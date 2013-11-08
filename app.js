@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-var lib = function(name) { return './libs/' + name; };
 
 app.configure(function(){
   app.use(express.urlencoded());
@@ -12,7 +11,7 @@ app.configure(function(){
 
 app.listen(8080);
 
-app.engine('html', require(lib('muExpress')).renderFile);
+app.engine('html', require('./libs/muExpress').renderFile);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 app.get('/', require('./controllers/index').home);
