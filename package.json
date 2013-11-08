@@ -1,0 +1,22 @@
+{ 
+  "name": "OpenUserJS.org", 
+  "description": "An open source user scripts repo built using Node.js",
+  "version" : "0.1.0",
+  "main" : "app",
+  "dependencies" :
+  {
+    "express" : "*",
+    "mu2" : "*"
+  },
+  "repository" :
+  {
+    "type" : "git",
+    "url" : "https://github.com/OpenUserJs/OpenUserJS.org.git"
+  },
+  "licenses": 
+  [
+    {
+      "type": "GPL"
+    }
+  ]
+}
