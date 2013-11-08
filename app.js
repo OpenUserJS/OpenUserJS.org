@@ -11,7 +11,7 @@ app.configure(function(){
 
 app.listen(8080);
 
-app.engine('html', require('muExpress').renderFile);
+app.engine('html', require('./node_custom/muExpress').renderFile);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 app.get('/', require('./controllers/index').home);
