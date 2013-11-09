@@ -16,14 +16,9 @@ app.engine('html', require('./libs/muExpress').renderFile);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 
-app.use('/css', express.static(__dirname + '/public/css'));
-app.use('/images', express.static(__dirname + '/public/images'));
-app.use('/js', express.static(__dirname + '/public/js'));
-
 app.get('/', controllers.home);
 
 app.use(express.static(__dirname + '/public'));
-
 app.use(function(req, res, next){
   res.sendfile(__dirname + '/public/404.html');
 });
