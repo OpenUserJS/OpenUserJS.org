@@ -1,0 +1,4 @@
+curl -u sizzlemctwizzle https://webhooks.nodejitsu.com/1/status/sizzlemctwizzle/changes?include_docs=auto
+
+curl http://webhooks.nodejitsu.com/OpenUserJs/OpenUserJS.org.png > status.png
+
