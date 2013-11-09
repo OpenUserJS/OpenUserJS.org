@@ -17,7 +17,23 @@
         </div>
 
         <div id="main">
-            <p>Welcome!</p>
+        {{#user}}
+          {{#loggedIn}}
+          <p>Welcome {{username}}!</p>
+          <p><a href="/logout/">Logout?</a></p>
+          {{/loggedIn}}
+          {{^loggedIn}}
+            <p>Welcome stranger!</p>
+            <div id="login">
+               <p>Please log in if you have an account</p>
+                 <form id="login" method="post" action="/">
+                    <input type="text" name="username" /><br />
+                    <input type="password" name="password" /><br />
+                    <input type="submit" value="Login" />
+                 </form>
+             </div>
+          {{/loggedIn}}
+        {{/user}}
         </div>
 
         <div id="footer">

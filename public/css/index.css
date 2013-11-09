@@ -36,3 +36,9 @@ body {
 #footer {
     font-size: 9pt;
 }
+
+#login {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+}
