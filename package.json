@@ -1,22 +1,27 @@
-{ 
-  "name": "OpenUserJS.org", 
+{
+  "name": "OpenUserJS.org",
   "description": "An open source user scripts repo built using Node.js",
-  "version" : "0.1.0",
-  "main" : "app",
-  "dependencies" :
-  {
-    "express" : "*",
-    "mu2" : "*"
+  "version": "0.1.0",
+  "main": "app",
+  "dependencies": {
+    "express": "*",
+    "mu2": "*"
   },
-  "repository" :
-  {
-    "type" : "git",
-    "url" : "https://github.com/OpenUserJs/OpenUserJS.org.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenUserJs/OpenUserJS.org.git"
   },
-  "licenses": 
-  [
+  "licenses": [
     {
       "type": "GPL"
     }
-  ]
+  ],
+  "subdomain": "openuserjs",
+  "domains": [ "openuserjs.org" ],
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
 }
