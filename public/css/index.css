@@ -1,0 +1,38 @@
+body {
+    font-family: arial, verdana;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+}
+
+#top {
+    background: #017FD4;
+}
+
+#top .container {
+    padding: 4px;
+    width: 40%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#top .container a {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+#main {
+    font-size: 14pt;
+    margin-top: 100px;
+    min-height: 600px;
+}
+
+#main p, #footer p {
+    text-align: center;
+}
+
+#footer {
+    font-size: 9pt;
+}
