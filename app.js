@@ -32,7 +32,7 @@ app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 
 app.get('/', controllers.home);
-app.get('/auth/:strategy', authentication.auth);
+app.get('/auth/:strategy?', authentication.auth);
 app.post('/auth/', function(req, res) {
   req.session.username = req.body.username;
   res.redirect('/auth/' + req.body.auth);
@@ -42,7 +42,7 @@ app.get('/logout', function(req, res) {
   res.redirect('/');
 });
 
-app.get('/auth/:strategy/callback', authentication.callback);
+app.get('/auth/:strategy/callback/', authentication.callback);
 
 app.use(express.static(__dirname + '/public'));
 app.use(function(req, res, next){

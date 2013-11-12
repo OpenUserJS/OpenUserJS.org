@@ -26,7 +26,8 @@
           <form id="login" method="post" action="/auth/">
             <p>Input your username (or the one you want):</p>
             <input type="text" name="username" /><br />
-            <p>Select an authenticator from the dropdown:</p>
+            <p>To Register: select an authenticator from the dropdown.</p>
+            <p>You can leave it blank if you're logging in.</p>
             <select name="auth">
               {{#strategies}}
               <option value="{{strat}}">{{pretty}}</option>

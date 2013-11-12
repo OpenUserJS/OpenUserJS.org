@@ -1,6 +1,6 @@
 var passport = require('passport');
 var crypto = require('crypto');
-var consumer = require('./consumer.json');
+var authKeys = require('./authKeys.json');
 var strategies = require('./strategies');
 var User = require('../models/user').User;
 
@@ -13,6 +13,9 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
+
+var strategyInstances = {};
+function dummyVerify(id, done) { console.error('A strategy called dummy.'); } 
 
 // Setup all our auth strategies
 strategies.forEach(function(strategy) {
@@ -29,95 +32,132 @@ strategies.forEach(function(strategy) {
   var PassportStrategy = require(requireStr)[
     strategy === 'google' ? 'OAuth2Strategy' : 'Strategy'
   ];
+  var instance = null;
 
   if (strategy === 'openid' || strategy === 'aol') {
-    passport.use(new PassportStrategy(
+    instance = new PassportStrategy(
       {
-        returnURL: 'http://localhost:8080/auth/' + strategy  + '/callback',
+        returnURL: 'http://localhost:8080/auth/' + strategy  + '/callback/',
         realm: 'http://localhost:8080/'
       },
-      function(identifier, done) {
-        User.findByOpenID({ openId: identifier }, function (err, user) {
-          return done(err, user);
-        });
-      }
-    ));
+      dummyVerify
+    );
   } else {
-    passport.use(new PassportStrategy(
+    instance = new PassportStrategy(
       {
-        consumerKey: consumer.keys[strategy],
-        consumerSecret: consumer.secrets[strategy],
-        clientID: consumer.keys[strategy],
-        clientSecret: consumer.secrets[strategy],
-        callbackURL: 'http://localhost:8080/auth/' + strategy  + '/callback'
+        consumerKey: authKeys[strategy].id,
+        consumerSecret: authKeys[strategy].key,
+        clientID: authKeys[strategy].id,
+        clientSecret: authKeys[strategy].key,
+        callbackURL: 'http://localhost:8080/auth/' + strategy  + '/callback/'
       },
-      function(token, refreshOrSecretToken, profile, done) {
-        var shasum = crypto.createHash('sha256');
-        shasum.update(String(profile.id));
-        var digest = shasum.digest('hex');
-        User.find({ 'auths' : digest }, function (err, user) {
-          if (!user || user.length === 0) {
-            user = new User({
-              'name' : '',
-              'auths' : [digest],
-              'strategies' : [strategy],
-              'role' : 4,
-              'about': ''
-            });
-            user.save(function(err, user){
-              return done(err, user);
-            });
-          } else {
-            /*user.forEach(function(user) {
-              user.remove(function (err, user) {
-                User.findById(user._id, function (){});
-              });
-            }); return done('resetting');*/
-            //User.remove({strategies: 'facebook'}, function(err, user) {});
-            console.log(user.length);
-            return done(err, user[0]);
-          }
-        });
-      }
-    ));
+      dummyVerify
+    );
   }
+
+  strategyInstances[strategy] = instance;
+  passport.use(instance);
 });
 
 exports.auth = function(req, res, next) {
   var strategy = req.route.params.strategy;
-  if (!strategy) next();
+  var username = req.session.username;
   var options = strategy === 'google' ?
     { scope: 'https://www.google.com/m8/feeds' } : {};
-  var authenticate = passport.authenticate(strategy, options);
 
-  // Just in case some dumbass tries a bad /auth/* url
-  try {
+  function auth() {
+    var authenticate = passport.authenticate(strategy, options);
+
+    // Just in case some dumbass tries a bad /auth/* url
+    if (!strategyInstances[strategy]) return next();
+
     authenticate(req, res);
-  } catch (e) {
-    next();
+  }
+
+  if (username) {
+    User.findOne({ name : username }, function(err, user) {
+      if (user) {
+        var strategies = user.strategies;
+        var strat = strategies.pop();
+        if (req.session.newstrategy) {
+          delete req.session.newstrategy;
+        } else if (!strategy) {
+          strategy = strat;
+        } else if (strategies.indexOf(strategy) === -1) { 
+          req.session.newstrategy = strategy;
+          strategy = strat;
+        }
+      }
+      if (!strategy) return res.redirect('/');
+
+      auth();
+    });
+  } else {
+    if (!strategy || !username) return res.redirect('/');
+    auth();
   }
 };
 
 exports.callback = function(req, res, next) {
   var strategy = req.route.params.strategy;
-  if (!strategy) next();
+  var username = req.session.username;
+  var newstrategy = req.session.newstrategy;
+  if (!strategy) return next();
+  var strategyInstance = strategyInstances[strategy];
+  
+  // Hijak the private verify method
+  strategyInstance._verify = 
+    function(token, refreshOrSecretToken, profile, done) {
+      strategyInstance._verify = dummyVerify;
+      var shasum = crypto.createHash('sha256');
+      shasum.update(String(profile.id));
+      var digest = shasum.digest('hex');
 
-  var authenticate = passport.authenticate(strategy, function(err, user, info) {
-    if (err) { return next(err); }
-    if (!user) { return res.redirect('/authfail'); }
-    User.findByIdAndUpdate(user._id, { 'name' : req.session.username },
-      function (err, user) {
-        delete req.session.username;
-        req.logIn(user, function(err) {
-          if (err) { return next(err); }
+      var findOption = {};
+      if (req.user) {
+        findOption.name = req.user.name;
+      } else {
+        findOption.auths = digest;
+      }
+
+      User.findOne(findOption, function (err, user) {
+        if (!user) {
+          user = new User({
+            'name' : username,
+            'auths' : [digest],
+            'strategies' : [strategy],
+            'role' : 4,
+            'about': ''
+          });
+          user.save(function(err, user) {
+            return done(err, user);
+          });
+        } else if (req.user) {
+          user.auths.push(digest);
+          user.strategies.push(strategy);
+          user.save(function(err, user) {
+            return done(err, user);
+          });
+        } else {
+          return done(err, user);
+        }
+      });
+    }
+
+  var authenticate = passport.authenticate(strategy, 
+    function(err, user, info) {
+      if (err) { return next(err); }
+      if (!user) { return res.redirect('/login'); }
+      req.logIn(user, function(err) {
+        if (err) { return next(err); }
+
+        if (newstrategy) {
+          return res.redirect('/auth/' + newstrategy);
+        } else {
           return res.redirect('/');
-        });
-    });
+        }
+      });
   });
 
-  try {
-    authenticate(req, res, next);
-  } catch (e) {
-    next();
-  }
+  authenticate(req, res, next);
 }
