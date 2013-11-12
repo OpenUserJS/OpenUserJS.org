@@ -3,30 +3,28 @@ body {
     font-weight: normal;
     margin: 0;
     padding: 0;
+    background: #DDDDDD;
+    color: #3A3A3A;
 }
 
 #top {
-    background: #017FD4;
-}
-
-#top .container {
-    padding: 4px;
-    width: 40%;
-    margin: 0 auto;
+    background: #2655AC;
     text-align: center;
+    padding: 4px;
 }
 
-#top .container a {
+#top a {
+    color: #DDDDDD;
     font-size: 11pt;
-    font-weight: bold;
-    color: #FFFFFF;
+    margin: 0 6px;
     text-decoration: none;
+    text-shadow: 2px 2px 2px #4E4E4E;
+    
 }
 
 #main {
-    font-size: 14pt;
-    margin-top: 100px;
-    min-height: 600px;
+    font-size: 11pt;
+    height: 70%;
 }
 
 #main p, #footer p, h3 {
@@ -41,4 +39,61 @@ body {
     width: 60%;
     margin-left: auto;
     margin-right: auto;
+}
+
+pre {
+    font-family: Consolas, Courier New, monospace;
+    font-size: 10pt;
+    word-wrap: break-word;
+}
+
+table tr td {
+    padding: 8px;
+    border: 1px solid #A6A6A6;
+}
+
+table tr:first-of-type {
+    font-size: 14pt;
+    background: #C1C1C1;
+    margin-bottom: 8px;
+}
+
+table tr:not(:first-of-type) {
+    font-size: 9pt;
+    background: #E5E5E5;
+}
+
+#scripts-list {
+    width: 70%;
+}
+
+#scripts-list .title {
+    display: block;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+#scripts-list .desc {
+    display: block;
+    font-style: italic;
+    margin-top: 4px;
+    text-indent: 14px;
+}
+
+/* generic classes */
+.spacer {
+    margin: 0; padding: 0;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.indent {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.color-normal {
+    color: #3A3A3A;
 }
