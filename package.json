@@ -5,7 +5,9 @@
   "main": "app",
   "dependencies": {
     "express": "*",
-    "mu2": "*"
+    "mu2": "*",
+    "mongodb": "*",
+    "mongoose": "*"
   },
   "repository": {
     "type": "git",
