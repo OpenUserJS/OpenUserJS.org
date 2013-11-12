@@ -17,23 +17,28 @@
         </div>
 
         <div id="main">
-        {{#user}}
-          {{#loggedIn}}
-          <p>Welcome {{username}}!</p>
-          <p><a href="/logout/">Logout?</a></p>
-          {{/loggedIn}}
-          {{^loggedIn}}
-            <p>Welcome stranger!</p>
-            <div id="login">
-               <p>Please log in if you have an account</p>
-                 <form id="login" method="post" action="/">
-                    <input type="text" name="username" /><br />
-                    <input type="password" name="password" /><br />
-                    <input type="submit" value="Login" />
-                 </form>
-             </div>
-          {{/loggedIn}}
-        {{/user}}
+        {{#username}}
+        <p>Welcome {{username}}! <a href="/logout">Logout?</a></p>
+        {{/username}}
+        {{^username}}
+        <div id="login">
+          <h3>Login (or Register)</h3>
+          <form id="login" method="post" action="/auth/">
+            <p>Input your username (or the one you want):</p>
+            <input type="text" name="username" /><br />
+            <p>Select an authenticator from the dropdown:</p>
+            <select name="auth">
+              {{#strategies}}
+              <option value="{{strat}}">{{pretty}}</option>
+              {{/strategies}}
+            </select>
+            <input type="submit" value="Go!" />
+          </form>
+          <p><em>Note: If you need an authenticator, the easiest way is to get
+              an OpenID from <a href="http://claimid.com/">claimID</a>.</em>
+          </p>
+        </div>
+        {{/username}}
         </div>
 
         <div id="footer">

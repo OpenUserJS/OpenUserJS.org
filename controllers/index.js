@@ -1,18 +1,19 @@
 var User = require('../models/user').User;
+var strategies = require('./strategies.json');
+var prettystrategies = require('./prettyStrategies.json');
 
 exports.home = function(req, res) {
-  var user = new User(req.session);
-  res.render('index', { 'title': 'Home page', 'user': user.settings }, res);
-}
+  var options = { 'title': 'Home page' };
 
-exports.login = function(req, res) {
-  var user = new User(req.session);
-  user.login(req.body.username, req.body.password);
-  res.redirect('/');
-}
+  if (!req.user) {
+    options.strategies = [{'strat' : '', 'pretty' : ''}];
+    strategies.forEach(function(strat, index) {
+      options.strategies.push({ 
+        'strat' : strat, 'pretty' : prettystrategies[index]});
+    });
+  } else {
+    options.username = req.user.name;
+  }
 
-exports.logout = function(req, res) {
-  var user = new User(req.session);
-  user.logout();
-  res.redirect('/');
+  res.render('index', options, res);
 }

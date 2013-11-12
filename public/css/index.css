@@ -29,7 +29,7 @@ body {
     min-height: 600px;
 }
 
-#main p, #footer p {
+#main p, #footer p, h3 {
     text-align: center;
 }
 
@@ -38,7 +38,7 @@ body {
 }
 
 #login {
-    width: 40%;
+    width: 60%;
     margin-left: auto;
     margin-right: auto;
 }

@@ -1,0 +1,11 @@
+[
+  // OAuth 1.0
+ // "google", "twitter", "yahoo", "flickr", "linkedin", "netflix",
+
+  // OAuth 2.0
+  "github", "facebook", //"reddit", "imgur", "amazon", "paypal",
+  //"windowslive", "google",
+
+  // OpenID
+  "aol", "openid"
+]
