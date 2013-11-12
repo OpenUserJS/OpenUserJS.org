@@ -5,24 +5,24 @@
   "main": "app",
   "dependencies": {
     "express": "*",
-    "mu2": "*"
+    "mu2": "*",
     "mongoose": "*",
     "passport": "*",
-    "passport-amazon"
-    "passport-aol"
-    "passport-facebook"
-    "passport-flickr"
-    "passport-github"
-    "passport-google-oauth"  
-    "passport-imgur"
-    "passport-linkedin"
-    "passport-netflix"
-    "passport-openid"
-    "passport-paypal-oauth"
-    "passport-reddit"
-    "passport-twitter"
-    "passport-windowslive"
-    "passport-yahoo-oauth"
+    "passport-amazon": "*",
+    "passport-aol": "*",
+    "passport-facebook": "*",
+    "passport-flickr": "*",
+    "passport-github": "*",
+    "passport-google-oauth": "*",
+    "passport-imgur": "*",
+    "passport-linkedin": "*",
+    "passport-netflix": "*",
+    "passport-openid": "*",
+    "passport-paypal-oauth": "*",
+    "passport-reddit": "*",
+    "passport-twitter": "*",
+    "passport-windowslive": "*",
+    "passport-yahoo-oauth": "*"
   },
   "repository": {
     "type": "git",
