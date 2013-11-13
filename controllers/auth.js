@@ -4,6 +4,9 @@ var authKeys = require('./authKeys.json');
 var strategies = require('./strategies');
 var User = require('../models/user').User;
 
+var URL = process.env.NODE_ENV === 'production' ? 
+  'openuserjs.org' : 'localhost:8080';
+
 passport.serializeUser(function(user, done) {
   done(null, user._id);
 });
@@ -37,8 +40,8 @@ strategies.forEach(function(strategy) {
   if (strategy === 'openid' || strategy === 'aol') {
     instance = new PassportStrategy(
       {
-        returnURL: 'http://localhost:8080/auth/' + strategy  + '/callback/',
-        realm: 'http://localhost:8080/'
+        returnURL: 'http://' + URL  + '/auth/' + strategy  + '/callback/',
+        realm: 'http://' + URL  + '/'
       },
       dummyVerify
     );
@@ -49,7 +52,7 @@ strategies.forEach(function(strategy) {
         consumerSecret: authKeys[strategy].key,
         clientID: authKeys[strategy].id,
         clientSecret: authKeys[strategy].key,
-        callbackURL: 'http://localhost:8080/auth/' + strategy  + '/callback/'
+        callbackURL: 'http://' + URL  + '/auth/' + strategy  + '/callback/'
       },
       dummyVerify
     );

@@ -20,7 +20,12 @@ app.configure(function(){
   app.use(app.router);
 });
 
-mongoose.connect('mongodb://localhost/test');
+if (process.env.NODE_ENV === 'production') {
+  mongoose.connect(require('./prodDB').connectString);
+} else {
+  mongoose.connect('mongodb://nodejitsu_sizzlemctwizzle:b6vrl5hvkv2a3vvbaq1nor7fdl@ds045978.mongolab.com:45978/nodejitsu_sizzlemctwizzle_nodejitsudb8203815757');
+}
+
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
