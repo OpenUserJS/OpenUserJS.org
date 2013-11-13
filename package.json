@@ -1,7 +1,7 @@
 {
   "name": "OpenUserJS.org",
   "description": "An open source user scripts repo built using Node.js",
-  "version": "0.1.0-8",
+  "version": "0.1.0-11",
   "main": "app",
   "dependencies": {
     "express": "*",
