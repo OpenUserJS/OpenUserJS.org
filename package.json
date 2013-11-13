@@ -1,7 +1,7 @@
 {
   "name": "OpenUserJS.org",
   "description": "An open source user scripts repo built using Node.js",
-  "version": "0.1.0",
+  "version": "0.1.0-7",
   "main": "app",
   "dependencies": {
     "express": "*",
@@ -34,7 +34,9 @@
     }
   ],
   "subdomain": "openuserjs",
-  "domains": [ "openuserjs.org" ],
+  "domains": [
+    "openuserjs.org"
+  ],
   "scripts": {
     "start": "node app.js"
   },
