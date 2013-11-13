@@ -1,7 +1,7 @@
 {
   "name": "OpenUserJS.org",
   "description": "An open source user scripts repo built using Node.js",
-  "version": "0.1.0-11",
+  "version": "0.1.0-18",
   "main": "app",
   "dependencies": {
     "express": "*",
@@ -13,16 +13,16 @@
     "passport-facebook": "*",
     "passport-flickr": "*",
     "passport-github": "*",
-    "passport-google-oauth": "*",
+    "passport-google": "*",
     "passport-imgur": "*",
     "passport-linkedin": "*",
     "passport-netflix": "*",
     "passport-openid": "*",
-    "passport-paypal-oauth": "*",
+    "passport-paypal": "*",
     "passport-reddit": "*",
     "passport-twitter": "*",
     "passport-windowslive": "*",
-    "passport-yahoo-oauth": "*"
+    "passport-yahoo": "*"
   },
   "repository": {
     "type": "git",

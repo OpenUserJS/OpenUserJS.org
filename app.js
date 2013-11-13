@@ -16,7 +16,6 @@ app.configure(function(){
   app.use(express.cookieParser(settings.secret));
   app.use(express.session());
   app.use(passport.initialize());
-  app.use(passport.session());
   app.use(app.router);
 });
 
@@ -43,7 +42,7 @@ app.post('/auth/', function(req, res) {
   res.redirect('/auth/' + req.body.auth);
 });
 app.get('/logout', function(req, res) {
-  req.logout();
+  delete req.session.user;
   res.redirect('/');
 });
 

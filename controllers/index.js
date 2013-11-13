@@ -4,15 +4,16 @@ var prettystrategies = require('./prettyStrategies.json');
 
 exports.home = function(req, res) {
   var options = { 'title': 'Home page' };
+  var user = req.session.user;
 
-  if (!req.user) {
+  if (!user) {
     options.strategies = [{'strat' : '', 'pretty' : ''}];
     strategies.forEach(function(strat, index) {
       options.strategies.push({ 
         'strat' : strat, 'pretty' : prettystrategies[index]});
     });
   } else {
-    options.username = req.user.name;
+    options.username = user.name;
   }
 
   res.render('index', options, res);

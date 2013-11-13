@@ -23,21 +23,15 @@ function dummyVerify(id, done) { console.error('A strategy called dummy.'); }
 // Setup all our auth strategies
 strategies.forEach(function(strategy) {
   var requireStr = 'passport-' + strategy;
-
-  switch (strategy) {
-  case 'google':
-  case 'yahoo':
-  case 'paypla':
-    requireStr += '-oauth';
-    break;
-  }
-
-  var PassportStrategy = require(requireStr)[
-    strategy === 'google' ? 'OAuth2Strategy' : 'Strategy'
-  ];
+  var PassportStrategy = require(requireStr).Strategy;
   var instance = null;
 
-  if (strategy === 'openid' || strategy === 'aol') {
+  switch (strategy) {
+  case 'yahoo':
+  case 'paypal':
+  case 'google':
+  case 'aol':
+  case 'openid':
     instance = new PassportStrategy(
       {
         returnURL: 'http://' + URL  + '/auth/' + strategy  + '/callback/',
@@ -45,7 +39,8 @@ strategies.forEach(function(strategy) {
       },
       dummyVerify
     );
-  } else {
+    break;
+  default:
     instance = new PassportStrategy(
       {
         consumerKey: authKeys[strategy].id,
@@ -65,11 +60,9 @@ strategies.forEach(function(strategy) {
 exports.auth = function(req, res, next) {
   var strategy = req.route.params.strategy;
   var username = req.session.username;
-  var options = strategy === 'google' ?
-    { scope: 'https://www.google.com/m8/feeds' } : {};
 
   function auth() {
-    var authenticate = passport.authenticate(strategy, options);
+    var authenticate = passport.authenticate(strategy);
 
     // Just in case some dumbass tries a bad /auth/* url
     if (!strategyInstances[strategy]) return next();
@@ -92,11 +85,10 @@ exports.auth = function(req, res, next) {
         }
       }
       if (!strategy) return res.redirect('/');
-
       auth();
     });
   } else {
-    if (!strategy || !username) return res.redirect('/');
+    if (!strategy) return res.redirect('/');
     auth();
   }
 };
@@ -107,39 +99,41 @@ exports.callback = function(req, res, next) {
   var newstrategy = req.session.newstrategy;
   if (!strategy) return next();
   var strategyInstance = strategyInstances[strategy];
-  
-  // Hijak the private verify method
-  strategyInstance._verify = 
-    function(token, refreshOrSecretToken, profile, done) {
-      strategyInstance._verify = dummyVerify;
+
+  function verify(id, done) {
       var shasum = crypto.createHash('sha256');
-      shasum.update(String(profile.id));
+      shasum.update(String(id));
       var digest = shasum.digest('hex');
 
-      var findOption = {};
-      if (req.user) {
-        findOption.name = req.user.name;
-      } else {
-        findOption.auths = digest;
-      }
-
-      User.findOne(findOption, function (err, user) {
+      User.findOne({ 'auths' : digest }, function (err, user) {
         if (!user) {
-          user = new User({
-            'name' : username,
-            'auths' : [digest],
-            'strategies' : [strategy],
-            'role' : 4,
-            'about': ''
-          });
-          user.save(function(err, user) {
-            return done(err, user);
-          });
-        } else if (req.user) {
-          user.auths.push(digest);
-          user.strategies.push(strategy);
-          user.save(function(err, user) {
-            return done(err, user);
+          User.findOne({ 'name' : username }, function(err, user) {
+            if (user && req.session.user) {
+              // Add the new strategy to same account
+              // This allows linking multiple external accounts to one of ours
+              user.auths.push(digest);
+              user.strategies.push(strategy);
+              user.save(function(err, user) {
+                return done(err, user);
+              });
+            } else {
+              // I have no idea where this error message goes
+              if (username.length) {
+                return done(null, false, 'username must be non-empty');
+              }
+
+              // Create a new user
+              user = new User({
+                'name' : username,
+                'auths' : [digest],
+                'strategies' : [strategy],
+                'role' : 4,
+                'about': ''
+              });
+              user.save(function(err, user) {
+                return done(err, user);
+              });
+            }
           });
         } else {
           return done(err, user);
@@ -147,16 +141,35 @@ exports.callback = function(req, res, next) {
       });
     }
 
+  // Hijak the private verify method so we can fuck shit up freely
+  switch (strategy) {
+  case 'yahoo':
+  case 'paypal':
+  case 'google':
+  case 'aol':
+  case 'openid':
+    strategyInstance._verify = verify;
+    break;
+  default:
+    strategyInstance._verify = 
+      function(token, refreshOrSecretToken, profile, done) {
+        verify(profile.id, done);
+      }
+  }
+
   var authenticate = passport.authenticate(strategy, 
     function(err, user, info) {
       if (err) { return next(err); }
-      if (!user) { return res.redirect('/login'); }
+      if (!user) { return res.redirect('/?authfail'); }
+
       req.logIn(user, function(err) {
         if (err) { return next(err); }
 
+        req.session.user = user;
         if (newstrategy) {
           return res.redirect('/auth/' + newstrategy);
         } else {
+          delete req.session.username;
           return res.redirect('/');
         }
       });
