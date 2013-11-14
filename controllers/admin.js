@@ -104,7 +104,7 @@ exports.apiAdminUpdate = function(req, res) {
 
   var tasks = [];
 
-  Strategy.find({}).exec().addCallback(function(strats) {
+  Strategy.find({}).exec().then(function(strats) {
     var stored = {};
     strats.forEach(function(strat) {
       stored[strat.name] = strat;
@@ -117,7 +117,7 @@ exports.apiAdminUpdate = function(req, res) {
       var strategy = null;
 
       if (stored[i] && !postStrat[0] && !postStrat[1]) {
-        tasks.push(stored[i].remove().exec().addCallback(function() {
+        tasks.push(stored[i].remove().exec().then(function() {
           delete strategyInstances[i];
         }));
         continue;
