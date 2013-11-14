@@ -45,6 +45,30 @@ exports.userAdmin = function(req, res) {
   });
 };
 
+exports.userAdminUpdate = function(req, res) {
+  if (!userIsAdmin(req)) res.redirect('/');
+
+  // Setup a function to call once everything is done
+  var wait = new Wait(function() {
+    res.redirect('/admin/user');
+  });
+
+  var users = req.body.user;
+  for (var name in users) {
+    var role = users[name];
+    User.findOneAndUpdate({ 'name' : name }, {'role' : Number(role)},
+      wait.add(function(err, user) {}));
+  }
+
+  var remove = req.body.remove || {};
+  for (var name in remove) {
+    User.findOneAndRemove({ 'name' : name },
+      wait.add(function(err, user) {}));
+  }
+
+  wait.done();
+};
+
 exports.apiAdmin = function(req, res) {
   if (!userIsAdmin(req)) res.redirect('/');
 
@@ -110,28 +134,4 @@ exports.apiAdminUpdate = function(req, res) {
 
     wait.done();
   });
-};
-
-exports.userAdminUpdate = function(req, res) {
-  if (!userIsAdmin(req)) res.redirect('/');
-
-  // Setup a function to call once everything is done
-  var wait = new Wait(function() {
-    res.redirect('/admin/user');
-  });
-
-  var users = req.body.user;
-  for (var name in users) {
-    var role = users[name];
-    User.findOneAndUpdate({ 'name' : name }, {'role' : Number(role)},
-      wait.add(function(err, user) {}));
-  }
-
-  var remove = req.body.remove || {};
-  for (var name in remove) {
-    User.findOneAndRemove({ 'name' : name },
-      wait.add(function(err, user) {}));
-  }
-
-  wait.done();
 };
