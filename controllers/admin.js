@@ -30,7 +30,8 @@ exports.userAdmin = function(req, res, next) {
   if (!userIsAdmin(req)) return next();
 
   var options = nil();
-  User.find({}, function(req, users) {
+  var thisUser = req.session.user;
+  User.find({ role : { $gt: thisUser.role } }, function(req, users) {
     options.users = [];
 
     var i = 0;
@@ -40,6 +41,7 @@ exports.userAdmin = function(req, res, next) {
         roles.push({ 'val' : index, 'display' : role,
           'selected' : index === user.role });
       });
+      roles = roles.splice(thisUser.role + 1);
       roles.reverse();
 
       options.users.push({ 'name' : user.name, 'roles' : roles });
@@ -55,15 +57,19 @@ exports.userAdminUpdate = function(req, res, next) {
   var queryPromises = [];
 
   var users = req.body.user;
+  var thisUser = req.session.user;
   for (var name in users) {
-    var role = users[name];
-    queryPromises.push(User.findOneAndUpdate({ 'name' : name }, 
-      {'role' : Number(role)}).exec());
+    var role = Number(users[name]);
+
+    if (role <= thisUser.role) { continue; }
+    queryPromises.push(User.findOneAndUpdate({ 'name' : name, 
+      role : { $gt: thisUser.role } }, {'role' : role}).exec());
   }
 
   var remove = req.body.remove || {};
   for (var name in remove) {
-    queryPromises.push(User.findOneAndRemove({ 'name' : name }).exec());
+    queryPromises.push(User.findOneAndRemove({ 'name' : name,
+      role : { $gt: thisUser.role } }).exec());
   }
 
   return Promise.all(queryPromises).then(function(){
