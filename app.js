@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var app = express();
 var controllers = require('./controllers');
-var authentication = require('./controllers/auth');
+//var authentication = require('./controllers/auth');
+var admin = require('./controllers/admin');
 var settings = require('./models/settings.json');
 
 app.configure(function(){
@@ -17,6 +18,11 @@ app.configure(function(){
   app.use(express.session());
   app.use(passport.initialize());
   app.use(app.router);
+
+  // Set up the views
+  app.engine('html', require('./libs/muExpress').renderFile);
+  app.set('view engine', 'html');
+  app.set('views', __dirname + '/views');
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -31,22 +37,22 @@ db.once('open', function callback () {
   app.listen(8080);
 });
 
-app.engine('html', require('./libs/muExpress').renderFile);
-app.set('view engine', 'html');
-app.set('views', __dirname + '/views');
-
 app.get('/', controllers.home);
-app.get('/auth/:strategy?', authentication.auth);
+/*app.get('/auth/:strategy?', authentication.auth);
 app.post('/auth/', function(req, res) {
   req.session.username = req.body.username;
   res.redirect('/auth/' + req.body.auth);
 });
+app.get('/auth/:strategy/callback/', authentication.callback);
 app.get('/logout', function(req, res) {
   delete req.session.user;
   res.redirect('/');
-});
+});*/
 
-app.get('/auth/:strategy/callback/', authentication.callback);
+app.get('/admin/user', admin.userAdmin);
+app.get('/admin/api', admin.apiAdmin);
+app.post('/admin/user/update', admin.userAdminUpdate);
+app.post('/admin/api/update', admin.apiAdminUpdate);
 
 app.use(express.static(__dirname + '/public'));
 app.use(function(req, res, next){
