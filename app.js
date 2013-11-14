@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var app = express();
 var controllers = require('./controllers');
-//var authentication = require('./controllers/auth');
+var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
 var settings = require('./models/settings.json');
 
@@ -26,8 +26,9 @@ app.configure(function(){
 });
 
 if (process.env.NODE_ENV === 'production') {
-  mongoose.connect(require('./prodDB').connectString);
+  mongoose.connect(process.env.CONNECT_STRING);
 } else {
+  // Throwaway database for development
   mongoose.connect('mongodb://nodejitsu_sizzlemctwizzle:b6vrl5hvkv2a3vvbaq1nor7fdl@ds045978.mongolab.com:45978/nodejitsu_sizzlemctwizzle_nodejitsudb8203815757');
 }
 
@@ -38,7 +39,7 @@ db.once('open', function callback () {
 });
 
 app.get('/', controllers.home);
-/*app.get('/auth/:strategy?', authentication.auth);
+app.get('/auth/:strategy?', authentication.auth);
 app.post('/auth/', function(req, res) {
   req.session.username = req.body.username;
   res.redirect('/auth/' + req.body.auth);
@@ -47,7 +48,7 @@ app.get('/auth/:strategy/callback/', authentication.callback);
 app.get('/logout', function(req, res) {
   delete req.session.user;
   res.redirect('/');
-});*/
+});
 
 app.get('/admin/user', admin.userAdmin);
 app.get('/admin/api', admin.apiAdmin);

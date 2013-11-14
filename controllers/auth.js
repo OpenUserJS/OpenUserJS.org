@@ -1,11 +1,11 @@
 var passport = require('passport');
 var crypto = require('crypto');
-var authKeys = require('./authKeys.json');
-var strategies = require('./strategies');
+var allStrategies = require('./strategies.json');
+var loadPassport = require('../libs/passportLoader').loadPassport;
+var strategyInstances = require('../libs/passportLoader').strategyInstances;
+var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
-
-var URL = process.env.NODE_ENV === 'production' ? 
-  'openuserjs.org' : 'localhost:8080';
+var userRoles = require('../models/userRoles.json');
 
 passport.serializeUser(function(user, done) {
   done(null, user._id);
@@ -17,44 +17,19 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-var strategyInstances = {};
-function dummyVerify(id, done) { console.error('A strategy called dummy.'); } 
-
 // Setup all our auth strategies
-strategies.forEach(function(strategy) {
-  var requireStr = 'passport-' + strategy;
-  var PassportStrategy = require(requireStr).Strategy;
-  var instance = null;
-
-  switch (strategy) {
-  case 'yahoo':
-  case 'paypal':
-  case 'google':
-  case 'aol':
-  case 'openid':
-    instance = new PassportStrategy(
-      {
-        returnURL: 'http://' + URL  + '/auth/' + strategy  + '/callback/',
-        realm: 'http://' + URL  + '/'
-      },
-      dummyVerify
-    );
-    break;
-  default:
-    instance = new PassportStrategy(
-      {
-        consumerKey: authKeys[strategy].id,
-        consumerSecret: authKeys[strategy].key,
-        clientID: authKeys[strategy].id,
-        clientSecret: authKeys[strategy].key,
-        callbackURL: 'http://' + URL  + '/auth/' + strategy  + '/callback/'
-      },
-      dummyVerify
-    );
+Strategy.find({}, function(err, strategies) {
+  
+  // Get OpenId strategies
+  for (var name in allStrategies) {
+    if (!allStrategies[name].oauth) {
+      strategies.push({ 'name' : name, 'openid' : true });
+    }
   }
-
-  strategyInstances[strategy] = instance;
-  passport.use(instance);
+  
+  strategies.forEach(function(strategy) {
+    loadPassport(strategy);
+  });
 });
 
 exports.auth = function(req, res, next) {
@@ -65,7 +40,7 @@ exports.auth = function(req, res, next) {
     var authenticate = passport.authenticate(strategy);
 
     // Just in case some dumbass tries a bad /auth/* url
-    if (!strategyInstances[strategy]) return next();
+    if (!strategyInstances[strategy]) return next('hey');
 
     authenticate(req, res);
   }
@@ -127,7 +102,7 @@ exports.callback = function(req, res, next) {
                 'name' : username,
                 'auths' : [digest],
                 'strategies' : [strategy],
-                'role' : 4,
+                'role' : userRoles.length - 1,
                 'about': ''
               });
               user.save(function(err, user) {
