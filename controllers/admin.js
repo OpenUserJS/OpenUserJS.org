@@ -23,7 +23,10 @@ function getOAuthStrategies(stored) {
 }
 
 exports.userAdmin = function(req, res) {
-  if (!userIsAdmin(req)) res.redirect('/');
+  if (!userIsAdmin(req)){
+    res.redirect('/');
+    return;
+  }
 
   var options = {};
   User.find({}, function(req, users) {
@@ -46,7 +49,10 @@ exports.userAdmin = function(req, res) {
 };
 
 exports.userAdminUpdate = function(req, res) {
-  if (!userIsAdmin(req)) res.redirect('/');
+  if (!userIsAdmin(req)){
+    res.redirect('/');
+    return;
+  }
 
   var queryPromises = [];
 
@@ -69,7 +75,10 @@ exports.userAdminUpdate = function(req, res) {
 };
 
 exports.apiAdmin = function(req, res) {
-  if (!userIsAdmin(req)) res.redirect('/');
+  if (!userIsAdmin(req)){
+    res.redirect('/');
+    return;
+  }
 
   Strategy.find({}, function(err, strats) {
     var stored = {};
@@ -86,13 +95,16 @@ exports.apiAdmin = function(req, res) {
 };
 
 exports.apiAdminUpdate = function(req, res) {
-  if (!userIsAdmin(req)) res.redirect('/');
+  if (!userIsAdmin(req)){
+    res.redirect('/');
+    return;
+  }
 
   var postStrats = req.body;
 
   var tasks = [];
 
-  Strategy.find({}, function(err, strats) {
+  Strategy.find({}).exec().addCallback(function(strats) {
     var stored = {};
     strats.forEach(function(strat) {
       stored[strat.name] = strat;
@@ -105,7 +117,7 @@ exports.apiAdminUpdate = function(req, res) {
       var strategy = null;
 
       if (stored[i] && !postStrat[0] && !postStrat[1]) {
-        tasks.push(stored[i].remove().addCallback(function() {
+        tasks.push(stored[i].remove().exec().addCallback(function() {
           delete strategyInstances[i];
         }));
         continue;
@@ -135,8 +147,8 @@ exports.apiAdminUpdate = function(req, res) {
         }));
       }
     }
-
-    Promise.all(tasks, function() {
+  }).then(function(){
+    Promise.all(tasks).then(function() {
       res.redirect('/admin/api');
     });
   });
