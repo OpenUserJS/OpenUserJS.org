@@ -104,47 +104,45 @@ exports.apiAdminUpdate = function(req, res) {
 
   var tasks = [];
 
-  Strategy.find({}).exec().then(function(strats) {
+  Promise.cast(Strategy.find({}).exec()).then(function(strats) {
     var stored = {};
     strats.forEach(function(strat) {
       stored[strat.name] = strat;
     });
 
-    for (var i in postStrats) {
-      if(i=='__proto__')
-        continue
-      var postStrat = postStrats[i];
+    for (var name in postStrats) {
+      if(!Object.hasOwnProperty.call(postStrats, name) || name=='__proto__')
+        continue;
+      var postStrat = postStrats[name];
       var strategy = null;
 
-      if (stored[i] && !postStrat[0] && !postStrat[1]) {
-        tasks.push(stored[i].remove().exec().then(function() {
-          delete strategyInstances[i];
+      if (stored[name] && !postStrat[0] && !postStrat[1]) {
+        tasks.push(stored[name].remove().exec().then(function() {
+          delete strategyInstances[name];
         }));
         continue;
-      }
-      else if (postStrat[0] && postStrat[1]) {
-        if (stored[i]) {
-          strategy = stored[i];
+      }else if (postStrat[0] && postStrat[1]) {
+        if (stored[name]) {
+          strategy = stored[name];
           strategy.id = postStrat[0]
           strategy.key = postStrat[1];
         } else {
           strategy = new Strategy({
             'id' : postStrat[0],
             'key' : postStrat[1],
-            'name' : i,
-            'display' : strategies[i].name
+            'name' : name,
+            'display' : strategies[name].name
           });
         }
 
         //save doesn't have promises yet, so create one manually
-        tasks.push(new Promise(function(resolve, reject){
-          strategy.save(function(err){
-            if(err) reject(err);
-            else resolve();
-          })
-        }).then(function(){
-          loadPassport(strategy);
-        }));
+        //create new scope for strategy
+        tasks.push((function(strategy){
+          Promise.promisify(strategy.save.bind(strategy))().then(
+            function(){
+              loadPassport(strategy);
+            });
+        })(strategy));
       }
     }
   }).then(function(){
