@@ -8,7 +8,9 @@ exports.home = function(req, res) {
 
   if (!user) {
     Strategy.find({}, function(err, strats) {
-      options.strategies = [];
+      // Empty option so you can just type in your username
+      // when logging in
+      options.strategies = [{ 'strat' : '', 'display' : '' }];
 
       // Get the strategies we have OAuth keys for
       strats.forEach(function(strat) {
