@@ -27,12 +27,18 @@ body {
     height: 70%;
 }
 
-#main p, #footer p {
+#main p, #footer p, h3 {
     text-align: center;
 }
 
 #footer {
     font-size: 9pt;
+}
+
+#login {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 pre {
