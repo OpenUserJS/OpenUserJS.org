@@ -5,6 +5,7 @@
   "main": "app",
   "dependencies": {
     "express": "*",
+    "bluebird": "*",
     "mu2": "*",
     "mongoose": "*",
     "passport": "*",

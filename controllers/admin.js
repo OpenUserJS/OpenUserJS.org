@@ -4,7 +4,7 @@ var strategies = require('./strategies.json');
 var userRoles = require('../models/userRoles.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
-var Wait = require('../libs/wait').Wait;
+var Promise = require("bluebird");
 
 function userIsAdmin(req) {
   return req.session.user && req.session.user.role < 3;
@@ -33,7 +33,7 @@ exports.userAdmin = function(req, res) {
     users.forEach(function(user) {
       var roles = [];
       userRoles.forEach(function(role, index) {
-        roles.push({ 'val' : index, 'display' : role, 
+        roles.push({ 'val' : index, 'display' : role,
           'selected' : index === user.role });
       });
       roles.reverse();
@@ -48,25 +48,24 @@ exports.userAdmin = function(req, res) {
 exports.userAdminUpdate = function(req, res) {
   if (!userIsAdmin(req)) res.redirect('/');
 
-  // Setup a function to call once everything is done
-  var wait = new Wait(function() {
-    res.redirect('/admin/user');
-  });
+  var queryPromises = [];
 
   var users = req.body.user;
   for (var name in users) {
     var role = users[name];
-    User.findOneAndUpdate({ 'name' : name }, {'role' : Number(role)},
-      wait.add(function(err, user) {}));
+    queryPromises.push(User.findOneAndUpdate({ 'name' : name }, {'role' : Number(role)}).exec());
   }
 
   var remove = req.body.remove || {};
   for (var name in remove) {
-    User.findOneAndRemove({ 'name' : name },
-      wait.add(function(err, user) {}));
+    queryPromises.push(User.findOneAndRemove({ 'name' : name }).exec());
   }
 
-  wait.done();
+  return Promise.all(queryPromises).then(function(){
+    res.redirect('/admin/user');
+  }).catch(function(e){
+    //XXX
+  });
 };
 
 exports.apiAdmin = function(req, res) {
@@ -91,24 +90,23 @@ exports.apiAdminUpdate = function(req, res) {
 
   var postStrats = req.body;
 
-  // Setup a function to call once everything is done
-  var wait = new Wait(function() {
-    res.redirect('/admin/api');
-  });
+  var tasks = [];
 
   Strategy.find({}, function(err, strats) {
     var stored = {};
     strats.forEach(function(strat) {
-      stored[strat.name] = strat; 
+      stored[strat.name] = strat;
     });
 
     for (var i in postStrats) {
+      if(i=='__proto__')
+        continue
       var postStrat = postStrats[i];
       var strategy = null;
 
       if (stored[i] && !postStrat[0] && !postStrat[1]) {
-        stored[i].remove(wait.add(function() {
-          delete strategyInstances[i]; 
+        tasks.push(stored[i].remove().addCallback(function() {
+          delete strategyInstances[i];
         }));
         continue;
       }
@@ -126,12 +124,20 @@ exports.apiAdminUpdate = function(req, res) {
           });
         }
 
-        strategy.save(wait.add(function(err, strategy) {
+        //save doesn't have promises yet, so create one manually
+        tasks.push(new Promise(function(resolve, reject){
+          strategy.save(function(err){
+            if(err) reject(err);
+            else resolve();
+          })
+        }).then(function(){
           loadPassport(strategy);
         }));
       }
     }
 
-    wait.done();
+    Promise.all(tasks, function() {
+      res.redirect('/admin/api');
+    });
   });
 };
