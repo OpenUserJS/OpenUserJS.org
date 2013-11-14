@@ -1,8 +1,9 @@
 var passport = require('passport');
+var nil = require('../libs/helpers').nil;
 var URL = process.env.NODE_ENV === 'production' ? 
   'openuserjs.org' : 'localhost:8080';
 
-exports.strategyInstances = {};
+exports.strategyInstances = nil();
 
 // This will load a single passport
 exports.loadPassport = function(strategy) {

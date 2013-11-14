@@ -5,6 +5,9 @@ var userRoles = require('../models/userRoles.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var Promise = require("bluebird");
+var help = require('../libs/helpers');
+var nil = help.nil;
+var forIn = help.forIn;
 
 function userIsAdmin(req) {
   return req.session.user && req.session.user.role < 3;
@@ -12,23 +15,21 @@ function userIsAdmin(req) {
 
 function getOAuthStrategies(stored) {
   var oAuthStrats = [];
-  for (var i in strategies) {
-    var strategy = strategies[i];
+  for (var type in strategies) {
+    var strategy = strategies[type];
     if (strategy.oauth) {
-      oAuthStrats.push(stored[i] || { 'strat' : i, 'id' : '', 'key' : ''});
+      oAuthStrats.push(stored[type] ||
+        nil({ 'strat' : type, 'id' : '', 'key' : ''}));
     }
   }
 
   return oAuthStrats;
 }
 
-exports.userAdmin = function(req, res) {
-  if (!userIsAdmin(req)){
-    res.redirect('/');
-    return;
-  }
+exports.userAdmin = function(req, res, next) {
+  if (!userIsAdmin(req)) return next();
 
-  var options = {};
+  var options = nil();
   User.find({}, function(req, users) {
     options.users = [];
 
@@ -48,18 +49,16 @@ exports.userAdmin = function(req, res) {
   });
 };
 
-exports.userAdminUpdate = function(req, res) {
-  if (!userIsAdmin(req)){
-    res.redirect('/');
-    return;
-  }
+exports.userAdminUpdate = function(req, res, next) {
+  if (!userIsAdmin(req)) return next();
 
   var queryPromises = [];
 
   var users = req.body.user;
   for (var name in users) {
     var role = users[name];
-    queryPromises.push(User.findOneAndUpdate({ 'name' : name }, {'role' : Number(role)}).exec());
+    queryPromises.push(User.findOneAndUpdate({ 'name' : name }, 
+      {'role' : Number(role)}).exec());
   }
 
   var remove = req.body.remove || {};
@@ -74,14 +73,11 @@ exports.userAdminUpdate = function(req, res) {
   });
 };
 
-exports.apiAdmin = function(req, res) {
-  if (!userIsAdmin(req)){
-    res.redirect('/');
-    return;
-  }
+exports.apiAdmin = function(req, res, next) {
+  if (!userIsAdmin(req)) return next();
 
   Strategy.find({}, function(err, strats) {
-    var stored = {};
+    var stored = nil();
     strats.forEach(function(strat) {
       stored[strat.name] = { 'strat' : strat.name,
         'id' : strat.id, 'key' : strat.key };
@@ -94,34 +90,28 @@ exports.apiAdmin = function(req, res) {
   });
 };
 
-exports.apiAdminUpdate = function(req, res) {
-  if (!userIsAdmin(req)){
-    res.redirect('/');
-    return;
-  }
+exports.apiAdminUpdate = function(req, res, next) {
+  if (!userIsAdmin(req)) return next();
 
   var postStrats = req.body;
 
   var tasks = [];
 
   Promise.cast(Strategy.find({}).exec()).then(function(strats) {
-    var stored = {};
+    var stored = nil();
     strats.forEach(function(strat) {
       stored[strat.name] = strat;
     });
 
-    for (var name in postStrats) {
-      if(!Object.hasOwnProperty.call(postStrats, name) || name=='__proto__')
-        continue;
-      var postStrat = postStrats[name];
+    forIn(postStrats, function(postStrat, name) {
       var strategy = null;
 
       if (stored[name] && !postStrat[0] && !postStrat[1]) {
         tasks.push(stored[name].remove().exec().then(function() {
           delete strategyInstances[name];
         }));
-        continue;
-      }else if (postStrat[0] && postStrat[1]) {
+        return;
+      } else if (postStrat[0] && postStrat[1]) {
         if (stored[name]) {
           strategy = stored[name];
           strategy.id = postStrat[0]
@@ -144,7 +134,7 @@ exports.apiAdminUpdate = function(req, res) {
             });
         })(strategy));
       }
-    }
+    });
   }).then(function(){
     Promise.all(tasks).then(function() {
       res.redirect('/admin/api');

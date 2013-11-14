@@ -40,7 +40,7 @@ exports.auth = function(req, res, next) {
     var authenticate = passport.authenticate(strategy);
 
     // Just in case some dumbass tries a bad /auth/* url
-    if (!strategyInstances[strategy]) return next('hey');
+    if (!strategyInstances[strategy]) return next();
 
     authenticate(req, res);
   }
