@@ -17,7 +17,8 @@ exports.loadPassport = function(strategy) {
       {
         returnURL: 'http://' + URL  + '/auth/' + strategy.name + '/callback/',
         realm: 'http://' + URL  + '/',
-        profile: false
+        profile: false,
+        stateless: true
       },
       function() {}
     );
