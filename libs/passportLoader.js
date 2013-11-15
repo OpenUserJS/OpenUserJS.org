@@ -1,7 +1,7 @@
 var passport = require('passport');
 var nil = require('../libs/helpers').nil;
 var URL = process.env.NODE_ENV === 'production' ? 
-  'openuserjs.org' : 'localhost:8080';
+  'openuserjs.org' : 'localhost:' + (process.env.PORT || 8080);
 
 exports.strategyInstances = nil();
 
