@@ -2,7 +2,6 @@
   "github" : { "name" : "GitHub", "oauth" : true },
   "facebook" : { "name" : "Facebook", "oauth" : true },
   "google" : { "name" : "Google", "oauth" : false },
-  "paypal" : { "name" : "PayPal", "oauth" : false },
   "yahoo" : { "name" : "Yahoo!", "oauth" : false },
   "aol" : { "name" : "AOL", "oauth" : false },
   "twitter" : { "name" : "Twitter", "oauth" : true },

@@ -7,7 +7,6 @@ exports.strategyInstances = nil();
 
 // This will load a single passport
 exports.loadPassport = function(strategy) {
-  //console.log(strategy);
   var requireStr = 'passport-' + strategy.name;
   var PassportStrategy = require(requireStr).Strategy;
   var instance = null;

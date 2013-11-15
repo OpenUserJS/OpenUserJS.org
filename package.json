@@ -19,7 +19,6 @@
     "passport-linkedin": "*",
     "passport-netflix": "*",
     "passport-openid": "*",
-    "passport-paypal": "*",
     "passport-reddit": "*",
     "passport-twitter": "*",
     "passport-windowslive": "*",

@@ -63,8 +63,7 @@ exports.auth = function(req, res, next) {
       auth();
     });
   } else {
-    if (!strategy) return res.redirect('/');
-    auth();
+    return next();
   }
 };
 
@@ -119,7 +118,6 @@ exports.callback = function(req, res, next) {
   // Hijak the private verify method so we can fuck shit up freely
   switch (strategy) {
   case 'yahoo':
-  case 'paypal':
   case 'google':
   case 'aol':
   case 'openid':
