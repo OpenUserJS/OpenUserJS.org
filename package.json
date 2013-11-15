@@ -21,7 +21,11 @@
     "passport-reddit": "*",
     "passport-twitter": "*",
     "passport-windowslive": "*",
-    "passport-yahoo": "*"
+    "passport-yahoo": "*",
+    "passport-foursquare": "*",
+    "passport-instagram" : "*",
+    "passport-steam": "*",
+    "passport-tumblr" : "*"
   },
   "repository": {
     "type": "git",

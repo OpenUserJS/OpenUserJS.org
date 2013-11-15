@@ -11,5 +11,9 @@
   "imgur" : { "name" : "Imgur", "oauth" : true },
   "amazon" : { "name" : "Amazon", "oauth" : true },
   "windowslive" : { "name" : "Windows Live", "oauth" : true },
+  "tumblr" : { "name" : "Tumblr", "oauth" : true },
+  "foursquare" : { "name" : "Foursquare", "oauth" : true },
+  "instagram" : { "name" : "Instagram", "oauth" : true },
+  "steam" : { "name" : "Steam", "oauth" : false },
   "openid" : { "name" : "OpenID", "oauth" : false }
 }
