@@ -17,13 +17,15 @@
     "passport-google": "*",
     "passport-imgur": "*",
     "passport-linkedin": "*",
-    "passport-netflix": "*",
     "passport-openid": "*",
-    "passport-paypal": "*",
     "passport-reddit": "*",
     "passport-twitter": "*",
     "passport-windowslive": "*",
-    "passport-yahoo": "*"
+    "passport-yahoo": "*",
+    "passport-foursquare": "*",
+    "passport-instagram" : "*",
+    "passport-steam": "*",
+    "passport-tumblr" : "*"
   },
   "repository": {
     "type": "git",

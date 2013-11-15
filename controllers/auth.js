@@ -18,11 +18,13 @@ passport.deserializeUser(function(id, done) {
 });
 
 // Setup all our auth strategies
+var openIdStrategies = {};
 Strategy.find({}, function(err, strategies) {
   
   // Get OpenId strategies
   for (var name in allStrategies) {
     if (!allStrategies[name].oauth) {
+      openIdStrategies[name] = true;
       strategies.push({ 'name' : name, 'openid' : true });
     }
   }
@@ -63,8 +65,7 @@ exports.auth = function(req, res, next) {
       auth();
     });
   } else {
-    if (!strategy) return res.redirect('/');
-    auth();
+    return next();
   }
 };
 
@@ -117,15 +118,9 @@ exports.callback = function(req, res, next) {
     }
 
   // Hijak the private verify method so we can fuck shit up freely
-  switch (strategy) {
-  case 'yahoo':
-  case 'paypal':
-  case 'google':
-  case 'aol':
-  case 'openid':
+  if (openIdStrategies[strategy]) {
     strategyInstance._verify = verify;
-    break;
-  default:
+  } else {
     strategyInstance._verify = 
       function(token, refreshOrSecretToken, profile, done) {
         verify(profile.id, done);

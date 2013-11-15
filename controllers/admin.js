@@ -4,10 +4,10 @@ var strategies = require('./strategies.json');
 var userRoles = require('../models/userRoles.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
-var Promise = require("bluebird");
 var help = require('../libs/helpers');
 var nil = help.nil;
 var forIn = help.forIn;
+var Wait = help.Wait;
 
 function userIsAdmin(req) {
   return req.session.user && req.session.user.role < 3;
@@ -31,7 +31,7 @@ exports.userAdmin = function(req, res, next) {
 
   var options = nil();
   var thisUser = req.session.user;
-  User.find({ role : { $gt: thisUser.role } }, function(req, users) {
+  User.find({ role : { $gt: thisUser.role } }, function(err, users) {
     options.users = [];
 
     var i = 0;
@@ -54,7 +54,9 @@ exports.userAdmin = function(req, res, next) {
 exports.userAdminUpdate = function(req, res, next) {
   if (!userIsAdmin(req)) return next();
 
-  var queryPromises = [];
+  var wait = new Wait(function() {
+    res.redirect('/admin/user');
+  });
 
   var users = req.body.user;
   var thisUser = req.session.user;
@@ -62,21 +64,15 @@ exports.userAdminUpdate = function(req, res, next) {
     var role = Number(users[name]);
 
     if (role <= thisUser.role) { continue; }
-    queryPromises.push(User.findOneAndUpdate({ 'name' : name, 
-      role : { $gt: thisUser.role } }, {'role' : role}).exec());
+    User.findOneAndUpdate({ 'name' : name, 
+      role : { $gt: thisUser.role } }, {'role' : role}, wait.add());
   }
 
   var remove = req.body.remove || {};
   for (var name in remove) {
-    queryPromises.push(User.findOneAndRemove({ 'name' : name,
-      role : { $gt: thisUser.role } }).exec());
+   User.findOneAndRemove({ 'name' : name,
+     role : { $gt: thisUser.role } }, wait.add());
   }
-
-  return Promise.all(queryPromises).then(function(){
-    res.redirect('/admin/user');
-  }).catch(function(e){
-    //XXX
-  });
 };
 
 exports.apiAdmin = function(req, res, next) {
@@ -100,10 +96,11 @@ exports.apiAdminUpdate = function(req, res, next) {
   if (!userIsAdmin(req)) return next();
 
   var postStrats = req.body;
+  var wait = new Wait(function() {
+    res.redirect('/admin/api');
+  });
 
-  var tasks = [];
-
-  Promise.cast(Strategy.find({}).exec()).then(function(strats) {
+  Strategy.find({}, function(err, strats) {
     var stored = nil();
     strats.forEach(function(strat) {
       stored[strat.name] = strat;
@@ -113,7 +110,7 @@ exports.apiAdminUpdate = function(req, res, next) {
       var strategy = null;
 
       if (stored[name] && !postStrat[0] && !postStrat[1]) {
-        tasks.push(stored[name].remove().exec().then(function() {
+        stored[name].remove(wait.add(function() {
           delete strategyInstances[name];
         }));
         return;
@@ -131,19 +128,13 @@ exports.apiAdminUpdate = function(req, res, next) {
           });
         }
 
-        //save doesn't have promises yet, so create one manually
-        //create new scope for strategy
-        tasks.push((function(strategy){
-          Promise.promisify(strategy.save.bind(strategy))().then(
-            function(){
-              loadPassport(strategy);
-            });
-        })(strategy));
+        
+        strategy.save(wait.add(function(err, strategy) {
+          loadPassport(strategy);
+        }));
       }
     });
-  }).then(function(){
-    Promise.all(tasks).then(function() {
-      res.redirect('/admin/api');
-    });
+
+    wait.done();
   });
 };

@@ -7,7 +7,6 @@ exports.strategyInstances = nil();
 
 // This will load a single passport
 exports.loadPassport = function(strategy) {
-  //console.log(strategy);
   var requireStr = 'passport-' + strategy.name;
   var PassportStrategy = require(requireStr).Strategy;
   var instance = null;
@@ -16,7 +15,9 @@ exports.loadPassport = function(strategy) {
     instance = new PassportStrategy(
       {
         returnURL: 'http://' + URL  + '/auth/' + strategy.name + '/callback/',
-        realm: 'http://' + URL  + '/'
+        realm: 'http://' + URL  + '/',
+        profile: false,
+        stateless: true
       },
       function() {}
     );
