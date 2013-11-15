@@ -7,7 +7,6 @@
   "twitter" : { "name" : "Twitter", "oauth" : true },
   "flickr" : { "name" : "Flickr", "oauth" : true },
   "linkedin" : { "name" : "LinkedIn", "oauth" : true },
-  "netflix" : { "name" : "Netflix", "oauth" : true },
   "reddit" : { "name" : "Reddit", "oauth" : true },
   "imgur" : { "name" : "Imgur", "oauth" : true },
   "amazon" : { "name" : "Amazon", "oauth" : true },
