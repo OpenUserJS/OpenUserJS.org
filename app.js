@@ -7,6 +7,8 @@ var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
 var settings = require('./models/settings.json');
 
+app.set('port', process.env.PORT || 8080);
+
 app.configure(function(){
   app.use(express.urlencoded());
   app.use(express.json());
@@ -35,7 +37,7 @@ if (process.env.NODE_ENV === 'production') {
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
-  app.listen(8080);
+  app.listen(app.get('port'));
 });
 
 app.get('/', controllers.home);
