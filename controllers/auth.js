@@ -94,7 +94,7 @@ exports.callback = function(req, res, next) {
               });
             } else {
               // I have no idea where this error message goes
-              if (!username.length) {
+              if (!username || !username.length) {
                 return done(null, false, 'username must be non-empty');
               }
 
