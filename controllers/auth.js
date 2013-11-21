@@ -92,6 +92,8 @@ exports.callback = function(req, res, next) {
               user.save(function(err, user) {
                 return done(err, user);
               });
+            } else if (user) {
+              return done(null, false, 'username is taken');
             } else {
               // I have no idea where this error message goes
               if (!username || !username.length) {
