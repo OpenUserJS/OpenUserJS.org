@@ -173,7 +173,7 @@ var rHTML = /<[^>]+>/;                                              // matches a
 
 ### Statements
 
-###### Simple Statements
+#### Simple Statements
 
 Each line should contain, at most, one statement. Put a semi-colon at the end of every simple statement.  
 Note that an assignment statement, which is assigning a function literal or object literal, is still an assignment statement and must end with a semicolon.
@@ -181,7 +181,7 @@ Note that an assignment statement, which is assigning a function literal or obje
 JavaScript allows any expression to be used as a statement. This can mask some errors, particularly in the presence of semi-colon insertion.  
 The only expressions that should be used as statements are assignments and invocations.
 
-###### Compound Statements
+#### Compound Statements
 
 Compound statements are statements that contain lists of statements enclosed in curly braces `{ }`.
 
@@ -190,12 +190,12 @@ Compound statements are statements that contain lists of statements enclosed in 
 * The right-curly-brace should begin a line and be indented to align with the beginning of the line containing the matching left-curly-brace.
 * Braces should be used around all statements, even single statements, when they are part of a control structure, such as an `if` or `for` statement. This makes it easier to add statements without accidentally introducing bugs.
 
-###### return Statement
+#### return Statement
 
 A `return` statement with a value should not use parentheses around the value.  
 The return value expression must start on the same line as the `return` keyword in order to avoid semi-colon insertion.
 
-###### if Statement
+#### if Statement
 
 The `if` class of statements should have the following form:
 
@@ -219,7 +219,7 @@ if (condition) {
 }
 ```
 
-###### for Statement
+#### for Statement
 
 A for class of statements should have the following form:
 
@@ -240,7 +240,7 @@ The first form should be used with arrays and with loops of a predeterminable nu
 The second form should be used with objects. Be aware that members that are added to the prototype of the object will be included in the enumeration.  
 It is wise to program defensively by using the `hasOwnProperty` method to distinguish the true members of the object.
 
-###### while Statement
+#### while Statement
 
 A `while` statement should have the following form:
 
@@ -250,7 +250,7 @@ while (condition) {
 }
 ```
 
-###### do Statement
+#### do Statement
 
 A `do` statement should have the following form:
 
@@ -262,7 +262,7 @@ do {
 
 Unlike the other compound statements, the `do` statement always ends with a semi-colon.
 
-###### switch Statement
+#### switch Statement
 
 A `switch` statement should have the following form:
 
@@ -280,7 +280,7 @@ switch (expression) {
 
 Each group of statements *(except the default)* should end with `break`, `return`, or `throw`. **Do not fall through.**
 
-###### try Statement
+#### try Statement
 
 The `try` class of statements should have the following form:
 
