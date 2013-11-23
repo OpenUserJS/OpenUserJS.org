@@ -35,15 +35,20 @@ Strategy.find({}, function(err, strategies) {
 });
 
 exports.auth = function(req, res, next) {
-  var strategy = req.body.auth;
-  var username = req.body.username.replace(/^\s+|\s+$/g, '');
-  req.session.username = username;
+  var strategy = req.body.auth || req.route.params.strategy;
+  var username = req.body.username;
+  if (!req.session.username) {
+    username = username.replace(/^\s+|\s+$/g, '');
+    req.session.username = username; 
+  } else {
+    username = req.session.username;
+  }
 
   function auth() {
     var authenticate = passport.authenticate(strategy);
 
     // Just in case some dumbass tries a bad /auth/* url
-    if (!strategyInstances[strategy]) return next();
+    if (!strategyInstances[strategy]) { return next(); }
 
     authenticate(req, res);
   }
@@ -70,6 +75,21 @@ exports.auth = function(req, res, next) {
   }
 };
 
+// Temporary migration code
+User.find({ 'strategies' : 'github' }, function(err, users) {
+  users.forEach(function(user) {
+    var index = user.strategies.indexOf('github');
+    if (index > -1) {
+      var auth = user.auths[index];
+      user.strategies.splice(index, 1);
+      user.auths.splice(index, 1);
+      user.auths.push(auth);
+      user.strategies.push('github');
+      user.save(function(err, user) {});
+    }
+  });
+});
+
 exports.callback = function(req, res, next) {
   var strategy = req.route.params.strategy;
   var username = req.session.username;
@@ -80,42 +100,53 @@ exports.callback = function(req, res, next) {
   strategyInstance = strategyInstances[strategy];
 
   function verify(id, done) {
-      var shasum = crypto.createHash('sha256');
-      shasum.update(String(id));
-      var digest = shasum.digest('hex');
+    var shasum = crypto.createHash('sha256');
+    shasum.update(String(id));
+    var digest = shasum.digest('hex');
 
-      User.findOne({ 'auths' : digest }, function (err, user) {
-        if (!user) {
-          User.findOne({ 'name' : username }, function(err, user) {
-            if (user && req.session.user) {
-              // Add the new strategy to same account
-              // This allows linking multiple external accounts to one of ours
-              user.auths.push(digest);
-              user.strategies.push(strategy);
-              user.save(function(err, user) {
-                return done(err, user);
-              });
-            } else if (user) {
-              return done(null, false, 'username is taken');
-            } else {
-              // Create a new user
-              user = new User({
-                'name' : username,
-                'auths' : [digest],
-                'strategies' : [strategy],
-                'role' : userRoles.length - 1,
-                'about': ''
-              });
-              user.save(function(err, user) {
-                return done(err, user);
-              });
-            }
-          });
-        } else {
-          return done(err, user);
-        }
-      });
+    if (strategy === 'github') {
+      digest = id;
     }
+
+    User.findOne({ 'auths' : digest }, function (err, user) {
+      if (!user) {
+        User.findOne({ 'name' : username }, function(err, user) {
+          if (user && req.session.user) {
+            // Add the new strategy to same account
+            // This allows linking multiple external accounts to one of ours
+            user.auths.push(digest);
+            user.strategies.push(strategy);
+            user.save(function(err, user) {
+              return done(err, user);
+            });
+          } else if (user && strategy === 'github') {
+            // We need the users GH id to do stuff so
+            // here is some temorary migragtion code
+            user.auths[user.strategies.indexOf('github')] = digest;
+            user.save(function(err, user) {
+              return done(err, user);
+            });
+          } else if (user) {
+            return done(null, false, 'username is taken');
+          } else {
+            // Create a new user
+            user = new User({
+              'name' : username,
+              'auths' : [digest],
+              'strategies' : [strategy],
+              'role' : userRoles.length - 1,
+              'about': ''
+            });
+            user.save(function(err, user) {
+              return done(err, user);
+            });
+          }
+        });
+      } else {
+        return done(err, user);
+      }
+    });
+  }
 
   // Hijak the private verify method so we can fuck shit up freely
   if (openIdStrategies[strategy]) {
