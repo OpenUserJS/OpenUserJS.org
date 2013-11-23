@@ -41,11 +41,7 @@ db.once('open', function callback () {
 });
 
 app.get('/', controllers.home);
-app.get('/auth/:strategy?', authentication.auth);
-app.post('/auth/', function(req, res) {
-  req.session.username = req.body.username;
-  res.redirect('/auth/' + req.body.auth);
-});
+app.post('/auth/', authentication.auth);
 app.get('/auth/:strategy/callback/', authentication.callback);
 app.get('/logout', function(req, res) {
   delete req.session.user;

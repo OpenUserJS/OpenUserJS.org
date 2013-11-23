@@ -35,8 +35,9 @@ Strategy.find({}, function(err, strategies) {
 });
 
 exports.auth = function(req, res, next) {
-  var strategy = req.route.params.strategy;
-  var username = req.session.username;
+  var strategy = req.body.auth;
+  var username = req.body.username.replace(/^\s+|\s+$/g, '');
+  req.session.username = username;
 
   function auth() {
     var authenticate = passport.authenticate(strategy);
@@ -61,11 +62,11 @@ exports.auth = function(req, res, next) {
           strategy = strat;
         }
       }
-      if (!strategy) return res.redirect('/');
+      if (!strategy) { return res.redirect('/?nostrategy'); }
       auth();
     });
   } else {
-    return next();
+    return res.redirect('/?noname');
   }
 };
 
@@ -73,8 +74,10 @@ exports.callback = function(req, res, next) {
   var strategy = req.route.params.strategy;
   var username = req.session.username;
   var newstrategy = req.session.newstrategy;
-  if (!strategy) return next();
-  var strategyInstance = strategyInstances[strategy];
+  var strategyInstance = null;
+
+  if (!strategy || !username) { return next(); }
+  strategyInstance = strategyInstances[strategy];
 
   function verify(id, done) {
       var shasum = crypto.createHash('sha256');
@@ -95,11 +98,6 @@ exports.callback = function(req, res, next) {
             } else if (user) {
               return done(null, false, 'username is taken');
             } else {
-              // I have no idea where this error message goes
-              if (!username || !username.length) {
-                return done(null, false, 'username must be non-empty');
-              }
-
               // Create a new user
               user = new User({
                 'name' : username,
