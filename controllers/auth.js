@@ -38,7 +38,7 @@ exports.auth = function(req, res, next) {
   var strategy = req.body.auth || req.route.params.strategy;
   var username = req.body.username;
   if (!req.session.username) {
-    username = username.replace(/^\s+|\s+$/g, '');
+    username = username.replace(/^\s+|\s+$/g, '').replace(/\//g, '');
     req.session.username = username; 
   } else {
     username = req.session.username;
