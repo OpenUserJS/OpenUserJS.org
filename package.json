@@ -8,6 +8,7 @@
     "bluebird": "*",
     "mu2": "*",
     "mongoose": "*",
+    "aws-sdk": "*",
     "passport": "*",
     "passport-amazon": "*",
     "passport-aol": "*",

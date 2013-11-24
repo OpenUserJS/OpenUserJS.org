@@ -40,15 +40,32 @@ db.once('open', function callback () {
   app.listen(app.get('port'));
 });
 
+
 app.get('/', controllers.home);
+
+// Authentication routes
 app.post('/auth/', authentication.auth);
 app.get('/auth/:strategy', authentication.auth);
 app.get('/auth/:strategy/callback/', authentication.callback);
-app.get('/logout', function(req, res) {
+app.get('/logout', function (req, res) {
   delete req.session.user;
   res.redirect('/');
 });
 
+// User routes
+app.get('/user/:username', function (req, res, next) { next(); });
+app.get('/user/edit', function (req, res, next) { next(); });
+app.post('/user/edit', function (req, res, next) { next(); });
+app.post('/user/edit/scripts', function (req, res, next) { next(); });
+
+// Script routes
+app.get('/script/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/install/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/meta/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/github/hook', function (req, res, next) { next(); });
+app.get('/github/service', function (req, res, next) { next(); });
+
+// Admin routes
 app.get('/admin/user', admin.userAdmin);
 app.get('/admin/api', admin.apiAdmin);
 app.post('/admin/user/update', admin.userAdminUpdate);
