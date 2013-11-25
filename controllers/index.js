@@ -2,25 +2,28 @@ var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
 var strategies = require('./strategies.json');
 
-exports.home = function(req, res) {
+exports.home = function (req, res) {
   var options = { 'title': 'Home page' };
   var user = req.session.user;
 
   if (!user) {
-    Strategy.find({}, function(err, strats) {
+    Strategy.find({}, function (err, strats) {
+      var strategy = null;
+      var name = null;
+
       // Empty option so you can just type in your username
       // when logging in
       options.strategies = [{ 'strat' : '', 'display' : '' }];
 
       // Get the strategies we have OAuth keys for
-      strats.forEach(function(strat) {
+      strats.forEach(function (strat) {
         options.strategies.push({ 'strat' : strat.name,
           'display' : strat.display });
       });
 
       // Get OpenId strategies
-      for (var name in strategies) {
-        var strategy = strategies[name];
+      for (name in strategies) {
+        strategy = strategies[name];
         if (!strategy.oauth) {
           options.strategies.push({ 'strat' : name,
             'display' : strategy.name });

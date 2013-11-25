@@ -15,8 +15,10 @@ function userIsAdmin(req) {
 
 function getOAuthStrategies(stored) {
   var oAuthStrats = [];
+  var strategy = null;
+
   for (var type in strategies) {
-    var strategy = strategies[type];
+    strategy = strategies[type];
     if (strategy.oauth) {
       oAuthStrats.push(stored[type] ||
         nil({ 'strat' : type, 'id' : '', 'key' : ''}));
@@ -26,18 +28,19 @@ function getOAuthStrategies(stored) {
   return oAuthStrats;
 }
 
-exports.userAdmin = function(req, res, next) {
-  if (!userIsAdmin(req)) return next();
-
+exports.userAdmin = function (req, res, next) {
   var options = nil();
   var thisUser = req.session.user;
-  User.find({ role : { $gt: thisUser.role } }, function(err, users) {
+
+  if (!userIsAdmin(req)) return next();
+
+  User.find({ role : { $gt: thisUser.role } }, function (err, users) {
+    var i = 0;
     options.users = [];
 
-    var i = 0;
-    users.forEach(function(user) {
+    users.forEach(function (user) {
       var roles = [];
-      userRoles.forEach(function(role, index) {
+      userRoles.forEach(function (role, index) {
         roles.push({ 'val' : index, 'display' : role,
           'selected' : index === user.role });
       });
@@ -51,66 +54,76 @@ exports.userAdmin = function(req, res, next) {
   });
 };
 
-exports.userAdminUpdate = function(req, res, next) {
-  if (!userIsAdmin(req)) return next();
-
+exports.userAdminUpdate = function (req, res, next) {
   var wait = new Wait(function() {
     res.redirect('/admin/user');
   });
+  var users = null;
+  var thisUser = null;
+  var role = null;
+  var remove = null;
+  var name = null;
 
-  var users = req.body.user;
-  var thisUser = req.session.user;
-  for (var name in users) {
-    var role = Number(users[name]);
+  if (!userIsAdmin(req)) return next();
+
+  users = req.body.user;
+  thisUser = req.session.user;
+  for (name in users) {
+    role = Number(users[name]);
 
     if (role <= thisUser.role) { continue; }
     User.findOneAndUpdate({ 'name' : name, 
       role : { $gt: thisUser.role } }, {'role' : role}, wait.add());
   }
 
-  var remove = req.body.remove || {};
-  for (var name in remove) {
+  remove = req.body.remove || {};
+  for (name in remove) {
    User.findOneAndRemove({ 'name' : name,
      role : { $gt: thisUser.role } }, wait.add());
   }
 };
 
-exports.apiAdmin = function(req, res, next) {
+exports.apiAdmin = function (req, res, next) {
   if (!userIsAdmin(req)) return next();
 
-  Strategy.find({}, function(err, strats) {
+  Strategy.find({}, function (err, strats) {
     var stored = nil();
-    strats.forEach(function(strat) {
+    var strategies = null;
+    var options = null;
+
+    strats.forEach(function (strat) {
       stored[strat.name] = { 'strat' : strat.name,
         'id' : strat.id, 'key' : strat.key };
     });
 
-    var strategies = getOAuthStrategies(stored);
-    var options = { 'strategies' : strategies };
+    strategies = getOAuthStrategies(stored);
+    options = { 'strategies' : strategies };
 
     res.render('apiAdmin', options, res);
   });
 };
 
-exports.apiAdminUpdate = function(req, res, next) {
-  if (!userIsAdmin(req)) return next();
-
-  var postStrats = req.body;
-  var wait = new Wait(function() {
+exports.apiAdminUpdate = function (req, res, next) {
+  var wait = new Wait(function () {
     res.redirect('/admin/api');
   });
+  var postStrats = null;
 
-  Strategy.find({}, function(err, strats) {
+  if (!userIsAdmin(req)) return next();
+
+  postStrats = req.body;
+  Strategy.find({}, function (err, strats) {
     var stored = nil();
+
     strats.forEach(function(strat) {
       stored[strat.name] = strat;
     });
 
-    forIn(postStrats, function(postStrat, name) {
+    forIn(postStrats, function (postStrat, name) {
       var strategy = null;
 
       if (stored[name] && !postStrat[0] && !postStrat[1]) {
-        stored[name].remove(wait.add(function() {
+        stored[name].remove(wait.add(function () {
           delete strategyInstances[name];
         }));
         return;
@@ -129,7 +142,7 @@ exports.apiAdminUpdate = function(req, res, next) {
         }
 
         
-        strategy.save(wait.add(function(err, strategy) {
+        strategy.save(wait.add(function (err, strategy) {
           loadPassport(strategy);
         }));
       }
