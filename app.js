@@ -5,6 +5,7 @@ var app = express();
 var controllers = require('./controllers');
 var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
+var user = require('./controllers/user');
 var settings = require('./models/settings.json');
 
 app.set('port', process.env.PORT || 8080);
@@ -53,15 +54,16 @@ app.get('/logout', function (req, res) {
 });
 
 // User routes
-app.get('/user/:username', function (req, res, next) { next(); });
-app.get('/user/edit', function (req, res, next) { next(); });
-app.post('/user/edit', function (req, res, next) { next(); });
+app.get('/users/:username', user.view);
+app.get('/user/edit', user.edit);
+app.post('/user/edit', user.update);
 app.post('/user/edit/scripts', function (req, res, next) { next(); });
 
 // Script routes
-app.get('/script/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/scripts/:username/:scriptname', function (req, res, next) { next(); });
 app.get('/install/:username/:scriptname', function (req, res, next) { next(); });
 app.get('/meta/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/script/:scriptname/edit', function (req, res, next) { next(); });
 app.get('/github/hook', function (req, res, next) { next(); });
 app.get('/github/service', function (req, res, next) { next(); });
 
