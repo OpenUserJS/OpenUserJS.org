@@ -7,6 +7,7 @@ var scriptSchema = new Schema({
   installs: Number,
   rating: Number,
   installable: Boolean,
+  updated: Date,
   meta: Object,
   _authorId: Schema.Types.ObjectId
 });
