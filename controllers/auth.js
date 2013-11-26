@@ -41,8 +41,10 @@ exports.auth = function (req, res, next) {
   var strategy = req.body.auth || req.route.params.strategy;
   var username = req.body.username || req.session.username;
 
-  // Clean the username of leading and trailing whitespace and forward slashes
-  username = username.replace(/^\s+|\s+$/g, '').replace(/\//g, '');
+  // Clean the username of leading and trailing whitespace, forward slashes,
+  // and leading question marks
+  username = username.replace(/^\s+|\s+$/g, '').replace(/\//g, '')
+    .replace(/^\?+/g, '');
 
   // Store the username in the session to we still have it when they
   // get back from authentication
