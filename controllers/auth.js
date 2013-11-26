@@ -41,8 +41,12 @@ exports.auth = function (req, res, next) {
   var strategy = req.body.auth || req.route.params.strategy;
   var username = req.body.username || req.session.username;
 
+  if (!username) { return res.redirect('/?noname'); }
   // Clean the username of leading and trailing whitespace and forward slashes
   username = username.replace(/^\s+|\s+$/g, '').replace(/\//g, '');
+
+  // The username could be empty after the replacements
+  if (!username) { return res.redirect('/?noname'); }
 
   // Store the username in the session to we still have it when they
   // get back from authentication
@@ -59,35 +63,31 @@ exports.auth = function (req, res, next) {
     authenticate(req, res);
   }
 
-  if (username) {
-    User.findOne({ name : username }, function (err, user) {
-      var strategies = null;
-      var strat = null;
+  User.findOne({ name : username }, function (err, user) {
+    var strategies = null;
+    var strat = null;
 
-      if (user) {
-        strategies = user.strategies;
-        strat = strategies.pop();
+    if (user) {
+      strategies = user.strategies;
+      strat = strategies.pop();
 
-        if (req.session.newstrategy) { // authenticate with a new strategy
-          delete req.session.newstrategy;
-        } else if (!strategy) { // use an existing strategy
-          strategy = strat;
-        } else if (strategies.indexOf(strategy) === -1) {
-          // add a new strategy but first authenticate with existing strategy
-          req.session.newstrategy = strategy;
-          strategy = strat;
-        } // else use the strategy that was given in the POST
-      }
+      if (req.session.newstrategy) { // authenticate with a new strategy
+        delete req.session.newstrategy;
+      } else if (!strategy) { // use an existing strategy
+        strategy = strat;
+      } else if (strategies.indexOf(strategy) === -1) {
+        // add a new strategy but first authenticate with existing strategy
+        req.session.newstrategy = strategy;
+        strategy = strat;
+      } // else use the strategy that was given in the POST
+    }
 
-      if (!strategy) { 
-        return res.redirect('/?nostrategy');
-      } else {
-        return auth();
-      }
-    });
-  } else {
-    return res.redirect('/?noname');
-  }
+    if (!strategy) { 
+      return res.redirect('/?nostrategy');
+    } else {
+      return auth();
+    }
+  });
 };
 
 // Temporary migration code

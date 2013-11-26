@@ -1,7 +1,10 @@
 var User = require('../models/user').User;
+var RepoManager = require('../libs/repoManager');
+var async = require('async');
 
-exports.view = function (req, res, next) {
-  User.findOne({ name: req.route.params.username }, function (err, user) {
+exports.view = function (username, req, res, next) {
+  console.log(username);
+  User.findOne({ name: username }, function (err, user) {
     if (err || !user) { next(); }
 
     res.render('user', { 
@@ -11,10 +14,33 @@ exports.view = function (req, res, next) {
 }
 
 exports.edit = function (req, res) {
-  if (req.session.user) {
-    res.render('userEdit', {
-      title: 'Edit Yourself', about: req.session.user.about
-    }, res);
+  var user = req.session.user;
+  var indexOfGH = -1;
+  var ghUserId = null;
+  var repoManager = null;
+
+  function render(repos) {
+    async.filter(repos, function (repo, callback) {
+      repo.fetchUserScripts(function() {
+        callback(repo.scripts.length > 0);
+      });
+    }, function (repos) {
+      res.render('userEdit', {
+        title: 'Edit Yourself', about: user.about, repos: repos
+      }, res);
+    });
+  }
+
+  if (user) {
+    indexOfGH = user.strategies.indexOf('github');
+    if (indexOfGH > -1) {
+      ghUserId = user.auths[indexOfGH];
+      repoManager = RepoManager.getManager(ghUserId);
+      async.parallel([
+        function (callback) {
+          repoManager.fetchRepos(callback);
+      }], render);
+    }
   } else {
     res.redirect('/');
   }
