@@ -28,6 +28,7 @@ exports.loadPassport = function (strategy) {
         consumerSecret: strategy.key,
         clientID: strategy.id,
         clientSecret: strategy.key,
+        state: 'a bullshit string reddit requires',
         callbackURL: 'http://' + URL  + '/auth/' + strategy.name + '/callback/'
       },
       function () {} // we replace this call back later (_verify)
