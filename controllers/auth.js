@@ -1,17 +1,19 @@
 var passport = require('passport');
-var crypto = require('crypto');
 var allStrategies = require('./strategies.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
 var userRoles = require('../models/userRoles.json');
+var verifyPassport = require('../libs/passportVerify').verify;
 
-passport.serializeUser(function(user, done) {
+// These functions serialize the user model so we can keep 
+// the info in the session
+passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
 
-passport.deserializeUser(function(id, done) {
+passport.deserializeUser(function (id, done) {
   User.findOne(id, function (err, user) {
     done(err, user);
   });
@@ -19,7 +21,7 @@ passport.deserializeUser(function(id, done) {
 
 // Setup all our auth strategies
 var openIdStrategies = {};
-Strategy.find({}, function(err, strategies) {
+Strategy.find({}, function (err, strategies) {
   
   // Get OpenId strategies
   for (var name in allStrategies) {
@@ -29,19 +31,23 @@ Strategy.find({}, function(err, strategies) {
     }
   }
   
-  strategies.forEach(function(strategy) {
+  // Load the passport module for each strategy
+  strategies.forEach(function (strategy) {
     loadPassport(strategy);
   });
 });
 
-exports.auth = function(req, res, next) {
+exports.auth = function (req, res, next) {
   var strategy = req.body.auth || req.route.params.strategy;
-  var username = req.body.username;
+  var username = req.body.username || req.session.username;
+
+  // Clean the username of leading and trailing whitespace and forward slashes
+  username = username.replace(/^\s+|\s+$/g, '').replace(/\//g, '');
+
+  // Store the username in the session to we still have it when they
+  // get back from authentication
   if (!req.session.username) {
-    username = username.replace(/^\s+|\s+$/g, '').replace(/\//g, '');
-    req.session.username = username; 
-  } else {
-    username = req.session.username;
+    req.session.username = username;
   }
 
   function auth() {
@@ -54,21 +60,30 @@ exports.auth = function(req, res, next) {
   }
 
   if (username) {
-    User.findOne({ name : username }, function(err, user) {
+    User.findOne({ name : username }, function (err, user) {
+      var strategies = null;
+      var strat = null;
+
       if (user) {
-        var strategies = user.strategies;
-        var strat = strategies.pop();
-        if (req.session.newstrategy) {
+        strategies = user.strategies;
+        strat = strategies.pop();
+
+        if (req.session.newstrategy) { // authenticate with a new strategy
           delete req.session.newstrategy;
-        } else if (!strategy) {
+        } else if (!strategy) { // use an existing strategy
           strategy = strat;
-        } else if (strategies.indexOf(strategy) === -1) { 
+        } else if (strategies.indexOf(strategy) === -1) {
+          // add a new strategy but first authenticate with existing strategy
           req.session.newstrategy = strategy;
           strategy = strat;
-        }
+        } // else use the strategy that was given in the POST
       }
-      if (!strategy) { return res.redirect('/?nostrategy'); }
-      auth();
+
+      if (!strategy) { 
+        return res.redirect('/?nostrategy');
+      } else {
+        return auth();
+      }
     });
   } else {
     return res.redirect('/?noname');
@@ -76,11 +91,13 @@ exports.auth = function(req, res, next) {
 };
 
 // Temporary migration code
-User.find({ 'strategies' : 'github' }, function(err, users) {
-  users.forEach(function(user) {
+// Will be removed
+User.find({ 'strategies' : 'github' }, function (err, users) {
+  users.forEach(function (user) {
     var index = user.strategies.indexOf('github');
+    var auth = null;
     if (index > -1) {
-      var auth = user.auths[index];
+      auth = user.auths[index];
       user.strategies.splice(index, 1);
       user.auths.splice(index, 1);
       user.auths.push(auth);
@@ -90,86 +107,48 @@ User.find({ 'strategies' : 'github' }, function(err, users) {
   });
 });
 
-exports.callback = function(req, res, next) {
+exports.callback = function (req, res, next) {
   var strategy = req.route.params.strategy;
   var username = req.session.username;
   var newstrategy = req.session.newstrategy;
   var strategyInstance = null;
 
+  // The callback was called inproperly
   if (!strategy || !username) { return next(); }
+
+  // Get the passport strategy instance so we can alter the _verfiy method
   strategyInstance = strategyInstances[strategy];
-
-  function verify(id, done) {
-    var shasum = crypto.createHash('sha256');
-    shasum.update(String(id));
-    var digest = shasum.digest('hex');
-
-    if (strategy === 'github') {
-      digest = id;
-    }
-
-    User.findOne({ 'auths' : digest }, function (err, user) {
-      if (!user) {
-        User.findOne({ 'name' : username }, function(err, user) {
-          if (user && req.session.user) {
-            // Add the new strategy to same account
-            // This allows linking multiple external accounts to one of ours
-            user.auths.push(digest);
-            user.strategies.push(strategy);
-            user.save(function(err, user) {
-              return done(err, user);
-            });
-          } else if (user && strategy === 'github') {
-            // We need the users GH id to do stuff so
-            // here is some temorary migragtion code
-            user.auths[user.strategies.indexOf('github')] = digest;
-            user.save(function(err, user) {
-              return done(err, user);
-            });
-          } else if (user) {
-            return done(null, false, 'username is taken');
-          } else {
-            // Create a new user
-            user = new User({
-              'name' : username,
-              'auths' : [digest],
-              'strategies' : [strategy],
-              'role' : userRoles.length - 1,
-              'about': ''
-            });
-            user.save(function(err, user) {
-              return done(err, user);
-            });
-          }
-        });
-      } else {
-        return done(err, user);
-      }
-    });
-  }
+  
 
   // Hijak the private verify method so we can fuck shit up freely
+  // We use this library for things it was never intended to do
   if (openIdStrategies[strategy]) {
-    strategyInstance._verify = verify;
+    strategyInstance._verify = function (id, done) {
+      verifyPassport(id, strategy, username, req.session.user, done);
+    }
   } else {
     strategyInstance._verify = 
-      function(token, refreshOrSecretToken, profile, done) {
-        verify(profile.id, done);
+      function (token, refreshOrSecretToken, profile, done) {
+        verifyPassport(profile.id, strategy, username, req.session.user, done);
       }
   }
 
+  // This callback will happen after the verify routine
   var authenticate = passport.authenticate(strategy, 
-    function(err, user, info) {
+    function (err, user, info) {
       if (err) { return next(err); }
       if (!user) { return res.redirect('/?authfail'); }
 
       req.logIn(user, function(err) {
         if (err) { return next(err); }
 
+        // Store the user info in the session
         req.session.user = user;
         if (newstrategy) {
+          // Allow a user to link to another acount
           return res.redirect('/auth/' + newstrategy);
         } else {
+          // Delete the username that was temporarily stored
           delete req.session.username;
           return res.redirect('/');
         }
