@@ -1,47 +1,4 @@
-<!DOCTYPE html>
-
-<html>
-
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <link type="text/css" rel="stylesheet" href="/css/index.css" />
-        <script src="/js/jquery-1.10.2.min.js" type="text/javascript"></script>
-        <title>{{title}}</title>
-
-        <script type="text/javascript">
-            // sloppy code atm, just for easy testing
-            function calculateElementHeights() {
-                var body = $(document.body);
-                var top = $('#top');
-                var main = $('#main');
-                var footer = $('#footer');
-                var scriptsList = $('#scripts-list');
-                var wHeight = Math.floor(window.innerHeight);
-                var wWidth = Math.floor(window.innerWidth);
-
-                body.css('height', wHeight + 'px');
-                body.css('width', wWidth + 'px');
-                main.css('max-width', wWidth + 'px')
-                    .css('max-height', Math.floor(wHeight - top.height() - footer.height()) + 'px');
-            }
-
-            $(window).on('resize', calculateElementHeights);
-            $(document).ready(calculateElementHeights);
-        </script>
-    </head>
-
-    <body>
-        <div id="top" class="bold">
-            <a href="/">Home</a>
-            <a href="/scripts">Scripts</a>
-            <a href="/forum">Forum</a>
-            {{#username}}
-            <a href="/logout">Logout</a>
-            {{/username}}
-            {{^username}}
-            <a href="/login">Login</a>
-            {{/username}}
-        </div>
+{{> views/header.html}}
 
         <div id="main">
             <div class="spacer" style="height: 15%;">
@@ -67,9 +24,4 @@
           </div>
         </div>
 
-        <div id="footer">
-            <p>An <a class="color-normal" href="https://github.com/OpenUserJs/OpenUserJS.org" target="_blank">open source</a> user scripts repo built using Node.js</p>
-        </div>
-    </body>
-
-</html>
+{{> views/footer.html}}
