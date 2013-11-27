@@ -2,7 +2,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var app = express();
-var controllers = require('./controllers');
+var main = require('./controllers/index');
 var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
 var settings = require('./models/settings.json');
@@ -40,14 +40,12 @@ db.once('open', function callback () {
   app.listen(app.get('port'));
 });
 
-app.get('/', controllers.home);
+app.get('/', main.home);
 app.post('/auth/', authentication.auth);
 app.get('/auth/:strategy', authentication.auth);
 app.get('/auth/:strategy/callback/', authentication.callback);
-app.get('/logout', function(req, res) {
-  delete req.session.user;
-  res.redirect('/');
-});
+app.get('/login', main.login);
+app.get('/logout', main.logout);
 
 app.get('/admin/user', admin.userAdmin);
 app.get('/admin/api', admin.apiAdmin);
@@ -55,7 +53,7 @@ app.post('/admin/user/update', admin.userAdminUpdate);
 app.post('/admin/api/update', admin.apiAdminUpdate);
 
 app.use(express.static(__dirname + '/public'));
-app.use(function(req, res, next){
+app.use(function (req, res, next){
   res.sendfile(__dirname + '/public/404.html');
 });
 
