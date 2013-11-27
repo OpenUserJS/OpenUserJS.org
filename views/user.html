@@ -1,21 +1,4 @@
-<!DOCTYPE html>
-
-<html>
-
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <link type="text/css" rel="stylesheet" href="/css/index.css" />
-        <script src="/js/jquery-1.10.2.min.js" type="text/javascript"></script>
-        <title>{{title}}</title>
-    </head>
-
-    <body>
-        <div id="top" class="bold">
-            <a href="/">Home</a>
-            <a href="/scripts">Scripts</a>
-            <a href="/forum">Forum</a>
-            <a href="/login">Login</a>
-        </div>
+{{> header.html}}
 
         <div id="main">
             <div class="spacer" style="height: 15%;">
@@ -37,9 +20,4 @@
             </table>
         </div>
 
-        <div id="footer">
-            <p>An <a class="color-normal" href="https://github.com/OpenUserJs/OpenUserJS.org" target="_blank">open source</a> user scripts repo built using Node.js</p>
-        </div>
-    </body>
-
-</html>
+{{> footer.html}}
