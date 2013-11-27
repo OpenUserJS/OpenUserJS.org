@@ -18,9 +18,10 @@ exports.edit = function (req, res) {
   var user = req.session.user;
 
   if (user) {
-    res.render('userEdit', { title: 'Edit Yourself', about: user.about }, res);
+    res.render('userEdit', { title: 'Edit Yourself', username: user.name,
+      about: user.about }, res);
   } else {
-    res.redirect('/');
+    res.redirect('/login');
   }
 };
 
@@ -29,8 +30,12 @@ exports.scripts = function (req, res) {
   var indexOfGH = -1;
   var ghUserId = null;
   var repoManager = null;
-  var options = { title: 'Edit Scripts' };
+  var options = null;
   var loadingRepos = false;
+
+  if (!user) { return res.redirect('/login'); }
+
+  options = { title: 'Edit Scripts', username: user.name };
 
   function render(repos) {
     async.filter(repos, function (repo, callback) {
@@ -38,32 +43,27 @@ exports.scripts = function (req, res) {
         callback(repo.scripts.length > 0);
       });
     }, function (repos) {
-      res.render('scriptsEdit', {
-        title: 'Edit Scripts', repos: repos
-      }, res);
+      options.repos = repos;
+      res.render('scriptsEdit', options, res);
     });
   }
 
-  if (user) {
-    indexOfGH = user.strategies.indexOf('github');
-    if (indexOfGH > -1) {
-      if (req.body.importScripts) {
-        loadingRepos = true;
-        ghUserId = user.auths[indexOfGH];
-        repoManager = RepoManager.getManager(ghUserId);
-        async.parallel([
-          function (callback) {
-            repoManager.fetchRepos(callback);
+  indexOfGH = user.strategies.indexOf('github');
+  if (indexOfGH > -1) {
+    if (req.body.importScripts) {
+      loadingRepos = true;
+      ghUserId = user.auths[indexOfGH];
+      repoManager = RepoManager.getManager(ghUserId);
+      async.parallel([
+        function (callback) {
+          repoManager.fetchRepos(callback);
         }], render);
-      } else {
-        options.hasGH = true;
-      }
+    } else {
+      options.hasGH = true;
     }
-
-    if (!loadingRepos) { res.render('scriptsEdit', options, res); }
-  } else {
-    res.redirect('/');
   }
+
+  if (!loadingRepos) { res.render('scriptsEdit', options, res); }
 }
 
 exports.update = function (req, res) {
