@@ -47,41 +47,24 @@
             <div class="spacer" style="height: 15%;">
                 &nbsp;
             </div>
-
-        {{#username}}
-        <p>Welcome {{username}}!</p>
-        {{/username}}
-        {{^username}}
-        <p>Welcome stranger! <a href="/login">Login?</a>
-        {{/username}}
-
-            <BR /><BR />
-
-            <table id="scripts-list" class="indent">
-                <tr class="bold">
-                    <td width="50%">
-                        Name & Description
-                    </td>
-                    <td width="15%">
-                        Rating
-                    </td>
-                    <td width="15%">
-                        Installs
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%">
-                        <span class="title">test name</span>
-                        <span class="desc">a test script that tests things</span>
-                    </td>
-                    <td width="15%">
-                        &#9733; &#9733; &#9733; &#9733; &#9733;
-                    </td>
-                    <td width="15%">
-                        12,561,582
-                    </td>
-                </tr>
-            </table>
+          <div id="login">
+            <h3>Login (or Register)</h3>
+            <form id="login" method="post" action="/auth/">
+              <p>Input your username (or the one you want):</p>
+              <input type="text" name="username" /><br />
+              <p>To Register: select an authenticator from the dropdown.</p>
+              <p>You can leave it blank if you're logging in.</p>
+              <select name="auth">
+                {{#strategies}}
+                <option value="{{strat}}">{{display}}</option>
+                {{/strategies}}
+              </select>
+              <input type="submit" value="Go!" />
+            </form>
+            <p><em>Note: If you need an authenticator, the easiest way is to get
+                an OpenID from <a href="http://claimid.com/">claimID</a>.</em>
+            </p>
+          </div>
         </div>
 
         <div id="footer">
