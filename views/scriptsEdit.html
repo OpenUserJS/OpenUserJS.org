@@ -22,19 +22,14 @@
                 &nbsp;
             </div>
 
-            <h1>{{username}}{{#isYou}} <a href="/user/edit">Edit?</a>{{/isYou}}</h1>
-            <table class="indent content">
-                <tr class="bold">
-                    <td>
-                        About
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{about}}
-                    </td>
-                </tr>
-            </table>
+            {{#repos}}
+            <p class="indent">
+              <strong><a href="https://github.com/{{user}}/{{repo}}">{{repo}}</a></strong><br />
+              {{#scripts}}
+              <a href="{{url}}">{{name}}</a><br />
+              {{/scripts}}
+            </p>
+            {{/repos}}
         </div>
 
         <div id="footer">

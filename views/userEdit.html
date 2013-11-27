@@ -34,6 +34,10 @@
                         <textarea class="indent" id="about" 
                                   name="about">{{about}}</textarea>
                     </td>
+                </tr>                <tr>
+                    <td class="bold">
+                        <a href="/user/edit/scripts">Manage Scripts</a>
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -42,15 +46,6 @@
                 </tr>
               </form>
             </table>
-
-            {{#repos}}
-            <p class="indent">
-              <strong><a href="https://github.com/{{user}}/{{repo}}">{{repo}}</a></strong><br />
-              {{#scripts}}
-              <a href="{{url}}">{{name}}</a><br />
-              {{/scripts}}
-            </p>
-            {{/repos}}
         </div>
 
         <div id="footer">

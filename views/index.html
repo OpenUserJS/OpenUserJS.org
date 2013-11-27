@@ -49,7 +49,7 @@
             </div>
 
         {{#username}}
-        <p>Welcome {{username}}!</p>
+        <p>Welcome <a href="/users/{{username}}">{{username}}</a>!</p>
         {{/username}}
         {{^username}}
         <p>Welcome stranger! <a href="/login">Login?</a>

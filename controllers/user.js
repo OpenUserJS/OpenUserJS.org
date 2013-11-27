@@ -2,18 +2,29 @@ var User = require('../models/user').User;
 var RepoManager = require('../libs/repoManager');
 var async = require('async');
 
-exports.view = function (username, req, res, next) {
-  console.log(username);
+exports.view = function (req, res, next) {
+  var username = req.route.params.username;
   User.findOne({ name: username }, function (err, user) {
     if (err || !user) { next(); }
 
     res.render('user', { 
-      title: user.name, username: user.name, about: user.about 
+      title: user.name, username: user.name, about: user.about, 
+      isYou: username === user.name
     }, res);
   });
 }
 
 exports.edit = function (req, res) {
+  var user = req.session.user;
+
+  if (user) {
+    res.render('userEdit', { title: 'Edit Yourself', about: user.about }, res);
+  } else {
+    res.redirect('/');
+  }
+};
+
+exports.scripts = function (req, res) {
   var user = req.session.user;
   var indexOfGH = -1;
   var ghUserId = null;
@@ -25,8 +36,8 @@ exports.edit = function (req, res) {
         callback(repo.scripts.length > 0);
       });
     }, function (repos) {
-      res.render('userEdit', {
-        title: 'Edit Yourself', about: user.about, repos: repos
+      res.render('scriptsEdit', {
+        title: 'Edit Scripts', repos: repos
       }, res);
     });
   }
@@ -44,7 +55,7 @@ exports.edit = function (req, res) {
   } else {
     res.redirect('/');
   }
-};
+}
 
 exports.update = function (req, res) {
   User.findOneAndUpdate({ _id: req.session.user._id }, 
