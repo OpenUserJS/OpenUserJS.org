@@ -29,6 +29,8 @@ exports.scripts = function (req, res) {
   var indexOfGH = -1;
   var ghUserId = null;
   var repoManager = null;
+  var options = { title: 'Edit Scripts' };
+  var loadingRepos = false;
 
   function render(repos) {
     async.filter(repos, function (repo, callback) {
@@ -45,13 +47,20 @@ exports.scripts = function (req, res) {
   if (user) {
     indexOfGH = user.strategies.indexOf('github');
     if (indexOfGH > -1) {
-      ghUserId = user.auths[indexOfGH];
-      repoManager = RepoManager.getManager(ghUserId);
-      async.parallel([
-        function (callback) {
-          repoManager.fetchRepos(callback);
-      }], render);
+      if (req.body.importScripts) {
+        loadingRepos = true;
+        ghUserId = user.auths[indexOfGH];
+        repoManager = RepoManager.getManager(ghUserId);
+        async.parallel([
+          function (callback) {
+            repoManager.fetchRepos(callback);
+        }], render);
+      } else {
+        options.hasGH = true;
+      }
     }
+
+    if (!loadingRepos) { res.render('scriptsEdit', options, res); }
   } else {
     res.redirect('/');
   }

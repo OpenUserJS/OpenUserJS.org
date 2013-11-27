@@ -21,7 +21,14 @@
             <div class="spacer" style="height: 15%;">
                 &nbsp;
             </div>
-
+            {{#hasGH}}
+            <p class="indent content">
+              <form id="load_repos" action="/user/edit/scripts" method="post">
+                <input type="hidden" name="importScripts" value="true" />
+                <input type="submit" value="Find Scripts On GitHub" />
+              </form>
+            </p>
+            {{/hasGH}}
             {{#repos}}
             <p class="indent">
               <strong><a href="https://github.com/{{user}}/{{repo}}">{{repo}}</a></strong><br />
