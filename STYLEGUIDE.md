@@ -29,7 +29,7 @@ Variable declarations without value should be initialized to `null`
 
 All variable statements should be the first statements within the function body.
 
-Each variable declaration should be separate, on its own line, in alphabetical order, e.g.,
+Each variable declaration should be separate, on its own line, e.g.,
 ```javascript
 var baz = 'meep';
 var foo = true;
