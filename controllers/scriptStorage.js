@@ -1,4 +1,5 @@
 var AWS = require('aws-sdk');
+var Script = require('../models/script').Script;
 
 // Secret keys. You don't have this file.
 // You could open a AWS account for testing and put your keys in it.

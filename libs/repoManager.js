@@ -1,6 +1,9 @@
 var https = require('https');
+var url = require('url');
 var async = require('async');
-var Strategy = require('../models/strategy.js').Strategy;
+var Strategy = require('../models/strategy').Strategy;
+//var storeScript = require('../controllers/scriptStorage').storeScript;
+var nil = require('./helpers').nil;
 var clientId = null;
 var clientKey = null;
 
@@ -9,10 +12,19 @@ Strategy.findOne({ name: 'github' }, function(err, strat) {
   clientKey = strat.key;
 });
 
-function fetchJSON(options, callback) {
+function fetchJSON(path, callback) {
   var repos = [];
   var raw = "";
   var json = null;
+  var options = {
+    hostname: 'api.github.com',
+    port: 443,
+    path: path,
+    method: 'GET',
+    headers: { 'User-Agent': 'Node.js' }
+  };
+
+  options.path += '?client_id=' + clientId + '&client_secret=' + clientKey;
 
   var req = https.request(options,
     function(res) {
@@ -28,34 +40,71 @@ function fetchJSON(options, callback) {
   req.end();
 }
 
-function RepoManager(userId) {
+function RepoManager(userId, repos) {
   this.userId = userId;
+  this.username = null;
+  this.repos = repos || nil();
 }
 
 RepoManager.prototype.fetchRepos = function (callback) {
   var repos = [];
+  var that = this;
 
-  var options = {
-    hostname: 'api.github.com',
-    port: 443,
-    path: '/user/' + this.userId + '/repos?client_id=' + clientId
-      + '&client_secret=' + clientKey,
-    method: 'GET',
-    headers: { 'User-Agent': 'Node.js' }
-  };
-
-  fetchJSON(options, function (json) {
+  fetchJSON('/user/' + this.userId + '/repos', function (json) {
     json.forEach(function (repo) {
-      repos.push(new Repo(repo.owner.login, repo.name));
+      if (!that.username) { that.username = repo.owner.login; }
+      repos.push(new Repo(that, repo.owner.login, repo.name));
     });
-    callback(repos);
+
+    async.each(repos, function (repo, cb) {
+      repo.fetchUserScripts(function() {
+        cb(null);
+      });
+    }, callback);
   });
 };
 
-function Repo(username, reponame) {
+RepoManager.prototype.loadScripts = function (callback) {
+  var arrayOfRepos = this.makeRepoArray();
+
+  async.each(arrayOfRepos, function(repo, cb) {
+    async.each(repo.scripts, function(script, innerCb) {
+      fetchJSON(url.parse(script.url).pathname, function(json) {
+        console.log(new Buffer(json.content, 'base64').toString('utf8'));
+        innerCb();
+      });
+    }, cb)
+  }, callback);
+}
+
+RepoManager.prototype.makeRepoArray = function () {
+  var retOptions = [];
+  var repos = this.repos;
+  var username = this.username;
+  var reponame = null;
+  var scripts = null;
+  var scriptname = null;
+  var option = null;
+
+  for (reponame in repos) {
+    option = { repo: reponame, user: username };
+    option.scripts = [];
+
+    scripts = repos[reponame];
+    for (scriptname in scripts) {
+      option.scripts.push({ name: scriptname, url: scripts[scriptname] });
+    }
+
+    retOptions.push(option);
+  }
+
+  return retOptions;
+}
+
+function Repo(manager, username, reponame) {
+  this.manager = manager;
   this.user = username;
   this.repo = reponame;
-  this.scripts = [];
 }
 
 Repo.prototype.fetchUserScripts = function (callback) {
@@ -66,12 +115,14 @@ Repo.prototype.parseTree = function (tree, done) {
   var object;
   var trees = [];
   var that = this;
+  var repos = this.manager.repos;
 
   tree.forEach(function (object) {
     if (object.type === 'tree') {
       trees.push(object.sha);
     } else if (object.path.substr(-8) === '.user.js') {
-      that.scripts.push({name: object.path, url: object.url});
+      if (!repos[that.repo]) { repos[that.repo] = nil(); }
+      repos[that.repo][object.path] = object.url;
     }
   });
 
@@ -83,20 +134,13 @@ Repo.prototype.parseTree = function (tree, done) {
 };
 
 Repo.prototype.getTree = function (sha, cb) {
-  var options = {
-    hostname: 'api.github.com',
-    port: 443,
-    path: '/repos/' + this.user  + '/' + this.repo
-      + '/git/trees/' + sha + '?client_id=' 
-      + clientId + '&client_secret=' + clientKey,
-    method: 'GET',
-    headers: { 'User-Agent': 'Node.js' }
-  };
-
   var that = this;
-  fetchJSON(options, function (json) {
-    that.parseTree(json.tree, cb);
+  fetchJSON('/repos/' + this.user  + '/' + this.repo + '/git/trees/' + sha, 
+    function (json) {
+      that.parseTree(json.tree, cb);
   });
 };
 
-exports.getManager = function (userId) { return new RepoManager(userId); };
+exports.getManager = function (userId, repos) { 
+  return new RepoManager(userId, repos); 
+};

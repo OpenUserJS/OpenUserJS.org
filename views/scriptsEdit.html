@@ -5,21 +5,31 @@
                 &nbsp;
             </div>
             {{#hasGH}}
+            {{^showRepos}}
             <p class="indent content">
               <form id="load_repos" action="/user/edit/scripts" method="post">
                 <input type="hidden" name="importScripts" value="true" />
                 <input type="submit" value="Find Scripts On GitHub" />
               </form>
             </p>
-            {{/hasGH}}
+            {{/showRepos}}
+            {{#showRepos}}
+            <form id="load_scripts_from_github" method="post" action="/user/edit/scripts">
+              <input type="hidden" name="loadScripts" value="true" />
             {{#repos}}
             <p class="indent">
+              <input type="checkbox" name="{{repo}}_all" value="{{repo}}" />
               <strong><a href="https://github.com/{{user}}/{{repo}}">{{repo}}</a></strong><br />
               {{#scripts}}
+              <input type="checkbox" name="{{repo}}[{{name}}]" value="true"/>
               <a href="{{url}}">{{name}}</a><br />
               {{/scripts}}
             </p>
             {{/repos}}
+            <input type="submit" value="Load Scripts" />
+            </form>
+            {{/showRepos}}
+            {{/hasGH}}
         </div>
 
 {{> footer.html}}
