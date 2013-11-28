@@ -1,17 +1,32 @@
 var User = require('../models/user').User;
+var Script = require('../models/script').Script;
 var RepoManager = require('../libs/repoManager');
 var async = require('async');
 var nil = require('../libs/helpers').nil;
 
 exports.view = function (req, res, next) {
   var username = req.route.params.username;
+  var thisUser = req.session.user;
+//Script.remove({}, function(){});
   User.findOne({ name: username }, function (err, user) {
     if (err || !user) { next(); }
 
-    res.render('user', { 
-      title: user.name, username: user.name, about: user.about, 
-      isYou: username === user.name
-    }, res);
+    Script.find({ _authorId: user._id }, function (err, scripts) {
+      var scriptView = [];
+
+      scripts.forEach(function (script) {
+        scriptView.push({ 
+          name: script.name, description: script.meta.description || '', 
+          url: '/install/' + script.installName, rating: script.rating,
+          installs: script.installs
+        });
+      });
+
+      res.render('user', { 
+        title: user.name, name: user.name, about: user.about, 
+        isYou: thisUser && thisUser.name === user.name, scripts: scriptView
+      }, res);
+    });
   });
 }
 
@@ -91,7 +106,7 @@ exports.scripts = function (req, res) {
       }
 
       // Load the scripts onto the site
-      RepoManager.getManager(ghUserId, loadable).loadScripts(function () {
+      RepoManager.getManager(ghUserId, user, loadable).loadScripts(function () {
         delete req.session.repos;
         res.redirect('/users/' + user.name);
       });

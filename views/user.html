@@ -5,7 +5,7 @@
                 &nbsp;
             </div>
 
-            <h1>{{username}}{{#isYou}} <a href="/user/edit">Edit?</a>{{/isYou}}</h1>
+            <h1>{{name}}{{#isYou}} <a href="/user/edit">Edit?</a>{{/isYou}}</h1>
             <table class="indent content">
                 <tr class="bold">
                     <td>
@@ -18,6 +18,40 @@
                     </td>
                 </tr>
             </table>
+
+            <BR /><BR />
+
+            <table id="scripts-list" class="indent">
+                <tr class="bold">
+                    <td width="50%">
+                        Name & Description
+                    </td>
+                    <td width="15%">
+                        Rating
+                    </td>
+                    <td width="15%">
+                        Installs
+                    </td>
+                </tr>
+                {{#scripts}}
+                <tr>
+                    <td width="50%">
+                        <span class="title">
+                          {{name}} - <a href="{{url}}">Install</a>
+                        </span>
+                        <span class="desc">{{description}}</span>
+                    </td>
+                    <td width="15%">
+                        {{rating}}
+                    </td>
+                    <td width="15%">
+                        {{installs}}
+                    </td>
+                </tr>
+                {{/scripts}}
+            </table>
         </div>
+<BR /><BR />
+<BR /><BR />
 
 {{> footer.html}}

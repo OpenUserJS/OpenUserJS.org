@@ -1,45 +1,90 @@
 var AWS = require('aws-sdk');
 var Script = require('../models/script').Script;
+var cleanFilename = require('../libs/helpers').cleanFilename;
+var bucketName = 'OpenUserJS.org';
 
 // Secret keys. You don't have this file.
 // You could open a AWS account for testing and put your keys in it.
 // http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html
-AWS.config.loadFromPath('../aws.json');
+AWS.config.loadFromPath('./aws.json');
 
-exports.sendScript = function (req, res) {
-  var s3 = new AWS.S3();
-  var params = { Bucket: req.route.params.username,
-    Key: req.route.params.scriptname };
+// Modified from Count Issues (http://userscripts.org/scripts/show/69307)
+// By Marti Martz (http://userscripts.org/users/37004)
+function parseMeta(aString) {
+  var re = /\/\/ @(\S+)(?:\s+(.*))?/;
+  var headers = {};
+  var name = null;
+  var key = null;
+  var value = null;
+  var line = null;
+  var lineMatches = null;
+  var lines = aString.split(/[\r\n]+/).filter(function (e, i, a) {
+    return (e.match(re));
+  });
 
-  // Total failure if this doesn't work, but we want speed
-  // and low overhead for installs
-  s3.getObject(params).createReadStream().pipe(res);
-}
-
-exports.storeScript = function (user, script, scriptStream) {
-  var s3 = new AWS.S3();
-  var bufs = [];
-
-  // Dump a script into the users bucket
-  function dumpScript(buf) {
-    s3.putObject({ Bucket: user.name, Key: script.name, Body: buf},
-      function (err, data) {});
+  for (line in lines) {
+    lineMatches = lines[line].replace(/\s+$/, "").match(re);
+    name = lineMatches[1];
+    value = lineMatches[2];
+    headers[name] = value || "";
   }
 
-  // Write a stream to a buffer (perhaps there is a better way?)
-  stdout.on('data', function (chunk) { bufs.push(chunk); });
-  stdout.on('end', function () {
-    var buf = Buffer.concat(bufs);
+  return headers;
+}
 
-    s3.headBucket({ Bucket: user.name }, function (err, data) {
-      // The bucket doesn't exist so we have to create it
-      if (!data) {
-        s3.createBucket({ Bucket: user.name }, function (err, data) {
-          dumpScript();
+exports.sendScript = function (req, res, next) {
+  var s3 = new AWS.S3();
+  var username = req.route.params.username.toLowerCase();
+  var namespace = req.route.params.namespace;
+  var key = username + '/' + (namespace ? namespace + '/' : '') 
+    + req.route.params.scriptname;
+  var script = s3.getObject({ Bucket: bucketName, Key: key },
+    function(err, data) {
+      if (err) { return next(); }
+      script.createReadStream().pipe(res);
+  });
+}
+
+exports.storeScript = function (user, scriptBuf, callback) {
+  var s3 = new AWS.S3();
+  var metadata = parseMeta(scriptBuf.toString('utf8'));
+  var namespace = cleanFilename(metadata.namespace || '');
+  var scriptName = cleanFilename(metadata.name || '');
+  var installName = cleanFilename(user.name).toLowerCase() + '/';
+
+  // Can't install a script without a @name (maybe replace with random value)
+  if (!scriptName) { return callback(null); }
+
+  if (namespace === user.name || !namespace) {
+    installName += scriptName + '.user.js';
+  } else {
+    installName += namespace + '/' + scriptName + '.user.js';
+  }
+
+  Script.findOne({ _authorId: user._id, installName: installName },
+    function (err, script) {
+
+      if (!script) {
+        script = new Script({
+          name: metadata.name,
+          about: '',
+          installs: 0,
+          rating: 0,
+          installable: true,
+          installName: installName,
+          updated: new Date(),
+          meta: metadata,
+          _authorId: user._id
         });
       } else {
-        dumpScript();
+        script.updated = new Date();
       }
-    });
+
+      script.save(function (err, script) {
+        s3.putObject({ Bucket: bucketName, Key: installName, Body: scriptBuf}, 
+          function (err, data) {
+            callback(script);
+          });
+      });
   });
 }

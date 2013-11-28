@@ -2,7 +2,7 @@ var https = require('https');
 var url = require('url');
 var async = require('async');
 var Strategy = require('../models/strategy').Strategy;
-//var storeScript = require('../controllers/scriptStorage').storeScript;
+var storeScript = require('../controllers/scriptStorage').storeScript;
 var nil = require('./helpers').nil;
 var clientId = null;
 var clientKey = null;
@@ -40,9 +40,10 @@ function fetchJSON(path, callback) {
   req.end();
 }
 
-function RepoManager(userId, repos) {
+function RepoManager(userId, user, repos) {
   this.userId = userId;
   this.username = null;
+  this.user = user;
   this.repos = repos || nil();
 }
 
@@ -66,12 +67,12 @@ RepoManager.prototype.fetchRepos = function (callback) {
 
 RepoManager.prototype.loadScripts = function (callback) {
   var arrayOfRepos = this.makeRepoArray();
+  var that = this;
 
   async.each(arrayOfRepos, function(repo, cb) {
     async.each(repo.scripts, function(script, innerCb) {
       fetchJSON(url.parse(script.url).pathname, function(json) {
-        console.log(new Buffer(json.content, 'base64').toString('utf8'));
-        innerCb();
+        storeScript(that.user, new Buffer(json.content, 'base64'), innerCb);
       });
     }, cb)
   }, callback);
@@ -141,6 +142,6 @@ Repo.prototype.getTree = function (sha, cb) {
   });
 };
 
-exports.getManager = function (userId, repos) { 
-  return new RepoManager(userId, repos); 
+exports.getManager = function (userId, user, repos) { 
+  return new RepoManager(userId, user, repos); 
 };

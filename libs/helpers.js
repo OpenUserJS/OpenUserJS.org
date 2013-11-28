@@ -59,7 +59,7 @@ exports.Wait = Wait;
 
 // Clean filenames but leave them readable
 // Based on Greasemonkey modules/remoteScript.js
-function cleanFilename(filename, defaultName) {
+exports.cleanFilename = function (filename, defaultName) {
   // Blacklist problem characters (slashes, colons, etc.).
   var cleanName = filename.replace(/[\\\/:*?\'\"<>|]/g, '')
 

@@ -6,6 +6,7 @@ var main = require('./controllers/index');
 var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
 var user = require('./controllers/user');
+var sendScript = require('./controllers/scriptStorage').sendScript;
 var settings = require('./models/settings.json');
 
 app.set('port', process.env.PORT || 8080);
@@ -59,9 +60,16 @@ app.post('/user/edit/scripts', user.scripts);
 
 // Script routes
 app.get('/scripts/:username/:scriptname', function (req, res, next) { next(); });
-app.get('/install/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/install/:username/:scriptname', sendScript);
 app.get('/meta/:username/:scriptname', function (req, res, next) { next(); });
 app.get('/script/:scriptname/edit', function (req, res, next) { next(); });
+app.get('/scripts/:username/:namespace/:scriptname', 
+  function (req, res, next) { next(); });
+app.get('/install/:username/:namespace/:scriptname', sendScript);
+app.get('/meta/:username/:namespace/:scriptname',
+  function (req, res, next) { next(); });
+app.get('/script/:namespace/:scriptname/edit', 
+  function (req, res, next) { next(); });
 app.get('/github/hook', function (req, res, next) { next(); });
 app.get('/github/service', function (req, res, next) { next(); });
 
