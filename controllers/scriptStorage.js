@@ -3,10 +3,15 @@ var Script = require('../models/script').Script;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var bucketName = 'OpenUserJS.org';
 
-// Secret keys. You don't have this file.
-// You could open a AWS account for testing and put your keys in it.
-// http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html
-AWS.config.loadFromPath('./aws.json');
+// You need to install (and ruby too): https://github.com/jubos/fake-s3
+// Then run: fakes3 -r fakeS3 -p 10001
+if (process.env.NODE_ENV !== 'production') {
+  //AWS.config.loadFromPath('./aws.json');
+  AWS.config.update({ accessKeyId: 'fakeId', secretAccessKey: 'fakeKey',
+    httpOptions: { 
+    proxy: 'localhost:10001', agent: require('http').globalAgent 
+  }});
+}
 
 // Modified from Count Issues (http://userscripts.org/scripts/show/69307)
 // By Marti Martz (http://userscripts.org/users/37004)
