@@ -91,7 +91,7 @@ exports.storeScript = function (user, scriptBuf, callback) {
   // Can't install a script without a @name (maybe replace with random value)
   if (!scriptName) { return callback(null); }
 
-  if (namespace === user.name || !namespace) {
+  if (namespace === cleanFilename(user.name).toLowerCase() || !namespace) {
     installName += scriptName + '.user.js';
   } else {
     installName += namespace + '/' + scriptName + '.user.js';
