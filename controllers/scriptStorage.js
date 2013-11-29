@@ -36,12 +36,21 @@ exports.sendScript = function (req, res, next) {
   var s3 = new AWS.S3();
   var username = req.route.params.username.toLowerCase();
   var namespace = req.route.params.namespace;
-  var key = username + '/' + (namespace ? namespace + '/' : '') 
+  var installName = username + '/' + (namespace ? namespace + '/' : '') 
     + req.route.params.scriptname;
-  var script = s3.getObject({ Bucket: bucketName, Key: key },
-    function(err, data) {
-      if (err) { return next(); }
-      script.createReadStream().pipe(res);
+
+  Script.findOne({ installName: installName }, function (err, script) {
+    var s3Obj = null;
+
+    if (!script) { return next(); }
+    ++script.installs;
+    script.save(function (err, script) {});
+
+    s3Obj = s3.getObject({ Bucket: bucketName, Key: installName },
+      function(err, data) {
+        if (err) { return next(); }
+        s3Obj.createReadStream().pipe(res);
+    });
   });
 }
 
@@ -61,30 +70,29 @@ exports.storeScript = function (user, scriptBuf, callback) {
     installName += namespace + '/' + scriptName + '.user.js';
   }
 
-  Script.findOne({ _authorId: user._id, installName: installName },
-    function (err, script) {
+  Script.findOne({ installName: installName }, function (err, script) {
 
-      if (!script) {
-        script = new Script({
-          name: metadata.name,
-          about: '',
-          installs: 0,
-          rating: 0,
-          installable: true,
-          installName: installName,
-          updated: new Date(),
-          meta: metadata,
-          _authorId: user._id
-        });
-      } else {
-        script.updated = new Date();
-      }
-
-      script.save(function (err, script) {
-        s3.putObject({ Bucket: bucketName, Key: installName, Body: scriptBuf}, 
-          function (err, data) {
-            callback(script);
-          });
+    if (!script) {
+      script = new Script({
+        name: metadata.name,
+        about: '',
+        installs: 0,
+        rating: 0,
+        installable: true,
+        installName: installName,
+        updated: new Date(),
+        meta: metadata,
+        _authorId: user._id
       });
+    } else {
+      script.updated = new Date();
+    }
+
+    script.save(function (err, script) {
+      s3.putObject({ Bucket: bucketName, Key: installName, Body: scriptBuf}, 
+        function (err, data) {
+          callback(script);
+        });
+    });
   });
 }

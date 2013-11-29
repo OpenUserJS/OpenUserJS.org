@@ -7,7 +7,7 @@ var nil = require('../libs/helpers').nil;
 exports.view = function (req, res, next) {
   var username = req.route.params.username;
   var thisUser = req.session.user;
-//Script.remove({}, function(){});
+
   User.findOne({ name: username }, function (err, user) {
     if (err || !user) { next(); }
 
