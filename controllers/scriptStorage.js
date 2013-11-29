@@ -54,6 +54,33 @@ exports.sendScript = function (req, res, next) {
   });
 }
 
+exports.sendMeta = function (req, res, next) {
+  var username = req.route.params.username.toLowerCase();
+  var namespace = req.route.params.namespace;
+  var installName = username + '/' + (namespace ? namespace + '/' : '') 
+    + req.route.params.scriptname;
+
+  installName = installName.replace(/\.meta\.js$/, '.user.js');
+
+  Script.findOne({ installName: installName }, function (err, script) {
+    var key = null;
+    var meta = null;
+    var lines = [];
+
+    if (!script) { return next(); }
+
+    meta = script.meta;
+    for (key in meta) {
+      lines.push('// @' + key + '    ' + meta[key]);
+    }
+
+    res.set("Content-Type", "text/javascript; charset=utf-8");
+    res.write('// ==UserScript==\n');
+    res.write(lines.reverse().join('\n'));
+    res.end('\n// ==/UserScript==\n');
+  });
+}
+
 exports.storeScript = function (user, scriptBuf, callback) {
   var s3 = new AWS.S3();
   var metadata = parseMeta(scriptBuf.toString('utf8'));
