@@ -44,8 +44,8 @@ exports.auth = function (req, res, next) {
   if (!username) { return res.redirect('/?noname'); }
   // Clean the username of leading and trailing whitespace, forward slashes,
   // and leading question marks
-  username = username.replace(/^\s+|\s+$/g, '').replace(/\//g, '')
-    .replace(/^\?+/g, '');
+  username = username.replace(/^\s+|\s+$/g, '')
+    .replace(/[\\\/:*?\'\"<>|]/g, '');
 
   // The username could be empty after the replacements
   if (!username) { return res.redirect('/?noname'); }
@@ -65,30 +65,31 @@ exports.auth = function (req, res, next) {
     authenticate(req, res);
   }
 
-  User.findOne({ name : username }, function (err, user) {
-    var strategies = null;
-    var strat = null;
+  User.findOne({ name : { $regex : new RegExp(username, "i") } },
+    function (err, user) {
+      var strategies = null;
+      var strat = null;
 
-    if (user) {
-      strategies = user.strategies;
-      strat = strategies.pop();
+      if (user) {
+        strategies = user.strategies;
+        strat = strategies.pop();
 
-      if (req.session.newstrategy) { // authenticate with a new strategy
-        delete req.session.newstrategy;
-      } else if (!strategy) { // use an existing strategy
-        strategy = strat;
-      } else if (strategies.indexOf(strategy) === -1) {
-        // add a new strategy but first authenticate with existing strategy
-        req.session.newstrategy = strategy;
-        strategy = strat;
-      } // else use the strategy that was given in the POST
-    }
+        if (req.session.newstrategy) { // authenticate with a new strategy
+          delete req.session.newstrategy;
+        } else if (!strategy) { // use an existing strategy
+          strategy = strat;
+        } else if (strategies.indexOf(strategy) === -1) {
+          // add a new strategy but first authenticate with existing strategy
+          req.session.newstrategy = strategy;
+          strategy = strat;
+        } // else use the strategy that was given in the POST
+      }
 
-    if (!strategy) { 
-      return res.redirect('/?nostrategy');
-    } else {
-      return auth();
-    }
+      if (!strategy) { 
+        return res.redirect('/?nostrategy');
+      } else {
+        return auth();
+      }
   });
 };
 
