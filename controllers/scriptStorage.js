@@ -44,18 +44,19 @@ exports.sendScript = function (req, res, next) {
   var installName = username + '/' + (namespace ? namespace + '/' : '') 
     + req.route.params.scriptname;
 
-  Script.findOne({ installName: installName }, function (err, script) {
-    var s3Obj = null;
+  // Send the script
+  var s3Obj = s3.getObject({ Bucket: bucketName, Key: installName },
+    function(err, data) {
+      if (err) { return next(); }
+      res.set("Content-Type", "text/javascript; charset=utf-8");
+      s3Obj.createReadStream().pipe(res);
+  });
 
-    if (!script) { return next(); }
+  // Update the install count
+  Script.findOne({ installName: installName }, function (err, script) {
+    if (!script) { return; }
     ++script.installs;
     script.save(function (err, script) {});
-
-    s3Obj = s3.getObject({ Bucket: bucketName, Key: installName },
-      function(err, data) {
-        if (err) { return next(); }
-        s3Obj.createReadStream().pipe(res);
-    });
   });
 }
 
