@@ -1,34 +1,29 @@
 {{> header.html}}
-
-        <div id="main">
-            <div class="spacer" style="height: 15%;">
-                &nbsp;
-            </div>
-
-            <table class="indent editor">
-              <form id="edit_about" action="/user/edit" method="post">
-                <tr class="bold">
-                    <td>
-                        About You
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <textarea class="indent" id="about" 
-                                  name="about">{{about}}</textarea>
-                    </td>
-                </tr>                <tr>
-                    <td class="bold">
-                        <a href="/user/edit/scripts">Manage Scripts</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="submit" value="Save" />
-                    </td>
-                </tr>
-              </form>
-            </table>
-        </div>
-
+<div id="main">
+  <div class="spacer" style="height: 15%;">
+    &nbsp;
+  </div>
+  <form id="edit_about" action="/user/edit" method="post">
+    <table class="indent editor">
+      <tr class="bold">
+        <td>About You</td>
+      </tr>
+      <tr>
+        <td>
+          <textarea class="indent" id="about" name="about">{{about}}</textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="bold">
+          <a href="/user/edit/scripts">Manage Scripts</a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="submit" value="Save" />
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
 {{> footer.html}}

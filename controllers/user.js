@@ -18,7 +18,7 @@ exports.view = function (req, res, next) {
         scriptView.push({ 
           name: script.name, description: script.meta.description || '', 
           url: '/install/' + script.installName, rating: script.rating,
-          installs: script.installs
+          installs: script.installs, version: script.meta.version
         });
       });
 
