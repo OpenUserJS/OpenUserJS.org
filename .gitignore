@@ -16,6 +16,6 @@ npm-debug.log
 node_modules
 
 data
-
+fakeS3
 aws.json
 
