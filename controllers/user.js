@@ -66,15 +66,18 @@ exports.scripts = function (req, res) {
       loadingRepos = true;
       options.showRepos = true;
       ghUserId = user.auths[indexOfGH];
-      repoManager = RepoManager.getManager(ghUserId);
 
-      repoManager.fetchRepos(function() {
-        // store the vaild repos in the session to prevent hijaking
-        req.session.repos = repoManager.repos;
+      User.findOne({ _id: user._id }, function (err, user) {
+        repoManager = RepoManager.getManager(ghUserId, user);
 
-        // convert the repos object to something mustache can use
-        options.repos = repoManager.makeRepoArray();
-        res.render('scriptsEdit', options, res);
+        repoManager.fetchRepos(function() {
+          // store the vaild repos in the session to prevent hijaking
+          req.session.repos = repoManager.repos;
+
+          // convert the repos object to something mustache can use
+          options.repos = repoManager.makeRepoArray();
+          res.render('scriptsEdit', options, res);
+        });
       });
     } else if (req.body.loadScripts && req.session.repos) {
       loadingRepos = true;

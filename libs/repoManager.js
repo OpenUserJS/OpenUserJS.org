@@ -3,6 +3,7 @@ var url = require('url');
 var async = require('async');
 var Strategy = require('../models/strategy').Strategy;
 var storeScript = require('../controllers/scriptStorage').storeScript;
+var updateScript = require('../controllers/scriptStorage').updateScript;
 var nil = require('./helpers').nil;
 var clientId = null;
 var clientKey = null;
@@ -12,19 +13,19 @@ Strategy.findOne({ name: 'github' }, function(err, strat) {
   clientKey = strat.key;
 });
 
-function fetchJSON(path, callback) {
-  var repos = [];
+function fetchRaw (subdomain, path, callback) {
   var raw = "";
-  var json = null;
   var options = {
-    hostname: 'api.github.com',
+    hostname: subdomain + '.github.com',
     port: 443,
     path: path,
     method: 'GET',
     headers: { 'User-Agent': 'Node.js' }
   };
 
-  options.path += '?client_id=' + clientId + '&client_secret=' + clientKey;
+  if (subdomain === 'api') {
+    options.path += '?client_id=' + clientId + '&client_secret=' + clientKey;
+  }
 
   var req = https.request(options,
     function(res) {
@@ -32,17 +33,21 @@ function fetchJSON(path, callback) {
       else {
         res.on('data', function (chunk) { raw += chunk; });
         res.on('end', function () {
-          json = JSON.parse(raw);
-          callback(json);
+          callback(raw);
         });
       } 
   });
   req.end();
 }
 
+function fetchJSON (path, callback) {
+  fetchRaw('api', path, function (raw) {
+    callback(JSON.parse(raw));
+  });
+}
+
 function RepoManager(userId, user, repos) {
   this.userId = userId;
-  this.username = null;
   this.user = user;
   this.repos = repos || nil();
 }
@@ -53,7 +58,10 @@ RepoManager.prototype.fetchRepos = function (callback) {
 
   fetchJSON('/user/' + this.userId + '/repos', function (json) {
     json.forEach(function (repo) {
-      if (!that.username) { that.username = repo.owner.login; }
+      if (that.user.ghUsername !== repo.owner.login) {
+        that.user.ghUsername = repo.owner.login; 
+        that.user.save(function (err, user) {});
+      }
       repos.push(new Repo(that, repo.owner.login, repo.name));
     });
 
@@ -65,15 +73,21 @@ RepoManager.prototype.fetchRepos = function (callback) {
   });
 };
 
-RepoManager.prototype.loadScripts = function (callback) {
+RepoManager.prototype.loadScripts = function (callback, update) {
   var arrayOfRepos = this.makeRepoArray();
   var that = this;
 
   async.each(arrayOfRepos, function(repo, cb) {
     async.each(repo.scripts, function(script, innerCb) {
-      fetchJSON(url.parse(script.url).pathname, function(json) {
-        storeScript(that.user, new Buffer(json.content, 'base64'), innerCb);
-      });
+      if (update) {
+        fetchRaw('raw', url.parse(script.url).pathname, function (raw) {
+          storeScript(that.user, new Buffer(raw), innerCb, update);
+        });
+      } else {
+        fetchJSON(url.parse(script.url).pathname, function (json) {
+          storeScript(that.user, new Buffer(json.content, 'base64'), innerCb);
+        });
+      }
     }, cb)
   }, callback);
 }
@@ -81,7 +95,7 @@ RepoManager.prototype.loadScripts = function (callback) {
 RepoManager.prototype.makeRepoArray = function () {
   var retOptions = [];
   var repos = this.repos;
-  var username = this.username;
+  var username = this.user.ghUsername;
   var reponame = null;
   var scripts = null;
   var scriptname = null;

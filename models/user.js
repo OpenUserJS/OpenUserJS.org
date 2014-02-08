@@ -8,7 +8,10 @@ var userSchema = new Schema({
 
   // A user can link multiple accounts to their OpenUserJS account
   auths: Array,
-  strategies: Array
+  strategies: Array,
+
+  // Store their GitHub username when they import scripts
+  ghUsername: String
 });
 
 var User = mongoose.model('User', userSchema);

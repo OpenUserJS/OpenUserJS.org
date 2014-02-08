@@ -1,6 +1,8 @@
 var AWS = require('aws-sdk');
 var Script = require('../models/script').Script;
+var User = require('../models/user').User;
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var getRepoManager = require('../libs/repoManager').getManager;
 var bucketName = 'OpenUserJS.org';
 
 // You need to install (and ruby too): https://github.com/jubos/fake-s3
@@ -97,7 +99,7 @@ function parseMeta(aString) {
   return headers;
 }
 
-exports.storeScript = function (user, scriptBuf, callback) {
+exports.storeScript = function (user, scriptBuf, callback, update) {
   var s3 = new AWS.S3();
   var metadata = parseMeta(scriptBuf.toString('utf8'));
   var namespace = cleanFilename(metadata.namespace || '');
@@ -115,7 +117,7 @@ exports.storeScript = function (user, scriptBuf, callback) {
 
   Script.findOne({ installName: installName }, function (err, script) {
 
-    if (!script) {
+    if (!script && !update) {
       script = new Script({
         name: metadata.name,
         about: '',
@@ -138,4 +140,50 @@ exports.storeScript = function (user, scriptBuf, callback) {
         });
     });
   });
-}
+};
+
+exports.webhook = function (req, res) {
+  var payload = null;
+  var username = null;
+  var reponame = null;
+  var repos = {};
+  var repo = null;
+
+  res.end(); // close connection
+  if (!req.body.payload ||
+    [ // Know GH webhook ips
+    '207.97.227.253',
+    '50.57.128.197',
+    '108.171.174.178',
+    '50.57.231.61'
+    ].indexOf(req.connection.remoteAddress) < 0) { return; }
+
+  payload = JSON.parse(req.body.payload);
+
+  // Only accept commits to the master branch
+  if (!payload || payload.ref !== 'refs/heads/master') { return; }
+
+  // Gather all the info for the RepoManager
+  username = payload.repository.owner.name;
+  reponame = payload.repository.name;
+
+  repo = repos[reponame] = {};
+
+  // Find the user that corresponds the repo owner
+  User.findOne({ ghUsername: username }, function (err, user) {
+    if (!user) { return; }
+
+    // Gather the modified user scripts
+    payload.commits.forEach(function (commit) {
+      commit.modified.forEach(function (filename) {
+        if (filename.substr(-8) === '.user.js') {
+          repo[filename] = 'https://raw.github.com/' + username + '/' + 
+            reponame + '/master/' + filename;
+        }
+      });
+    });
+
+    // Update modified scripts
+    getRepoManager(null, user, repos).loadScripts(function (){}, true);
+  });
+};
