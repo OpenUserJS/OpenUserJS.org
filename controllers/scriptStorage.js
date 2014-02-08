@@ -117,7 +117,9 @@ exports.storeScript = function (user, scriptBuf, callback, update) {
 
   Script.findOne({ installName: installName }, function (err, script) {
 
-    if (!script && !update) {
+    if (!script && update) {
+      return callback(null);
+    } else if (!script) {
       script = new Script({
         name: metadata.name,
         about: '',
