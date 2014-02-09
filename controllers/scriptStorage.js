@@ -32,17 +32,15 @@ exports.sendScript = function (req, res, next) {
   }
   installName = getInstallName(req, res);
 
-  // Send the script
-  var s3Obj = s3.getObject({ Bucket: bucketName, Key: installName },
-    function(err, data) {
-      if (err) { return next(); }
-      res.set('Content-Type', 'text/javascript; charset=utf-8');
-      s3Obj.createReadStream().pipe(res);
-  });
-
   // Update the install count
   Script.findOne({ installName: installName }, function (err, script) {
-    if (!script) { return; }
+    if (!script) { return next(); }
+
+    // Send the script
+    res.set('Content-Type', 'text/javascript; charset=utf-8');
+    s3.getObject({ Bucket: bucketName, Key: installName })
+      .createReadStream().pipe(res);
+
     ++script.installs;
     script.save(function (err, script) {});
   });
