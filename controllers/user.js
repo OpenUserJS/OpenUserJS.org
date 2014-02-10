@@ -9,7 +9,7 @@ exports.view = function (req, res, next) {
   var thisUser = req.session.user;
 
   User.findOne({ name: username }, function (err, user) {
-    if (err || !user) { next(); }
+    if (err || !user) { return next(); }
 
     Script.find({ _authorId: user._id }, function (err, scripts) {
       var scriptView = [];
