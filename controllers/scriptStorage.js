@@ -2,7 +2,7 @@ var AWS = require('aws-sdk');
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 var cleanFilename = require('../libs/helpers').cleanFilename;
-var getRepoManager = require('../libs/repoManager').getManager;
+var RepoManager = require('../libs/repoManager');
 var bucketName = 'OpenUserJS.org';
 
 // You need to install (and ruby too): https://github.com/jubos/fake-s3
@@ -150,13 +150,11 @@ exports.webhook = function (req, res) {
   var repo = null;
 
   res.end(); // close connection
+
+  // Test for know GH webhook ips: https://api.github.com/meta
   if (!req.body.payload ||
-    [ // Know GH webhook ips
-    '207.97.227.253',
-    '50.57.128.197',
-    '108.171.174.178',
-    '50.57.231.61'
-    ].indexOf(req.connection.remoteAddress) < 0) { return; }
+    !/192\.30\.252\.(2[0-5][0-5]|1[0-9]{2}|[1-9]?\d)/
+    .test(req.connection.remoteAddress)) { return; }
 
   payload = JSON.parse(req.body.payload);
 
@@ -184,6 +182,7 @@ exports.webhook = function (req, res) {
     });
 
     // Update modified scripts
-    getRepoManager(null, user, repos).loadScripts(function (){}, true);
+    var repoManager = RepoManager.getManager(null, user, repos);
+    repoManager.loadScripts(function (){}, true);
   });
 };
