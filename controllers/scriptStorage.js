@@ -5,10 +5,11 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var RepoManager = require('../libs/repoManager');
 var bucketName = 'OpenUserJS.org';
 
-// You need to install (and ruby too): https://github.com/jubos/fake-s3
-// Then run: fakes3 -r fakeS3 -p 10001
-if (process.env.NODE_ENV !== 'production') {
-  //AWS.config.loadFromPath('./aws.json');
+if (process.env.NODE_ENV === 'production') {
+  AWS.config.update({ region: 'us-east-1' });
+} else {
+  // You need to install (and ruby too): https://github.com/jubos/fake-s3
+  // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
   AWS.config.update({ accessKeyId: 'fakeId', secretAccessKey: 'fakeKey',
     httpOptions: { 
     proxy: 'localhost:10001', agent: require('http').globalAgent 
