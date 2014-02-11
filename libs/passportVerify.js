@@ -46,7 +46,8 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
             'auths' : [digest],
             'strategies' : [strategy],
             'role' : userRoles.length - 1,
-            'about': ''
+            'about': '',
+            'ghUsername': null
           });
           user.save(function (err, user) {
             return done(err, user);

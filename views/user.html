@@ -5,12 +5,19 @@
                 &nbsp;
             </div>
 
-        {{#username}}
-        <p>Welcome <a href="/users/{{username}}">{{username}}</a>!</p>
-        {{/username}}
-        {{^username}}
-        <p>Welcome stranger! <a href="/login">Login?</a>
-        {{/username}}
+            <h1>{{name}}{{#isYou}} <a href="/user/edit">Edit?</a>{{/isYou}}</h1>
+            <table class="indent content">
+                <tr class="bold">
+                    <td>
+                        About
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{about}}
+                    </td>
+                </tr>
+            </table>
 
             <BR /><BR />
 
@@ -26,19 +33,25 @@
                         Installs
                     </td>
                 </tr>
+                {{#scripts}}
                 <tr>
                     <td width="50%">
-                        <span class="title">test name</span>
-                        <span class="desc">a test script that tests things</span>
+                        <span class="title">
+                          {{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - <a href="{{url}}">Install</a>
+                        </span>
+                        <span class="desc">{{description}}</span>
                     </td>
                     <td width="15%">
-                        &#9733; &#9733; &#9733; &#9733; &#9733;
+                        {{rating}}
                     </td>
                     <td width="15%">
-                        12,561,582
+                        {{installs}}
                     </td>
                 </tr>
+                {{/scripts}}
             </table>
         </div>
+<BR /><BR />
+<BR /><BR />
 
 {{> footer.html}}
