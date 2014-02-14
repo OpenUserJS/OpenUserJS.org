@@ -79,15 +79,9 @@ RepoManager.prototype.loadScripts = function (callback, update) {
 
   async.each(arrayOfRepos, function(repo, cb) {
     async.each(repo.scripts, function(script, innerCb) {
-      if (update) {
-        fetchRaw('raw', url.parse(script.url).pathname, function (raw) {
-          storeScript(that.user, new Buffer(raw), innerCb, update);
-        });
-      } else {
-        fetchJSON(url.parse(script.url).pathname, function (json) {
-          storeScript(that.user, new Buffer(json.content, 'base64'), innerCb);
-        });
-      }
+      fetchRaw('raw', url.parse(script.url).pathname, function (raw) {
+        storeScript(that.user, new Buffer(raw), innerCb, update);
+      });
     }, cb)
   }, callback);
 }
@@ -107,7 +101,9 @@ RepoManager.prototype.makeRepoArray = function () {
 
     scripts = repos[reponame];
     for (scriptname in scripts) {
-      option.scripts.push({ name: scriptname, url: scripts[scriptname] });
+      option.scripts.push({ name: scriptname, 
+        url: 'https://raw.github.com/' + username + '/' + 
+        reponame + '/master' + scripts[scriptname] });
     }
 
     retOptions.push(option);
@@ -123,10 +119,10 @@ function Repo(manager, username, reponame) {
 }
 
 Repo.prototype.fetchUserScripts = function (callback) {
-  this.getTree('HEAD', callback);
+  this.getTree('HEAD', '', callback);
 };
 
-Repo.prototype.parseTree = function (tree, done) {
+Repo.prototype.parseTree = function (tree, path, done) {
   var object;
   var trees = [];
   var that = this;
@@ -134,25 +130,25 @@ Repo.prototype.parseTree = function (tree, done) {
 
   tree.forEach(function (object) {
     if (object.type === 'tree') {
-      trees.push(object.sha);
+      trees.push({ sha: object.sha, path: path + '/' + object.path });
     } else if (object.path.substr(-8) === '.user.js') {
       if (!repos[that.repo]) { repos[that.repo] = nil(); }
-      repos[that.repo][object.path] = object.url;
+      repos[that.repo][object.path] = path + '/' + object.path;
     }
   });
 
-  async.each(trees, function(sha, cb) {
-    that.getTree(sha, cb);
+  async.each(trees, function(tree, cb) {
+    that.getTree(tree.sha, tree.path, cb);
   }, function () { 
     done(); 
   });
 };
 
-Repo.prototype.getTree = function (sha, cb) {
+Repo.prototype.getTree = function (sha, path, cb) {
   var that = this;
   fetchJSON('/repos/' + this.user  + '/' + this.repo + '/git/trees/' + sha, 
     function (json) {
-      that.parseTree(json.tree, cb);
+      that.parseTree(json.tree, path, cb);
   });
 };
 
