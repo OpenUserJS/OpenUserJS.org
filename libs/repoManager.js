@@ -76,13 +76,16 @@ RepoManager.prototype.fetchRepos = function (callback) {
 RepoManager.prototype.loadScripts = function (callback, update) {
   var arrayOfRepos = this.makeRepoArray();
   var that = this;
+  var scripts = [];
 
-  async.each(arrayOfRepos, function(repo, cb) {
-    async.each(repo.scripts, function(script, innerCb) {
-      fetchRaw('raw', url.parse(script.url).pathname, function (raw) {
-        storeScript(that.user, raw, innerCb, update);
-      });
-    }, cb)
+  arrayOfRepos.forEach(function (repo) {
+    scripts.concat(repo.scripts);
+  });
+
+  async.eachLimit(scripts, 5, function (script, cb) {
+    fetchRaw('raw', url.parse(script.url).pathname, function (raw) {
+      storeScript(that.user, raw, cb, update);
+    });
   }, callback);
 }
 
