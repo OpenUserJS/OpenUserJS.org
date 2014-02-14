@@ -62,6 +62,9 @@ RepoManager.prototype.fetchRepos = function (callback) {
         that.user.ghUsername = repo.owner.login; 
         that.user.save(function (err, user) {});
       }
+
+      // Don't search through forks
+      if (repo.fork) { return; }
       repos.push(new Repo(that, repo.owner.login, repo.name));
     });
 
@@ -78,6 +81,9 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   var that = this;
   var scripts = [];
 
+  // TODO: remove usage of makeRepoArray since it causes
+  // redundant looping and make array of scripts directly
+  // from this.repos
   arrayOfRepos.forEach(function (repo) {
     scripts.concat(repo.scripts);
   });
