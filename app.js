@@ -1,4 +1,5 @@
 var express = require('express');
+var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
 var passport = require('passport');
 var app = express();
@@ -8,6 +9,9 @@ var admin = require('./controllers/admin');
 var user = require('./controllers/user');
 var scriptStorage = require('./controllers/scriptStorage');
 var settings = require('./models/settings.json');
+var connectStr = process.env.CONNECT_STRING || settings.connect;
+var sessionSecret = process.env.SESSION_SECRET || settings.secret;
+var db = mongoose.connection;
 
 app.set('port', process.env.PORT || 8080);
 
@@ -18,8 +22,13 @@ app.configure(function(){
   app.use(express.methodOverride());
 
   // Order is very important here (i.e mess with at your own risk)
-  app.use(express.cookieParser(settings.secret));
-  app.use(express.session());
+  app.use(express.cookieParser());
+  app.use(express.session({
+    secret: sessionSecret,
+    store: new MongoStore({
+      url: connectStr
+    })
+  }));
   app.use(passport.initialize());
   app.use(app.router);
 
@@ -29,14 +38,7 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
 });
 
-if (process.env.NODE_ENV === 'production') {
-  mongoose.connect(process.env.CONNECT_STRING);
-} else {
-  // Throwaway database for development
-  mongoose.connect('mongodb://nodejitsu_sizzlemctwizzle:b6vrl5hvkv2a3vvbaq1nor7fdl@ds045978.mongolab.com:45978/nodejitsu_sizzlemctwizzle_nodejitsudb8203815757');
-}
-
-var db = mongoose.connection;
+mongoose.connect(connectStr);
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
   app.listen(app.get('port'));
