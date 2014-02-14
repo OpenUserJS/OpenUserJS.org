@@ -140,7 +140,7 @@ Repo.prototype.parseTree = function (tree, path, done) {
     }
   });
 
-  async.each(trees, function(tree, cb) {
+  async.eachLimit(trees, 5, function(tree, cb) {
     that.getTree(tree.sha, tree.path, cb);
   }, function () { 
     done(); 
