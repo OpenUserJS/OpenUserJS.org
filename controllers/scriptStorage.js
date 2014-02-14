@@ -98,9 +98,9 @@ function parseMeta(aString) {
   return headers;
 }
 
-exports.storeScript = function (user, scriptBuf, callback, update) {
+exports.storeScript = function (user, scriptStr, callback, update) {
   var s3 = new AWS.S3();
-  var metadata = parseMeta(scriptBuf.toString('utf8'));
+  var metadata = parseMeta(scriptStr);
   var namespace = cleanFilename(metadata.namespace || '');
   var scriptName = cleanFilename(metadata.name || '');
   var installName = cleanFilename(user.name).toLowerCase() + '/';
@@ -135,7 +135,8 @@ exports.storeScript = function (user, scriptBuf, callback, update) {
     }
 
     script.save(function (err, script) {
-      s3.putObject({ Bucket: bucketName, Key: installName, Body: scriptBuf}, 
+      s3.putObject({ Bucket: bucketName, Key: installName, 
+        Body: new Buffer(scriptStr)},
         function (err, data) {
           callback(script);
         });

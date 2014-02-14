@@ -80,7 +80,7 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   async.each(arrayOfRepos, function(repo, cb) {
     async.each(repo.scripts, function(script, innerCb) {
       fetchRaw('raw', url.parse(script.url).pathname, function (raw) {
-        storeScript(that.user, new Buffer(raw), innerCb, update);
+        storeScript(that.user, raw, innerCb, update);
       });
     }, cb)
   }, callback);
