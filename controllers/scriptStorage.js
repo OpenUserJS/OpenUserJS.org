@@ -188,8 +188,7 @@ exports.webhook = function (req, res) {
     payload.commits.forEach(function (commit) {
       commit.modified.forEach(function (filename) {
         if (filename.substr(-8) === '.user.js') {
-          repo[filename] = 'https://raw.github.com/' + username + '/' + 
-            reponame + '/master/' + filename;
+          repo[filename] = '/' + filename;
         }
       });
     });

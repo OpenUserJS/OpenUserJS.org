@@ -1,5 +1,4 @@
 var https = require('https');
-var url = require('url');
 var async = require('async');
 var Strategy = require('../models/strategy').Strategy;
 var storeScript = require('../controllers/scriptStorage').storeScript;
@@ -63,7 +62,7 @@ RepoManager.prototype.fetchRepos = function (callback) {
       if (that.user.ghUsername !== repo.owner.login) {
         that.user.ghUsername = repo.owner.login; 
         that.user.save(function (err, user) {});
-      }
+     }
 
       // Don't search through forks
       if (repo.fork) { return; }
@@ -91,7 +90,7 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   });
 
   async.eachLimit(scripts, 5, function (script, cb) {
-    fetchRaw('raw', url.parse(script.url).pathname, function (bufs) {
+    fetchRaw('raw', script.url, function (bufs) {
       getMeta(bufs, function (meta) {
         if (meta) {
           storeScript(that.user, meta, Buffer.concat(bufs), cb, update);
@@ -116,9 +115,8 @@ RepoManager.prototype.makeRepoArray = function () {
 
     scripts = repos[reponame];
     for (scriptname in scripts) {
-      option.scripts.push({ name: scriptname, 
-        url: 'https://raw.github.com/' + username + '/' + 
-        reponame + '/master' + scripts[scriptname] });
+      option.scripts.push({ name: scriptname, url: '/' + username + 
+        '/' + reponame + '/master' + scripts[scriptname] });
     }
 
     retOptions.push(option);
