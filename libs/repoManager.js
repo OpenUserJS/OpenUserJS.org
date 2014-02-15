@@ -4,6 +4,7 @@ var async = require('async');
 var Strategy = require('../models/strategy').Strategy;
 var storeScript = require('../controllers/scriptStorage').storeScript;
 var updateScript = require('../controllers/scriptStorage').updateScript;
+var getMeta = require('../controllers/scriptStorage').getMeta;
 var nil = require('./helpers').nil;
 var clientId = null;
 var clientKey = null;
@@ -29,11 +30,12 @@ function fetchRaw (subdomain, path, callback) {
 
   var req = https.request(options,
     function(res) {
+      var bufs = [];
       if (res.statusCode != 200) { return; }
       else {
-        res.on('data', function (chunk) { raw += chunk; });
-        res.on('end', function () {
-          callback(raw);
+        res.on('data', function(d) { bufs.push(d); });
+        res.on('end', function() {
+          callback(bufs); 
         });
       } 
   });
@@ -41,8 +43,8 @@ function fetchRaw (subdomain, path, callback) {
 }
 
 function fetchJSON (path, callback) {
-  fetchRaw('api', path, function (raw) {
-    callback(JSON.parse(raw));
+  fetchRaw('api', path, function (bufs) {
+    callback(JSON.parse(Buffer.concat(bufs).toString()));
   });
 }
 
@@ -85,12 +87,16 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   // redundant looping and make array of scripts directly
   // from this.repos
   arrayOfRepos.forEach(function (repo) {
-    scripts.concat(repo.scripts);
+    scripts = scripts.concat(repo.scripts);
   });
 
   async.eachLimit(scripts, 5, function (script, cb) {
-    fetchRaw('raw', url.parse(script.url).pathname, function (raw) {
-      storeScript(that.user, raw, cb, update);
+    fetchRaw('raw', url.parse(script.url).pathname, function (bufs) {
+      getMeta(bufs, function (meta) {
+        if (meta) {
+          storeScript(that.user, meta, Buffer.concat(bufs), cb, update);
+        }
+      });
     });
   }, callback);
 }

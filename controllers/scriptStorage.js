@@ -80,13 +80,10 @@ function parseMeta(aString) {
   var line = null;
   var lineMatches = null;
   var lines = {};
-  var headerContent = /\/\/ ==UserScript==\s*\n([\S\s]*)\n\/\/ ==\/UserScript==/m.exec(aString);
 
-  if (headerContent[1]) {
-    lines = headerContent[1].split(/[\r\n]+/).filter(function (e, i, a) {
-      return (e.match(re));
-    });
-  }
+  lines = aString.split(/[\r\n]+/).filter(function (e, i, a) {
+    return (e.match(re));
+  });
 
   for (line in lines) {
     lineMatches = lines[line].replace(/\s+$/, "").match(re);
@@ -98,11 +95,28 @@ function parseMeta(aString) {
   return headers;
 }
 
-exports.storeScript = function (user, scriptStr, callback, update) {
+exports.getMeta = function getMeta (chunks, callback) {
+  // We need to convert the array of buffers to a string to
+  // parse the header. But strings are memory inefficient compared
+  // to buffers so we only convert the least number of chunks to
+  // get the user script header.
+  var str = '';
+  var i = 0;
+  var len = chunks.length;
+
+  for (; i < chunks.length; ++i) {
+    var header = null;
+    str += chunks[i];
+    header = /\/\/ ==UserScript==\s*\n([\S\s]*)\n\/\/ ==\/UserScript==/m.exec(str)[1];
+
+    if (header) { return callback(parseMeta(header)); }
+  }
+}
+
+exports.storeScript = function (user, meta, buf, callback, update) {
   var s3 = new AWS.S3();
-  var metadata = parseMeta(scriptStr);
-  var namespace = cleanFilename(metadata.namespace || '');
-  var scriptName = cleanFilename(metadata.name || '');
+  var namespace = cleanFilename(meta.namespace || '');
+  var scriptName = cleanFilename(meta.name || '');
   var installName = cleanFilename(user.name).toLowerCase() + '/';
 
   // Can't install a script without a @name (maybe replace with random value)
@@ -120,7 +134,7 @@ exports.storeScript = function (user, scriptStr, callback, update) {
       return callback(null);
     } else if (!script) {
       script = new Script({
-        name: metadata.name,
+        name: meta.name,
         about: '',
         installs: 0,
         rating: 0,
@@ -135,11 +149,8 @@ exports.storeScript = function (user, scriptStr, callback, update) {
     }
 
     script.save(function (err, script) {
-      s3.putObject({ Bucket: bucketName, Key: installName, 
-        Body: new Buffer(scriptStr)},
-        function (err, data) {
-          callback(script);
-        });
+      s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
+        function (err, data) { callback(script); });
     });
   });
 };
