@@ -141,7 +141,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         installable: true,
         installName: installName,
         updated: new Date(),
-        meta: metadata,
+        meta: meta,
         _authorId: user._id
       });
     } else {
