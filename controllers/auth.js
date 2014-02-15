@@ -44,10 +44,10 @@ exports.auth = function (req, res, next) {
   var username = req.body.username || req.session.username;
 
   if (!username) { return res.redirect('/?noname'); }
-  // Clean the username of leading and trailing whitespace, forward slashes,
-  // and leading question marks
+  // Clean the username of leading and trailing whitespace,
+  // and other stuff that is unsafe in a url
   username = username.replace(/^\s+|\s+$/g, '')
-    .replace(/[\\\/:*?\'\"<>|]/g, '');
+    .replace(/[\\\/:*?\'\"<>|#]/g, '');
 
   // The username could be empty after the replacements
   if (!username) { return res.redirect('/?noname'); }
