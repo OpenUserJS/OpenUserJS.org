@@ -52,7 +52,7 @@ exports.auth = function (req, res, next) {
   // The username could be empty after the replacements
   if (!username) { return res.redirect('/?noname'); }
 
-  // Store the username in the session to we still have it when they
+  // Store the username in the session so we still have it when they
   // get back from authentication
   if (!req.session.username) {
     req.session.username = username;
