@@ -23,23 +23,6 @@ exports.view = function (req, res, next) {
           scriptsList: scriptsList
       }, res);
     });
-
-    /*Script.find({ _authorId: user._id }, function (err, scripts) {
-      var scriptView = [];
-
-      scripts.forEach(function (script) {
-        scriptView.push({ 
-          name: script.name, description: script.meta.description || '', 
-          url: '/install/' + script.installName, rating: script.rating,
-          installs: script.installs, version: script.meta.version
-        });
-      });
-
-      res.render('user', { 
-        title: user.name, name: user.name, about: user.about, 
-        isYou: thisUser && thisUser.name === user.name, scripts: scriptView
-      }, res);
-    });*/
   });
 }
 

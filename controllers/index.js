@@ -16,12 +16,7 @@ Script.find({}, function (err, scripts) {
 });
 
 exports.home = function (req, res) {
-  var options = { 'title': 'Home page' };
   var user = req.session.user;
-  
-  if (user) {
-    options.username = user.name;
-  }
 
   scriptsList.listScripts({}, req.route.params, [], '',
     function (scriptsList) {
@@ -31,7 +26,6 @@ exports.home = function (req, res) {
         scriptsList: scriptsList
       }, res);
   });
-  //res.render('index', options, res);
 }
 
 exports.login = function (req, res) {

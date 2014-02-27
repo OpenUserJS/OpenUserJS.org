@@ -1,0 +1,39 @@
+{{#scriptsList}}
+<table id="scripts-list" class="indent">
+  <tr class="bold">
+{{#headings}}
+    <td width="{{width}}">
+      <a href="{{baseUrl}}{{size}}/sort/{{name}}{{direction}}">{{label}}</a>
+    </td>
+{{/headings}}
+  </tr>
+{{#scripts}}
+   <tr>
+     <td width="50%">
+       <span class="title">
+         {{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - <a href="{{url}}">Install</a>
+       </span>
+       <span class="desc">{{description}}</span>
+     </td>
+     {{#hasAuthor}}
+     <td width="15%">
+       <a href="/users/{{author}}">{{author}}</a>
+     </td>
+     {{/hasAuthor}}
+     <td width="15%">
+       {{rating}}
+     </td>
+     <td width="15%">
+       {{installs}}
+     </td>
+   </tr>
+{{/scripts}}
+   <br />
+{{#previous}}
+<a href="{{baseUrl}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
+{{/previous}}
+{{pageNumber}}
+{{#next}}
+ &gt; <a href="{{baseUrl}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
+{{/next}}
+{{/scriptsList}}
