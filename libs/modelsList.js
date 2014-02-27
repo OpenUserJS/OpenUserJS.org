@@ -7,10 +7,15 @@ var defaultSort = 'updated';
 // for the corresponding Mustache partial template using req.query.params
 exports.listScripts = function (query, params, omit, baseUrl, callback) {
   var options = {};
-  options.size = params[0];
-  options.orderBy = params[1];
-  options.direction = params[2];
-  options.page = params[3];
+
+  if (params instanceof Array) {
+    options.size = params[0];
+    options.orderBy = params[1];
+    options.direction = params[2];
+    options.page = params[3];
+  } else {
+    options = params;
+  }
   options.omit = omit;
 
   listModels(Script, query, options,
@@ -81,13 +86,12 @@ function listModels (model, query, options, callback) {
   var page = options.page && !isNaN(options.page) ? options.page - 1 : 0;
   var direction = options.direction === 'asc' ? 1 : -1;
   var size = options.size || listSize;
-  var sortObj = {};
+  var params = { sort: {} };
 
   if (-1 === fields.indexOf(orderBy)) { orderBy = defaultSort; }
   if (page < 0) { page = 0; }
   if (!options.direction && 
       typeof model.schema.tree[orderBy]() === 'string') { direction = 1; }
-  if (size <= 0) { size = listSize; }
 
   if (options.omit) {
     options.omit.forEach(function (field) {
@@ -96,14 +100,16 @@ function listModels (model, query, options, callback) {
     });
   }
 
-  sortObj[orderBy] = direction;
+  params.sort[orderBy] = direction;
+  if (size >= 0) {
+    params.limit = size + 1;
+    params.skip = size * page;
+  }
 
-  model.find(query, fields.join(' '),
-    { sort: sortObj,
-      skip: size * page,
-      limit : size + 1 },
+  model.find(query, fields.join(' '), params,
     function (err, models) {
       if (!models) { models = [] }
+      if (size < 0) { size = models.length; }
       direction = direction === 1 ? 'asc' : 'desc';
 
       callback(models, size, orderBy, direction, page);
