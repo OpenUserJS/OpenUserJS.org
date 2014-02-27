@@ -44,7 +44,19 @@ db.once('open', function callback () {
   app.listen(app.get('port'));
 });
 
-app.get('/', main.home);
+function scriptsRegex (root) {
+  var slash = '\/';
+  if (root === slash) { slash = ''; }
+  return new RegExp(root + 
+    '(?:' + slash + 'scripts' +
+    '(?:\/size\/(\d+))?' +
+    '(?:\/sort\/([^\/]+))?' +
+    '(?:\/dir\/(asc|desc))?' +
+    '(?:\/page\/([1-9]\d*))?' +
+    ')?$');
+}
+app.get(scriptsRegex('\/'), main.home);
+//app.get('/', main.home);
 
 // Authentication routes
 app.post('/auth/', authentication.auth);
@@ -54,7 +66,7 @@ app.get('/login', main.login);
 app.get('/logout', main.logout);
 
 // User routes
-app.get('/users/:username', user.view);
+app.get(scriptsRegex('\/users\/([^\/]+)'), user.view);
 app.get('/user/edit', user.edit);
 app.post('/user/edit', user.update);
 app.get('/user/edit/scripts', user.scripts);

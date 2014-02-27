@@ -20,35 +20,7 @@
             </table>
 
             <BR /><BR />
-
-            <table id="scripts-list" class="indent">
-                <tr class="bold">
-                    <td width="50%">
-                        Name & Description
-                    </td>
-                    <td width="15%">
-                        Rating
-                    </td>
-                    <td width="15%">
-                        Installs
-                    </td>
-                </tr>
-                {{#scripts}}
-                <tr>
-                    <td width="50%">
-                        <span class="title">
-                          {{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - <a href="{{url}}">Install</a>
-                        </span>
-                        <span class="desc">{{description}}</span>
-                    </td>
-                    <td width="15%">
-                        {{rating}}
-                    </td>
-                    <td width="15%">
-                        {{installs}}
-                    </td>
-                </tr>
-                {{/scripts}}
+{{> scriptsList.html}}
             </table>
         </div>
 <BR /><BR />

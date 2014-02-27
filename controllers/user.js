@@ -1,30 +1,26 @@
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var RepoManager = require('../libs/repoManager');
+var scriptsList = require('../libs/modelsList');
 var async = require('async');
 var nil = require('../libs/helpers').nil;
 
 exports.view = function (req, res, next) {
-  var username = req.route.params.username;
+  var username = req.route.params.shift();
   var thisUser = req.session.user;
 
   User.findOne({ name: username }, function (err, user) {
     if (err || !user) { return next(); }
 
-    Script.find({ _authorId: user._id }, function (err, scripts) {
-      var scriptView = [];
-
-      scripts.forEach(function (script) {
-        scriptView.push({ 
-          name: script.name, description: script.meta.description || '', 
-          url: '/install/' + script.installName, rating: script.rating,
-          installs: script.installs, version: script.meta.version
-        });
-      });
-
-      res.render('user', { 
-        title: user.name, name: user.name, about: user.about, 
-        isYou: thisUser && thisUser.name === user.name, scripts: scriptView
+    scriptsList.listScripts({ _authorId: user._id },
+      req.route.params, ['author'], '/users/' + username,
+      function (scriptsList) {
+        res.render('user', { 
+          title: user.name,
+          name: user.name,
+          about: user.about, 
+          isYou: thisUser && thisUser.name === user.name,
+          scriptsList: scriptsList
       }, res);
     });
   });
