@@ -55,8 +55,6 @@ function scriptsRegex (root) {
     '(?:\/page\/([1-9]\d*))?' +
     ')?$');
 }
-app.get(scriptsRegex('\/'), main.home);
-//app.get('/', main.home);
 
 // Authentication routes
 app.post('/auth/', authentication.auth);
@@ -91,6 +89,8 @@ app.get('/admin/user', admin.userAdmin);
 app.get('/admin/api', admin.apiAdmin);
 app.post('/admin/user/update', admin.userAdminUpdate);
 app.post('/admin/api/update', admin.apiAdminUpdate);
+
+app.get(scriptsRegex('\/'), main.home);
 
 app.use(express.static(__dirname + '/public'));
 app.use(function (req, res, next){
