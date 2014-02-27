@@ -1,6 +1,19 @@
 var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
+var Script = require('../models/script').Script;
 var strategies = require('./strategies.json');
+var scriptsList = require('../libs/modelsList');
+
+// Temporary code to set new author value on scripts
+// Will be removed once deployed in production
+Script.find({}, function (err, scripts) {
+  scripts.forEach(function (script) {
+    User.findOne({ _id : script._authorId }, function (err, user) {
+      script.author = user.name;
+      script.save(function (err, script) {});
+    });
+  });
+});
 
 exports.home = function (req, res) {
   var options = { 'title': 'Home page' };
@@ -9,7 +22,16 @@ exports.home = function (req, res) {
   if (user) {
     options.username = user.name;
   }
-  res.render('index', options, res);
+
+  scriptsList.listScripts({}, req.route.params, [], '',
+    function (scriptsList) {
+      res.render('index', {
+        title: 'Home Page',
+        username: user ? user.name : null,
+        scriptsList: scriptsList
+      }, res);
+  });
+  //res.render('index', options, res);
 }
 
 exports.login = function (req, res) {

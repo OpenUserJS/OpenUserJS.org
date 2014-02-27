@@ -10,6 +10,7 @@ var scriptSchema = new Schema({
   installName: String,
   updated: Date,
   meta: Object,
+  author: String,
   _authorId: Schema.Types.ObjectId
 });
 
