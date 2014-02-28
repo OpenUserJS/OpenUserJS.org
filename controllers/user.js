@@ -104,10 +104,13 @@ exports.scripts = function (req, res) {
         }
       }
 
-      // Load the scripts onto the site
-      RepoManager.getManager(ghUserId, user, loadable).loadScripts(function () {
-        delete req.session.repos;
-        res.redirect('/users/' + user.name);
+      User.findOne({ _id: user._id }, function (err, user) {
+        // Load the scripts onto the site
+        RepoManager.getManager(ghUserId, user, loadable).loadScripts(
+          function () {
+            delete req.session.repos;
+            res.redirect('/users/' + user.name);
+        });
       });
     }
   }

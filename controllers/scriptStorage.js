@@ -3,6 +3,7 @@ var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var RepoManager = require('../libs/repoManager');
+var userRoles = require('../models/userRoles.json');
 var bucketName = 'OpenUserJS.org';
 
 if (process.env.NODE_ENV === 'production') {
@@ -150,7 +151,14 @@ exports.storeScript = function (user, meta, buf, callback, update) {
 
     script.save(function (err, script) {
       s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
-        function (err, data) { callback(script); });
+        function (err, data) {
+           if (user.role === userRoles.length - 1) {
+             --user.role;
+             user.save(function (err, user) { callback(script); });
+           } else {
+             callback(script);
+           }
+        });
     });
   });
 };
