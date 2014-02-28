@@ -29,12 +29,18 @@ exports.view = function (req, res, next) {
 exports.edit = function (req, res) {
   var user = req.session.user;
 
-  if (user) {
-    res.render('userEdit', { title: 'Edit Yourself', username: user.name,
-      about: user.about }, res);
-  } else {
-    res.redirect('/login');
-  }
+  if (!user) { return res.redirect('/login'); }
+
+  scriptsList.listScripts({ _authorId: user._id },
+  { size: -1 }, ['author'], '/user/edit',
+    function (scriptsList) {
+      res.render('userEdit', { 
+        title: 'Edit Yourself',
+        name: user.name,
+        about: user.about, 
+        scriptsList: scriptsList
+      }, res);
+  });
 };
 
 exports.scripts = function (req, res) {

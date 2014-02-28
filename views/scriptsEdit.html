@@ -5,6 +5,15 @@
                 &nbsp;
             </div>
             {{#hasGH}}
+            <p class="indent content">
+              To keep scripts you've imported from GitHub up-to-date on OpenUserJS.org when you push changes:<br>
+              <ol>
+                <li>Add a Webhook (in the repo settings) to the repos containing the script(s)</li>
+                <li>Paste the URL below as the "Payload URL"</li>
+                <li>Click "Update webhook"</li>
+              </ol>
+              <input type="text" size="50" value="http://openuserjs.jit.su/github/hook" />
+            </p>
             {{^showRepos}}
             <p class="indent content">
               <form id="load_repos" action="/user/edit/scripts" method="post">
