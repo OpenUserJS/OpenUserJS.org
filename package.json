@@ -9,6 +9,7 @@
     "mu2": "*",
     "mongoose": "*",
     "connect-mongo": "*",
+    "formidable": "*",
     "async": "*",
     "aws-sdk": "*",
     "passport": "*",
