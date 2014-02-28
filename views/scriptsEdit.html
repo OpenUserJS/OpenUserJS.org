@@ -21,6 +21,13 @@
                 <input type="submit" value="Find Scripts On GitHub" />
               </form>
             </p>
+            <br /><br />
+            <form action="/user/edit/scripts" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="uploadScript" value="true" />
+              <label for="script">Upload Script: </label>
+              <input type="file" name="script" /><br />
+              <input type="submit" value="Upload" />
+            </form>
             {{/showRepos}}
             {{#showRepos}}
             <form id="load_scripts_from_github" method="post" action="/user/edit/scripts">

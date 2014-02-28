@@ -1,3 +1,6 @@
+var fs = require('fs');
+var formidable = require('formidable');
+var scriptStorage = require('./scriptStorage');
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var RepoManager = require('../libs/repoManager');
@@ -55,8 +58,39 @@ exports.scripts = function (req, res) {
   var repos = null;
   var scriptname = null;
   var loadable = null;
+  var form = null;
 
   if (!user) { return res.redirect('/login'); }
+
+  // TODO: Organize this code
+  if (/multipart\/form-data/.test(req.headers['content-type'])) {
+    form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+      var script = files.script;
+      var stream = null;
+      var bufs = [];
+
+      // Reject non-js and huge files
+      if (script.type !== 'application/javascript' && 
+          script.size > 500000) { return res.redirect('/user/edit/scripts'); }
+
+      stream = fs.createReadStream(script.path);
+      stream.on('data', function (d) { bufs.push(d); });
+
+      // Pardon the depth
+      stream.on('end', function () {
+        User.findOne({ _id: user._id }, function (err, user) {
+          scriptStorage.getMeta(bufs, function (meta) {
+            scriptStorage.storeScript(user, meta, Buffer.concat(bufs),
+              function(script) {
+                res.redirect('/users/' + user.name);
+            });
+          });
+        });
+      });
+    });
+    return;
+  }
 
   options = { title: 'Edit Scripts', username: user.name };
 

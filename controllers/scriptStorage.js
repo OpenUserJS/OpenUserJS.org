@@ -108,9 +108,9 @@ exports.getMeta = function getMeta (chunks, callback) {
   for (; i < chunks.length; ++i) {
     var header = null;
     str += chunks[i];
-    header = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m.exec(str)[1];
+    header = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m.exec(str);
 
-    if (header) { return callback(parseMeta(header)); }
+    if (header && header[1]) { return callback(parseMeta(header[1])); }
   }
 }
 
