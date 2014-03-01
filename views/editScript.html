@@ -1,0 +1,24 @@
+{{> header.html}}
+
+<div id="main">
+  <pre id="editor">{{{source}}}</pre>
+<script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/cobalt");
+    editor.getSession().setMode("ace/mode/javascript");
+    
+    function submitCode() {
+      var form = document.getElementById('code_form');
+      var source = document.getElementById('source');
+      source.value = editor.getValue();
+      form.submit();
+    }
+</script>
+<form action="{{url}}" id="code_form" method="post">
+  <input type="hidden" id="source" name="source" value="" />
+  <input type="button" onclick="submitCode();" value="Submit Code" />
+</form>
+</div>
+
+{{> footer.html}}

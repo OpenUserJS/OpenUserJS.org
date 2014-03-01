@@ -90,6 +90,14 @@ table tr:not(:first-of-type) {
     height: 100px;
 }
 
+#editor { 
+    position: relative;
+    width: 60%;
+    height: 550px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* generic classes */
 .spacer {
     margin: 0; padding: 0;

@@ -112,6 +112,8 @@ exports.getMeta = function getMeta (chunks, callback) {
 
     if (header && header[1]) { return callback(parseMeta(header[1])); }
   }
+
+  callback(null);
 }
 
 exports.storeScript = function (user, meta, buf, callback, update) {

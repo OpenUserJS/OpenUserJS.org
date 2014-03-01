@@ -69,6 +69,8 @@ app.get('/user/edit', user.edit);
 app.post('/user/edit', user.update);
 app.get('/user/edit/scripts', user.scripts);
 app.post('/user/edit/scripts', user.scripts);
+app.get('/user/edit/scripts/new', user.newScript);
+app.post('/user/edit/scripts/new', user.newScript);
 
 // Script routes
 app.get('/scripts/:username/:scriptname', function (req, res, next) { next(); });

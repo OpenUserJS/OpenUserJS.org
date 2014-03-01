@@ -189,3 +189,29 @@ exports.update = function (req, res) {
     });
   }
 };
+
+exports.newScript = function (req, res) {
+  var user = req.session.user;
+  var url = '/user/edit/scripts/new';
+
+  if (!user) { return res.redirect('/login'); }
+
+  if (req.body.source) {
+    var source = new Buffer(req.body.source);
+    scriptStorage.getMeta([source], function (meta) {
+      if (!meta || !meta.name) { return res.redirect(url); }
+
+      User.findOne({ _id: user._id }, function (err, user) {
+        scriptStorage.storeScript(user, meta, source, function (script) {
+          res.redirect('/users/' + user.name);
+        });
+      });
+    });
+  } else {
+    res.render('editScript', { 
+      title: 'Write a new script',
+      source: '',
+      url: url
+    }, res);
+  }
+};
