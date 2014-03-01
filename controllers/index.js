@@ -5,21 +5,6 @@ var strategies = require('./strategies.json');
 var scriptsList = require('../libs/modelsList');
 var userRoles = require('../models/userRoles.json');
 
-// Temporary code to fix data
-// Will be removed once deployed in production
-Script.find({}, function (err, scripts) {
-  scripts.forEach(function (script) {
-    User.findOne({ _id : script._authorId }, function (err, user) {
-      script.author = user.name;
-      script.save(function (err, script) {});
-      if (user.role === userRoles.length - 1) {
-        --user.role;
-        user.save(function (err, user) {});
-      }
-    });
-  });
-});
-
 exports.home = function (req, res) {
   var user = req.session.user;
 

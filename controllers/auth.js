@@ -95,23 +95,6 @@ exports.auth = function (req, res, next) {
   });
 };
 
-// Temporary migration code
-// Will be removed
-User.find({ 'strategies' : 'github' }, function (err, users) {
-  users.forEach(function (user) {
-    var index = user.strategies.indexOf('github');
-    var auth = null;
-    if (index > -1) {
-      auth = user.auths[index];
-      user.strategies.splice(index, 1);
-      user.auths.splice(index, 1);
-      user.auths.push(auth);
-      user.strategies.push('github');
-      user.save(function(err, user) {});
-    }
-  });
-});
-
 exports.callback = function (req, res, next) {
   var strategy = req.route.params.strategy;
   var username = req.session.username;
