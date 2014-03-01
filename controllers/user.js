@@ -223,6 +223,7 @@ exports.editScript = function (req, res, next) {
   if (!user) { return res.redirect('/login'); }
 
   req.route.params.username = user.name;
+  req.route.params.scriptname += '.user.js';
   scriptStorage.getSource(req, function (script, stream) {
     var bufs = [];
 

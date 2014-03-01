@@ -34,7 +34,7 @@ exports.listScripts = function (query, params, omit, baseUrl, callback) {
       scriptsList.hasAuthor = omit.indexOf('author') === -1;
 
       scripts.forEach(function (script) {
-        var editUrl = script.installName.split('/');
+        var editUrl = script.installName.replace(/\.user\.js$/, '').split('/');
         editUrl.shift();
 
         scriptsList.scripts.push({ 

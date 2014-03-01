@@ -92,7 +92,7 @@ table tr:not(:first-of-type) {
 
 #editor { 
     position: relative;
-    width: 60%;
+    width: 70%;
     height: 550px;
     margin-left: auto;
     margin-right: auto;
