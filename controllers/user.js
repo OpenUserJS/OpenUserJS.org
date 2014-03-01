@@ -215,3 +215,26 @@ exports.newScript = function (req, res) {
     }, res);
   }
 };
+
+exports.editScript = function (req, res, next) {
+  var user = req.session.user;
+  var installName = null;
+
+  if (!user) { return res.redirect('/login'); }
+
+  req.route.params.username = user.name;
+  scriptStorage.getSource(req, function (script, stream) {
+    var bufs = [];
+
+    if (!script || script._authorId != user._id) { return next(); }
+
+    stream.on('data', function (d) { bufs.push(d); });
+    stream.on('end', function () {
+      res.render('editScript', { 
+        title: 'Edit ' + script.name,
+        source: Buffer.concat(bufs).toString('utf8'),
+        url: '/user/edit/scripts/new'
+      }, res);
+    });
+  });
+};

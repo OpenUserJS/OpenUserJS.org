@@ -17,39 +17,49 @@ if (process.env.NODE_ENV === 'production') {
   }});
 }
 
-function getInstallName (req, res) {
+function getInstallName (req) {
   var username = req.route.params.username.toLowerCase();
   var namespace = req.route.params.namespace;
   return username + '/' + (namespace ? namespace + '/' : '') 
     + req.route.params.scriptname;
 }
 
-exports.sendScript = function (req, res, next) {
+exports.getSource = function (req, callback) {
   var s3 = new AWS.S3();
+  var installName = getInstallName(req);
+
+  Script.findOne({ installName: installName }, function (err, script) {
+    if (!script) { return callback(null); }
+
+    // Get the script
+    callback(script, s3.getObject({ Bucket: bucketName, Key: installName })
+      .createReadStream());
+  });
+};
+
+exports.sendScript = function (req, res, next) {
   var accept = req.headers['Accept'];
   var installName = null;
 
   if (accept === 'text/x-userscript-meta') { 
     return exports.sendMeta(req, res, next); 
   }
-  installName = getInstallName(req, res);
 
-  // Update the install count
-  Script.findOne({ installName: installName }, function (err, script) {
+  exports.getSource(req, function (script, stream) {
     if (!script) { return next(); }
 
     // Send the script
     res.set('Content-Type', 'text/javascript; charset=utf-8');
-    s3.getObject({ Bucket: bucketName, Key: installName })
-      .createReadStream().pipe(res);
+    stream.pipe(res);
 
+    // Update the install count
     ++script.installs;
     script.save(function (err, script) {});
   });
-}
+};
 
 exports.sendMeta = function (req, res, next) {
-  var installName = getInstallName(req, res).replace(/\.meta\.js$/, '.user.js');
+  var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
 
   Script.findOne({ installName: installName }, function (err, script) {
     var key = null;

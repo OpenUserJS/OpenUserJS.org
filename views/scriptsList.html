@@ -22,7 +22,7 @@
      {{/edit}}
      <td width="50%">
        <span class="title">
-         {{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - <a href="{{url}}">Install</a>
+         {{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - {{#edit}}<a href="{{editUrl}}">Edit</a>{{/edit}}{{^edit}}<a href="{{url}}">Install</a>{{/edit}}
        </span>
        <span class="desc">{{description}}</span>
      </td>

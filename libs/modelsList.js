@@ -34,11 +34,15 @@ exports.listScripts = function (query, params, omit, baseUrl, callback) {
       scriptsList.hasAuthor = omit.indexOf('author') === -1;
 
       scripts.forEach(function (script) {
+        var editUrl = script.installName.split('/');
+        editUrl.shift();
+
         scriptsList.scripts.push({ 
           name: script.name,
           author: script.author,
           description: script.meta.description || '', 
           url: '/install/' + script.installName,
+          editUrl: '/script/' + editUrl.join('/') + '/edit/source',
           rating: script.rating,
           installs: script.installs,
           version: script.meta.version

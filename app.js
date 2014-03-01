@@ -71,12 +71,13 @@ app.get('/user/edit/scripts', user.scripts);
 app.post('/user/edit/scripts', user.scripts);
 app.get('/user/edit/scripts/new', user.newScript);
 app.post('/user/edit/scripts/new', user.newScript);
+app.get('/script/:scriptname/edit/source', user.editScript);
+app.get('/script/:namespace/:scriptname/edit/source', user.editScript);
 
 // Script routes
 app.get('/scripts/:username/:scriptname', function (req, res, next) { next(); });
 app.get('/install/:username/:scriptname', scriptStorage.sendScript);
 app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
-app.get('/script/:scriptname/edit', function (req, res, next) { next(); });
 app.get('/scripts/:username/:namespace/:scriptname', 
   function (req, res, next) { next(); });
 app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
