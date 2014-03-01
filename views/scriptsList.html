@@ -1,6 +1,12 @@
 {{#scriptsList}}
+{{#edit}}
+<form action="/user/edit" method="post">
+{{/edit}}
 <table id="scripts-list" class="indent">
   <tr class="bold">
+{{#edit}}
+    <td width="%5">&nbsp;</td>
+{{/edit}}
 {{#headings}}
     <td width="{{width}}">
       <a href="{{baseUrl}}{{size}}/sort/{{name}}{{direction}}">{{label}}</a>
@@ -9,6 +15,11 @@
   </tr>
 {{#scripts}}
    <tr>
+     {{#edit}}
+     <td width="5%">
+       <input type="checkbox" name="urls[{{url}}]" />
+     </td>
+     {{/edit}}
      <td width="50%">
        <span class="title">
          {{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - <a href="{{url}}">Install</a>
@@ -36,4 +47,8 @@
 {{#next}}
  &gt; <a href="{{baseUrl}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
 {{/next}}
+{{#edit}}
+<input type="submit" value="Delete Selected Scripts" />
+</form>
+{{/edit}}
 {{/scriptsList}}

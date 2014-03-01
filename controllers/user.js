@@ -7,6 +7,7 @@ var RepoManager = require('../libs/repoManager');
 var scriptsList = require('../libs/modelsList');
 var async = require('async');
 var nil = require('../libs/helpers').nil;
+var cleanFilename = require('../libs/helpers').cleanFilename;
 
 exports.view = function (req, res, next) {
   var username = req.route.params.shift();
@@ -37,6 +38,7 @@ exports.edit = function (req, res) {
   scriptsList.listScripts({ _authorId: user._id },
   { size: -1 }, ['author'], '/user/edit',
     function (scriptsList) {
+      scriptsList.edit = true;
       res.render('userEdit', { 
         title: 'Edit Yourself',
         name: user.name,
@@ -159,12 +161,31 @@ exports.scripts = function (req, res) {
 }
 
 exports.update = function (req, res) {
-  User.findOneAndUpdate({ _id: req.session.user._id }, 
-    { about: req.body.about  },
-    function (err, user) {
-      if (err) { res.redirect('/'); }
+  var user = req.session.user;
+  var scriptUrls = req.body.urls ? Object.keys(req.body.urls) : '';
+  var installRegex = null;
+  var installNames = [];
+  var username = cleanFilename(user.name).toLowerCase();
 
-      req.session.user.about = user.about;
+  if (!user) { return res.redirect('/login'); }
+
+  if (req.body.about) {
+    User.findOneAndUpdate({ _id: user._id }, 
+      { about: req.body.about  },
+      function (err, user) {
+        if (err) { res.redirect('/'); }
+
+        req.session.user.about = user.about;
+        res.redirect('/users/' + user.name);
+    });
+  } else {
+    installRegex = new RegExp('^\/install\/(' + username + '\/.+)$');
+    scriptUrls.forEach(function (url) {
+      var matches = installRegex.exec(url);
+      if (matches && matches[1]) { installNames.push(matches[1]); }
+    });
+    async.each(installNames, scriptStorage.deleteScript, function () {
       res.redirect('/users/' + user.name);
-  });
+    });
+  }
 };

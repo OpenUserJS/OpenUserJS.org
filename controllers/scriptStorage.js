@@ -163,6 +163,13 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   });
 };
 
+exports.deleteScript = function (installName, callback) {
+    Script.findOneAndRemove({ installName: installName }, function (err, user) {
+      var s3 = new AWS.S3();
+      s3.deleteObject({ Bucket : bucketName, Key : installName}, callback);
+    });
+};
+
 exports.webhook = function (req, res) {
   var payload = null;
   var username = null;
