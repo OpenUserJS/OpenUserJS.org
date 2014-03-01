@@ -148,6 +148,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
     } else if (!script) {
       script = new Script({
         name: meta.name,
+        author: user.name,
         about: '',
         installs: 0,
         rating: 0,
@@ -158,6 +159,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         _authorId: user._id
       });
     } else {
+      script.meta = meta;
       script.updated = new Date();
     }
 
