@@ -40,9 +40,10 @@ exports.listScripts = function (query, params, omit, baseUrl, callback) {
         scriptsList.scripts.push({ 
           name: script.name,
           author: script.author,
-          description: script.meta.description || '', 
-          url: '/install/' + script.installName,
-          editUrl: '/script/' + editUrl.join('/') + '/edit/source',
+          description: script.meta.description || '',
+          url: '/scripts/' + script.installName.replace(/\.user\.js$/, ''),
+          install: '/install/' + script.installName,
+          editUrl: '/script/' + editUrl.join('/') + '/edit',
           rating: script.rating,
           installs: script.installs,
           version: script.meta.version

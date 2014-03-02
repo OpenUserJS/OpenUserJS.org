@@ -17,12 +17,12 @@
    <tr>
      {{#edit}}
      <td width="5%">
-       <input type="checkbox" name="urls[{{url}}]" />
+       <input type="checkbox" name="urls[{{install}}]" />
      </td>
      {{/edit}}
      <td width="50%">
        <span class="title">
-         {{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - {{#edit}}<a href="{{editUrl}}">Edit</a>{{/edit}}{{^edit}}<a href="{{url}}">Install</a>{{/edit}}
+         <a href="{{url}}">{{name}}</a>{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - {{#edit}}<a href="{{editUrl}}">Edit</a>{{/edit}}{{^edit}}<a href="{{install}}">Install</a>{{/edit}}
        </span>
        <span class="desc">{{description}}</span>
      </td>

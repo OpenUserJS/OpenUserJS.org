@@ -23,6 +23,7 @@ function getInstallName (req) {
   return username + '/' + (namespace ? namespace + '/' : '') 
     + req.route.params.scriptname;
 }
+exports.getInstallName = getInstallName;
 
 exports.getSource = function (req, callback) {
   var s3 = new AWS.S3();
@@ -178,10 +179,10 @@ exports.storeScript = function (user, meta, buf, callback, update) {
 };
 
 exports.deleteScript = function (installName, callback) {
-    Script.findOneAndRemove({ installName: installName }, function (err, user) {
-      var s3 = new AWS.S3();
-      s3.deleteObject({ Bucket : bucketName, Key : installName}, callback);
-    });
+  Script.findOneAndRemove({ installName: installName }, function (err, user) {
+    var s3 = new AWS.S3();
+    s3.deleteObject({ Bucket : bucketName, Key : installName}, callback);
+  });
 };
 
 exports.webhook = function (req, res) {

@@ -7,6 +7,7 @@ var main = require('./controllers/index');
 var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
 var user = require('./controllers/user');
+var script = require('./controllers/script');
 var scriptStorage = require('./controllers/scriptStorage');
 var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
@@ -71,19 +72,20 @@ app.get('/user/edit/scripts', user.scripts);
 app.post('/user/edit/scripts', user.scripts);
 app.get('/user/edit/scripts/new', user.newScript);
 app.post('/user/edit/scripts/new', user.newScript);
-app.get('/script/:scriptname/edit/source', user.editScript);
-app.get('/script/:namespace/:scriptname/edit/source', user.editScript);
+app.get('/scripts/:username/:scriptname/source', user.editScript);
+app.get('/scripts/:username/:namespace/:scriptname/source', user.editScript);
 
 // Script routes
-app.get('/scripts/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/scripts/:username/:scriptname', script.view);
+app.get('/scripts/:username/:namespace/:scriptname', script.view);
+app.get('/script/scriptname/edit', script.edit);
+app.get('/script/:namespace/:scriptname/edit', script.edit);
+app.post('/script/scriptname/edit', script.edit);
+app.post('/script/:namespace/:scriptname/edit', script.edit);
 app.get('/install/:username/:scriptname', scriptStorage.sendScript);
-app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
-app.get('/scripts/:username/:namespace/:scriptname', 
-  function (req, res, next) { next(); });
 app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
+app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
 app.get('/meta/:username/:namespace/:scriptname', scriptStorage.sendMeta);
-app.get('/script/:namespace/:scriptname/edit', 
-  function (req, res, next) { next(); });
 app.post('/github/hook', scriptStorage.webhook);
 app.post('/github/service', function (req, res, next) { next(); });
 

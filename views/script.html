@@ -1,0 +1,62 @@
+{{> header.html}}
+
+        <div id="main">
+            <div class="spacer" style="height: 15%;">
+                &nbsp;
+            </div>
+
+            <h1>{{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}}{{#isYou}}&nbsp;-&nbsp;<a href="{{edit}}">Edit?</a>{{/isYou}}</h1>
+            <table class="indent content">
+                <tr class="bold">
+                  <td>
+                    <a href="{{install}}">Install</a>
+                  </td>
+                  <td>
+                    <a href="{{source}}">View Source</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Description
+                  </td>
+                  <td>
+                    {{description}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Author
+                  </td>
+                  <td>
+                    <a href="/users/{{author}}">{{author}}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Rating
+                  </td>
+                  <td>
+                    {{rating}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Installs
+                  </td>
+                  <td>
+                    {{installs}}
+                  </td>
+                </tr>
+                {{#about}}
+                <tr>
+                  <td colspan="2">
+                    {{about}}
+                  </td>
+                </tr>
+                {{/about}}
+            </table>
+        </div>
+<BR /><BR />
+<BR /><BR />
+
+{{> footer.html}}

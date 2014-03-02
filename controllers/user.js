@@ -190,14 +190,17 @@ exports.update = function (req, res) {
   }
 };
 
-exports.newScript = function (req, res) {
+exports.newScript = function (req, res, next) {
   var user = req.session.user;
-  var url = '/user/edit/scripts/new';
+  var source = null;
+  var url = null;
 
   if (!user) { return res.redirect('/login'); }
 
-  if (req.body.source) {
-    var source = new Buffer(req.body.source);
+  if (req.body.url) {
+    source = new Buffer(req.body.source);
+    url = req.body.url;
+
     scriptStorage.getMeta([source], function (meta) {
       if (!meta || !meta.name) { return res.redirect(url); }
 
@@ -211,7 +214,9 @@ exports.newScript = function (req, res) {
     res.render('editScript', { 
       title: 'Write a new script',
       source: '',
-      url: url
+      url: req.url,
+      owner: true,
+      readOnly: false
     }, res);
   }
 };
@@ -220,21 +225,24 @@ exports.editScript = function (req, res, next) {
   var user = req.session.user;
   var installName = null;
 
-  if (!user) { return res.redirect('/login'); }
-
-  req.route.params.username = user.name;
+  if (!req.route.params.username) {
+    req.route.params.username = user.name;
+  }
   req.route.params.scriptname += '.user.js';
+
   scriptStorage.getSource(req, function (script, stream) {
     var bufs = [];
 
-    if (!script || script._authorId != user._id) { return next(); }
+    if (!script) { return next(); }
 
     stream.on('data', function (d) { bufs.push(d); });
     stream.on('end', function () {
       res.render('editScript', { 
         title: 'Edit ' + script.name,
         source: Buffer.concat(bufs).toString('utf8'),
-        url: '/user/edit/scripts/new'
+        url: req.url,
+        owner: user && script._authorId == user._id,
+        readOnly: !user
       }, res);
     });
   });
