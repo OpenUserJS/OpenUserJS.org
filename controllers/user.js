@@ -206,7 +206,8 @@ exports.newScript = function (req, res, next) {
 
       User.findOne({ _id: user._id }, function (err, user) {
         scriptStorage.storeScript(user, meta, source, function (script) {
-          res.redirect('/users/' + user.name);
+          res.redirect('/scripts/' + script.installName
+            .replace(/\.user\.js$/, ''));
         });
       });
     });
