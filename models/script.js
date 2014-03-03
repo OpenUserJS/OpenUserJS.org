@@ -9,6 +9,7 @@ var scriptSchema = new Schema({
   installable: Boolean,
   installName: String,
   updated: Date,
+  fork: Array,
   meta: Object,
   author: String,
   _authorId: Schema.Types.ObjectId

@@ -6,13 +6,13 @@
 <form method="post" action="/admin/user/update">
 {{#users}}
   <strong>{{name}}</strong> | Role:
-  <select name="user[{{name}}]">
+  <select name="user[{{{name}}}]">
     {{#roles}}
-    <option value="{{val}}" {{#selected}}selected="{{selected}}"{{/selected}}>
+    <option value="{{{val}}}" {{#selected}}selected="{{selected}}"{{/selected}}>
       {{display}}</option>
     {{/roles}}
   </select> | Remove: 
-  <input type="checkbox" name="remove[{{name}}]" value="{{user}}"><br />
+  <input type="checkbox" name="remove[{{{name}}}]" value="{{{user}}}"><br />
 {{/users}}
 <input type="submit" value="Update" />
 </form>

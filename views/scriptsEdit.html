@@ -36,11 +36,11 @@
               <input type="hidden" name="loadScripts" value="true" />
             {{#repos}}
             <p class="indent">
-              <input type="checkbox" name="{{repo}}_all" value="{{repo}}" />
-              <strong><a href="https://github.com/{{user}}/{{repo}}">{{repo}}</a></strong><br />
+              <input type="checkbox" name="{{{repo}}}_all" value="{{{repo}}}" />
+              <strong><a href="https://github.com/{{{user}}}/{{{repo}}}">{{repo}}</a></strong><br />
               {{#scripts}}
-              <input type="checkbox" name="{{repo}}[{{name}}]" value="true"/>
-              <a href="{{url}}">{{name}}</a><br />
+              <input type="checkbox" name="{{{repo}}}[{{{name}}}]" value="true"/>
+              <a href="{{{url}}}">{{name}}</a><br />
               {{/scripts}}
             </p>
             {{/repos}}

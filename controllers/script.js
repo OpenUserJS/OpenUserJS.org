@@ -13,7 +13,15 @@ exports.view = function (req, res, next) {
     function (err, script) {
       if (err || !script) { return next(); }
       var editUrl = installName.split('/');
+      var fork = script.fork;
       editUrl.shift();
+
+      if (fork instanceof Array && fork.length > 0) {
+        fork[0].first = true;
+        fork[fork.length - 1].original = true;
+      } else {
+        fork = null;
+      }
 
       res.render('script', { 
         title: script.name,
@@ -25,9 +33,11 @@ exports.view = function (req, res, next) {
         author: script.author,
         rating: script.rating,
         installs: script.installs,
+        fork: fork,
         description: script.meta.description,
         about: script.about,
-        isYou: user && user._id == script._authorId
+        isYou: user && user._id == script._authorId,
+        isFork: !!fork
       }, res);
   });
 };

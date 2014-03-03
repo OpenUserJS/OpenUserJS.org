@@ -206,13 +206,30 @@ exports.newScript = function (req, res, next) {
 
       User.findOne({ _id: user._id }, function (err, user) {
         scriptStorage.storeScript(user, meta, source, function (script) {
-          res.redirect('/scripts/' + script.installName
-            .replace(/\.user\.js$/, ''));
+          var redirectUrl = '/scripts/' + script.installName
+            .replace(/\.user\.js$/, '');
+
+          if (!req.body.original) { return res.redirect(redirectUrl); }
+
+          Script.findOne({ installName: req.body.original }, 
+            function (err, origScript) {
+              var fork = null;
+              if (err || !origScript) { return res.redirect(redirectUrl); }
+
+              fork = origScript.fork || [];
+              fork.shift({ author: origScript.author, url: origScript
+                .installName.replace(/\.user\.js$/, '') });
+              script.fork = fork;
+
+              script.save(function (err, script) {
+                res.redirect(redirectUrl);
+              });
+          });
         });
       });
     });
   } else {
-    res.render('editScript', { 
+    res.render('scriptEditor', { 
       title: 'Write a new script',
       source: '',
       url: req.url,
@@ -226,11 +243,7 @@ exports.editScript = function (req, res, next) {
   var user = req.session.user;
   var installName = null;
 
-  if (!req.route.params.username) {
-    req.route.params.username = user.name;
-  }
   req.route.params.scriptname += '.user.js';
-
   scriptStorage.getSource(req, function (script, stream) {
     var bufs = [];
 
@@ -238,9 +251,10 @@ exports.editScript = function (req, res, next) {
 
     stream.on('data', function (d) { bufs.push(d); });
     stream.on('end', function () {
-      res.render('editScript', { 
+      res.render('scriptEditor', { 
         title: 'Edit ' + script.name,
         source: Buffer.concat(bufs).toString('utf8'),
+        original: script.installName,
         url: req.url,
         owner: user && script._authorId == user._id,
         readOnly: !user

@@ -9,7 +9,7 @@
 {{/edit}}
 {{#headings}}
     <td width="{{width}}">
-      <a href="{{baseUrl}}{{size}}/sort/{{name}}{{direction}}">{{label}}</a>
+      <a href="{{{baseUrl}}}{{size}}/sort/{{name}}{{direction}}">{{label}}</a>
     </td>
 {{/headings}}
   </tr>
@@ -17,18 +17,18 @@
    <tr>
      {{#edit}}
      <td width="5%">
-       <input type="checkbox" name="urls[{{install}}]" />
+       <input type="checkbox" name="urls[{{{install}}}]" />
      </td>
      {{/edit}}
      <td width="50%">
        <span class="title">
-         <a href="{{url}}">{{name}}</a>{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - {{#edit}}<a href="{{editUrl}}">Edit</a>{{/edit}}{{^edit}}<a href="{{install}}">Install</a>{{/edit}}
+         <a href="{{{url}}}">{{name}}</a>{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}} - {{#edit}}<a href="{{{editUrl}}}">Edit</a>{{/edit}}{{^edit}}<a href="{{{install}}}">Install</a>{{/edit}}
        </span>
        <span class="desc">{{description}}</span>
      </td>
      {{#hasAuthor}}
      <td width="15%">
-       <a href="/users/{{author}}">{{author}}</a>
+       <a href="/users/{{{author}}}">{{author}}</a>
      </td>
      {{/hasAuthor}}
      <td width="15%">
@@ -41,11 +41,11 @@
 {{/scripts}}
    <br />
 {{#previous}}
-<a href="{{baseUrl}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
+<a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
 {{/previous}}
 {{pageNumber}}
 {{#next}}
- &gt; <a href="{{baseUrl}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
+ &gt; <a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
 {{/next}}
 {{#edit}}
 <input type="submit" value="Delete Selected Scripts" />
