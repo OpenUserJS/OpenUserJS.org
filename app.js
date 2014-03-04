@@ -17,6 +17,20 @@ var db = mongoose.connection;
 app.set('port', process.env.PORT || 8080);
 
 app.configure(function(){
+  // Force HTTPS
+  if (process.env.NODE_ENV === 'production') {
+    app.use(function (req, res, next) {
+      res.setHeader('Strict-Transport-Security', 
+        'max-age=8640000; includeSubDomains');
+
+      if (req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(301, 'https://' + req.headers.host + req.url);
+      }
+
+      next();
+    });
+  }
+
   app.use(express.urlencoded());
   app.use(express.json());
   app.use(express.compress());
@@ -31,22 +45,6 @@ app.configure(function(){
     })
   }));
   app.use(passport.initialize());
-
-  // Force HTTPS
-  if (process.env.NODE_ENV === 'production') {
-    app.use(function (req, res, next) {
-      if (req.headers['x-forwarded-proto'] !== 'https') {
-        var url = 'https://' + req.headers.host + '/';
-        res.setHeader('Strict-Transport-Security', 
-          'max-age=8640000; includeSubDomains');
-        res.writeHead(301, { 'location': url });
-        return res.end('Redirecting to <a href="' + url + '">' + 
-          url + '</a>.');
-      }
-
-      next();
-    });
-  }
   app.use(app.router);
 
   // Set up the views
