@@ -31,6 +31,22 @@ app.configure(function(){
     })
   }));
   app.use(passport.initialize());
+
+  // Force HTTPS
+  if (process.env.NODE_ENV === 'production') {
+    app.use(function (req, res, next) {
+      if (req.headers['x-forwarded-proto'] !== 'https') {
+        var url = 'https://' + req.headers.host + '/';
+        res.setHeader('Strict-Transport-Security', 
+          'max-age=8640000; includeSubDomains');
+        res.writeHead(301, { 'location': url });
+        return res.end('Redirecting to <a href="' + url + '">' + 
+          url + '</a>.');
+      }
+
+      next();
+    });
+  }
   app.use(app.router);
 
   // Set up the views
