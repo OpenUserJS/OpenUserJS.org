@@ -15,6 +15,16 @@
                     <a href="{{{source}}}">View Source</a>
                   </td>
                 </tr>
+                {{#voteable}}
+                <tr>
+                  <td>
+                    <span class="bold">Review</span>
+                  </td>
+                  <td>
+                    <a {{#up}}class="bold" {{/up}}href="{{{upUrl}}}">Like</a>&nbsp;-&nbsp;<a {{#down}}class="bold" {{/down}}href="{{{downUrl}}}">Dislike</a>
+                  </td>
+                </tr>
+                {{/voteable}}
                 <tr>
                   <td>
                     Description

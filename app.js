@@ -100,6 +100,8 @@ app.get('/install/:username/:scriptname', scriptStorage.sendScript);
 app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
 app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
 app.get('/meta/:username/:namespace/:scriptname', scriptStorage.sendMeta);
+app.get('/vote/:username/:scriptname/:vote', script.vote);
+app.get('/vote/:username/:namespace/:scriptname/:vote', script.vote);
 app.post('/github/hook', scriptStorage.webhook);
 app.post('/github/service', function (req, res, next) { next(); });
 

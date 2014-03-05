@@ -153,6 +153,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         about: '',
         installs: 0,
         rating: 0,
+        votes: 0,
         installable: true,
         installName: installName,
         updated: new Date(),

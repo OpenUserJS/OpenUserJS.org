@@ -6,6 +6,7 @@ var scriptSchema = new Schema({
   about: String,
   installs: Number,
   rating: Number,
+  votes: Number,
   installable: Boolean,
   installName: String,
   updated: Date,
