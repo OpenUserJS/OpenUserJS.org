@@ -1,3 +1,4 @@
 {
-  "secret" : "someSecretStringForCookieParser"
+  "secret" : "someSecretStringForSession",
+  "connect" : "mongodb://nodejitsu_sizzlemctwizzle:b6vrl5hvkv2a3vvbaq1nor7fdl@ds045978.mongolab.com:45978/nodejitsu_sizzlemctwizzle_nodejitsudb8203815757"
 }

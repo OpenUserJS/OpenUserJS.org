@@ -1,13 +1,17 @@
 {
   "name": "OpenUserJS.org",
   "description": "An open source user scripts repo built using Node.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "app",
   "dependencies": {
     "express": "*",
     "bluebird": "*",
     "mu2": "*",
     "mongoose": "*",
+    "connect-mongo": "*",
+    "formidable": "*",
+    "async": "*",
+    "aws-sdk": "*",
     "passport": "*",
     "passport-amazon": "*",
     "passport-aol": "*",
@@ -23,9 +27,9 @@
     "passport-windowslive": "*",
     "passport-yahoo": "*",
     "passport-foursquare": "*",
-    "passport-instagram" : "*",
+    "passport-instagram": "*",
     "passport-steam": "*",
-    "passport-tumblr" : "*"
+    "passport-tumblr": "*"
   },
   "repository": {
     "type": "git",

@@ -27,7 +27,7 @@ body {
     height: 70%;
 }
 
-#main p, #footer p, h3 {
+#main p, #footer p, h1, h2, h3 {
     text-align: center;
 }
 
@@ -80,6 +80,24 @@ table tr:not(:first-of-type) {
     text-indent: 14px;
 }
 
+.editor {
+    width: 60%;
+    text-align: center;
+}
+
+.editor textarea {
+    width: 90%;
+    height: 100px;
+}
+
+#editor { 
+    position: relative;
+    width: 70%;
+    height: 550px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* generic classes */
 .spacer {
     margin: 0; padding: 0;
@@ -96,4 +114,8 @@ table tr:not(:first-of-type) {
 
 .color-normal {
     color: #3A3A3A;
+}
+
+.content {
+    width: 60%;
 }

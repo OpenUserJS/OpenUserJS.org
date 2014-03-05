@@ -16,7 +16,8 @@ npm-debug.log
 node_modules
 
 data
+fakeS3
+cert
+aws.json
 
-prodDB.json
-
-iisnode
+/iisnode

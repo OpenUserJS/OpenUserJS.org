@@ -1,0 +1,27 @@
+{{> header.html}}
+
+        <div id="main">
+            <div class="spacer" style="height: 15%;">
+                &nbsp;
+            </div>
+          <div id="login">
+            <h3>Login (or Register)</h3>
+            <form id="login" method="post" action="/auth/">
+              <p>Input your username (or the one you want):</p>
+              <input type="text" name="username" /><br />
+              <p>To Register: select an authenticator from the dropdown.</p>
+              <p>You can leave it blank if you're logging in.</p>
+              <select name="auth">
+                {{#strategies}}
+                <option value="{{strat}}">{{display}}</option>
+                {{/strategies}}
+              </select>
+              <input type="submit" value="Go!" />
+            </form>
+            <p><em>Note: If you need an authenticator, the easiest way is to get
+                an OpenID from <a href="http://claimid.com/">claimID</a>.</em>
+            </p>
+          </div>
+        </div>
+
+{{> footer.html}}

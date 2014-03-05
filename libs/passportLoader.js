@@ -6,12 +6,12 @@ var URL = process.env.NODE_ENV === 'production' ?
 exports.strategyInstances = nil();
 
 // This will load a single passport
-exports.loadPassport = function(strategy) {
+exports.loadPassport = function (strategy) {
   var requireStr = 'passport-' + strategy.name;
   var PassportStrategy = require(requireStr).Strategy;
   var instance = null;
 
-  if(strategy.openid) {
+  if (strategy.openid) {
     instance = new PassportStrategy(
       {
         returnURL: 'http://' + URL  + '/auth/' + strategy.name + '/callback/',
@@ -19,7 +19,7 @@ exports.loadPassport = function(strategy) {
         profile: false,
         stateless: true
       },
-      function() {}
+      function () {} // we replace this call back later (_verify)
     );
   } else {
     instance = new PassportStrategy(
@@ -28,9 +28,10 @@ exports.loadPassport = function(strategy) {
         consumerSecret: strategy.key,
         clientID: strategy.id,
         clientSecret: strategy.key,
+        state: 'a bullshit string reddit requires',
         callbackURL: 'http://' + URL  + '/auth/' + strategy.name + '/callback/'
       },
-      function() {}
+      function () {} // we replace this call back later (_verify)
     );
   }
 

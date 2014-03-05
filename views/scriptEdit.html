@@ -1,0 +1,32 @@
+{{> header.html}}
+<div id="main">
+  <div class="spacer" style="height: 15%;">
+    &nbsp;
+  </div>
+  <form id="edit_about" action="edit" method="post">
+    <table class="indent editor">
+      <tr class="bold">
+        <td colspan="2">About {{name}}</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <textarea class="indent" id="about" name="about">{{about}}</textarea>
+        </td>
+      </tr>
+      <tr>
+        <td class="bold">
+          <a href="{{{source}}}">Edit Source</a>
+        </td>
+        <td class="bold">
+          Delete Script: <input type="checkbox" name="remove" />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <input type="submit" value="Save" />
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
+{{> footer.html}}
