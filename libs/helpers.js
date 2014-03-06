@@ -21,42 +21,6 @@ exports.forIn = function (obj, forProp) {
   }
 };
 
-// A simple way of waiting for a bunch of async calls to finish
-// Call the constructor with the function you want run when everything is done
-// Add functions that you want to wait to get called 
-// Basically callbacks to async functions
-
-// So instead of:
-// asyncFunction(callback);
-
-// Do:
-// var wait = new Wait(function() { console.log('done'); });
-// asyncFunction(wait.add(callback));
-
-function Wait(last) {
-  this.counter = 0;
-  this.done = function () {
-    if (this.counter) { return; }
-    last();
-  };
-}
-
-Wait.prototype.add = function (task) {
-  var wait = this;
-  ++this.counter;
-
-  return (function () {
-    if (task) {
-      task.apply(null, Array.prototype.slice.apply(arguments));
-    }
-
-    --wait.counter;
-    wait.done();
-  });
-}
-
-exports.Wait = Wait;
-
 // Clean filenames but leave them readable
 // Based on Greasemonkey modules/remoteScript.js
 exports.cleanFilename = function (filename, defaultName) {
@@ -67,4 +31,8 @@ exports.cleanFilename = function (filename, defaultName) {
   .replace(/(\s|%20)+/g, '_');
 
   return cleanName || defaultName;
-}
+};
+
+exports.encodePath = function (path) {
+  return encodeURIComponent(path).replace(/%2F/g, '/');
+};
