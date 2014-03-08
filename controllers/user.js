@@ -7,7 +7,6 @@ var RepoManager = require('../libs/repoManager');
 var scriptsList = require('../libs/modelsList');
 var async = require('async');
 var nil = require('../libs/helpers').nil;
-var cleanFilename = require('../libs/helpers').cleanFilename;
 
 exports.view = function (req, res, next) {
   var username = req.route.params.shift();
@@ -165,7 +164,7 @@ exports.update = function (req, res) {
   var scriptUrls = req.body.urls ? Object.keys(req.body.urls) : '';
   var installRegex = null;
   var installNames = [];
-  var username = cleanFilename(user.name).toLowerCase();
+  var username = user.name.toLowerCase();
 
   if (!user) { return res.redirect('/login'); }
 

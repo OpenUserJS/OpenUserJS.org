@@ -6,6 +6,7 @@ var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
 var userRoles = require('../models/userRoles.json');
 var verifyPassport = require('../libs/passportVerify').verify;
+var cleanFilename = require('../libs/helpers').cleanFilename;
 
 // These functions serialize the user model so we can keep 
 // the info in the session
@@ -46,8 +47,7 @@ exports.auth = function (req, res, next) {
   if (!username) { return res.redirect('/?noname'); }
   // Clean the username of leading and trailing whitespace,
   // and other stuff that is unsafe in a url
-  username = username.replace(/^\s+|\s+$/g, '')
-    .replace(/[\\\/:*?\'\"<>|#]/g, '');
+  username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
 
   // The username could be empty after the replacements
   if (!username) { return res.redirect('/?noname'); }

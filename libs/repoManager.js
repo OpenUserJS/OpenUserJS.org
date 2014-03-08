@@ -1,9 +1,7 @@
 var https = require('https');
 var async = require('async');
 var Strategy = require('../models/strategy').Strategy;
-var storeScript = require('../controllers/scriptStorage').storeScript;
-var updateScript = require('../controllers/scriptStorage').updateScript;
-var getMeta = require('../controllers/scriptStorage').getMeta;
+var scriptStorage = require('../controllers/scriptStorage');
 var nil = require('./helpers').nil;
 var clientId = null;
 var clientKey = null;
@@ -91,9 +89,10 @@ RepoManager.prototype.loadScripts = function (callback, update) {
 
   async.eachLimit(scripts, 5, function (script, cb) {
     fetchRaw('raw', script.url, function (bufs) {
-      getMeta(bufs, function (meta) {
+      scriptStorage.getMeta(bufs, function (meta) {
         if (meta) {
-          storeScript(that.user, meta, Buffer.concat(bufs), cb, update);
+          scriptStorage.storeScript(that.user, meta, Buffer.concat(bufs), 
+            cb, update);
         }
       });
     });
