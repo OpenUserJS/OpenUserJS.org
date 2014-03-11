@@ -19,7 +19,7 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
   }
 
   User.findOne({ 'auths' : digest }, function (err, user) {
-    if (!user) {
+    if (!user || (user && strategy === 'github')) {
       User.findOne({ 'name' : username }, function (err, user) {
         if (user && loggedIn) {
           // Add the new strategy to same account

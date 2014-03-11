@@ -4,7 +4,6 @@ var scriptStorage = require('./scriptStorage');
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
-var scriptStorage = require('./scriptStorage');
 
 exports.view = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);

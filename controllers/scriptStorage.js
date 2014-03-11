@@ -2,7 +2,6 @@ var AWS = require('aws-sdk');
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 var cleanFilename = require('../libs/helpers').cleanFilename;
-var RepoManager = require('../libs/repoManager');
 var userRoles = require('../models/userRoles.json');
 var bucketName = 'OpenUserJS.org';
 
@@ -79,7 +78,7 @@ exports.sendMeta = function (req, res, next) {
     res.write(lines.reverse().join('\n'));
     res.end('\n// ==/UserScript==\n');
   });
-}
+};
 
 // Modified from Count Issues (http://userscripts.org/scripts/show/69307)
 // By Marti Martz (http://userscripts.org/users/37004)
@@ -107,7 +106,7 @@ function parseMeta(aString) {
   return headers;
 }
 
-exports.getMeta = function getMeta (chunks, callback) {
+exports.getMeta = function (chunks, callback) {
   // We need to convert the array of buffers to a string to
   // parse the header. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
@@ -125,18 +124,18 @@ exports.getMeta = function getMeta (chunks, callback) {
   }
 
   callback(null);
-}
+};
 
 exports.storeScript = function (user, meta, buf, callback, update) {
   var s3 = new AWS.S3();
-  var namespace = cleanFilename(meta.namespace || '');
-  var scriptName = cleanFilename(meta.name || '');
-  var installName = cleanFilename(user.name).toLowerCase() + '/';
+  var namespace = cleanFilename(meta.namespace, '');
+  var scriptName = cleanFilename(meta.name, '');
+  var installName = user.name.toLowerCase() + '/';
 
   // Can't install a script without a @name (maybe replace with random value)
   if (!scriptName) { return callback(null); }
 
-  if (namespace === cleanFilename(user.name).toLowerCase() || !namespace) {
+  if (namespace === user.name || !namespace) {
     installName += scriptName + '.user.js';
   } else {
     installName += namespace + '/' + scriptName + '.user.js';
@@ -188,6 +187,7 @@ exports.deleteScript = function (installName, callback) {
 };
 
 exports.webhook = function (req, res) {
+  var RepoManager = require('../libs/repoManager');
   var payload = null;
   var username = null;
   var reponame = null;

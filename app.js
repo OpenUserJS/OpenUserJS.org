@@ -55,9 +55,8 @@ app.configure(function(){
 
 mongoose.connect(connectStr);
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function callback () {
-  app.listen(app.get('port'));
-});
+db.once('open', function () {});
+app.listen(app.get('port'));
 
 function scriptsRegex (root) {
   var slash = '\/';

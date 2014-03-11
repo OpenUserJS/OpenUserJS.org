@@ -5,9 +5,8 @@ var userRoles = require('../models/userRoles.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var help = require('../libs/helpers');
+var async = require('async');
 var nil = help.nil;
-var forIn = help.forIn;
-var Wait = help.Wait;
 
 function userIsAdmin(req) {
   return req.session.user && req.session.user.role < 3;
@@ -32,7 +31,7 @@ exports.userAdmin = function (req, res, next) {
   var options = nil();
   var thisUser = req.session.user;
 
-  if (!userIsAdmin(req)) return next();
+  if (!userIsAdmin(req)) { return next(); }
 
   User.find({ role : { $gt: thisUser.role } }, function (err, users) {
     var i = 0;
@@ -55,36 +54,46 @@ exports.userAdmin = function (req, res, next) {
 };
 
 exports.userAdminUpdate = function (req, res, next) {
-  var wait = new Wait(function() {
-    res.redirect('/admin/user');
-  });
   var users = null;
   var thisUser = null;
   var role = null;
   var remove = null;
   var name = null;
 
-  if (!userIsAdmin(req)) return next();
+  if (!userIsAdmin(req)) { return next(); }
 
   users = req.body.user;
+  users = Object.keys(users).map(function (name) {
+    return { name: name, role: users[name] };
+  });
   thisUser = req.session.user;
-  for (name in users) {
-    role = Number(users[name]);
-
-    if (role <= thisUser.role) { continue; }
-    User.findOneAndUpdate({ 'name' : name, 
-      role : { $gt: thisUser.role } }, {'role' : role}, wait.add());
-  }
-
   remove = req.body.remove || {};
-  for (name in remove) {
-   User.findOneAndRemove({ 'name' : name,
-     role : { $gt: thisUser.role } }, wait.add());
-  }
+  remove = Object.keys(remove);
+
+  async.parallel([
+    function (callback) {
+      async.each(users, function (user, cb) {
+        role = Number(user.role);
+
+        if (role <= thisUser.role) { cb(); }
+        User.findOneAndUpdate({ 'name' : user.name, 
+          role : { $gt: thisUser.role } }, {'role' : role}, cb);
+      }, callback);
+    },
+    function (callback) {
+      async.each(remove, function (name, cb) {
+        User.findOneAndRemove({ 'name' : name,
+          role : { $gt: thisUser.role } }, cb);
+      }, callback);
+    }
+  ],
+  function (err) {
+    res.redirect('/admin/user');
+  });
 };
 
 exports.apiAdmin = function (req, res, next) {
-  if (!userIsAdmin(req)) return next();
+  if (!userIsAdmin(req)) { return next(); }
 
   Strategy.find({}, function (err, strats) {
     var stored = nil();
@@ -104,50 +113,57 @@ exports.apiAdmin = function (req, res, next) {
 };
 
 exports.apiAdminUpdate = function (req, res, next) {
-  var wait = new Wait(function () {
-    res.redirect('/admin/api');
-  });
   var postStrats = null;
 
-  if (!userIsAdmin(req)) return next();
+  if (!userIsAdmin(req)) { return next(); }
 
-  postStrats = req.body;
+  postStrats = Object.keys(req.body).map(function (postStrat) {
+    var values = req.body[postStrat];
+    return { name: postStrat, id: values[0], key: values[1] }
+  });
+
   Strategy.find({}, function (err, strats) {
     var stored = nil();
 
     strats.forEach(function(strat) {
       stored[strat.name] = strat;
     });
-
-    forIn(postStrats, function (postStrat, name) {
+    async.each(postStrats, function (postStrat, cb) {
       var strategy = null;
+      var name = postStrat.name;
+      var id = postStrat.id;
+      var key = postStrat.key;
 
-      if (stored[name] && !postStrat[0] && !postStrat[1]) {
-        stored[name].remove(wait.add(function () {
+      if (stored[name] && !id && !key) {
+        stored[name].remove(function () {
           delete strategyInstances[name];
-        }));
+          cb();
+        });
         return;
-      } else if (postStrat[0] && postStrat[1]) {
+      } else if (id && key) {
         if (stored[name]) {
           strategy = stored[name];
-          strategy.id = postStrat[0]
-          strategy.key = postStrat[1];
+          strategy.id = id;
+          strategy.key = key;
         } else {
           strategy = new Strategy({
-            'id' : postStrat[0],
-            'key' : postStrat[1],
+            'id' : id,
+            'key' : key,
             'name' : name,
             'display' : strategies[name].name
           });
         }
 
         
-        strategy.save(wait.add(function (err, strategy) {
+        return strategy.save(function (err, strategy) {
           loadPassport(strategy);
-        }));
+          cb();
+        });
       }
-    });
 
-    wait.done();
+      cb();
+    }, function (err) {
+      res.redirect('/admin/api');
+    });
   });
 };

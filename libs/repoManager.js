@@ -1,9 +1,6 @@
 var https = require('https');
 var async = require('async');
 var Strategy = require('../models/strategy').Strategy;
-var storeScript = require('../controllers/scriptStorage').storeScript;
-var updateScript = require('../controllers/scriptStorage').updateScript;
-var getMeta = require('../controllers/scriptStorage').getMeta;
 var nil = require('./helpers').nil;
 var clientId = null;
 var clientKey = null;
@@ -14,7 +11,6 @@ Strategy.findOne({ name: 'github' }, function(err, strat) {
 });
 
 function fetchRaw (subdomain, path, callback) {
-  var raw = "";
   var options = {
     hostname: subdomain + '.github.com',
     port: 443,
@@ -30,7 +26,7 @@ function fetchRaw (subdomain, path, callback) {
   var req = https.request(options,
     function(res) {
       var bufs = [];
-      if (res.statusCode != 200) { return; }
+      if (res.statusCode != 200) { return callback([new Buffer('')]); }
       else {
         res.on('data', function(d) { bufs.push(d); });
         res.on('end', function() {
@@ -78,6 +74,7 @@ RepoManager.prototype.fetchRepos = function (callback) {
 };
 
 RepoManager.prototype.loadScripts = function (callback, update) {
+  var scriptStorage = require('../controllers/scriptStorage');
   var arrayOfRepos = this.makeRepoArray();
   var that = this;
   var scripts = [];
@@ -89,11 +86,12 @@ RepoManager.prototype.loadScripts = function (callback, update) {
     scripts = scripts.concat(repo.scripts);
   });
 
-  async.eachLimit(scripts, 5, function (script, cb) {
+  async.each(scripts, function (script, cb) {
     fetchRaw('raw', script.url, function (bufs) {
-      getMeta(bufs, function (meta) {
+      scriptStorage.getMeta(bufs, function (meta) {
         if (meta) {
-          storeScript(that.user, meta, Buffer.concat(bufs), cb, update);
+          scriptStorage.storeScript(that.user, meta, Buffer.concat(bufs), 
+            cb, update);
         }
       });
     });
@@ -150,9 +148,9 @@ Repo.prototype.parseTree = function (tree, path, done) {
     }
   });
 
-  async.eachLimit(trees, 5, function(tree, cb) {
+  async.each(trees, function(tree, cb) {
     that.getTree(tree.sha, tree.path, cb);
-  }, function () { 
+  }, function () {
     done(); 
   });
 };
