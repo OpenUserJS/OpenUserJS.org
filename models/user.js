@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
+  // Visible
   name: String,
-  role: Number,
   about: String,
 
   // A user can link multiple accounts to their OpenUserJS account
@@ -11,7 +11,14 @@ var userSchema = new Schema({
   strategies: Array,
 
   // Store their GitHub username when they import scripts
-  ghUsername: String
+  ghUsername: String,
+
+  // Moderation
+  role: Number,
+  karma: Number,
+  flags: Number,
+  disabled: Boolean,
+  removed: Boolean
 });
 
 var User = mongoose.model('User', userSchema);

@@ -110,6 +110,14 @@ app.get('/admin/api', admin.apiAdmin);
 app.post('/admin/user/update', admin.userAdminUpdate);
 app.post('/admin/api/update', admin.apiAdminUpdate);
 
+// Moderation routes
+app.get('/flag/user/:username', function (req, res, next) { next(); });
+app.get('/flag/:username/:namespace/:scriptname', 
+  function (req, res, next) { next(); });
+app.get('/flag/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/flagged', function (req, res, next) { next(); });
+app.get('/graveyard', function (req, res, next) { next(); });
+
 app.get(scriptsRegex('\/'), main.home);
 
 app.use(express.static(__dirname + '/public'));
