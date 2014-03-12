@@ -25,6 +25,7 @@ exports.view = function (req, res, next) {
       }
 
       options = { 
+        'res': res,
         title: script.name,
         name: script.name,
         version: script.meta.version,
@@ -60,7 +61,7 @@ exports.view = function (req, res, next) {
              }
            }
 
-           res.render('script', options, res);
+           res.render('script', options);
        });
   });
 };
@@ -90,12 +91,13 @@ exports.edit = function (req, res, next) {
           });
         }
       } else {
-        res.render('scriptEdit', { 
+        res.render('scriptEdit', {
+          'res': res,
           title: script.name,
           name: script.name,
           source: '/scripts/' + installName + '/source',
           about: script.about
-        }, res);
+        });
       }
   });
 };

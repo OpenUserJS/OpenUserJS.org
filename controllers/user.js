@@ -19,12 +19,13 @@ exports.view = function (req, res, next) {
       req.route.params, ['author'], '/users/' + username,
       function (scriptsList) {
         res.render('user', { 
+          'res': res,
           title: user.name,
           name: user.name,
           about: user.about, 
           isYou: thisUser && thisUser.name === user.name,
           scriptsList: scriptsList
-      }, res);
+      });
     });
   });
 }
@@ -39,11 +40,12 @@ exports.edit = function (req, res) {
     function (scriptsList) {
       scriptsList.edit = true;
       res.render('userEdit', { 
+        'res': res,
         title: 'Edit Yourself',
         name: user.name,
         about: user.about, 
         scriptsList: scriptsList
-      }, res);
+      });
   });
 };
 
@@ -93,7 +95,7 @@ exports.scripts = function (req, res) {
     return;
   }
 
-  options = { title: 'Edit Scripts', username: user.name };
+  options = { 'res': res, title: 'Edit Scripts', username: user.name };
 
   indexOfGH = user.strategies.indexOf('github');
   if (indexOfGH > -1) {
@@ -156,7 +158,7 @@ exports.scripts = function (req, res) {
     }
   }
 
-  if (!loadingRepos) { res.render('scriptsEdit', options, res); }
+  if (!loadingRepos) { res.render('scriptsEdit', options); }
 }
 
 exports.update = function (req, res) {
@@ -228,13 +230,14 @@ exports.newScript = function (req, res, next) {
       });
     });
   } else {
-    res.render('scriptEditor', { 
+    res.render('scriptEditor', {
+      'res': res,
       title: 'Write a new script',
       source: '',
       url: req.url,
       owner: true,
       readOnly: false
-    }, res);
+    });
   }
 };
 
@@ -250,14 +253,15 @@ exports.editScript = function (req, res, next) {
 
     stream.on('data', function (d) { bufs.push(d); });
     stream.on('end', function () {
-      res.render('scriptEditor', { 
+      res.render('scriptEditor', {
+        'res': res,
         title: 'Edit ' + script.name,
         source: Buffer.concat(bufs).toString('utf8'),
         original: script.installName,
         url: req.url,
         owner: user && script._authorId == user._id,
         readOnly: !user
-      }, res);
+      });
     });
   });
 };

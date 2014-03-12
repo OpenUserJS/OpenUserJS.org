@@ -28,7 +28,7 @@ function getOAuthStrategies(stored) {
 }
 
 exports.userAdmin = function (req, res, next) {
-  var options = nil();
+  var options = nil({ 'res' : res });
   var thisUser = req.session.user;
 
   if (!userIsAdmin(req)) { return next(); }
@@ -49,7 +49,7 @@ exports.userAdmin = function (req, res, next) {
       options.users.push({ 'name' : user.name, 'roles' : roles });
     });
 
-    res.render('userAdmin', options, res);
+    res.render('userAdmin', options);
   });
 };
 
@@ -106,9 +106,9 @@ exports.apiAdmin = function (req, res, next) {
     });
 
     strategies = getOAuthStrategies(stored);
-    options = { 'strategies' : strategies };
+    options = { 'res' : res, 'strategies' : strategies };
 
-    res.render('apiAdmin', options, res);
+    res.render('apiAdmin', options);
   });
 };
 

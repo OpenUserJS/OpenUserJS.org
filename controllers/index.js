@@ -11,15 +11,16 @@ exports.home = function (req, res) {
   scriptsList.listScripts({}, req.route.params, [], '',
     function (scriptsList) {
       res.render('index', {
+        'res': res,
         title: 'Home Page',
         username: user ? user.name : null,
         scriptsList: scriptsList
-      }, res);
+      });
   });
 }
 
 exports.login = function (req, res) {
-  var options = { 'title': 'Login' };
+  var options = { 'res' : res, 'title': 'Login' };
 
   if (req.session.user) { res.redirect('/'); }
 
@@ -46,7 +47,7 @@ exports.login = function (req, res) {
       }
     }
 
-    res.render('login', options, res);
+    res.render('login', options);
   });
 };
 
