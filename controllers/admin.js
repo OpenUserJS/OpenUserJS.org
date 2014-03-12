@@ -7,6 +7,7 @@ var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var help = require('../libs/helpers');
 var async = require('async');
 var nil = help.nil;
+var fn = help.fn;
 
 function userIsAdmin(req) {
   return req.session.user && req.session.user.role < 3;
@@ -28,7 +29,7 @@ function getOAuthStrategies(stored) {
 }
 
 exports.userAdmin = function (req, res, next) {
-  var options = nil({ 'res' : res });
+  var options = nil();
   var thisUser = req.session.user;
 
   if (!userIsAdmin(req)) { return next(); }
@@ -49,7 +50,7 @@ exports.userAdmin = function (req, res, next) {
       options.users.push({ 'name' : user.name, 'roles' : roles });
     });
 
-    res.render('userAdmin', options);
+    res.render('userAdmin', options, fn(res));
   });
 };
 
@@ -106,9 +107,9 @@ exports.apiAdmin = function (req, res, next) {
     });
 
     strategies = getOAuthStrategies(stored);
-    options = { 'res' : res, 'strategies' : strategies };
+    options = { 'strategies' : strategies };
 
-    res.render('apiAdmin', options);
+    res.render('apiAdmin', options, fn(res));
   });
 };
 

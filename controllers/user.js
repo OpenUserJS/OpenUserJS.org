@@ -7,6 +7,7 @@ var RepoManager = require('../libs/repoManager');
 var scriptsList = require('../libs/modelsList');
 var async = require('async');
 var nil = require('../libs/helpers').nil;
+var fn = require('../libs/helpers').fn;
 
 exports.view = function (req, res, next) {
   var username = req.route.params.shift();
@@ -18,14 +19,13 @@ exports.view = function (req, res, next) {
     scriptsList.listScripts({ _authorId: user._id },
       req.route.params, ['author'], '/users/' + username,
       function (scriptsList) {
-        res.render('user', { 
-          'res': res,
+        res.render('user', {
           title: user.name,
           name: user.name,
           about: user.about, 
           isYou: thisUser && thisUser.name === user.name,
           scriptsList: scriptsList
-      });
+      }, fn(res));
     });
   });
 }
@@ -39,13 +39,12 @@ exports.edit = function (req, res) {
   { size: -1 }, ['author'], '/user/edit',
     function (scriptsList) {
       scriptsList.edit = true;
-      res.render('userEdit', { 
-        'res': res,
+      res.render('userEdit', {
         title: 'Edit Yourself',
         name: user.name,
         about: user.about, 
         scriptsList: scriptsList
-      });
+      }, fn(res));
   });
 };
 
@@ -95,7 +94,7 @@ exports.scripts = function (req, res) {
     return;
   }
 
-  options = { 'res': res, title: 'Edit Scripts', username: user.name };
+  options = { title: 'Edit Scripts', username: user.name };
 
   indexOfGH = user.strategies.indexOf('github');
   if (indexOfGH > -1) {
@@ -115,7 +114,7 @@ exports.scripts = function (req, res) {
 
           // convert the repos object to something mustache can use
           options.repos = repoManager.makeRepoArray();
-          res.render('scriptsEdit', options, res);
+          res.render('scriptsEdit', options, fn(res));
         });
       });
     } else if (req.body.loadScripts && req.session.repos) {
@@ -158,7 +157,7 @@ exports.scripts = function (req, res) {
     }
   }
 
-  if (!loadingRepos) { res.render('scriptsEdit', options); }
+  if (!loadingRepos) { res.render('scriptsEdit', options, fn(res)); }
 }
 
 exports.update = function (req, res) {
@@ -231,13 +230,12 @@ exports.newScript = function (req, res, next) {
     });
   } else {
     res.render('scriptEditor', {
-      'res': res,
       title: 'Write a new script',
       source: '',
       url: req.url,
       owner: true,
       readOnly: false
-    });
+    }, fn(res));
   }
 };
 
@@ -254,14 +252,13 @@ exports.editScript = function (req, res, next) {
     stream.on('data', function (d) { bufs.push(d); });
     stream.on('end', function () {
       res.render('scriptEditor', {
-        'res': res,
         title: 'Edit ' + script.name,
         source: Buffer.concat(bufs).toString('utf8'),
         original: script.installName,
         url: req.url,
         owner: user && script._authorId == user._id,
         readOnly: !user
-      });
+      }, fn(res));
     });
   });
 };

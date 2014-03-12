@@ -4,6 +4,7 @@ var Script = require('../models/script').Script;
 var strategies = require('./strategies.json');
 var scriptsList = require('../libs/modelsList');
 var userRoles = require('../models/userRoles.json');
+var fn = require('../libs/helpers').fn;
 
 exports.home = function (req, res) {
   var user = req.session.user;
@@ -11,16 +12,15 @@ exports.home = function (req, res) {
   scriptsList.listScripts({}, req.route.params, [], '',
     function (scriptsList) {
       res.render('index', {
-        'res': res,
         title: 'Home Page',
         username: user ? user.name : null,
         scriptsList: scriptsList
-      });
+      }, fn(res));
   });
 }
 
 exports.login = function (req, res) {
-  var options = { 'res' : res, 'title': 'Login' };
+  var options = { 'title': 'Login' };
 
   if (req.session.user) { res.redirect('/'); }
 
@@ -47,7 +47,7 @@ exports.login = function (req, res) {
       }
     }
 
-    res.render('login', options);
+    res.render('login', options, fn(res));
   });
 };
 

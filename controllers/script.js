@@ -4,6 +4,7 @@ var scriptStorage = require('./scriptStorage');
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
+var fn = require('../libs/helpers').fn;
 
 exports.view = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);
@@ -24,8 +25,7 @@ exports.view = function (req, res, next) {
         fork = null;
       }
 
-      options = { 
-        'res': res,
+      options = {
         title: script.name,
         name: script.name,
         version: script.meta.version,
@@ -42,7 +42,9 @@ exports.view = function (req, res, next) {
         isFork: !!fork
       };
 
-      if (!user || options.isYou) { return res.render('script', options, res); }
+      if (!user || options.isYou) {
+        return res.render('script', options, fn(res));
+      }
 
        Vote.findOne({ _scriptId: script._id, _userId: user._id },
          function (err, voteModel) {
@@ -61,7 +63,7 @@ exports.view = function (req, res, next) {
              }
            }
 
-           res.render('script', options);
+           res.render('script', options, fn(res));
        });
   });
 };
@@ -92,12 +94,11 @@ exports.edit = function (req, res, next) {
         }
       } else {
         res.render('scriptEdit', {
-          'res': res,
           title: script.name,
           name: script.name,
           source: '/scripts/' + installName + '/source',
           about: script.about
-        });
+        }, fn(res));
       }
   });
 };
