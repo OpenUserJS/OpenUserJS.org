@@ -21,7 +21,6 @@
     "passport-google": "*",
     "passport-imgur": "*",
     "passport-linkedin": "*",
-    "passport-openid": "*",
     "passport-reddit": "*",
     "passport-twitter": "*",
     "passport-windowslive": "*",
