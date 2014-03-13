@@ -15,9 +15,8 @@ var userSchema = new Schema({
 
   // Moderation
   role: Number,
-  karma: Number,
   flags: Number,
-  disabled: Boolean,
+  flagged: Boolean,
   removed: Boolean
 });
 

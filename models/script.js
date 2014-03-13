@@ -12,7 +12,7 @@ var scriptSchema = new Schema({
   // Moderation
   votes: Number, // votes negate flags
   flags: Number,
-  disabled: Boolean,
+  flagged: Boolean,
   removed: Boolean,
   installable: Boolean,
   installName: String,

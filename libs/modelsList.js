@@ -96,7 +96,7 @@ function listModels (model, query, options, callback) {
   if (-1 === fields.indexOf(orderBy)) { orderBy = defaultSort; }
   if (page < 0) { page = 0; }
   if (!options.direction && 
-      typeof model.schema.tree[orderBy]() === 'string') { direction = 1; }
+      Script.schema.paths[orderBy].instance === 'String') { direction = 1; }
 
   if (options.omit) {
     options.omit.forEach(function (field) {
