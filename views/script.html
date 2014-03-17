@@ -25,6 +25,26 @@
                   </td>
                 </tr>
                 {{/voteable}}
+                {{#flaggable}}
+                <tr>
+                  <td>
+                    <span class="bold">Report</span>
+                  </td>
+                  <td>
+                    <a {{#flagged}}class="bold" {{/flagged}}href="{{{flagUrl}}}">{{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}} This Script?</a>
+                  </td>
+                </tr>
+                {{/flaggable}}
+                {{#moderation}}
+                <tr>
+                  <td>
+                    <span class="bold">Moderation</span>
+                  </td>
+                  <td>
+                    Flags = {{flags}} | Threshold = {{threshold}}  | <a href="{{{removeUrl}}}">Remove This Script?</a>
+                  </td>
+                </tr>
+                {{/moderation}}
                 <tr>
                   <td>
                     Description

@@ -4,6 +4,8 @@ var scriptStorage = require('./scriptStorage');
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
+var Flag = require('../models/flag').Flag;
+var flagLib = require('../libs/flag');
 var fn = require('../libs/helpers').fn;
 
 exports.view = function (req, res, next) {
@@ -63,7 +65,43 @@ exports.view = function (req, res, next) {
              }
            }
 
-           res.render('script', options, fn(res));
+           flagLib.flaggable(Script, script, user,
+             function (canFlag, author, flag) {
+             var flagUrl = '/flag/' + installName;
+
+               function setThreshold (author) {
+                 flagLib.getThreshold(Script, script, author,
+                   function (threshold) {
+                     options.threshold = threshold;
+                     res.render('script', options, fn(res));
+                 });
+               }
+
+               if (flag) {
+                 flagUrl += '/unflag';
+                 options.flagged = true;
+                 options.flaggable = true;
+               } else {
+                 options.flaggable = canFlag;
+               }
+               options.flagUrl = flagUrl;
+
+             if (user.role < 3 || (script.flagged && user.role < 4)) {
+               options.moderation = true;
+               options.flags = script.flags || 0;
+               options.removeUrl = '/remove/' + installName;
+               if (author) {
+                 return setThreshold(author);
+               } else {
+                 return flagLib.getAuthor(script, function (author) {
+                   setThreshold(author);
+                 });
+               }
+             }
+             
+
+             res.render('script', options, fn(res));
+           });
        });
   });
 };
@@ -131,6 +169,20 @@ exports.vote = function (req, res, next) {
         function (err, voteModel) {
           var oldVote = null;
           var votes = script.votes || 0;
+          var flags = 0;
+
+          function saveScript () {
+            if (!flags) { 
+              return script.save(function (err, script) { res.redirect(url); });
+            }
+
+            flagLib.getAuthor(script, function(author) {
+              flagLib.saveContent(Script, script, author, flags,
+                function (flagged) {
+                  res.redirect(url);
+              });
+            });
+          }
 
           if (user._id == script._authorId || (!voteModel && unvote)) {
             return res.redirect(url);
@@ -142,22 +194,37 @@ exports.vote = function (req, res, next) {
             });
             script.rating += vote ? 1 : -1;
             script.votes = votes + 1;
+            if (vote) { flags = -1; }
           } else if (unvote) {
             oldVote = voteModel.vote;
-            voteModel.remove(function () {
+            return voteModel.remove(function () {
               script.rating += oldVote ? -1 : 1;
               script.votes = votes <= 0 ? 0 : votes - 1;
-              script.save(function(err, script) { res.redirect(url); });
+              if (oldVote) { flags = 1; }
+              saveScript();
             });
-            return;
           } else if (voteModel.vote !== vote) {
             voteModel.vote = vote;
             script.rating += vote ? 2 : -2;
+            flags = vote ? -1 : 1;
           }
 
-          voteModel.save(function (err, vote) {
-            script.save(function (err, script) { res.redirect(url); });
-          });
+          voteModel.save(saveScript);
+      });
+  });
+};
+
+exports.flag = function (req, res, next) {
+  var installName = scriptStorage.getInstallName(req);
+  var unflag = req.route.params.unflag;
+
+  Script.findOne({ installName: installName + '.user.js' },
+    function (err, script) {
+      var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
+      if (err || !script) { return next(); }
+
+      fn(Script, script, req.session.user, function (flagged) {
+        res.redirect('/scripts/' + installName);
       });
   });
 };

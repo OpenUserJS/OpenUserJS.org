@@ -112,9 +112,8 @@ app.post('/admin/api/update', admin.apiAdminUpdate);
 
 // Moderation routes
 app.get('/flag/user/:username', function (req, res, next) { next(); });
-app.get('/flag/:username/:namespace/:scriptname', 
-  function (req, res, next) { next(); });
-app.get('/flag/:username/:scriptname', function (req, res, next) { next(); });
+app.get('/flag/:username/:namespace/:scriptname/:unflag?', script.flag);
+app.get('/flag/:username/:scriptname/:unflag?', script.flag);
 app.get('/flagged', function (req, res, next) { next(); });
 app.get('/graveyard', function (req, res, next) { next(); });
 
