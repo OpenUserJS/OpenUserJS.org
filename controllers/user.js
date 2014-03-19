@@ -7,7 +7,6 @@ var RepoManager = require('../libs/repoManager');
 var scriptsList = require('../libs/modelsList');
 var async = require('async');
 var nil = require('../libs/helpers').nil;
-var fn = require('../libs/helpers').fn;
 
 exports.view = function (req, res, next) {
   var username = req.route.params.shift();
@@ -24,8 +23,9 @@ exports.view = function (req, res, next) {
           name: user.name,
           about: user.about, 
           isYou: thisUser && thisUser.name === user.name,
-          scriptsList: scriptsList
-      }, fn(res));
+          scriptsList: scriptsList,
+          username: thisUser ? thisUser.name : null
+      });
     });
   });
 }
@@ -43,8 +43,9 @@ exports.edit = function (req, res) {
         title: 'Edit Yourself',
         name: user.name,
         about: user.about, 
-        scriptsList: scriptsList
-      }, fn(res));
+        scriptsList: scriptsList,
+        username: user ? user.name : null
+      });
   });
 };
 
@@ -114,7 +115,7 @@ exports.scripts = function (req, res) {
 
           // convert the repos object to something mustache can use
           options.repos = repoManager.makeRepoArray();
-          res.render('scriptsEdit', options, fn(res));
+          res.render('scriptsEdit', options);
         });
       });
     } else if (req.body.loadScripts && req.session.repos) {
@@ -157,7 +158,7 @@ exports.scripts = function (req, res) {
     }
   }
 
-  if (!loadingRepos) { res.render('scriptsEdit', options, fn(res)); }
+  if (!loadingRepos) { res.render('scriptsEdit', options); }
 }
 
 exports.update = function (req, res) {
@@ -234,8 +235,9 @@ exports.newScript = function (req, res, next) {
       source: '',
       url: req.url,
       owner: true,
-      readOnly: false
-    }, fn(res));
+      readOnly: false,
+      username: user ? user.name : null
+    });
   }
 };
 
@@ -257,8 +259,9 @@ exports.editScript = function (req, res, next) {
         original: script.installName,
         url: req.url,
         owner: user && script._authorId == user._id,
+        username: user ? user.name : null,
         readOnly: !user
-      }, fn(res));
+      });
     });
   });
 };

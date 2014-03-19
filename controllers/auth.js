@@ -25,12 +25,10 @@ var openIdStrategies = {};
 Strategy.find({}, function (err, strategies) {
   
   // Get OpenId strategies
-  if (process.env.NODE_ENV === 'production') {
-    for (var name in allStrategies) {
-      if (!allStrategies[name].oauth) {
-        openIdStrategies[name] = true;
-        strategies.push({ 'name' : name, 'openid' : true });
-      }
+  for (var name in allStrategies) {
+    if (!allStrategies[name].oauth) {
+      openIdStrategies[name] = true;
+      strategies.push({ 'name' : name, 'openid' : true });
     }
   }
   
@@ -44,13 +42,13 @@ exports.auth = function (req, res, next) {
   var strategy = req.body.auth || req.route.params.strategy;
   var username = req.body.username || req.session.username;
 
-  if (!username) { return res.redirect('/?noname'); }
+  if (!username) { return res.redirect('/register?noname'); }
   // Clean the username of leading and trailing whitespace,
   // and other stuff that is unsafe in a url
   username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
 
   // The username could be empty after the replacements
-  if (!username) { return res.redirect('/?noname'); }
+  if (!username) { return res.redirect('/register?noname'); }
 
   // Store the username in the session so we still have it when they
   // get back from authentication
@@ -88,7 +86,7 @@ exports.auth = function (req, res, next) {
       }
 
       if (!strategy) { 
-        return res.redirect('/?nostrategy');
+        return res.redirect('/register');
       } else {
         return auth();
       }
@@ -101,7 +99,7 @@ exports.callback = function (req, res, next) {
   var newstrategy = req.session.newstrategy;
   var strategyInstance = null;
 
-  // The callback was called inproperly
+  // The callback was called improperly
   if (!strategy || !username) { return next(); }
 
   // Get the passport strategy instance so we can alter the _verfiy method
@@ -125,7 +123,7 @@ exports.callback = function (req, res, next) {
   var authenticate = passport.authenticate(strategy, 
     function (err, user, info) {
       if (err) { return next(err); }
-      if (!user) { return res.redirect('/?authfail'); }
+      if (!user) { return res.redirect('/register?authfail'); }
 
       req.logIn(user, function(err) {
         if (err) { return next(err); }

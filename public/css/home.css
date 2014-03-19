@@ -1,0 +1,69 @@
+/***************************
+ * Scripts Section Stylings
+ ***************************/
+
+.scripts-section{
+	width: 71%;
+	float: left;
+}
+.script{
+	background: white;
+	margin-bottom: 10px;
+}
+.script-internal{
+	padding: 8px;
+}
+.home-install-button{
+	float: left;
+	margin: 3px 0 5px 0;
+	/*Use this if replacing text button with "download" icon button*/
+	/*height: 26px;*/ 
+}
+.script-title{
+	margin: 0 0 5px 70px;
+}
+table{
+	width: 95%;
+}
+.script-description{
+	padding: 8px 0 0 0;
+	border-top: solid 1px #414042;
+	margin: 5px 0 0 0;
+}
+
+
+/**************************
+ * Groups Section Stylings
+ **************************/
+.groups-aside{
+	background: #3d6680;
+	width: 29%;
+	margin-left: 72%;
+	opacity: .6;
+	height: auto;
+}
+.home-row{
+	height: 26px;
+}
+.home-col1{
+	width: 70%;
+}
+.home-col2{
+	text-align: right;
+}
+.home-col3{
+	width: 80px;
+	text-align: right;
+}
+.groups-aside{
+	color: white;
+}
+.groups-aside h2{
+	margin: 0;
+}
+.groups-aside a{
+	color: white;
+}
+.groups-aside a:hover{
+	color: #dce5de;
+}

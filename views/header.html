@@ -1,44 +1,74 @@
 <!DOCTYPE html>
-
-<html>
-
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <link type="text/css" rel="stylesheet" href="/css/index.css" />
-        <script src="/js/jquery-1.10.2.min.js" type="text/javascript"></script>
-        <title>{{title}}</title>
-
-        <script type="text/javascript">
-            // sloppy code atm, just for easy testing
-            function calculateElementHeights() {
-                var body = $(document.body);
-                var top = $('#top');
-                var main = $('#main');
-                var footer = $('#footer');
-                var scriptsList = $('#scripts-list');
-                var wHeight = Math.floor(window.innerHeight);
-                var wWidth = Math.floor(window.innerWidth);
-
-                body.css('height', wHeight + 'px');
-                body.css('width', wWidth + 'px');
-                main.css('max-width', wWidth + 'px')
-                    .css('max-height', Math.floor(wHeight - top.height() - footer.height()) + 'px');
-            }
-
-            $(window).on('resize', calculateElementHeights);
-            $(document).ready(calculateElementHeights);
-        </script>
-    </head>
-
-    <body>
-        <div id="top" class="bold">
-            <a href="/">Home</a>
-            <a href="/scripts">Scripts</a>
-            <a href="/forum">Forum</a>
-            {{#username}}
-            <a href="/logout">Logout</a>
-            {{/username}}
-            {{^username}}
-            <a href="/login">Login</a>
-            {{/username}}
-        </div>
+<html lang="en">
+	
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>{{title}}</title>
+		<link href='http://fonts.googleapis.com/css?family=Squada+One' rel='stylesheet' type='text/css'>
+		<link href="/css/normalize.css" rel="stylesheet" type="text/css" media="all" />
+		<link href="/css/main.css" rel="stylesheet" type="text/css" media="all" />
+		<link href="/css/home.css" rel="stylesheet" type="text/css" media="all" />
+	</head>
+	
+	
+	<body>
+		<header id="masthead" >
+			
+			<div id="tophead">
+				<section class="centered-content">
+					
+					<h1 id="logo"><a id="logo-anchor" href="/">OpenUserJS.org</a></h1>
+                                        {{#username}}
+                                        <form id="login-form" action="/logout" method="get">
+                                          <a id="profile-link" href="/users/{{username}}">{{username}}</a>
+                                          <input type="submit" value="Logout" title="Logout"/>
+                                        {{/username}}
+                                        {{^username}}
+					<form id="login-form" action="/auth/" method="post">
+						<input type="text" name="username" required="" maxlength="100" placeholder="username" />
+						<input type="submit" value="Login / Register" title="Login or Register"/>
+                                        {{/username}}
+					</form>
+				</section>
+			</div>
+			
+			<div id="nav-bar">
+				<nav id="nav-buttons" class="centered-content">
+						<button class="nav-button" title="All the Scripts"
+						type="button" onclick="location.href='/'">
+							<img src="/images/icons_scripts.png" />
+							<p class="nav-button-label">
+								Scripts
+							</p>
+						</button>
+						<button class="nav-button" title="All the Groups" 
+						type="button" disabled>
+							<img src="/images/icons_groups.png" />
+							<p class="nav-button-label">
+								Groups
+							</p>
+						</button>
+						<button class="nav-button" title="Propose Ideas & Request Scripts"
+						type="button" disabled>
+							<img src="/images/icons_beggar.png"/>
+							<p class="nav-button-label">
+								Beggar's Corner
+							</p>
+						</button>
+						<button class="nav-button" title="Development Libraries"
+						type="button" disabled>
+							<img src="/images/icons_toolbox.png" />
+							<p class="nav-button-label">
+								The Toolbox
+							</p>
+						</button>
+						<button class="nav-button" title="Talk Shop, Get Help"
+						type="button" disabled>
+							<img src="/images/icons_garage.png" />
+							<p class="nav-button-label">
+								The Garage
+							</p>
+						</button>
+				</nav>
+			</div>
+		</header>

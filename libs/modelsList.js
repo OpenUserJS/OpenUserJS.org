@@ -1,6 +1,20 @@
 var Script = require('../models/script').Script;
 var listSize = 10;
 var defaultSort = 'updated';
+var months = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 // /scripts/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of scripts and build the options object 
@@ -20,12 +34,12 @@ exports.listScripts = function (query, params, omit, baseUrl, callback) {
 
   listModels(Script, query, options,
     function (scripts, size, orderBy, direction, page) {
-      var headings = {
+      /*var headings = {
         'name': { label: 'Name', width: 50 },
         'author': { label: 'Author', width: 15 },
         'rating': { label: 'Rating', width: 15 },
         'installs': { label: 'Installs', width: 15 }
-      };
+      };*/
       var scriptsList = {};
       var heading = null;
       var name = null;
@@ -36,6 +50,7 @@ exports.listScripts = function (query, params, omit, baseUrl, callback) {
       scripts.forEach(function (script) {
         var editUrl = script.installName.replace(/\.user\.js$/, '').split('/');
         editUrl.shift();
+        var updated = script.updated;
 
         scriptsList.scripts.push({ 
           name: script.name,
@@ -46,11 +61,14 @@ exports.listScripts = function (query, params, omit, baseUrl, callback) {
           editUrl: '/script/' + editUrl.join('/') + '/edit',
           rating: script.rating,
           installs: script.installs,
-          version: script.meta.version
+          version: script.meta.version,
+          updated: script.updated.getDate() + ' '
+            + months[script.updated.getMonth()] + ' '
+            + script.updated.getFullYear()
         });
       });
 
-      for (name in headings) {
+      /*for (name in headings) {
         if (!scriptsList.hasAuthor && name === 'author') { continue; }
         heading = headings[name];
 
@@ -63,7 +81,7 @@ exports.listScripts = function (query, params, omit, baseUrl, callback) {
 
         heading.name = name;
         scriptsList.headings.push(heading);
-      }
+      }*/
 
       scriptsList.baseUrl = baseUrl + '/scripts';
       
@@ -91,7 +109,8 @@ function listModels (model, query, options, callback) {
   var page = options.page && !isNaN(options.page) ? options.page - 1 : 0;
   var direction = options.direction === 'asc' ? 1 : -1;
   var size = options.size || listSize;
-  var params = { sort: {} };
+  // Temporary overwrite sort
+  var params = { sort: { 'updated' : -1, 'rating' : -1, 'installs' : -1 } };
 
   if (-1 === fields.indexOf(orderBy)) { orderBy = defaultSort; }
   if (page < 0) { page = 0; }
@@ -105,7 +124,7 @@ function listModels (model, query, options, callback) {
     });
   }
 
-  params.sort[orderBy] = direction;
+  //params.sort[orderBy] = direction;
   if (size >= 0) {
     params.limit = size + 1;
     params.skip = size * page;

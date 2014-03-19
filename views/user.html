@@ -1,29 +1,13 @@
 {{> header.html}}
-
-        <div id="main">
-            <div class="spacer" style="height: 15%;">
-                &nbsp;
-            </div>
-
-            <h1>{{name}}{{#isYou}} <a href="/user/edit">Edit?</a>{{/isYou}}</h1>
-            <table class="indent content">
-                <tr class="bold">
-                    <td>
-                        About
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{about}}
-                    </td>
-                </tr>
-            </table>
-
-            <BR /><BR />
+<div class="centered-content">
+  <h1>{{name}}{{#isYou}} <a href="/user/edit">Edit?</a>{{/isYou}}</h1>
+</div>
+<div class="content-box">
+  <strong>About</strong><br /><br />
+  {{about}}
+</div>
+<br /><br />
+<div class="centered-content">
 {{> scriptsList.html}}
-            </table>
-        </div>
-<BR /><BR />
-<BR /><BR />
-
+</div>
 {{> footer.html}}

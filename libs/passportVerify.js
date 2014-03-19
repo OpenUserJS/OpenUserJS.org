@@ -19,20 +19,13 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
   }
 
   User.findOne({ 'auths' : digest }, function (err, user) {
-    if (!user || (user && strategy === 'github')) {
+    if (!user) {
       User.findOne({ 'name' : username }, function (err, user) {
         if (user && loggedIn) {
           // Add the new strategy to same account
           // This allows linking multiple external accounts to one of ours
           user.auths.push(digest);
           user.strategies.push(strategy);
-          user.save(function (err, user) {
-            return done(err, user);
-          });
-        } else if (user && strategy === 'github') {
-          // We need the users GH id to do stuff so
-          // here is some temorary migragtion code
-          user.auths[user.strategies.indexOf('github')] = digest;
           user.save(function (err, user) {
             return done(err, user);
           });

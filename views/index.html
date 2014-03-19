@@ -1,19 +1,26 @@
 {{> header.html}}
-
-        <div id="main">
-            <div class="spacer" style="height: 15%;">
-                &nbsp;
-            </div>
-
-        {{#username}}
-        <p>Welcome <a href="/users/{{{username}}}">{{username}}</a>!</p>
-        {{/username}}
-        {{^username}}
-        <p>Welcome stranger! <a href="/login">Login?</a>
-        {{/username}}
-
-            <BR /><BR />
+		<div class="centered-content">
+				
+				<form>
+					<input type="search" value="search for a script" required />
+				</form>
+				
+				<h1>POPULAR SCRIPTS</h1>
+				
 {{> scriptsList.html}}
-        </div>
-
+	
+			<aside class="groups-aside">
+				<h1 id="groups-section-header">GROUPS COMING SOON!</h1>
+				<!-- <h1 id="groups-section-header">POPULAR GROUPS</h1>
+				<ul>
+					<li class="group">
+						<h2><a href="">Group Name</a></h2>
+						<span>Total Installs: 1,246,209</span> 
+						<br />
+						<span>Number of Scripts: 248</span> 
+					</li>
+				</ul>
+				<a href="groups.html">More Groups...</a> -->
+			</aside>
+		</div>
 {{> footer.html}}

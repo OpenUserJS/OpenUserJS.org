@@ -7,7 +7,6 @@ var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var help = require('../libs/helpers');
 var async = require('async');
 var nil = help.nil;
-var fn = help.fn;
 
 function userIsAdmin(req) {
   return req.session.user && req.session.user.role < 3;
@@ -50,7 +49,7 @@ exports.userAdmin = function (req, res, next) {
       options.users.push({ 'name' : user.name, 'roles' : roles });
     });
 
-    res.render('userAdmin', options, fn(res));
+    res.render('userAdmin', options);
   });
 };
 
@@ -109,7 +108,7 @@ exports.apiAdmin = function (req, res, next) {
     strategies = getOAuthStrategies(stored);
     options = { 'strategies' : strategies };
 
-    res.render('apiAdmin', options, fn(res));
+    res.render('apiAdmin', options);
   });
 };
 

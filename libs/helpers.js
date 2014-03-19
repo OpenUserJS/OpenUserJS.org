@@ -32,8 +32,3 @@ exports.cleanFilename = function (filename, defaultName) {
 
   return cleanName || defaultName;
 };
-
-// Wrap something in an anonymous function
-exports.fn = function (something) { 
-  return (function () { return something; }); 
-};

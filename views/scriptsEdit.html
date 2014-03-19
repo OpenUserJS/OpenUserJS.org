@@ -1,53 +1,49 @@
 {{> header.html}}
-
-        <div id="main">
-            <div class="spacer" style="height: 15%;">
-                &nbsp;
-            </div>
-            {{#hasGH}}
-            <p class="indent content">
-              To keep scripts you've imported from GitHub up-to-date on OpenUserJS.org when you push changes:<br>
-              <ol>
-                <li>Add a Webhook (in the repo settings) to the repos containing the script(s)</li>
-                <li>Paste the URL below as the "Payload URL"</li>
-                <li>Click "Add webhook"</li>
-              </ol>
-              <input type="text" size="50" value="http://openuserjs.jit.su/github/hook" />
-            </p>
-            {{^showRepos}}
-            <p class="indent content">
-              <form id="load_repos" action="/user/edit/scripts" method="post">
-                <input type="hidden" name="importScripts" value="true" />
-                <input type="submit" value="Find Scripts On GitHub" />
-              </form>
-            </p>
-            <br /><br />
-            <form action="/user/edit/scripts" method="post" enctype="multipart/form-data">
-              <input type="hidden" name="uploadScript" value="true" />
-              <label for="script">Upload Script: </label>
-              <input type="file" name="script" /><br />
-              <input type="submit" value="Upload" />
-            </form>
-            <br /><br />
-            <p class="indent content"><a href="/user/edit/scripts/new">Write a New Script</a></p>
-            {{/showRepos}}
-            {{#showRepos}}
-            <form id="load_scripts_from_github" method="post" action="/user/edit/scripts">
-              <input type="hidden" name="loadScripts" value="true" />
-            {{#repos}}
-            <p class="indent">
-              <input type="checkbox" name="{{{repo}}}_all" value="{{{repo}}}" />
-              <strong><a href="https://github.com/{{{user}}}/{{{repo}}}">{{repo}}</a></strong><br />
-              {{#scripts}}
-              <input type="checkbox" name="{{{repo}}}[{{{name}}}]" value="true"/>
-              <a href="{{{url}}}">{{name}}</a><br />
-              {{/scripts}}
-            </p>
-            {{/repos}}
-            <input type="submit" value="Load Scripts" />
-            </form>
-            {{/showRepos}}
-            {{/hasGH}}
-        </div>
+<div class="content-box">
+  {{#hasGH}}
+  <p>
+    To keep scripts you've imported from GitHub up-to-date on OpenUserJS.org when you push changes:<br>
+    <ol>
+      <li>Add a Webhook (in the repo settings) to the repos containing the script(s)</li>
+      <li>Paste the URL below as the "Payload URL"</li>
+      <li>Click "Add webhook"</li>
+    </ol>
+    <input type="text" size="50" value="http://openuserjs.jit.su/github/hook" />
+  </p>
+  {{^showRepos}}
+  <p class="indent content">
+    <form id="load_repos" action="/user/edit/scripts" method="post">
+      <input type="hidden" name="importScripts" value="true" />
+      <input type="submit" value="Find Scripts On GitHub" />
+    </form>
+  </p>
+  <br /><br />
+  <form action="/user/edit/scripts" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="uploadScript" value="true" />
+    <label for="script">Upload Script: </label>
+    <input type="file" name="script" /><br />
+    <input type="submit" value="Upload" />
+  </form>
+  <br /><br />
+  <p class="indent content"><a href="/user/edit/scripts/new">Write a New Script</a></p>
+  {{/showRepos}}
+  {{#showRepos}}
+  <form id="load_scripts_from_github" method="post" action="/user/edit/scripts">
+    <input type="hidden" name="loadScripts" value="true" />
+    {{#repos}}
+    <p class="indent">
+      <input type="checkbox" name="{{{repo}}}_all" value="{{{repo}}}" />
+      <strong><a href="https://github.com/{{{user}}}/{{{repo}}}">{{repo}}</a></strong><br />
+      {{#scripts}}
+      <input type="checkbox" name="{{{repo}}}[{{{name}}}]" value="true"/>
+      <a href="{{{url}}}">{{name}}</a><br />
+      {{/scripts}}
+    </p>
+    {{/repos}}
+    <input type="submit" value="Load Scripts" />
+  </form>
+  {{/showRepos}}
+  {{/hasGH}}
+</div>
 
 {{> footer.html}}

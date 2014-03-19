@@ -6,7 +6,6 @@ var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 var Flag = require('../models/flag').Flag;
 var flagLib = require('../libs/flag');
-var fn = require('../libs/helpers').fn;
 
 exports.view = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);
@@ -41,11 +40,12 @@ exports.view = function (req, res, next) {
         description: script.meta.description,
         about: script.about,
         isYou: user && user._id == script._authorId,
+        username: user ? user.name : null,
         isFork: !!fork
       };
 
       if (!user || options.isYou) {
-        return res.render('script', options, fn(res));
+        return res.render('script', options);
       }
 
        Vote.findOne({ _scriptId: script._id, _userId: user._id },
@@ -73,7 +73,7 @@ exports.view = function (req, res, next) {
                  flagLib.getThreshold(Script, script, author,
                    function (threshold) {
                      options.threshold = threshold;
-                     res.render('script', options, fn(res));
+                     res.render('script', options);
                  });
                }
 
@@ -89,7 +89,7 @@ exports.view = function (req, res, next) {
              if (user.role < 3 || (script.flagged && user.role < 4)) {
                options.moderation = true;
                options.flags = script.flags || 0;
-               options.removeUrl = '/remove/' + installName;
+               options.removeUrl = '/remove/scripts/' + installName;
                if (author) {
                  return setThreshold(author);
                } else {
@@ -100,7 +100,7 @@ exports.view = function (req, res, next) {
              }
              
 
-             res.render('script', options, fn(res));
+             res.render('script', options);
            });
        });
   });
@@ -135,8 +135,9 @@ exports.edit = function (req, res, next) {
           title: script.name,
           name: script.name,
           source: '/scripts/' + installName + '/source',
-          about: script.about
-        }, fn(res));
+          about: script.about,
+          username: user ? user.name : null
+        });
       }
   });
 };

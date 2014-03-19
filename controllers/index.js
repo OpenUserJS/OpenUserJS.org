@@ -4,7 +4,6 @@ var Script = require('../models/script').Script;
 var strategies = require('./strategies.json');
 var scriptsList = require('../libs/modelsList');
 var userRoles = require('../models/userRoles.json');
-var fn = require('../libs/helpers').fn;
 
 exports.home = function (req, res) {
   var user = req.session.user;
@@ -15,22 +14,19 @@ exports.home = function (req, res) {
         title: 'Home Page',
         username: user ? user.name : null,
         scriptsList: scriptsList
-      }, fn(res));
+      });
   });
 }
 
-exports.login = function (req, res) {
-  var options = { 'title': 'Login' };
+exports.register = function (req, res) {
+  var options = { 'title': 'Register', 'wantname': req.session.username };
 
-  if (req.session.user) { res.redirect('/'); }
+  if (req.session.user) { return res.redirect('/'); }
 
   Strategy.find({}, function (err, strats) {
     var strategy = null;
     var name = null;
-
-    // Empty option so you can just type in your username
-    // when logging in
-    options.strategies = [{ 'strat' : '', 'display' : '' }];
+    options.strategies = [];
 
     // Get the strategies we have OAuth keys for
     strats.forEach(function (strat) {
@@ -47,7 +43,7 @@ exports.login = function (req, res) {
       }
     }
 
-    res.render('login', options, fn(res));
+    res.render('register', options);
   });
 };
 
