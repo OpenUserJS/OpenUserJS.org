@@ -58,7 +58,6 @@ exports.userAdmin = function (req, res, next) {
 exports.userAdminUpdate = function (req, res, next) {
   var users = null;
   var thisUser = null;
-  var role = null;
   var remove = null;
   var name = null;
 
@@ -75,16 +74,19 @@ exports.userAdminUpdate = function (req, res, next) {
   async.parallel([
     function (callback) {
       async.each(users, function (user, cb) {
-        role = Number(user.role);
+        var role = Number(user.role);
 
         if (role <= thisUser.role) { cb(); }
-        User.find({ 'name' : user.name, role : { $gt: thisUser.role } }, 
-          function (err, user) { user.save(cb); });
+        User.findOne({ 'name' : user.name, role : { $gt: thisUser.role } }, 
+          function (err, user) {
+            user.role = role;
+            user.save(cb); 
+          });
       }, callback);
     },
     function (callback) {
       async.each(remove, function (name, cb) {
-        User.find({ 'name' : name, role : { $gt: thisUser.role } },
+        User.findOne({ 'name' : name, role : { $gt: thisUser.role } },
           function (err, user) {
             var authorId = user._id;
             user.remove(function (err) {
