@@ -23,6 +23,8 @@ exports.register = function (req, res) {
 
   if (req.session.user) { return res.redirect('/'); }
 
+  delete req.session.username;
+
   Strategy.find({}, function (err, strats) {
     var strategy = null;
     var name = null;
