@@ -1,9 +1,11 @@
 var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user.js').User;
+var Script = require('../models/script').Script;
 var strategies = require('./strategies.json');
 var userRoles = require('../models/userRoles.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
+var scriptStorage = require('./scriptStorage');
 var help = require('../libs/helpers');
 var async = require('async');
 var nil = help.nil;
@@ -76,14 +78,23 @@ exports.userAdminUpdate = function (req, res, next) {
         role = Number(user.role);
 
         if (role <= thisUser.role) { cb(); }
-        User.findOneAndUpdate({ 'name' : user.name, 
-          role : { $gt: thisUser.role } }, {'role' : role}, cb);
+        User.find({ 'name' : user.name, role : { $gt: thisUser.role } }, 
+          function (err, user) { user.save(cb); });
       }, callback);
     },
     function (callback) {
       async.each(remove, function (name, cb) {
-        User.findOneAndRemove({ 'name' : name,
-          role : { $gt: thisUser.role } }, cb);
+        User.find({ 'name' : name, role : { $gt: thisUser.role } },
+          function (err, user) {
+            var authorId = user._id;
+            user.remove(function (err) {
+              Script.find({ _authorId: authorId }, function (err, scripts) {
+                async.each(scripts, function (script, innerCb) {
+                  scriptStorage.deleteScript(script.installName, innerCb);
+                }, cb);
+              });
+            }); 
+        });
       }, callback);
     }
   ],
