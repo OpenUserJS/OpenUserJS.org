@@ -37,11 +37,13 @@ exports.register = function (req, res) {
     });
 
     // Get OpenId strategies
-    for (name in strategies) {
-      strategy = strategies[name];
-      if (!strategy.oauth) {
-        options.strategies.push({ 'strat' : name,
-                                  'display' : strategy.name });
+    if (process.env.NODE_ENV === 'production') {
+      for (name in strategies) {
+        strategy = strategies[name];
+        if (!strategy.oauth) {
+          options.strategies.push({ 'strat' : name,
+            'display' : strategy.name });
+        }
       }
     }
 
