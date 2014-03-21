@@ -115,7 +115,7 @@ exports.scripts = function (req, res) {
 
           // convert the repos object to something mustache can use
           options.repos = repoManager.makeRepoArray();
-          res.render('scriptsEdit', options);
+          res.render('addScripts', options);
         });
       });
     } else if (req.body.loadScripts && req.session.repos) {
@@ -158,7 +158,7 @@ exports.scripts = function (req, res) {
     }
   }
 
-  if (!loadingRepos) { res.render('scriptsEdit', options); }
+  if (!loadingRepos) { res.render('addScripts', options); }
 }
 
 exports.update = function (req, res) {
@@ -218,7 +218,7 @@ exports.newScript = function (req, res, next) {
               if (err || !origScript) { return res.redirect(redirectUrl); }
 
               fork = origScript.fork || [];
-              fork.shift({ author: origScript.author, url: origScript
+              fork.unshift({ author: origScript.author, url: origScript
                 .installName.replace(/\.user\.js$/, '') });
               script.fork = fork;
 

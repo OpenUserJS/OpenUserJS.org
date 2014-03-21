@@ -18,6 +18,9 @@
     </form>
   </p>
   <br /><br />
+  {{/showRepos}}
+  {{/hasGH}}
+  {{^showRepos}}
   <form action="/user/edit/scripts" method="post" enctype="multipart/form-data">
     <input type="hidden" name="uploadScript" value="true" />
     <label for="script">Upload Script: </label>
@@ -43,7 +46,6 @@
     <input type="submit" value="Load Scripts" />
   </form>
   {{/showRepos}}
-  {{/hasGH}}
 </div>
 
 {{> footer.html}}
