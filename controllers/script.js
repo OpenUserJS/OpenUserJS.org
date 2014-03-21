@@ -173,7 +173,7 @@ exports.vote = function (req, res, next) {
           var flags = 0;
 
           function saveScript () {
-            if (!flags) { 
+            if (!flags) {
               return script.save(function (err, script) { res.redirect(url); });
             }
 
@@ -184,6 +184,9 @@ exports.vote = function (req, res, next) {
               });
             });
           }
+
+          if (!script.rating) { script.rating = 0; }
+          if (!script.votes) { script.votes = 0; }
 
           if (user._id == script._authorId || (!voteModel && unvote)) {
             return res.redirect(url);

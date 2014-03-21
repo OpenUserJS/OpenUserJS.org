@@ -68,6 +68,7 @@ function getThreshold (model, content, author, callback) {
 exports.getThreshold = getThreshold;
 
 function saveContent (model, content, author, flags, callback) {
+  if (!content.flags) { content.flags = 0; }
   content.flags += flags;
 
   if (content.flags >= thresholds[model.modelName] * (author.role < 4 ? 2 : 1)) {
