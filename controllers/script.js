@@ -6,6 +6,7 @@ var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 var Flag = require('../models/flag').Flag;
 var flagLib = require('../libs/flag');
+var removeLib = require('../libs/remove');
 
 exports.view = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);
@@ -50,7 +51,7 @@ exports.view = function (req, res, next) {
 
        Vote.findOne({ _scriptId: script._id, _userId: user._id },
          function (err, voteModel) {
-           var voteUrl = '/vote/' + installName + '/';
+           var voteUrl = '/vote/scripts/' + installName + '/';
            options.voteable = true;
            options.upUrl = voteUrl + 'up';
            options.downUrl = voteUrl + 'down';
@@ -67,15 +68,7 @@ exports.view = function (req, res, next) {
 
            flagLib.flaggable(Script, script, user,
              function (canFlag, author, flag) {
-             var flagUrl = '/flag/' + installName;
-
-               function setThreshold (author) {
-                 flagLib.getThreshold(Script, script, author,
-                   function (threshold) {
-                     options.threshold = threshold;
-                     res.render('script', options);
-                 });
-               }
+             var flagUrl = '/flag/scripts/' + installName;
 
                if (flag) {
                  flagUrl += '/unflag';
@@ -86,21 +79,20 @@ exports.view = function (req, res, next) {
                }
                options.flagUrl = flagUrl;
 
-             if (user.role < 3 || (script.flagged && user.role < 4)) {
-               options.moderation = true;
-               options.flags = script.flags || 0;
-               options.removeUrl = '/remove/scripts/' + installName;
-               if (author) {
-                 return setThreshold(author);
-               } else {
-                 return flagLib.getAuthor(script, function (author) {
-                   setThreshold(author);
-                 });
-               }
-             }
-             
+               removeLib.removeable(Script, script, user,
+                 function (canRemove, author) {
+                   options.moderation = canRemove;
+                   options.flags = script.flags || 0;
+                   options.removeUrl = '/remove/scripts/' + installName;
 
-             res.render('script', options);
+                   if (!canRemove) { return res.render('script', options); }
+
+                   flagLib.getThreshold(Script, script, author,
+                     function (threshold) {
+                       options.threshold = threshold;
+                       res.render('script', options);
+                   });
+               });
            });
        });
   });
@@ -150,9 +142,10 @@ exports.vote = function (req, res, next) {
   var unvote = false;
 
   if (!user) { return res.redirect('/login'); }
-  url[1] = 'scripts';
   if (url.length > 5) { url.pop(); }
-  url = url.join('/');
+  url.shift();
+  url.shift();
+  url = '/' + url.join('/');
 
   if (vote === 'up') {
     vote = true;

@@ -4,16 +4,24 @@
 				<ul class="scripts-list">
 					<li class="script">
 {{#edit}}
-						<button class="install-button" title="Install"
+						<button class="install-button" title="Edit"
 								type="button" onclick="location.href='{{{editUrl}}}'" >
 								Edit
 						</button>
 {{/edit}}
+{{#moderation}}
+						<button class="install-button" title="Remove"
+								type="button" onclick="location.href='/remove{{{url}}}'" >
+								Remove
+						</button>
+{{/moderation}}
 {{^edit}}
+{{^moderation}}
 						<button class="install-button" title="Install"
 								type="button" onclick="location.href='{{{install}}}'" >
 								Install
 						</button>
+{{/moderation}}
 {{/edit}}
 						<h2 class="script-title"><a href="{{{url}}}">{{name}}{{#version}} - {{version}}{{/version}}</a></h2>
 

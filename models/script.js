@@ -8,17 +8,16 @@ var scriptSchema = new Schema({
   installs: Number,
   rating: Number,
   about: String,
+  updated: Date,
 
   // Moderation
-  votes: Number, // votes negate flags
+  votes: Number, // upvotes negate flags
   flags: Number,
   flagged: Boolean,
-  removed: Boolean,
   installable: Boolean,
   installName: String,
 
   // Extra info
-  updated: Date,
   fork: Array,
   meta: Object,
   _authorId: Schema.Types.ObjectId

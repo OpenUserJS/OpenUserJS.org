@@ -5,6 +5,9 @@ var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var RepoManager = require('../libs/repoManager');
 var scriptsList = require('../libs/modelsList');
+var Flag = require('../models/flag').Flag;
+var flagLib = require('../libs/flag');
+var removeLib = require('../libs/remove');
 var async = require('async');
 var nil = require('../libs/helpers').nil;
 
@@ -13,18 +16,51 @@ exports.view = function (req, res, next) {
   var thisUser = req.session.user;
 
   User.findOne({ name: username }, function (err, user) {
+    var options = { isYou: thisUser && thisUser.name === user.name };
     if (err || !user) { return next(); }
 
-    scriptsList.listScripts({ _authorId: user._id },
-      req.route.params, ['author'], '/users/' + username,
-      function (scriptsList) {
-        res.render('user', {
-          title: user.name,
-          name: user.name,
-          about: user.about, 
-          isYou: thisUser && thisUser.name === user.name,
-          scriptsList: scriptsList,
-          username: thisUser ? thisUser.name : null
+    function render () {
+      req.route.params.push('author');
+
+      scriptsList.listScripts({ _authorId: user._id },
+        req.route.params, '/users/' + username,
+        function (scriptsList) {
+          options.title = user.name;
+          options.name = user.name;
+          options.about = user.about;
+          options.scriptsList = scriptsList;
+          options.username = thisUser ? thisUser.name : null;
+          res.render('user', options);
+      });
+    }
+
+    if (!thisUser || options.isYou) {
+      return render();
+    }
+
+    flagLib.flaggable(User, user, thisUser, function (canFlag, author, flag) {
+      var flagUrl = '/flag/users/' + user.name;
+
+      if (flag) {
+        flagUrl += '/unflag';
+        options.flagged = true;
+        options.flaggable = true;
+      } else {
+        options.flaggable = canFlag;
+      }
+      options.flagUrl = flagUrl;
+
+      removeLib.removeable(User, user, thisUser, function (canRemove, author) {
+        options.moderation = canRemove;
+        options.flags = user.flags || 0;
+        options.removeUrl = '/remove/users/' + user.name;
+
+        if (!canRemove) { return render(); }
+
+        flagLib.getThreshold(User, user, author, function (threshold) {
+          options.threshold = threshold;
+          render();
+        });
       });
     });
   });
@@ -35,8 +71,10 @@ exports.edit = function (req, res) {
 
   if (!user) { return res.redirect('/login'); }
 
+  req.route.params.push('author');
+
   scriptsList.listScripts({ _authorId: user._id },
-  { size: -1 }, ['author'], '/user/edit',
+  { size: -1 }, '/user/edit',
     function (scriptsList) {
       scriptsList.edit = true;
       res.render('userEdit', {
@@ -262,6 +300,20 @@ exports.editScript = function (req, res, next) {
         username: user ? user.name : null,
         readOnly: !user
       });
+    });
+  });
+};
+
+exports.flag = function (req, res, next) {
+  var username = req.route.params.username;
+  var unflag = req.route.params.unflag;
+
+  User.findOne({ name: username }, function (err, user) {
+    var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
+    if (err || !user) { return next(); }
+
+    fn(User, user, req.session.user, function (flagged) {
+      res.redirect('/users/' + username);
     });
   });
 };

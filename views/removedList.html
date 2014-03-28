@@ -1,0 +1,23 @@
+{{#removedList}}
+<section class="scripts-section">
+{{#removed}}
+<ul class="scripts-list">
+  <li class="script">
+    <h2 class="script-title">Removed {{removed}} by <a href="/users/{{remover}}">{{remover}}</a></h2>
+    {{#content}}
+    <strong>{{key}}:</strong> {{value}}<br />
+    {{/content}}				
+    <p class="script-description">{{reason}}</p>
+  </li>
+</ul>
+{{/removed}}
+   <br />
+{{#previous}}
+<a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
+{{/previous}}
+{{pageNumber}}
+{{#next}}
+ &gt; <a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
+{{/next}}
+</section>
+{{/removedList}}

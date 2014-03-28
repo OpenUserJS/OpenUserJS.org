@@ -1,10 +1,19 @@
 {{> header.html}}
 <div class="centered-content">
   <h1>{{name}}{{#isYou}} <a href="/user/edit">Edit?</a>{{/isYou}}</h1>
+  {{#flaggable}}
+  <button class="{{#flagged}}button-selected{{/flagged}}" title="{{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}" type="button" onclick="location.href='{{{flagUrl}}}'" >
+    {{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}} User
+  </button><br /><br />
+  {{/flaggable}}
 </div>
 <div class="content-box">
   <strong>About</strong><br /><br />
   {{about}}
+  {{#moderation}}
+  <br /><br /><strong>Moderation</strong><br /><br />
+  Flags = {{flags}} | Threshold = {{threshold}}  | <a href="{{{removeUrl}}}">Remove This User?
+  {{/moderation}}
 </div>
 <br /><br />
 <div class="centered-content">

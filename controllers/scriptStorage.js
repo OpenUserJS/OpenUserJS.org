@@ -2,6 +2,7 @@ var AWS = require('aws-sdk');
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var userRoles = require('../models/userRoles.json');
 var bucketName = 'OpenUserJS.org';
 
@@ -141,41 +142,43 @@ exports.storeScript = function (user, meta, buf, callback, update) {
     installName += namespace + '/' + scriptName + '.user.js';
   }
 
-  Script.findOne({ installName: installName }, function (err, script) {
+  findDeadorAlive(Script, { installName: installName }, true,
+    function (alive, script, removed) {
 
-    if (!script && update) {
-      return callback(null);
-    } else if (!script) {
-      script = new Script({
-        name: meta.name,
-        author: user.name,
-        about: '',
-        installs: 0,
-        rating: 0,
-        votes: 0,
-        installable: true,
-        installName: installName,
-        updated: new Date(),
-        fork: null,
-        meta: meta,
-        _authorId: user._id
-      });
-    } else {
-      script.meta = meta;
-      script.updated = new Date();
-    }
-
-    script.save(function (err, script) {
-      s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
-        function (err, data) {
-           if (user.role === userRoles.length - 1) {
-             --user.role;
-             user.save(function (err, user) { callback(script); });
-           } else {
-             callback(script);
-           }
+      if (removed || (!script && update)) {
+        return callback(null);
+      } else if (!script) {
+        script = new Script({
+          name: meta.name,
+          author: user.name,
+          installs: 0,
+          rating: 0,
+          about: '',
+          updated: new Date(),
+          votes: 0,
+          flags: 0,
+          installable: true,
+          installName: installName,
+          fork: null,
+          meta: meta,
+          _authorId: user._id
         });
-    });
+      } else {
+        script.meta = meta;
+        script.updated = new Date();
+      }
+
+      script.save(function (err, script) {
+        s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
+          function (err, data) {
+            if (user.role === userRoles.length - 1) {
+              --user.role;
+              user.save(function (err, user) { callback(script); });
+            } else {
+              callback(script);
+            }
+        });
+      });
   });
 };
 

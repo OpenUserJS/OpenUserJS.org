@@ -8,6 +8,8 @@ var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
 var user = require('./controllers/user');
 var script = require('./controllers/script');
+var remove = require('./controllers/remove');
+var moderation = require('./controllers/moderation');
 var scriptStorage = require('./controllers/scriptStorage');
 var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
@@ -58,11 +60,11 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {});
 app.listen(app.get('port'));
 
-function scriptsRegex (root) {
+function listRegex (root, type) {
   var slash = '\/';
   if (root === slash) { slash = ''; }
-  return new RegExp(root + 
-    '(?:' + slash + 'scripts' +
+  return new RegExp('^' + root +
+    '(?:' + slash + '(?:' + type + ')list' +
     '(?:\/size\/(\d+))?' +
     '(?:\/sort\/([^\/]+))?' +
     '(?:\/dir\/(asc|desc))?' +
@@ -78,7 +80,7 @@ app.get('/register', main.register);
 app.get('/logout', main.logout);
 
 // User routes
-app.get(scriptsRegex('\/users\/([^\/]+)'), user.view);
+app.get(listRegex('\/users\/([^\/]+?)', 'script'), user.view);
 app.get('/user/edit', user.edit);
 app.post('/user/edit', user.update);
 app.get('/user/edit/scripts', user.scripts);
@@ -99,8 +101,8 @@ app.get('/install/:username/:scriptname', scriptStorage.sendScript);
 app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
 app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
 app.get('/meta/:username/:namespace/:scriptname', scriptStorage.sendMeta);
-app.get('/vote/:username/:scriptname/:vote', script.vote);
-app.get('/vote/:username/:namespace/:scriptname/:vote', script.vote);
+app.get('/vote/scripts/:username/:scriptname/:vote', script.vote);
+app.get('/vote/scripts/:username/:namespace/:scriptname/:vote', script.vote);
 app.post('/github/hook', scriptStorage.webhook);
 app.post('/github/service', function (req, res, next) { next(); });
 
@@ -111,14 +113,15 @@ app.post('/admin/user/update', admin.userAdminUpdate);
 app.post('/admin/api/update', admin.apiAdminUpdate);
 
 // Moderation routes
-app.get('/flag/user/:username', function (req, res, next) { next(); });
-app.get('/flag/:username/:namespace/:scriptname/:unflag?', script.flag);
-app.get('/flag/:username/:scriptname/:unflag?', script.flag);
-app.get('/flagged', function (req, res, next) { next(); });
-app.get('/graveyard', function (req, res, next) { next(); });
-app.get(/^\/remove\/(.+)\/(.+)$/, function (req, res, next) { next(); });
+app.get('/flag/users/:username/:unflag?', user.flag);
+app.get('/flag/scripts/:username/:namespace/:scriptname/:unflag?', script.flag);
+app.get('/flag/scripts/:username/:scriptname/:unflag?', script.flag);
+app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'),
+  moderation.flagged);
+app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
+app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 
-app.get(scriptsRegex('\/'), main.home);
+app.get(listRegex('\/', 'script'), main.home);
 
 app.use(express.static(__dirname + '/public'));
 app.use(function (req, res, next) {

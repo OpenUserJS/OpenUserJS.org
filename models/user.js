@@ -16,8 +16,7 @@ var userSchema = new Schema({
   // Moderation
   role: Number,
   flags: Number,
-  flagged: Boolean,
-  removed: Boolean
+  flagged: Boolean
 });
 
 var User = mongoose.model('User', userSchema);

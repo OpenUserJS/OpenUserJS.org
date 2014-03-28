@@ -18,7 +18,9 @@ function flaggable (model, content, user, callback) {
   // It is not the responsibility of the community
   // to police the site administration
   if (model.modelName === 'User') {
-    return callback(model._id != user._id && model.role > 2, model);
+    return getFlag(model, content, user, function (flag) {
+      callback(content._id != user._id && content.role > 2, content, flag);
+    });
   }
 
   getAuthor(content, function (author) {
@@ -32,16 +34,22 @@ function flaggable (model, content, user, callback) {
     if (author.role < 3) { return callback(author.role > 2, author); }
 
     // You can't flag something twice
-    Flag.findOne({
-      'model': model.modelName,
-      '_contentId': content._id,
-      '_userId': user._id
-    }, function (err, flag) {
+    getFlag(model, content, user, function (flag) {
       return callback(!flag, author, flag);
     });
   });
 }
 exports.flaggable = flaggable;
+
+function getFlag(model, content, user, callback) {
+  Flag.findOne({
+    'model': model.modelName,
+    '_contentId': content._id,
+    '_userId': user._id
+  }, function (err, flag) {
+    callback(err || !flag ? null : flag);
+  });
+}
 
 function getAuthor (content, callback) {
   User.findOne({ _id: content._authorId }, function (err, author) {
@@ -108,20 +116,22 @@ exports.flag = function (model, content, user, callback) {
 exports.unflag = function (model, content, user, callback) {
   if (!user) { return callback(null); }
 
-  Flag.findOne({
-    'model': model.modelName,
-    '_contentId': content._id,
-    '_userId': user._id
-  }, function (err, flag) {
-    if (err || !flag) { return callback(null); }
+  getFlag(model, content, user, function (flag) {
+    if (!flag) { return callback(null); }
 
     if (!content.flags) { content.flags = 0; }
     if (!content.flagged) { content.flagged = false; }
 
-    User.findOne({ _id: content._authorId }, function (err, author) {
+    function removeFlag (author) {
       flag.remove(function (err) {
         saveContent(model, content, author, user.role < 4 ? -2 : -1, callback);
       });
-    });
+    }
+
+    if (model.modelName === 'User') {
+      removeFlag(content);
+    } else {
+      getAuthor(content, removeFlag);
+    }
   });
 };

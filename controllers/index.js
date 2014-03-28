@@ -8,7 +8,7 @@ var userRoles = require('../models/userRoles.json');
 exports.home = function (req, res) {
   var user = req.session.user;
 
-  scriptsList.listScripts({}, req.route.params, [], '',
+  scriptsList.listScripts({}, req.route.params, '',
     function (scriptsList) {
       res.render('index', {
         title: 'Home Page',
@@ -16,7 +16,7 @@ exports.home = function (req, res) {
         scriptsList: scriptsList
       });
   });
-}
+};
 
 exports.register = function (req, res) {
   var options = { 'title': 'Register', 'wantname': req.session.username };
@@ -54,4 +54,4 @@ exports.register = function (req, res) {
 exports.logout = function (req, res) {
   delete req.session.user;
   res.redirect('/');
-}
+};
