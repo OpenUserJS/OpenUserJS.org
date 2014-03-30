@@ -20,29 +20,40 @@ exports.home = function (req, res) {
 
 exports.search = function (req, res, next) {
   var user = req.session.user;
-  var search = req.route.params.shift()
-    .replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
-  var searchRegex = new RegExp('\\b' + search, 'i');
-  var searchable = ['name', 'author', 'meta.description'];
-  var baseUrl = '/search/' + encodeURIComponent(search.replace(/\\/g, ''));
+  var search = req.route.params.shift();
+  var regexStr = '';
+  var urlRegexStr = '';
+  var searchable = ['name', 'author', 'about', 'meta.description'];
+  var baseUrl = '/search/' + encodeURIComponent(search);
   var conditions = [];
   var query = null;
+  var searchRegex = null;
+  var urlRegex = null
+  var terms = search.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
+    .split(/\s+/);
 
+  terms.forEach(function (term) {
+    regexStr += '(?=.*?\\b' + term  + ')';
+    urlRegexStr += '(?=.*?' + term  + ')';
+  });
+
+  searchRegex = new RegExp(regexStr, 'i');
   searchable.forEach(function (prop) {
     var condition = {};
     condition[prop] = searchRegex;
     conditions.push(condition);
   });
-  conditions.push({ 'meta.include': new RegExp(search, 'i') });
 
-  query = Script.find().or(conditions);
+  urlRegex = new RegExp(urlRegexStr, 'i');
+  conditions.push({ 'meta.include': urlRegex });
+  conditions.push({ 'meta.match': urlRegex });
 
-  scriptsList.listScripts(query, req.route.params, baseUrl,
+  scriptsList.listScripts({ $or: conditions }, req.route.params, baseUrl,
     function (scriptsList) {
       res.render('index', {
         'title': 'Searching for "' + search  +'"',
         'username': user ? user.name : null,
-        'search': search.replace(/\\/g, ''),
+        'search': search,
         'scriptsList': scriptsList
       });
   });
