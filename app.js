@@ -121,6 +121,11 @@ app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'),
 app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
 app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 
+app.post('/search', function(req, res) {
+  var search = encodeURIComponent(req.body.search.replace(/^\s+|\s+$/g, ''));
+  res.redirect('/search/' + search + '/' + req.body.type + 'list');
+});
+app.get(listRegex('\/search\/([^\/]+?)', 'script'), main.search);
 app.get(listRegex('\/', 'script'), main.home);
 
 app.use(express.static(__dirname + '/public'));

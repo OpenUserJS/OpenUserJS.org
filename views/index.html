@@ -1,8 +1,10 @@
 {{> header.html}}
+<br />
 		<div class="centered-content">
 				
-				<form>
-					<input type="search" value="search for a script" required />
+				<form action="/search" method="post">
+                                  <input type="hidden" name="type" value="script" />
+				  <input type="text" name="search" placeholder="search for a script" required="true" value="{{search}}" />
 				</form>
 				
 				<h1>POPULAR SCRIPTS</h1>

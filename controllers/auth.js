@@ -67,7 +67,7 @@ exports.auth = function (req, res, next) {
     authenticate(req, res);
   }
 
-  User.findOne({ name : { $regex : new RegExp('^' + username + '$', "i") } },
+  User.findOne({ name : { $regex : new RegExp('^' + username + '$', 'i') } },
     function (err, user) {
       var strategies = null;
       var strat = null;

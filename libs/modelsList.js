@@ -227,13 +227,19 @@ function listModels (model, query, options, defaultOrder, callback) {
     params.skip = size * page;
   }
 
-  model.find(query, omit, params,
-    function (err, models) {
-      if (!models) { models = [] }
-      if (size < 0) { size = models.length; }
-      orderBy = typeof orderBy === 'string' ? orderBy : '';
-      direction = direction === 1 ? 'asc' : 'desc';
+  function process (err, models) {
+    if (!models) { models = [] }
+    if (size < 0) { size = models.length; }
+    orderBy = typeof orderBy === 'string' ? orderBy : '';
+    direction = direction === 1 ? 'asc' : 'desc';
 
-      callback(models, size, orderBy, direction, page, options);
-  });
-}
+    callback(models, size, orderBy, direction, page, options);
+  }
+
+  if (query.mongooseCollection) {
+    query.select(omit).sort(params.sort).limit(params.limit)
+      .skip(params.skip).exec(process);
+  } else {
+    model.find(query, omit, params, process);
+  }
+};

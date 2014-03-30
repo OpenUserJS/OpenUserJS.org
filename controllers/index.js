@@ -18,6 +18,36 @@ exports.home = function (req, res) {
   });
 };
 
+exports.search = function (req, res, next) {
+  var user = req.session.user;
+  var search = req.route.params.shift()
+    .replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+  var searchRegex = new RegExp('\\b' + search, 'i');
+  var searchable = ['name', 'author', 'meta.description'];
+  var baseUrl = '/search/' + encodeURIComponent(search.replace(/\\/g, ''));
+  var conditions = [];
+  var query = null;
+
+  searchable.forEach(function (prop) {
+    var condition = {};
+    condition[prop] = searchRegex;
+    conditions.push(condition);
+  });
+  conditions.push({ 'meta.include': new RegExp(search, 'i') });
+
+  query = Script.find().or(conditions);
+
+  scriptsList.listScripts(query, req.route.params, baseUrl,
+    function (scriptsList) {
+      res.render('index', {
+        'title': 'Searching for "' + search  +'"',
+        'username': user ? user.name : null,
+        'search': search.replace(/\\/g, ''),
+        'scriptsList': scriptsList
+      });
+  });
+};
+
 exports.register = function (req, res) {
   var options = { 'title': 'Register', 'wantname': req.session.username };
 

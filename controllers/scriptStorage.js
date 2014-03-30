@@ -71,7 +71,13 @@ exports.sendMeta = function (req, res, next) {
 
     meta = script.meta;
     for (key in meta) {
-      lines.push('// @' + key + '    ' + meta[key]);
+      if (meta[key] instanceof Array) {
+        meta[key].forEach(function (value) {
+          lines.push('// @' + key + '    ' + value);
+        });
+      } else {
+        lines.push('// @' + key + '    ' + meta[key]);
+      }
     }
 
     res.set('Content-Type', 'text/javascript; charset=utf-8');
@@ -98,10 +104,17 @@ function parseMeta(aString) {
   });
 
   for (line in lines) {
-    lineMatches = lines[line].replace(/\s+$/, "").match(re);
+    lineMatches = lines[line].replace(/\s+$/, '').match(re);
     name = lineMatches[1];
     value = lineMatches[2];
-    headers[name] = value || "";
+    if (!headers[name]) {
+      headers[name] = value || '';
+    } else {
+      if (!(headers[name] instanceof Array)) {
+        headers[name] = [headers[name]];
+      }
+      headers[name].push(value || '');
+    }
   }
 
   return headers;
