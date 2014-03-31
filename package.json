@@ -10,6 +10,7 @@
     "mongoose": "*",
     "connect-mongo": "*",
     "formidable": "*",
+    "markdown": "*",
     "async": "*",
     "aws-sdk": "*",
     "passport": "*",
