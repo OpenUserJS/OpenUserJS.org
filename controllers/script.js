@@ -7,6 +7,7 @@ var Vote = require('../models/vote').Vote;
 var Flag = require('../models/flag').Flag;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
+var renderMd = require('../libs/markdown').renderMd;
 
 exports.view = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);
@@ -39,7 +40,7 @@ exports.view = function (req, res, next) {
         installs: script.installs,
         fork: fork,
         description: script.meta.description,
-        about: script.about,
+        about: renderMd(script.about),
         isYou: user && user._id == script._authorId,
         username: user ? user.name : null,
         isFork: !!fork

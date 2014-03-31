@@ -9,6 +9,7 @@ var Flag = require('../models/flag').Flag;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var async = require('async');
+var renderMd = require('../libs/markdown').renderMd;
 var nil = require('../libs/helpers').nil;
 
 exports.view = function (req, res, next) {
@@ -27,7 +28,7 @@ exports.view = function (req, res, next) {
         function (scriptsList) {
           options.title = user.name;
           options.name = user.name;
-          options.about = user.about;
+          options.about = renderMd(user.about);
           options.scriptsList = scriptsList;
           options.username = thisUser ? thisUser.name : null;
           res.render('user', options);
@@ -205,7 +206,6 @@ exports.update = function (req, res) {
   var installRegex = null;
   var installNames = [];
   var username = user.name.toLowerCase();
-
   if (!user) { return res.redirect('/login'); }
 
   if (req.body.about) {
