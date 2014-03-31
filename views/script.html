@@ -29,12 +29,12 @@
       {{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}
     </button>
     {{/flaggable}}
-    <p class="sr-description">{{description}}{{#about}}<br /><hr /><br />{{{about}}}{{/about}}</p>
+    <p class="sr-description">{{description}}</p>
 
     <table width="100%">
       <tr class="sr-row">
 	<td class="sr-col1">Author:</td>
-	<td class="sr-col2">{{author}}</td>
+	<td class="sr-col2"><a href="/users/{{author}}">{{author}}</a></td>
       </tr>
       <tr class="sr-row">
 	<td class="sr-col1">Last Update:</td>
@@ -63,7 +63,7 @@
 </tr>
 {{/isFork}}
 </table>					
-
+{{#about}}<hr /><p class="sr-description">{{{about}}}</p>{{/about}}
 </section>
 </div>
 {{> footer.html}}
