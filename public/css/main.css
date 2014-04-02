@@ -14,12 +14,13 @@ h5,h6{
 	color: #004e70;
 }
 
-ul
+ul.scripts-list
 {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
 }
+
 .button-selected{
 	background-color: gray;
 	color: white;
