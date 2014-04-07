@@ -13,10 +13,13 @@
 .script-internal{
 	padding: 8px;
 }
-.home-install-button{
+.install-button{
 	float: left;
 	margin: 3px 0 5px 0;
-	/*Use this if replacing text button with "download" icon button*/
+	width: 80px;
+	height: 30px;
+	font-size: 1.6em;
+	/*Use this when replacing text button with "download" icon button*/
 	/*height: 26px;*/ 
 }
 .script-title{
@@ -30,17 +33,63 @@ table{
 	border-top: solid 1px #414042;
 	margin: 5px 0 0 0;
 }
-
-
+.script table,.script p{
+	font-size: 1.6em;
+}
+.script-title{
+	margin: 0 0 5px 70px;
+	font-size: 1.9em;
+	position: relative;
+	top: 10px;
+}
+.script-title a{
+	text-decoration: none;
+}
+.scripts-section h1{
+	font-size: 3em;
+	margin-bottom: 15px;
+	margin-top: 25px;
+}
+.script-title-anchor{
+	font-size: 1.6em;
+	color: #004e70;
+	padding-left: 10px;
+}
+.paging-controls{
+	font-size: 2em;
+	color: #004e70;
+	padding-left: 10px;
+	text-align: center;
+}
+.paging-anchor{
+	color: #004e70;
+}
+.scripts-section input{
+	font-size: 2.2em;
+	width: 500px;
+	position: relative;
+	top: 10px;
+	padding: 2px 5px;
+}
 /**************************
  * Groups Section Stylings
  **************************/
 .groups-aside{
 	background: #3d6680;
-	width: 29%;
+	width: 27%;
 	margin-left: 72%;
 	opacity: .6;
-	height: auto;
+	position: relative;
+	/* For when the Search form and section title are brought
+	 * back into the scriptsList.html file. */
+	/*top: 12px;*/
+	right: -8px;
+	height: 700px;
+}
+#groups-section-header{
+	color: white;
+	font-size: 3em;
+	margin: 10px 0 0 5px;
 }
 .home-row{
 	height: 26px;
