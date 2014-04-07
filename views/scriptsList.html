@@ -23,7 +23,7 @@
 						</button>
 {{/moderation}}
 {{/edit}}
-						<h2 class="script-title"><a href="{{{url}}}">{{name}}{{#version}} - {{version}}{{/version}}</a></h2>
+						<h2 class="script-title"><a class="script-title-anchor" href="{{{url}}}">{{name}}{{#version}} - {{version}}{{/version}}</a></h2>
 
 						<table width="100%">
 							<tr class="home-row">
@@ -42,12 +42,14 @@
 				</ul>
 {{/scripts}}
    <br />
+<div class="paging-controls">
 {{#previous}}
-<a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
+<a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
 {{/previous}}
 {{pageNumber}}
 {{#next}}
- &gt; <a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
+ &gt; <a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
 {{/next}}
+</div>
 </section>
 {{/scriptsList}}

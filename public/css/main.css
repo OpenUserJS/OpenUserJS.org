@@ -42,18 +42,30 @@ ul.scripts-list
 	font-size: 1.9em;
 	margin: 5px 0;
 }
-.nav-button{
-	border-width: 2px;
-	background-color: transparent;
-	padding: 0;
+.button-div{
+	display: inline-block;
+	/* The width for each div should be 20% (192px) for 
+	 * allowing dynamic page resizing. */
+	
 	/* The following margins space and center buttons
 	 * evenly and give masthead hourglass vs grid look.*/
-	/*margin: 10px 14px;*/
-	margin : 10px 0 10px 36px;
+	margin: 0 14px;
+	
+	/* This margin setting styles the buttons as inline
+	 * with the page as a straight grid. */
+	/*margin : 10px 0 10px 36px;
 	position: relative;
-	left: 3px;
-	width: 160px;
+	left: 3px;*/
+
+}
+.nav-button{
+	border-width: 2px;
+	border-radius: 8px;
+	background-color: transparent;
+	padding: 0;
 	height: 160px;
+	width: 160px;
+	margin: auto;
 }
 button:disabled{
 	opacity: .5;
