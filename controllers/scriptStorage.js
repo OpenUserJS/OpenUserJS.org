@@ -42,7 +42,7 @@ exports.sendScript = function (req, res, next) {
   var accept = req.headers['Accept'];
   var installName = null;
 
-  if (accept === 'text/x-userscript-meta') { 
+  if (0 !== req.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') { 
     return exports.sendMeta(req, res, next); 
   }
 
@@ -52,6 +52,9 @@ exports.sendScript = function (req, res, next) {
     // Send the script
     res.set('Content-Type', 'text/javascript; charset=utf-8');
     stream.pipe(res);
+
+    // Don't count installs on libraries
+    if (script.isLib) { return; }
 
     // Update the install count
     ++script.installs;
@@ -142,17 +145,49 @@ exports.getMeta = function (chunks, callback) {
 
 exports.storeScript = function (user, meta, buf, callback, update) {
   var s3 = new AWS.S3();
-  var namespace = cleanFilename(meta.namespace, '');
-  var scriptName = cleanFilename(meta.name, '');
+  var namespace = null;
+  var scriptName = null;
   var installName = user.name.toLowerCase() + '/';
+  var isLibrary = typeof meta === 'string';
+  var libraries = [];
+  var requires = null;
+  var libraryRegex = new RegExp('^https?:\/\/' + 
+    (process.env.NODE_ENV === 'production' ?
+      'openuserjs\.org' : 'localhost:8080') +
+    '\/libs\/src\/(.+?\/.+?\.js)$', '');
 
-  // Can't install a script without a @name (maybe replace with random value)
-  if (!scriptName) { return callback(null); }
+  if (!meta) { return callback(null); }
 
-  if (namespace === user.name || !namespace) {
-    installName += scriptName + '.user.js';
+  if (!isLibrary) {
+    namespace = cleanFilename(meta.namespace, '');
+    scriptName = cleanFilename(meta.name, '');
+
+    // Can't install a script without a @name (maybe replace with random value)
+    if (!scriptName) { return callback(null); }
+
+    if (!namespace || namespace === user.name) {
+      installName += scriptName + '.user.js';
+    } else {
+      installName += namespace + '/' + scriptName + '.user.js';
+    }
+
+    if (meta.require) {
+      if (typeof meta.require === 'string') {
+        requires = [meta.require];
+      } else {
+        requires = meta.require;
+      }
+
+      requires.forEach(function (require) {
+          var match = libraryRegx.exec(require);
+          if (match && match[1]) { libraries.push(match[1]); }
+      });
+    }
   } else {
-    installName += namespace + '/' + scriptName + '.user.js';
+    scriptName = cleanFilename(meta.replace(/^\s+|\s+$/g, ''), '');
+    if (!scriptName) { return callback(null); }
+
+    installName += scriptName + '.js';
   }
 
   findDeadorAlive(Script, { installName: installName }, true,
@@ -162,7 +197,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         return callback(null);
       } else if (!script) {
         script = new Script({
-          name: meta.name,
+          name: isLibrary ? meta : meta.name,
           author: user.name,
           installs: 0,
           rating: 0,
@@ -170,14 +205,18 @@ exports.storeScript = function (user, meta, buf, callback, update) {
           updated: new Date(),
           votes: 0,
           flags: 0,
-          installable: true,
           installName: installName,
           fork: null,
-          meta: meta,
+          meta: isLibrary ? { name: meta } : meta,
+          isLib: isLibrary,
+          uses: isLibrary ? null : libraries,
           _authorId: user._id
         });
       } else {
-        script.meta = meta;
+        if (!script.isLib) {
+          script.meta = meta;
+          script.uses = libraries;
+        }
         script.updated = new Date();
       }
 

@@ -80,15 +80,17 @@ app.get('/register', main.register);
 app.get('/logout', main.logout);
 
 // User routes
-app.get(listRegex('\/users\/([^\/]+?)', 'script'), user.view);
+app.get(listRegex('\/users\/([^\/]+?)', 'script|lib'), user.view);
 app.get('/user/edit', user.edit);
 app.post('/user/edit', user.update);
-app.get('/user/edit/scripts', user.scripts);
-app.post('/user/edit/scripts', user.scripts);
-app.get('/user/edit/scripts/new', user.newScript);
-app.post('/user/edit/scripts/new', user.newScript);
-app.get('/scripts/:username/:scriptname/source', user.editScript);
-app.get('/scripts/:username/:namespace/:scriptname/source', user.editScript);
+app.get('/user/add/scripts', user.scripts);
+app.post('/user/add/scripts', user.scripts);
+app.get('/user/add/scripts/new', user.newScript);
+app.post('/user/add/scripts/new', user.newScript);
+app.get('/user/add/lib', script.lib(user.scripts));
+app.post('/user/add/lib', script.lib(user.scripts));
+app.get('/user/add/lib/new', script.lib(user.newScript));
+app.post('/user/add/lib/new', script.lib(user.newScript));
 
 // Script routes
 app.get('/scripts/:username/:scriptname', script.view);
@@ -101,10 +103,23 @@ app.get('/install/:username/:scriptname', scriptStorage.sendScript);
 app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
 app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
 app.get('/meta/:username/:namespace/:scriptname', scriptStorage.sendMeta);
+app.get('/scripts/:username/:scriptname/source', user.editScript);
+app.get('/scripts/:username/:namespace/:scriptname/source', user.editScript);
 app.get('/vote/scripts/:username/:scriptname/:vote', script.vote);
 app.get('/vote/scripts/:username/:namespace/:scriptname/:vote', script.vote);
 app.post('/github/hook', scriptStorage.webhook);
 app.post('/github/service', function (req, res, next) { next(); });
+
+// Library routes
+app.get(listRegex('\/toolbox', 'lib'), main.toolbox);
+app.get(listRegex('\/search\/([^\/]+?)', 'lib'), main.toolSearch);
+app.get('/libs/:username/:scriptname', script.lib(script.view));
+app.get('/lib/:scriptname/edit', script.lib(script.edit));
+app.post('/lib/:scriptname/edit', script.lib(script.edit));
+app.get('/libs/:username/:scriptname/source', script.lib(user.editScript));
+app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript);
+app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
+app.get('/use/lib/:username/:libname', function (req, res, next) { next(); });
 
 // Admin routes
 app.get('/admin/user', admin.userAdmin);
@@ -116,8 +131,9 @@ app.post('/admin/api/update', admin.apiAdminUpdate);
 app.get('/flag/users/:username/:unflag?', user.flag);
 app.get('/flag/scripts/:username/:namespace/:scriptname/:unflag?', script.flag);
 app.get('/flag/scripts/:username/:scriptname/:unflag?', script.flag);
+app.get('/flag/libs/:username/:scriptname/:unflag?', script.lib(script.flag)); //
 app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'),
-  moderation.flagged);
+  moderation.flagged); //
 app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
 app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 

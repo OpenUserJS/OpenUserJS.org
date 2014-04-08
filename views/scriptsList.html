@@ -17,10 +17,18 @@
 {{/moderation}}
 {{^edit}}
 {{^moderation}}
+{{#isLib}}
+						<button class="raw-button" title="Raw Source"
+								type="button" onclick="location.href='{{{install}}}'" >
+								Raw Source
+						</button>
+{{/isLib}}
+{{^isLib}}
 						<button class="install-button" title="Install"
 								type="button" onclick="location.href='{{{install}}}'" >
 								Install
 						</button>
+{{/isLib}}
 {{/moderation}}
 {{/edit}}
 						<h2 class="script-title"><a href="{{{url}}}">{{name}}{{#version}} - {{version}}{{/version}}</a></h2>
@@ -33,8 +41,10 @@
 							</tr>
 							<tr class="home-row">
 								<td class="home-col1">Last Update: {{updated}}</td>
+{{^isLib}}
 								<td class="home-col2">Installs:</td>
 								<td class="home-col3">{{installs}}</td>
+{{/isLib}}
 							</tr>
 						</table>					
 						<p class="script-description">{{description}}</p>

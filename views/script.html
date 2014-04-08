@@ -3,11 +3,15 @@
   <section class="sr-section">
     
     <h1 class="sr-script-title">{{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}}{{#isYou}}&nbsp;-&nbsp;<a href="{{{edit}}}">Edit?</a>{{/isYou}}</h1>
-    
+    {{#isLib}}
+    <span class="lib-url"><strong>Library URL: </strong><input type="text" name="lib_url" value="https://openuserjs.org{{{install}}}" size="50"/></span><br /><br />
+    {{/isLib}}
+    {{^isLib}}
     <button class="install-button" title="Install"
 	    type="button" onclick="location.href='{{{install}}}'" >
       Install
     </button>
+    {{/isLib}}
     <button class="view-source-button" title="View Source"
 	    type="button" onclick="location.href='{{{source}}}'" >
       View Source
@@ -44,10 +48,12 @@
 	<td class="sr-col1">Rating:</td>
 	<td class="sr-col2">{{rating}}</td>
       </tr>
+      {{^isLib}}
       <tr class="sr-row">
 	<td class="sr-col1">Installs:</td>
 	<td class="sr-col2">{{installs}}</td>
       </tr>
+      {{/isLib}}
       {{#moderation}}
       <tr class="sr-row">
 	<td class="sr-col1">Moderation:</td>

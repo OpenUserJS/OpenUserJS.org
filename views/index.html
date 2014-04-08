@@ -3,14 +3,14 @@
 		<div class="centered-content">
 				
 				<form action="/search" method="post">
-                                  <input type="hidden" name="type" value="script" />
-				  <input type="text" name="search" placeholder="search for a script" required="true" value="{{search}}" />
+                                  <input type="hidden" name="type" value="{{#toolbox}}lib{{/toolbox}}{{^toolbox}}script{{/toolbox}}" />
+				  <input type="text" name="search" placeholder="search for a {{#toolbox}}library{{/toolbox}}{{^toolbox}}script{{/toolbox}}" required="true" value="{{search}}" />
 				</form>
 				
-				<h1>POPULAR SCRIPTS</h1>
+				<h1>{{#toolbox}}LIBRARIES{{/toolbox}}{{^toolbox}}POPULAR SCRIPTS{{/toolbox}}</h1>
 				
 {{> scriptsList.html}}
-	
+{{^toolbox}}
 			<aside class="groups-aside">
 				<h1 id="groups-section-header">GROUPS COMING SOON!</h1>
 				<!-- <h1 id="groups-section-header">POPULAR GROUPS</h1>
@@ -24,5 +24,6 @@
 				</ul>
 				<a href="groups.html">More Groups...</a> -->
 			</aside>
+{{/toolbox}}
 		</div>
 {{> footer.html}}

@@ -1,5 +1,6 @@
 {{> header.html}}
 <div class="content-box">
+  {{^isLib}}
   {{#hasGH}}
   <p>
     To keep scripts you've imported from GitHub up-to-date on OpenUserJS.org when you push changes:<br>
@@ -12,26 +13,31 @@
   </p>
   {{^showRepos}}
   <p class="indent content">
-    <form id="load_repos" action="/user/edit/scripts" method="post">
+    <form id="load_repos" action="/user/add/scripts" method="post">
       <input type="hidden" name="importScripts" value="true" />
-      <input type="submit" value="Find Scripts On GitHub" />
+      <input type="submit" value="Find {{#isLib}}a Library Script{{/isLib}}{{^isLib}}Scripts{{/isLib}} On GitHub" />
     </form>
   </p>
   <br /><br />
   {{/showRepos}}
   {{/hasGH}}
+  {{/isLib}}
   {{^showRepos}}
-  <form action="/user/edit/scripts" method="post" enctype="multipart/form-data">
+  <form action="/user/add/{{#isLib}}lib{{/isLib}}{{^isLib}}scripts{{/isLib}}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="uploadScript" value="true" />
-    <label for="script">Upload Script: </label>
+    {{#isLib}}
+    <strong>Library Name: </strong>
+    <input type="text" name="script_name" value="" /><br /><br />
+    {{/isLib}}
+    <label for="script">Upload {{#isLib}}Library{{/isLib}} Script: </label>
     <input type="file" name="script" /><br />
     <input type="submit" value="Upload" />
   </form>
   <br /><br />
-  <p class="indent content"><a href="/user/edit/scripts/new">Write a New Script</a></p>
+  <p class="indent content">{{#isLib}}<a href="/user/add/lib/new">Write a New Library Script</a>{{/isLib}}{{^isLib}}<a href="/user/add/scripts/new">Write a New Script</a>{{/isLib}}</p>
   {{/showRepos}}
   {{#showRepos}}
-  <form id="load_scripts_from_github" method="post" action="/user/edit/scripts">
+  <form id="load_scripts_from_github" method="post" action="/user/add/scripts">
     <input type="hidden" name="loadScripts" value="true" />
     {{#repos}}
     <p class="indent">

@@ -21,6 +21,12 @@ var months = [
 // Get a list of scripts and build the options object 
 // for the corresponding Mustache partial template
 exports.listScripts = function (query, params, baseUrl, callback) {
+  if (query.isLib === null) {
+    delete query.isLib;
+  } else if (!query.isLib) {
+    query.isLib = { $ne: true };
+  }
+
   listModels(Script, query, params, ['rating', 'installs', 'updated'],
     function (scripts, size, orderBy, direction, page, options) {
       /*var headings = {
@@ -38,23 +44,28 @@ exports.listScripts = function (query, params, baseUrl, callback) {
       scriptsList.hasAuthor = options.omit.indexOf('author') === -1;
 
       scripts.forEach(function (script) {
-        var editUrl = script.installName.replace(/\.user\.js$/, '').split('/');
-        editUrl.shift();
+        var isLib = script.isLib || false;
+        var scriptPath = script.installName
+          .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
+        var editUrl = scriptPath.split('/');
         var updated = script.updated;
+
+        editUrl.shift();
 
         scriptsList.scripts.push({ 
           name: script.name,
           author: script.author,
           description: script.meta.description || '',
-          url: '/scripts/' + script.installName.replace(/\.user\.js$/, ''),
-          install: '/install/' + script.installName,
-          editUrl: '/script/' + editUrl.join('/') + '/edit',
+          url: (isLib ? '/libs/' : '/scripts/') + scriptPath,
+          install: (isLib ? '/libs/src/' : '/install/') + script.installName,
+          editUrl: (isLib ? '/lib/' : '/script/') + editUrl.join('/') + '/edit',
           rating: script.rating,
           installs: script.installs,
-          version: script.meta.version,
-          updated: script.updated.getDate() + ' '
-            + months[script.updated.getMonth()] + ' '
-            + script.updated.getFullYear()
+          version: script.meta.version || '',
+          isLib: script.isLib,
+          updated: updated.getDate() + ' '
+            + months[updated.getMonth()] + ' '
+            + updated.getFullYear()
         });
       });
 
@@ -73,7 +84,8 @@ exports.listScripts = function (query, params, baseUrl, callback) {
         scriptsList.headings.push(heading);
       }*/
 
-      scriptsList.baseUrl = baseUrl + '/scriptlist';
+      scriptsList.baseUrl = baseUrl + (query.isLib === true ? 
+        '/liblist' : '/scriptlist');
       
       scriptsList.size = options.size ? '/size/' + size : '';
       scriptsList.orderBy = options.orderBy ? '/sort/' + orderBy : '';
@@ -134,9 +146,12 @@ exports.listRemoved = function (query, params, baseUrl, callback) {
         var content = result.content;
         var key = null;
         var contentArr = [];
+        var val = null;
         
         for (key in content) {
-          contentArr.push({ 'key': key, 'value': content[key].toString() });
+          val = content[key];
+          val = val && typeof val === 'object' ? JSON.stringify(val) : val;
+          contentArr.push({ 'key': key, 'value': val });
         }
 
         removedList.removed.push({ 

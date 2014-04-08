@@ -18,44 +18,78 @@ exports.home = function (req, res) {
   });
 };
 
-exports.search = function (req, res, next) {
+function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
   var user = req.session.user;
   var search = req.route.params.shift();
-  var regexStr = '';
-  var urlRegexStr = '';
-  var searchable = ['name', 'author', 'about', 'meta.description'];
   var baseUrl = '/search/' + encodeURIComponent(search);
   var conditions = [];
   var query = null;
-  var searchRegex = null;
-  var urlRegex = null
+  var prefixStr = '';
+  var fullStr = '';
+  var prefixRegex = null;
+  var fullRegex = null;
   var terms = search.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
     .split(/\s+/);
 
   terms.forEach(function (term) {
-    regexStr += '(?=.*?\\b' + term  + ')';
-    urlRegexStr += '(?=.*?' + term  + ')';
+    prefixStr += '(?=.*?\\b' + term  + ')';
+    fullStr += '(?=.*?' + term  + ')';
   });
+  prefixRegex = new RegExp(prefixStr, 'i');
+  fullRegex = new RegExp(fullStr, 'i');
 
-  searchRegex = new RegExp(regexStr, 'i');
-  searchable.forEach(function (prop) {
+  prefixSearch.forEach(function (prop) {
     var condition = {};
-    condition[prop] = searchRegex;
+    condition[prop] = prefixRegex;
     conditions.push(condition);
   });
 
-  urlRegex = new RegExp(urlRegexStr, 'i');
-  conditions.push({ 'meta.include': urlRegex });
-  conditions.push({ 'meta.match': urlRegex });
+  fullSearch.forEach(function (prop) {
+    var condition = {};
+    condition[prop] = fullRegex;
+    conditions.push(condition);
+  });
+  opts['$or'] = conditions;
 
-  scriptsList.listScripts({ $or: conditions }, req.route.params, baseUrl,
+  scriptsList.listScripts(opts, req.route.params, baseUrl,
     function (scriptsList) {
-      res.render('index', {
+      callback({
         'title': 'Searching for "' + search  +'"',
         'username': user ? user.name : null,
         'search': search,
         'scriptsList': scriptsList
       });
+  });
+}
+
+exports.search = function (req, res, next) {
+  getSearchResults(req, res, 
+    ['name', 'author', 'about', 'meta.description'], 
+    ['meta.include', 'meta.match'], {},
+    function (options) {
+      res.render('index', options);
+  });
+};
+
+exports.toolbox = function (req, res) {
+  var user = req.session.user;
+
+  scriptsList.listScripts({ isLib: true }, req.route.params, '/toolbox',
+    function (scriptsList) {
+      res.render('index', {
+        title: 'The Toolbox',
+        toolbox: true,
+        username: user ? user.name : null,
+        scriptsList: scriptsList
+      });
+  });
+};
+
+exports.toolSearch = function (req, res) {
+  getSearchResults(req, res, ['name', 'author', 'about'], [], { isLib: true },
+    function (options) {
+      options.toolbox = true;
+      res.render('index', options);
   });
 };
 

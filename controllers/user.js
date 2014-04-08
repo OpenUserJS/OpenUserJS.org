@@ -23,7 +23,7 @@ exports.view = function (req, res, next) {
     function render () {
       req.route.params.push('author');
 
-      scriptsList.listScripts({ _authorId: user._id },
+      scriptsList.listScripts({ _authorId: user._id, isLib: null },
         req.route.params, '/users/' + username,
         function (scriptsList) {
           options.title = user.name;
@@ -74,14 +74,14 @@ exports.edit = function (req, res) {
 
   req.route.params.push('author');
 
-  scriptsList.listScripts({ _authorId: user._id },
+  scriptsList.listScripts({ _authorId: user._id, isLib: null },
   { size: -1 }, '/user/edit',
     function (scriptsList) {
       scriptsList.edit = true;
       res.render('userEdit', {
         title: 'Edit Yourself',
         name: user.name,
-        about: user.about, 
+        about: user.about,
         scriptsList: scriptsList,
         username: user ? user.name : null
       });
@@ -90,6 +90,7 @@ exports.edit = function (req, res) {
 
 exports.scripts = function (req, res) {
   var user = req.session.user;
+  var isLib = req.route.params.isLib;
   var indexOfGH = -1;
   var ghUserId = null;
   var repoManager = null;
@@ -101,6 +102,8 @@ exports.scripts = function (req, res) {
   var scriptname = null;
   var loadable = null;
   var form = null;
+  var userjsRegex = /\.user\.js$/;
+  var jsRegex = /\.js$/;
 
   if (!user) { return res.redirect('/login'); }
 
@@ -111,10 +114,13 @@ exports.scripts = function (req, res) {
       var script = files.script;
       var stream = null;
       var bufs = [];
+      var failUrl = '/user/add/' + (isLib ? 'lib' : 'scripts');
 
       // Reject non-js and huge files
       if (script.type !== 'application/javascript' && 
-          script.size > 500000) { return res.redirect('/user/edit/scripts'); }
+          script.size > 500000) { 
+        return res.redirect(failUrl); 
+      }
 
       stream = fs.createReadStream(script.path);
       stream.on('data', function (d) { bufs.push(d); });
@@ -122,19 +128,31 @@ exports.scripts = function (req, res) {
       // Pardon the depth
       stream.on('end', function () {
         User.findOne({ _id: user._id }, function (err, user) {
-          scriptStorage.getMeta(bufs, function (meta) {
-            scriptStorage.storeScript(user, meta, Buffer.concat(bufs),
+          var scriptName = fields.script_name;
+          if (isLib) {
+            scriptStorage.storeScript(user, scriptName, Buffer.concat(bufs),
               function(script) {
-                res.redirect('/users/' + user.name);
+                if (!script) { return res.redirect(failUrl); }
+                res.redirect('/libs/' + script.installName
+                  .replace(jsRegex, ''));
             });
-          });
+          } else {
+            scriptStorage.getMeta(bufs, function (meta) {
+              scriptStorage.storeScript(user, meta, Buffer.concat(bufs),
+                function(script) {
+                  if (!script) { return res.redirect(failUrl); }
+                  res.redirect('/scripts/' + script.installName
+                    .replace(userjsRegex, ''));
+              });
+            });
+          }
         });
       });
     });
     return;
   }
 
-  options = { title: 'Edit Scripts', username: user.name };
+  options = { title: 'Edit Scripts', username: user.name, isLib: isLib };
 
   indexOfGH = user.strategies.indexOf('github');
   if (indexOfGH > -1) {
@@ -231,49 +249,70 @@ exports.update = function (req, res) {
 
 exports.newScript = function (req, res, next) {
   var user = req.session.user;
+  var isLib = req.route.params.isLib;
   var source = null;
   var url = null;
 
   if (!user) { return res.redirect('/login'); }
 
+  function storeScript(meta, source) {
+    var userjsRegex = /\.user\.js$/;
+    var jsRegex = /\.js$/;
+
+    User.findOne({ _id: user._id }, function (err, user) {
+      scriptStorage.storeScript(user, meta, source, function (script) {
+        var redirectUrl = script ? (script.isLib ? '/libs/'
+          + script.installName.replace(jsRegex, '') : '/scripts/'
+          + script.installName.replace(userjsRegex, '')) : req.body.url;
+
+        if (!script || !req.body.original) {
+          return res.redirect(redirectUrl);
+        }
+
+        Script.findOne({ installName: req.body.original }, 
+          function (err, origScript) {
+            var fork = null;
+            if (err || !origScript) { return res.redirect(redirectUrl); }
+
+            if (origScript.isLib) {
+              
+            }
+
+            fork = origScript.fork || [];
+            fork.unshift({ author: origScript.author, url: origScript
+              .installName.replace(origScript.isLib ? jsRegex : userjsRegex, '')
+            });
+            script.fork = fork;
+
+            script.save(function (err, script) {
+              res.redirect(redirectUrl);
+            });
+        });
+      });
+    });
+  }
+
   if (req.body.url) {
     source = new Buffer(req.body.source);
     url = req.body.url;
 
-    scriptStorage.getMeta([source], function (meta) {
-      if (!meta || !meta.name) { return res.redirect(url); }
-
-      User.findOne({ _id: user._id }, function (err, user) {
-        scriptStorage.storeScript(user, meta, source, function (script) {
-          var redirectUrl = '/scripts/' + script.installName
-            .replace(/\.user\.js$/, '');
-
-          if (!req.body.original) { return res.redirect(redirectUrl); }
-
-          Script.findOne({ installName: req.body.original }, 
-            function (err, origScript) {
-              var fork = null;
-              if (err || !origScript) { return res.redirect(redirectUrl); }
-
-              fork = origScript.fork || [];
-              fork.unshift({ author: origScript.author, url: origScript
-                .installName.replace(/\.user\.js$/, '') });
-              script.fork = fork;
-
-              script.save(function (err, script) {
-                res.redirect(redirectUrl);
-              });
-          });
-        });
+    if (isLib) {
+      storeScript(req.body.script_name, source);
+    } else {
+      scriptStorage.getMeta([source], function (meta) {
+        if (!meta || !meta.name) { return res.redirect(url); }
+        storeScript(meta, source);
       });
-    });
+    }
   } else {
     res.render('scriptEditor', {
-      title: 'Write a new script',
+      title: 'Write a new ' + (isLib ? 'library ' : '') + 'script',
       source: '',
       url: req.url,
       owner: true,
       readOnly: false,
+      isLib: isLib,
+      newScript: true,
       username: user ? user.name : null
     });
   }
@@ -281,9 +320,10 @@ exports.newScript = function (req, res, next) {
 
 exports.editScript = function (req, res, next) {
   var user = req.session.user;
+  var isLib = req.route.params.isLib;
   var installName = null;
 
-  req.route.params.scriptname += '.user.js';
+  req.route.params.scriptname += isLib ? '.js' : '.user.js';
   scriptStorage.getSource(req, function (script, stream) {
     var bufs = [];
 
@@ -298,6 +338,8 @@ exports.editScript = function (req, res, next) {
         url: req.url,
         owner: user && script._authorId == user._id,
         username: user ? user.name : null,
+        isLib: script.isLib,
+        scriptName: script.name,
         readOnly: !user
       });
     });

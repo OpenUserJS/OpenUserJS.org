@@ -14,12 +14,13 @@ var scriptSchema = new Schema({
   votes: Number, // upvotes negate flags
   flags: Number,
   flagged: Boolean,
-  installable: Boolean,
   installName: String,
 
   // Extra info
   fork: Array,
   meta: Object,
+  isLib: Boolean,
+  uses: [String],
   _authorId: Schema.Types.ObjectId
 });
 

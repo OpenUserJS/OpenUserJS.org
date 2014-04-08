@@ -26,11 +26,12 @@
     {{/readOnly}}
 </script>
 {{^readOnly}}
-<div class="centered-content">
-<form action="/user/edit/scripts/new" id="code_form" method="post">
+<div class="content-box">
+<form action="{{#isLib}}/user/add/lib/new{{/isLib}}{{^isLib}}/user/add/scripts/new{{/isLib}}" id="code_form" method="post">
   <input type="hidden" id="source" name="source" value="" />
   <input type="hidden" name="url" value="{{{url}}}" />
   {{^owner}}<input type="hidden" name="original" value="{{original}}" />{{/owner}}
+  {{#isLib}}{{#newScript}}<strong>Library Name:</strong> <input type="text" name="script_name" value="" /><br /><br />{{/newScript}}{{^newScript}}<input type="hidden" name="script_name" value="{{scriptName}}" />{{/newScript}}{{/isLib}}
   <input type="button" onclick="submitCode();" value="Submit Code{{^owner}} as Fork{{/owner}}" /><br /><br />
 </form>
 </div>

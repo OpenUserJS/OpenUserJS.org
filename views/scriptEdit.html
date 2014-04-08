@@ -6,7 +6,7 @@
     
     <button class="install-button" title="Install"
 	    type="button" onclick="location.href='{{{install}}}'" >
-      Install
+      {{#isLib}}Raw{{/isLib}}{{^isLib}}Install{{/isLib}}
     </button>
     <button class="view-source-button" title="View Source"
 	    type="button" onclick="location.href='{{{source}}}'" >

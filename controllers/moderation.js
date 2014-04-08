@@ -28,7 +28,8 @@ exports.flagged = function (req, res, next) {
       req.route.params[1] = ['flags', 'updated'];
     }
 
-    modelsList.listScripts({ flagged: true }, req.route.params, baseUrl,
+    modelsList.listScripts({ flagged: true, isLib: null },
+      req.route.params, baseUrl,
       function (scriptsList) {
         options.scriptsList = scriptsList;
         res.render('flagged', options);

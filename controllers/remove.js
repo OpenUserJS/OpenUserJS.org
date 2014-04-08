@@ -9,7 +9,9 @@ exports.rm = function (req, res, next) {
 
   switch (type) {
   case 'scripts':
-    Script.findOne({ installName: path + '.user.js' }, function (err, script) {
+  case 'libs':
+    path += type === 'libs' ? '.js' : '.user.js';
+    Script.findOne({ installName: path }, function (err, script) {
       removeLib.remove(Script, script, thisUser, '', function (removed) {
         if (!removed) { return next(); }
         res.redirect('/');

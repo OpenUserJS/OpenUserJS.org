@@ -8,12 +8,35 @@ var Flag = require('../models/flag').Flag;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var renderMd = require('../libs/markdown').renderMd;
+var months = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+];
+
+// Let script controllers know this is a lib route
+exports.lib = function (controller) {
+  return (function (req, res, next) {
+    req.route.params.isLib = true;
+    controller(req, res, next);
+  });
+};
 
 exports.view = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);
+  var isLib = req.route.params.isLib;
   var user = req.session.user;
 
-  Script.findOne({ installName: installName + '.user.js' },
+  Script.findOne({ installName: installName + (isLib ? '.js' : '.user.js') },
     function (err, script) {
       if (err || !script) { return next(); }
       var editUrl = installName.split('/');
@@ -31,17 +54,24 @@ exports.view = function (req, res, next) {
       options = {
         title: script.name,
         name: script.name,
-        version: script.meta.version,
-        install: '/install/' + script.installName,
-        source: '/scripts/' + installName + '/source',
-        edit: '/script/' + editUrl.join('/') + '/edit',
+        version: script.isLib ? '' : script.meta.version,
+        install: (script.isLib ? '/libs/src/'  : '/install/')
+          + script.installName,
+        source: (script.isLib ? '/libs/' : '/scripts/') 
+          + installName + '/source',
+        edit: (script.isLib ? '/lib/' : '/script/')
+          + editUrl.join('/') + '/edit',
         author: script.author,
+        updated: script.updated.getDate() + ' '
+          + months[script.updated.getMonth()] + ' '
+          + script.updated.getFullYear(),
         rating: script.rating,
         installs: script.installs,
         fork: fork,
-        description: script.meta.description,
+        description: script.isLib ? '' : script.meta.description,
         about: renderMd(script.about),
         isYou: user && user._id == script._authorId,
+        isLib: script.isLib,
         username: user ? user.name : null,
         isFork: !!fork
       };
@@ -52,7 +82,9 @@ exports.view = function (req, res, next) {
 
        Vote.findOne({ _scriptId: script._id, _userId: user._id },
          function (err, voteModel) {
-           var voteUrl = '/vote/scripts/' + installName + '/';
+           var voteUrl = '/vote' + (script.isLib ? '/libs/' : '/scripts/')
+             + installName + '/';
+
            options.voteable = true;
            options.upUrl = voteUrl + 'up';
            options.downUrl = voteUrl + 'down';
@@ -69,7 +101,8 @@ exports.view = function (req, res, next) {
 
            flagLib.flaggable(Script, script, user,
              function (canFlag, author, flag) {
-             var flagUrl = '/flag/scripts/' + installName;
+               var flagUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/')
+                 + installName;
 
                if (flag) {
                  flagUrl += '/unflag';
@@ -84,7 +117,8 @@ exports.view = function (req, res, next) {
                  function (canRemove, author) {
                    options.moderation = canRemove;
                    options.flags = script.flags || 0;
-                   options.removeUrl = '/remove/scripts/' + installName;
+                   options.removeUrl = '/remove' 
+                     + (script.isLib ? '/libs/' : '/scripts/') + installName;
 
                    if (!canRemove) { return res.render('script', options); }
 
@@ -101,34 +135,39 @@ exports.view = function (req, res, next) {
 
 exports.edit = function (req, res, next) {
   var installName = null;
+  var isLib = req.route.params.isLib;
   var user = req.session.user;
 
   if (!user) { return res.redirect('/login'); }
 
-  req.route.params.username = user.name;
+  req.route.params.username = user.name.toLowerCase();
   installName = scriptStorage.getInstallName(req);
 
-  Script.findOne({ installName: installName + '.user.js' },
+  Script.findOne({ installName: installName + (isLib ? '.js' : '.user.js') },
     function (err, script) {
+      var baseUrl = script && script.isLib ? '/libs/' : '/scripts/';
       if (err || !script || script._authorId != user._id) { return next(); }
 
       if (typeof req.body.about !== 'undefined') {
         if (req.body.remove) {
-          scriptStorage.deleteScript(installName + '.user.js', function () {
+          scriptStorage.deleteScript(script.installName, function () {
             res.redirect('/users/' + user.name);
           });
         } else {
           script.about = req.body.about;
           script.save(function (err, script) {
-            res.redirect('/scripts/' + installName);
+            res.redirect(baseUrl + installName);
           });
         }
       } else {
         res.render('scriptEdit', {
           title: script.name,
           name: script.name,
-          source: '/scripts/' + installName + '/source',
+          install: (script.isLib ? '/libs/src/' : '/install/')
+            + script.installName,
+          source: baseUrl + installName + '/source',
           about: script.about,
+          isLib: script.isLib,
           username: user ? user.name : null
         });
       }
@@ -136,7 +175,9 @@ exports.edit = function (req, res, next) {
 };
 
 exports.vote = function (req, res, next) {
-  var installName = scriptStorage.getInstallName(req);
+  var isLib = req.route.params.isLib;
+  var installName = scriptStorage.getInstallName(req)
+    + (isLib ? '.js' : '.user.js');
   var vote = req.route.params.vote;
   var user = req.session.user;
   var url = req._parsedUrl.pathname.split('/');
@@ -158,8 +199,10 @@ exports.vote = function (req, res, next) {
     return res.redirect(url);
   }
 
-  Script.findOne({ installName: installName + '.user.js' },
+  Script.findOne({ installName: installName },
     function (err, script) {
+      if (err || !script) { return res.redirect(url); }
+
       Vote.findOne({ _scriptId: script._id, _userId: user._id },
         function (err, voteModel) {
           var oldVote = null;
@@ -213,16 +256,17 @@ exports.vote = function (req, res, next) {
 };
 
 exports.flag = function (req, res, next) {
+  var isLib = req.route.params.isLib;
   var installName = scriptStorage.getInstallName(req);
   var unflag = req.route.params.unflag;
 
-  Script.findOne({ installName: installName + '.user.js' },
+  Script.findOne({ installName: installName + (isLib ? '.js' : '.user.js') },
     function (err, script) {
       var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
       if (err || !script) { return next(); }
 
       fn(Script, script, req.session.user, function (flagged) {
-        res.redirect('/scripts/' + installName);
+        res.redirect((isLib ? '/libs/' : '/scripts/') + installName);
       });
   });
 };
