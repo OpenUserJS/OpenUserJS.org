@@ -108,7 +108,7 @@ exports.register = function (req, res) {
     // Get the strategies we have OAuth keys for
     strats.forEach(function (strat) {
       options.strategies.push({ 'strat' : strat.name,
-                                'display' : strat.display });
+        'display' : strat.display });
     });
 
     // Get OpenId strategies

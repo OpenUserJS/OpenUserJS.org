@@ -10,7 +10,27 @@
     <strong><a href="/user/add/lib">Add Library</a></strong>
   </form>
 </div>
-<br />
+<br /><br />
+<div class="content-box">
+  <h2>Authentication</h2>
+  <p><strong>{{defaultStrategy}}</strong> is your current form of authentication.</p>
+  {{#haveOtherStrategies}}
+  <p>Other verified forms of authentication:</p>
+  {{#usedStrategies}}
+  <strong>{{display}}</strong> - <a href="/auth/{{strat}}">Make default</a><br />
+  {{/usedStrategies}}
+  {{/haveOtherStrategies}}
+  <form id="register" method="post" action="/auth/">
+    <p>Add another form of authentication:</p>
+    <select name="auth">
+      {{#openStrategies}}
+      <option value="{{strat}}">{{display}}</option>
+      {{/openStrategies}}
+    </select>
+    <input type="submit" value="Authenticate" />
+  </form>
+</div>
+<br /><br />
 <div class="centered-content">
   {{> scriptsList.html}}
 </div>

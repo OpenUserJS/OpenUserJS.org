@@ -41,8 +41,26 @@ Strategy.find({}, function (err, strategies) {
 });
 
 exports.auth = function (req, res, next) {
+  var user = req.session.user;
   var strategy = req.body.auth || req.route.params.strategy;
   var username = req.body.username || req.session.username;
+
+  function auth() {
+    var authenticate = passport.authenticate(strategy);
+
+    // Just in case some dumbass tries a bad /auth/* url
+    if (!strategyInstances[strategy]) { return next(); }
+
+    authenticate(req, res);
+  }
+
+  // Allow a logged in user to add a new strategy
+  if (strategy && user) {
+    req.session.username = user.name;
+    return auth();
+  } else if (user) {
+    return next();
+  }
 
   if (!username) { return res.redirect('/register?noname'); }
   // Clean the username of leading and trailing whitespace,
@@ -56,15 +74,6 @@ exports.auth = function (req, res, next) {
   // get back from authentication
   if (!req.session.username) {
     req.session.username = username;
-  }
-
-  function auth() {
-    var authenticate = passport.authenticate(strategy);
-
-    // Just in case some dumbass tries a bad /auth/* url
-    if (!strategyInstances[strategy]) { return next(); }
-
-    authenticate(req, res);
   }
 
   User.findOne({ name : { $regex : new RegExp('^' + username + '$', 'i') } },
@@ -100,6 +109,7 @@ exports.callback = function (req, res, next) {
   var username = req.session.username;
   var newstrategy = req.session.newstrategy;
   var strategyInstance = null;
+  var doneUrl = req.session.user ? '/user/edit' : '/';
 
   // The callback was called improperly
   if (!strategy || !username) { return next(); }
@@ -125,7 +135,10 @@ exports.callback = function (req, res, next) {
   var authenticate = passport.authenticate(strategy, 
     function (err, user, info) {
       if (err) { return next(err); }
-      if (!user) { return res.redirect('/register?authfail'); }
+      if (!user) {
+        return res.redirect(doneUrl + (doneUrl === '/' ? 'register' : '')
+          + '?authfail');
+      }
 
       req.logIn(user, function(err) {
         if (err) { return next(err); }
@@ -138,7 +151,7 @@ exports.callback = function (req, res, next) {
         } else {
           // Delete the username that was temporarily stored
           delete req.session.username;
-          return res.redirect('/');
+          return res.redirect(doneUrl);
         }
       });
   });

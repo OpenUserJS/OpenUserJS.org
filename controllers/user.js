@@ -3,11 +3,13 @@ var formidable = require('formidable');
 var scriptStorage = require('./scriptStorage');
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
+var Strategy = require('../models/strategy.js').Strategy;
 var RepoManager = require('../libs/repoManager');
 var scriptsList = require('../libs/modelsList');
 var Flag = require('../models/flag').Flag;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
+var strategies = require('./strategies.json');
 var async = require('async');
 var renderMd = require('../libs/markdown').renderMd;
 var nil = require('../libs/helpers').nil;
@@ -69,22 +71,65 @@ exports.view = function (req, res, next) {
 
 exports.edit = function (req, res) {
   var user = req.session.user;
+  var userStrats = req.session.user.strategies.slice(0);
+  var options = {
+    title: 'Edit Yourself',
+    name: user.name,
+    about: user.about,
+    username: user ? user.name : null
+  };
 
   if (!user) { return res.redirect('/login'); }
 
   req.route.params.push('author');
 
-  scriptsList.listScripts({ _authorId: user._id, isLib: null },
-  { size: -1 }, '/user/edit',
-    function (scriptsList) {
-      scriptsList.edit = true;
-      res.render('userEdit', {
-        title: 'Edit Yourself',
-        name: user.name,
-        about: user.about,
-        scriptsList: scriptsList,
-        username: user ? user.name : null
-      });
+  Strategy.find({}, function (err, strats) {
+    var defaultStrategy = userStrats[userStrats.length - 1];
+    var strategy = null;
+    var name = null;
+    options.openStrategies = [];
+    options.usedStrategies = [];
+
+    // Get the strategies we have OAuth keys for
+    strats.forEach(function (strat) {
+      if (strat.name === defaultStrategy) { return; }
+
+      if (userStrats.indexOf(strat.name) > -1) {
+        options.usedStrategies.push({ 'strat' : strat.name,
+          'display' : strat.display });
+      } else {
+        options.openStrategies.push({ 'strat' : strat.name,
+          'display' : strat.display });
+      }
+    });
+
+    // Get OpenId strategies
+    if (process.env.NODE_ENV === 'production') {
+      for (name in strategies) {
+        strategy = strategies[name];
+
+        if (!strategy.oauth && name !== defaultStrategy) {
+          if (userStrats.indexOf(name) > -1) {
+            options.usedStrategies.push({ 'strat' : name,
+              'display' : strategy.name });
+          } else {
+            options.openStrategies.push({ 'strat' : name,
+              'display' : strategy.name });
+          }
+        }
+      }
+    }
+
+    options.defaultStrategy = strategies[defaultStrategy].name;
+    options.haveOtherStrategies = options.usedStrategies.length > 0;
+
+    scriptsList.listScripts({ _authorId: user._id, isLib: null },
+      { size: -1 }, '/user/edit',
+      function (scriptsList) {
+        scriptsList.edit = true;
+        options.scriptsList = scriptsList;
+        res.render('userEdit', options);
+    });
   });
 };
 

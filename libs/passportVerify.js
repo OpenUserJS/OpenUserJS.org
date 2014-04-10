@@ -21,6 +21,7 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
 
   findDeadorAlive(User, { 'auths' : digest }, true,
     function (alive, user, removed) {
+      var pos = user ? user.auths.indexOf(digest) : -1;
       if (removed) { done(null, false, 'user was removed'); }
 
       if (!user) {
@@ -50,6 +51,14 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
               return done(err, user);
             });
           }
+        });
+      } else if (pos > -1 && pos < user.auths.length - 1) {
+        user.strategies.splice(pos, 1);
+        user.auths.splice(pos, 1);
+        user.strategies.push(strategy);
+        user.auths.push(digest);
+        user.save(function (err, user) {
+          return done(err, user);
         });
       } else {
         // The user was authenticated
