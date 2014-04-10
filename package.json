@@ -4,7 +4,7 @@
   "version": "0.1.2",
   "main": "app",
   "dependencies": {
-    "express": "*",
+    "express": "3.5.1",
     "bluebird": "*",
     "mu2": "*",
     "mongoose": "*",
