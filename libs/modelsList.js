@@ -21,6 +21,16 @@ var months = [
 // Get a list of scripts and build the options object 
 // for the corresponding Mustache partial template
 exports.listScripts = function (query, params, baseUrl, callback) {
+
+  // Don't list flagged scripts by default
+  if (query.flagged === null) {
+    delete query.flagged;
+  } else if (query.flagged !== true) {
+    query.flagged = { $ne: true };
+  }
+
+  // List both libraries and scripts if isLib is null
+  // Only list scripts and omit libraries by default
   if (query.isLib === null) {
     delete query.isLib;
   } else if (!query.isLib) {

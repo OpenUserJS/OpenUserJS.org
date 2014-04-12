@@ -23,10 +23,15 @@ exports.view = function (req, res, next) {
     if (err || !user) { return next(); }
 
     function render () {
+      var query = { _authorId: user._id, isLib: null };
       req.route.params.push('author');
 
-      scriptsList.listScripts({ _authorId: user._id, isLib: null },
-        req.route.params, '/users/' + username,
+      // Only list flagged scripts for author and user >= moderator
+      if (options.isYou || thisUser.role < 4) {
+        query.flagged = null;
+      }
+
+      scriptsList.listScripts(query, req.route.params, '/users/' + username,
         function (scriptsList) {
           options.title = user.name;
           options.name = user.name;
@@ -123,7 +128,7 @@ exports.edit = function (req, res) {
     options.defaultStrategy = strategies[defaultStrategy].name;
     options.haveOtherStrategies = options.usedStrategies.length > 0;
 
-    scriptsList.listScripts({ _authorId: user._id, isLib: null },
+    scriptsList.listScripts({ _authorId: user._id, isLib: null, flagged: null },
       { size: -1 }, '/user/edit',
       function (scriptsList) {
         scriptsList.edit = true;
