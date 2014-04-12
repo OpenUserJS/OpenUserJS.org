@@ -27,7 +27,7 @@ exports.view = function (req, res, next) {
       req.route.params.push('author');
 
       // Only list flagged scripts for author and user >= moderator
-      if (options.isYou || thisUser.role < 4) {
+      if (options.isYou || (thisUser && thisUser.role < 4)) {
         query.flagged = null;
       }
 
