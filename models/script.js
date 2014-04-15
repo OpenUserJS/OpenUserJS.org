@@ -21,6 +21,7 @@ var scriptSchema = new Schema({
   meta: Object,
   isLib: Boolean,
   uses: [String],
+  _groupId: Schema.Types.ObjectId, // The group is script created
   _authorId: Schema.Types.ObjectId
 });
 
