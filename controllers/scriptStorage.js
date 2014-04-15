@@ -179,7 +179,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
       }
 
       requires.forEach(function (require) {
-          var match = libraryRegx.exec(require);
+          var match = libraryRegex.exec(require);
           if (match && match[1]) { libraries.push(match[1]); }
       });
     }
