@@ -53,6 +53,14 @@
 	<td class="sr-col1">Installs:</td>
 	<td class="sr-col2">{{installs}}</td>
       </tr>
+      <tr class="sr-row">
+	<td class="sr-col1">Groups:</td>
+	<td class="sr-col2">
+          {{#groups}}
+          <a href="/group/{{url}}">{{name}}</a><br />
+          {{/groups}}
+        </td>
+      </tr>
       {{/isLib}}
       {{#moderation}}
       <tr class="sr-row">

@@ -1,10 +1,13 @@
 var fs = require('fs');
 var formidable = require('formidable');
+var async = require('async');
 var scriptStorage = require('./scriptStorage');
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 var Flag = require('../models/flag').Flag;
+var Group = require('../models/group').Group;
+var addScriptToGroups = require('./group').addScriptToGroups
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var renderMd = require('../libs/markdown').renderMd;
@@ -42,6 +45,7 @@ exports.view = function (req, res, next) {
       var editUrl = installName.split('/');
       var fork = script.fork;
       var options = null;
+      var tasks = [];
       editUrl.shift();
 
       if (fork instanceof Array && fork.length > 0) {
@@ -76,60 +80,85 @@ exports.view = function (req, res, next) {
         isFork: !!fork
       };
 
+      function render() { res.render('script', options); }
+
+      tasks.push(function (callback) {
+        if (script.isLib) { return callback(); }
+
+        Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
+          options.groups = (groups || []).map(function (group) {
+            return { name: group.name, url: group.name.replace(/\s+/g, '_') };
+          });
+          callback();
+        });
+      });
+
       if (!user || options.isYou) {
-        return res.render('script', options);
+        return async.parallel(tasks, render);
       }
 
-       Vote.findOne({ _scriptId: script._id, _userId: user._id },
-         function (err, voteModel) {
-           var voteUrl = '/vote' + (script.isLib ? '/libs/' : '/scripts/')
-             + installName + '/';
+      tasks.push(function (callback) {
+        Vote.findOne({ _scriptId: script._id, _userId: user._id },
+          function (err, voteModel) {
+            var voteUrl = '/vote' + (script.isLib ? '/libs/' : '/scripts/')
+              + installName + '/';
 
-           options.voteable = true;
-           options.upUrl = voteUrl + 'up';
-           options.downUrl = voteUrl + 'down';
+            options.voteable = true;
+            options.upUrl = voteUrl + 'up';
+            options.downUrl = voteUrl + 'down';
 
-           if (voteModel) {
-             if (voteModel.vote) {
-               options.up = true;
-               options.upUrl = voteUrl + 'unvote';
-             } else {
-               options.down = true;
-               options.downUrl = voteUrl + 'unvote';
-             }
-           }
+            if (voteModel) {
+              if (voteModel.vote) {
+                options.up = true;
+                options.upUrl = voteUrl + 'unvote';
+              } else {
+                options.down = true;
+                options.downUrl = voteUrl + 'unvote';
+              }
+            }
 
-           flagLib.flaggable(Script, script, user,
-             function (canFlag, author, flag) {
-               var flagUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/')
-                 + installName;
+            callback();
+          });
+      });
 
-               if (flag) {
-                 flagUrl += '/unflag';
-                 options.flagged = true;
-                 options.flaggable = true;
-               } else {
-                 options.flaggable = canFlag;
-               }
-               options.flagUrl = flagUrl;
+      tasks.push(function (callback) {
+        flagLib.flaggable(Script, script, user,
+          function (canFlag, author, flag) {
+            var flagUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/')
+              + installName;
 
-               removeLib.removeable(Script, script, user,
-                 function (canRemove, author) {
-                   options.moderation = canRemove;
-                   options.flags = script.flags || 0;
-                   options.removeUrl = '/remove' 
-                     + (script.isLib ? '/libs/' : '/scripts/') + installName;
+            if (flag) {
+              flagUrl += '/unflag';
+              options.flagged = true;
+              options.flaggable = true;
+            } else {
+              options.flaggable = canFlag;
+            }
+            options.flagUrl = flagUrl;
 
-                   if (!canRemove) { return res.render('script', options); }
+            callback();
+        });
+      });
 
-                   flagLib.getThreshold(Script, script, author,
-                     function (threshold) {
-                       options.threshold = threshold;
-                       res.render('script', options);
-                   });
-               });
-           });
-       });
+      tasks.push(function (callback) {
+        removeLib.removeable(Script, script, user,
+          function (canRemove, author) {
+            options.moderation = canRemove;
+            options.flags = script.flags || 0;
+            options.removeUrl = '/remove' 
+              + (script.isLib ? '/libs/' : '/scripts/') + installName;
+
+            if (!canRemove) { return callback(); }
+
+            flagLib.getThreshold(Script, script, author,
+              function (threshold) {
+                options.threshold = threshold;
+                callback();
+            });
+        });
+      });
+
+      async.parallel(tasks, render);
   });
 };
 
@@ -155,20 +184,28 @@ exports.edit = function (req, res, next) {
           });
         } else {
           script.about = req.body.about;
-          script.save(function (err, script) {
+          addScriptToGroups(script, req.body.groups.split(/,/), function () {
             res.redirect(baseUrl + installName);
           });
         }
       } else {
-        res.render('scriptEdit', {
-          title: script.name,
-          name: script.name,
-          install: (script.isLib ? '/libs/src/' : '/install/')
-            + script.installName,
-          source: baseUrl + installName + '/source',
-          about: script.about,
-          isLib: script.isLib,
-          username: user ? user.name : null
+        Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
+          var groupsArr = (groups || []).map(function (group) {
+            return group.name;
+          });
+
+          res.render('scriptEdit', {
+            title: script.name,
+            name: script.name,
+            install: (script.isLib ? '/libs/src/' : '/install/')
+              + script.installName,
+            source: baseUrl + installName + '/source',
+            about: script.about,
+            groups: JSON.stringify(groupsArr),
+            canCreateGroup: (!script._groupId).toString(),
+            isLib: script.isLib,
+            username: user ? user.name : null
+          });
         });
       }
   });

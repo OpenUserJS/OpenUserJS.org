@@ -150,7 +150,9 @@ app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
 app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 
 // Group routes
-app.get('/group/search/:term', group.search);
+app.get(listRegex('\/groups', ''), group.list);
+app.get(listRegex('\/group\/([^\/]+?)', 'script'), group.view);
+app.get('/api/group/search/:term/:addTerm?', group.search);
 
 app.post('/search', function(req, res) {
   var search = encodeURIComponent(req.body.search.replace(/^\s+|\s+$/g, ''));

@@ -12,17 +12,18 @@
 {{> scriptsList.html}}
 {{^toolbox}}
 			<aside class="groups-aside">
-				<h1 id="groups-section-header">GROUPS COMING SOON!</h1>
-				<!-- <h1 id="groups-section-header">POPULAR GROUPS</h1>
+				<h1 id="groups-section-header">POPULAR GROUPS</h1>
+                                {{#groupsList}}
 				<ul>
+                                  {{#groups}}
 					<li class="group">
-						<h2><a href="">Group Name</a></h2>
-						<span>Total Installs: 1,246,209</span> 
-						<br />
-						<span>Number of Scripts: 248</span> 
+						<h2><a href="{{{url}}">{{name}}</a></h2>
+						<span>{{size}} script{{#multiple}}s{{/multiple}}</span> 
 					</li>
+                                  {{/groups}}
 				</ul>
-				<a href="groups.html">More Groups...</a> -->
+                                {{/groupsList}}
+				<a href="/groups">More Groups...</a>
 			</aside>
 {{/toolbox}}
 		</div>

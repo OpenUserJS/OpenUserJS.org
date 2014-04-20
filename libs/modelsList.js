@@ -1,6 +1,8 @@
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 var Remove = require('../models/remove').Remove;
+var Group = require('../models/group').Group;
+var getRating = require('../libs/collectiveRating').getRating;
 var listSize = 10;
 var months = [
   'Jan',
@@ -38,20 +40,19 @@ exports.listScripts = function (query, params, baseUrl, callback) {
   }
 
   listModels(Script, query, params, ['rating', 'installs', 'updated'],
-    function (scripts, size, orderBy, direction, page, options) {
+    function (scripts, scriptsList) {
       /*var headings = {
         'name': { label: 'Name', width: 50 },
         'author': { label: 'Author', width: 15 },
         'rating': { label: 'Rating', width: 15 },
         'installs': { label: 'Installs', width: 15 }
       };*/
-      var scriptsList = {};
       var heading = null;
       var name = null;
-      options.orderBy = orderBy;
       scriptsList.scripts = [];
       scriptsList.headings = [];
-      scriptsList.hasAuthor = options.omit.indexOf('author') === -1;
+      scriptsList.hasAuthor = params[4] ? 
+        params[4].indexOf('author') === -1 : true;
 
       scripts.forEach(function (script) {
         var isLib = script.isLib || false;
@@ -96,17 +97,6 @@ exports.listScripts = function (query, params, baseUrl, callback) {
 
       scriptsList.baseUrl = baseUrl + (query.isLib === true ? 
         '/liblist' : '/scriptlist');
-      
-      scriptsList.size = options.size ? '/size/' + size : '';
-      scriptsList.orderBy = options.orderBy ? '/sort/' + orderBy : '';
-      scriptsList.direction = options.direction ? '/dir/' + direction : '';
-      page += 1;
-
-      scriptsList.pageNumber = page;
-      scriptsList.next = scripts.length > size ? '/page/' + (page + 1) : '';
-      scriptsList.previous = page > 1 ? '/page/' + (page - 1) : '';
-
-      if (scriptsList.next) { scriptsList.scripts.pop(); }
       callback(scriptsList);
   });
 };
@@ -116,8 +106,7 @@ exports.listScripts = function (query, params, baseUrl, callback) {
 // for the corresponding Mustache partial template
 exports.listUsers = function (query, params, baseUrl, callback) {
   listModels(User, query, params, ['name'],
-    function (users, size, orderBy, direction, page, options) {
-      var usersList = {};
+    function (users, usersList) {
       usersList.users = [];
 
       users.forEach(function (user) {
@@ -128,17 +117,6 @@ exports.listUsers = function (query, params, baseUrl, callback) {
       });
 
       usersList.baseUrl = baseUrl + '/userlist';
-      
-      usersList.size = options.size ? '/size/' + size : '';
-      usersList.orderBy = options.orderBy ? '/sort/' + orderBy : '';
-      usersList.direction = options.direction ? '/dir/' + direction : '';
-      page += 1;
-
-      usersList.pageNumber = page;
-      usersList.next = users.length > size ? '/page/' + (page + 1) : '';
-      usersList.previous = page > 1 ? '/page/' + (page - 1) : '';
-
-      if (usersList.next) { usersList.users.pop(); }
       callback(usersList);
   });
 };
@@ -148,8 +126,7 @@ exports.listUsers = function (query, params, baseUrl, callback) {
 // for the corresponding Mustache partial template
 exports.listRemoved = function (query, params, baseUrl, callback) {
   listModels(Remove, query, params, ['removed'],
-    function (results, size, orderBy, direction, page, options) {
-      var removedList = {};
+    function (results, removedList) {
       removedList.removed = [];
 
       results.forEach(function (result) {
@@ -175,18 +152,43 @@ exports.listRemoved = function (query, params, baseUrl, callback) {
       });
 
       removedList.baseUrl = baseUrl + '/list';
-      
-      removedList.size = options.size ? '/size/' + size : '';
-      removedList.orderBy = options.orderBy ? '/sort/' + orderBy : '';
-      removedList.direction = options.direction ? '/dir/' + direction : '';
-      page += 1;
-
-      removedList.pageNumber = page;
-      removedList.next = results.length > size ? '/page/' + (page + 1) : '';
-      removedList.previous = page > 1 ? '/page/' + (page - 1) : '';
-
-      if (removedList.next) { removedList.removed.pop(); }
       callback(removedList);
+  });
+};
+
+// /groups/list/size/:size/sort/:orderBy/dir/:direction/page/:page
+// Get a list of groups and build the options object 
+// for the corresponding Mustache partial template
+exports.listGroups = function (query, params, baseUrl, callback) {
+  listModels(Group, query, params, ['rating'],
+    function (groups, groupsList) {
+      groupsList.groups = [];
+
+      groups.forEach(function (group) {
+        groupsList.groups.push({ 
+          name: group.name,
+          url: '/group/' + group.name.replace(/\s+/g, '_'),
+          size: group._scriptIds.length,
+          multiple: group._scriptIds.length > 1
+        });
+
+        // Wait two hours between group rating updates
+        // This calculation runs in the background
+        if (new Date().getTime() > (group.updated.getTime() + 1000*60*60*2)) {
+          Script.find({ _id: { $in: group._scriptIds } },
+            function (err, scripts) {
+              if (!err || scripts.length > 1) {
+                group.rating = getRating(scripts);
+              }
+
+              group.updated = new Date();
+              group.save(function () {});
+          });
+        }
+      });
+
+      groupsList.baseUrl = baseUrl + '/list';
+      callback(groupsList);
   });
 };
 
@@ -208,13 +210,13 @@ function listModels (model, query, options, defaultOrder, callback) {
     optArr = options;
     options = {};
     options.size = optArr[0];
-    options.orderBy = optArr[1] || defaultOrder;
+    options.orderBy = optArr[1];
     options.direction = optArr[2];
     options.page = optArr[3];
     options.omit = optArr[4];
   }
 
-  orderBy = options.orderBy;
+  orderBy = options.orderBy || defaultOrder;
   page = options.page && !isNaN(options.page) ? options.page - 1 : 0;
   size = options.size || listSize;
 
@@ -254,11 +256,22 @@ function listModels (model, query, options, defaultOrder, callback) {
 
   model.find(query, omit, params,
     function (err, models) {
+      var list = {};
       if (!models) { models = [] }
       if (size < 0) { size = models.length; }
       orderBy = typeof orderBy === 'string' ? orderBy : '';
       direction = direction === 1 ? 'asc' : 'desc';
 
-      callback(models, size, orderBy, direction, page, options);
+      list.size = options.size ? '/size/' + size : '';
+      list.orderBy = options.orderBy ? '/sort/' + orderBy : '';
+      list.direction = options.direction ? '/dir/' + direction : '';
+      page += 1;
+
+      list.pageNumber = page;
+      list.next = models.length > size ? '/page/' + (page + 1) : '';
+      list.previous = page > 1 ? '/page/' + (page - 1) : '';
+
+      if (list.next) { models.pop(); }
+      callback(models, list);
   });
 };
