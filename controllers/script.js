@@ -86,6 +86,7 @@ exports.view = function (req, res, next) {
         if (script.isLib) { return callback(); }
 
         Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
+          options.hasGroups = !err && groups.length > 0;
           options.groups = (groups || []).map(function (group) {
             return { name: group.name, url: group.name.replace(/\s+/g, '_') };
           });

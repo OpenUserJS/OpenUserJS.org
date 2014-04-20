@@ -63,8 +63,10 @@ $(document).ready(function() {
   </section>
   <br /><br />
   <form id="edit_about" action="edit" method="post">
-    <textarea class="indent" id="about" name="about">{{about}}</textarea><br /><br />
+    <strong>Use GitHub Flavored Markdown for formatting.</strong><br />
+    <textarea class="indent" id="about" name="about" rows="20" style="width: 60%;">{{about}}</textarea><br /><br />
 {{^isLib}}
+    <h3>Script Groups</h3>
     <input type="hidden" id="groups" name="groups" style="width:300px" /><br /><br />
 {{/isLib}}
     <strong>Delete Script:</strong>&nbsp;<input type="checkbox" name="remove" />

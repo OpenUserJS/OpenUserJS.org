@@ -4,7 +4,8 @@
 </div>
 <div class="content-box">
   <form id="edit_about" action="/user/edit" method="post">
-    <textarea class="indent" id="about" name="about">{{about}}</textarea><br />
+    <strong>Use GitHub Flavored Markdown for formatting.</strong><br />
+    <textarea class="indent" id="about" name="about" rows="10" style="width: 40%;">{{about}}</textarea><br />
     <input type="submit" value="Save" /><br /><br />
     <strong><a href="/user/add/scripts">Add Scripts</a></strong> | 
     <strong><a href="/user/add/lib">Add Library</a></strong>

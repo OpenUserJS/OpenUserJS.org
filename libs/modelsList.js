@@ -177,7 +177,7 @@ exports.listGroups = function (query, params, baseUrl, callback) {
         if (new Date().getTime() > (group.updated.getTime() + 1000*60*60*2)) {
           Script.find({ _id: { $in: group._scriptIds } },
             function (err, scripts) {
-              if (!err || scripts.length > 1) {
+              if (!err && scripts.length > 1) {
                 group.rating = getRating(scripts);
               }
 

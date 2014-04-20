@@ -53,6 +53,7 @@
 	<td class="sr-col1">Installs:</td>
 	<td class="sr-col2">{{installs}}</td>
       </tr>
+      {{#hasGroups}}
       <tr class="sr-row">
 	<td class="sr-col1">Groups:</td>
 	<td class="sr-col2">
@@ -61,6 +62,7 @@
           {{/groups}}
         </td>
       </tr>
+      {{/hasGroups}}
       {{/isLib}}
       {{#moderation}}
       <tr class="sr-row">
