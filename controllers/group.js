@@ -57,7 +57,7 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
 
     // Groups to add the script to
     // This could have been added to the above query but
-    // I need to figure out which groups don't exist as well (see below)
+    // We need to figure out which groups don't exist as well (see below)
     existingGroups = groups.filter(function (group) {
       return group._scriptIds.indexOf(script._id) === -1;
     });
@@ -102,7 +102,7 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
       script.save(callback);
 
       // Update the group ratings in the background
-      existingGroups.forEach(function (group) {
+      groups.forEach(function (group) {
         Script.find({ _id: { $in: group._scriptIds } },
           function (err, scripts) {
             if (err || scripts.length < 2) { return; }
