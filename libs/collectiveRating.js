@@ -18,6 +18,19 @@ function mean (values) {
   return sum / values.length;
 }
 
+function getRating (scripts) {
+  var ratings = null;
+
+  if (scripts.length < 2) { return 0; }
+
+  ratings = scripts.map(function (script) {
+    return script.rating;
+  });
+
+  return Math.round((median(ratings) + mean(ratings)) / 2);
+}
+exports.getRating = getRating;
+
 // TODO: Memoize this function with an 
 // expiring cache (either memory or DB based) to
 // speed up voting and flagging
@@ -25,13 +38,9 @@ exports.getKarma = function (user, maxKarma, callback) {
   var ratings = [];
   var karma = 0;
   Script.find({ _authorId: user._id }, 'rating', function (err, scripts) {
-    if (err || scripts.length < 2) { return callback(karma); }
+    if (err) { return callback(karma); }
 
-    scripts.forEach(function (script) {
-      ratings.push(script.rating);
-    });
-
-    karma = Math.floor((median(ratings) + mean(ratings)) / 2 / 10);
+    karm = Math.floor(getRating(scripts) / 10);
     if (karma > maxKarma) { karma = maxKarma; }
 
     callback(karma);

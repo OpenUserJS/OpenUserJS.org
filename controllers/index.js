@@ -1,20 +1,33 @@
+var async = require('async');
 var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var strategies = require('./strategies.json');
-var scriptsList = require('../libs/modelsList');
+var modelsList = require('../libs/modelsList');
 var userRoles = require('../models/userRoles.json');
 
 exports.home = function (req, res) {
   var user = req.session.user;
+  var options = { title: 'Home Page', username: user ? user.name : null };
 
-  scriptsList.listScripts({}, req.route.params, '',
-    function (scriptsList) {
-      res.render('index', {
-        title: 'Home Page',
-        username: user ? user.name : null,
-        scriptsList: scriptsList
+  async.parallel([
+    function (callback) {
+      modelsList.listScripts({}, req.route.params, '',
+        function (scriptsList) {
+          options.scriptsList = scriptsList;
+          callback();
       });
+    },
+    function (callback) {
+      var params = [null, null, null, null, null];
+      modelsList.listGroups({}, params, '',
+        function (groupsList) {
+          options.groupsList = groupsList;
+          callback();
+      });
+    }
+  ], function () {
+    res.render('index', options);
   });
 };
 
@@ -51,7 +64,7 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
   });
   opts['$or'] = conditions;
 
-  scriptsList.listScripts(opts, req.route.params, baseUrl,
+  modelsList.listScripts(opts, req.route.params, baseUrl,
     function (scriptsList) {
       callback({
         'title': 'Searching for "' + search  +'"',
@@ -74,7 +87,7 @@ exports.search = function (req, res, next) {
 exports.toolbox = function (req, res) {
   var user = req.session.user;
 
-  scriptsList.listScripts({ isLib: true }, req.route.params, '/toolbox',
+  modelsList.listScripts({ isLib: true }, req.route.params, '/toolbox',
     function (scriptsList) {
       res.render('index', {
         title: 'The Toolbox',

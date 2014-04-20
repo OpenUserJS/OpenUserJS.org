@@ -11,6 +11,7 @@ var user = require('./controllers/user');
 var script = require('./controllers/script');
 var remove = require('./controllers/remove');
 var moderation = require('./controllers/moderation');
+var group = require('./controllers/group');
 var scriptStorage = require('./controllers/scriptStorage');
 var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
@@ -147,6 +148,11 @@ app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'),
   moderation.flagged); //
 app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
 app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
+
+// Group routes
+app.get(listRegex('\/groups', ''), group.list);
+app.get(listRegex('\/group\/([^\/]+?)', 'script'), group.view);
+app.get('/api/group/search/:term/:addTerm?', group.search);
 
 app.post('/search', function(req, res) {
   var search = encodeURIComponent(req.body.search.replace(/^\s+|\s+$/g, ''));

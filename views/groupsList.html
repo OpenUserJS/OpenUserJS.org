@@ -1,0 +1,19 @@
+{{#groupsList}}
+<section class="scripts-section">
+  {{#groups}}
+  <ul class="scripts-list">
+    <li class="script">
+      <h2><a href="{{{url}}}">{{name}}</a> - {{size}} script{{#multiple}}s{{/multiple}}</h2>
+    </li>
+  </ul>
+  {{/groups}}
+   <br />
+{{#previous}}
+<a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
+{{/previous}}
+{{pageNumber}}
+{{#next}}
+ &gt; <a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
+{{/next}}
+</section>
+{{/groupsList}}
