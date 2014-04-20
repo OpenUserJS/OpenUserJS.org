@@ -131,7 +131,7 @@ app.post('/lib/:scriptname/edit', script.lib(script.edit));
 app.get('/libs/:username/:scriptname/source', script.lib(user.editScript));
 app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript);
 app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
-app.get('/use/lib/:username/:libname', function (req, res, next) { next(); });
+app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Admin routes
 app.get('/admin/user', admin.userAdmin);

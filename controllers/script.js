@@ -10,6 +10,7 @@ var Group = require('../models/group').Group;
 var addScriptToGroups = require('./group').addScriptToGroups
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
+var modelsList = require('../libs/modelsList');
 var renderMd = require('../libs/markdown').renderMd;
 var months = [
   'Jan',
@@ -31,6 +32,26 @@ exports.lib = function (controller) {
   return (function (req, res, next) {
     req.route.params.isLib = true;
     controller(req, res, next);
+  });
+};
+
+exports.useLib = function (req, res, next) {
+  var installName = req.route.params.shift().toLowerCase() + '/' 
+    + req.route.params.shift();
+  var user = req.session.user;
+  var options = { username: user ? user.name : '' };
+
+  Script.findOne({ installName: installName + '.js' }, function (err, lib) {
+    if (err || !lib) { return next(); }
+
+    options.title = 'Scripts that use <a href="/libs/' + installName + '">' 
+      + lib.name + '</a>';
+    modelsList.listScripts({ uses: lib.installName },
+      req.route.params, '/use/lib/' + installName,
+      function (scriptsList) {
+        options.scriptsList = scriptsList;
+        res.render('group', options);
+    });
   });
 };
 
@@ -93,6 +114,34 @@ exports.view = function (req, res, next) {
           callback();
         });
       });
+
+      if (!script.isLib && script.uses && script.uses.length > 0) {
+        options.usesLibs = true;
+        options.libs = [];
+        tasks.push(function (callback) {
+          Script.find({ installName: { $in: script.uses } },
+            function (err, libs) {
+              libs.forEach(function (lib) {
+                options.libs.push({ 
+                  name: lib.name, url: lib.installName.replace(/\.js$/, '') 
+                });
+              });
+              callback();
+          });
+        });
+      } else if (script.isLib) {
+        tasks.push(function (callback) {
+          Script.count({ uses: script.installName }, function (err, count) {
+            if (err) { count = 0; }
+            if (count <= 0) { return callback(); }
+
+            options.usedBy = { count: count, url: '/use/lib/' + installName };
+            if (count > 1) { options.usedBy.multiple = true; }
+
+            callback();
+          });
+        });
+      }
 
       if (!user || options.isYou) {
         return async.parallel(tasks, render);

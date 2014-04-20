@@ -58,12 +58,30 @@
 	<td class="sr-col1">Groups:</td>
 	<td class="sr-col2">
           {{#groups}}
-          <a href="/group/{{url}}">{{name}}</a><br />
+          <a href="/group/{{{url}}}">{{name}}</a><br />
           {{/groups}}
         </td>
       </tr>
       {{/hasGroups}}
+      {{#usesLibs}}
+      <tr class="sr-row">
+	<td class="sr-col1">Uses Libraries:</td>
+	<td class="sr-col2">
+          {{#libs}}
+          <a href="/libs/{{{url}}}">{{name}}</a><br />
+          {{/libs}}
+        </td>
+      </tr>
+      {{/usesLibs}}
       {{/isLib}}
+      {{#usedBy}}
+      <tr class="sr-row">
+	<td class="sr-col1">Used By:</td>
+	<td class="sr-col2">
+          <a href="{{{url}}}">{{count}} script{{#multiple}}s{{/multiple}}</a>
+        </td>
+      </tr>
+      {{/usedBy}}
       {{#moderation}}
       <tr class="sr-row">
 	<td class="sr-col1">Moderation:</td>
