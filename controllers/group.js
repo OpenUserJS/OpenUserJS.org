@@ -5,12 +5,16 @@ var modelsList = require('../libs/modelsList');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
 
+function cleanGroupName (name) {
+  return cleanFilename(name, '').replace(/_/g, ' ')
+    .replace(/^\s+|\s+$/g, '').replace(/,/g, '');
+}
+
 exports.search = function (req, res) {
   var queryStr = '';
   var queryRegex = null;
   var addTerm = req.route.params.addTerm;
-  var term = cleanFilename(req.route.params.term, '')
-    .replace(/_/g, ' ').replace(/^\s+|\s+$/g, '').replace(/,/g, '');
+  var term = cleanGroupName(req.route.params.term);
   var terms = term.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/);
   var results = null;
 
@@ -64,9 +68,9 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
     });
 
     // Name of a group that doesn't exist
-    newGroup = groupNames.filter(function (name) {
+    newGroup = cleanGroupName(groupNames.filter(function (name) {
       return existingNames.indexOf(name) === -1;
-    }).shift();
+    }).shift());
 
     // Add script to exising groups
     tasks.push(function (cb) {
