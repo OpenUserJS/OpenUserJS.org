@@ -48,10 +48,26 @@ exports.userAdmin = function (req, res, next) {
       roles = roles.splice(thisUser.role + 1);
       roles.reverse();
 
-      options.users.push({ 'name' : user.name, 'roles' : roles });
+      options.users.push({ 'id' : user._id, 'name' : user.name,
+        'roles' : roles });
     });
 
     res.render('userAdmin', options);
+  });
+};
+
+exports.adminUserView = function (req, res, next) {
+  var id = req.route.params.id;
+  var thisUser = req.session.user;
+
+  if (!userIsAdmin(req)) { return next(); }
+
+  User.findOne({ '_id' : id, role : { $gt: thisUser.role } },
+    function (err, user) {
+      if (err || !user) { return next(); }
+
+      res.render('userAdmin', { user: { 
+        info: JSON.stringify(user.toObject(), null, ' ') } });
   });
 };
 
@@ -64,9 +80,10 @@ exports.userAdminUpdate = function (req, res, next) {
   if (!userIsAdmin(req)) { return next(); }
 
   users = req.body.user;
-  users = Object.keys(users).map(function (name) {
-    return { name: name, role: users[name] };
+  users = Object.keys(users).map(function (id) {
+    return { id: id, role: users[id] };
   });
+
   thisUser = req.session.user;
   remove = req.body.remove || {};
   remove = Object.keys(remove);
@@ -77,16 +94,16 @@ exports.userAdminUpdate = function (req, res, next) {
         var role = Number(user.role);
 
         if (role <= thisUser.role) { cb(); }
-        User.findOne({ 'name' : user.name, role : { $gt: thisUser.role } }, 
+        User.findOne({ '_id' : user.id, role : { $gt: thisUser.role } }, 
           function (err, user) {
             user.role = role;
-            user.save(cb); 
+            user.save(cb);
           });
       }, callback);
     },
     function (callback) {
-      async.each(remove, function (name, cb) {
-        User.findOne({ 'name' : name, role : { $gt: thisUser.role } },
+      async.each(remove, function (id, cb) {
+        User.findOne({ '_id' : id, role : { $gt: thisUser.role } },
           function (err, user) {
             var authorId = user._id;
             user.remove(function (err) {

@@ -3,19 +3,24 @@
 <title>User Administration</title>
 </head>
 <body>
+{{^user}}
 <form method="post" action="/admin/user/update">
 {{#users}}
-  <strong>{{name}}</strong> | Role:
-  <select name="user[{{{name}}}]">
+  <strong><a href="/admin/user/{{{id}}}">{{name}}</a></strong> | Role:
+  <select name="user[{{{id}}}]">
     {{#roles}}
     <option value="{{{val}}}" {{#selected}}selected="{{selected}}"{{/selected}}>
       {{display}}</option>
     {{/roles}}
   </select> | Remove: 
-  <input type="checkbox" name="remove[{{{name}}}]" value="{{{user}}}"><br />
+  <input type="checkbox" name="remove[{{{id}}}]" value=""><br />
 {{/users}}
 <input type="submit" value="Update" />
 </form>
+{{/user}}
+{{#user}}
+<pre>{{{info}}}</pre>
+{{/user}}
 </body>
 </html>
 <html>

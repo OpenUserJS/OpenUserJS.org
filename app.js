@@ -135,6 +135,7 @@ app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Admin routes
 app.get('/admin/user', admin.userAdmin);
+app.get('/admin/user/:id', admin.adminUserView);
 app.get('/admin/api', admin.apiAdmin);
 app.post('/admin/user/update', admin.userAdminUpdate);
 app.post('/admin/api/update', admin.apiAdminUpdate);
