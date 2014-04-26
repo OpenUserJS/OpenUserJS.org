@@ -40,6 +40,16 @@
 	<td class="sr-col1">Author:</td>
 	<td class="sr-col2"><a href="/users/{{author}}">{{author}}</a></td>
       </tr>
+      {{#hasCollab}}
+      <tr class="sr-row">
+	<td class="sr-col1">Collaborators:</td>
+	<td class="sr-col2">
+          {{#collaborators}}
+          <a href="/users/{{name}}">{{name}}</a><br />
+          {{/collaborators}}
+        </td>
+      </tr>
+      {{/hasCollab}}
       <tr class="sr-row">
 	<td class="sr-col1">Last Update:</td>
 	<td class="sr-col2">{{updated}}</td>

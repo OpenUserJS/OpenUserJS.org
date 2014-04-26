@@ -95,6 +95,8 @@ exports.view = function (req, res, next) {
         fork: fork,
         description: script.isLib ? '' : script.meta.description,
         about: renderMd(script.about),
+        hasCollab: false,
+        collaborators: [],
         isYou: user && user._id == script._authorId,
         isLib: script.isLib,
         username: user ? user.name : null,
@@ -102,6 +104,17 @@ exports.view = function (req, res, next) {
       };
 
       function render() { res.render('script', options); }
+
+      if (script.meta.author && script.meta.collaborator) {
+        options.hasCollab = true;
+        if (typeof script.meta.collaborator === 'string') {
+          options.collaborators = [{ name: script.meta.collaborator }];
+        } else {
+          script.meta.collaborator.forEach(function (collaborator) {
+            options.collaborators.push({ name: collaborator });
+          });
+        }
+      }
 
       tasks.push(function (callback) {
         if (script.isLib) { return callback(); }

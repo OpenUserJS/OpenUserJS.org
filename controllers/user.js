@@ -19,7 +19,7 @@ exports.view = function (req, res, next) {
   var thisUser = req.session.user;
 
   User.findOne({ name: username }, function (err, user) {
-    var options = { isYou: thisUser && thisUser.name === user.name };
+    var options = { isYou: thisUser && user && thisUser.name === user.name };
     if (err || !user) { return next(); }
 
     function render () {
@@ -324,10 +324,6 @@ exports.newScript = function (req, res, next) {
             var fork = null;
             if (err || !origScript) { return res.redirect(redirectUrl); }
 
-            if (origScript.isLib) {
-              
-            }
-
             fork = origScript.fork || [];
             fork.unshift({ author: origScript.author, url: origScript
               .installName.replace(origScript.isLib ? jsRegex : userjsRegex, '')
@@ -376,8 +372,17 @@ exports.editScript = function (req, res, next) {
   req.route.params.scriptname += isLib ? '.js' : '.user.js';
   scriptStorage.getSource(req, function (script, stream) {
     var bufs = [];
+    var collaborators = [];
 
     if (!script) { return next(); }
+
+    if (script.meta.collaborator) {
+      if (typeof script.meta.collaborator === 'string') {
+        collaborators.push(script.meta.collaborator);
+      } else {
+        collaborators = script.meta.collaborator;
+      }
+    }
 
     stream.on('data', function (d) { bufs.push(d); });
     stream.on('end', function () {
@@ -386,7 +391,8 @@ exports.editScript = function (req, res, next) {
         source: Buffer.concat(bufs).toString('utf8'),
         original: script.installName,
         url: req.url,
-        owner: user && script._authorId == user._id,
+        owner: user && (script._authorId == user._id 
+          || collaborators.indexOf(user.name) > -1),
         username: user ? user.name : null,
         isLib: script.isLib,
         scriptName: script.name,

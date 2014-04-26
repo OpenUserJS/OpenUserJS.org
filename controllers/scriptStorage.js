@@ -98,6 +98,13 @@ function parseMeta(aString) {
   var line = null;
   var lineMatches = null;
   var lines = {};
+  var unique = {
+    'name': true,
+    'namespace': true,
+    'description': true,
+    'version': true,
+    'author': true
+  };
 
   lines = aString.split(/[\r\n]+/).filter(function (e, i, a) {
     return (e.match(re));
@@ -107,7 +114,7 @@ function parseMeta(aString) {
     lineMatches = lines[line].replace(/\s+$/, '').match(re);
     name = lineMatches[1];
     value = lineMatches[2];
-    if (!headers[name]) {
+    if (!headers[name] || unique[name]) {
       headers[name] = value || '';
     } else {
       if (!(headers[name] instanceof Array)) {
@@ -148,6 +155,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   var isLibrary = typeof meta === 'string';
   var libraries = [];
   var requires = null;
+  var collaborators = null;
   var libraryRegex = new RegExp('^https?:\/\/' + 
     (process.env.NODE_ENV === 'production' ?
       'openuserjs\.org' : 'localhost:8080') +
@@ -161,6 +169,19 @@ exports.storeScript = function (user, meta, buf, callback, update) {
 
     // Can't install a script without a @name (maybe replace with random value)
     if (!scriptName) { return callback(null); }
+
+    if (!isLibrary && meta.author
+        && meta.author != user.name && meta.collaborator) {
+      collaborators = meta.collaborator;
+      if ((typeof collaborators === 'string' 
+          && collaborators === user.name)
+          || (collaborators instanceof Array 
+          && collaborators.indexOf(user.name) > -1)) {
+        installName = meta.author.toLowerCase() + '/';
+      } else {
+        collaborators = null;
+      }
+    }
 
     if (!namespace || namespace === user.name) {
       installName += scriptName + '.user.js';
@@ -190,7 +211,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   findDeadorAlive(Script, { installName: installName }, true,
     function (alive, script, removed) {
 
-      if (removed || (!script && update)) {
+      if (removed || (!script && (update || collaborators))) {
         return callback(null);
       } else if (!script) {
         script = new Script({
@@ -211,6 +232,11 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         });
       } else {
         if (!script.isLib) {
+          if (collaborators && (script.meta.author != meta.author
+              || JSON.stringify(script.meta.collaborator) != 
+             JSON.stringify(meta.collaborator))) {
+            return callback(null);
+          }
           script.meta = meta;
           script.uses = libraries;
         }
