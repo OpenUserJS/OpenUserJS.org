@@ -66,27 +66,24 @@ exports.sendMeta = function (req, res, next) {
   var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
 
   Script.findOne({ installName: installName }, function (err, script) {
-    var key = null;
     var meta = null;
-    var lines = [];
 
     if (!script) { return next(); }
 
+    res.set('Content-Type', 'text/javascript; charset=utf-8');
     meta = script.meta;
-    for (key in meta) {
+
+    res.write('// ==UserScript==\n');
+    Object.keys(meta).reverse().forEach(function (key) {
       if (meta[key] instanceof Array) {
         meta[key].forEach(function (value) {
-          lines.push('// @' + key + '    ' + value);
+          res.write('// @' + key + '    ' + value + '\n');
         });
       } else {
-        lines.push('// @' + key + '    ' + meta[key]);
+        res.write('// @' + key + '    ' + meta[key] + '\n');
       }
-    }
-
-    res.set('Content-Type', 'text/javascript; charset=utf-8');
-    res.write('// ==UserScript==\n');
-    res.write(lines.reverse().join('\n'));
-    res.end('\n// ==/UserScript==\n');
+    });
+    res.end('// ==/UserScript==\n');
   });
 };
 
