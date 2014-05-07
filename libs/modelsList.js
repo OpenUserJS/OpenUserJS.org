@@ -215,7 +215,7 @@ exports.listDiscussions = function (query, params, baseUrl, callback) {
           updated: formatDate(discussion.updated),
           rating: discussion.rating,
           url: discussion.path
-            + (discussion.duplicateId ? '_' + discussion.duplicateId : ''),
+            + (discussion.duplicateId ? '_' + discussion.duplicateId : '')
         });
       });
 

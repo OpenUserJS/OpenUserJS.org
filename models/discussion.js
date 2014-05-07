@@ -16,6 +16,11 @@ var discussionSchema = new Schema({
   // true if creator comment is flagged past discussion threshold
   flagged: Boolean,
 
+  // Issue field (yeah that's right, issues are just special discussions)
+  issue: Boolean,
+  open: Boolean,
+  labels: [String],
+
   // Extra info
   path: String,
   duplicateId: Number,

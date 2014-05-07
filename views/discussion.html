@@ -2,6 +2,30 @@
 <div class="centered-content">
   <h1>{{topic}}</h1>
 </div>
+{{#issue}}
+<div class="content-box">
+<strong>Status:</strong> {{#open}}Open{{/open}}{{^open}}Closed{{/open}}<br />
+{{#open}}
+{{#canClose}}
+<a href="{{{closeUrl}}}">
+  <button title="Close Issue" type="button">
+    Close Issue
+  </button>
+</a>
+{{/canClose}}
+{{/open}}
+{{^open}}
+{{#canOpen}}
+<a href="{{{openUrl}}}">
+  <button title="Reopen Issue" type="button">
+    Reopen Issue
+  </button>
+</a>
+{{/canOpen}}
+{{/open}}
+</div>
+<br />
+{{/issue}}
 {{#username}}
 <div class="content-box">
  <form id="post_comment" action="{{path}}" method="post">

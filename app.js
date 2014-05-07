@@ -13,6 +13,7 @@ var remove = require('./controllers/remove');
 var moderation = require('./controllers/moderation');
 var group = require('./controllers/group');
 var discussion = require('./controllers/discussion');
+var issue = require('./controllers/issue');
 var scriptStorage = require('./controllers/scriptStorage');
 var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
@@ -134,6 +135,24 @@ app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript);
 app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
 app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
+// Issues routes
+app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
+  + '\/issues(?:\/(closed))?', ''), issue.list);
+app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
+  + '\/issues\/([^\/]+?)', ''), issue.view);
+app.get('/:type(scripts|libs)/:username/:scriptname/open', issue.open);
+app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/open',
+  issue.open);
+app.post('/:type(scripts|libs)/:username/:scriptname/open', issue.open);
+app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/open',
+  issue.open);
+app.post('/:type(scripts|libs)/:username/:scriptname/issues/:topic',
+  issue.comment);
+app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic',
+  issue.comment);
+app.get('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
+app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
+
 // Admin routes
 app.get('/admin/user', admin.userAdmin);
 app.get('/admin/user/:id', admin.adminUserView);
@@ -161,7 +180,7 @@ app.get(listRegex('\/(corner|garage|discuss)', ''), discussion.list);
 app.get(listRegex('\/(corner|garage|discuss)\/([^\/]+?)', ''), discussion.show);
 app.get('/post/:category(corner|garage|discuss)', discussion.newTopic);
 app.post('/post/:category(corner|garage|discuss)', discussion.createTopic);
-app.post('/:category(corner|garage|discuss)/:topic', discussion.postComment);
+app.post('/:category(corner|garage|discuss)/:topic', discussion.createComment);
 //app.get('/:category(corner|garage|discuss)/:topic/:comment', discussion.comment);
 
 app.post('/search', function(req, res) {
