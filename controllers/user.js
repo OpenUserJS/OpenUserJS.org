@@ -21,6 +21,8 @@ exports.view = function (req, res, next) {
 
   User.findOne({ name: username }, function (err, user) {
     var options = { isYou: thisUser && user && thisUser.name === user.name };
+    options.isMod = options.isYou && thisUser.role < 4;
+
     if (err || !user) { return next(); }
 
     function render () {
