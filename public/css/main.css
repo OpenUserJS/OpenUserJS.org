@@ -5,7 +5,7 @@ body {
 }
 
 h1,h2,h3,h4{
-	font-family: 'Squada One', cursive;
+	font-family: 'Squada One', Helvetica, Arial, sans-serif;
 	font-weight: 400;
 	color: #004e70;
 }
@@ -13,17 +13,16 @@ h1,h2,h3,h4{
 h5,h6{
 	color: #004e70;
 }
-
+button{
+	font-family: 'Squada One', Helvetica, Arial, sans-serif;
+	font-weight: 400;
+	color: #004e70;
+}
 ul.scripts-list
 {
 	list-style-type: none;
 	padding: 0;
 	margin: 0;
-}
-
-.button-selected{
-	background-color: gray;
-	color: white;
 }
 
 /************************************
@@ -127,4 +126,146 @@ footer a{
 }
 .footer-link{
 	padding-right: 10px;
+}
+
+/**************************
+ * Footer Specific Styling
+ **************************/
+.search-input{
+	font-size: 2.2em;
+	width: 500px;
+	position: relative;
+	top: 10px;
+	padding: 2px 5px;
+	margin-left: 8px;
+}
+.pop-scripts-header{
+	font-size: 3.2em;
+	margin: 25px 0 5px 8px;
+}
+
+
+/**************************
+ * Unique Script Page Style
+ **************************/
+.sr-script-title{
+	font-size: 3.4em;
+	margin: 16px 0 10px 0;
+	display: inline;
+}
+.voting-div{
+	display: inline;
+	margin-left: 12px;
+}
+.up-arrow{
+	position: relative;
+	top: -10px;
+}
+.down-arrow{
+	position: relative;
+	top: 12px;
+	left: -29px;
+}
+.header-rating{
+	font-size: 2em;
+	color: #004e70;
+	position: relative;
+	left: -24px;
+	top: -4px;
+}
+.sr-section{
+	padding: 10px;
+	margin: 15px 0;
+}
+.sr-button{
+	height: 40px;
+	font-size: 2.0em;
+}
+.sr-edit-button{
+	font-size: 1.6em;
+	position: relative;
+	top: -2px;
+}
+.sr-flag-button{
+}
+.sr-source-button{
+	width: 130px;
+	height: 25px;
+	font-size: 1.6em;
+	position: relative;
+	top: -16px;
+}
+.sr-install-button{
+	margin: 3px 0 5px 0;
+	width: 130px;
+}
+.sr-section table,.sr-section p{
+	font-size: 1.6em;
+}
+table{
+	width: 95%;
+}
+.sr-col1{
+	width: 140px;
+	vertical-align: top;
+}
+.sr-col2{
+	vertical-align: top;
+}
+.sr-description{
+	padding: 8px 0;
+	border-top: solid 1px #414042;
+	border-bottom: solid 1px #414042;
+	margin: 5px 0;
+}
+.button-selected{
+	background-color: gray;
+	color: white;
+}
+.button-anchor{
+	text-decoration: none;
+}
+
+/**************************
+ * Registration Page Style
+ **************************/
+.register-group{
+	margin: 20px 0 20px 100px;
+	font-size: 1.6em;
+}
+
+/**************************
+ * User Page Styles
+ **************************/
+.moderator-box{
+	background: #FF9966;
+	border-radius: 10px;
+	margin-top: 15px;
+	margin-bottom: 20px;
+}
+.mod-header{
+	display: inline;
+	position: relative;
+	top: 5px;
+	margin: 0 20px;
+}
+.user-about{
+	font-size: 1.6em;
+}
+.user-flag{
+	position: relative;
+	top: 2px;
+	left: -4px;
+}
+.about-header{
+	font-size: 1.3em;
+	margin: 15px 0;
+}
+.about-content{
+	margin: 15px 15px;
+}
+#flagged-button{
+	margin-right: 8px;
+}
+#user-edit{
 }

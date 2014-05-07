@@ -2,44 +2,54 @@
 <div class="content-box">
   <section class="sr-section">
     
-    <h1 class="sr-script-title">{{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}}{{#isYou}}&nbsp;-&nbsp;<a href="{{{edit}}}">Edit?</a>{{/isYou}}</h1>
+    <div>
+	    <h1 class="sr-script-title">{{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}}</h1>
+		{{#voteable}}
+	    <div class="voting-div">
+		    <a class="button-anchor up-arrow" href="{{{upUrl}}">
+		         <img src="{{#up}}/images/up-vote-green.png{{/up}}{{^up}}/images/up-vote-grey.png{{/up}}"/>
+		    </a>
+		    <a class="button-anchor down-arrow" href="{{{downUrl}}}">
+		         <img src="{{#down}}/images/down-vote-red.png{{/down}}{{^down}}/images/down-vote-grey.png{{/down}}"/>
+		    </a>
+	    </div>
+	    <span class="header-rating">Rating: {{rating}}</span>
+		{{/voteable}}
+    </div>
     {{#isLib}}
     <span class="lib-url"><strong>Library URL: </strong><input type="text" name="lib_url" value="https://openuserjs.org{{{install}}}" size="50"/></span><br /><br />
     {{/isLib}}
-    {{^isLib}}
-    <a href="{{{install}}}">
-      <button class="install-button" title="Install" type="button">
-        Install
-      </button>
-    </a>
-    {{/isLib}}
-    <a href="{{{source}}}">
-      <button class="view-source-button" title="View Source" type="button">
+	{{^isLib}}
+	<div class="sr-main-buttons"> 
+	    {{#isYou}}
+	    	<a class="button-anchor" href="{{{edit}}}">
+				<button class="sr-button sr-edit-button" title="Edit" type="button">
+	        		Edit Mode
+	      		</button>
+			</a>
+	    {{/isYou}}
+	    <a class="button-anchor" href="{{{install}}}">
+	      <button class="sr-button sr-install-button" title="Install" type="button">
+	        Install
+	      </button>
+	    </a>
+	    {{/isLib}}
+	    {{#flaggable}}
+	    <a class="button-anchor" href="{{{flagUrl}}}">
+	      <button class="sr-flag-button" title="{{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}"
+		      type="button">
+	    {{#flagged}}<img src="/images/red-flag.png"/>{{/flagged}}{{^flagged}}<img src="/images/white-flag.png"/>{{/flagged}}
+	      </button>
+	    </a>
+	    {{/flaggable}}
+	</div>
+	
+    <a class="button-anchor" href="{{{source}}}">
+      <button class="sr-button sr-source-button" title="View Source" type="button">
         View Source
       </button>
     </a>
-    {{#voteable}}
-    <a href="{{{upUrl}}">
-      <button class="{{#up}}button-selected{{/up}}" title="Up Vote" 
-              type="button">
-        Up Vote
-      </button>
-    </a>
-    <a href="{{{downUrl}}}">
-      <button class="{{#down}}button-selected{{/down}}" title="Down Vote"
-	      type="button">
-        Down Vote
-      </button>
-    </a>
-    {{/voteable}}
-    {{#flaggable}}
-    <a href="{{{flagUrl}}}">
-      <button class="{{#flagged}}button-selected{{/flagged}}" title="{{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}"
-	      type="button">
-        {{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}
-      </button>
-    </a>
-    {{/flaggable}}
+    
     <p class="sr-description">{{description}}</p>
     <table width="100%">
       <tr class="sr-row">

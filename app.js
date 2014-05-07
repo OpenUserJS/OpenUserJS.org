@@ -1,4 +1,4 @@
-var toobusy = require('toobusy');
+// var toobusy = require('toobusy');
 var express = require('express');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
@@ -23,7 +23,7 @@ app.set('port', process.env.PORT || 8080);
 
 app.configure(function(){
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-  app.use(function (req, res, next) {
+ /* app.use(function (req, res, next) {
     // check if we're toobusy
     if (toobusy()) { 
       res.send(503, 'I\'m busy right now, sorry :(');
@@ -31,7 +31,7 @@ app.configure(function(){
       next();
     }
   });
-
+*/
   // Force HTTPS
   if (process.env.NODE_ENV === 'production') {
     app.use(function (req, res, next) {
