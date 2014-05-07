@@ -7,25 +7,13 @@ var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 var Flag = require('../models/flag').Flag;
 var Group = require('../models/group').Group;
+var Discussion = require('../models/discussion').Discussion;
 var addScriptToGroups = require('./group').addScriptToGroups
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var modelsList = require('../libs/modelsList');
 var renderMd = require('../libs/markdown').renderMd;
-var months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
+var formatDate = require('../libs/helpers').formatDate;
 
 // Let script controllers know this is a lib route
 exports.lib = function (controller) {
@@ -35,6 +23,7 @@ exports.lib = function (controller) {
   });
 };
 
+// Display which scripts use a library hosted on the site
 exports.useLib = function (req, res, next) {
   var installName = req.route.params.shift().toLowerCase() + '/' 
     + req.route.params.shift();
@@ -55,6 +44,8 @@ exports.useLib = function (req, res, next) {
   });
 };
 
+// View a detailed description of a script
+// This is the most intensive page to render on the site
 exports.view = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);
   var isLib = req.route.params.isLib;
@@ -69,6 +60,7 @@ exports.view = function (req, res, next) {
       var tasks = [];
       editUrl.shift();
 
+      // Set the forks to be label properly
       if (fork instanceof Array && fork.length > 0) {
         fork[0].first = true;
         fork[fork.length - 1].original = true;
@@ -76,6 +68,7 @@ exports.view = function (req, res, next) {
         fork = null;
       }
 
+      // Set up all the general options
       options = {
         title: script.name,
         name: script.name,
@@ -87,9 +80,7 @@ exports.view = function (req, res, next) {
         edit: (script.isLib ? '/lib/' : '/script/')
           + editUrl.join('/') + '/edit',
         author: script.author,
-        updated: script.updated.getDate() + ' '
-          + months[script.updated.getMonth()] + ' '
-          + script.updated.getFullYear(),
+        updated: formatDate(script.updated),
         rating: script.rating,
         installs: script.installs,
         fork: fork,
@@ -105,6 +96,7 @@ exports.view = function (req, res, next) {
 
       function render() { res.render('script', options); }
 
+      // Show collaborators of the script
       if (script.meta.author && script.meta.collaborator) {
         options.hasCollab = true;
         if (typeof script.meta.collaborator === 'string') {
@@ -116,6 +108,22 @@ exports.view = function (req, res, next) {
         }
       }
 
+      // Show the number of open issues
+      tasks.push(function (callback) {
+        var category = (script.isLib ? 'libs' : 'scripts')
+          + '/' + installName;
+        options.issuesUrl = '/' + category + '/issues';
+        options.openIssueUrl = '/' + category + '/issue/new';
+
+        Discussion.count({ category: category + '/issues', open: true },
+          function (err, count) {
+            if (err) { count = 0; }
+            options.issuesCount = count;
+            callback();
+        });
+      });
+
+      // Show the groups the script belongs to
       tasks.push(function (callback) {
         if (script.isLib) { return callback(); }
 
@@ -128,6 +136,7 @@ exports.view = function (req, res, next) {
         });
       });
 
+      // Show which libraries hosted on the site a script uses
       if (!script.isLib && script.uses && script.uses.length > 0) {
         options.usesLibs = true;
         options.libs = [];
@@ -143,6 +152,7 @@ exports.view = function (req, res, next) {
           });
         });
       } else if (script.isLib) {
+        // Show how many scripts use this library
         tasks.push(function (callback) {
           Script.count({ uses: script.installName }, function (err, count) {
             if (err) { count = 0; }
@@ -160,6 +170,7 @@ exports.view = function (req, res, next) {
         return async.parallel(tasks, render);
       }
 
+      // Setup the voting UI
       tasks.push(function (callback) {
         Vote.findOne({ _scriptId: script._id, _userId: user._id },
           function (err, voteModel) {
@@ -184,6 +195,7 @@ exports.view = function (req, res, next) {
           });
       });
 
+      // Setup the flagging UI
       tasks.push(function (callback) {
         flagLib.flaggable(Script, script, user,
           function (canFlag, author, flag) {
@@ -203,6 +215,7 @@ exports.view = function (req, res, next) {
         });
       });
 
+      // Set up the removal UI
       tasks.push(function (callback) {
         removeLib.removeable(Script, script, user,
           function (canRemove, author) {
@@ -225,6 +238,7 @@ exports.view = function (req, res, next) {
   });
 };
 
+// route to edit a script
 exports.edit = function (req, res, next) {
   var installName = null;
   var isLib = req.route.params.isLib;
@@ -274,6 +288,7 @@ exports.edit = function (req, res, next) {
   });
 };
 
+// Script voting
 exports.vote = function (req, res, next) {
   var isLib = req.route.params.isLib;
   var installName = scriptStorage.getInstallName(req)
@@ -355,6 +370,7 @@ exports.vote = function (req, res, next) {
   });
 };
 
+// Script flagging
 exports.flag = function (req, res, next) {
   var isLib = req.route.params.isLib;
   var installName = scriptStorage.getInstallName(req);

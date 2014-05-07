@@ -10,6 +10,8 @@ var help = require('../libs/helpers');
 var async = require('async');
 var nil = help.nil;
 
+// This controller is only for use by users with a role of admin or above
+
 function userIsAdmin(req) {
   return req.session.user && req.session.user.role < 3;
 }
@@ -29,12 +31,14 @@ function getOAuthStrategies(stored) {
   return oAuthStrats;
 }
 
+// Allow admins to set user roles and delete users
 exports.userAdmin = function (req, res, next) {
   var options = nil();
   var thisUser = req.session.user;
 
   if (!userIsAdmin(req)) { return next(); }
 
+  // You can only see users with a role less than yours
   User.find({ role : { $gt: thisUser.role } }, function (err, users) {
     var i = 0;
     options.users = [];
@@ -56,12 +60,15 @@ exports.userAdmin = function (req, res, next) {
   });
 };
 
+// View everything about a particular user
+// This is mostly for debugging in production
 exports.adminUserView = function (req, res, next) {
   var id = req.route.params.id;
   var thisUser = req.session.user;
 
   if (!userIsAdmin(req)) { return next(); }
 
+  // Nothing fancy, just the stringified user object
   User.findOne({ '_id' : id, role : { $gt: thisUser.role } },
     function (err, user) {
       if (err || !user) { return next(); }
@@ -71,6 +78,7 @@ exports.adminUserView = function (req, res, next) {
   });
 };
 
+// Make changes to users listed
 exports.userAdminUpdate = function (req, res, next) {
   var users = null;
   var thisUser = null;
@@ -88,6 +96,8 @@ exports.userAdminUpdate = function (req, res, next) {
   remove = req.body.remove || {};
   remove = Object.keys(remove);
 
+  // User removal and role change might be problematic
+  // But why would you change and user role and delete them?
   async.parallel([
     function (callback) {
       async.each(users, function (user, cb) {
@@ -122,6 +132,7 @@ exports.userAdminUpdate = function (req, res, next) {
   });
 };
 
+// This page allows admins to set oAuth keys for the available authenticators
 exports.apiAdmin = function (req, res, next) {
   if (!userIsAdmin(req)) { return next(); }
 
@@ -142,6 +153,9 @@ exports.apiAdmin = function (req, res, next) {
   });
 };
 
+// Manage oAuth strategies without having to restart the server
+// When new keys are added, we load the new strategy
+// When keys are removed, we remove the strategy
 exports.apiAdminUpdate = function (req, res, next) {
   var postStrats = null;
 

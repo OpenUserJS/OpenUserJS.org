@@ -2,6 +2,7 @@ var removeLib = require('../libs/remove');
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 
+// Simple controller to remove content and save it in the graveyard
 exports.rm = function (req, res, next) {
   var type = req.route.params[0];
   var path = req.route.params[1];

@@ -62,6 +62,7 @@ exports.sendScript = function (req, res, next) {
   });
 };
 
+// Send user script metadata block
 exports.sendMeta = function (req, res, next) {
   var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
 
@@ -208,6 +209,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
     installName += scriptName + '.js';
   }
 
+  // Prevent a removed script from being reuploaded
   findDeadorAlive(Script, { installName: installName }, true,
     function (alive, script, removed) {
 
@@ -264,6 +266,8 @@ exports.deleteScript = function (installName, callback) {
   });
 };
 
+// GitHub calls this on a push if a webhook is setup
+// This controller makes sure we have the latest version of a script
 exports.webhook = function (req, res) {
   var RepoManager = require('../libs/repoManager');
   var payload = null;

@@ -14,12 +14,15 @@ var async = require('async');
 var renderMd = require('../libs/markdown').renderMd;
 var nil = require('../libs/helpers').nil;
 
+// View information and scripts of a user
 exports.view = function (req, res, next) {
   var username = req.route.params.shift();
   var thisUser = req.session.user;
 
   User.findOne({ name: username }, function (err, user) {
     var options = { isYou: thisUser && user && thisUser.name === user.name };
+    options.isMod = options.isYou && thisUser.role < 4;
+
     if (err || !user) { return next(); }
 
     function render () {
@@ -31,6 +34,7 @@ exports.view = function (req, res, next) {
         query.flagged = null;
       }
 
+      // list the user's scripts
       scriptsList.listScripts(query, req.route.params, '/users/' + username,
         function (scriptsList) {
           options.title = user.name;
@@ -46,6 +50,7 @@ exports.view = function (req, res, next) {
       return render();
     }
 
+    // Display the flag user UI
     flagLib.flaggable(User, user, thisUser, function (canFlag, author, flag) {
       var flagUrl = '/flag/users/' + user.name;
 
@@ -74,6 +79,7 @@ exports.view = function (req, res, next) {
   });
 }
 
+// Let a user edit their account
 exports.edit = function (req, res) {
   var user = req.session.user;
   var userStrats = req.session.user.strategies.slice(0);
@@ -138,6 +144,7 @@ exports.edit = function (req, res) {
   });
 };
 
+// Sloppy code to let a user add scripts to their acount
 exports.scripts = function (req, res) {
   var user = req.session.user;
   var isLib = req.route.params.isLib;
@@ -268,6 +275,7 @@ exports.scripts = function (req, res) {
   if (!loadingRepos) { res.render('addScripts', options); }
 }
 
+// post route to update a user's account
 exports.update = function (req, res) {
   var user = req.session.user;
   var scriptUrls = req.body.urls ? Object.keys(req.body.urls) : '';
@@ -277,6 +285,7 @@ exports.update = function (req, res) {
   if (!user) { return res.redirect('/login'); }
 
   if (req.body.about) {
+    // Update the about section of a user's profile
     User.findOneAndUpdate({ _id: user._id }, 
       { about: req.body.about  },
       function (err, user) {
@@ -286,6 +295,7 @@ exports.update = function (req, res) {
         res.redirect('/users/' + user.name);
     });
   } else {
+    // Remove scripts (currently no UI)
     installRegex = new RegExp('^\/install\/(' + username + '\/.+)$');
     scriptUrls.forEach(function (url) {
       var matches = installRegex.exec(url);
@@ -297,6 +307,7 @@ exports.update = function (req, res) {
   }
 };
 
+// Submit a script through the web editor
 exports.newScript = function (req, res, next) {
   var user = req.session.user;
   var isLib = req.route.params.isLib;
@@ -364,6 +375,7 @@ exports.newScript = function (req, res, next) {
   }
 };
 
+// Show a script in the web editor
 exports.editScript = function (req, res, next) {
   var user = req.session.user;
   var isLib = req.route.params.isLib;
@@ -402,6 +414,7 @@ exports.editScript = function (req, res, next) {
   });
 };
 
+// route to flag a user
 exports.flag = function (req, res, next) {
   var username = req.route.params.username;
   var unflag = req.route.params.unflag;

@@ -6,6 +6,7 @@ var strategies = require('./strategies.json');
 var modelsList = require('../libs/modelsList');
 var userRoles = require('../models/userRoles.json');
 
+// The home page has scripts and groups in a sidebar
 exports.home = function (req, res) {
   var user = req.session.user;
   var options = { title: 'Home Page', username: user ? user.name : null };
@@ -31,6 +32,7 @@ exports.home = function (req, res) {
   });
 };
 
+// Preform a script search
 function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
   var user = req.session.user;
   var search = req.route.params.shift();
@@ -44,6 +46,7 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
   var terms = search.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
     .split(/\s+/);
 
+  // Match all the terms but in any order
   terms.forEach(function (term) {
     prefixStr += '(?=.*?\\b' + term  + ')';
     fullStr += '(?=.*?' + term  + ')';
@@ -51,6 +54,7 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
   prefixRegex = new RegExp(prefixStr, 'i');
   fullRegex = new RegExp(fullStr, 'i');
 
+  // One of the searchable fields must match the conditions
   prefixSearch.forEach(function (prop) {
     var condition = {};
     condition[prop] = prefixRegex;
@@ -75,6 +79,7 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
   });
 }
 
+// Script search results
 exports.search = function (req, res, next) {
   getSearchResults(req, res, 
     ['name', 'author', 'about', 'meta.description'], 
@@ -84,6 +89,7 @@ exports.search = function (req, res, next) {
   });
 };
 
+// Show library scripts
 exports.toolbox = function (req, res) {
   var user = req.session.user;
 
@@ -98,6 +104,7 @@ exports.toolbox = function (req, res) {
   });
 };
 
+// Search library scripts
 exports.toolSearch = function (req, res) {
   getSearchResults(req, res, ['name', 'author', 'about'], [], { isLib: true },
     function (options) {
@@ -106,6 +113,7 @@ exports.toolSearch = function (req, res) {
   });
 };
 
+// UI for user registration
 exports.register = function (req, res) {
   var options = { 'title': 'Register', 'wantname': req.session.username };
 

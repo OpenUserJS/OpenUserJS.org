@@ -1,18 +1,20 @@
 {{> header.html}}
+{{#isMod}}
 <div class="centered-content moderator-box">
 		<h1 class="pop-scripts-header mod-header">OpenUserJS Moderator Areas: </h1>
 
-	    <a class="button-anchor" href="{{{install}}}">
+	    <a class="button-anchor" href="/flagged">
 	      <button id="flagged-button" class="sr-button sr-install-button" title="Flagged" type="button">
 	        Flagged
 	      </button>
 	    </a>
-	    <a class="button-anchor" href="{{{install}}}">
+	    <a class="button-anchor" href="/graveyard">
 	      <button id="graveyard-button" class="sr-button sr-install-button" title="Graveyard" type="button">
 	        Graveyard
 	      </button>
 	    </a>
 </div>
+{{/isMod}}
 
 <div class="centered-content">
   <h1 class="pop-scripts-header mod-header">{{name}}</h1> 

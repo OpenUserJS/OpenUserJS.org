@@ -18,6 +18,9 @@ function mean (values) {
   return sum / values.length;
 }
 
+// Generate a collective rating by averaging the median and mean of
+// scripts in a group. I think this gives a more fair rating than just
+// using one of them alone.
 function getRating (scripts) {
   var ratings = null;
 

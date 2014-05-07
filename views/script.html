@@ -79,6 +79,12 @@
 	<td class="sr-col1">Installs:</td>
 	<td class="sr-col2">{{installs}}</td>
       </tr>
+      <tr class="sr-row">
+	<td class="sr-col1">Issues:</td>
+	<td class="sr-col2">
+          <a href="{{{issuesUrl}}}">{{issuesCount}} open issues</a><br />
+        </td>
+      </tr>
       {{#hasGroups}}
       <tr class="sr-row">
 	<td class="sr-col1">Groups:</td>
@@ -122,7 +128,8 @@
           {{#first}}<a href="/script/{{{url}}">Forked</a>{{/first}}{{^first}}who <a href="/script/{{{url}}">forked</a>{{/first}}{{^original}} from <a href="/users/{{{author}}}">{{author}}</a><br />{{/original}}{{#original}} the original</a> by <a href="/users/{{{author}}}">{{author}}</a>{{/original}}{{/fork}}</td>
 </tr>
 {{/isFork}}
-</table>					
+</table>
+<hr /><p>Have a feature request or found a bug? <a href="{{{openIssueUrl}}}">Let the author know.</a></p>	
 {{#about}}<hr /><div class="user-content">{{{about}}}</div>{{/about}}
 </section>
 </div>

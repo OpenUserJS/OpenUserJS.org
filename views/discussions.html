@@ -2,10 +2,16 @@
 <div class="content-box creation-box">
   <h1>{{title}}</h1>
   <p><strong>{{description}}</strong></p>
+  {{^issue}}
   <p><a href="/post/{{category}}">Start a New Discussion</a></p>
   {{^general}}
   <p><strong>Note:</strong> To start an off-topic discussion, use the <a href="/discuss">general discussion</a> area.</p>
   {{/general}}
+  {{/issue}}
+  {{#issue}}
+  <p><a href="/{{category}}/issue/new">Open a New Issue</a></p>
+  <p>{{^open}}<strong><a href="/{{category}}/issues">{{/open}}Open{{^open}}</a></strong>{{/open}} | {{#open}}<strong><a href="/{{category}}/issues/closed">{{/open}}Closed{{#open}}</a></strong>{{/open}}
+  {{/issue}}
 </div>
 <br />
 <div class="centered-content">

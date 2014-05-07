@@ -2,6 +2,7 @@ var marked = require('marked');
 var hljs = require('highlight.js');
 var renderer = new marked.Renderer();
 
+// Automatically generate an anchor for each header
 renderer.heading = function (text, level) {
   var escapedText = text.toLowerCase().replace(/<\/?[^>]+?>/g, '')
     .replace(/[^\w]+/g, '-');
@@ -14,6 +15,7 @@ renderer.heading = function (text, level) {
     text + '</h' + level + '>';
 };
 
+// Set the options to use for rendering markdown
 marked.setOptions({
   highlight: function (code, lang) {
     if (lang) {

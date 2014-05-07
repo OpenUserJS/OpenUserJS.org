@@ -10,6 +10,7 @@ Strategy.findOne({ name: 'github' }, function(err, strat) {
   clientKey = strat.key;
 });
 
+// Requests a GitHub url and returns the chunks as buffers
 function fetchRaw (subdomain, path, callback) {
   var options = {
     hostname: subdomain + '.github.com',
@@ -37,18 +38,22 @@ function fetchRaw (subdomain, path, callback) {
   req.end();
 }
 
+// Use for call the GitHub JSON api
+// Returns the JSON parsed object
 function fetchJSON (path, callback) {
   fetchRaw('api', path, function (bufs) {
     callback(JSON.parse(Buffer.concat(bufs).toString()));
   });
 }
 
+// This manages actions on the repos of a user
 function RepoManager(userId, user, repos) {
   this.userId = userId;
   this.user = user;
   this.repos = repos || nil();
 }
 
+// Fetches the information about repos that contain user scripts
 RepoManager.prototype.fetchRepos = function (callback) {
   var repos = [];
   var that = this;
@@ -73,6 +78,7 @@ RepoManager.prototype.fetchRepos = function (callback) {
   });
 };
 
+// Import scripts on GitHub
 RepoManager.prototype.loadScripts = function (callback, update) {
   var scriptStorage = require('../controllers/scriptStorage');
   var arrayOfRepos = this.makeRepoArray();
@@ -98,6 +104,7 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   }, callback);
 }
 
+// Create the Mustache object to display repos with their user scrips
 RepoManager.prototype.makeRepoArray = function () {
   var retOptions = [];
   var repos = this.repos;
@@ -123,16 +130,20 @@ RepoManager.prototype.makeRepoArray = function () {
   return retOptions;
 }
 
+// Manages a single repo
 function Repo(manager, username, reponame) {
   this.manager = manager;
   this.user = username;
   this.repo = reponame;
 }
 
+// Use recursive requests to locate all user scripts in a repo
 Repo.prototype.fetchUserScripts = function (callback) {
   this.getTree('HEAD', '', callback);
 };
 
+// Looks for user script in the current directory
+// and initiates searches on subdirectories
 Repo.prototype.parseTree = function (tree, path, done) {
   var object;
   var trees = [];
@@ -155,6 +166,7 @@ Repo.prototype.parseTree = function (tree, path, done) {
   });
 };
 
+// Gets information about a directory
 Repo.prototype.getTree = function (sha, path, cb) {
   var that = this;
   fetchJSON('/repos/' + this.user  + '/' + this.repo + '/git/trees/' + sha, 

@@ -4,29 +4,10 @@ var Remove = require('../models/remove').Remove;
 var Group = require('../models/group').Group;
 var Discussion = require('../models/discussion').Discussion;
 var Comment = require('../models/comment').Comment;
-var getRating = require('../libs/collectiveRating').getRating;
-var renderMd = require('../libs/markdown').renderMd;
+var getRating = require('./collectiveRating').getRating;
+var renderMd = require('./markdown').renderMd;
+var formatDate = require('./helpers').formatDate;
 var listSize = 10;
-var months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
-
-function formatDate (date) {
-  return date.getDate() + ' '
-    + months[date.getMonth()] + ' '
-    + date.getFullYear()
-}
 
 // /scriptlist/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of scripts and build the options object 
@@ -215,7 +196,7 @@ exports.listDiscussions = function (query, params, baseUrl, callback) {
           updated: formatDate(discussion.updated),
           rating: discussion.rating,
           url: discussion.path
-            + (discussion.duplicateId ? '_' + discussion.duplicateId : ''),
+            + (discussion.duplicateId ? '_' + discussion.duplicateId : '')
         });
       });
 
@@ -261,6 +242,7 @@ function listModels (model, query, options, defaultOrder, callback) {
   var omit = '';
   var params = { sort: {} };
 
+  // Either use route params or an object
   if (options instanceof Array) {
     optArr = options;
     options = {};
@@ -277,6 +259,7 @@ function listModels (model, query, options, defaultOrder, callback) {
 
   if (page < 0) { page = 0; }
 
+  // Set the sort order for the model list
   if (typeof orderBy === 'string' && -1 !== fields.indexOf(orderBy)) {
     direction = options.direction || model.schema.paths[orderBy]
       .instance === 'String' ? 1 : -1;
@@ -290,6 +273,7 @@ function listModels (model, query, options, defaultOrder, callback) {
     params.sort = orderBy;
   }
 
+  // Omit certain fields from the models in the list
   if (typeof options.omit === 'string') {
     options.omit = options.omit.split(' ');
   } else if (!options.omit) {
@@ -304,6 +288,7 @@ function listModels (model, query, options, defaultOrder, callback) {
     omit = fields.join(' ');
   }
 
+  // Get the right portion (page) of results
   if (size >= 0) {
     params.limit = size + 1;
     params.skip = size * page;
@@ -317,6 +302,7 @@ function listModels (model, query, options, defaultOrder, callback) {
       orderBy = typeof orderBy === 'string' ? orderBy : '';
       direction = direction === 1 ? 'asc' : 'desc';
 
+      // Build the pagination for the Mustache template
       list.size = options.size ? '/size/' + size : '';
       list.orderBy = options.orderBy ? '/sort/' + orderBy : '';
       list.direction = options.direction ? '/dir/' + direction : '';

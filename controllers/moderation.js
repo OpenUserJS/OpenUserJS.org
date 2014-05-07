@@ -1,5 +1,7 @@
 var modelsList = require('../libs/modelsList');
 
+// When content reaches a its threshold of flags it gets marked as flagged
+// and it can now be removed by moderators
 exports.flagged = function (req, res, next) {
   var user = req.session.user;
   var type = req.route.params.shift() || 'users';
@@ -40,6 +42,9 @@ exports.flagged = function (req, res, next) {
   }
 };
 
+// When content is remove via the community moderation system it isn't
+// actually deleted. Instead it is sent to the graveyard where hopefully
+// any mistakes can be undone.
 exports.graveyard = function (req, res, next) {
   var contentTypes = {
     'users' :
@@ -61,6 +66,9 @@ exports.graveyard = function (req, res, next) {
 
   if (!contentType || !user || user.role > 3) { return next(); }
 
+  // Currently removed content is displayed as raw JSON data
+  // Hopefully one day it can actually be viewed read-only by
+  // those who have the authority
   modelsList.listRemoved({ model: contentType.name }, req.route.params, baseUrl,
     function (removedList) {
       var type = null;
