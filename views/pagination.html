@@ -1,9 +1,11 @@
-<div class="paging-controls">
+<div class="paging-section">
+<div class="paging-controls-box">
   {{#previous}}
-  <a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
+  <a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}"><img src="/images/page-left.png"/></a>
   {{/previous}}
-  {{pageNumber}}
+  <span class="page-number">{{pageNumber}}</span>
   {{#next}}
-  &gt; <a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
+  <a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}"><img src="/images/page-right.png"/></a>
   {{/next}}
+</div>
 </div>

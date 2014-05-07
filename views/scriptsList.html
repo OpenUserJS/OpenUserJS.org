@@ -28,8 +28,8 @@
       {{/isLib}}
       {{^isLib}}
       <a href="{{{install}}}">
-        <button class="install-button" title="Install" type="button">
-	  Install
+        <button class="install-icon-button" title="Install" type="button">
+	  		<img class="install-icon" src="/images/download.png" />
         </button>
       </a>
       {{/isLib}}
@@ -37,7 +37,7 @@
       {{/edit}}
       <h2 class="script-title"><a class="script-title-anchor" href="{{{url}}}">{{name}}{{#version}} - {{version}}{{/version}}</a></h2>
 
-      <table width="100%">
+      <table class="meta-table" width="100%">
 	<tr class="home-row">
 	  {{#hasAuthor}}<td class="home-col1">Author: <a class="author-link" href="/users/{{author}}">{{author}}</a></td>{{/hasAuthor}}
 	  <td class="home-col2">Rating:</td>
