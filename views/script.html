@@ -17,10 +17,10 @@
 		{{/voteable}}
     </div>
     {{#isLib}}
-    <span class="lib-url"><strong>Library URL: </strong><input type="text" name="lib_url" value="https://openuserjs.org{{{install}}}" size="50"/></span><br /><br />
+    <span class="lib-url"><strong>Library URL: </strong><input type="text" name="lib_url" value="https://openuserjs.org{{{install}}}" size="50"/></span>
     {{/isLib}}
-	{{^isLib}}
 	<div class="sr-main-buttons"> 
+	{{^isLib}}
 	    {{#isYou}}
 	    	<a class="button-anchor" href="{{{edit}}}">
 				<button class="sr-button sr-edit-button" title="Edit" type="button">
@@ -45,7 +45,7 @@
 	</div>
 	
     <a class="button-anchor" href="{{{source}}}">
-      <button class="sr-button sr-source-button" title="View Source" type="button">
+      <button class="sr-button sr-source-button lib-source-button" title="View Source" type="button">
         View Source
       </button>
     </a>
