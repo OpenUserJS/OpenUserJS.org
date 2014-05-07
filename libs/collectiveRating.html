@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/collectiveRating</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/collectiveRating"><meta name="groc-project-path" content="libs/collectiveRating.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/collectiveRating.js">libs/collectiveRating.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">median</span> <span class="p">(</span><span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">middle</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">values</span><span class="p">.</span><span class="nx">length</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="nx">values</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span> <span class="o">-</span> <span class="nx">b</span><span class="p">;</span> <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">values</span><span class="p">.</span><span class="nx">length</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">?</span> <span class="nx">values</span><span class="p">[</span><span class="nx">middle</span><span class="p">]</span> <span class="o">:</span> 
+    <span class="p">(</span><span class="nx">values</span><span class="p">[</span><span class="nx">middle</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">values</span><span class="p">[</span><span class="nx">middle</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">mean</span> <span class="p">(</span><span class="nx">values</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">values</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">sum</span> <span class="o">/</span> <span class="nx">values</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Generate a collective rating by averaging the median and mean of
+scripts in a group. I think this gives a more fair rating than just
+using one of them alone.</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">getRating</span> <span class="p">(</span><span class="nx">scripts</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">ratings</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">scripts</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="nx">ratings</span> <span class="o">=</span> <span class="nx">scripts</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">script</span><span class="p">.</span><span class="nx">rating</span><span class="p">;</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="nx">median</span><span class="p">(</span><span class="nx">ratings</span><span class="p">)</span> <span class="o">+</span> <span class="nx">mean</span><span class="p">(</span><span class="nx">ratings</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getRating</span> <span class="o">=</span> <span class="nx">getRating</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TODO: Memoize this function with an 
+expiring cache (either memory or DB based) to
+speed up voting and flagging</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">getKarma</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">maxKarma</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">ratings</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="kd">var</span> <span class="nx">karma</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="nx">Script</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">_authorId</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">scripts</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">karma</span><span class="p">);</span> <span class="p">}</span>
+
+    <span class="nx">karm</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">getRating</span><span class="p">(</span><span class="nx">scripts</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">karma</span> <span class="o">&gt;</span> <span class="nx">maxKarma</span><span class="p">)</span> <span class="p">{</span> <span class="nx">karma</span> <span class="o">=</span> <span class="nx">maxKarma</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="nx">callback</span><span class="p">(</span><span class="nx">karma</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div></div></body></html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/markdown</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/markdown"><meta name="groc-project-path" content="libs/markdown.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/markdown.js">libs/markdown.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">marked</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;marked&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">hljs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;highlight.js&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">renderer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">marked</span><span class="p">.</span><span class="nx">Renderer</span><span class="p">();</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Automatically generate an anchor for each header</p></div></div><div class="code"><div class="wrapper"><span class="nx">renderer</span><span class="p">.</span><span class="nx">heading</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">escapedText</span> <span class="o">=</span> <span class="nx">text</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&lt;\/?[^&gt;]+?&gt;/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^\w]+/g</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="s1">&#39;&lt;h&#39;</span> <span class="o">+</span> <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;&gt;&lt;a name=&quot;anchor-&#39;</span> <span class="o">+</span>
+    <span class="nx">escapedText</span> <span class="o">+</span>
+    <span class="s1">&#39;&quot; class=&quot;anchor&quot; href=&quot;#anchor-&#39;</span> <span class="o">+</span>
+    <span class="nx">escapedText</span> <span class="o">+</span>
+    <span class="s1">&#39;&quot;&gt;&lt;span class=&quot;header-link&quot;&gt;&lt;/span&gt;&lt;/a&gt;&#39;</span> <span class="o">+</span>
+    <span class="nx">text</span> <span class="o">+</span> <span class="s1">&#39;&lt;/h&#39;</span> <span class="o">+</span> <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">;</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the options to use for rendering markdown</p></div></div><div class="code"><div class="wrapper"><span class="nx">marked</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">({</span>
+  <span class="nx">highlight</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">hljs</span><span class="p">.</span><span class="nx">highlight</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">code</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">hljs</span><span class="p">.</span><span class="nx">highlightAuto</span><span class="p">(</span><span class="nx">code</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nx">renderer</span><span class="o">:</span> <span class="nx">renderer</span><span class="p">,</span>
+  <span class="nx">gfm</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">tables</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">breaks</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">pedantic</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="nx">sanitize</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">smartLists</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">smartypants</span><span class="o">:</span> <span class="kc">false</span>
+<span class="p">});</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">renderMd</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">marked</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+<span class="p">};</span></div></div></div></div></body></html>

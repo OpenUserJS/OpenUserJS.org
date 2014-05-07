@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/helpers</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/helpers"><meta name="groc-project-path" content="libs/helpers.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/helpers.js">libs/helpers.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">months</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="s1">&#39;Jan&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Feb&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Mar&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Apr&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;May&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Jun&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Jul&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Aug&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Sep&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Oct&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Nov&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Dec&#39;</span>
+<span class="p">];</span>
+<span class="kd">var</span> <span class="nx">second</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">minute</span> <span class="o">=</span> <span class="nx">second</span> <span class="o">*</span> <span class="mi">60</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">hour</span> <span class="o">=</span> <span class="nx">minute</span> <span class="o">*</span> <span class="mi">60</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">day</span> <span class="o">=</span> <span class="nx">hour</span> <span class="o">*</span> <span class="mi">24</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get a formatted date that can be used everywhere a date is displayed</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">formatDate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">date</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">difference</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getTime</span><span class="p">();</span>
+  <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+  <span class="kd">function</span> <span class="nx">pluralize</span> <span class="p">(</span><span class="nx">number</span><span class="p">,</span> <span class="nx">unit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">number</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">unit</span> <span class="o">+</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">?</span> <span class="s1">&#39;s&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ago&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">difference</span> <span class="o">&gt;</span> <span class="nx">day</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getDate</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
+      <span class="o">+</span> <span class="nx">months</span><span class="p">[</span><span class="nx">date</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
+      <span class="o">+</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">();</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">difference</span> <span class="o">&gt;</span> <span class="nx">hour</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">pluralize</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">difference</span> <span class="o">/</span> <span class="nx">hour</span><span class="p">),</span> <span class="s1">&#39;hour&#39;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">difference</span> <span class="o">&gt;</span> <span class="nx">minute</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">pluralize</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">difference</span> <span class="o">/</span> <span class="nx">minute</span><span class="p">),</span> <span class="s1">&#39;minute&#39;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">pluralize</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nx">difference</span> <span class="o">/</span> <span class="nx">second</span><span class="p">),</span> <span class="s1">&#39;second&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create an object with no properties</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">nil</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">nilObj</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">obj</span><span class="p">)</span> <span class="k">return</span> <span class="nx">nilObj</span><span class="p">;</span>
+
+  <span class="nx">exports</span><span class="p">.</span><span class="nx">forIn</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">nilObj</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+  <span class="p">});</span>
+  
+  <span class="k">return</span> <span class="nx">nilObj</span><span class="p">;</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Safely iterate on an object not create using nil()</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">forIn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">forProp</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">))</span> <span class="p">{</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+    <span class="nx">forProp</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">obj</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clean filenames but leave them readable
+Based on Greasemonkey modules/remoteScript.js</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">cleanFilename</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">defaultName</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Blacklist problem characters (slashes, colons, etc.).</p></div></div><div class="code"><div class="wrapper">  <span class="kd">var</span> <span class="nx">cleanName</span> <span class="o">=</span> <span class="p">(</span><span class="nx">filename</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[\\\/:*?\&#39;\&quot;&lt;&gt;|#;@=&amp;]/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Make whitespace readable.</p></div></div><div class="code"><div class="wrapper">  <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(\s|%20)+/g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nx">cleanName</span> <span class="o">||</span> <span class="nx">defaultName</span><span class="p">;</span>
+<span class="p">};</span></div></div></div></div></body></html>

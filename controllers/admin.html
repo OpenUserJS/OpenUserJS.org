@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="en"><head><title>controllers/admin</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/admin"><meta name="groc-project-path" content="controllers/admin.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/admin.js">controllers/admin.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Strategy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/strategy.js&#39;</span><span class="p">).</span><span class="nx">Strategy</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user.js&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">strategies</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./strategies.json&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">userRoles</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/userRoles.json&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">loadPassport</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/passportLoader&#39;</span><span class="p">).</span><span class="nx">loadPassport</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">strategyInstances</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/passportLoader&#39;</span><span class="p">).</span><span class="nx">strategyInstances</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">scriptStorage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./scriptStorage&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">help</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/helpers&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">nil</span> <span class="o">=</span> <span class="nx">help</span><span class="p">.</span><span class="nx">nil</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This controller is only for use by users with a role of admin or above</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">getOAuthStrategies</span><span class="p">(</span><span class="nx">stored</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">oAuthStrats</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="kd">var</span> <span class="nx">strategy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">type</span> <span class="k">in</span> <span class="nx">strategies</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">strategy</span> <span class="o">=</span> <span class="nx">strategies</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">strategy</span><span class="p">.</span><span class="nx">oauth</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">oAuthStrats</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">stored</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">||</span>
+        <span class="nx">nil</span><span class="p">({</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">type</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">}));</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">oAuthStrats</span><span class="p">;</span>
+<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Allow admins to set user roles and delete users</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">userAdmin</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span>
+  <span class="kd">var</span> <span class="nx">thisUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can only see users with a role less than yours</p></div></div><div class="code"><div class="wrapper">  <span class="nx">User</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">role</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$gt</span><span class="o">:</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="p">}</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">users</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">users</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="nx">users</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">roles</span> <span class="o">=</span> <span class="p">[];</span>
+      <span class="nx">userRoles</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">roles</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;val&#39;</span> <span class="o">:</span> <span class="nx">index</span><span class="p">,</span> <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">role</span><span class="p">,</span>
+          <span class="s1">&#39;selected&#39;</span> <span class="o">:</span> <span class="nx">index</span> <span class="o">===</span> <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="p">});</span>
+      <span class="p">});</span>
+      <span class="nx">roles</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+      <span class="nx">roles</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+
+      <span class="nx">options</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;id&#39;</span> <span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span> <span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+        <span class="s1">&#39;roles&#39;</span> <span class="o">:</span> <span class="nx">roles</span> <span class="p">});</span>
+    <span class="p">});</span>
+
+    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;userAdmin&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View everything about a particular user
+This is mostly for debugging in production</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">adminUserView</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">thisUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Nothing fancy, just the stringified user object</p></div></div><div class="code"><div class="wrapper">  <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="s1">&#39;_id&#39;</span> <span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">role</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$gt</span><span class="o">:</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="p">}</span> <span class="p">},</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+
+      <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;userAdmin&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">user</span><span class="o">:</span> <span class="p">{</span> 
+        <span class="nx">info</span><span class="o">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">toObject</span><span class="p">(),</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="p">}</span> <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Make changes to users listed</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">userAdminUpdate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">users</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">thisUser</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">remove</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+
+  <span class="nx">users</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="nx">users</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">users</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">users</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="p">};</span>
+  <span class="p">});</span>
+
+  <span class="nx">thisUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="nx">remove</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">remove</span> <span class="o">||</span> <span class="p">{};</span>
+  <span class="nx">remove</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">remove</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User removal and role change might be problematic
+But why would you change and user role and delete them?</p></div></div><div class="code"><div class="wrapper">  <span class="nx">async</span><span class="p">.</span><span class="nx">parallel</span><span class="p">([</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">users</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">role</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">role</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">role</span> <span class="o">&lt;=</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span> <span class="nx">cb</span><span class="p">();</span> <span class="p">}</span>
+        <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="s1">&#39;_id&#39;</span> <span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">role</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$gt</span><span class="o">:</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="p">}</span> <span class="p">},</span> 
+          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">=</span> <span class="nx">role</span><span class="p">;</span>
+            <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
+          <span class="p">});</span>
+      <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">remove</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="s1">&#39;_id&#39;</span> <span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">role</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$gt</span><span class="o">:</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="p">}</span> <span class="p">},</span>
+          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">authorId</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">;</span>
+            <span class="nx">user</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">Script</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">_authorId</span><span class="o">:</span> <span class="nx">authorId</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">scripts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">scripts</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">innerCb</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">deleteScript</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">,</span> <span class="nx">innerCb</span><span class="p">);</span>
+                <span class="p">},</span> <span class="nx">cb</span><span class="p">);</span>
+              <span class="p">});</span>
+            <span class="p">});</span> 
+        <span class="p">});</span>
+      <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/admin/user&#39;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This page allows admins to set oAuth keys for the available authenticators</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">apiAdmin</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+
+  <span class="nx">Strategy</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strats</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">stored</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">strategies</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+    <span class="nx">strats</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">strat</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">stored</span><span class="p">[</span><span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+        <span class="s1">&#39;id&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">key</span> <span class="p">};</span>
+    <span class="p">});</span>
+
+    <span class="nx">strategies</span> <span class="o">=</span> <span class="nx">getOAuthStrategies</span><span class="p">(</span><span class="nx">stored</span><span class="p">);</span>
+    <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;strategies&#39;</span> <span class="o">:</span> <span class="nx">strategies</span> <span class="p">};</span>
+
+    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;apiAdmin&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Manage oAuth strategies without having to restart the server
+When new keys are added, we load the new strategy
+When keys are removed, we remove the strategy</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">apiAdminUpdate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">postStrats</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+
+  <span class="nx">postStrats</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">postStrat</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">values</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">[</span><span class="nx">postStrat</span><span class="p">];</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">postStrat</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">key</span><span class="o">:</span> <span class="nx">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">Strategy</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strats</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">stored</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span>
+
+    <span class="nx">strats</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">strat</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">stored</span><span class="p">[</span><span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">strat</span><span class="p">;</span>
+    <span class="p">});</span>
+    <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">postStrats</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">postStrat</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">strategy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">postStrat</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">postStrat</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">postStrat</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">stored</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">stored</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">remove</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="k">delete</span> <span class="nx">strategyInstances</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+          <span class="nx">cb</span><span class="p">();</span>
+        <span class="p">});</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stored</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
+          <span class="nx">strategy</span> <span class="o">=</span> <span class="nx">stored</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+          <span class="nx">strategy</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+          <span class="nx">strategy</span><span class="p">.</span><span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">strategy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Strategy</span><span class="p">({</span>
+            <span class="s1">&#39;id&#39;</span> <span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
+            <span class="s1">&#39;key&#39;</span> <span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
+            <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">strategies</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">name</span>
+          <span class="p">});</span>
+        <span class="p">}</span>
+
+        
+        <span class="k">return</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strategy</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">loadPassport</span><span class="p">(</span><span class="nx">strategy</span><span class="p">);</span>
+          <span class="nx">cb</span><span class="p">();</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+
+      <span class="nx">cb</span><span class="p">();</span>
+    <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/admin/api&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div></div></body></html>
