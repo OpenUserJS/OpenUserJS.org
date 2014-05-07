@@ -60,7 +60,8 @@ exports.show = function (req, res, next) {
 
     options.category = category;
     options.topic = discussion.topic;
-    options.path = discussion.path 
+    options.title = discussion.topic;
+    options.path = discussion.path;
       + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
     modelsList.listComments({ _discussionId: discussion._id }, 
       req.route.params, options.path,
@@ -95,7 +96,10 @@ function postComment (user, discussion, content, creator, callback) {
     _authorId: user._id
   });
 
-  comment.save(callback);
+  comment.save(function (err, comment) {
+    ++discussion.comments;
+    discussion.save(callback);
+  });
 }
 
 exports.createTopic = function (req, res, next) {
@@ -135,7 +139,7 @@ exports.createTopic = function (req, res, next) {
     });
 
     newDiscussion.save(function (err, discussion) {
-      postComment(user, discussion, content, true, function (err, comment) {
+      postComment(user, discussion, content, true, function (err, discussion) {
         res.redirect(discussion.path
           + (discussion.duplicateId ? '_' + discussion.duplicateId : ''));
       });
@@ -155,7 +159,7 @@ exports.postComment = function (req, res, next) {
   findDiscussion(category, topic, function (discussion) {
     if (!discussion) { return next(); }
 
-    postComment(user, discussion, content, true, function (err, comment) {
+    postComment(user, discussion, content, true, function (err, discussion) {
       res.redirect(discussion.path
         + (discussion.duplicateId ? '_' + discussion.duplicateId : ''));
     });
