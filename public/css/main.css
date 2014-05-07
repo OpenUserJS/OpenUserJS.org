@@ -35,7 +35,7 @@ ul.scripts-list
 #nav-buttons{
 }
 .nav-button-label{
-	font-family: 'Squada One', cursive;
+	font-family: 'Squada One', cursive, sans-serif;
 	font-weight: 400;
 	color: #004e70;
 	font-size: 1.9em;
