@@ -1,0 +1,273 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/modelsList</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/modelsList"><meta name="groc-project-path" content="libs/modelsList.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/modelsList.js">libs/modelsList.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Remove</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/remove&#39;</span><span class="p">).</span><span class="nx">Remove</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Group</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/group&#39;</span><span class="p">).</span><span class="nx">Group</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Discussion</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/discussion&#39;</span><span class="p">).</span><span class="nx">Discussion</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Comment</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/comment&#39;</span><span class="p">).</span><span class="nx">Comment</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">getRating</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./collectiveRating&#39;</span><span class="p">).</span><span class="nx">getRating</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">renderMd</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./markdown&#39;</span><span class="p">).</span><span class="nx">renderMd</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">formatDate</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./helpers&#39;</span><span class="p">).</span><span class="nx">formatDate</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">listSize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>/scriptlist/size/:size/sort/:orderBy/dir/:direction/page/:page
+Get a list of scripts and build the options object 
+for the corresponding Mustache partial template</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">listScripts</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Don't list flagged scripts by default</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">delete</span> <span class="nx">query</span><span class="p">.</span><span class="nx">flagged</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">!==</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">query</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">$ne</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
+  <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>List both libraries and scripts if isLib is null
+Only list scripts and omit libraries by default</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">delete</span> <span class="nx">query</span><span class="p">.</span><span class="nx">isLib</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">query</span><span class="p">.</span><span class="nx">isLib</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">query</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">$ne</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
+  <span class="p">}</span>
+
+  <span class="nx">listModels</span><span class="p">(</span><span class="nx">Script</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;installs&#39;</span><span class="p">,</span> <span class="s1">&#39;updated&#39;</span><span class="p">],</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">scripts</span><span class="p">,</span> <span class="nx">scriptsList</span><span class="p">)</span> <span class="p">{</span>
+      <span class="cm">/*var headings = {</span>
+<span class="cm">        &#39;name&#39;: { label: &#39;Name&#39;, width: 50 },</span>
+<span class="cm">        &#39;author&#39;: { label: &#39;Author&#39;, width: 15 },</span>
+<span class="cm">        &#39;rating&#39;: { label: &#39;Rating&#39;, width: 15 },</span>
+<span class="cm">        &#39;installs&#39;: { label: &#39;Installs&#39;, width: 15 }</span>
+<span class="cm">      };*/</span>
+      <span class="kd">var</span> <span class="nx">heading</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="nx">scriptsList</span><span class="p">.</span><span class="nx">scripts</span> <span class="o">=</span> <span class="p">[];</span>
+      <span class="nx">scriptsList</span><span class="p">.</span><span class="nx">headings</span> <span class="o">=</span> <span class="p">[];</span>
+      <span class="nx">scriptsList</span><span class="p">.</span><span class="nx">hasAuthor</span> <span class="o">=</span> <span class="nx">params</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">?</span> 
+        <span class="nx">params</span><span class="p">[</span><span class="mi">4</span><span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+
+      <span class="nx">scripts</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">isLib</span> <span class="o">=</span> <span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">scriptPath</span> <span class="o">=</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span>
+          <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="sr">/\.js$/</span> <span class="o">:</span> <span class="sr">/\.user\.js$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">editUrl</span> <span class="o">=</span> <span class="nx">scriptPath</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+
+        <span class="nx">editUrl</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+
+        <span class="nx">scriptsList</span><span class="p">.</span><span class="nx">scripts</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> 
+          <span class="nx">name</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+          <span class="nx">author</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">author</span><span class="p">,</span>
+          <span class="nx">description</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">description</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+          <span class="nx">url</span><span class="o">:</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/scripts/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">scriptPath</span><span class="p">,</span>
+          <span class="nx">install</span><span class="o">:</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/src/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/install/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">,</span>
+          <span class="nx">editUrl</span><span class="o">:</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/lib/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/script/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">editUrl</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/edit&#39;</span><span class="p">,</span>
+          <span class="nx">rating</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">rating</span><span class="p">,</span>
+          <span class="nx">installs</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installs</span><span class="p">,</span>
+          <span class="nx">version</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">version</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+          <span class="nx">isLib</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span><span class="p">,</span>
+          <span class="nx">updated</span><span class="o">:</span> <span class="nx">formatDate</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">updated</span><span class="p">)</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="cm">/*for (name in headings) {</span>
+<span class="cm">        if (!scriptsList.hasAuthor &amp;&amp; name === &#39;author&#39;) { continue; }</span>
+<span class="cm">        heading = headings[name];</span>
+
+<span class="cm">        if (orderBy === name) {</span>
+<span class="cm">          heading.direction = &#39;/dir/&#39; + </span>
+<span class="cm">            (direction === &#39;asc&#39; ? &#39;desc&#39; : &#39;asc&#39;);</span>
+<span class="cm">        } else {</span>
+<span class="cm">          heading.direction = &#39;&#39;;</span>
+<span class="cm">        }</span>
+
+<span class="cm">        heading.name = name;</span>
+<span class="cm">        scriptsList.headings.push(heading);</span>
+<span class="cm">      }*/</span>
+
+      <span class="nx">scriptsList</span><span class="p">.</span><span class="nx">baseUrl</span> <span class="o">=</span> <span class="nx">baseUrl</span> <span class="o">+</span> <span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">===</span> <span class="kc">true</span> <span class="o">?</span> 
+        <span class="s1">&#39;/liblist&#39;</span> <span class="o">:</span> <span class="s1">&#39;/scriptlist&#39;</span><span class="p">);</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">scriptsList</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>/userlist/size/:size/sort/:orderBy/dir/:direction/page/:page
+Get a list of users and build the options object 
+for the corresponding Mustache partial template</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">listUsers</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">listModels</span><span class="p">(</span><span class="nx">User</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">users</span><span class="p">,</span> <span class="nx">usersList</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">usersList</span><span class="p">.</span><span class="nx">users</span> <span class="o">=</span> <span class="p">[];</span>
+
+      <span class="nx">users</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">usersList</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> 
+          <span class="nx">name</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+          <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/users/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="nx">usersList</span><span class="p">.</span><span class="nx">baseUrl</span> <span class="o">=</span> <span class="nx">baseUrl</span> <span class="o">+</span> <span class="s1">&#39;/userlist&#39;</span><span class="p">;</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">usersList</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>/list/size/:size/sort/:orderBy/dir/:direction/page/:page
+Get a list of removed content and build the options object 
+for the corresponding Mustache partial template</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">listRemoved</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">listModels</span><span class="p">(</span><span class="nx">Remove</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;removed&#39;</span><span class="p">],</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="nx">removedList</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">removedList</span><span class="p">.</span><span class="nx">removed</span> <span class="o">=</span> <span class="p">[];</span>
+
+      <span class="nx">results</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">content</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">contentArr</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        
+        <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">val</span> <span class="o">=</span> <span class="nx">content</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+          <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span> <span class="o">?</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="o">:</span> <span class="nx">val</span><span class="p">;</span>
+          <span class="nx">contentArr</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;key&#39;</span><span class="o">:</span> <span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="o">:</span> <span class="nx">val</span> <span class="p">});</span>
+        <span class="p">}</span>
+
+        <span class="nx">removedList</span><span class="p">.</span><span class="nx">removed</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> 
+          <span class="nx">remover</span><span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">removerName</span><span class="p">,</span>
+          <span class="nx">removed</span><span class="o">:</span> <span class="nx">formatDate</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">removed</span><span class="p">),</span>
+          <span class="nx">reason</span><span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">reason</span><span class="p">,</span>
+          <span class="nx">content</span><span class="o">:</span> <span class="nx">contentArr</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="nx">removedList</span><span class="p">.</span><span class="nx">baseUrl</span> <span class="o">=</span> <span class="nx">baseUrl</span> <span class="o">+</span> <span class="s1">&#39;/list&#39;</span><span class="p">;</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">removedList</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>/groups/list/size/:size/sort/:orderBy/dir/:direction/page/:page
+Get a list of groups and build the options object 
+for the corresponding Mustache partial template</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">listGroups</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">listModels</span><span class="p">(</span><span class="nx">Group</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;rating&#39;</span><span class="p">],</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">groups</span><span class="p">,</span> <span class="nx">groupsList</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">groupsList</span><span class="p">.</span><span class="nx">groups</span> <span class="o">=</span> <span class="p">[];</span>
+
+      <span class="nx">groups</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">group</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">groupsList</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> 
+          <span class="nx">name</span><span class="o">:</span> <span class="nx">group</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+          <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/group/&#39;</span> <span class="o">+</span> <span class="nx">group</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s+/g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">),</span>
+          <span class="nx">size</span><span class="o">:</span> <span class="nx">group</span><span class="p">.</span><span class="nx">_scriptIds</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+          <span class="nx">multiple</span><span class="o">:</span> <span class="nx">group</span><span class="p">.</span><span class="nx">_scriptIds</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Wait two hours between group rating updates
+This calculation runs in the background</p></div></div><div class="code"><div class="wrapper">        <span class="k">if</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">group</span><span class="p">.</span><span class="nx">updated</span><span class="p">.</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1000</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">2</span><span class="p">))</span> <span class="p">{</span>
+          <span class="nx">Script</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">_id</span><span class="o">:</span> <span class="p">{</span> <span class="nx">$in</span><span class="o">:</span> <span class="nx">group</span><span class="p">.</span><span class="nx">_scriptIds</span> <span class="p">}</span> <span class="p">},</span>
+            <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">scripts</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">err</span> <span class="o">&amp;&amp;</span> <span class="nx">scripts</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">group</span><span class="p">.</span><span class="nx">rating</span> <span class="o">=</span> <span class="nx">getRating</span><span class="p">(</span><span class="nx">scripts</span><span class="p">);</span>
+              <span class="p">}</span>
+
+              <span class="nx">group</span><span class="p">.</span><span class="nx">updated</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+              <span class="nx">group</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{});</span>
+          <span class="p">});</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+
+      <span class="nx">groupsList</span><span class="p">.</span><span class="nx">baseUrl</span> <span class="o">=</span> <span class="nx">baseUrl</span> <span class="o">+</span> <span class="s1">&#39;/list&#39;</span><span class="p">;</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">groupsList</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>/list/size/:size/sort/:orderBy/dir/:direction/page/:page
+Get a list of discussions and build the options object 
+for the corresponding Mustache partial template</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">listDiscussions</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">listModels</span><span class="p">(</span><span class="nx">Discussion</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;updated&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">],</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">discussions</span><span class="p">,</span> <span class="nx">discussionsList</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">discussionsList</span><span class="p">.</span><span class="nx">discussions</span> <span class="o">=</span> <span class="p">[];</span>
+
+      <span class="nx">discussions</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">discussion</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">discussionsList</span><span class="p">.</span><span class="nx">discussions</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> 
+          <span class="nx">topic</span><span class="o">:</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">topic</span><span class="p">,</span>
+          <span class="nx">comments</span><span class="o">:</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">comments</span><span class="p">,</span>
+          <span class="nx">author</span><span class="o">:</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">author</span><span class="p">,</span>
+          <span class="nx">created</span><span class="o">:</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">created</span><span class="p">,</span>
+          <span class="nx">lastCommentor</span><span class="o">:</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">author</span> <span class="o">!=</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">lastCommentor</span> <span class="o">?</span>
+            <span class="nx">discussion</span><span class="p">.</span><span class="nx">lastCommentor</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+          <span class="nx">updated</span><span class="o">:</span> <span class="nx">formatDate</span><span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">updated</span><span class="p">),</span>
+          <span class="nx">rating</span><span class="o">:</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">rating</span><span class="p">,</span>
+          <span class="nx">url</span><span class="o">:</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">path</span>
+            <span class="o">+</span> <span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">?</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="nx">discussionsList</span><span class="p">.</span><span class="nx">baseUrl</span> <span class="o">=</span> <span class="nx">baseUrl</span> <span class="o">+</span> <span class="s1">&#39;/list&#39;</span><span class="p">;</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">discussionsList</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>/list/size/:size/sort/:orderBy/dir/:direction/page/:page
+Get a list of comments and build the options object 
+for the corresponding Mustache partial template</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">listComments</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">listModels</span><span class="p">(</span><span class="nx">Comment</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;created&#39;</span><span class="p">],</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">comments</span><span class="p">,</span> <span class="nx">commentsList</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">commentsList</span><span class="p">.</span><span class="nx">comments</span> <span class="o">=</span> <span class="p">[];</span>
+
+      <span class="nx">comments</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">comment</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">commentsList</span><span class="p">.</span><span class="nx">comments</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> 
+          <span class="nx">author</span><span class="o">:</span> <span class="nx">comment</span><span class="p">.</span><span class="nx">author</span><span class="p">,</span>
+          <span class="nx">content</span><span class="o">:</span> <span class="nx">renderMd</span><span class="p">(</span><span class="nx">comment</span><span class="p">.</span><span class="nx">content</span><span class="p">),</span>
+          <span class="nx">created</span><span class="o">:</span> <span class="nx">formatDate</span><span class="p">(</span><span class="nx">comment</span><span class="p">.</span><span class="nx">created</span><span class="p">),</span>
+          <span class="nx">rating</span><span class="o">:</span> <span class="nx">comment</span><span class="p">.</span><span class="nx">rating</span><span class="p">,</span>
+          <span class="nx">id</span><span class="o">:</span> <span class="nx">comment</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+        <span class="p">});</span>
+      <span class="p">});</span>
+
+      <span class="nx">commentsList</span><span class="p">.</span><span class="nx">baseUrl</span> <span class="o">=</span> <span class="nx">baseUrl</span> <span class="o">+</span> <span class="s1">&#39;/list&#39;</span><span class="p">;</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">commentsList</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>options = { 
+  size: (Number), orderBy: (String or Array or Object),
+  direction: (String), page: (Number), omit: (Array)</p></div></div><div class="code"><div class="wrapper"><span class="c1">// </span>
+<span class="kd">function</span> <span class="nx">listModels</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">defaultOrder</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">optArr</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">fields</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">schema</span><span class="p">.</span><span class="nx">tree</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">orderBy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">direction</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">omit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">sort</span><span class="o">:</span> <span class="p">{}</span> <span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Either use route params or an object</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">optArr</span> <span class="o">=</span> <span class="nx">options</span><span class="p">;</span>
+    <span class="nx">options</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="nx">optArr</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">orderBy</span> <span class="o">=</span> <span class="nx">optArr</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">direction</span> <span class="o">=</span> <span class="nx">optArr</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">page</span> <span class="o">=</span> <span class="nx">optArr</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">omit</span> <span class="o">=</span> <span class="nx">optArr</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+  <span class="p">}</span>
+
+  <span class="nx">orderBy</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">orderBy</span> <span class="o">||</span> <span class="nx">defaultOrder</span><span class="p">;</span>
+  <span class="nx">page</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">page</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">page</span><span class="p">)</span> <span class="o">?</span> <span class="nx">options</span><span class="p">.</span><span class="nx">page</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="nx">size</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">size</span> <span class="o">||</span> <span class="nx">listSize</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">page</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="nx">page</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the sort order for the model list</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">orderBy</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">!==</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">orderBy</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">direction</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">direction</span> <span class="o">||</span> <span class="nx">model</span><span class="p">.</span><span class="nx">schema</span><span class="p">.</span><span class="nx">paths</span><span class="p">[</span><span class="nx">orderBy</span><span class="p">]</span>
+      <span class="p">.</span><span class="nx">instance</span> <span class="o">===</span> <span class="s1">&#39;String&#39;</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">sort</span><span class="p">[</span><span class="nx">orderBy</span><span class="p">]</span> <span class="o">=</span> <span class="nx">direction</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">orderBy</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">orderBy</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">order</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">params</span><span class="p">.</span><span class="nx">sort</span><span class="p">[</span><span class="nx">order</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">!==</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">order</span><span class="p">)</span> <span class="o">&amp;&amp;</span> 
+        <span class="nx">model</span><span class="p">.</span><span class="nx">schema</span><span class="p">.</span><span class="nx">paths</span><span class="p">[</span><span class="nx">order</span><span class="p">].</span><span class="nx">instance</span> <span class="o">===</span> <span class="s1">&#39;String&#39;</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">});</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">orderBy</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">sort</span> <span class="o">=</span> <span class="nx">orderBy</span><span class="p">;</span>
+  <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Omit certain fields from the models in the list</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span><span class="p">.</span><span class="nx">omit</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">omit</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">omit</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">options</span><span class="p">.</span><span class="nx">omit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">omit</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">omit</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="p">.</span><span class="nx">omit</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">field</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">field</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="p">}</span>
+    <span class="p">});</span>
+    <span class="nx">omit</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
+  <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the right portion (page) of results</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="nx">size</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">limit</span> <span class="o">=</span> <span class="nx">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">skip</span> <span class="o">=</span> <span class="nx">size</span> <span class="o">*</span> <span class="nx">page</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">model</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">omit</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">models</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">models</span><span class="p">)</span> <span class="p">{</span> <span class="nx">models</span> <span class="o">=</span> <span class="p">[]</span> <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">size</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">models</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="p">}</span>
+      <span class="nx">orderBy</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">orderBy</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> <span class="o">?</span> <span class="nx">orderBy</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+      <span class="nx">direction</span> <span class="o">=</span> <span class="nx">direction</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="s1">&#39;asc&#39;</span> <span class="o">:</span> <span class="s1">&#39;desc&#39;</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Build the pagination for the Mustache template</p></div></div><div class="code"><div class="wrapper">      <span class="nx">list</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">size</span> <span class="o">?</span> <span class="s1">&#39;/size/&#39;</span> <span class="o">+</span> <span class="nx">size</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+      <span class="nx">list</span><span class="p">.</span><span class="nx">orderBy</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">orderBy</span> <span class="o">?</span> <span class="s1">&#39;/sort/&#39;</span> <span class="o">+</span> <span class="nx">orderBy</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+      <span class="nx">list</span><span class="p">.</span><span class="nx">direction</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">direction</span> <span class="o">?</span> <span class="s1">&#39;/dir/&#39;</span> <span class="o">+</span> <span class="nx">direction</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+      <span class="nx">page</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+
+      <span class="nx">list</span><span class="p">.</span><span class="nx">pageNumber</span> <span class="o">=</span> <span class="nx">page</span><span class="p">;</span>
+      <span class="nx">list</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">models</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">size</span> <span class="o">?</span> <span class="s1">&#39;/page/&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">page</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+      <span class="nx">list</span><span class="p">.</span><span class="nx">previous</span> <span class="o">=</span> <span class="nx">page</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">?</span> <span class="s1">&#39;/page/&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">page</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">list</span><span class="p">.</span><span class="nx">next</span><span class="p">)</span> <span class="p">{</span> <span class="nx">models</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span> <span class="p">}</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">models</span><span class="p">,</span> <span class="nx">list</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span></div></div></div></div></body></html>
