@@ -106,7 +106,7 @@ exports.view = function (req, res, next) {
         var category = (script.isLib ? 'libs' : 'scripts')
           + '/' + installName;
         options.issuesUrl = '/' + category + '/issues';
-        options.openIssueUrl = '/' + category + '/open';
+        options.openIssueUrl = '/' + category + '/issue/new';
 
         Discussion.count({ category: category + '/issues', open: true },
           function (err, count) {

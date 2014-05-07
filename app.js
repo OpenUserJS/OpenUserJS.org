@@ -140,11 +140,11 @@ app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
   + '\/issues(?:\/(closed))?', ''), issue.list);
 app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
   + '\/issues\/([^\/]+?)', ''), issue.view);
-app.get('/:type(scripts|libs)/:username/:scriptname/open', issue.open);
-app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/open',
+app.get('/:type(scripts|libs)/:username/:scriptname/issue/new', issue.open);
+app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issue/new',
   issue.open);
-app.post('/:type(scripts|libs)/:username/:scriptname/open', issue.open);
-app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/open',
+app.post('/:type(scripts|libs)/:username/:scriptname/issue/new', issue.open);
+app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issue/new',
   issue.open);
 app.post('/:type(scripts|libs)/:username/:scriptname/issues/:topic',
   issue.comment);
