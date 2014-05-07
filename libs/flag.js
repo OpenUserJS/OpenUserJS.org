@@ -1,7 +1,7 @@
 var Flag = require('../models/flag').Flag;
 var User = require('../models/user').User;
 var getKarma = require('./collectiveRating').getKarma;
-var thresholds = { 'Script': 5, 'User': 10 };
+var thresholds = { 'Script': 5, 'User': 10, 'Discussion': 3, 'Comment': 2 };
 var maxKarma = 10;
 
 // Determine whether content can be flagged by a user.
@@ -28,7 +28,7 @@ function flaggable (model, content, user, callback) {
     if (!author) { return callback(false); }
 
     // You can't flag your own content
-    //if (author._id == user._id) { return callback(false); }
+    if (author._id == user._id) { return callback(false); }
 
     // Content belonging to an admin or above cannot be flagged
     if (author.role < 3) { return callback(author.role > 2, author); }

@@ -1,0 +1,28 @@
+{{#discussionsList}}
+<section class="scripts-section">
+  {{#discussions}}
+  <ul class="scripts-list">
+    <li class="script">
+      <h2 class="script-title"><a class="script-title-anchor" href="{{{url}}}">{{topic}}</a></h2>
+      <table width="100%">
+        <tr class="home-row">
+          <td class="home-col1">Started by: <a class="author-link" href="/users/{{author}}">{{author}}</a></td>
+          <td class="home-col2">Rating:</td>
+          <td class="home-col3">{{rating}}</td>
+        </tr>
+        <tr class="home-row">
+          <td class="home-col1">Last Active: {{updated}}</td>
+          <td class="home-col2">Comments:</td>
+          <td class="home-col3">{{comments}}</td>
+        </tr>
+      </table>
+      {{#lastCommentor}}
+      <p class="script-description">Last comment by <a class="author-link" href="/users/{{lastCommentor}}">{{lastCommentor}}</a></p>
+      {{/lastCommentor}}
+    </li>
+  </ul>
+  {{/discussions}}
+  <br />
+  {{> pagination.html}}
+</section>
+{{/discussionsList}}

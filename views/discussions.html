@@ -1,0 +1,14 @@
+{{> header.html}}
+<div class="content-box">
+  <h1>{{title}}</h1>
+  <p><strong>{{description}}</strong></p>
+  <p><a href="/post/{{category}}">Start a New Discussion</a></p>
+  {{^general}}
+  <p><strong>Note:</strong> To start an off-topic discussion, use the <a href="/discuss">general discussion</a> area.</p>
+  {{/general}}
+</div>
+<br />
+<div class="centered-content">
+{{> discussionsList.html}}
+</div>
+{{> footer.html}}

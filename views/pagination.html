@@ -1,0 +1,9 @@
+<div class="paging-controls">
+  {{#previous}}
+  <a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
+  {{/previous}}
+  {{pageNumber}}
+  {{#next}}
+  &gt; <a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
+  {{/next}}
+</div>

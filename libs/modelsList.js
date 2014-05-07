@@ -2,7 +2,10 @@ var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 var Remove = require('../models/remove').Remove;
 var Group = require('../models/group').Group;
+var Discussion = require('../models/discussion').Discussion;
+var Comment = require('../models/comment').Comment;
 var getRating = require('../libs/collectiveRating').getRating;
+var renderMd = require('../libs/markdown').renderMd;
 var listSize = 10;
 var months = [
   'Jan',
@@ -18,6 +21,12 @@ var months = [
   'Nov',
   'Dec'
 ];
+
+function formatDate (date) {
+  return date.getDate() + ' '
+    + months[date.getMonth()] + ' '
+    + date.getFullYear()
+}
 
 // /scriptlist/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of scripts and build the options object 
@@ -59,7 +68,6 @@ exports.listScripts = function (query, params, baseUrl, callback) {
         var scriptPath = script.installName
           .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
         var editUrl = scriptPath.split('/');
-        var updated = script.updated;
 
         editUrl.shift();
 
@@ -74,9 +82,7 @@ exports.listScripts = function (query, params, baseUrl, callback) {
           installs: script.installs,
           version: script.meta.version || '',
           isLib: script.isLib,
-          updated: updated.getDate() + ' '
-            + months[updated.getMonth()] + ' '
-            + updated.getFullYear()
+          updated: formatDate(script.updated)
         });
       });
 
@@ -143,9 +149,7 @@ exports.listRemoved = function (query, params, baseUrl, callback) {
 
         removedList.removed.push({ 
           remover: result.removerName,
-          removed: result.removed.getDate() + ' '
-            + months[result.removed.getMonth()] + ' '
-            + result.removed.getFullYear(),
+          removed: formatDate(result.removed),
           reason: result.reason,
           content: contentArr
         });
@@ -189,6 +193,57 @@ exports.listGroups = function (query, params, baseUrl, callback) {
 
       groupsList.baseUrl = baseUrl + '/list';
       callback(groupsList);
+  });
+};
+
+// /list/size/:size/sort/:orderBy/dir/:direction/page/:page
+// Get a list of discussions and build the options object 
+// for the corresponding Mustache partial template
+exports.listDiscussions = function (query, params, baseUrl, callback) {
+  listModels(Discussion, query, params, ['updated', 'rating'],
+    function (discussions, discussionsList) {
+      discussionsList.discussions = [];
+
+      discussions.forEach(function (discussion) {
+        discussionsList.discussions.push({ 
+          topic: discussion.topic,
+          comments: discussion.comments,
+          author: discussion.author,
+          created: discussion.created,
+          lastCommentor: discussion.author != discussion.lastCommentor ?
+            discussion.lastCommentor : null,
+          updated: formatDate(discussion.updated),
+          rating: discussion.rating,
+          url: discussion.path
+            + (discussion.duplicateId ? '_' + discussion.duplicateId : ''),
+        });
+      });
+
+      discussionsList.baseUrl = baseUrl + '/list';
+      callback(discussionsList);
+  });
+};
+
+// /list/size/:size/sort/:orderBy/dir/:direction/page/:page
+// Get a list of comments and build the options object 
+// for the corresponding Mustache partial template
+exports.listComments = function (query, params, baseUrl, callback) {
+  listModels(Comment, query, params, ['created'],
+    function (comments, commentsList) {
+      commentsList.comments = [];
+
+      comments.forEach(function (comment) {
+        commentsList.comments.push({ 
+          author: comment.author,
+          content: renderMd(comment.content),
+          created: formatDate(comment.created),
+          rating: comment.rating,
+          id: comment.id,
+        });
+      });
+
+      commentsList.baseUrl = baseUrl + '/list';
+      callback(commentsList);
   });
 };
 

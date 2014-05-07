@@ -7,34 +7,40 @@
     <span class="lib-url"><strong>Library URL: </strong><input type="text" name="lib_url" value="https://openuserjs.org{{{install}}}" size="50"/></span><br /><br />
     {{/isLib}}
     {{^isLib}}
-    <button class="install-button" title="Install"
-	    type="button" onclick="location.href='{{{install}}}'" >
-      Install
-    </button>
+    <a href="{{{install}}}">
+      <button class="install-button" title="Install" type="button">
+        Install
+      </button>
+    </a>
     {{/isLib}}
-    <button class="view-source-button" title="View Source"
-	    type="button" onclick="location.href='{{{source}}}'" >
-      View Source
-    </button>
+    <a href="{{{source}}}">
+      <button class="view-source-button" title="View Source" type="button">
+        View Source
+      </button>
+    </a>
     {{#voteable}}
-    <button class="{{#up}}button-selected{{/up}}" title="Up Vote"
-	    type="button" onclick="location.href='{{{upUrl}}}'" >
-      Up Vote
-    </button>
-
-    <button class="{{#down}}button-selected{{/down}}" title="Down Vote"
-	    type="button" onclick="location.href='{{{downUrl}}}'" >
-      Down Vote
-    </button>
+    <a href="{{{upUrl}}">
+      <button class="{{#up}}button-selected{{/up}}" title="Up Vote" 
+              type="button">
+        Up Vote
+      </button>
+    </a>
+    <a href="{{{downUrl}}}">
+      <button class="{{#down}}button-selected{{/down}}" title="Down Vote"
+	      type="button">
+        Down Vote
+      </button>
+    </a>
     {{/voteable}}
     {{#flaggable}}
-    <button class="{{#flagged}}button-selected{{/flagged}}" title="{{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}"
-	    type="button" onclick="location.href='{{{flagUrl}}}'" >
-      {{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}
-    </button>
+    <a href="{{{flagUrl}}}">
+      <button class="{{#flagged}}button-selected{{/flagged}}" title="{{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}"
+	      type="button">
+        {{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}
+      </button>
+    </a>
     {{/flaggable}}
     <p class="sr-description">{{description}}</p>
-
     <table width="100%">
       <tr class="sr-row">
 	<td class="sr-col1">Author:</td>

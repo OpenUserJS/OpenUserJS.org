@@ -1,65 +1,61 @@
 {{#scriptsList}}
 <section class="scripts-section">
-{{#scripts}}
-				<ul class="scripts-list">
-					<li class="script">
-{{#edit}}
-						<button class="install-button" title="Edit"
-								type="button" onclick="location.href='{{{editUrl}}}'" >
-								Edit
-						</button>
-{{/edit}}
-{{#moderation}}
-						<button class="install-button" title="Remove"
-								type="button" onclick="location.href='/remove{{{url}}}'" >
-								Remove
-						</button>
-{{/moderation}}
-{{^edit}}
-{{^moderation}}
-{{#isLib}}
-						<button class="raw-button" title="Raw Source"
-								type="button" onclick="location.href='{{{install}}}'" >
-								Raw Source
-						</button>
-{{/isLib}}
-{{^isLib}}
-						<button class="install-button" title="Install"
-								type="button" onclick="location.href='{{{install}}}'" >
-								Install
-						</button>
-{{/isLib}}
-{{/moderation}}
-{{/edit}}
-						<h2 class="script-title"><a class="script-title-anchor" href="{{{url}}}">{{name}}{{#version}} - {{version}}{{/version}}</a></h2>
+  {{#scripts}}
+  <ul class="scripts-list">
+    <li class="script">
+      {{#edit}}
+      <a href="{{{editUrl}}}">
+        <button class="install-button" title="Edit" type="button">
+	  Edit
+        </button>
+      </a>
+      {{/edit}}
+      {{#moderation}}
+      <a href="/remove{{{url}}}">
+        <button class="install-button" title="Remove" type="button">
+	  Remove
+        </button>
+      </a>
+      {{/moderation}}
+      {{^edit}}
+      {{^moderation}}
+      {{#isLib}}
+      <a href="{{{install}}}">
+        <button class="raw-button" title="Raw Source" type="button">
+	  Raw Source
+        </button>
+      </a>
+      {{/isLib}}
+      {{^isLib}}
+      <a href="{{{install}}}">
+        <button class="install-button" title="Install" type="button">
+	  Install
+        </button>
+      </a>
+      {{/isLib}}
+      {{/moderation}}
+      {{/edit}}
+      <h2 class="script-title"><a class="script-title-anchor" href="{{{url}}}">{{name}}{{#version}} - {{version}}{{/version}}</a></h2>
 
-						<table width="100%">
-							<tr class="home-row">
-								{{#hasAuthor}}<td class="home-col1">Author: <a class="author-link" href="/users/{{author}}">{{author}}</a></td>{{/hasAuthor}}
-								<td class="home-col2">Rating:</td>
-								<td class="home-col3">{{rating}}</td>
-							</tr>
-							<tr class="home-row">
-								<td class="home-col1">Last Update: {{updated}}</td>
-{{^isLib}}
-								<td class="home-col2">Installs:</td>
-								<td class="home-col3">{{installs}}</td>
-{{/isLib}}
-							</tr>
-						</table>					
-						<p class="script-description">{{description}}</p>
-					</li>
-				</ul>
-{{/scripts}}
-   <br />
-<div class="paging-controls">
-{{#previous}}
-<a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
-{{/previous}}
-{{pageNumber}}
-{{#next}}
- &gt; <a class="paging-anchor" href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
-{{/next}}
-</div>
+      <table width="100%">
+	<tr class="home-row">
+	  {{#hasAuthor}}<td class="home-col1">Author: <a class="author-link" href="/users/{{author}}">{{author}}</a></td>{{/hasAuthor}}
+	  <td class="home-col2">Rating:</td>
+	  <td class="home-col3">{{rating}}</td>
+	</tr>
+	<tr class="home-row">
+	  <td class="home-col1">Last Update: {{updated}}</td>
+          {{^isLib}}
+	  <td class="home-col2">Installs:</td>
+	  <td class="home-col3">{{installs}}</td>
+          {{/isLib}}
+	</tr>
+      </table>					
+      <p class="script-description">{{description}}</p>
+    </li>
+  </ul>
+  {{/scripts}}
+  <br />
+  {{> pagination.html}}
 </section>
 {{/scriptsList}}

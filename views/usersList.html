@@ -13,13 +13,7 @@
     </li>
   </ul>
 {{/users}}
-   <br />
-{{#previous}}
-<a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{previous}}">Previous Page</a> &lt;
-{{/previous}}
-{{pageNumber}}
-{{#next}}
- &gt; <a href="{{{baseUrl}}}{{size}}{{orderBy}}{{direction}}{{next}}">Next Page</a>
-{{/next}}
+  <br />
+  {{> pagination.html}}
 </section>
 {{/usersList}}

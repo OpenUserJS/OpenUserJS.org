@@ -12,6 +12,7 @@ var script = require('./controllers/script');
 var remove = require('./controllers/remove');
 var moderation = require('./controllers/moderation');
 var group = require('./controllers/group');
+var discussion = require('./controllers/discussion');
 var scriptStorage = require('./controllers/scriptStorage');
 var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
@@ -154,6 +155,14 @@ app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 app.get(listRegex('\/groups', ''), group.list);
 app.get(listRegex('\/group\/([^\/]+?)', 'script'), group.view);
 app.get('/api/group/search/:term/:addTerm?', group.search);
+
+// Discussion routes
+app.get(listRegex('\/(corner|garage|discuss)', ''), discussion.list);
+app.get(listRegex('\/(corner|garage|discuss)\/([^\/]+?)', ''), discussion.show);
+app.get('/post/:category(corner|garage|discuss)', discussion.newTopic);
+app.post('/post/:category(corner|garage|discuss)', discussion.createTopic);
+app.post('/:category(corner|garage|discuss)/:topic', discussion.postComment);
+//app.get('/:category(corner|garage|discuss)/:topic/:comment', discussion.comment);
 
 app.post('/search', function(req, res) {
   var search = encodeURIComponent(req.body.search.replace(/^\s+|\s+$/g, ''));
