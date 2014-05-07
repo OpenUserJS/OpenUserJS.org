@@ -7,6 +7,7 @@ var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 var Flag = require('../models/flag').Flag;
 var Group = require('../models/group').Group;
+var Discussion = require('../models/discussion').Discussion;
 var addScriptToGroups = require('./group').addScriptToGroups
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
@@ -115,6 +116,20 @@ exports.view = function (req, res, next) {
           });
         }
       }
+
+      tasks.push(function (callback) {
+        var category = (script.isLib ? 'libs' : 'scripts')
+          + '/' + installName;
+        options.issuesUrl = '/' + category + '/issues';
+        options.openIssueUrl = '/' + category + '/open';
+
+        Discussion.count({ category: category + '/issues', open: true },
+          function (err, count) {
+            if (err) { count = 0; }
+            options.issuesCount = count;
+            callback();
+        });
+      });
 
       tasks.push(function (callback) {
         if (script.isLib) { return callback(); }
