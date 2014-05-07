@@ -13,20 +13,7 @@ var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var modelsList = require('../libs/modelsList');
 var renderMd = require('../libs/markdown').renderMd;
-var months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
+var formatDate = require('../libs/helpers').formatDate;
 
 // Let script controllers know this is a lib route
 exports.lib = function (controller) {
@@ -88,9 +75,7 @@ exports.view = function (req, res, next) {
         edit: (script.isLib ? '/lib/' : '/script/')
           + editUrl.join('/') + '/edit',
         author: script.author,
-        updated: script.updated.getDate() + ' '
-          + months[script.updated.getMonth()] + ' '
-          + script.updated.getFullYear(),
+        updated: formatDate(script.updated),
         rating: script.rating,
         installs: script.installs,
         fork: fork,

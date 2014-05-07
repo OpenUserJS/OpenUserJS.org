@@ -4,29 +4,10 @@ var Remove = require('../models/remove').Remove;
 var Group = require('../models/group').Group;
 var Discussion = require('../models/discussion').Discussion;
 var Comment = require('../models/comment').Comment;
-var getRating = require('../libs/collectiveRating').getRating;
-var renderMd = require('../libs/markdown').renderMd;
+var getRating = require('./collectiveRating').getRating;
+var renderMd = require('./markdown').renderMd;
+var formatDate = require('./helpers').formatDate;
 var listSize = 10;
-var months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
-
-function formatDate (date) {
-  return date.getDate() + ' '
-    + months[date.getMonth()] + ' '
-    + date.getFullYear()
-}
 
 // /scriptlist/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of scripts and build the options object 
