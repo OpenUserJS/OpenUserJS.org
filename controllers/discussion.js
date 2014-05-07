@@ -3,6 +3,7 @@ var Discussion = require('../models/discussion').Discussion;
 var Comment = require('../models/comment').Comment;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
+// List discussions for one of the three categories
 exports.list = function (req, res, next) {
   var category = req.route.params.shift();
   var user = req.session.user;
@@ -35,10 +36,13 @@ exports.list = function (req, res, next) {
   });
 };
 
+// Locate a discussion and deal with topic url collisions
 function findDiscussion (category, topicUrl, callback) {
+  // To prevent collisions we add an incrementing id to the topic url
   var topic = /(.+?)(?:_(\d+))?$/.exec(topicUrl);
   var query = { path: '/' + category + '/' + topic[1] };
 
+  // We only need to look for the proper duplicate if there is one
   if (topic[2]) {
     query.duplicateId = Number(topic[2]);
   }
@@ -50,6 +54,7 @@ function findDiscussion (category, topicUrl, callback) {
 }
 exports.findDiscussion = findDiscussion;
 
+// List comments in a discussion
 exports.show = function (req, res, next) {
   var category = req.route.params.shift();
   var topic = req.route.params.shift();
@@ -73,6 +78,7 @@ exports.show = function (req, res, next) {
   });
 };
 
+// UI to create a new topic
 exports.newTopic = function (req, res, next) {
   var category = req.route.params.category;
   var user = req.session.user;
@@ -82,6 +88,7 @@ exports.newTopic = function (req, res, next) {
   res.render('discussionCreate', { username: user.name, category: category });
 };
 
+// Does all the work of submitting a new comment and updating the discussion
 function postComment (user, discussion, content, creator, callback) {
   var created = new Date();
   var comment = new Comment({
@@ -106,6 +113,8 @@ function postComment (user, discussion, content, creator, callback) {
 }
 exports.postComment = postComment;
 
+// Does all the work of submitting a new topic and 
+// resolving topic url collisions
 function postTopic (user, category, topic, content, issue, callback) {
   var urlTopic = cleanFilename(topic, '').replace(/_\d+$/, '');
   var path = '/' + category + '/' + urlTopic;
@@ -136,6 +145,7 @@ function postTopic (user, category, topic, content, issue, callback) {
       props.duplicateId = 0;
     }
 
+    // Issues are just discussions with special properties
     if (issue) {
       props.issue = true;
       props.open = true;
@@ -145,6 +155,7 @@ function postTopic (user, category, topic, content, issue, callback) {
     newDiscussion = new Discussion(props);
 
     newDiscussion.save(function (err, discussion) {
+      // Now post the first comment
       postComment(user, discussion, content, true, function (err, discussion) {
         callback(discussion);
       });
@@ -153,6 +164,7 @@ function postTopic (user, category, topic, content, issue, callback) {
 }
 exports.postTopic = postTopic;
 
+// post route to create a new topic
 exports.createTopic = function (req, res, next) {
   var user = req.session.user;
   var category = req.route.params.category;
@@ -169,6 +181,7 @@ exports.createTopic = function (req, res, next) {
   });
 };
 
+// post route to create a new comment on an existing discussion
 exports.createComment = function (req, res, next) {
   var category = req.route.params.category;
   var topic = req.route.params.topic;

@@ -5,11 +5,13 @@ var modelsList = require('../libs/modelsList');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
 
+// clean the name of the group so it is url safe
 function cleanGroupName (name) {
   return cleanFilename(name, '').replace(/_/g, ' ')
     .replace(/^\s+|\s+$/g, '').replace(/,/g, '');
 }
 
+// api for the client side javascript select2 library
 exports.search = function (req, res) {
   var queryStr = '';
   var queryRegex = null;
@@ -43,6 +45,7 @@ exports.search = function (req, res) {
   });
 };
 
+// When the select2 library submits
 exports.addScriptToGroups = function (script, groupNames, callback) {
   if (script.isLib || !groupNames || groupNames[0].length === 0) {
     return script.save(callback);
@@ -116,6 +119,7 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
   });
 };
 
+// list groups
 exports.list = function (req, res) {
   var user = req.session.user;
   var options = { title: 'Script Groups', username: user ? user.name : '' };
@@ -129,6 +133,7 @@ exports.list = function (req, res) {
   });
 };
 
+// list the scripts in a group
 exports.view = function (req, res, next) {
   var user = req.session.user;
   var groupUrlName = req.route.params.shift();

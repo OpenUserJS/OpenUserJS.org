@@ -3,6 +3,7 @@ var modelsList = require('../libs/modelsList');
 var scriptStorage = require('./scriptStorage');
 var discussion = require('./discussion');
 
+// List script issues
 exports.list = function (req, res, next) {
   var type = req.route.params.shift();
   var username = req.route.params.shift().toLowerCase();
@@ -32,6 +33,7 @@ exports.list = function (req, res, next) {
   });
 };
 
+// Show the discussion on an issue
 exports.view = function (req, res, next) {
   var type = req.route.params.shift();
   var username = req.route.params.shift().toLowerCase();
@@ -74,6 +76,7 @@ exports.view = function (req, res, next) {
   });
 };
 
+// Open a new issue
 exports.open = function (req, res, next) {
   var type = req.route.params.type;
   var installName = scriptStorage.getInstallName(req);
@@ -109,6 +112,7 @@ exports.open = function (req, res, next) {
   });
 };
 
+// post route to add a new comment to a discussion on an issue
 exports.comment = function (req, res, next) {
   var type = req.route.params.type;
   var topic = req.route.params.topic;
@@ -136,6 +140,7 @@ exports.comment = function (req, res, next) {
   });
 };
 
+// Open or close and issue you are allowed
 exports.changeStatus = function (req, res, next) {
   var type = req.route.params.type;
   var topic = req.route.params.topic;
@@ -155,6 +160,8 @@ exports.changeStatus = function (req, res, next) {
       discussion.findDiscussion(category, topic, function (issue) {
         if (!issue) { return next(); }
 
+        // Both the script author and the issue creator can close the issue
+        // Only the script author can reopen a closed issue
         if (action === 'close' && issue.open 
           && (user.name === issue.author || user.name === script.author)) {
           issue.open = false;

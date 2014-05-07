@@ -53,6 +53,7 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
           }
         });
       } else if (pos > -1 && pos < user.auths.length - 1) {
+        // Set the default strategy
         user.strategies.splice(pos, 1);
         user.auths.splice(pos, 1);
         user.strategies.push(strategy);

@@ -17,6 +17,7 @@ var minute = second * 60;
 var hour = minute * 60;
 var day = hour * 24;
 
+// Get a formatted date that can be used everywhere a date is displayed
 exports.formatDate = function (date) {
   var difference = new Date().getTime() - date.getTime();
   var ret = '';
