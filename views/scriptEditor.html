@@ -32,7 +32,7 @@
   <input type="hidden" name="url" value="{{{url}}}" />
   {{^owner}}<input type="hidden" name="original" value="{{original}}" />{{/owner}}
   {{#isLib}}{{#newScript}}<strong>Library Name:</strong> <input type="text" name="script_name" value="" /><br /><br />{{/newScript}}{{^newScript}}<input type="hidden" name="script_name" value="{{scriptName}}" />{{/newScript}}{{/isLib}}
-  <input type="button " onclick="submitCode();" value="Submit Code{{^owner}} as Fork{{/owner}}" /><br /><br />
+  <input type="button" onclick="submitCode();" value="Submit Code{{^owner}} as Fork{{/owner}}" /><br /><br />
 </form>
 </div>
 {{/readOnly}}
