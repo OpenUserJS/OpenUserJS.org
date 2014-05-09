@@ -16,20 +16,29 @@ var second = 1000;
 var minute = second * 60;
 var hour = minute * 60;
 var day = hour * 24;
+var week = day * 7;
 
 // Get a formatted date that can be used everywhere a date is displayed
 exports.formatDate = function (date) {
   var difference = new Date().getTime() - date.getTime();
   var ret = '';
+  var days = 0;
 
   function pluralize (number, unit) {
     return number + ' ' + unit + (number > 1 ? 's' : '') + ' ago';
   }
 
-  if (difference > day) {
+  if (difference > week) {
     ret = date.getDate() + ' '
       + months[date.getMonth()] + ' '
       + date.getFullYear();
+  } else if (difference > day) {
+    days = Math.round(difference / day);
+    if (days <= 1) {
+      ret = 'Yesterday';
+    } else {
+      ret = days + ' days ago';
+    }
   } else if (difference > hour) {
     ret = pluralize(Math.round(difference / hour), 'hour');
   } else if (difference > minute) {
