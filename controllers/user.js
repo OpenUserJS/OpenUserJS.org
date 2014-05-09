@@ -158,56 +158,6 @@ exports.scripts = function (req, res) {
   var repos = null;
   var scriptname = null;
   var loadable = null;
-  var form = null;
-  var userjsRegex = /\.user\.js$/;
-  var jsRegex = /\.js$/;
-
-  if (!user) { return res.redirect('/login'); }
-
-  // TODO: Organize this code
-  if (/multipart\/form-data/.test(req.headers['content-type'])) {
-    form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
-      var script = files.script;
-      var stream = null;
-      var bufs = [];
-      var failUrl = '/user/add/' + (isLib ? 'lib' : 'scripts');
-
-      // Reject non-js and huge files
-      if (script.type !== 'application/javascript' && 
-          script.size > 500000) { 
-        return res.redirect(failUrl); 
-      }
-
-      stream = fs.createReadStream(script.path);
-      stream.on('data', function (d) { bufs.push(d); });
-
-      // Pardon the depth
-      stream.on('end', function () {
-        User.findOne({ _id: user._id }, function (err, user) {
-          var scriptName = fields.script_name;
-          if (isLib) {
-            scriptStorage.storeScript(user, scriptName, Buffer.concat(bufs),
-              function(script) {
-                if (!script) { return res.redirect(failUrl); }
-                res.redirect('/libs/' + script.installName
-                  .replace(jsRegex, ''));
-            });
-          } else {
-            scriptStorage.getMeta(bufs, function (meta) {
-              scriptStorage.storeScript(user, meta, Buffer.concat(bufs),
-                function(script) {
-                  if (!script) { return res.redirect(failUrl); }
-                  res.redirect('/scripts/' + script.installName
-                    .replace(userjsRegex, ''));
-              });
-            });
-          }
-        });
-      });
-    });
-    return;
-  }
 
   options = { title: 'Edit Scripts', username: user.name, isLib: isLib };
 
@@ -273,7 +223,62 @@ exports.scripts = function (req, res) {
   }
 
   if (!loadingRepos) { res.render('addScripts', options); }
-}
+};
+
+exports.uploadScript = function (req, res, next) {
+  var user = req.session.user;
+  var isLib = req.route.params.isLib;
+  var userjsRegex = /\.user\.js$/;
+  var jsRegex = /\.js$/;
+  var form = null;
+
+  if (!user) { return res.redirect('/login'); }
+  if (!/multipart\/form-data/.test(req.headers['content-type'])) {
+    return next();
+  }
+
+  form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var script = files.script;
+    var stream = null;
+    var bufs = [];
+    var failUrl = '/user/add/' + (isLib ? 'lib' : 'scripts');
+
+    // Reject non-js and huge files
+    if (script.type !== 'application/javascript' && 
+      script.size > 500000) { 
+      return res.redirect(failUrl); 
+    }
+
+    stream = fs.createReadStream(script.path);
+    stream.on('data', function (d) { bufs.push(d); });
+
+    stream.on('end', function () {
+      User.findOne({ _id: user._id }, function (err, user) {
+        var scriptName = fields.script_name;
+        if (isLib) {
+          scriptStorage.storeScript(user, scriptName, Buffer.concat(bufs),
+            function (script) {
+              if (!script) { return res.redirect(failUrl); }
+
+              res.redirect('/libs/' + script.installName
+                .replace(jsRegex, ''));
+            });
+          } else {
+            scriptStorage.getMeta(bufs, function (meta) {
+              scriptStorage.storeScript(user, meta, Buffer.concat(bufs),
+                function (script) {
+                  if (!script) { return res.redirect(failUrl); }
+
+                  res.redirect('/scripts/' + script.installName
+                    .replace(userjsRegex, ''));
+                });
+            });
+          }
+      });
+    });
+  });
+};
 
 // post route to update a user's account
 exports.update = function (req, res) {

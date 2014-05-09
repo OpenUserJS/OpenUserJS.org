@@ -11,23 +11,19 @@ Strategy.findOne({ name: 'github' }, function(err, strat) {
 });
 
 // Requests a GitHub url and returns the chunks as buffers
-function fetchRaw (subdomain, path, callback) {
+function fetchRaw (host, path, callback) {
   var options = {
-    hostname: subdomain + '.github.com',
+    hostname: host,
     port: 443,
     path: path,
     method: 'GET',
     headers: { 'User-Agent': 'Node.js' }
   };
 
-  if (subdomain === 'api') {
-    options.path += '?client_id=' + clientId + '&client_secret=' + clientKey;
-  }
-
   var req = https.request(options,
     function(res) {
       var bufs = [];
-      if (res.statusCode != 200) { return callback([new Buffer('')]); }
+      if (res.statusCode != 200) { console.log(res.statusCode);return callback([new Buffer('')]); }
       else {
         res.on('data', function(d) { bufs.push(d); });
         res.on('end', function() {
@@ -41,7 +37,8 @@ function fetchRaw (subdomain, path, callback) {
 // Use for call the GitHub JSON api
 // Returns the JSON parsed object
 function fetchJSON (path, callback) {
-  fetchRaw('api', path, function (bufs) {
+  path += '?client_id=' + clientId + '&client_secret=' + clientKey;
+  fetchRaw('api.github.com', path, function (bufs) {
     callback(JSON.parse(Buffer.concat(bufs).toString()));
   });
 }
@@ -85,23 +82,20 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   var that = this;
   var scripts = [];
 
-  // TODO: remove usage of makeRepoArray since it causes
-  // redundant looping and make array of scripts directly
-  // from this.repos
+  // TODO: remove usage of makeRepoArray since it causes redundant looping 
   arrayOfRepos.forEach(function (repo) {
-    scripts = scripts.concat(repo.scripts);
-  });
-
-  async.each(scripts, function (script, cb) {
-    fetchRaw('raw', script.url, function (bufs) {
-      scriptStorage.getMeta(bufs, function (meta) {
-        if (meta) {
-          scriptStorage.storeScript(that.user, meta, Buffer.concat(bufs), 
-            cb, update);
-        }
+    async.each(repo.scripts, function (script, cb) {
+      var url = '/' + repo.user  + '/' + repo.repo + '/master' + script.path;
+      fetchRaw('raw.githubusercontent.com', url, function (bufs) {
+        scriptStorage.getMeta(bufs, function (meta) {
+          if (meta) {
+            scriptStorage.storeScript(that.user, meta, Buffer.concat(bufs), 
+              cb, update);
+          }
+        });
       });
-    });
-  }, callback);
+    }, callback);
+  });
 }
 
 // Create the Mustache object to display repos with their user scrips
@@ -120,8 +114,7 @@ RepoManager.prototype.makeRepoArray = function () {
 
     scripts = repos[reponame];
     for (scriptname in scripts) {
-      option.scripts.push({ name: scriptname, url: '/' + username + 
-        '/' + reponame + '/master' + scripts[scriptname] });
+      option.scripts.push({ name: scriptname, path: scripts[scriptname] });
     }
 
     retOptions.push(option);

@@ -100,10 +100,12 @@ app.get('/user/edit', user.edit);
 app.post('/user/edit', user.update);
 app.get('/user/add/scripts', user.scripts);
 app.post('/user/add/scripts', user.scripts);
+app.post('/user/add/scripts/upload', user.uploadScript);
 app.get('/user/add/scripts/new', user.newScript);
 app.post('/user/add/scripts/new', user.newScript);
 app.get('/user/add/lib', script.lib(user.scripts));
 app.post('/user/add/lib', script.lib(user.scripts));
+app.post('/user/add/lib/upload', user.uploadScript);
 app.get('/user/add/lib/new', script.lib(user.newScript));
 app.post('/user/add/lib/new', script.lib(user.newScript));
 

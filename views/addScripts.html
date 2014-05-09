@@ -12,6 +12,7 @@
       <li>Paste the URL below as the "Payload URL"</li>
       <li>Click "Add webhook"</li>
     </ol>
+  <p>Use the default settings for everything else.</p>
     <input type="text" size="50" value="https://openuserjs.org/github/hook" />
   </p>
   {{^showRepos}}
@@ -26,7 +27,7 @@
   {{/isLib}}
   {{^showRepos}}
   <h2>Upload {{#isLib}}Library{{/isLib}} Script</h2>
-  <form action="/user/add/{{#isLib}}lib{{/isLib}}{{^isLib}}scripts{{/isLib}}" method="post" enctype="multipart/form-data">
+  <form action="/user/add/{{#isLib}}lib{{/isLib}}{{^isLib}}scripts{{/isLib}}/upload" method="post" enctype="multipart/form-data">
     <input type="hidden" name="uploadScript" value="true" />
     {{#isLib}}
     <strong>Library Name: </strong>
@@ -46,7 +47,7 @@
       <strong><a href="https://github.com/{{{user}}}/{{{repo}}}">{{repo}}</a></strong><br />
       {{#scripts}}
       <input type="checkbox" name="{{{repo}}}[{{{name}}}]" value="true"/>
-      <a href="{{{url}}}">{{name}}</a><br />
+      <a href="https://github.com/{{{user}}}/{{{repo}}}/blob/master{{{path}}}">{{name}}</a><br />
       {{/scripts}}
     </p>
     {{/repos}}
