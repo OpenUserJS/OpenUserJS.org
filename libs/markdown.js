@@ -18,7 +18,7 @@ renderer.heading = function (text, level) {
 // Set the options to use for rendering markdown
 marked.setOptions({
   highlight: function (code, lang) {
-    if (lang) {
+    if (lang && hljs.getLanguage(lang)) {
       return hljs.highlight(lang, code).value;
     } else {
       return hljs.highlightAuto(code).value;
