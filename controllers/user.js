@@ -263,8 +263,8 @@ exports.uploadScript = function (req, res, next) {
             function (script) {
               if (!script) { return res.redirect(failUrl); }
 
-              res.redirect('/libs/' + script.installName
-                .replace(jsRegex, ''));
+              res.redirect('/libs/' + encodeURI(script.installName
+                .replace(jsRegex, '')));
             });
           } else {
             scriptStorage.getMeta(bufs, function (meta) {
@@ -272,8 +272,8 @@ exports.uploadScript = function (req, res, next) {
                 function (script) {
                   if (!script) { return res.redirect(failUrl); }
 
-                  res.redirect('/scripts/' + script.installName
-                    .replace(userjsRegex, ''));
+                  res.redirect('/scripts/' + encodeURI(script.installName
+                    .replace(userjsRegex, '')));
                 });
             });
           }
@@ -329,9 +329,9 @@ exports.newScript = function (req, res, next) {
 
     User.findOne({ _id: user._id }, function (err, user) {
       scriptStorage.storeScript(user, meta, source, function (script) {
-        var redirectUrl = script ? (script.isLib ? '/libs/'
+        var redirectUrl = encodeURI(script ? (script.isLib ? '/libs/'
           + script.installName.replace(jsRegex, '') : '/scripts/'
-          + script.installName.replace(userjsRegex, '')) : req.body.url;
+          + script.installName.replace(userjsRegex, '')) : req.body.url);
 
         if (!script || !req.body.original) {
           return res.redirect(redirectUrl);
