@@ -85,7 +85,8 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   // TODO: remove usage of makeRepoArray since it causes redundant looping 
   arrayOfRepos.forEach(function (repo) {
     async.each(repo.scripts, function (script, cb) {
-      var url = '/' + repo.user  + '/' + repo.repo + '/master' + script.path;
+      var url = '/' + encodeURI(repo.user)  + '/' + encodeURI(repo.repo)
+        + '/master' + script.path;
       fetchRaw('raw.githubusercontent.com', url, function (bufs) {
         scriptStorage.getMeta(bufs, function (meta) {
           if (meta) {
@@ -145,10 +146,11 @@ Repo.prototype.parseTree = function (tree, path, done) {
 
   tree.forEach(function (object) {
     if (object.type === 'tree') {
-      trees.push({ sha: object.sha, path: path + '/' + object.path });
+      trees.push({ sha: object.sha, path: path + '/'
+        + encodeURI(object.path) });
     } else if (object.path.substr(-8) === '.user.js') {
       if (!repos[that.repo]) { repos[that.repo] = nil(); }
-      repos[that.repo][object.path] = path + '/' + object.path;
+      repos[that.repo][object.path] = path + '/' + encodeURI(object.path);
     }
   });
 
@@ -162,7 +164,8 @@ Repo.prototype.parseTree = function (tree, path, done) {
 // Gets information about a directory
 Repo.prototype.getTree = function (sha, path, cb) {
   var that = this;
-  fetchJSON('/repos/' + this.user  + '/' + this.repo + '/git/trees/' + sha, 
+  fetchJSON('/repos/' + encodeURI(this.user)  + '/' + encodeURI(this.repo)
+    + '/git/trees/' + sha, 
     function (json) {
       that.parseTree(json.tree, path, cb);
   });

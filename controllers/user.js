@@ -159,6 +159,8 @@ exports.scripts = function (req, res) {
   var scriptname = null;
   var loadable = null;
 
+  if (!user) { return res.redirect('/login'); }
+
   options = { title: 'Edit Scripts', username: user.name, isLib: isLib };
 
   indexOfGH = user.strategies.indexOf('github');
