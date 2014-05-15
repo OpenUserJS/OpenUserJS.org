@@ -69,7 +69,7 @@ function getThreshold (model, content, author, callback) {
   var threshold = thresholds[model.modelName] * (author.role < 4 ? 2 : 1);
 
   // Calculate karma and add it to the threshold
-  getKarma(author, maxKarma, function (karma) { 
+  getKarma(author, maxKarma, function (karma) {
     return callback(threshold + karma);
   });
 }
@@ -91,17 +91,17 @@ function saveContent (model, content, author, flags, callback) {
 exports.saveContent = saveContent;
 
 function flag (model, content, user, author, callback) {
-  var flag = new Flag({
+  var fl = new Flag({
     'model': model.modelName,
     '_contentId': content._id,
     '_userId': user._id
   });
 
-  flag.save(function (err, flag) {
+  fl.save(function (err, flag) {
     if (!content.flags) { content.flags = 0; }
     if (!content.flagged) { content.flagged = false; }
 
-    saveContent(model, content, author, user.role < 4 ? 2 : 1, callback)
+    saveContent(model, content, author, user.role < 4 ? 2 : 1, callback);
   });
 }
 

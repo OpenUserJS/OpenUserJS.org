@@ -29,9 +29,11 @@ exports.formatDate = function (date) {
   }
 
   if (difference > week) {
-    ret = date.getDate() + ' '
-      + months[date.getMonth()] + ' '
-      + date.getFullYear();
+    ret = date.getDate() +
+      ' ' +
+      months[date.getMonth()] +
+      ' ' +
+      date.getFullYear();
   } else if (difference > day) {
     days = Math.round(difference / day);
     if (days <= 1) {
@@ -48,7 +50,7 @@ exports.formatDate = function (date) {
   }
 
   return ret;
-}
+};
 
 // Create an object with no properties
 exports.nil = function (obj) {
@@ -59,7 +61,7 @@ exports.nil = function (obj) {
   exports.forIn(obj, function (val, key) {
     nilObj[key] = val;
   });
-  
+
   return nilObj;
 };
 

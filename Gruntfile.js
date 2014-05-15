@@ -28,7 +28,7 @@ module.exports = function (grunt) {
   // build: 'grunt build'
   grunt.registerTask('build', [
     //check jss
-    //'jshint',
+    'jshint',
     //clean old build
     'clean',
     //copy root and img files

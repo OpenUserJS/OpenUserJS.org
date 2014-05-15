@@ -7,7 +7,7 @@ var modelNames = ['Script'];
 var models = {};
 
 modelNames.forEach(function (modelName) {
-  models[modelName] = require('../models/' + 
+  models[modelName] = require('../models/' +
     modelName.toLowerCase())[modelName];
 });
 
@@ -42,7 +42,7 @@ function removeable (model, content, user, callback) {
 exports.removeable = removeable;
 
 function remove (model, content, user, reason, callback) {
-  var remove = new Remove({
+  var rem = new Remove({
     'model': model.modelName,
     'content': content.toObject(),
     'removed': new Date(),
@@ -52,7 +52,7 @@ function remove (model, content, user, reason, callback) {
     '_removerId': user._id
   });
 
-  remove.save(function (err, remove) {
+  rem.save(function (err, remove) {
     content.remove(function (err) { callback(remove); });
   });
 }
@@ -80,7 +80,7 @@ exports.remove = function (model, content, user, reason, callback) {
   });
 };
 
-// This function is similar to findOne but expands 
+// This function is similar to findOne but expands
 // the search to removed content
 // You pass it the model of the content, the search query,
 // the user making the query (or boolean true for internal usage),

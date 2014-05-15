@@ -66,4 +66,4 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
         return done(null, user);
       }
   });
-}
+};
