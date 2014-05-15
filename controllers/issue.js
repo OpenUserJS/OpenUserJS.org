@@ -104,10 +104,12 @@ exports.open = function (req, res, next) {
 
       discussion.postTopic(user, category + '/issues', topic, content, true,
         function (discussion) {
-          if (!discussion) { return res.redirect('/' + category + '/open'); }
+          if (!discussion) {
+            return res.redirect('/' + encodeURI(category) + '/open');
+          }
 
-          res.redirect(discussion.path
-            + (discussion.duplicateId ? '_' + discussion.duplicateId : ''));
+          res.redirect(encodeURI(discussion.path
+            + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
       });
   });
 };
@@ -133,8 +135,8 @@ exports.comment = function (req, res, next) {
 
         discussion.postComment(user, issue, content, false,
           function (err, discussion) {
-            res.redirect(discussion.path
-              + (discussion.duplicateId ? '_' + discussion.duplicateId : ''));
+            res.redirect(encodeURI(discussion.path
+              + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
         });
       });
   });
@@ -174,8 +176,8 @@ exports.changeStatus = function (req, res, next) {
 
         if (changed) { 
           issue.save(function (err, discussion) {
-            res.redirect(discussion.path
-              + (discussion.duplicateId ? '_' + discussion.duplicateId : ''));
+            res.redirect(encodeURI(discussion.path
+              + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
           });
         } else {
           next();

@@ -176,8 +176,8 @@ exports.createTopic = function (req, res, next) {
   postTopic(user, category, topic, content, false, function (discussion) {
     if (!discussion) { return exports.newTopic(req, res, next); }
 
-    res.redirect(discussion.path
-      + (discussion.duplicateId ? '_' + discussion.duplicateId : ''));
+    res.redirect(encodeURI(discussion.path
+      + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
   });
 };
 
@@ -195,8 +195,8 @@ exports.createComment = function (req, res, next) {
     if (!discussion) { return next(); }
 
     postComment(user, discussion, content, false, function (err, discussion) {
-      res.redirect(discussion.path
-        + (discussion.duplicateId ? '_' + discussion.duplicateId : ''));
+      res.redirect(encodeURI(discussion.path
+        + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
     });
   });
 };

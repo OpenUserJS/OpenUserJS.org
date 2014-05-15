@@ -257,12 +257,12 @@ exports.edit = function (req, res, next) {
       if (typeof req.body.about !== 'undefined') {
         if (req.body.remove) {
           scriptStorage.deleteScript(script.installName, function () {
-            res.redirect('/users/' + user.name);
+            res.redirect('/users/' + encodeURI(user.name));
           });
         } else {
           script.about = req.body.about;
           addScriptToGroups(script, req.body.groups.split(/,/), function () {
-            res.redirect(baseUrl + installName);
+            res.redirect(encodeURI(baseUrl + installName));
           });
         }
       } else {
@@ -303,6 +303,7 @@ exports.vote = function (req, res, next) {
   url.shift();
   url.shift();
   url = '/' + url.join('/');
+  url = encodeURI(url);
 
   if (vote === 'up') {
     vote = true;
@@ -382,7 +383,7 @@ exports.flag = function (req, res, next) {
       if (err || !script) { return next(); }
 
       fn(Script, script, req.session.user, function (flagged) {
-        res.redirect((isLib ? '/libs/' : '/scripts/') + installName);
+        res.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
       });
   });
 };
