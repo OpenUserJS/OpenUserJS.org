@@ -40,6 +40,7 @@
       <table class="meta-table" width="100%">
 	<tr class="home-row">
 	  {{#hasAuthor}}<td class="home-col1">Author: <a class="author-link" href="/users/{{author}}">{{author}}</a></td>{{/hasAuthor}}
+          {{^hasAuthor}}<td class="home-col1"></td>{{/hasAuthor}}
 	  <td class="home-col2">Rating:</td>
 	  <td class="home-col3">{{rating}}</td>
 	</tr>
