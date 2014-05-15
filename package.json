@@ -34,6 +34,8 @@
   },
   "devDependencies": {
       "grunt": "~0.4",
+      "grunt-contrib-clean": "~0.5",
+      "grunt-contrib-copy": "~0.5",
       "grunt-contrib-jshint": "~0.10"
   },
   "repository": {

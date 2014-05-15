@@ -6,15 +6,26 @@ module.exports = function (grunt) {
 
   pkg.timestamp = new Date().getTime();
 
-  // Initializes the Grunt tasks with the following settings
   grunt.initConfig({
-      pkg: pkg,
-      jshint: require('./tasks/jshint.js')
+    pkg: pkg,
+    clean: require('./tasks/clean.js'),
+    copy: require('./tasks/copy.js'),
+    jshint: require('./tasks/jshint.js')
   });
 
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
 
-  // is called without any further parameter.
+  // called without any further parameter: 'grunt'
   grunt.registerTask('default', ['jshint']);
-
+  // build: 'grunt build'
+  grunt.registerTask('build', [
+    //check jss
+    //'jshint',
+    //clean old build
+    'clean',
+    //copy root and img files
+    'copy'
+  ]);
 };
