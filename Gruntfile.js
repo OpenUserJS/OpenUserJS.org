@@ -10,12 +10,18 @@ module.exports = function (grunt) {
     pkg: pkg,
     clean: require('./tasks/clean.js'),
     copy: require('./tasks/copy.js'),
-    jshint: require('./tasks/jshint.js')
+    cssmin: require('./tasks/cssmin.js'),
+    htmlmin: require('./tasks/htmlmin.js'),
+    jshint: require('./tasks/jshint.js'),
+    uglify: require('./tasks/uglify.js')
   });
 
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // called without any further parameter: 'grunt'
   grunt.registerTask('default', ['jshint']);
@@ -26,6 +32,10 @@ module.exports = function (grunt) {
     //clean old build
     'clean',
     //copy root and img files
-    'copy'
+    'copy',
+    //minify html/js/css
+    'htmlmin',
+    'uglify',
+    'cssmin'
   ]);
 };

@@ -29,11 +29,18 @@ module.exports = {
                 dest: 'builds/libs/'
             },
             //public
+            //css in tasks/cssmin.js
             {
                 expand: true,
-                cwd: 'public/',
+                cwd: 'public/images',
                 src: '**/*',
-                dest: 'builds/public/'
+                dest: 'builds/public/images'
+            },
+            {
+              expand: true,
+              cwd: 'public/js',
+              src: '**/*.js',
+              dest: 'builds/public/js'
             },
             //mvc
             {
@@ -47,14 +54,8 @@ module.exports = {
                 cwd: 'models/',
                 src: '**/*',
                 dest: 'builds/models/'
-            },
-            {
-                expand: true,
-                cwd: 'views/',
-                src: '**/*',
-                dest: 'builds/views/'
-            },
-
+            }
+            //html in tasks/htmlmin.js
         ]
     }
 };
