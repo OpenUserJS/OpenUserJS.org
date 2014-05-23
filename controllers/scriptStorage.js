@@ -39,7 +39,7 @@ exports.getSource = function (req, callback) {
 };
 
 exports.sendScript = function (req, res, next) {
-  var accept = req.headers['Accept'];
+  var accept = req.headers.accept;
   var installName = null;
 
   if (0 !== req.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') { 
