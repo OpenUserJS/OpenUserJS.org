@@ -27,9 +27,9 @@ function fetchRaw (host, path, callback) {
       else {
         res.on('data', function(d) { bufs.push(d); });
         res.on('end', function() {
-          callback(bufs); 
+          callback(bufs);
         });
-      } 
+      }
   });
   req.end();
 }
@@ -58,7 +58,7 @@ RepoManager.prototype.fetchRepos = function (callback) {
   fetchJSON('/user/' + this.userId + '/repos', function (json) {
     json.forEach(function (repo) {
       if (that.user.ghUsername !== repo.owner.login) {
-        that.user.ghUsername = repo.owner.login; 
+        that.user.ghUsername = repo.owner.login;
         that.user.save(function (err, user) {});
      }
 
@@ -82,15 +82,15 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   var that = this;
   var scripts = [];
 
-  // TODO: remove usage of makeRepoArray since it causes redundant looping 
+  // TODO: remove usage of makeRepoArray since it causes redundant looping
   arrayOfRepos.forEach(function (repo) {
     async.each(repo.scripts, function (script, cb) {
       var url = '/' + encodeURI(repo.user)  + '/' + encodeURI(repo.repo)
-        + '/master' + script.path;
+        + '/master' + encodeURI(script.path);
       fetchRaw('raw.githubusercontent.com', url, function (bufs) {
         scriptStorage.getMeta(bufs, function (meta) {
           if (meta) {
-            scriptStorage.storeScript(that.user, meta, Buffer.concat(bufs), 
+            scriptStorage.storeScript(that.user, meta, Buffer.concat(bufs),
               cb, update);
           }
         });
@@ -157,7 +157,7 @@ Repo.prototype.parseTree = function (tree, path, done) {
   async.each(trees, function(tree, cb) {
     that.getTree(tree.sha, tree.path, cb);
   }, function () {
-    done(); 
+    done();
   });
 };
 
@@ -165,12 +165,12 @@ Repo.prototype.parseTree = function (tree, path, done) {
 Repo.prototype.getTree = function (sha, path, cb) {
   var that = this;
   fetchJSON('/repos/' + encodeURI(this.user)  + '/' + encodeURI(this.repo)
-    + '/git/trees/' + sha, 
+    + '/git/trees/' + sha,
     function (json) {
       that.parseTree(json.tree, path, cb);
   });
 };
 
-exports.getManager = function (userId, user, repos) { 
-  return new RepoManager(userId, user, repos); 
+exports.getManager = function (userId, user, repos) {
+  return new RepoManager(userId, user, repos);
 };
