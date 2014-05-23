@@ -39,7 +39,7 @@ exports.getSource = function (req, callback) {
 };
 
 exports.sendScript = function (req, res, next) {
-  var accept = req.headers['Accept'];
+  var accept = req.headers.accept;
   var installName = null;
 
   if (0 !== req.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') { 
@@ -304,7 +304,7 @@ exports.webhook = function (req, res) {
     payload.commits.forEach(function (commit) {
       commit.modified.forEach(function (filename) {
         if (filename.substr(-8) === '.user.js') {
-          repo[filename] = '/' + filename;
+          repo[filename] = '/' + encodeURI(filename);
         }
       });
     });
