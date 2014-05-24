@@ -27,6 +27,9 @@ exports.home = function (req, res) {
   // Scripts: Query
   var scriptListQuery = Script.find();
 
+  // Scripts: Query: isLib=false
+  scriptListQuery.find({isLib: false});
+
   // Scripts: Query: Search
   if (req.query.q)
     modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
