@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>{{title}}</title>
-  {{> v2/includes/head.html }}
+  {{> includes/head.html }}
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="/css/scriptPage.css">
   <style>
@@ -10,28 +10,28 @@
   </style>
 </head>
 <body>
-  {{> v2/includes/header.html }}
+  {{> includes/header.html }}
   <div class="container-fluid">
     <div class="row">
       <div class="container-fluid col-sm-8">
         {{#script}}
         <div class="row">
           <div class="col-xs-12">
-            {{> v2/includes/scriptPageHeader.html }}
+            {{> includes/scriptPageHeader.html }}
             {{#meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{meta.description}}</p>{{/meta.description}}
             {{#meta.copyright}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{meta.copyright}}</p>{{/meta.copyright}}
             {{#meta.homepage}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{meta.homepage}}">{{meta.homepage}}</a></p>{{/meta.homepage}}
-            {{#about}}<div class="user-content">{{{aboutRendered}}}</div>{{/about}}
+            {{#aboutRendered}}<div class="user-content">{{{aboutRendered}}}</div>{{/aboutRendered}}
           </div>
         </div>
         {{/script}}
       </div>
       <div class="container-fluid col-sm-4">
-        {{> v2/includes/scriptPageSidebar.html }}
+        {{> includes/scriptPageSidebar.html }}
       </div>
     </div>
   </div>
-  {{> v2/includes/footer.html }}
+  {{> includes/footer.html }}
   <script type="text/javascript" src="https://rawgit.com/toopay/bootstrap-markdown/master/js/bootstrap-markdown.js"></script>
   <script type="text/javascript">
 

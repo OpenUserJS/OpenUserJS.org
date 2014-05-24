@@ -73,11 +73,6 @@ exports.parseScript = function(scriptData) {
  * User
  */
 
-var getUserPageUrl = function(script) {
-  var isLib = script.isLib || false;
-  return (isLib ? '/libs/src/' : '/install/') + script.installName;
-};
-
 //
 exports.parseUser = function(userData) {
   var user = userData.toObject ? userData.toObject() : userData;

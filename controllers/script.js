@@ -1,17 +1,20 @@
 var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
-var scriptStorage = require('./scriptStorage');
-var User = require('../models/user').User;
-var Script = require('../models/script').Script;
-var Vote = require('../models/vote').Vote;
+
+var Discussion = require('../models/discussion').Discussion;
 var Flag = require('../models/flag').Flag;
 var Group = require('../models/group').Group;
-var Discussion = require('../models/discussion').Discussion;
+var Script = require('../models/script').Script;
+var User = require('../models/user').User;
+var Vote = require('../models/vote').Vote;
+
+var scriptStorage = require('./scriptStorage');
 var addScriptToGroups = require('./group').addScriptToGroups
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var modelsList = require('../libs/modelsList');
+var modelParser = require('../libs/modelParser');
 var renderMd = require('../libs/markdown').renderMd;
 var formatDate = require('../libs/helpers').formatDate;
 
@@ -47,194 +50,196 @@ exports.useLib = function (req, res, next) {
 // View a detailed description of a script
 // This is the most intensive page to render on the site
 exports.view = function (req, res, next) {
-  var installName = scriptStorage.getInstallName(req);
-  var isLib = req.route.params.isLib;
   var user = req.session.user;
 
-  Script.findOne({ installName: installName + (isLib ? '.js' : '.user.js') },
-    function (err, script) {
-      if (err || !script) { return next(); }
-      var editUrl = installName.split('/');
-      var fork = script.fork;
-      var options = null;
-      var tasks = [];
-      editUrl.shift();
+  var installName = scriptStorage.getInstallName(req);
+  var scriptAuthor = req.route.params.username;
+  var scriptNameSlug = req.route.params.scriptname;
+  var isLib = req.route.params.isLib;
 
-      // Set the forks to be label properly
-      if (fork instanceof Array && fork.length > 0) {
-        fork[0].first = true;
-        fork[fork.length - 1].original = true;
+  Script.findOne({
+    installName: installName + (isLib ? '.js' : '.user.js')
+  }, function (err, scriptData) {
+    if (err || !scriptData) { return next(); }
+
+    var options = {};
+    var tasks = [];
+
+    //
+    options.title = scriptData.name + ' | OpenUserJS.org';
+    options.user = user;
+
+    //
+    var script = options.script = modelParser.parseScript(scriptData);
+    options.script.isOwner = options.user && options.user._id == script._authorId,
+    options.script.aboutRendered = renderMd(script.about);
+
+    var fork = script.fork;
+    // Set the forks to be label properly
+    if (fork instanceof Array && fork.length > 0) {
+      fork[0].first = true;
+      fork[fork.length - 1].original = true;
+    } else {
+      fork = null;
+    }
+
+    // Show the number of open issues
+    tasks.push(function (callback) {
+      var category = (script.isLib ? 'libs' : 'scripts') + '/' + installName;
+      options.scriptIssuesPageUrl = '/' + category + '/issues';
+      options.scriptOpenIssuePageUrl = '/' + category + '/issue/new';
+
+      Discussion.count({ category: category + '/issues', open: true },
+        function (err, count) {
+          if (err) { count = 0; }
+          options.issuesCount = count;
+          callback();
+      });
+    });
+
+    // Show collaborators of the script
+    if (script.meta.author && script.meta.collaborator) {
+      options.hasCollab = true;
+      if (typeof script.meta.collaborator === 'string') {
+        options.collaborators = [{ name: script.meta.collaborator }];
       } else {
-        fork = null;
+        script.meta.collaborator.forEach(function (collaborator) {
+          options.collaborators.push({ name: collaborator });
+        });
       }
+    }
 
-      // Set up all the general options
-      options = {
-        title: script.name,
-        name: script.name,
-        version: script.isLib ? '' : script.meta.version,
-        install: (script.isLib ? '/libs/src/'  : '/install/')
-          + script.installName,
-        source: (script.isLib ? '/libs/' : '/scripts/') 
-          + installName + '/source',
-        edit: (script.isLib ? '/lib/' : '/script/')
-          + editUrl.join('/') + '/edit',
-        author: script.author,
-        updated: formatDate(script.updated),
-        rating: script.rating,
-        installs: script.installs,
-        fork: fork,
-        description: script.isLib ? '' : script.meta.description,
-        about: renderMd(script.about),
-        hasCollab: false,
-        collaborators: [],
-        isYou: user && user._id == script._authorId,
-        isLib: script.isLib,
-        username: user ? user.name : null,
-        isFork: !!fork
-      };
+    // Show the groups the script belongs to
+    tasks.push(function (callback) {
+      if (script.isLib) { return callback(); }
 
-      function render() { res.render('script', options); }
+      Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
+        options.hasGroups = !err && groups.length > 0;
+        options.groups = (groups || []).map(function (group) {
+          return { name: group.name, url: group.name.replace(/\s+/g, '_') };
+        });
+        callback();
+      });
+    });
 
-      // Show collaborators of the script
-      if (script.meta.author && script.meta.collaborator) {
-        options.hasCollab = true;
-        if (typeof script.meta.collaborator === 'string') {
-          options.collaborators = [{ name: script.meta.collaborator }];
-        } else {
-          script.meta.collaborator.forEach(function (collaborator) {
-            options.collaborators.push({ name: collaborator });
-          });
-        }
-      }
-
-      // Show the number of open issues
+    // Show which libraries hosted on the site a script uses
+    if (!script.isLib && script.uses && script.uses.length > 0) {
+      options.usesLibs = true;
+      options.libs = [];
       tasks.push(function (callback) {
-        var category = (script.isLib ? 'libs' : 'scripts')
-          + '/' + installName;
-        options.issuesUrl = '/' + category + '/issues';
-        options.openIssueUrl = '/' + category + '/issue/new';
-
-        Discussion.count({ category: category + '/issues', open: true },
-          function (err, count) {
-            if (err) { count = 0; }
-            options.issuesCount = count;
+        Script.find({ installName: { $in: script.uses } },
+          function (err, libs) {
+            libs.forEach(function (lib) {
+              options.libs.push({ 
+                name: lib.name, url: lib.installName.replace(/\.js$/, '') 
+              });
+            });
             callback();
         });
       });
-
-      // Show the groups the script belongs to
+    } else if (script.isLib) {
+      // Show how many scripts use this library
       tasks.push(function (callback) {
-        if (script.isLib) { return callback(); }
+        Script.count({ uses: script.installName }, function (err, count) {
+          if (err) { count = 0; }
+          if (count <= 0) { return callback(); }
 
-        Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
-          options.hasGroups = !err && groups.length > 0;
-          options.groups = (groups || []).map(function (group) {
-            return { name: group.name, url: group.name.replace(/\s+/g, '_') };
-          });
+          options.usedBy = { count: count, url: '/use/lib/' + installName };
+          if (count > 1) { options.usedBy.multiple = true; }
+
           callback();
         });
       });
+    }
 
-      // Show which libraries hosted on the site a script uses
-      if (!script.isLib && script.uses && script.uses.length > 0) {
-        options.usesLibs = true;
-        options.libs = [];
-        tasks.push(function (callback) {
-          Script.find({ installName: { $in: script.uses } },
-            function (err, libs) {
-              libs.forEach(function (lib) {
-                options.libs.push({ 
-                  name: lib.name, url: lib.installName.replace(/\.js$/, '') 
-                });
-              });
+    // Setup the voting UI
+    tasks.push(function (callback) {
+      var voteUrl = scriptData.url + '/vote/';
+      options.voteUpUrl = voteUrl + 'up';
+      options.voteDownUrl = voteUrl + 'down';
+
+      options.voteable = false;
+      options.votedUp = false;
+      options.votedDown = false;
+
+      // Can't vote when not logged in or when user owns the script.
+      if (!user || options.isOwner) {
+        callback();
+        return;
+      }
+
+      Vote.findOne({
+        _scriptId: scriptData._id,
+        _userId: user._id
+      }, function (err, voteModel) {
+        options.voteable = !options.script.isOwner;
+
+        if (voteModel) {
+          if (voteModel.vote) {
+            options.votedUp = true;
+            options.voteUpUrl = voteUrl + 'unvote';
+          } else {
+            options.votedDown = true;
+            options.voteDownUrl = voteUrl + 'unvote';
+          }
+        }
+
+        callback();
+      });
+
+    });
+
+    // Setup the flagging UI
+    tasks.push(function (callback) {
+      var flagUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/') + installName;
+
+      // Can't flag when not logged in or when user owns the script.
+      if (!user || options.isOwner) {
+        callback();
+        return;
+      }
+
+      flagLib.flaggable(Script, script, user,
+        function (canFlag, author, flag) {
+          if (flag) {
+            flagUrl += '/unflag';
+            options.flagged = true;
+            options.flaggable = true;
+          } else {
+            options.flaggable = canFlag;
+          }
+          options.flagUrl = flagUrl;
+
+          callback();
+      });
+    });
+
+    // Set up the removal UI
+    tasks.push(function (callback) {
+      // Can't remove when not logged in or when user owns the script.
+      if (!user || options.isOwner) {
+        callback();
+        return;
+      }
+
+      removeLib.removeable(Script, script, user,
+        function (canRemove, author) {
+          options.moderation = canRemove;
+          options.flags = script.flags || 0;
+          options.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + installName;
+
+          if (!canRemove) { return callback(); }
+
+          flagLib.getThreshold(Script, script, author,
+            function (threshold) {
+              options.threshold = threshold;
               callback();
           });
-        });
-      } else if (script.isLib) {
-        // Show how many scripts use this library
-        tasks.push(function (callback) {
-          Script.count({ uses: script.installName }, function (err, count) {
-            if (err) { count = 0; }
-            if (count <= 0) { return callback(); }
-
-            options.usedBy = { count: count, url: '/use/lib/' + installName };
-            if (count > 1) { options.usedBy.multiple = true; }
-
-            callback();
-          });
-        });
-      }
-
-      if (!user || options.isYou) {
-        return async.parallel(tasks, render);
-      }
-
-      // Setup the voting UI
-      tasks.push(function (callback) {
-        Vote.findOne({ _scriptId: script._id, _userId: user._id },
-          function (err, voteModel) {
-            var voteUrl = '/vote' + (script.isLib ? '/libs/' : '/scripts/')
-              + installName + '/';
-
-            options.voteable = true;
-            options.upUrl = voteUrl + 'up';
-            options.downUrl = voteUrl + 'down';
-
-            if (voteModel) {
-              if (voteModel.vote) {
-                options.up = true;
-                options.upUrl = voteUrl + 'unvote';
-              } else {
-                options.down = true;
-                options.downUrl = voteUrl + 'unvote';
-              }
-            }
-
-            callback();
-          });
       });
+    });
 
-      // Setup the flagging UI
-      tasks.push(function (callback) {
-        flagLib.flaggable(Script, script, user,
-          function (canFlag, author, flag) {
-            var flagUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/')
-              + installName;
-
-            if (flag) {
-              flagUrl += '/unflag';
-              options.flagged = true;
-              options.flaggable = true;
-            } else {
-              options.flaggable = canFlag;
-            }
-            options.flagUrl = flagUrl;
-
-            callback();
-        });
-      });
-
-      // Set up the removal UI
-      tasks.push(function (callback) {
-        removeLib.removeable(Script, script, user,
-          function (canRemove, author) {
-            options.moderation = canRemove;
-            options.flags = script.flags || 0;
-            options.removeUrl = '/remove' 
-              + (script.isLib ? '/libs/' : '/scripts/') + installName;
-
-            if (!canRemove) { return callback(); }
-
-            flagLib.getThreshold(Script, script, author,
-              function (threshold) {
-                options.threshold = threshold;
-                callback();
-            });
-        });
-      });
-
-      async.parallel(tasks, render);
+    function render(){ res.render('pages/scriptPage', options); }
+    async.parallel(tasks, render);
   });
 };
 
