@@ -1,20 +1,21 @@
+var _ = require('underscore');
+
 var orderDirs = ['asc', 'desc'];
-function parseScriptsSortQuery(scriptsQuery, query, defaultFn) {
-  if (query.orderBy) {
-    var orderBy = query.orderBy;
-    var orderDir = query.orderDir;
-    if (_.isUndefined(query.orderDir) || !_.contains(orderDirs, orderDir))
+var parseModelListSort = function(model, modelListQuery, orderBy, orderDir, defaultSortFn) {
+  if (orderBy) {
+    if (_.isUndefined(orderDir) || !_.contains(orderDirs, orderDir))
       orderDir = 'asc';
 
-    if (_.has(Script.schema.paths, query.orderBy)) {
+    if (_.has(model.schema.paths, orderBy)) {
       var sortBy = {};
       sortBy[orderBy] = orderDir;
-      scriptsQuery.sort(sortBy);
+      modelListQuery.sort(sortBy);
       return;
     }
   }
-  defaultFn(scriptsQuery);
-}
+  defaultSortFn(modelListQuery);
+};
+exports.parseModelListSort = parseModelListSort;
 
 var parseSearchConditions = function(q, prefixSearchFields, fullSearchFields) {
   var conditions = [];

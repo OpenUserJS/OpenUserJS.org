@@ -25,38 +25,34 @@ exports.home = function (req, res) {
   options.user = user ? modelParser.parseUser(user) : null;
 
   // Scripts: Query
-  var scriptsQuery = Script.find();
+  var scriptListQuery = Script.find();
 
   // Scripts: Query: Search
   if (req.query.q)
-    modelQuery.parseScriptSearchQuery(scriptsQuery, req.query.q);
+    modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
 
   // Scripts: Query: Sort
-  if (req.query.orderBy) {
-    // parseScriptsSortQuery(scriptsQuery, req.query, function(scriptsQuery) {
-    //   scriptsQuery.sort('-updated');
-    // });
-  } else {
-    scriptsQuery.sort('-rating -installs -updated');
-  }
+  modelQuery.parseModelListSort(Script, scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
+    scriptListQuery.sort('-rating -installs -updated');
+  });
   
 
   // Scripts: Pagination
-  options.scriptsPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-  options.scriptsLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-  var scriptsSkipFrom = (options.scriptsPage * options.scriptsLimit) - options.scriptsLimit;
-  scriptsQuery
-    .skip(scriptsSkipFrom)
-    .limit(options.scriptsLimit);
+  options.scriptListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
+  options.scriptListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
+  var scriptListSkipFrom = (options.scriptListCurrentPage * options.scriptListLimit) - options.scriptListLimit;
+  scriptListQuery
+    .skip(scriptListSkipFrom)
+    .limit(options.scriptListLimit);
 
   // Groups: Query
-  var groupsQuery = Group.find();
-  groupsQuery
+  var groupListQuery = Group.find();
+  groupListQuery
     .limit(25);
 
   async.parallel([
     function (callback) {
-      scriptsQuery.exec(function(err, scriptDataList){
+      scriptListQuery.exec(function(err, scriptDataList){
         if (err) {
           callback();
         } else {
@@ -66,17 +62,17 @@ exports.home = function (req, res) {
       });
     },
     function (callback) {
-      Script.count(scriptsQuery._conditions, function(err, totalScripts){
+      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
         if (err) {
           callback();
         } else {
-          options.totalScripts = totalScripts;
-          options.numScriptPages = Math.ceil(options.totalScripts / options.scriptsLimit) || 1;
+          options.scriptListCount = scriptListCount;
+          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
           callback();
         }
       });
     }, function (callback) {
-      groupsQuery.exec(function(err, groupDataList){
+      groupListQuery.exec(function(err, groupDataList){
         if (err) {
           callback();
         } else {
@@ -85,19 +81,19 @@ exports.home = function (req, res) {
         }
       });
     }, function (callback) {
-      Group.count(groupsQuery._conditions, function(err, totalGroups){
+      Group.count(groupListQuery._conditions, function(err, groupListCount){
         if (err) {
           callback();
         } else {
-          options.totalGroups = totalGroups;
+          options.groupListCount = groupListCount;
           callback();
         }
       });
     }
   ], function () {
     options.pagination = paginateTemplate({
-      currentPage: options.scriptsPage,
-      lastPage: options.numScriptPages,
+      currentPage: options.scriptListCurrentPage,
+      lastPage: options.scriptListNumPages,
       urlFn: function(p) {
         var parseQueryString = true;
         var u = url.parse(req.url, parseQueryString);
