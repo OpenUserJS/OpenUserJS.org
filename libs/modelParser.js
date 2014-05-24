@@ -42,6 +42,7 @@ var getScriptInstallPageUrl = function(script) {
 
 //
 exports.parseScript = function(scriptData) {
+  if (scriptData === undefined) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
   // Script Good/Bad bar.
@@ -75,6 +76,7 @@ exports.parseScript = function(scriptData) {
 
 //
 exports.parseUser = function(userData) {
+  if (userData === undefined) return;
   var user = userData.toObject ? userData.toObject() : userData;
 
   // Urls: Public
@@ -89,6 +91,7 @@ exports.parseUser = function(userData) {
 
 //
 exports.parseGroup = function(groupData) {
+  if (groupData === undefined) return;
   var group = groupData.toObject ? groupData.toObject() : groupData;
 
   group.size = group._scriptIds.length;
