@@ -88,6 +88,22 @@ function listRegex (root, type) {
     ')?$');
 }
 
+// Emulate app.route('/').VERB(callback).VERB(callback); from ExpressJS 4.x
+var methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
+function app_route(path) {
+  var r = {};
+  r.all = function(cb) {
+    app.all.call(app, path, cb);
+  };
+  methods.forEach(function(method){
+    r[method] = function(cb) {
+      app[method].call(app, path, cb);
+      return r;
+    };
+  });
+  return r;
+}
+
 // Authentication routes
 app.post('/auth/', authentication.auth);
 app.get('/auth/:strategy', authentication.auth);
@@ -111,12 +127,11 @@ app.get('/user/add/lib/new', script.lib(user.newScript));
 app.post('/user/add/lib/new', script.lib(user.newScript));
 
 // Script routes
-app.get('/scripts/:username/:scriptname', script.view);
-app.get('/scripts/:username/:namespace/:scriptname', script.view);
-app.get('/script/scriptname/edit', script.edit);
-app.get('/script/:namespace/:scriptname/edit', script.edit);
-app.post('/script/scriptname/edit', script.edit);
-app.post('/script/:namespace/:scriptname/edit', script.edit);
+app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
+app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
+app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit); // Legacy TODO Remove
+
+// Script routes: Legacy
 app.get('/install/:username/:scriptname', scriptStorage.sendScript);
 app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
 app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);

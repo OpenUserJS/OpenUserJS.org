@@ -232,7 +232,7 @@ exports.view = function (req, res, next) {
 
     //
     options.title = scriptData.name + ' | OpenUserJS.org';
-    options.user = user;
+    user = options.user = modelParser.parseUser(user);
 
     //
     var script = options.script = modelParser.parseScript(scriptData);
@@ -258,51 +258,96 @@ exports.view = function (req, res, next) {
 
 // route to edit a script
 exports.edit = function (req, res, next) {
-  var installName = null;
-  var isLib = req.route.params.isLib;
   var user = req.session.user;
 
   if (!user) { return res.redirect('/login'); }
 
+  // Support routes lacking the :username. TODO: Remove this functionality.
   req.route.params.username = user.name.toLowerCase();
-  installName = scriptStorage.getInstallName(req);
 
-  Script.findOne({ installName: installName + (isLib ? '.js' : '.user.js') },
-    function (err, script) {
-      var baseUrl = script && script.isLib ? '/libs/' : '/scripts/';
-      if (err || !script || script._authorId != user._id) { return next(); }
+  var installNameSlug = scriptStorage.getInstallName(req);
+  var scriptAuthor = req.route.params.username;
+  var scriptNameSlug = req.route.params.scriptname;
+  var isLib = req.route.params.isLib;
 
-      if (typeof req.body.about !== 'undefined') {
-        if (req.body.remove) {
-          scriptStorage.deleteScript(script.installName, function () {
-            res.redirect('/users/' + encodeURI(user.name));
-          });
-        } else {
-          script.about = req.body.about;
-          addScriptToGroups(script, req.body.groups.split(/,/), function () {
-            res.redirect(encodeURI(baseUrl + installName));
-          });
-        }
+  Script.findOne({
+    installName: installNameSlug + (isLib ? '.js' : '.user.js')
+  }, function (err, scriptData) {
+    if (err || !scriptData) { return next(); }
+
+    //
+    var options = {};
+    var tasks = [];
+
+    //
+    options.title = 'Edit Metadata: ' + scriptData.name + ' | OpenUserJS.org';
+    user = options.user = modelParser.parseUser(user);
+
+    //
+    var script = options.script = modelParser.parseScript(scriptData);
+
+    // If authed user is not the script author.
+    if (script._authorId != user._id) { return next(); }
+
+
+    var baseUrl = script && script.isLib ? '/libs/' : '/scripts/';
+
+    if (typeof req.body.about !== 'undefined') {
+      // POST
+      if (req.body.remove) {
+        scriptStorage.deleteScript(scriptData.installName, function () {
+          res.redirect(user.userPageUrl);
+        });
       } else {
-        Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
-          var groupsArr = (groups || []).map(function (group) {
-            return group.name;
-          });
-
-          res.render('scriptEdit', {
-            title: script.name,
-            name: script.name,
-            install: (script.isLib ? '/libs/src/' : '/install/')
-              + script.installName,
-            source: baseUrl + installName + '/source',
-            about: script.about,
-            groups: JSON.stringify(groupsArr),
-            canCreateGroup: (!script._groupId).toString(),
-            isLib: script.isLib,
-            username: user ? user.name : null
-          });
+        scriptData.about = req.body.about;
+        addScriptToGroups(scriptData, req.body.groups.split(/,/), function () {
+          res.redirect(script.scriptPageUrl);
         });
       }
+    } else {
+      // GET
+
+      options.script = script;
+
+      tasks = tasks.concat(getScriptPageTasks(options));
+
+      tasks.push(function (callback) {
+        callback();
+      });
+
+      // Groups
+      options.canCreateGroup = (!script._groupId).toString();
+
+      function preRender(){
+        var groupNameList = (options.groups || []).map(function (group) {
+          return group.name;
+        });
+        options.groupNameListJSON = JSON.stringify(groupNameList);
+
+      };
+      function render(){ res.render('pages/scriptEditMetadataPage', options); }
+      function asyncComplete(){ preRender(); render(); }
+      async.parallel(tasks, asyncComplete);
+
+      // Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
+      //   var groupsArr = (groups || []).map(function (group) {
+      //     return group.name;
+      //   });
+
+      //   res.render('scriptEdit', {
+      //     title: script.name,
+      //     name: script.name,
+      //     install: (script.isLib ? '/libs/src/' : '/install/')
+      //       + script.installName,
+      //     source: baseUrl + installName + '/source',
+      //     about: script.about,
+      //     groups: JSON.stringify(groupsArr),
+      //     canCreateGroup: (!script._groupId).toString(),
+      //     isLib: script.isLib,
+      //     username: user ? user.name : null
+      //   });
+      // });
+    }
   });
 };
 
