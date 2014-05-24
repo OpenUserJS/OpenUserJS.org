@@ -30,7 +30,10 @@
     "passport-foursquare": "*",
     "passport-instagram": "*",
     "passport-steam": "*",
-    "passport-tumblr": "*"
+    "passport-tumblr": "*",
+    "underscore": "*",
+    "moment": "*",
+    "url": "*"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,41 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th></th>
+      <th class="text-center">Name</th>
+      <th class="text-center">Installs</th>
+      <th class="text-center">Rating</th>
+      <th class="text-center">Last Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#scriptList}}
+    <tr>
+      <td>
+        <a href="{{{scriptInstallPageUrl}}}">
+          <button class="btn btn-default"><i class="fa fa-download"></i></button>
+        </a>
+      </td>
+      <td>
+        <b>
+          <a href="{{{scriptPageUrl}}}">{{name}}</a>{{#version}} <div class="label label-info">{{version}}</div>{{/version}}
+        </b>
+        <p>{{meta.description}}</p>
+      </td>
+      <td class="text-center">
+        <p>{{installs}}</p>
+      </td>
+      <td class="rating text-center">
+        <p>{{rating}}</p>
+        <div class="progress">
+          <div style="width: {{votesPercent}}%" class="progress-bar progress-bar-good"></div>
+          <div style="width: {{flagsPercent}}%" class="progress-bar progress-bar-danger"></div>
+        </div>
+      </td>
+      <td class="text-center">
+        <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
+      </td>
+    </tr>
+    {{/scriptList}}
+  </tbody>
+</table>

@@ -1,0 +1,20 @@
+<h2 class="script-header">
+  <a href="{{{installUrl}}}" class="pull-right">
+    <button class="btn btn-info"><i class="fa fa-download"></i> Install</button>
+  </a>
+  <a href="{{{url}}}" class="script-name">{{name}}</a>{{#meta.version}} <div class="script-version label label-info">{{meta.version}}</div>{{/meta.version}}
+</h2>
+<p>By <a href="/users/{{author}}" class="script-author">{{author}}</a> — Last updated <time class="script-updated" datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time> — Installed {{installs}} times.</p>
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" data-toggle="collapse" data-target="#content-navbar" class="navbar-toggle"><i class="fa fa-bars"></i></button>
+  </div>
+  <div class="collapse navbar-collapse" id="content-navbar">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="{{{url}}}" class="">About</a></li>
+      <li><a href="{{{viewSourceCodeUrl}}}" class="{{^viewSourceCodeUrl}}disabled{{/viewSourceCodeUrl}}">Source Code</a></li>
+      <li><a href="{{{issuesUrl}}}" class="{{^issuesUrl}}disabled{{/issuesUrl}}">Issues <span class="badge">{{issuesCount}}</span></a></li>
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,89 @@
+@media (max-width: 767px) {
+  span.visible-xs {
+    display: inline !important;
+  }
+  ul.nav > li > a > span.visible-xs + i.fa {
+    float: right;
+    line-height: 20px;
+  }
+}
+.tagcloud {
+  padding-left: 0;
+}
+.tagcloud li {
+  display: inline;
+}
+.progress,
+.progress-bar {
+  box-shadow: none;
+}
+.label {
+  font-family: Arial;
+  background-color: #eee;
+  color: #333333;
+}
+.rating .progress {
+  height: 4px;
+}
+.progress-bar-good {
+  background-color: #ccc;
+  color: #333;
+}
+.progress-bar-bad {
+  background-color: #080;
+}
+footer .navbar {
+  margin-bottom: 0;
+}
+.table {
+  margin-bottom: 0;
+}
+.navbar-inverse {
+  background-color: #333;
+  border-color: #222;
+}
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+  color: #fff;
+  background-color: #272727;
+}
+.navbar-inverse .navbar-toggle {
+  border-color: #222;
+  background-color: #333;
+  color: #666;
+}
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+  background-color: #272727;
+}
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form {
+  border-color: #222;
+}
+
+body > .container-fluid {
+  min-height: calc(100vh - 122px); /* header (50px + 1px + 20px) + footer (50px + 1px) */
+}
+
+.nav>li>a:hover,
+.nav>li>a:focus {
+  color: #333;
+}
+
+a.disabled, a[disabled] {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+ul.nav.navbar-nav > li > a > .badge {
+  background-color: #fff;
+  color: #666;
+}
+
+body > .container-fluid > .row > .container-fluid.col-sm-8 {
+  margin-bottom: 100px;
+}

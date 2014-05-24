@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="/css/common.css">
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-8">
+        
+        {{> includes/scriptList.html }}
+        <div class="text-center">
+          {{{pagination}}}
+        </div>
+        
+      </div>
+      <div class="col-sm-4">
+        <div class="panel">
+          <div class="input-group col-xs-12">
+            {{> includes/scriptSearchBar.html }}
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div class="panel-title">Popular Groups</div>
+          </div>
+          <div class="panel-body">
+            <ul class="tagcloud">
+              {{#groupList}}
+                <li><a href="{{{groupPageUrl}}}">{{name}}</a> <span class="badge">{{size}}</span></li>
+              {{/groupList}}
+            </ul>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div class="panel-title">Stats</div>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <label for="" class="col-xs-4 text-right">Scripts:</label>
+              <div class="col-xs-8">{{totalScripts}}</div>
+            </div>
+            <div class="row">
+              <label for="" class="col-xs-4 text-right">Groups:</label>
+              <div class="col-xs-8">{{totalGroups}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

@@ -1,0 +1,23 @@
+  <nav role="navigation" class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" data-toggle="collapse" data-target=".navbar-collapse-top" class="navbar-toggle"><i class="fa fa-bars"></i></button>
+        <a href="/" class="navbar-brand">OpenUserJS</a>
+      </div>
+      <div class="navbar-collapse navbar-collapse-top collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/">Scripts</a></li>
+          <li><a href="/groups">Groups</a></li>
+          <li><a href="/discuss">Discuss</a></li>
+          {{#user}}
+          <li><a href="#"><i class="fa fa-envelope-o"></i> 0<span class="visible-xs"> Unread Messages</span></a></li>
+          <li><a href="{{user.userPageUrl}}">{{user.name}}</a></li>
+          <li><a href="/logout"><span class="visible-xs">Logout</span><i class="fa fa-sign-out"></i></a></li>
+          {{/user}}
+          {{^user}}
+          <li><a href="#">Login / Sign Up <i class="fa fa-sign-in"></i></a></li>
+          {{/user}}
+        </ul>
+      </div>
+    </div>
+  </nav>

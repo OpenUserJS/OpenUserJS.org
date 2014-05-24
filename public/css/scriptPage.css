@@ -1,0 +1,14 @@
+.user-content img {
+  max-width: 100%;
+}
+.btn-vote {
+  display:block;
+  width: 100%;
+  text-align: center;
+}
+.btn-vote:not(:hover):not(.active) {
+  color: #aea79f;
+}
+.script-header {
+  margin-top: 0;
+}

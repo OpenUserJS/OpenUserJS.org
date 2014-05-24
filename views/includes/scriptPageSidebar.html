@@ -1,0 +1,52 @@
+<div class="panel">
+  <div class="input-group col-xs-12">
+    {{> v2/includes/searchscripts.html }}
+  </div>
+</div>
+{{#script}}
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-xs-3">
+        <a href="{{{voteUpUrl}}}" class="btn-vote {{^voteable}}disabled{{/voteable}} {{#votedUp}}active{{/votedUp}}"><i class="fa fa-2x fa-caret-up"></i></a>
+        <a href="{{{voteDownUrl}}}" class="btn-vote {{^voteable}}disabled{{/voteable}} {{#votedDown}}active{{/votedDown}}"><i class="fa fa-2x fa-caret-down"></i></a>
+      </div>
+      <div class="col-xs-9">
+        <p><i class="fa fa-fw fa-signal"></i> <b>Rating:</b> {{rating}}</p>
+        <div class="progress">
+          <div style="width: {{votesPercent}}%" class="progress-bar progress-bar-good">{{#votes}}{{votes}}<i class="fa fa-fw fa-caret-up"></i>{{/votes}}</div>
+          <div style="width: {{flagsPercent}}%" class="progress-bar progress-bar-danger">{{#flags}}{{flags}}<i class="fa fa-fw fa-caret-down"></i>{{/flags}}</div>
+        </div>
+      </div>
+    </div>
+    
+
+    <ul class="nav nav-pills nav-justified">
+      <li><a href="#" class="disabled"><i class="fa fa-star{{^upvoted}}-o{{/upvoted}}"></i> Favourite</a></li>
+      <li><a href="{{{flagUrl}}}" class="{{^flaggable}}disabled{{/flaggable}}"><i class="fa fa-flag{{^flagged}}-o{{/flagged}}"></i> {{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}</a></a></li>
+      <li><a href="#" class="disabled"><i class="fa fa-code-fork"></i> Fork</a></a></li>
+    </ul>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">Author Tools</div>
+  </div>
+  <div class="panel-body">
+    <ul class="nav nav-pills nav-justified">
+      <li><a href="{{{scriptEditMetadataPageUrl}}}" class=""><i class="fa fa-edit"></i> Edit Meta</a></li>
+      <li><a href="{{{scruptEditSourcePageUrl}}}" class=""><i class="fa fa-file-text"></i> Edit Script</a></li>
+    </ul>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">Mod Tools</div>
+  </div>
+  <div class="panel-body">
+    <ul class="nav nav-pills nav-justified">
+      <li><a href="#" class="disabled"><i class="fa fa-trash-o"></i> Spam</a></li>
+    </ul>
+  </div>
+</div>
+{{/script}}

@@ -84,3 +84,11 @@ exports.cleanFilename = function (filename, defaultName) {
 
   return cleanName || defaultName;
 };
+
+exports.limitRange = function(min, x, max) {
+  return Math.max(Math.min(x, max), min);
+};
+
+exports.limitMin = function(min, x) {
+  return Math.max(x, min);
+};
