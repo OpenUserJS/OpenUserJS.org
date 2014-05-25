@@ -9,6 +9,8 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
+var helpers = require('../libs/helpers');
+var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
 
 // clean the name of the group so it is url safe
 function cleanGroupName (name) {
