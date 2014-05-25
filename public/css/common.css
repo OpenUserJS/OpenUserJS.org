@@ -92,3 +92,16 @@ h2.page-heading {
   margin-top: 0;
 }
 
+.page-heading-icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: baseline;
+  text-align: center;
+}
+
+.page-heading-icon img {
+  max-width: 1em;
+  max-height: 1em;
+}
+

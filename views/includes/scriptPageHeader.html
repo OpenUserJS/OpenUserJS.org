@@ -2,7 +2,7 @@
   <a href="{{{scriptInstallPageUrl}}}" class="pull-right">
     <button class="btn btn-info"><i class="fa fa-download"></i> Install</button>
   </a>
-  <a href="{{{scriptPageUrl}}}" class="script-name">{{name}}</a>{{#meta.version}} <div class="script-version label label-info">{{meta.version}}</div>{{/meta.version}}
+  <a href="{{{scriptPageUrl}}}" class="script-name">{{#meta.icon}}<span class="page-heading-icon"><img src="{{{meta.icon}}}" alt="" /></span>{{/meta.icon}}{{name}}</a>{{#meta.version}} <div class="script-version label label-info">{{meta.version}}</div>{{/meta.version}}
 </h2>
 <p>By <a href="/users/{{author}}" class="script-author">{{author}}</a> — Last updated <time class="script-updated" datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time> — Installed {{installs}} times.</p>
 
