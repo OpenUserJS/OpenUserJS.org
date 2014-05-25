@@ -230,6 +230,8 @@ exports.userScriptListPage = function(req, res, next) {
 exports.userEditProfilePage = function (req, res, next) {
   var authedUser = req.session.user;
 
+  if (!authedUser) { return res.redirect('/login'); }
+
   var username = req.route.params.username;
 
   User.findOne({
@@ -294,6 +296,8 @@ exports.userEditProfilePage = function (req, res, next) {
 
 exports.userEditPreferencesPage = function (req, res, next) {
   var authedUser = req.session.user;
+
+  if (!authedUser) { return res.redirect('/login'); }
 
   User.findOne({
     _id: authedUser._id
