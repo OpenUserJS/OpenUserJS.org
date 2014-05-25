@@ -118,16 +118,12 @@ app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(us
 app_route('/user/preferences').get(user.userEditPreferencesPage);
 
 // User routes: Legacy
-app.get('/user/add/scripts', user.scripts);
-app.post('/user/add/scripts', user.scripts);
-app.post('/user/add/scripts/upload', user.uploadScript);
-app.get('/user/add/scripts/new', user.newScript);
-app.post('/user/add/scripts/new', user.newScript);
-app.get('/user/add/lib', script.lib(user.scripts));
-app.post('/user/add/lib', script.lib(user.scripts));
-app.post('/user/add/lib/upload', user.uploadScript);
-app.get('/user/add/lib/new', script.lib(user.newScript));
-app.post('/user/add/lib/new', script.lib(user.newScript));
+app_route('/user/add/scripts').get(user.scripts).post(user.scripts);
+app_route('/user/add/lib').get(script.lib(user.scripts)).post(script.lib(user.scripts));
+app_route('/user/add/scripts/new').get(user.newScript).post(user.newScript);
+app_route('/user/add/lib/new').get(script.lib(user.newScript)).post(script.lib(user.newScript));
+app_route('/user/add/:scripttype(scripts|lib)/upload').post(user.uploadScript);
+
 
 // Script routes
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
@@ -193,10 +189,9 @@ app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
 app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 
 // Group routes
-app.get(listRegex('\/groups', ''), group.list);
+app_route('/groups').get(group.list);
 app_route('/group/:groupname').get(group.view);
-app.get(listRegex('\/group\/([^\/]+?)', 'script'), group.view);
-app.get('/api/group/search/:term/:addTerm?', group.search);
+app_route('/api/group/search/:term/:addTerm?').get(group.search);
 
 // Discussion routes
 app.get(listRegex('\/(corner|garage|discuss)', ''), discussion.list);
