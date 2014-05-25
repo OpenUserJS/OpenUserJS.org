@@ -156,3 +156,11 @@ h2.page-heading {
 .post-controls:hover {
   opacity: 1;
 }
+
+.topic-meta-data .names .username {
+  font-weight: bold;
+}
+
+.topic-post-contents {
+  margin: .5em -15px;
+}

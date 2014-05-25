@@ -41,7 +41,7 @@
   </div>
 
   <div id="reply-control" class="collapse">
-    <form action="" method="post">
+    <form action="{{{discussion.discussionPageUrl}}}" method="post">
       <div class="container-fluid row user-content">
 
         <div class="submit-panel pull-right btn-toolbar">
@@ -68,9 +68,11 @@
       document.location.hash = $comment.attr('id');
 
       var text = $replyTextarea.text();
-      text += '\n\n';
-      text += 'Re: [Comment](' + document.location.href + ') ';
+      if (!/^\s*$/.test(text))
+        text += '\n\n'; // Add linebreak if reply already started.
+      text += '[Re](' + document.location.href + '): ';
       text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
+      text += '  \n';
       $replyTextarea.text(text);
     });
   </script>
