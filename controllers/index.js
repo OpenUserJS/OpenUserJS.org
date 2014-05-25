@@ -17,12 +17,17 @@ var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
 
 // The home page has scripts and groups in a sidebar
 exports.home = function (req, res) {
+  var authedUser = req.session.user;
+
+  //
   var options = {};
+  var tasks = [];
+
   options.title = 'OpenUserJS.org';
 
   // Session
-  var user = req.session.user;
-  options.user = user ? modelParser.parseUser(user) : null;
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
 
   // Scripts: Query
   var scriptListQuery = Script.find();

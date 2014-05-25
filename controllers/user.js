@@ -75,15 +75,15 @@ exports.view = function (req, res, next) {
     var options = {};
     var tasks = [];
 
-    //
+    // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    var user = options.user = modelParser.parseUser(userData);
-    options.title = user.name + ' | OpenUserJS.org';
-    options.isUserPage = true;
+    options.isMod = authedUser && authedUser.role < 4;
 
     //
+    var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.isMod = authedUser && authedUser.role < 4;
+    options.title = user.name + ' | OpenUserJS.org';
+    options.isUserPage = true;
 
     //
     user.aboutRendered = renderMd(user.about);
@@ -141,16 +141,16 @@ exports.userScriptListPage = function(req, res, next) {
     var options = {};
     var tasks = [];
 
-    //
+    // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.role < 4;
+
+
+    //
     var user = options.user = modelParser.parseUser(userData);
+    options.isYou = authedUser && user && authedUser._id == user._id;
     options.title = user.name + ' | OpenUserJS.org';
     options.isUserScriptListPage = true;
-
-
-    //
-    options.isYou = authedUser && user && authedUser._id == user._id;
-    options.isMod = authedUser && authedUser.role < 4;
 
     // Scripts: Query
     var scriptListQuery = Script.find();
@@ -241,14 +241,14 @@ exports.userEditProfilePage = function (req, res, next) {
     var options = {};
     var tasks = [];
 
-    //
+    // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    var user = options.user = modelParser.parseUser(userData);
-    options.title = user.name + ' | OpenUserJS.org';
+    options.isMod = authedUser && authedUser.role < 4;
 
     //
+    var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.isMod = authedUser && authedUser.role < 4;
+    options.title = user.name + ' | OpenUserJS.org';
 
     //
     user.aboutRendered = renderMd(user.about);
@@ -304,14 +304,14 @@ exports.userEditPreferencesPage = function (req, res, next) {
     var options = {};
     var tasks = [];
 
-    //
+    // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    var user = options.user = modelParser.parseUser(userData);
-    options.title = user.name + ' | OpenUserJS.org';
+    options.isMod = authedUser && authedUser.role < 4;
 
     //
+    var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.isMod = authedUser && authedUser.role < 4;
+    options.title = user.name + ' | OpenUserJS.org';
 
     //
     user.aboutRendered = renderMd(user.about);

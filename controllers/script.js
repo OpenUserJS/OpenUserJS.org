@@ -52,7 +52,7 @@ var getScriptPageTasks = function(options) {
 
   // Shortcuts
   var script = options.script;
-  var user = options.user;
+  var authedUser = options.authedUser;
 
   // Show the number of open issues
   tasks.push(function (callback) {
@@ -134,14 +134,14 @@ var getScriptPageTasks = function(options) {
     options.votedDown = false;
 
     // Can't vote when not logged in or when user owns the script.
-    if (!user || options.isOwner) {
+    if (!authedUser || options.isOwner) {
       callback();
       return;
     }
 
     Vote.findOne({
       _scriptId: script._id,
-      _userId: user._id
+      _userId: authedUser._id
     }, function (err, voteModel) {
       options.voteable = !script.isOwner;
 
@@ -165,12 +165,12 @@ var getScriptPageTasks = function(options) {
     var flagUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
 
     // Can't flag when not logged in or when user owns the script.
-    if (!user || options.isOwner) {
+    if (!authedUser || options.isOwner) {
       callback();
       return;
     }
 
-    flagLib.flaggable(Script, script, user,
+    flagLib.flaggable(Script, script, authedUser,
       function (canFlag, author, flag) {
         if (flag) {
           flagUrl += '/unflag';
@@ -188,12 +188,12 @@ var getScriptPageTasks = function(options) {
   // Set up the removal UI
   tasks.push(function (callback) {
     // Can't remove when not logged in or when user owns the script.
-    if (!user || options.isOwner) {
+    if (!authedUser || options.isOwner) {
       callback();
       return;
     }
 
-    removeLib.removeable(Script, script, user,
+    removeLib.removeable(Script, script, authedUser,
       function (canRemove, author) {
         options.moderation = canRemove;
         options.flags = script.flags || 0;
@@ -215,7 +215,7 @@ var getScriptPageTasks = function(options) {
 // View a detailed description of a script
 // This is the most intensive page to render on the site
 exports.view = function (req, res, next) {
-  var user = req.session.user;
+  var authedUser = req.session.user;
 
   var installNameSlug = scriptStorage.getInstallName(req);
   var scriptAuthor = req.route.params.username;
@@ -230,15 +230,16 @@ exports.view = function (req, res, next) {
     var options = {};
     var tasks = [];
 
-    //
-    options.title = scriptData.name + ' | OpenUserJS.org';
-    user = options.user = modelParser.parseUser(user);
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.role < 4;
 
     //
     var script = options.script = modelParser.parseScript(scriptData);
-    script.isOwner = options.user && options.user._id == script._authorId,
+    options.isOwner = authedUser && authedUser._id == script._authorId;
     script.aboutRendered = renderMd(script.about);
     script.installNameSlug = installNameSlug;
+    options.title = script.name + ' | OpenUserJS.org';
 
     var fork = script.fork;
     // Set the forks to be label properly
@@ -258,12 +259,12 @@ exports.view = function (req, res, next) {
 
 // route to edit a script
 exports.edit = function (req, res, next) {
-  var user = req.session.user;
+  var authedUser = req.session.user;
 
-  if (!user) { return res.redirect('/login'); }
+  if (!authedUser) { return res.redirect('/login'); }
 
   // Support routes lacking the :username. TODO: Remove this functionality.
-  req.route.params.username = user.name.toLowerCase();
+  req.route.params.username = authedUser.name.toLowerCase();
 
   var installNameSlug = scriptStorage.getInstallName(req);
   var scriptAuthor = req.route.params.username;
@@ -279,15 +280,17 @@ exports.edit = function (req, res, next) {
     var options = {};
     var tasks = [];
 
-    //
-    options.title = 'Edit Metadata: ' + scriptData.name + ' | OpenUserJS.org';
-    user = options.user = modelParser.parseUser(user);
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.role < 4;
 
     //
     var script = options.script = modelParser.parseScript(scriptData);
+    options.isOwner = authedUser && authedUser._id == script._authorId;
+    options.title = 'Edit Metadata: ' + script.name + ' | OpenUserJS.org';
 
     // If authed user is not the script author.
-    if (script._authorId != user._id) { return next(); }
+    if (!options.isOwner) { return next(); }
 
 
     var baseUrl = script && script.isLib ? '/libs/' : '/scripts/';
@@ -296,7 +299,7 @@ exports.edit = function (req, res, next) {
       // POST
       if (req.body.remove) {
         scriptStorage.deleteScript(scriptData.installName, function () {
-          res.redirect(user.userPageUrl);
+          res.redirect(authedUser.userPageUrl);
         });
       } else {
         scriptData.about = req.body.about;
