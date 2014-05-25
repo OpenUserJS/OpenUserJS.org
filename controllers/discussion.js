@@ -1,14 +1,33 @@
-var modelsList = require('../libs/modelsList');
-var Discussion = require('../models/discussion').Discussion;
+var async = require('async');
+var _ = require('underscore');
+var url = require("url");
+
 var Comment = require('../models/comment').Comment;
+var Discussion = require('../models/discussion').Discussion;
+
+var renderMd = require('../libs/markdown').renderMd;
+var modelsList = require('../libs/modelsList');
+var modelParser = require('../libs/modelParser');
+var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var helpers = require('../libs/helpers');
+var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
 
 // List discussions for one of the three categories
 exports.list = function (req, res, next) {
-  var category = req.route.params.shift();
-  var user = req.session.user;
-  var options = { username: user ? user.name : '' };
+  var authedUser = req.session.user;
 
+  var category = req.route.params.shift();
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
+
+  //
   switch (category) {
   case 'garage':
     options.title = 'The Garage';
@@ -27,13 +46,83 @@ exports.list = function (req, res, next) {
     return next();
   }
 
-  options.category = category;
-  modelsList.listDiscussions({ category: category }, 
-    req.route.params, '/' + category,
-    function (discussionsList) {
-      options.discussionsList = discussionsList;
-      res.render('discussions', options);
+  //
+  options.title = options.title + ' | OpenUserJS.org';
+  options.pageMetaDescription = options.description;
+  options.pageMetaKeywords = null; // seperator = ', '
+
+  // Discussion: Query
+  var discussionListQuery = Discussion.find();
+
+  // Discussion: Query: category
+  discussionListQuery.find({category: category});
+
+  // Scripts: Query: flagged
+  // Only list flagged scripts for author and user >= moderator
+  if (options.isYou || options.isMod) {
+    // Show
+  } else {
+    // Script.flagged is undefined by default.
+    discussionListQuery.find({flagged: {$ne: true}}); 
+  }
+
+  // Scripts: Query: Search
+  if (req.query.q)
+    modelQuery.parseDiscussionSearchQuery(discussionListQuery, req.query.q);
+
+  // Scripts: Query: Sort
+  modelQuery.parseModelListSort(Discussion, discussionListQuery, req.query.orderBy, req.query.orderDir, function(){
+    discussionListQuery.sort('-updated -rating');
   });
+
+  // Scripts: Pagination
+  options.discussionListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
+  options.discussionListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
+  var discussionListSkipFrom = (options.discussionListCurrentPage * options.discussionListLimit) - options.discussionListLimit;
+  discussionListQuery
+    .skip(discussionListSkipFrom)
+    .limit(options.discussionListLimit);
+
+  // User scripList
+  tasks.push(function (callback) {
+    discussionListQuery.exec(function(err, discussionDataList){
+      if (err) {
+        callback();
+      } else {
+        options.discussionList = _.map(discussionDataList, modelParser.parseDiscussion);
+        callback();
+      }
+    });
+  });
+  tasks.push(function (callback) {
+    Discussion.count(discussionListQuery._conditions, function(err, discussionListCount){
+      if (err) {
+        callback();
+      } else {
+        options.discussionListCount = discussionListCount;
+        options.discussionListNumPages = Math.ceil(options.discussionListCount / options.discussionListLimit) || 1;
+        callback();
+      }
+    });
+  });
+
+  function preRender(){
+    // Pagination
+    options.pagination = paginateTemplate({
+      currentPage: options.discussionListCurrentPage,
+      lastPage: options.discussionListNumPages,
+      urlFn: function(p) {
+        var parseQueryString = true;
+        var u = url.parse(req.url, parseQueryString);
+        u.query.p = p;
+        delete u.search; // http://stackoverflow.com/a/7517673/947742
+        return url.format(u);
+      }
+    });
+  };
+  function render(){ res.render('pages/discussionListPage', options); }
+  function asyncComplete(){ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
 };
 
 // Locate a discussion and deal with topic url collisions
@@ -56,25 +145,114 @@ exports.findDiscussion = findDiscussion;
 
 // List comments in a discussion
 exports.show = function (req, res, next) {
+  var authedUser = req.session.user;
+
   var category = req.route.params.shift();
   var topic = req.route.params.shift();
-  var user = req.session.user;
-  var options = { username: user ? user.name : '' };
 
-  findDiscussion(category, topic, function (discussion) {
-    if (!discussion) { return next(); }
+  findDiscussion(category, topic, function (discussionData) {
+    if (!discussionData) { return next(); }
 
-    options.category = category;
-    options.topic = discussion.topic;
-    options.title = discussion.topic;
-    options.path = discussion.path
-      + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
-    modelsList.listComments({ _discussionId: discussion._id }, 
-      req.route.params, options.path,
-      function (commentsList) {
-        options.commentsList = commentsList;
-        res.render('discussion', options);
+    //
+    var options = {};
+    var tasks = [];
+
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.role < 4;
+
+    //
+    var discussion = options.discussion = modelParser.parseDiscussion(discussionData);
+    options.title = discussion.topic + ' | OpenUserJS.org';
+    options.pageMetaDescription = discussion.topic;
+    options.pageMetaKeywords = null; // seperator = ', '
+
+    // Comments: Query
+    var commentListQuery = Comment.find();
+
+    // Comments: Query: discussion
+    commentListQuery.find({_discussionId: discussion._id});
+
+    // Comments: Query: flagged
+    // Only list flagged scripts for author and user >= moderator
+    if (options.isYou || options.isMod) {
+      // Show
+    } else {
+      // Script.flagged is undefined by default.
+      commentListQuery.find({flagged: {$ne: true}}); 
+    }
+
+    // Comments: Query: Populate
+    commentListQuery.populate({
+      path: '_authorId',
+      model: 'User',
+      select: 'name role'
     });
+
+    // Comments: Query: Search
+    if (req.query.q)
+      modelQuery.parseCommentSearchQuery(commentListQuery, req.query.q);
+
+    // Comments: Query: Sort
+    modelQuery.parseModelListSort(Comment, commentListQuery, req.query.orderBy, req.query.orderDir, function(){
+      commentListQuery.sort('created -rating');
+    });
+
+    // Comments: Pagination
+    options.commentListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
+    options.commentListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
+    var commentListSkipFrom = (options.commentListCurrentPage * options.commentListLimit) - options.commentListLimit;
+    commentListQuery
+      .skip(commentListSkipFrom)
+      .limit(options.commentListLimit);
+
+    // Comments
+    tasks.push(function (callback) {
+      commentListQuery.exec(function(err, commentDataList){
+        if (err) {
+          callback();
+        } else {
+          options.commentList = _.map(commentDataList, modelParser.parseComment);
+          _.map(options.commentList, function(comment){
+            comment.author = modelParser.parseUser(comment._authorId);
+          });
+          callback();
+        }
+      });
+    });
+    tasks.push(function (callback) {
+      Comment.count(commentListQuery._conditions, function(err, commentListCount){
+        if (err) {
+          callback();
+        } else {
+          options.commentListCount = commentListCount;
+          options.commentListNumPages = Math.ceil(options.commentListCount / options.commentListLimit) || 1;
+          callback();
+        }
+      });
+    });
+
+    function preRender(){
+      // Pagination
+      options.pagination = paginateTemplate({
+        currentPage: options.commentListCurrentPage,
+        lastPage: options.commentListNumPages,
+        urlFn: function(p) {
+          var parseQueryString = true;
+          var u = url.parse(req.url, parseQueryString);
+          u.query.p = p;
+          delete u.search; // http://stackoverflow.com/a/7517673/947742
+          return url.format(u);
+        }
+      });
+
+      // Render
+      console.log(options.commentList);
+      _.map(options.commentList, modelParser.renderComment);
+    };
+    function render(){ res.render('pages/discussionPage', options); }
+    function asyncComplete(){ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
   });
 };
 

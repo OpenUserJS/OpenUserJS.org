@@ -67,3 +67,22 @@ exports.parseGroupSearchQuery = function(groupListQuery, query) {
     '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
   });
 }
+
+exports.parseDiscussionSearchQuery = function(discussionListQuery, query) {
+  var q = unescape(query);
+  var partialWordMatchFields = ['topic'];
+  var fullWordMatchFields = ['author'];
+  discussionListQuery.find({
+    '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
+  });
+}
+
+exports.parseCommentSearchQuery = function(commentListQuery, query) {
+  var q = unescape(query);
+  var partialWordMatchFields = ['content'];
+  var fullWordMatchFields = ['author'];
+  commentListQuery.find({
+    '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
+  });
+}
+

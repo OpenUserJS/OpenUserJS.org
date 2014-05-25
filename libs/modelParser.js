@@ -1,10 +1,13 @@
 var moment = require('moment');
 
+var userRoles = require('../models/userRoles.json');
+
+var renderMd = require('../libs/markdown').renderMd;
+
+
 /**
  * Parse persisted model data and return a new object with additional generated fields used in view templates.
  */
-
-var Script = require('../models/script').Script;
 
 /**
  * Script
@@ -79,6 +82,8 @@ exports.parseUser = function(userData) {
   if (userData === undefined) return;
   var user = userData.toObject ? userData.toObject() : userData;
 
+  user.roleName = userRoles[user.role];
+
   // Urls: Public
   user.userPageUrl = '/users/' + user.name;
   user.userScriptListPageUrl = user.userPageUrl + '/scripts';
@@ -103,3 +108,44 @@ exports.parseGroup = function(groupData) {
 
   return group;
 };
+
+/**
+ * Discussion
+ */
+
+//
+exports.parseDiscussion = function(discussionData) {
+  if (discussionData === undefined) return;
+  var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
+
+  // Urls
+  discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
+
+  // Dates
+  discussion.updatedISOFormat = discussion.updated.toISOString();
+  discussion.updatedHumanized = moment(discussion.updated).fromNow();
+
+  return discussion;
+};
+
+/**
+ * Discussion
+ */
+
+//
+exports.parseComment = function(commentData) {
+  if (commentData === undefined) return;
+  var comment = commentData.toObject ? commentData.toObject() : commentData;
+
+  // Dates
+  comment.createdISOFormat = comment.created.toISOString();
+  comment.createdHumanized = moment(comment.created).fromNow();
+
+  return comment;
+};
+
+exports.renderComment = function(comment) {
+  comment.contentRendered = renderMd(comment.content);
+};
+
+

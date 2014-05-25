@@ -161,7 +161,6 @@ exports.userScriptListPage = function(req, res, next) {
 
     // Scripts: Query: author=user
     scriptListQuery.find({_authorId: user._id});
-    // scriptListQuery.find({author: user.name});
 
     // Scripts: Query: flagged
     // Only list flagged scripts for author and user >= moderator

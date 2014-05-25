@@ -1,0 +1,39 @@
+<div class="topic-post list-group-item" id="comment-{{id}}">
+  <article>
+    <div class="row">
+      <div class="topic-avatar col-xs-1">
+        <a href="/users/{{{author.userPageUrl}}}">
+          <img src="http://lorempixel.com/45/45?name={{author.name}}" alt="">
+        </a>
+      </div>
+      <div class="topic-body col-xs-11">
+        <div class="topic-meta-data">
+          <div class="names">
+            <span class="username">
+              <a href="{{{author.userPageUrl}}}">{{author.name}}</a> <span class="label label-default">{{author.roleName}}</span>
+            </span>
+          </div>
+          <div class="post-info pull-right">
+            <a href="#comment-{{id}}" class="post-date">
+              <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
+            </a>
+          </div>
+        </div>
+        <div class="contents">
+          <div class="user-data">
+            {{{contentRendered}}}
+          </div>
+          <section class="post-menu-area">
+            <nav class="post-controls text-right">
+              <button title="begin composing a reply to this post">
+                <i class="fa fa-reply"></i> Reply
+              </button>
+            </nav>
+          </section>
+        </div>
+      </div>
+    </div>
+
+
+  </article>
+</div>

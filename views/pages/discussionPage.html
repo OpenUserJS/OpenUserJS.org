@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="https://toopay.github.io/bootstrap-markdown/css/bootstrap-markdown.min.css">
+  <style>
+  
+  </style>
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="container-fluid col-sm-8">
+        <div class="row">
+          <div class="col-xs-12">
+            <h2 class="page-heading">
+              {{discussion.topic}}
+            </h2>
+            <div class="container-fluid comments">
+              <div class="row">
+                <section class="topic-area list-group">
+                  {{#commentList}}
+                  {{> includes/comment.html }}
+                  {{/commentList}}
+                  <div class="text-center">
+                    {{{pagination}}}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid col-sm-4">
+
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  <!-- Markdown Editor -->
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js"></script>
+</body>
+</html>
