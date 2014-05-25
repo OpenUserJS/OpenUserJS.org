@@ -24,6 +24,10 @@ exports.home = function (req, res) {
   var tasks = [];
 
   options.title = 'OpenUserJS.org';
+  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
+  var pageMetaKeywords = ['userscript', 'greasemonkey'];
+  pageMetaKeywords.concat(['web browser']);
+  options.pageMetaKeywords = pageMetaKeywords.join(', ');
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);

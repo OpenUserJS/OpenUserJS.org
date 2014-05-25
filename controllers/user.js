@@ -83,6 +83,8 @@ exports.view = function (req, res, next) {
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
     options.title = user.name + ' | OpenUserJS.org';
+    options.pageMetaDescription = null;
+    options.pageMetaKeywords = null; // seperator = ', '
     options.isUserPage = true;
 
     //
@@ -150,6 +152,8 @@ exports.userScriptListPage = function(req, res, next) {
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
     options.title = user.name + ' | OpenUserJS.org';
+    options.pageMetaDescription = null;
+    options.pageMetaKeywords = null; // seperator = ', '
     options.isUserScriptListPage = true;
 
     // Scripts: Query

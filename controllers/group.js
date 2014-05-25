@@ -141,6 +141,8 @@ exports.list = function (req, res) {
 
   //
   options.title = 'Groups | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null; // seperator = ', '
 
   // Scripts: Query
   var groupListQuery = Group.find();
@@ -186,6 +188,7 @@ exports.list = function (req, res) {
   });
 
   function preRender(){
+    // Pagination
     options.pagination = paginateTemplate({
       currentPage: options.groupListCurrentPage,
       lastPage: options.groupListNumPages,
@@ -197,6 +200,12 @@ exports.list = function (req, res) {
         return url.format(u);
       }
     });
+
+    // Page <head> meta keywords
+    var pageMetaKeywords = ['userscript', 'greasemonkey'];
+    if (options.groupList)
+      pageMetaKeywords.concat(_.pluck(options.groupList, 'name'));
+    options.pageMetaKeywords = pageMetaKeywords.join(', ');
   };
   function render(){ res.render('pages/groupListPage', options); }
   function asyncComplete(){ preRender(); render(); }
@@ -309,6 +318,11 @@ exports.view = function (req, res, next) {
           return url.format(u);
         }
       });
+      // Page <head> meta keywords
+      var pageMetaKeywords = ['userscript', 'greasemonkey'];
+      if (options.groupList)
+        pageMetaKeywords.push(group.name);
+      options.pageMetaKeywords = pageMetaKeywords.join(', ');
     };
     function render(){ res.render('pages/groupScriptListPage', options); }
     function asyncComplete(){ preRender(); render(); }

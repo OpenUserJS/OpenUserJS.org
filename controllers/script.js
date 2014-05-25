@@ -240,6 +240,7 @@ exports.view = function (req, res, next) {
     script.aboutRendered = renderMd(script.about);
     script.installNameSlug = installNameSlug;
     options.title = script.name + ' | OpenUserJS.org';
+    options.pageMetaDescription = script.meta.description ? script.meta.description : null;
 
     var fork = script.fork;
     // Set the forks to be label properly
@@ -252,8 +253,15 @@ exports.view = function (req, res, next) {
 
     tasks = tasks.concat(getScriptPageTasks(options));
 
+    function preRender(){
+      var pageMetaKeywords = ['userscript', 'greasemonkey'];
+      if (script.groups)
+        pageMetaKeywords.concat(_.pluck(script.groups, 'name'));
+      options.pageMetaKeywords = pageMetaKeywords.join(', ');
+    };
     function render(){ res.render('pages/scriptPage', options); }
-    async.parallel(tasks, render);
+    function asyncComplete(){ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
   });
 };
 
