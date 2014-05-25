@@ -13,11 +13,38 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var helpers = require('../libs/helpers');
 var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
 
+var categories = [
+  {
+    slug: 'garage',
+    name: 'The Garage',
+    description: 'Talk shop, and get help with user script development'
+  },
+  {
+    slug: 'corner',
+    name: 'Beggar\'s Corner',
+    description: 'Propose ideas and request user scripts'
+  },
+  {
+    slug: 'discuss',
+    name: 'General Discussion',
+    description: 'Off-topic discussion about anything related to user scripts or OpenUserJS.org'
+  },
+];
+
+_.each(categories, function(category){
+  category.categoryPageUrl = '/' + category.slug;
+  category.categoryPostDiscussionPageUrl = '/post/' + category.slug;
+});
+
 // List discussions for one of the three categories
 exports.list = function (req, res, next) {
   var authedUser = req.session.user;
 
-  var category = req.route.params.shift();
+  var categorySlug = req.route.params.shift();
+
+  var category = _.findWhere(categories, {slug: categorySlug});
+  if (!category)
+    return next();
 
   //
   var options = {};
@@ -28,34 +55,16 @@ exports.list = function (req, res, next) {
   options.isMod = authedUser && authedUser.role < 4;
 
   //
-  switch (category) {
-  case 'garage':
-    options.title = 'The Garage';
-    options.description = 'Talk shop, and get help with user script development';
-    break;
-  case 'corner':
-    options.title = 'Beggar\'s Corner';
-    options.description = 'Propose ideas and request user scripts';
-    break;
-  case 'discuss':
-    options.title = 'General Discussion';
-    options.description = 'Off-topic discussion about anything related to user scripts or OpenUserJS.org';
-    options.general = true;
-    break;
-  default:
-    return next();
-  }
-
-  //
-  options.title = options.title + ' | OpenUserJS.org';
-  options.pageMetaDescription = options.description;
+  options.category = category;
+  options.title = category.name + ' | OpenUserJS.org';
+  options.pageMetaDescription = category.description;
   options.pageMetaKeywords = null; // seperator = ', '
 
   // Discussion: Query
   var discussionListQuery = Discussion.find();
 
   // Discussion: Query: category
-  discussionListQuery.find({category: category});
+  discussionListQuery.find({category: category.slug});
 
   // Scripts: Query: flagged
   // Only list flagged scripts for author and user >= moderator
@@ -147,10 +156,14 @@ exports.findDiscussion = findDiscussion;
 exports.show = function (req, res, next) {
   var authedUser = req.session.user;
 
-  var category = req.route.params.shift();
+  var categorySlug = req.route.params.shift();
   var topic = req.route.params.shift();
 
-  findDiscussion(category, topic, function (discussionData) {
+  var category = _.findWhere(categories, {slug: categorySlug});
+  if (!category)
+    return next();
+
+  findDiscussion(category.slug, topic, function (discussionData) {
     if (!discussionData) { return next(); }
 
     //
@@ -160,6 +173,9 @@ exports.show = function (req, res, next) {
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.role < 4;
+
+    //
+    options.category = category;
 
     //
     var discussion = options.discussion = modelParser.parseDiscussion(discussionData);
@@ -247,7 +263,6 @@ exports.show = function (req, res, next) {
       });
 
       // Render
-      console.log(options.commentList);
       _.map(options.commentList, modelParser.renderComment);
     };
     function render(){ res.render('pages/discussionPage', options); }

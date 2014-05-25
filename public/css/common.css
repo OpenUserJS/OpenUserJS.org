@@ -105,3 +105,54 @@ h2.page-heading {
   max-height: 1em;
 }
 
+.tr-link {
+  cursor: pointer;
+}
+
+/* Discussion */
+.td-activity { width: 60px; }
+
+#reply-control {
+  transition: height 0.4s ease;
+}
+
+#reply-control {
+  width: 100%;
+  z-index: 1039;
+  height: 0;
+  background-color: #ebebeb;
+  bottom: 0;
+  font-size: 14px;
+  position: fixed;
+}
+
+#reply-control.open {
+}
+
+#reply-control .md-editor {
+  
+  height: 300px;
+}
+
+#reply-control textarea {
+  width: 100%;
+  height: 100%;
+}
+
+#reply-control .md-editor textarea,
+#reply-control .md-editor md-preview {
+  height: calc(100% - 42px);
+}
+
+#reply-control .submit-panel {
+  padding: 6px 4px;
+}
+
+.post-controls {
+  opacity: 0.2;
+  transition: opacity linear 0.4s;
+}
+
+.post-controls:hover {
+  opacity: 1;
+}

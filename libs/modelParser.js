@@ -5,6 +5,24 @@ var userRoles = require('../models/userRoles.json');
 var renderMd = require('../libs/markdown').renderMd;
 
 
+moment.lang('en', {
+  relativeTime : {
+    future: "in %s",
+    past:   "%s ago",
+    s:  function(number, withoutSuffix, key, isFuture){ return number + "s"; },
+    m:  "1m",
+    mm: "%dm",
+    h:  "1h",
+    hh: "%dh",
+    d:  "1d",
+    dd: "%dd",
+    M:  "1m",
+    MM: "%dm",
+    y:  "1y",
+    yy: "%dy"
+  }
+});
+
 /**
  * Parse persisted model data and return a new object with additional generated fields used in view templates.
  */
@@ -122,6 +140,8 @@ exports.parseDiscussion = function(discussionData) {
   discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
   // Dates
+  discussion.createdISOFormat = discussion.created.toISOString();
+  discussion.createdHumanized = moment(discussion.created).fromNow();
   discussion.updatedISOFormat = discussion.updated.toISOString();
   discussion.updatedHumanized = moment(discussion.updated).fromNow();
 

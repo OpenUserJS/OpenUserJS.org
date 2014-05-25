@@ -5,9 +5,7 @@
   {{> includes/head.html }}
   <link rel="stylesheet" href="/css/common.css">
   <style type="text/css"  media="screen">
-    .table tbody tr {
-      cursor: pointer;
-    }
+
   </style>
 </head>
 <body>
@@ -34,21 +32,6 @@
     </div>
   </div>
   {{> includes/footer.html }}
-  <script>
-    $(document).ready(function(){
-      // https://stackoverflow.com/questions/4904938/link-entire-table-row
-      $('table.table tbody tr').click(function(e){
-        if ($(e.target).is("a,input")) // anything else you don't want to trigger the click
-          return;
-
-        var a = $(this).find('a');
-        if (!a) return;
-        var url = a.attr('href');
-        if (!url) return;
-        window.location = url; 
-        e.stopPropagation();
-      })
-    });
-  </script>
+  {{> includes/tableTrLink.html }}
 </body>
 </html>

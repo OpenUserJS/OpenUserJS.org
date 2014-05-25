@@ -5,9 +5,6 @@
   {{> includes/head.html }}
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="https://toopay.github.io/bootstrap-markdown/css/bootstrap-markdown.min.css">
-  <style>
-  
-  </style>
 </head>
 <body>
   {{> includes/header.html }}
@@ -16,9 +13,12 @@
       <div class="container-fluid col-sm-8">
         <div class="row">
           <div class="col-xs-12">
-            <h2 class="page-heading">
-              {{discussion.topic}}
-            </h2>
+            <div class="topic-title row container-fluid">
+              <ol class="breadcrumb pull-left">
+                <li class="active"><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
+                <li class=""><a href="{{{discussion.discussionPageUrl}}}">{{discussion.topic}}</a></li>
+              </ol>
+            </div>            
             <div class="container-fluid comments">
               <div class="row">
                 <section class="topic-area list-group">
@@ -39,9 +39,40 @@
       </div>
     </div>
   </div>
+
+  <div id="reply-control" class="collapse">
+    <form action="" method="post">
+      <div class="container-fluid row user-content">
+
+        <div class="submit-panel pull-right btn-toolbar">
+          <button class="btn btn-sm btn-success" type="submit">Reply</button>
+          <button class="btn btn-sm btn-danger" type="button" data-toggle="collapse" data-target="#reply-control">Cancel</button>
+        </div>
+        <textarea name="comment-content" data-provide="markdown" data-iconlibrary="fa" class="col-xs-12" placeholder="Type here using Markdown."></textarea>
+      </div>
+    </form>
+  </div>
+
   {{> includes/footer.html }}
   <!-- Markdown Editor -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js"></script>
+  <script type="text/javascript">
+    $('.btn-comment-reply').click(function(e){
+      $('#reply-control').collapse('show');
+
+      var $comment = $(e.target).closest('.topic-post');
+      var $author = $comment.find('.topic-meta-data .names .username').first();
+      var $replyTextarea = $('#reply-control textarea[name="comment-content"');
+
+      document.location.hash = $comment.attr('id');
+
+      var text = $replyTextarea.text();
+      text += '\n\n';
+      text += 'Re: [Comment](' + document.location.href + ') ';
+      text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
+      $replyTextarea.text(text);
+    });
+  </script>
 </body>
 </html>
