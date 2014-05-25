@@ -80,17 +80,20 @@ exports.view = function (req, res, next) {
 }
 
 // Let a user edit their account
-exports.edit = function (req, res) {
+exports.edit = function (req, res, next) {
   var user = req.session.user;
-  var userStrats = req.session.user.strategies.slice(0);
-  var options = {
+  var userStrats = null;
+  var options = null;
+
+  if (!user) { return next(); }
+
+  userStrats = req.session.user.strategies.slice(0);
+  options = {
     title: 'Edit Yourself',
     name: user.name,
     about: user.about,
-    username: user ? user.name : null
+    username: user.name
   };
-
-  if (!user) { return res.redirect('/login'); }
 
   req.route.params.push('author');
 
@@ -145,7 +148,7 @@ exports.edit = function (req, res) {
 };
 
 // Sloppy code to let a user add scripts to their acount
-exports.scripts = function (req, res) {
+exports.scripts = function (req, res, next) {
   var user = req.session.user;
   var isLib = req.route.params.isLib;
   var indexOfGH = -1;
@@ -159,7 +162,7 @@ exports.scripts = function (req, res) {
   var scriptname = null;
   var loadable = null;
 
-  if (!user) { return res.redirect('/login'); }
+  if (!user) { return next(); }
 
   options = { title: 'Edit Scripts', username: user.name, isLib: isLib };
 
@@ -234,7 +237,7 @@ exports.uploadScript = function (req, res, next) {
   var jsRegex = /\.js$/;
   var form = null;
 
-  if (!user) { return res.redirect('/login'); }
+  if (!user) { return next(); }
   if (!/multipart\/form-data/.test(req.headers['content-type'])) {
     return next();
   }
@@ -283,13 +286,14 @@ exports.uploadScript = function (req, res, next) {
 };
 
 // post route to update a user's account
-exports.update = function (req, res) {
+exports.update = function (req, res, next) {
   var user = req.session.user;
   var scriptUrls = req.body.urls ? Object.keys(req.body.urls) : '';
   var installRegex = null;
   var installNames = [];
   var username = user.name.toLowerCase();
-  if (!user) { return res.redirect('/login'); }
+
+  if (!user) { return next(); }
 
   if (req.body.about) {
     // Update the about section of a user's profile
@@ -321,7 +325,7 @@ exports.newScript = function (req, res, next) {
   var source = null;
   var url = null;
 
-  if (!user) { return res.redirect('/login'); }
+  if (!user) { return next(); }
 
   function storeScript(meta, source) {
     var userjsRegex = /\.user\.js$/;
