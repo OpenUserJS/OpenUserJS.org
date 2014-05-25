@@ -1,7 +1,12 @@
 var async = require('async');
+var _ = require('underscore');
+
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
+
 var modelsList = require('../libs/modelsList');
+var modelParser = require('../libs/modelParser');
+var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
 
@@ -135,20 +140,101 @@ exports.list = function (req, res) {
 
 // list the scripts in a group
 exports.view = function (req, res, next) {
-  var user = req.session.user;
-  var groupUrlName = req.route.params.shift();
-  var groupName = groupUrlName.replace(/_+/g, ' ');
-  var options = { title: 'Scripts grouped as ' + groupName, 
-    username: user ? user.name : '' };
+  var authedUser = req.session.user;
 
-  Group.findOne({ name: groupName }, function (err, group) {
-    if (err || !group || group._scriptIds.length === 0) { return next(); }
+  var groupNameSlug = req.route.params.groupname;
+  var groupName = groupNameSlug.replace(/_+/g, ' ');
 
-    modelsList.listScripts({ _id: { $in: group._scriptIds } },
-      req.route.params, '/group/' + groupUrlName,
-      function (scriptsList) {
-        options.scriptsList = scriptsList;
-        res.render('group', options);
+  Group.findOne({
+    name: groupName
+  }, function (err, groupData) {
+    if (err || !groupData) { return next(); }
+
+    // Don't show page if we have no scripts assigned to it yet.
+    if (groupData._scriptIds.length === 0) { return next(); }
+
+    //
+    var options = {};
+    var tasks = [];
+
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.role < 4;
+
+    //
+    var group = options.group = modelParser.parseGroup(groupData);
+    options.title = group.name + ' | OpenUserJS.org';
+
+    // Scripts: Query
+    var scriptListQuery = Script.find();
+
+    // Scripts: Query: script in group
+    scriptListQuery.find({_id: {$in: group._scriptIds}});
+
+    // Scripts: Query: isLib=false
+    scriptListQuery.find({isLib: false});
+
+    // Scripts: Query: Search
+    if (req.query.q)
+      modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
+
+    // Scripts: Query: Sort
+    modelQuery.parseModelListSort(Script, scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
+      scriptListQuery.sort('-rating -installs -updated');
     });
+    
+
+    // Scripts: Pagination
+    options.scriptListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
+    options.scriptListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
+    var scriptListSkipFrom = (options.scriptListCurrentPage * options.scriptListLimit) - options.scriptListLimit;
+    scriptListQuery
+      .skip(scriptListSkipFrom)
+      .limit(options.scriptListLimit);
+
+    // Groups: Query
+    var groupListQuery = Group.find();
+    groupListQuery
+      .limit(25);
+
+    // Scripts
+    tasks.push(function (callback) {
+      scriptListQuery.exec(function(err, scriptDataList){
+        if (err) {
+          callback();
+        } else {
+          options.scriptList = _.map(scriptDataList, modelParser.parseScript);
+          callback();
+        }
+      });
+    });
+    tasks.push(function (callback) {
+      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
+        if (err) {
+          callback();
+        } else {
+          options.scriptListCount = scriptListCount;
+          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
+          callback();
+        }
+      });
+    });
+
+    // Groups
+    tasks.push(function (callback) {
+      groupListQuery.exec(function(err, groupDataList){
+        if (err) {
+          callback();
+        } else {
+          options.groupList = _.map(groupDataList, modelParser.parseGroup);
+          callback();
+        }
+      });
+    });
+
+    function preRender(){};
+    function render(){ res.render('pages/groupScriptListPage', options); }
+    function asyncComplete(){ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
   });
 };

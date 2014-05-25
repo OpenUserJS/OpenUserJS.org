@@ -196,6 +196,7 @@ app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 
 // Group routes
 app.get(listRegex('\/groups', ''), group.list);
+app_route('/group/:groupname').get(group.view);
 app.get(listRegex('\/group\/([^\/]+?)', 'script'), group.view);
 app.get('/api/group/search/:term/:addTerm?', group.search);
 
