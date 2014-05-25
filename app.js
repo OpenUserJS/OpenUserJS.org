@@ -114,12 +114,10 @@ app.get('/logout', main.logout);
 // User routes
 app_route('/users/:username').get(user.view);
 app_route('/users/:username/scripts').get(user.userScriptListPage);
-app_route('/users/:username/profile/edit').get(user.userEditProfilePage);
+app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
 app_route('/user/preferences').get(user.userEditPreferencesPage);
 
 // User routes: Legacy
-app.get('/user/edit', user.edit);
-app.post('/user/edit', user.update);
 app.get('/user/add/scripts', user.scripts);
 app.post('/user/add/scripts', user.scripts);
 app.post('/user/add/scripts/upload', user.uploadScript);
