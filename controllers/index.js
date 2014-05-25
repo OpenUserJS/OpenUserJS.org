@@ -58,47 +58,52 @@ exports.home = function (req, res) {
   groupListQuery
     .limit(25);
 
-  async.parallel([
-    function (callback) {
-      scriptListQuery.exec(function(err, scriptDataList){
-        if (err) {
-          callback();
-        } else {
-          options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-          callback();
-        }
-      });
-    },
-    function (callback) {
-      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-        if (err) {
-          callback();
-        } else {
-          options.scriptListCount = scriptListCount;
-          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
-          callback();
-        }
-      });
-    }, function (callback) {
-      groupListQuery.exec(function(err, groupDataList){
-        if (err) {
-          callback();
-        } else {
-          options.groupList = _.map(groupDataList, modelParser.parseGroup);
-          callback();
-        }
-      });
-    }, function (callback) {
-      Group.count(groupListQuery._conditions, function(err, groupListCount){
-        if (err) {
-          callback();
-        } else {
-          options.groupListCount = groupListCount;
-          callback();
-        }
-      });
-    }
-  ], function () {
+  // Scripts
+  tasks.push(function (callback) {
+    scriptListQuery.exec(function(err, scriptDataList){
+      if (err) {
+        callback();
+      } else {
+        options.scriptList = _.map(scriptDataList, modelParser.parseScript);
+        callback();
+      }
+    });
+  });
+  tasks.push(function (callback) {
+    Script.count(scriptListQuery._conditions, function(err, scriptListCount){
+      if (err) {
+        callback();
+      } else {
+        options.scriptListCount = scriptListCount;
+        options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
+        callback();
+      }
+    });
+  });
+
+  // Groups
+  tasks.push(function (callback) {
+    groupListQuery.exec(function(err, groupDataList){
+      if (err) {
+        callback();
+      } else {
+        options.groupList = _.map(groupDataList, modelParser.parseGroup);
+        callback();
+      }
+    });
+  });
+  tasks.push(function (callback) {
+    Group.count(groupListQuery._conditions, function(err, groupListCount){
+      if (err) {
+        callback();
+      } else {
+        options.groupListCount = groupListCount;
+        callback();
+      }
+    });
+  });
+
+  function preRender(){
     options.pagination = paginateTemplate({
       currentPage: options.scriptListCurrentPage,
       lastPage: options.scriptListNumPages,
@@ -110,9 +115,10 @@ exports.home = function (req, res) {
         return url.format(u);
       }
     });
-
-    res.render('pages/scriptListPage', options);
-  });
+  };
+  function render(){ res.render('pages/scriptListPage', options); }
+  function asyncComplete(){ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
 };
 
 // Preform a script search
