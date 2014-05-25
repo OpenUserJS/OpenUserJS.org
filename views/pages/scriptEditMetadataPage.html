@@ -19,7 +19,7 @@
         {{#script}}
         <div class="row">
           <div class="col-xs-12">
-            <h2 class="script-header">
+            <h2 class="page-heading">
               <a href="{{{scriptPageUrl}}}" class="script-name">{{name}}</a>{{#meta.version}} <div class="script-version label label-info">{{meta.version}}</div>{{/meta.version}}
             </h2>
             <form action="edit" method="post">
@@ -29,7 +29,6 @@
               <div class="user-content">
                   <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="20" class="col-xs-12">{{about}}</textarea>
               </div>
-              
             </form>
           </div>
         </div>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="/css/common.css">
+  <style>
+  
+  </style>
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="container-fluid col-sm-8">
+        <div class="row">
+          <div class="col-xs-12">
+            {{> includes/userPageHeader.html }}
+            
+            <div class="edit-authentication-box">
+              <h2 class="edit-authentication">Authentication</h2>
+              <p><strong>{{defaultStrategy}}</strong> is your current form of authentication.</p>
+              {{#haveOtherStrategies}}
+              <p>Other verified forms of authentication:</p>
+              {{#usedStrategies}}
+              <strong>{{display}}</strong> - <a href="/auth/{{strat}}">Make default</a><br />
+              {{/usedStrategies}}
+              {{/haveOtherStrategies}}
+              <form id="register" method="post" action="/auth/">
+                <p>Add another form of authentication:</p>
+                <select name="auth">
+                  {{#openStrategies}}
+                  <option value="{{strat}}">{{display}}</option>
+                  {{/openStrategies}}
+                </select>
+                <input type="submit" value="Authenticate" />
+              </form>
+           </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid col-sm-4">
+        {{> includes/userToolsPanel.html }}
+        {{> includes/userModToolsPanel.html }}
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

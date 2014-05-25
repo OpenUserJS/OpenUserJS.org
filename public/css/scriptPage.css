@@ -9,6 +9,3 @@
 .btn-vote:not(:hover):not(.active) {
   color: #aea79f;
 }
-.script-header {
-  margin-top: 0;
-}

@@ -87,3 +87,8 @@ ul.nav.navbar-nav > li > a > .badge {
 body > .container-fluid > .row > .container-fluid.col-sm-8 {
   margin-bottom: 100px;
 }
+
+h2.page-heading {
+  margin-top: 0;
+}
+

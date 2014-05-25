@@ -1,0 +1,16 @@
+<h2 class="page-heading">
+  <a href="{{{user.userPageUrl}}}" class="user-name">{{user.name}}</a>{{#user.roleName}} <div class=" label label-info">{{user.roleName}}</div>{{/user.roleName}}
+</h2>
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" data-toggle="collapse" data-target="#content-navbar" class="navbar-toggle"><i class="fa fa-bars"></i></button>
+  </div>
+  <div class="collapse navbar-collapse" id="content-navbar">
+    <ul class="nav navbar-nav">
+      <li class="{{#isUserPage}}active{{/isUserPage}}"><a href="{{{user.userPageUrl}}}" class="">Profile</a></li>
+      <li class="{{#isUserScriptListPage}}active{{/isUserScriptListPage}}"><a href="{{{user.userScriptListPageUrl}}}" class="{{^user.userScriptListPageUrl}}disabled{{/user.userScriptListPageUrl}}">Scripts <span class="badge">{{scriptListCount}}</span></a></li>
+      <li class="{{#isUserCommentListPage}}active{{/isUserCommentListPage}}"><a href="{{{user.userCommentListPageUrl}}}" class="{{^user.userCommentListPageUrl}}disabled{{/user.userCommentListPageUrl}}">Comments <span class="badge">{{commentListCount}}</span></a></li>
+    </ul>
+  </div>
+</nav>

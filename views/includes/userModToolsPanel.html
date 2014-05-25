@@ -1,0 +1,12 @@
+{{#isMod}}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">Mod Tools</div>
+  </div>
+  <div class="panel-body">
+    <ul class="nav nav-pills nav-justified">
+      <li><a href="{{{flagUrl}}}" class="{{^flaggable}}disabled{{/flaggable}}"><i class="fa fa-flag{{^flagged}}-o{{/flagged}}"></i> {{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}</a></a></li>
+    </ul>
+  </div>
+</div>
+{{/isMod}}

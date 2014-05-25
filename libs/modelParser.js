@@ -81,6 +81,8 @@ exports.parseUser = function(userData) {
 
   // Urls: Public
   user.userPageUrl = '/users/' + user.name;
+  user.userScriptListPageUrl = user.userPageUrl + '/scripts';
+  user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
 
   return user;
 };

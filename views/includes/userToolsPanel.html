@@ -1,0 +1,14 @@
+{{#isYou}}
+<div class="panel panel-default">
+  <div class="panel-body">
+    <ul class="nav nav-pills nav-justified">
+      <li><a href="{{{user.userEditProfilePageUrl}}}" class="{{^user.userEditProfilePageUrl}}disabled{{/user.userEditProfilePageUrl}}"><i class="fa fa-user"></i> Edit Profile</a></li>
+      <li><a href="/user/preferences" class=""><i class="fa fa-cogs"></i> Preferences</a></li>
+    </ul>
+    <ul class="nav nav-pills nav-justified">
+      <li><a href="/user/add/scripts" class=""><i class="fa fa-file-code-o"></i> Add Script</a></li>
+      <li><a href="/user/add/lib" class=""><i class="fa fa-folder-open-o"></i> Add Library</a></li>
+    </ul>
+  </div>
+</div>
+{{/isYou}}

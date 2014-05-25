@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="/css/common.css">
+  <style>
+  
+  </style>
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="container-fluid col-sm-8">
+        <div class="row">
+          <div class="col-xs-12">
+            {{> includes/userPageHeader.html }}
+            <form action="/user/edit" method="post">
+              <button type="submit" class="btn btn-default pull-right">Save</button>
+              <h3>Description</h3>
+              <p><strong>Use <a target="_blank" href="https://help.github.com/articles/github-flavored-markdown">GitHub Flavored Markdown</a> for formatting.</strong></p>
+              <div class="user-content">
+                  <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="20" class="col-xs-12">{{user.about}}</textarea>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid col-sm-4">
+        {{> includes/userToolsPanel.html }}
+        {{> includes/userModToolsPanel.html }}
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  <!-- Markdown Editor -->
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js"></script>
+</body>
+</html>

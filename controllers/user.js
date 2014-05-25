@@ -1,59 +1,40 @@
 var fs = require('fs');
 var formidable = require('formidable');
-var scriptStorage = require('./scriptStorage');
-var User = require('../models/user').User;
+var async = require('async');
+var _ = require('underscore');
+var url = require("url");
+
+var Flag = require('../models/flag').Flag;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy.js').Strategy;
+var User = require('../models/user').User;
+
+var scriptStorage = require('./scriptStorage');
 var RepoManager = require('../libs/repoManager');
 var scriptsList = require('../libs/modelsList');
-var Flag = require('../models/flag').Flag;
+var modelParser = require('../libs/modelParser');
+var modelQuery = require('../libs/modelQuery');
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var strategies = require('./strategies.json');
-var async = require('async');
 var renderMd = require('../libs/markdown').renderMd;
-var nil = require('../libs/helpers').nil;
+var helpers = require('../libs/helpers');
+var nil = helpers.nil;
+var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
 
-// View information and scripts of a user
-exports.view = function (req, res, next) {
-  var username = req.route.params.shift();
-  var thisUser = req.session.user;
+var setupFlagUserUITask = function(options) {
+  var user = options.user;
+  var authedUser = options.authedUser;
 
-  User.findOne({ name: username }, function (err, user) {
-    var options = { isYou: thisUser && user && thisUser.name === user.name };
-    options.isMod = options.isYou && thisUser.role < 4;
+  return function(callback) {
+    var flagUrl = '/flag/users/' + user.name;
 
-    if (err || !user) { return next(); }
-
-    function render () {
-      var query = { _authorId: user._id, isLib: null };
-      req.route.params.push('author');
-
-      // Only list flagged scripts for author and user >= moderator
-      if (options.isYou || (thisUser && thisUser.role < 4)) {
-        query.flagged = null;
-      }
-
-      // list the user's scripts
-      scriptsList.listScripts(query, req.route.params, '/users/' + username,
-        function (scriptsList) {
-          options.title = user.name;
-          options.name = user.name;
-          options.about = renderMd(user.about);
-          options.scriptsList = scriptsList;
-          options.username = thisUser ? thisUser.name : null;
-          res.render('user', options);
-      });
+    // Can't flag when not logged in or when user owns the script.
+    if (!user || options.isOwner) {
+      callback();
+      return;
     }
-
-    if (!thisUser || options.isYou) {
-      return render();
-    }
-
-    // Display the flag user UI
-    flagLib.flaggable(User, user, thisUser, function (canFlag, author, flag) {
-      var flagUrl = '/flag/users/' + user.name;
-
+    flagLib.flaggable(User, user, authedUser, function (canFlag, author, flag) {
       if (flag) {
         flagUrl += '/unflag';
         options.flagged = true;
@@ -63,21 +44,364 @@ exports.view = function (req, res, next) {
       }
       options.flagUrl = flagUrl;
 
-      removeLib.removeable(User, user, thisUser, function (canRemove, author) {
+      removeLib.removeable(User, user, authedUser, function (canRemove, author) {
         options.moderation = canRemove;
         options.flags = user.flags || 0;
         options.removeUrl = '/remove/users/' + user.name;
 
-        if (!canRemove) { return render(); }
+        if (!canRemove) { return callback(); }
 
         flagLib.getThreshold(User, user, author, function (threshold) {
           options.threshold = threshold;
-          render();
+          callback();
         });
       });
     });
+  };
+};
+
+// View information and scripts of a user
+exports.view = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  var username = req.route.params.username;
+
+  User.findOne({
+    name: username
+  }, function (err, userData) {
+    if (err || !userData) { return next(); }
+
+    //
+    var options = {};
+    var tasks = [];
+
+    //
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    var user = options.user = modelParser.parseUser(userData);
+    options.title = user.name + ' | OpenUserJS.org';
+    options.isUserPage = true;
+
+    //
+    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isMod = authedUser.role < 4;
+
+    //
+    user.aboutRendered = renderMd(user.about);
+
+    // Scripts: Query
+    var scriptListQuery = Script.find();
+
+    // Scripts: Query: author=user
+    scriptListQuery.find({_authorId: user._id});
+    // scriptListQuery.find({author: user.name});
+
+    // Scripts: Query: flagged
+    // Only list flagged scripts for author and user >= moderator
+    if (options.isYou || options.isMod) {
+      // Show
+    } else {
+      // Script.flagged is undefined by default.
+      scriptListQuery.find({flagged: {$ne: true}}); 
+    }
+
+    // User scripList (count)
+    tasks.push(function (callback) {
+      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
+        if (err) {
+          callback();
+        } else {
+          options.scriptListCount = scriptListCount;
+          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
+          callback();
+        }
+      });
+    });
+
+    // Setup the flag user UI
+    tasks.push(setupFlagUserUITask(options));
+
+    function preRender(){};
+    function render(){ res.render('pages/userPage', options); }
+    function asyncComplete(){ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
   });
-}
+};
+
+exports.userScriptListPage = function(req, res, next) {
+  var authedUser = req.session.user;
+
+  var username = req.route.params.username;
+
+  User.findOne({
+    name: username
+  }, function (err, userData) {
+    if (err || !userData) { return next(); }
+
+    //
+    var options = {};
+    var tasks = [];
+
+    //
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    var user = options.user = modelParser.parseUser(userData);
+    options.title = user.name + ' | OpenUserJS.org';
+    options.isUserScriptListPage = true;
+
+
+    //
+    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isMod = authedUser.role < 4;
+
+    // Scripts: Query
+    var scriptListQuery = Script.find();
+
+    // Scripts: Query: author=user
+    scriptListQuery.find({_authorId: user._id});
+    // scriptListQuery.find({author: user.name});
+
+    // Scripts: Query: flagged
+    // Only list flagged scripts for author and user >= moderator
+    if (options.isYou || options.isMod) {
+      // Show
+    } else {
+      // Script.flagged is undefined by default.
+      scriptListQuery.find({flagged: {$ne: true}}); 
+    }
+
+    // Scripts: Query: Search
+    if (req.query.q)
+      modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
+
+    // Scripts: Query: Sort
+    modelQuery.parseModelListSort(Script, scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
+      scriptListQuery.sort('-rating -installs -updated');
+    });
+
+    // Scripts: Pagination
+    options.scriptListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
+    options.scriptListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
+    var scriptListSkipFrom = (options.scriptListCurrentPage * options.scriptListLimit) - options.scriptListLimit;
+    scriptListQuery
+      .skip(scriptListSkipFrom)
+      .limit(options.scriptListLimit);
+
+    // User scripList
+    tasks.push(function (callback) {
+      scriptListQuery.exec(function(err, scriptDataList){
+        if (err) {
+          callback();
+        } else {
+          options.scriptList = _.map(scriptDataList, modelParser.parseScript);
+          callback();
+        }
+      });
+    });
+    tasks.push(function (callback) {
+      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
+        if (err) {
+          callback();
+        } else {
+          options.scriptListCount = scriptListCount;
+          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
+          callback();
+        }
+      });
+    });
+
+    function preRender(){
+      options.pagination = paginateTemplate({
+        currentPage: options.scriptListCurrentPage,
+        lastPage: options.scriptListNumPages,
+        urlFn: function(p) {
+          var parseQueryString = true;
+          var u = url.parse(req.url, parseQueryString);
+          u.query.p = p;
+          delete u.search; // http://stackoverflow.com/a/7517673/947742
+          return url.format(u);
+        }
+      });
+    };
+    function render(){ res.render('pages/userScriptListPage', options); }
+    function asyncComplete(){ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};
+
+exports.userEditProfilePage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  var username = req.route.params.username;
+
+  User.findOne({
+    name: username
+  }, function (err, userData) {
+    if (err || !userData) { return next(); }
+
+    //
+    var options = {};
+    var tasks = [];
+
+    //
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    var user = options.user = modelParser.parseUser(userData);
+    options.title = user.name + ' | OpenUserJS.org';
+
+    //
+    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isMod = authedUser.role < 4;
+
+    //
+    user.aboutRendered = renderMd(user.about);
+
+    // Scripts: Query
+    var scriptListQuery = Script.find();
+
+    // Scripts: Query: author=user
+    scriptListQuery.find({_authorId: user._id});
+    // scriptListQuery.find({author: user.name});
+
+    // Scripts: Query: flagged
+    // Only list flagged scripts for author and user >= moderator
+    if (options.isYou || options.isMod) {
+      // Show
+    } else {
+      // Script.flagged is undefined by default.
+      scriptListQuery.find({flagged: {$ne: true}}); 
+    }
+
+    // User scripList (count)
+    tasks.push(function (callback) {
+      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
+        if (err) {
+          callback();
+        } else {
+          options.scriptListCount = scriptListCount;
+          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
+          callback();
+        }
+      });
+    });
+
+    // Setup the flag user UI
+    tasks.push(setupFlagUserUITask(options));
+
+    function preRender(){};
+    function render(){ res.render('pages/userEditProfilePage', options); }
+    function asyncComplete(){ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};
+
+exports.userEditPreferencesPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  User.findOne({
+    _id: authedUser._id
+  }, function (err, userData) {
+    if (err || !userData) { return next(); }
+
+    //
+    var options = {};
+    var tasks = [];
+
+    //
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    var user = options.user = modelParser.parseUser(userData);
+    options.title = user.name + ' | OpenUserJS.org';
+
+    //
+    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isMod = authedUser.role < 4;
+    console.log(options);
+
+    //
+    user.aboutRendered = renderMd(user.about);
+
+    // Scripts: Query
+    var scriptListQuery = Script.find();
+
+    // Scripts: Query: author=user
+    scriptListQuery.find({_authorId: user._id});
+    // scriptListQuery.find({author: user.name});
+
+    // Scripts: Query: flagged
+    // Only list flagged scripts for author and user >= moderator
+    if (options.isYou || options.isMod) {
+      // Show
+    } else {
+      // Script.flagged is undefined by default.
+      scriptListQuery.find({flagged: {$ne: true}}); 
+    }
+
+    // User scripList (count)
+    tasks.push(function (callback) {
+      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
+        if (err) {
+          callback();
+        } else {
+          options.scriptListCount = scriptListCount;
+          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
+          callback();
+        }
+      });
+    });
+
+    // User edit auth strategies
+    tasks.push(function(callback) {
+      var userStrats = user.strategies.slice(0);
+      Strategy.find({}, function (err, strats) {
+        var defaultStrategy = userStrats[userStrats.length - 1];
+        var strategy = null;
+        var name = null;
+        options.openStrategies = [];
+        options.usedStrategies = [];
+
+        // Get the strategies we have OAuth keys for
+        strats.forEach(function (strat) {
+          if (strat.name === defaultStrategy) { return; }
+
+          if (userStrats.indexOf(strat.name) > -1) {
+            options.usedStrategies.push({ 'strat' : strat.name,
+              'display' : strat.display });
+          } else {
+            options.openStrategies.push({ 'strat' : strat.name,
+              'display' : strat.display });
+          }
+        });
+
+        // Get OpenId strategies
+        if (process.env.NODE_ENV === 'production') {
+          for (name in strategies) {
+            strategy = strategies[name];
+
+            if (!strategy.oauth && name !== defaultStrategy) {
+              if (userStrats.indexOf(name) > -1) {
+                options.usedStrategies.push({ 'strat' : name,
+                  'display' : strategy.name });
+              } else {
+                options.openStrategies.push({ 'strat' : name,
+                  'display' : strategy.name });
+              }
+            }
+          }
+        }
+
+        options.defaultStrategy = strategies[defaultStrategy].name;
+        options.haveOtherStrategies = options.usedStrategies.length > 0;
+
+        callback();
+      });
+    });
+
+    // Setup the flag user UI
+    tasks.push(setupFlagUserUITask(options));
+
+    function preRender(){};
+    function render(){ res.render('pages/userEditPreferencesPage', options); }
+    function asyncComplete(){ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};
 
 // Let a user edit their account
 exports.edit = function (req, res) {
