@@ -312,7 +312,6 @@ exports.userEditPreferencesPage = function (req, res, next) {
     //
     options.isYou = authedUser && user && authedUser._id == user._id;
     options.isMod = authedUser.role < 4;
-    console.log(options);
 
     //
     user.aboutRendered = renderMd(user.about);
