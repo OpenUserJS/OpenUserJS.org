@@ -50,11 +50,20 @@ var parseSearchConditions = function(q, prefixSearchFields, fullSearchFields) {
 };
 exports.parseSearchConditions = parseSearchConditions;
 
-exports.parseScriptSearchQuery = function(scriptsQuery, query) {
+exports.parseScriptSearchQuery = function(scriptListQuery, query) {
   var q = unescape(query);
   var partialWordMatchFields = ['name', 'author', 'about', 'meta.description'];
   var fullWordMatchFields = ['meta.include', 'meta.match'];
-  scriptsQuery.find({
+  scriptListQuery.find({
+    '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
+  });
+}
+
+exports.parseGroupSearchQuery = function(groupListQuery, query) {
+  var q = unescape(query);
+  var partialWordMatchFields = ['name'];
+  var fullWordMatchFields = [];
+  groupListQuery.find({
     '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
   });
 }

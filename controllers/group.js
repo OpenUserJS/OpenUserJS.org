@@ -1,5 +1,6 @@
 var async = require('async');
 var _ = require('underscore');
+var url = require("url");
 
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
@@ -128,16 +129,78 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
 
 // list groups
 exports.list = function (req, res) {
-  var user = req.session.user;
-  var options = { title: 'Script Groups', username: user ? user.name : '' };
+  var authedUser = req.session.user;
 
-  req.route.params[0] = 25;
+  //
+  var options = {};
+  var tasks = [];
 
-  modelsList.listGroups({}, req.route.params, '/groups',
-    function (groupsList) {
-      options.groupsList = groupsList;
-      res.render('groups', options);
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
+
+  //
+  options.title = 'Groups | OpenUserJS.org';
+
+  // Scripts: Query
+  var groupListQuery = Group.find();
+
+  // Scripts: Query: Search
+  if (req.query.q)
+    modelQuery.parseGroupSearchQuery(groupListQuery, req.query.q);
+
+  // Scripts: Query: Sort
+  modelQuery.parseModelListSort(Group, groupListQuery, req.query.orderBy, req.query.orderDir, function(){
+    groupListQuery.sort('-rating name');
   });
+  
+
+  // Scripts: Pagination
+  options.groupListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
+  options.groupListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 25;
+  var groupListSkipFrom = (options.groupListCurrentPage * options.groupListLimit) - options.groupListLimit;
+  groupListQuery
+    .skip(groupListSkipFrom)
+    .limit(options.groupListLimit);
+
+  // Groups
+  tasks.push(function (callback) {
+    groupListQuery.exec(function(err, groupDataList){
+      if (err) {
+        callback();
+      } else {
+        options.groupList = _.map(groupDataList, modelParser.parseGroup);
+        callback();
+      }
+    });
+  });
+  tasks.push(function (callback) {
+    Group.count(groupListQuery._conditions, function(err, groupListCount){
+      if (err) {
+        callback();
+      } else {
+        options.groupListCount = groupListCount;
+        callback();
+      }
+    });
+  });
+
+  function preRender(){
+    options.pagination = paginateTemplate({
+      currentPage: options.groupListCurrentPage,
+      lastPage: options.groupListNumPages,
+      urlFn: function(p) {
+        var parseQueryString = true;
+        var u = url.parse(req.url, parseQueryString);
+        u.query.p = p;
+        delete u.search; // http://stackoverflow.com/a/7517673/947742
+        return url.format(u);
+      }
+    });
+  };
+  function render(){ res.render('pages/groupListPage', options); }
+  function asyncComplete(){ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
 };
 
 // list the scripts in a group
@@ -234,7 +297,19 @@ exports.view = function (req, res, next) {
       });
     });
 
-    function preRender(){};
+    function preRender(){
+      options.pagination = paginateTemplate({
+        currentPage: options.scriptListCurrentPage,
+        lastPage: options.scriptListNumPages,
+        urlFn: function(p) {
+          var parseQueryString = true;
+          var u = url.parse(req.url, parseQueryString);
+          u.query.p = p;
+          delete u.search; // http://stackoverflow.com/a/7517673/947742
+          return url.format(u);
+        }
+      });
+    };
     function render(){ res.render('pages/groupScriptListPage', options); }
     function asyncComplete(){ preRender(); render(); }
     async.parallel(tasks, asyncComplete);

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="/css/common.css">
+  <style type="text/css"  media="screen">
+    .table tbody tr {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-8">
+        <h2 class="page-heading">
+          Groups
+        </h2>
+        {{> includes/groupList.html }}
+        <div class="text-center">
+          {{{pagination}}}
+        </div>
+        
+      </div>
+      <div class="col-sm-4">
+        <div class="panel">
+          <div class="input-group col-xs-12">
+            {{> includes/searchBar.html }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  <script>
+    $(document).ready(function(){
+      // https://stackoverflow.com/questions/4904938/link-entire-table-row
+      $('table.table tbody tr').click(function(e){
+        if ($(e.target).is("a,input")) // anything else you don't want to trigger the click
+          return;
+
+        var a = $(this).find('a');
+        if (!a) return;
+        var url = a.attr('href');
+        if (!url) return;
+        window.location = url; 
+        e.stopPropagation();
+      })
+    });
+  </script>
+</body>
+</html>
