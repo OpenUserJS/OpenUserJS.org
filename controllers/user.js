@@ -83,7 +83,7 @@ exports.view = function (req, res, next) {
 
     //
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.isMod = authedUser.role < 4;
+    options.isMod = authedUser && authedUser.role < 4;
 
     //
     user.aboutRendered = renderMd(user.about);
@@ -150,7 +150,7 @@ exports.userScriptListPage = function(req, res, next) {
 
     //
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.isMod = authedUser.role < 4;
+    options.isMod = authedUser && authedUser.role < 4;
 
     // Scripts: Query
     var scriptListQuery = Script.find();
@@ -248,7 +248,7 @@ exports.userEditProfilePage = function (req, res, next) {
 
     //
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.isMod = authedUser.role < 4;
+    options.isMod = authedUser && authedUser.role < 4;
 
     //
     user.aboutRendered = renderMd(user.about);
@@ -311,7 +311,7 @@ exports.userEditPreferencesPage = function (req, res, next) {
 
     //
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.isMod = authedUser.role < 4;
+    options.isMod = authedUser && authedUser.role < 4;
 
     //
     user.aboutRendered = renderMd(user.about);
