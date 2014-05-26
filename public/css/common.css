@@ -126,21 +126,17 @@ h2.page-heading {
   position: fixed;
 }
 
-#reply-control.open {
-}
-
-#reply-control .md-editor {
-  
+.md-editor {
   height: 300px;
 }
 
-#reply-control textarea {
+textarea {
   width: 100%;
   height: 100%;
 }
 
-#reply-control .md-editor textarea,
-#reply-control .md-editor .md-preview {
+.md-editor textarea,
+.md-editor .md-preview {
   height: calc(100% - 42px);
 }
 
@@ -180,4 +176,8 @@ h2.page-heading {
 .form-register {
   max-width: 600px;
   margin: 0 auto;
+}
+
+input#discussion-topic {
+  width: calc(100% - 18px - 4px);
 }

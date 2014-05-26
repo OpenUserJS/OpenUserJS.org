@@ -273,12 +273,44 @@ exports.show = function (req, res, next) {
 
 // UI to create a new topic
 exports.newTopic = function (req, res, next) {
-  var category = req.route.params.category;
-  var user = req.session.user;
+  var authedUser = req.session.user;
 
-  if (!user) { return next(); }
+  if (!authedUser)
+    return redirect('/login');
 
-  res.render('discussionCreate', { username: user.name, category: category });
+  var categorySlug = req.route.params.category;
+
+  var category = _.findWhere(categories, {slug: categorySlug});
+  if (!category)
+    return next();
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
+
+  //
+  options.category = category;
+
+  // Metadata
+  options.title = 'OpenUserJS.org';
+  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
+  var pageMetaKeywords = ['userscript', 'greasemonkey'];
+  pageMetaKeywords.concat(['web browser']);
+  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+
+  //--- Tasks
+  // ...
+
+  //---
+  function preRender(){};
+  function render(){ res.render('pages/newDiscussionPage', options); }
+  function asyncComplete(){ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
+  return;
 };
 
 // Does all the work of submitting a new comment and updating the discussion
