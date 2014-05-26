@@ -105,11 +105,12 @@ function app_route(path) {
 }
 
 // Authentication routes
-app.post('/auth/', authentication.auth);
-app.get('/auth/:strategy', authentication.auth);
-app.get('/auth/:strategy/callback/', authentication.callback);
-app.get('/register', main.register);
-app.get('/logout', main.logout);
+app_route('/auth/').post(authentication.auth);
+app_route('/auth/:strategy').get(authentication.auth);
+app_route('/auth/:strategy/callback/').get(authentication.callback);
+app_route('/login').get(main.register);
+app_route('/register').get(main.register);
+app_route('/logout').get(main.logout);
 
 // User routes
 app_route('/users/:username').get(user.view);
