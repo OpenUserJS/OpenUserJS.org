@@ -140,7 +140,7 @@ h2.page-heading {
 }
 
 #reply-control .md-editor textarea,
-#reply-control .md-editor md-preview {
+#reply-control .md-editor .md-preview {
   height: calc(100% - 42px);
 }
 
