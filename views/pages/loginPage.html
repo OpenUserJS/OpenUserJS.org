@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="/css/common.css">
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <form action="/auth/" method="post" class="form-signin">
+        <h3>
+          Login
+          <p class="small">Login with your prefered OAuth/OpenID service.</p>
+        </h3>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username">
+          <span class="input-group-btn">
+            <button class="btn btn-info" type="submit">Sign In <i class="fa fa-sign-in fa-fw"></i></button>
+          </span>
+        </div>
+      </form>
+    </div>
+    <div class="row">
+      <form action="/auth/" method="post" class="form-register">
+        <h3>
+          Register
+          <p class="small">Sign up with a OAuth/OpenID service.</p>
+        </h3>
+        
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username">
+          <span class="input-group-btn">
+            <select name="auth" class="btn btn-addon-default" style="border-radius: 0px;">
+            {{#strategies}}
+              <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}>{{display}}</option>
+            {{/strategies}}
+            </select>
+          </span>
+          <span class="input-group-btn">
+            <button class="btn btn-info" type="submit">Register <i class="fa fa-sign-in fa-fw"></i></button>
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

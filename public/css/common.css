@@ -164,3 +164,20 @@ h2.page-heading {
 .topic-post-contents {
   margin: .5em -15px;
 }
+
+.btn-addon-default {
+  color: #333333;
+  background-color: #eeeeee;
+  border: 1px solid #cccccc;
+}
+
+.btn-addon-default:hover,
+.btn-addon-default:focus {
+  color: #333;
+}
+
+.form-signin,
+.form-register {
+  max-width: 600px;
+  margin: 0 auto;
+}

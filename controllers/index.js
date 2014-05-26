@@ -208,36 +208,75 @@ exports.toolSearch = function (req, res) {
 
 // UI for user registration
 exports.register = function (req, res) {
-  var options = { 'title': 'Register', 'wantname': req.session.username };
+  var authedUser = req.session.user;
 
-  if (req.session.user) { return res.redirect('/'); }
+  // If already logged in, goto the front page.
+  if (authedUser)
+    return res.redirect('/');
 
+  //
+  var options = {};
+  var tasks = [];
+
+  //
+  options.title = 'Register | OpenUserJS.org';
+  options.pageMetaDescription = 'Login to OpenUserJS.org using OAuth.';
+  var pageMetaKeywords = ['login', 'register'];
+  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
+
+  //
+  options.wantname = req.session.username;
   delete req.session.username;
 
-  Strategy.find({}, function (err, strats) {
-    var strategy = null;
-    var name = null;
-    options.strategies = [];
+  //
+  options.strategies = [];
 
-    // Get the strategies we have OAuth keys for
-    strats.forEach(function (strat) {
-      options.strategies.push({ 'strat' : strat.name,
-        'display' : strat.display });
-    });
-
-    // Get OpenId strategies
-    if (process.env.NODE_ENV === 'production') {
-      for (name in strategies) {
-        strategy = strategies[name];
-        if (!strategy.oauth) {
-          options.strategies.push({ 'strat' : name,
-            'display' : strategy.name });
-        }
+  // Get OpenId strategies
+  if (process.env.NODE_ENV === 'production') {
+    _.each(strategies, function(strategy, strategyKey){
+      if (!strategy.oauth) {
+        options.strategies.push({
+          'strat': strategyKey,
+          'display': strategy.name
+        });
       }
-    }
+    });
+  }
 
-    res.render('register', options);
+  //
+  tasks.push(function (callback) {
+    Strategy.find({}, function (err, availableStrategies) {
+      if (err) {
+        callback();
+      } else {
+        // Get the strategies we have OAuth keys for
+        availableStrategies.forEach(function (strategy) {
+          options.strategies.push({
+            'strat': strategy.name,
+            'display': strategy.display
+          });
+        });
+        callback();
+      }
+    });
   });
+
+  function preRender(){
+    // Sort the strategies
+    options.strategies = _.sortBy(options.strategies, function(strategy){ return strategy.display; });
+
+    // Prefer GitHub
+    var githubStrategy = _.findWhere(options.strategies, {strat: 'github'});
+    if (githubStrategy)
+      githubStrategy.selected = true;
+  };
+  function render(){ res.render('pages/loginPage', options); }
+  function asyncComplete(){ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
 };
 
 exports.logout = function (req, res) {
