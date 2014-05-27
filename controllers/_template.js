@@ -82,12 +82,12 @@ exports.example = function (req, res, next) {
 
   // Pagination
   var pagination = getDefaultPagination(req);
-  pagination.applyToQuery(discussionListQuery);
+  pagination.applyToQuery(scriptListQuery);
 
   //--- Tasks
 
   // Pagination
-  tasks.push(pagination.getCountTask(discussionListQuery));
+  tasks.push(pagination.getCountTask(scriptListQuery));
   
   // Scripts
   tasks.push(function (callback) {
@@ -96,17 +96,6 @@ exports.example = function (req, res, next) {
         callback();
       } else {
         options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-        callback();
-      }
-    });
-  });
-  tasks.push(function (callback) {
-    Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-      if (err) {
-        callback();
-      } else {
-        options.scriptListCount = scriptListCount;
-        options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
         callback();
       }
     });
