@@ -2,7 +2,6 @@ var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
 var _ = require('underscore');
-var url = require("url");
 
 var Flag = require('../models/flag').Flag;
 var Script = require('../models/script').Script;
@@ -18,9 +17,8 @@ var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var strategies = require('./strategies.json');
 var renderMd = require('../libs/markdown').renderMd;
-var helpers = require('../libs/helpers');
-var nil = helpers.nil;
-var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
+var nil = require('../libs/helpers').nil;
+var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 var setupFlagUserUITask = function(options) {
   var user = options.user;
@@ -180,13 +178,14 @@ exports.userScriptListPage = function(req, res, next) {
       scriptListQuery.sort('-rating -installs -updated');
     });
 
-    // Scripts: Pagination
-    options.scriptListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-    options.scriptListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-    var scriptListSkipFrom = (options.scriptListCurrentPage * options.scriptListLimit) - options.scriptListLimit;
-    scriptListQuery
-      .skip(scriptListSkipFrom)
-      .limit(options.scriptListLimit);
+    // Pagination
+    var pagination = getDefaultPagination(req);
+    pagination.applyToQuery(scriptListQuery);
+
+    //--- Tasks
+
+    // Pagination
+    tasks.push(pagination.getCountTask(scriptListQuery));
 
     // User scripList
     tasks.push(function (callback) {
@@ -212,17 +211,8 @@ exports.userScriptListPage = function(req, res, next) {
     });
 
     function preRender(){
-      options.pagination = paginateTemplate({
-        currentPage: options.scriptListCurrentPage,
-        lastPage: options.scriptListNumPages,
-        urlFn: function(p) {
-          var parseQueryString = true;
-          var u = url.parse(req.url, parseQueryString);
-          u.query.p = p;
-          delete u.search; // http://stackoverflow.com/a/7517673/947742
-          return url.format(u);
-        }
-      });
+      // Pagination
+      options.paginationRendered = pagination.renderDefault(req);
     };
     function render(){ res.render('pages/userScriptListPage', options); }
     function asyncComplete(){ preRender(); render(); }

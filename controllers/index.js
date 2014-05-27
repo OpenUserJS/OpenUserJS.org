@@ -1,6 +1,5 @@
 var async = require('async');
 var _ = require('underscore');
-var url = require("url");
 
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
@@ -12,8 +11,7 @@ var modelsList = require('../libs/modelsList');
 var userRoles = require('../models/userRoles.json');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
-var helpers = require('../libs/helpers');
-var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
+var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 // The home page has scripts and groups in a sidebar
 exports.home = function (req, res) {
@@ -48,19 +46,19 @@ exports.home = function (req, res) {
     scriptListQuery.sort('-rating -installs -updated');
   });
   
-
-  // Scripts: Pagination
-  options.scriptListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-  options.scriptListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-  var scriptListSkipFrom = (options.scriptListCurrentPage * options.scriptListLimit) - options.scriptListLimit;
-  scriptListQuery
-    .skip(scriptListSkipFrom)
-    .limit(options.scriptListLimit);
+  // Pagination
+  var pagination = getDefaultPagination(req);
+  pagination.applyToQuery(scriptListQuery);
 
   // Groups: Query
   var groupListQuery = Group.find();
   groupListQuery
     .limit(25);
+
+  //--- Tasks
+
+  // Pagination
+  tasks.push(pagination.getCountTask(scriptListQuery));
 
   // Scripts
   tasks.push(function (callback) {
@@ -69,17 +67,6 @@ exports.home = function (req, res) {
         callback();
       } else {
         options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-        callback();
-      }
-    });
-  });
-  tasks.push(function (callback) {
-    Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-      if (err) {
-        callback();
-      } else {
-        options.scriptListCount = scriptListCount;
-        options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
         callback();
       }
     });
@@ -108,17 +95,8 @@ exports.home = function (req, res) {
   });
 
   function preRender(){
-    options.pagination = paginateTemplate({
-      currentPage: options.scriptListCurrentPage,
-      lastPage: options.scriptListNumPages,
-      urlFn: function(p) {
-        var parseQueryString = true;
-        var u = url.parse(req.url, parseQueryString);
-        u.query.p = p;
-        delete u.search; // http://stackoverflow.com/a/7517673/947742
-        return url.format(u);
-      }
-    });
+    // Pagination
+    options.paginationRendered = pagination.renderDefault(req);
   };
   function render(){ res.render('pages/scriptListPage', options); }
   function asyncComplete(){ preRender(); render(); }

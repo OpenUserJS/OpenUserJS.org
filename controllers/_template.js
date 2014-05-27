@@ -18,7 +18,7 @@ var modelQuery = require('../libs/modelQuery');
 var helpers = require('../libs/helpers');
 
 // Generate a bootstrap3 pagination widget.
-var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
+var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 
 //--- Views
@@ -84,15 +84,14 @@ exports.example = function (req, res, next) {
   });
   
 
-  // Scripts: Pagination
-  options.scriptListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-  options.scriptListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-  var scriptListSkipFrom = (options.scriptListCurrentPage * options.scriptListLimit) - options.scriptListLimit;
-  scriptListQuery
-    .skip(scriptListSkipFrom)
-    .limit(options.scriptListLimit);
+  // Pagination
+  var pagination = getDefaultPagination(req);
+  pagination.applyToQuery(discussionListQuery);
 
   //--- Tasks
+
+  // Pagination
+  tasks.push(pagination.getCountTask(discussionListQuery));
   
   // Scripts
   tasks.push(function (callback) {

@@ -1,6 +1,5 @@
 var async = require('async');
 var _ = require('underscore');
-var url = require("url");
 
 var Comment = require('../models/comment').Comment;
 var Discussion = require('../models/discussion').Discussion;
@@ -10,8 +9,6 @@ var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
-var helpers = require('../libs/helpers');
-var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 var categories = [
