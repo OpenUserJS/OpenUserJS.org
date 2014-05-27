@@ -201,13 +201,14 @@ exports.show = function (req, res, next) {
       commentListQuery.sort('created -rating');
     });
 
-    // Comments: Pagination
-    options.commentListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-    options.commentListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-    var commentListSkipFrom = (options.commentListCurrentPage * options.commentListLimit) - options.commentListLimit;
-    commentListQuery
-      .skip(commentListSkipFrom)
-      .limit(options.commentListLimit);
+    // Pagination
+    var pagination = getDefaultPagination(req);
+    pagination.applyToQuery(commentListQuery);
+
+    //--- Tasks
+
+    // Pagination
+    tasks.push(pagination.getCountTask(commentListQuery));
 
     // Comments
     tasks.push(function (callback) {
@@ -223,31 +224,10 @@ exports.show = function (req, res, next) {
         }
       });
     });
-    tasks.push(function (callback) {
-      Comment.count(commentListQuery._conditions, function(err, commentListCount){
-        if (err) {
-          callback();
-        } else {
-          options.commentListCount = commentListCount;
-          options.commentListNumPages = Math.ceil(options.commentListCount / options.commentListLimit) || 1;
-          callback();
-        }
-      });
-    });
 
     function preRender(){
       // Pagination
-      options.pagination = paginateTemplate({
-        currentPage: options.commentListCurrentPage,
-        lastPage: options.commentListNumPages,
-        urlFn: function(p) {
-          var parseQueryString = true;
-          var u = url.parse(req.url, parseQueryString);
-          u.query.p = p;
-          delete u.search; // http://stackoverflow.com/a/7517673/947742
-          return url.format(u);
-        }
-      });
+      options.paginationRendered = pagination.renderDefault(req);
 
       // Render
       _.map(options.commentList, modelParser.renderComment);
