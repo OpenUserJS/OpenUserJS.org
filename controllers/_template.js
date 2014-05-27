@@ -113,7 +113,10 @@ exports.example = function (req, res, next) {
   });
 
   //---
-  function preRender(){};
+  function preRender(){
+    // Pagination
+    options.paginationRendered = pagination.renderDefault(req);
+  };
   function render(){ res.render('pages/_templatePage', options); }
   function asyncComplete(){ preRender(); render(); }
   async.parallel(tasks, asyncComplete);
