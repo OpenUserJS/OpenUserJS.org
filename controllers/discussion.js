@@ -78,7 +78,7 @@ exports.list = function (req, res, next) {
     modelQuery.parseDiscussionSearchQuery(discussionListQuery, req.query.q);
 
   // Scripts: Query: Sort
-  modelQuery.parseModelListSort(Discussion, discussionListQuery, req.query.orderBy, req.query.orderDir, function(){
+  modelQuery.parseModelListSort(discussionListQuery, req.query.orderBy, req.query.orderDir, function(){
     discussionListQuery.sort('-updated -rating');
   });
 
@@ -194,7 +194,7 @@ exports.show = function (req, res, next) {
       modelQuery.parseCommentSearchQuery(commentListQuery, req.query.q);
 
     // Comments: Query: Sort
-    modelQuery.parseModelListSort(Comment, commentListQuery, req.query.orderBy, req.query.orderDir, function(){
+    modelQuery.parseModelListSort(commentListQuery, req.query.orderBy, req.query.orderDir, function(){
       commentListQuery.sort('created -rating');
     });
 

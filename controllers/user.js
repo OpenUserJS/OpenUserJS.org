@@ -174,7 +174,7 @@ exports.userScriptListPage = function(req, res, next) {
       modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
 
     // Scripts: Query: Sort
-    modelQuery.parseModelListSort(Script, scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
+    modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
       scriptListQuery.sort('-rating -installs -updated');
     });
 
