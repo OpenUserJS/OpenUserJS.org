@@ -1,6 +1,5 @@
 var async = require('async');
 var _ = require('underscore');
-var url = require("url");
 
 //--- Models
 var Group = require('../models/group').Group;
@@ -13,9 +12,6 @@ var modelParser = require('../libs/modelParser');
 
 // Tools for parsing req.query.q and applying it to a mongoose query.
 var modelQuery = require('../libs/modelQuery');
-
-// helpers.limitMin and helpers.limitRange are used with pagination.
-var helpers = require('../libs/helpers');
 
 // Generate a bootstrap3 pagination widget.
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
