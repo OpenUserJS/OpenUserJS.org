@@ -1,3 +1,5 @@
+var url = require("url");
+
 var months = [
   'Jan',
   'Feb',
@@ -91,4 +93,12 @@ exports.limitRange = function(min, x, max) {
 
 exports.limitMin = function(min, x) {
   return Math.max(x, min);
+};
+
+exports.setUrlQueryValue = function(baseUrl, queryVarKey, queryVarValue) {
+  var parseQueryString = true;
+  var u = url.parse(baseUrl, parseQueryString);
+  u.query[queryVarKey] = queryVarValue;
+  delete u.search; // http://stackoverflow.com/a/7517673/947742
+  return url.format(u);
 };

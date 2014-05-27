@@ -12,6 +12,7 @@ var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var helpers = require('../libs/helpers');
 var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
+var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 var categories = [
   {
@@ -84,13 +85,14 @@ exports.list = function (req, res, next) {
     discussionListQuery.sort('-updated -rating');
   });
 
-  // Scripts: Pagination
-  options.discussionListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-  options.discussionListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-  var discussionListSkipFrom = (options.discussionListCurrentPage * options.discussionListLimit) - options.discussionListLimit;
-  discussionListQuery
-    .skip(discussionListSkipFrom)
-    .limit(options.discussionListLimit);
+  // Pagination
+  var pagination = getDefaultPagination(req);
+  pagination.applyToQuery(discussionListQuery);
+
+  //--- Tasks
+
+  // Pagination
+  tasks.push(pagination.getCountTask(discussionListQuery));
 
   // User scripList
   tasks.push(function (callback) {
@@ -103,31 +105,16 @@ exports.list = function (req, res, next) {
       }
     });
   });
-  tasks.push(function (callback) {
-    Discussion.count(discussionListQuery._conditions, function(err, discussionListCount){
-      if (err) {
-        callback();
-      } else {
-        options.discussionListCount = discussionListCount;
-        options.discussionListNumPages = Math.ceil(options.discussionListCount / options.discussionListLimit) || 1;
-        callback();
-      }
-    });
-  });
+
+  var getPageUrlFn = function(baseUrl, queryVarName) {
+    return function(p) {
+      return replaceUrlQueryVar(baseUrl, queryVarName, p);
+    };
+  };
 
   function preRender(){
     // Pagination
-    options.pagination = paginateTemplate({
-      currentPage: options.discussionListCurrentPage,
-      lastPage: options.discussionListNumPages,
-      urlFn: function(p) {
-        var parseQueryString = true;
-        var u = url.parse(req.url, parseQueryString);
-        u.query.p = p;
-        delete u.search; // http://stackoverflow.com/a/7517673/947742
-        return url.format(u);
-      }
-    });
+    options.paginationRendered = pagination.renderDefault(req);
   };
   function render(){ res.render('pages/discussionListPage', options); }
   function asyncComplete(){ preRender(); render(); }

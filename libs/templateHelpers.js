@@ -1,5 +1,8 @@
+var countTask = require('../libs/tasks').countTask;
+var helpers = require('../libs/helpers');
 
-exports.paginateTemplate = function(opts) {
+
+var paginateTemplate = function(opts) {
   // Required
   var currentPage = opts.currentPage;
   var lastPage = opts.lastPage;
@@ -39,4 +42,52 @@ exports.paginateTemplate = function(opts) {
   }
   html += '</ul>';
   return html;
-}
+};
+exports.paginateTemplate = paginateTemplate;
+
+var newPagination = function(currentPage, itemsPerPage) {
+  // Options
+  var maxItemsPerPage = 100;
+  var defaultItemsPerPage = 25;
+
+  //
+  var pagination = {
+    currentPage: null,
+    itemsPerPage: null,
+    startIndex: null,
+    numItems: null,
+  };
+  pagination.applyToQuery = function(modelListQuery) {
+    pagination.startIndex = (pagination.currentPage * pagination.itemsPerPage) - pagination.itemsPerPage;
+    modelListQuery
+      .skip(pagination.startIndex)
+      .limit(pagination.itemsPerPage);
+  };
+  pagination.getCountTask = function(modelListQuery) {
+    return countTask(modelListQuery, pagination, 'numItems');
+  };
+  pagination.render = function() {
+    return paginateTemplate(pagination);
+  };
+
+  //
+  pagination.currentPage = currentPage ? helpers.limitMin(1, currentPage) : 1;
+  pagination.itemsPerPage = itemsPerPage ? helpers.limitRange(1, itemsPerPage, maxItemsPerPage) : defaultItemsPerPage;
+  
+  return pagination;
+};
+exports.newPagination = newPagination;
+
+
+var getDefaultPagination = function(req) {
+  var pagination = newPagination(req.query.p, req.query.limit);
+  pagination.renderDefault = function(req) {
+    pagination.lastPage = Math.ceil(pagination.numItems / pagination.itemsPerPage) || 1;
+    pagination.urlFn = function(p) {
+      return helpers.setUrlQueryValue(req.url, 'p', p);
+    };
+    return pagination.render();
+  };
+  return pagination;
+};
+exports.getDefaultPagination = getDefaultPagination;
