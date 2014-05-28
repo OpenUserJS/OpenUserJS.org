@@ -1,5 +1,7 @@
 var _ = require('underscore');
 
+var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
+
 var orderDirs = ['asc', 'desc'];
 var parseModelListSort = function(modelListQuery, orderBy, orderDir, defaultSortFn) {
   if (orderBy) {
@@ -50,39 +52,75 @@ var parseSearchConditions = function(q, prefixSearchFields, fullSearchFields) {
 };
 exports.parseSearchConditions = parseSearchConditions;
 
-exports.parseScriptSearchQuery = function(scriptListQuery, query) {
+var parseScriptSearchQuery = function(scriptListQuery, query) {
   var q = unescape(query);
   var partialWordMatchFields = ['name', 'author', 'about', 'meta.description'];
   var fullWordMatchFields = ['meta.include', 'meta.match'];
   scriptListQuery.find({
     '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
   });
-}
+};
+exports.parseScriptSearchQuery = parseScriptSearchQuery;
 
-exports.parseGroupSearchQuery = function(groupListQuery, query) {
+var parseGroupSearchQuery = function(groupListQuery, query) {
   var q = unescape(query);
   var partialWordMatchFields = ['name'];
   var fullWordMatchFields = [];
   groupListQuery.find({
     '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
   });
-}
+};
+exports.parseGroupSearchQuery = parseGroupSearchQuery;
 
-exports.parseDiscussionSearchQuery = function(discussionListQuery, query) {
+var parseDiscussionSearchQuery = function(discussionListQuery, query) {
   var q = unescape(query);
   var partialWordMatchFields = ['topic'];
   var fullWordMatchFields = ['author'];
   discussionListQuery.find({
     '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
   });
-}
+};
+exports.parseDiscussionSearchQuery = parseDiscussionSearchQuery;
 
-exports.parseCommentSearchQuery = function(commentListQuery, query) {
+var parseCommentSearchQuery = function(commentListQuery, query) {
   var q = unescape(query);
   var partialWordMatchFields = ['content'];
   var fullWordMatchFields = ['author'];
   commentListQuery.find({
     '$or': parseSearchConditions(q, partialWordMatchFields, fullWordMatchFields)
   });
-}
+};
+exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
+
+exports.applyCommentListQueryDefaults = function(commentListQuery, options, req) {
+  // Comments: Query: flagged
+  // Only list flagged scripts for author and user >= moderator
+  if (options.isYou || options.isMod) {
+    // Show
+  } else {
+    // Script.flagged is undefined by default.
+    commentListQuery.find({flagged: {$ne: true}}); 
+  }
+
+  // Comments: Query: Populate
+  commentListQuery.populate({
+    path: '_authorId',
+    model: 'User',
+    select: 'name role'
+  });
+
+  // Comments: Query: Search
+  if (req.query.q)
+    parseCommentSearchQuery(commentListQuery, req.query.q);
+
+  // Comments: Query: Sort
+  parseModelListSort(commentListQuery, req.query.orderBy, req.query.orderDir, function(){
+    commentListQuery.sort('created -rating');
+  });
+
+  // Pagination
+  var pagination = getDefaultPagination(req);
+  pagination.applyToQuery(commentListQuery);
+  options.pagination = pagination;
+};

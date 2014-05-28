@@ -30,8 +30,6 @@ var categories = [
   },
 ];
 
-_.each(categories, modelParser.parseCategory);
-
 // List discussions for one of the three categories
 exports.list = function (req, res, next) {
   var authedUser = req.session.user;
@@ -51,8 +49,10 @@ exports.list = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  //
-  options.category = category;
+  // Category
+  category = options.category = modelParser.parseCategory(category);
+
+  // Metadata
   options.title = category.name + ' | OpenUserJS.org';
   options.pageMetaDescription = category.description;
   options.pageMetaKeywords = null; // seperator = ', '
@@ -144,11 +144,13 @@ exports.show = function (req, res, next) {
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.role < 4;
 
-    //
-    options.category = category;
+    // Category
+    category = options.category = modelParser.parseCategory(category);
 
-    //
+    // Discussion
     var discussion = options.discussion = modelParser.parseDiscussion(discussionData);
+
+    // Metadata
     options.title = discussion.topic + ' | OpenUserJS.org';
     options.pageMetaDescription = discussion.topic;
     options.pageMetaKeywords = null; // seperator = ', '
@@ -197,16 +199,15 @@ exports.show = function (req, res, next) {
     tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
     function preRender(){
+      // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
       _.map(options.commentList, function(comment){
         comment.author = modelParser.parseUser(comment._authorId);
       });
+      _.map(options.commentList, modelParser.renderComment);
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
-
-      // Render
-      _.map(options.commentList, modelParser.renderComment);
     };
     function render(){ res.render('pages/discussionPage', options); }
     function asyncComplete(){ preRender(); render(); }

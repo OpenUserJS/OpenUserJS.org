@@ -1,14 +1,15 @@
 var async = require('async');
 var _ = require('underscore');
 
-var Script = require('../models/script').Script;
+var Comment = require('../models/comment').Comment;
 var Discussion = require('../models/discussion').Discussion;
+var Script = require('../models/script').Script;
 
 var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var scriptStorage = require('./scriptStorage');
-var discussion = require('./discussion');
+var discussionLib = require('./discussion');
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
@@ -122,44 +123,102 @@ exports.list = function (req, res, next) {
 
 // Show the discussion on an issue
 exports.view = function (req, res, next) {
-  var type = req.route.params.shift();
-  var username = req.route.params.shift().toLowerCase();
-  var namespace = req.route.params.shift();
-  var scriptname = req.route.params.shift();
-  var topic = req.route.params.shift();
-  var installName = username + '/' + (namespace ? namespace + '/' : '')
-    + scriptname;
-  var user = req.session.user;
-  var options = { username: user ? user.name : '' };
-  var category = type + '/' + installName + '/issues';
+  var authedUser = req.session.user;
 
-  Script.findOne({ installName: installName 
-    + (type === 'libs' ? '.js' : '.user.js') }, function (err, script) {
-      if (err || !script) { return next(); }
+  var type = req.route.params.type;
+  var username = req.route.params.username.toLowerCase();
+  var namespace = req.route.params.namespace;
+  var scriptname = req.route.params.scriptname;
+  var topic = req.route.params.topic;
 
-      discussion.findDiscussion(category, topic, function (discussion) {
-        if (!discussion) { return next(); }
+  var installNameSlug = username + '/' + (namespace ? namespace + '/' : '') + scriptname;
 
-        options.category = category;
-        options.topic = discussion.topic;
-        options.title = discussion.topic;
-        options.issue = true;
-        options.open = discussion.open;
-        options.canClose = user ? discussion.author === user.name
-          || script.author === user.name : false;
-        options.canOpen = user ? script.author === user.name : false;
-        options.path = discussion.path
-          + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
-        options.closeUrl = options.path + '/close';
-        options.openUrl = options.path + '/reopen';
+  Script.findOne({
+    installName: installNameSlug  + (type === 'libs' ? '.js' : '.user.js')
+  }, function (err, scriptData) {
+    if (err || !scriptData) { return next(); }
 
-        modelsList.listComments({ _discussionId: discussion._id }, 
-          req.route.params, options.path,
-          function (commentsList) {
-            options.commentsList = commentsList;
-            res.render('discussion', options);
+    //
+    var options = {};
+    var tasks = [];
+
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
+
+    // Script
+    var script = options.script = modelParser.parseScript(scriptData);
+    options.isOwner = authedUser && authedUser._id == script._authorId;
+
+    // Category
+    var category = {};
+    category.slug = type + '/' + installNameSlug + '/issues';
+    category.name = 'Issues';
+    category.description = '';
+    category = options.category = modelParser.parseCategory(category);
+    category.categoryPageUrl = script.scriptIssuesPageUrl;
+    category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
+
+    discussionLib.findDiscussion(category.slug, topic, function (discussionData) {
+      if (err || !discussionData) { return next(); }
+
+      // Discussion
+      var discussion = options.discussion = modelParser.parseDiscussion(discussionData);
+      modelParser.parseIssue(discussion);
+      options.canClose = authedUser && (authedUser.name === script.author || authedUser.name === discussion.author);
+      options.canOpen = authedUser && authedUser.name === script.author;
+
+      // CommentListQuery
+      var commentListQuery = Comment.find();
+
+      // CommentListQuery: discussion
+      commentListQuery.find({_discussionId: discussion._id});
+
+      // CommentListQuery: Defaults
+      modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
+
+      // CommentListQuery: Pagination
+      var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+
+      //--- Tasks
+
+      // Show the number of open issues
+      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategory, open: true });
+      tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
+
+      // CommentListQuery: Pagination
+      tasks.push(pagination.getCountTask(commentListQuery));
+
+      // Comments
+      tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
+
+      function preRender(){
+        // Metadata
+        options.title = discussion.topic +  + ' | OpenUserJS.org';
+        options.pageMetaDescription = discussion.topic;
+        options.pageMetaKeywords = null; // seperator = ', '
+
+        // commentList
+        // commentList
+        options.commentList = _.map(options.commentList, modelParser.parseComment);
+        _.map(options.commentList, function(comment){
+          comment.author = modelParser.parseUser(comment._authorId);
         });
-      });
+        _.map(options.commentList, modelParser.renderComment);
+
+        console.log(options.commentList);
+        
+        // Script
+        options.issuesCount = pagination.numItems;
+
+        // Pagination
+        options.paginationRendered = pagination.renderDefault(req);
+      };
+      function render(){ res.render('pages/scriptIssuePage', options); }
+      function asyncComplete(){ preRender(); render(); }
+      async.parallel(tasks, asyncComplete);
+    });
   });
 };
 
@@ -193,7 +252,7 @@ exports.open = function (req, res, next) {
       });
     }
 
-    discussion.postTopic(user, category + '/issues', topic, content, true,
+    discussionLib.postTopic(user, category + '/issues', topic, content, true,
       function (discussion) {
         if (!discussion) {
           return res.redirect('/' + encodeURI(category) + '/open');
@@ -221,10 +280,10 @@ exports.comment = function (req, res, next) {
 
       if (err || !script) { return next(); }
 
-      discussion.findDiscussion(category, topic, function (issue) {
+      discussionLib.findDiscussion(category, topic, function (issue) {
         if (!issue) { return next(); }
 
-        discussion.postComment(user, issue, content, false,
+        discussionLib.postComment(user, issue, content, false,
           function (err, discussion) {
             res.redirect(encodeURI(discussion.path
               + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
@@ -250,7 +309,7 @@ exports.changeStatus = function (req, res, next) {
 
       if (err || !script) { return next(); }
 
-      discussion.findDiscussion(category, topic, function (issue) {
+      discussionLib.findDiscussion(category, topic, function (issue) {
         if (!issue) { return next(); }
 
         // Both the script author and the issue creator can close the issue

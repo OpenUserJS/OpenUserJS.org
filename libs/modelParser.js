@@ -159,6 +159,20 @@ exports.parseDiscussion = function(discussionData) {
   discussion.updatedISOFormat = discussion.updated.toISOString();
   discussion.updatedHumanized = moment(discussion.updated).fromNow();
 
+  //discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
+
+  return discussion;
+};
+
+exports.parseIssue = function(discussionData) {
+  if (discussionData === undefined) return;
+  var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
+
+  discussion.issue = true;
+  discussion.issueCloseUrl = discussion.path + '/close';
+  discussion.issueOpenUrl = discussion.path + '/reopen';
+
+
   return discussion;
 };
 

@@ -51,7 +51,7 @@ app.configure(function(){
   if (process.env.NODE_ENV !== 'production') {
     app.use(express.logger('dev'));
   }
-  
+
   app.use(express.urlencoded());
   app.use(express.json());
   app.use(express.compress());
@@ -162,6 +162,7 @@ app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
 // app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(issue.open);
+app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 
 // Issues routes: Legacy
 app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?' + '\/issues\/([^\/]+?)', ''), issue.view);
