@@ -161,7 +161,7 @@ app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 // Issues routes
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
 // app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
-app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(issue.open);
+app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(issue.open).post(issue.open);
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 
 // Issues routes: Legacy

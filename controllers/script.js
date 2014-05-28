@@ -59,8 +59,9 @@ var getScriptPageTasks = function(options) {
   //--- Tasks
 
   // Show the number of open issues
-  var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategory, open: true });
+  var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: {$ne: false} });
   tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
+
 
   // Show collaborators of the script
   if (script.meta.author && script.meta.collaborator) {

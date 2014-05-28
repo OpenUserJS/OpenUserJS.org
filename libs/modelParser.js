@@ -77,7 +77,7 @@ exports.parseScript = function(scriptData) {
 
   // Urls: Slugs
   script.authorSlug = script.author;
-  script.namespaceSlug = script.meta && script.meta.namespace && cleanFilename(script.meta.namespace);
+  script.namespaceSlug = (script.meta && script.meta.namespace) ? cleanFilename(script.meta.namespace) : '';
   script.nameSlug = cleanFilename(script.name);
   script.installNameSlug = script.authorSlug + '/' + (script.namespaceSlug ? script.namespaceSlug + '/' : '') + script.nameSlug;
   
@@ -87,9 +87,13 @@ exports.parseScript = function(scriptData) {
   script.scriptViewSourcePageUrl = getScriptViewSourcePageUrl(script);
 
   // Urls: Issues
-  script.issuesCategory = (script.isLib ? 'libs' : 'scripts') + '/' + script.installNameSlug;
-  script.scriptIssuesPageUrl = '/' + script.issuesCategory + '/issues';
-  script.scriptOpenIssuePageUrl = '/' + script.issuesCategory + '/issue/new';
+  var slug = (script.isLib ? 'libs' : 'scripts');
+  slug += '/' + script.authorSlug.toLowerCase();
+  slug += script.meta.namespace ?  '/' + script.namespaceSlug : '';
+  slug += '/' + script.nameSlug;
+  script.issuesCategorySlug = slug + '/issues';
+  script.scriptIssuesPageUrl = '/' + script.issuesCategorySlug;
+  script.scriptOpenIssuePageUrl = '/' + slug + '/issue/new';
 
   // Urls: Author
   script.scriptEditMetadataPageUrl = getScriptEditAboutPageUrl(script);

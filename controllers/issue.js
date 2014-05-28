@@ -56,9 +56,9 @@ exports.list = function (req, res, next) {
     category = options.category = modelParser.parseCategory(category);
     category.categoryPageUrl = script.scriptIssuesPageUrl;
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
+    options.category = category;
 
     // Metadata
-    options.category = category;
     options.title = script.name + ' Issues' + ' | OpenUserJS.org';
     options.pageMetaDescription = category.description;
     options.pageMetaKeywords = null; // seperator = ', '
@@ -97,7 +97,7 @@ exports.list = function (req, res, next) {
     //--- Tasks
 
     // Show the number of open issues
-    var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategory, open: true });
+    var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: {$ne: false} });
     tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
     // Pagination
@@ -159,6 +159,7 @@ exports.view = function (req, res, next) {
     category = options.category = modelParser.parseCategory(category);
     category.categoryPageUrl = script.scriptIssuesPageUrl;
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
+    options.category = category;
 
     discussionLib.findDiscussion(category.slug, topic, function (discussionData) {
       if (err || !discussionData) { return next(); }
@@ -184,7 +185,7 @@ exports.view = function (req, res, next) {
       //--- Tasks
 
       // Show the number of open issues
-      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategory, open: true });
+      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug});
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
       // CommentListQuery: Pagination
@@ -200,14 +201,11 @@ exports.view = function (req, res, next) {
         options.pageMetaKeywords = null; // seperator = ', '
 
         // commentList
-        // commentList
         options.commentList = _.map(options.commentList, modelParser.parseComment);
         _.map(options.commentList, function(comment){
           comment.author = modelParser.parseUser(comment._authorId);
         });
         _.map(options.commentList, modelParser.renderComment);
-
-        console.log(options.commentList);
         
         // Script
         options.issuesCount = pagination.numItems;
@@ -232,35 +230,64 @@ exports.open = function (req, res, next) {
   var content = req.body['comment-content'];
 
   var type = req.route.params.type;
-  var installName = scriptStorage.getInstallName(req);
-  var category = type + '/' + installName;
-  var user = req.session.user;
+  var installNameSlug = scriptStorage.getInstallName(req);
 
   Script.findOne({
-    installName: installName  + (type === 'libs' ? '.js' : '.user.js')
-  }, function (err, script) {
+    installName: installNameSlug  + (type === 'libs' ? '.js' : '.user.js')
+  }, function (err, scriptData) {
+    if (err || !scriptData) { return next(); }
 
-    if (err || !script) { return next(); }
+    //
+    var options = {};
+    var tasks = [];
 
-    if (!topic) { 
-      return res.render('discussionCreate', {
-        title: 'New Issue for ' + script.name,
-        name: script.name,
-        username: user.name,
-        category: category,
-        issue: true
-      });
-    }
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
-    discussionLib.postTopic(user, category + '/issues', topic, content, true,
-      function (discussion) {
-        if (!discussion) {
-          return res.redirect('/' + encodeURI(category) + '/open');
+    // Script
+    var script = options.script = modelParser.parseScript(scriptData);
+    options.isOwner = authedUser && authedUser._id == script._authorId;
+
+    // Category
+    var category = {};
+    category.slug = type + '/' + installNameSlug + '/issues';
+    category.name = 'Issues';
+    category.description = '';
+    category = options.category = modelParser.parseCategory(category);
+    category.categoryPageUrl = script.scriptIssuesPageUrl;
+    category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
+    options.category = category;
+
+    if (topic && content) {
+      // Issue Submission
+      discussionLib.postTopic(authedUser, category.slug, topic, content, true,
+        function (discussion) {
+          if (!discussion)
+            return res.redirect('/' + encodeURI(category) + '/open');
+
+          res.redirect(encodeURI(discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
         }
+      );
+    } else {
+      // New Issue Page
+  
 
-        res.redirect(encodeURI(discussion.path
-          + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
-    });
+      //--- Tasks
+      // ...
+
+      //---
+      function preRender(){
+        // Metadata
+        options.title = 'New Issue for ' + script.name + ' | OpenUserJS.org';
+        options.pageMetaDescription = '';
+        options.pageMetaKeywords = null; // seperator = ', '
+      };
+      function render(){ res.render('pages/scriptNewIssuePage', options); }
+      function asyncComplete(){ preRender(); render(); }
+      async.parallel(tasks, asyncComplete);
+    }
   });
 };
 
