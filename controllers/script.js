@@ -17,6 +17,7 @@ var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var renderMd = require('../libs/markdown').renderMd;
 var formatDate = require('../libs/helpers').formatDate;
+var countTask = require('../libs/tasks').countTask;
 
 // Let script controllers know this is a lib route
 exports.lib = function (controller) {
@@ -54,19 +55,12 @@ var getScriptPageTasks = function(options) {
   var script = options.script;
   var authedUser = options.authedUser;
 
-  // Show the number of open issues
-  tasks.push(function (callback) {
-    var category = (script.isLib ? 'libs' : 'scripts') + '/' + script.installNameSlug;
-    options.scriptIssuesPageUrl = '/' + category + '/issues';
-    options.scriptOpenIssuePageUrl = '/' + category + '/issue/new';
 
-    Discussion.count({ category: category + '/issues', open: true },
-      function (err, count) {
-        if (err) { count = 0; }
-        options.issuesCount = count;
-        callback();
-    });
-  });
+  //--- Tasks
+
+  // Show the number of open issues
+  var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategory, open: true });
+  tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
   // Show collaborators of the script
   if (script.meta.author && script.meta.collaborator) {

@@ -155,20 +155,15 @@ app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
 app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Issues routes
-app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
-  + '\/issues(?:\/(closed))?', ''), issue.list);
-app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
-  + '\/issues\/([^\/]+?)', ''), issue.view);
-app.get('/:type(scripts|libs)/:username/:scriptname/issue/new', issue.open);
-app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issue/new',
-  issue.open);
-app.post('/:type(scripts|libs)/:username/:scriptname/issue/new', issue.open);
-app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issue/new',
-  issue.open);
-app.post('/:type(scripts|libs)/:username/:scriptname/issues/:topic',
-  issue.comment);
-app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic',
-  issue.comment);
+app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
+// app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
+app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(issue.open);
+
+// Issues routes: Legacy
+app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?' + '\/issues\/([^\/]+?)', ''), issue.view);
+app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/open').post(issue.open);
+app.post('/:type(scripts|libs)/:username/:scriptname/issues/:topic', issue.comment);
+app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic', issue.comment);
 app.get('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
 app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
 

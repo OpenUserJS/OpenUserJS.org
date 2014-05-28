@@ -30,10 +30,7 @@ var categories = [
   },
 ];
 
-_.each(categories, function(category){
-  category.categoryPageUrl = '/' + category.slug;
-  category.categoryPostDiscussionPageUrl = '/post/' + category.slug;
-});
+_.each(categories, modelParser.parseCategory);
 
 // List discussions for one of the three categories
 exports.list = function (req, res, next) {

@@ -2,6 +2,7 @@ var moment = require('moment');
 
 var userRoles = require('../models/userRoles.json');
 var renderMd = require('../libs/markdown').renderMd;
+var cleanFilename = require('../libs/helpers').cleanFilename;
 
 
 moment.lang('en', {
@@ -74,10 +75,21 @@ exports.parseScript = function(scriptData) {
   script.votesPercent = votesRatio * 100;
   script.flagsPercent = flagsRatio * 100;
 
+  // Urls: Slugs
+  script.authorSlug = script.author;
+  script.namespaceSlug = script.meta && script.meta.namespace && cleanFilename(script.meta.namespace);
+  script.nameSlug = cleanFilename(script.name);
+  script.installNameSlug = script.authorSlug + '/' + (script.namespaceSlug ? script.namespaceSlug + '/' : '') + script.nameSlug;
+  
   // Urls: Public
   script.scriptPageUrl = getScriptPageUrl(script);
   script.scriptInstallPageUrl = getScriptInstallPageUrl(script);
   script.scriptViewSourcePageUrl = getScriptViewSourcePageUrl(script);
+
+  // Urls: Issues
+  script.issuesCategory = (script.isLib ? 'libs' : 'scripts') + '/' + script.installNameSlug;
+  script.scriptIssuesPageUrl = '/' + script.issuesCategory + '/issues';
+  script.scriptOpenIssuePageUrl = '/' + script.issuesCategory + '/issue/new';
 
   // Urls: Author
   script.scriptEditMetadataPageUrl = getScriptEditAboutPageUrl(script);
@@ -151,7 +163,7 @@ exports.parseDiscussion = function(discussionData) {
 };
 
 /**
- * Discussion
+ * Comment
  */
 
 //
@@ -171,3 +183,18 @@ exports.renderComment = function(comment) {
 };
 
 
+/**
+ * Category
+ */
+
+//
+exports.parseCategory = function(categoryData) {
+  if (categoryData === undefined) return;
+  var category = categoryData.toObject ? categoryData.toObject() : categoryData;
+
+  // Urls
+  category.categoryPageUrl = '/' + category.slug;
+  category.categoryPostDiscussionPageUrl = '/post/' + category.slug;
+
+  return category;
+};
