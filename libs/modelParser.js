@@ -1,7 +1,6 @@
 var moment = require('moment');
 
 var userRoles = require('../models/userRoles.json');
-
 var renderMd = require('../libs/markdown').renderMd;
 
 
@@ -99,7 +98,10 @@ exports.parseScript = function(scriptData) {
 exports.parseUser = function(userData) {
   if (userData === undefined) return;
   var user = userData.toObject ? userData.toObject() : userData;
-
+  
+  // Role
+  user.isMod = user.role < 4;
+  user.isAdmin = user.role < 3;
   user.roleName = userRoles[user.role];
 
   // Urls: Public

@@ -1,0 +1,30 @@
+{{#adminTools}}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <i class="fa fa-fw fa-coffee"></i>
+      Admin Tools
+    </div>
+  </div>
+  <div class="panel-body">
+    <form class="form-horizontal" role="form" method="post" action="/admin/user/update">
+      <div class="form-group container-fluid">
+        <label class="col-sm-2 control-label">Role</label>
+        <div class="col-sm-8">
+          <select class="form-control" name="user[{{{user._id}}}]">
+          {{#availableRoles}}
+            <option value="{{{id}}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
+          {{/availableRoles}}
+          </select>
+        </div>
+        <input type="submit" class="col-sm-2 btn btn-default" value="Save">
+      </div>
+    </form>
+      <form method="post" action="/admin/user/update">
+        <input type="hidden" name="user[]">
+        <input type="hidden" name="remove[{{{user._id}}}]" value="true">
+        <button type="submit" class="btn disabled btn-danger col-xs-12"><i class="fa fa-trash-o"></i> Delete</button>
+    </form>
+  </div>
+</div>
+{{/adminTools}}

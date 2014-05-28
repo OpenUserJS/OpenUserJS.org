@@ -8,6 +8,7 @@ var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
 
+var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
 var RepoManager = require('../libs/repoManager');
 var scriptsList = require('../libs/modelsList');
@@ -75,7 +76,8 @@ exports.view = function (req, res, next) {
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
     //
     var user = options.user = modelParser.parseUser(userData);
@@ -87,6 +89,35 @@ exports.view = function (req, res, next) {
 
     //
     user.aboutRendered = renderMd(user.about);
+
+    // User
+    if (options.isYou) {
+      options.userTools = {};
+    }
+
+    // Mod
+    if (authedUser && authedUser.isMod && authedUser.role < user.role) {
+      //options.userTools = {}; // TODO: Support moderator edits of user profiles?
+      options.modTools = {};
+    }
+
+    // Admin
+    if (authedUser && authedUser.isAdmin && authedUser.role < user.role) {
+      options.adminTools = {};
+
+      // user.role
+      // Allow authedUser to raise target user role to the level below him.
+      var roles = _.map(userRoles, function(roleName, index){
+        return {
+          id: index,
+          name: roleName,
+          selected: index === user.role,
+        };
+      });
+      roles = roles.splice(authedUser.role + 1);
+      roles.reverse();
+      options.adminTools.availableRoles = roles;
+    }
 
     // Scripts: Query
     var scriptListQuery = Script.find();
@@ -103,6 +134,8 @@ exports.view = function (req, res, next) {
       // Script.flagged is undefined by default.
       scriptListQuery.find({flagged: {$ne: true}}); 
     }
+
+    //--- Tasks
 
     // User scripList (count)
     tasks.push(function (callback) {
@@ -143,7 +176,8 @@ exports.userScriptListPage = function(req, res, next) {
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
 
     //
@@ -238,7 +272,7 @@ exports.userEditProfilePage = function (req, res, next) {
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
+    options.isMod = authedUser && authedUser.isMod;
 
     //
     var user = options.user = modelParser.parseUser(userData);
