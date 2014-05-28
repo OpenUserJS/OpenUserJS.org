@@ -2,6 +2,20 @@ var _ = require('underscore');
 
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
+var findOrDefaultIfNull = function(query, key, value, defaultValue) {
+  var conditions = [];
+  var condition = {};
+  condition[key] = value;
+  conditions.push(condition);
+  if (value == defaultValue) {
+    condition = {};
+    condition[key] = null;
+    conditions.push(condition);
+  }
+  query.find({$or: conditions});
+};
+exports.findOrDefaultIfNull = findOrDefaultIfNull;
+
 var orderDirs = ['asc', 'desc'];
 var parseModelListSort = function(modelListQuery, orderBy, orderDir, defaultSortFn) {
   if (orderBy) {

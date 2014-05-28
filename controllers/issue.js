@@ -70,7 +70,7 @@ exports.list = function (req, res, next) {
     discussionListQuery.find({category: category.slug});
 
     // Discussion: Query: open
-    discussionListQuery.find({open: options.openIssuesOnly});
+    modelQuery.findOrDefaultIfNull(discussionListQuery, 'open', options.openIssuesOnly, true);
 
     // Discussion: Query: flagged
     // Only list flagged scripts for author and user >= moderator
@@ -185,7 +185,7 @@ exports.view = function (req, res, next) {
       //--- Tasks
 
       // Show the number of open issues
-      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug});
+      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: {$ne: false} });
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
       // CommentListQuery: Pagination
