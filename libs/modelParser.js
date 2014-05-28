@@ -173,6 +173,7 @@ exports.parseIssue = function(discussionData) {
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
 
   discussion.issue = true;
+  discussion.open = (discussion.open === undefined || discussion.open === null) ? true : discussion.open;
   discussion.issueCloseUrl = discussion.path + '/close';
   discussion.issueOpenUrl = discussion.path + '/reopen';
 
