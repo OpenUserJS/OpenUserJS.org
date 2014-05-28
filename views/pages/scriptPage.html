@@ -3,11 +3,7 @@
 <head>
   <title>{{title}}</title>
   {{> includes/head.html }}
-  <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="/css/scriptPage.css">
-  <style>
-  
-  </style>
 </head>
 <body>
   {{> includes/header.html }}
@@ -18,9 +14,24 @@
         <div class="row">
           <div class="col-xs-12">
             {{> includes/scriptPageHeader.html }}
-            {{#meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{meta.description}}</p>{{/meta.description}}
-            {{#meta.copyright}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{meta.copyright}}</p>{{/meta.copyright}}
-            {{#meta.homepage}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{meta.homepage}}">{{meta.homepage}}</a></p>{{/meta.homepage}}
+            <div class="script-meta">
+              {{#meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{meta.description}}</p>{{/meta.description}}
+              {{#meta.homepage}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{meta.homepage}}">{{meta.homepage}}</a></p>{{/meta.homepage}}
+              {{#meta.copyright}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{meta.copyright}}</p>{{/meta.copyright}}
+              {{#meta.licence}}<p><i class="fa fa-fw fa-legal"></i> <b>Licence:</b> {{meta.licence}}</p>{{/meta.licence}}
+              {{#meta.collaborator}}<p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{.}}</p>{{/meta.collaborator}}
+              {{#fork}}
+              <p><b>Fork History:</b></p>
+              <ul>
+                {{#.}}
+                <li>
+                  <i class="fa fa-fw fa-fork"></i> <a href="/script/{{{url}}">{{author}}/{{name}}</a>
+                </li>
+                {{/.}}
+              </ul>
+              {{/fork}}
+            </div>
+            
             {{#aboutRendered}}<div class="user-content">{{{aboutRendered}}}</div>{{/aboutRendered}}
           </div>
         </div>

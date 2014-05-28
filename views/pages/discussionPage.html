@@ -3,7 +3,6 @@
 <head>
   <title>{{title}}</title>
   {{> includes/head.html }}
-  <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="https://toopay.github.io/bootstrap-markdown/css/bootstrap-markdown.min.css">
 </head>
 <body>
@@ -26,7 +25,7 @@
                   {{> includes/comment.html }}
                   {{/commentList}}
                   <div class="text-center">
-                    {{{pagination}}}
+                    {{{paginationRendered}}}
                   </div>
                 </section>
               </div>

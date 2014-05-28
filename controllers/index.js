@@ -1,6 +1,5 @@
 var async = require('async');
 var _ = require('underscore');
-var url = require("url");
 
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
@@ -12,8 +11,7 @@ var modelsList = require('../libs/modelsList');
 var userRoles = require('../models/userRoles.json');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
-var helpers = require('../libs/helpers');
-var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
+var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 // The home page has scripts and groups in a sidebar
 exports.home = function (req, res) {
@@ -44,23 +42,23 @@ exports.home = function (req, res) {
     modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
 
   // Scripts: Query: Sort
-  modelQuery.parseModelListSort(Script, scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
+  modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
     scriptListQuery.sort('-rating -installs -updated');
   });
   
-
-  // Scripts: Pagination
-  options.scriptListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-  options.scriptListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-  var scriptListSkipFrom = (options.scriptListCurrentPage * options.scriptListLimit) - options.scriptListLimit;
-  scriptListQuery
-    .skip(scriptListSkipFrom)
-    .limit(options.scriptListLimit);
+  // Pagination
+  var pagination = getDefaultPagination(req);
+  pagination.applyToQuery(scriptListQuery);
 
   // Groups: Query
   var groupListQuery = Group.find();
   groupListQuery
     .limit(25);
+
+  //--- Tasks
+
+  // Pagination
+  tasks.push(pagination.getCountTask(scriptListQuery));
 
   // Scripts
   tasks.push(function (callback) {
@@ -69,17 +67,6 @@ exports.home = function (req, res) {
         callback();
       } else {
         options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-        callback();
-      }
-    });
-  });
-  tasks.push(function (callback) {
-    Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-      if (err) {
-        callback();
-      } else {
-        options.scriptListCount = scriptListCount;
-        options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
         callback();
       }
     });
@@ -108,17 +95,8 @@ exports.home = function (req, res) {
   });
 
   function preRender(){
-    options.pagination = paginateTemplate({
-      currentPage: options.scriptListCurrentPage,
-      lastPage: options.scriptListNumPages,
-      urlFn: function(p) {
-        var parseQueryString = true;
-        var u = url.parse(req.url, parseQueryString);
-        u.query.p = p;
-        delete u.search; // http://stackoverflow.com/a/7517673/947742
-        return url.format(u);
-      }
-    });
+    // Pagination
+    options.paginationRendered = pagination.renderDefault(req);
   };
   function render(){ res.render('pages/scriptListPage', options); }
   function asyncComplete(){ preRender(); render(); }
@@ -208,36 +186,75 @@ exports.toolSearch = function (req, res) {
 
 // UI for user registration
 exports.register = function (req, res) {
-  var options = { 'title': 'Register', 'wantname': req.session.username };
+  var authedUser = req.session.user;
 
-  if (req.session.user) { return res.redirect('/'); }
+  // If already logged in, goto the front page.
+  if (authedUser)
+    return res.redirect('/');
 
+  //
+  var options = {};
+  var tasks = [];
+
+  //
+  options.title = 'Register | OpenUserJS.org';
+  options.pageMetaDescription = 'Login to OpenUserJS.org using OAuth.';
+  var pageMetaKeywords = ['login', 'register'];
+  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
+
+  //
+  options.wantname = req.session.username;
   delete req.session.username;
 
-  Strategy.find({}, function (err, strats) {
-    var strategy = null;
-    var name = null;
-    options.strategies = [];
+  //
+  options.strategies = [];
 
-    // Get the strategies we have OAuth keys for
-    strats.forEach(function (strat) {
-      options.strategies.push({ 'strat' : strat.name,
-        'display' : strat.display });
-    });
-
-    // Get OpenId strategies
-    if (process.env.NODE_ENV === 'production') {
-      for (name in strategies) {
-        strategy = strategies[name];
-        if (!strategy.oauth) {
-          options.strategies.push({ 'strat' : name,
-            'display' : strategy.name });
-        }
+  // Get OpenId strategies
+  if (process.env.NODE_ENV === 'production') {
+    _.each(strategies, function(strategy, strategyKey){
+      if (!strategy.oauth) {
+        options.strategies.push({
+          'strat': strategyKey,
+          'display': strategy.name
+        });
       }
-    }
+    });
+  }
 
-    res.render('register', options);
+  //
+  tasks.push(function (callback) {
+    Strategy.find({}, function (err, availableStrategies) {
+      if (err) {
+        callback();
+      } else {
+        // Get the strategies we have OAuth keys for
+        availableStrategies.forEach(function (strategy) {
+          options.strategies.push({
+            'strat': strategy.name,
+            'display': strategy.display
+          });
+        });
+        callback();
+      }
+    });
   });
+
+  function preRender(){
+    // Sort the strategies
+    options.strategies = _.sortBy(options.strategies, function(strategy){ return strategy.display; });
+
+    // Prefer GitHub
+    var githubStrategy = _.findWhere(options.strategies, {strat: 'github'});
+    if (githubStrategy)
+      githubStrategy.selected = true;
+  };
+  function render(){ res.render('pages/loginPage', options); }
+  function asyncComplete(){ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
 };
 
 exports.logout = function (req, res) {

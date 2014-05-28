@@ -1,6 +1,5 @@
 var async = require('async');
 var _ = require('underscore');
-var url = require("url");
 
 var Comment = require('../models/comment').Comment;
 var Discussion = require('../models/discussion').Discussion;
@@ -10,8 +9,7 @@ var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
-var helpers = require('../libs/helpers');
-var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
+var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 var categories = [
   {
@@ -80,17 +78,18 @@ exports.list = function (req, res, next) {
     modelQuery.parseDiscussionSearchQuery(discussionListQuery, req.query.q);
 
   // Scripts: Query: Sort
-  modelQuery.parseModelListSort(Discussion, discussionListQuery, req.query.orderBy, req.query.orderDir, function(){
+  modelQuery.parseModelListSort(discussionListQuery, req.query.orderBy, req.query.orderDir, function(){
     discussionListQuery.sort('-updated -rating');
   });
 
-  // Scripts: Pagination
-  options.discussionListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-  options.discussionListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-  var discussionListSkipFrom = (options.discussionListCurrentPage * options.discussionListLimit) - options.discussionListLimit;
-  discussionListQuery
-    .skip(discussionListSkipFrom)
-    .limit(options.discussionListLimit);
+  // Pagination
+  var pagination = getDefaultPagination(req);
+  pagination.applyToQuery(discussionListQuery);
+
+  //--- Tasks
+
+  // Pagination
+  tasks.push(pagination.getCountTask(discussionListQuery));
 
   // User scripList
   tasks.push(function (callback) {
@@ -103,31 +102,16 @@ exports.list = function (req, res, next) {
       }
     });
   });
-  tasks.push(function (callback) {
-    Discussion.count(discussionListQuery._conditions, function(err, discussionListCount){
-      if (err) {
-        callback();
-      } else {
-        options.discussionListCount = discussionListCount;
-        options.discussionListNumPages = Math.ceil(options.discussionListCount / options.discussionListLimit) || 1;
-        callback();
-      }
-    });
-  });
+
+  var getPageUrlFn = function(baseUrl, queryVarName) {
+    return function(p) {
+      return replaceUrlQueryVar(baseUrl, queryVarName, p);
+    };
+  };
 
   function preRender(){
     // Pagination
-    options.pagination = paginateTemplate({
-      currentPage: options.discussionListCurrentPage,
-      lastPage: options.discussionListNumPages,
-      urlFn: function(p) {
-        var parseQueryString = true;
-        var u = url.parse(req.url, parseQueryString);
-        u.query.p = p;
-        delete u.search; // http://stackoverflow.com/a/7517673/947742
-        return url.format(u);
-      }
-    });
+    options.paginationRendered = pagination.renderDefault(req);
   };
   function render(){ res.render('pages/discussionListPage', options); }
   function asyncComplete(){ preRender(); render(); }
@@ -210,17 +194,18 @@ exports.show = function (req, res, next) {
       modelQuery.parseCommentSearchQuery(commentListQuery, req.query.q);
 
     // Comments: Query: Sort
-    modelQuery.parseModelListSort(Comment, commentListQuery, req.query.orderBy, req.query.orderDir, function(){
+    modelQuery.parseModelListSort(commentListQuery, req.query.orderBy, req.query.orderDir, function(){
       commentListQuery.sort('created -rating');
     });
 
-    // Comments: Pagination
-    options.commentListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-    options.commentListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-    var commentListSkipFrom = (options.commentListCurrentPage * options.commentListLimit) - options.commentListLimit;
-    commentListQuery
-      .skip(commentListSkipFrom)
-      .limit(options.commentListLimit);
+    // Pagination
+    var pagination = getDefaultPagination(req);
+    pagination.applyToQuery(commentListQuery);
+
+    //--- Tasks
+
+    // Pagination
+    tasks.push(pagination.getCountTask(commentListQuery));
 
     // Comments
     tasks.push(function (callback) {
@@ -236,31 +221,10 @@ exports.show = function (req, res, next) {
         }
       });
     });
-    tasks.push(function (callback) {
-      Comment.count(commentListQuery._conditions, function(err, commentListCount){
-        if (err) {
-          callback();
-        } else {
-          options.commentListCount = commentListCount;
-          options.commentListNumPages = Math.ceil(options.commentListCount / options.commentListLimit) || 1;
-          callback();
-        }
-      });
-    });
 
     function preRender(){
       // Pagination
-      options.pagination = paginateTemplate({
-        currentPage: options.commentListCurrentPage,
-        lastPage: options.commentListNumPages,
-        urlFn: function(p) {
-          var parseQueryString = true;
-          var u = url.parse(req.url, parseQueryString);
-          u.query.p = p;
-          delete u.search; // http://stackoverflow.com/a/7517673/947742
-          return url.format(u);
-        }
-      });
+      options.paginationRendered = pagination.renderDefault(req);
 
       // Render
       _.map(options.commentList, modelParser.renderComment);
@@ -273,12 +237,44 @@ exports.show = function (req, res, next) {
 
 // UI to create a new topic
 exports.newTopic = function (req, res, next) {
-  var category = req.route.params.category;
-  var user = req.session.user;
+  var authedUser = req.session.user;
 
-  if (!user) { return next(); }
+  if (!authedUser)
+    return redirect('/login');
 
-  res.render('discussionCreate', { username: user.name, category: category });
+  var categorySlug = req.route.params.category;
+
+  var category = _.findWhere(categories, {slug: categorySlug});
+  if (!category)
+    return next();
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
+
+  //
+  options.category = category;
+
+  // Metadata
+  options.title = 'OpenUserJS.org';
+  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
+  var pageMetaKeywords = ['userscript', 'greasemonkey'];
+  pageMetaKeywords.concat(['web browser']);
+  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+
+  //--- Tasks
+  // ...
+
+  //---
+  function preRender(){};
+  function render(){ res.render('pages/newDiscussionPage', options); }
+  function asyncComplete(){ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
+  return;
 };
 
 // Does all the work of submitting a new comment and updating the discussion

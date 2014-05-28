@@ -1,12 +1,12 @@
 var _ = require('underscore');
 
 var orderDirs = ['asc', 'desc'];
-var parseModelListSort = function(model, modelListQuery, orderBy, orderDir, defaultSortFn) {
+var parseModelListSort = function(modelListQuery, orderBy, orderDir, defaultSortFn) {
   if (orderBy) {
     if (_.isUndefined(orderDir) || !_.contains(orderDirs, orderDir))
       orderDir = 'asc';
 
-    if (_.has(model.schema.paths, orderBy)) {
+    if (_.has(modelListQuery.model.schema.paths, orderBy)) {
       var sortBy = {};
       sortBy[orderBy] = orderDir;
       modelListQuery.sort(sortBy);

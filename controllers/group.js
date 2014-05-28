@@ -1,6 +1,5 @@
 var async = require('async');
 var _ = require('underscore');
-var url = require("url");
 
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
@@ -10,8 +9,7 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
-var helpers = require('../libs/helpers');
-var paginateTemplate = require('../libs/templateHelpers').paginateTemplate;
+var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 // clean the name of the group so it is url safe
 function cleanGroupName (name) {
@@ -152,18 +150,19 @@ exports.list = function (req, res) {
     modelQuery.parseGroupSearchQuery(groupListQuery, req.query.q);
 
   // Scripts: Query: Sort
-  modelQuery.parseModelListSort(Group, groupListQuery, req.query.orderBy, req.query.orderDir, function(){
+  modelQuery.parseModelListSort(groupListQuery, req.query.orderBy, req.query.orderDir, function(){
     groupListQuery.sort('-rating name');
   });
   
 
-  // Scripts: Pagination
-  options.groupListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-  options.groupListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 25;
-  var groupListSkipFrom = (options.groupListCurrentPage * options.groupListLimit) - options.groupListLimit;
-  groupListQuery
-    .skip(groupListSkipFrom)
-    .limit(options.groupListLimit);
+  // Pagination
+  var pagination = getDefaultPagination(req);
+  pagination.applyToQuery(groupListQuery);
+
+  //--- Tasks
+
+  // Pagination
+  tasks.push(pagination.getCountTask(groupListQuery));
 
   // Groups
   tasks.push(function (callback) {
@@ -176,30 +175,10 @@ exports.list = function (req, res) {
       }
     });
   });
-  tasks.push(function (callback) {
-    Group.count(groupListQuery._conditions, function(err, groupListCount){
-      if (err) {
-        callback();
-      } else {
-        options.groupListCount = groupListCount;
-        callback();
-      }
-    });
-  });
 
   function preRender(){
     // Pagination
-    options.pagination = paginateTemplate({
-      currentPage: options.groupListCurrentPage,
-      lastPage: options.groupListNumPages,
-      urlFn: function(p) {
-        var parseQueryString = true;
-        var u = url.parse(req.url, parseQueryString);
-        u.query.p = p;
-        delete u.search; // http://stackoverflow.com/a/7517673/947742
-        return url.format(u);
-      }
-    });
+    options.paginationRendered = pagination.renderDefault(req);
 
     // Page <head> meta keywords
     var pageMetaKeywords = ['userscript', 'greasemonkey'];
@@ -253,23 +232,23 @@ exports.view = function (req, res, next) {
       modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
 
     // Scripts: Query: Sort
-    modelQuery.parseModelListSort(Script, scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
+    modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
       scriptListQuery.sort('-rating -installs -updated');
     });
-    
 
-    // Scripts: Pagination
-    options.scriptListCurrentPage = req.query.p ? helpers.limitMin(1, req.query.p) : 1;
-    options.scriptListLimit = req.query.limit ? helpers.limitRange(0, req.query.limit, 100) : 10;
-    var scriptListSkipFrom = (options.scriptListCurrentPage * options.scriptListLimit) - options.scriptListLimit;
-    scriptListQuery
-      .skip(scriptListSkipFrom)
-      .limit(options.scriptListLimit);
+    // Pagination
+    var pagination = getDefaultPagination(req);
+    pagination.applyToQuery(scriptListQuery);
 
     // Groups: Query
     var groupListQuery = Group.find();
     groupListQuery
       .limit(25);
+
+    //--- Tasks
+
+    // Pagination
+    tasks.push(pagination.getCountTask(scriptListQuery));
 
     // Scripts
     tasks.push(function (callback) {
@@ -278,17 +257,6 @@ exports.view = function (req, res, next) {
           callback();
         } else {
           options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-          callback();
-        }
-      });
-    });
-    tasks.push(function (callback) {
-      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-        if (err) {
-          callback();
-        } else {
-          options.scriptListCount = scriptListCount;
-          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
           callback();
         }
       });
@@ -307,17 +275,9 @@ exports.view = function (req, res, next) {
     });
 
     function preRender(){
-      options.pagination = paginateTemplate({
-        currentPage: options.scriptListCurrentPage,
-        lastPage: options.scriptListNumPages,
-        urlFn: function(p) {
-          var parseQueryString = true;
-          var u = url.parse(req.url, parseQueryString);
-          u.query.p = p;
-          delete u.search; // http://stackoverflow.com/a/7517673/947742
-          return url.format(u);
-        }
-      });
+      // Pagination
+      options.paginationRendered = pagination.renderDefault(req);
+
       // Page <head> meta keywords
       var pageMetaKeywords = ['userscript', 'greasemonkey'];
       if (options.groupList)

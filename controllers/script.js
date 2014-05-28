@@ -242,15 +242,6 @@ exports.view = function (req, res, next) {
     options.title = script.name + ' | OpenUserJS.org';
     options.pageMetaDescription = script.meta.description ? script.meta.description : null;
 
-    var fork = script.fork;
-    // Set the forks to be label properly
-    if (fork instanceof Array && fork.length > 0) {
-      fork[0].first = true;
-      fork[fork.length - 1].original = true;
-    } else {
-      fork = null;
-    }
-
     tasks = tasks.concat(getScriptPageTasks(options));
 
     function preRender(){
