@@ -1,0 +1,19 @@
+<script type="text/javascript">
+  $('.btn-comment-reply').click(function(e){
+    $('#reply-control').collapse('show');
+
+    var $comment = $(e.target).closest('.topic-post');
+    var $author = $comment.find('.topic-meta-data .names .username').first();
+    var $replyTextarea = $('#reply-control textarea[name="comment-content"');
+
+    document.location.hash = $comment.attr('id');
+
+    var text = $replyTextarea.text();
+    if (!/^\s*$/.test(text))
+      text += '\n\n'; // Add linebreak if reply already started.
+    text += '[Re](' + document.location.href + '): ';
+    text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
+    text += '  \n';
+    $replyTextarea.text(text);
+  });
+</script>
