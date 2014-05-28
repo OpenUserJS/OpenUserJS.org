@@ -299,7 +299,7 @@ exports.comment = function (req, res, next) {
   var category = type + '/' + installName + '/issues';
   var user = req.session.user;
 
-  if (!user) { return next(); }
+  if (!user) { return res.redirect('/login'); }
 
   Script.findOne({ installName: installName 
     + (type === 'libs' ? '.js' : '.user.js') }, function (err, script) {
@@ -329,7 +329,7 @@ exports.changeStatus = function (req, res, next) {
   var user = req.session.user;
   var changed = false;
 
-  if (!user) { return next(); }
+  if (!user) { return res.redirect('/login'); }
 
   Script.findOne({ installName: installName 
     + (type === 'libs' ? '.js' : '.user.js') }, function (err, script) {
