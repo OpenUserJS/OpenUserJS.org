@@ -1,4 +1,5 @@
 var moment = require('moment');
+var _ = require('underscore');
 
 var userRoles = require('../models/userRoles.json');
 var renderMd = require('../libs/markdown').renderMd;
@@ -63,7 +64,7 @@ var getScriptInstallPageUrl = function(script) {
 
 //
 exports.parseScript = function(scriptData) {
-  if (scriptData === undefined) return;
+  if (!scriptData) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
   // Script Good/Bad bar.
@@ -112,7 +113,7 @@ exports.parseScript = function(scriptData) {
 
 //
 exports.parseUser = function(userData) {
-  if (userData === undefined) return;
+  if (!userData) return;
   var user = userData.toObject ? userData.toObject() : userData;
   
   // Role
@@ -134,7 +135,7 @@ exports.parseUser = function(userData) {
 
 //
 exports.parseGroup = function(groupData) {
-  if (groupData === undefined) return;
+  if (!groupData) return;
   var group = groupData.toObject ? groupData.toObject() : groupData;
 
   group.size = group._scriptIds.length;
@@ -151,7 +152,7 @@ exports.parseGroup = function(groupData) {
 
 //
 exports.parseDiscussion = function(discussionData) {
-  if (discussionData === undefined) return;
+  if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
 
   // Urls
@@ -163,13 +164,27 @@ exports.parseDiscussion = function(discussionData) {
   discussion.updatedISOFormat = discussion.updated.toISOString();
   discussion.updatedHumanized = moment(discussion.updated).fromNow();
 
+  // RecentCommentors
+  var recentCommentors = [];
+  if (discussion.author)
+    recentCommentors.push(discussion.author);
+  if (discussion.lastCommentor != discussion.author)
+    recentCommentors.push(discussion.lastCommentor);
+  recentCommentors = _.map(recentCommentors, function(username){
+    return {
+      name: username,
+    };
+  });
+  recentCommentors.reverse();
+  discussion.recentCommentors = recentCommentors;
+
   //discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
   return discussion;
 };
 
 exports.parseIssue = function(discussionData) {
-  if (discussionData === undefined) return;
+  if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
 
   discussion.issue = true;
@@ -187,7 +202,7 @@ exports.parseIssue = function(discussionData) {
 
 //
 exports.parseComment = function(commentData) {
-  if (commentData === undefined) return;
+  if (!commentData) return;
   var comment = commentData.toObject ? commentData.toObject() : commentData;
 
   // Dates
@@ -198,6 +213,7 @@ exports.parseComment = function(commentData) {
 };
 
 exports.renderComment = function(comment) {
+  if (!comment) return;
   comment.contentRendered = renderMd(comment.content);
 };
 
@@ -208,7 +224,7 @@ exports.renderComment = function(comment) {
 
 //
 exports.parseCategory = function(categoryData) {
-  if (categoryData === undefined) return;
+  if (!categoryData) return;
   var category = categoryData.toObject ? categoryData.toObject() : categoryData;
 
   // Urls

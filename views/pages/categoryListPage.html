@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="list-group">
+        {{#categoryList}}
+          <a href="{{{categoryPageUrl}}}" class="list-group-item">
+            <h4 class="list-group-item-heading">{{name}}</h4>
+            <p class="list-group-item-text">{{description}}</p>
+          </a>
+        {{/categoryList}}
+        </div>
+        {{> includes/discussionList.html }}
+        <div class="text-center">
+          {{{paginationRendered}}}
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  {{> includes/tableTrLink.html }}
+</body>
+</html>

@@ -2,6 +2,10 @@
   <thead>
     <tr>
       <th class="text-center">Topic</th>
+      {{#multipleCategories}}
+      <th class="text-center td-activity">Category</th>
+      {{/multipleCategories}}
+      <th class="text-center">Users</th>
       <th class="text-center">Posts</th>
       <th class="text-center">Views</th>
       <th class="text-center td-activity" colspan="2">Activity</th>
@@ -15,8 +19,18 @@
           <a href="{{{discussionPageUrl}}}">{{topic}}</a>
         </b>
       </td>
+      {{#multipleCategories}}
+      <td>
+        <span class="label label-default td-activity"><a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.name}}</a></span>
+      </td>
+      {{/multipleCategories}} 
       <td class="text-center">
         <p>{{comments}}</p>
+      </td>
+      <td class="">
+      {{#recentCommentors}}
+        <span class="label label-info">{{name}}</span>
+      {{/recentCommentors}}
       </td>
       <td class="text-center">
         <p>?</p>

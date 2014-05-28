@@ -195,6 +195,7 @@ app_route('/group/:groupname').get(group.view);
 app_route('/api/group/search/:term/:addTerm?').get(group.search);
 
 // Discussion routes
+app_route('/forum').get(discussion.categoryListPage);
 app.get(listRegex('\/(corner|garage|discuss)', ''), discussion.list);
 app.get(listRegex('\/(corner|garage|discuss)\/([^\/]+?)', ''), discussion.show);
 app.get('/post/:category(corner|garage|discuss)', discussion.newTopic);

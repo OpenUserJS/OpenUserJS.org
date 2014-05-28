@@ -108,7 +108,7 @@ exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
 
 exports.applyCommentListQueryDefaults = function(commentListQuery, options, req) {
-  // Comments: Query: flagged
+  // CommentListQuery: flagged
   // Only list flagged scripts for author and user >= moderator
   if (options.isYou || options.isMod) {
     // Show
@@ -117,18 +117,18 @@ exports.applyCommentListQueryDefaults = function(commentListQuery, options, req)
     commentListQuery.find({flagged: {$ne: true}}); 
   }
 
-  // Comments: Query: Populate
+  // CommentListQuery: Populate
   commentListQuery.populate({
     path: '_authorId',
     model: 'User',
     select: 'name role'
   });
 
-  // Comments: Query: Search
+  // CommentListQuery: Search
   if (req.query.q)
     parseCommentSearchQuery(commentListQuery, req.query.q);
 
-  // Comments: Query: Sort
+  // CommentListQuery: Sort
   parseModelListSort(commentListQuery, req.query.orderBy, req.query.orderDir, function(){
     commentListQuery.sort('created -rating');
   });
@@ -136,5 +136,30 @@ exports.applyCommentListQueryDefaults = function(commentListQuery, options, req)
   // Pagination
   var pagination = getDefaultPagination(req);
   pagination.applyToQuery(commentListQuery);
+  options.pagination = pagination;
+};
+
+exports.applyDiscussionListQueryDefaults = function(discussionListQuery, options, req) {
+  // DiscussionListQuery: flagged
+  // Only list flagged scripts for author and user >= moderator
+  if (options.isYou || options.isMod) {
+    // Show
+  } else {
+    // Script.flagged is undefined by default.
+    discussionListQuery.find({flagged: {$ne: true}}); 
+  }
+
+  // DiscussionListQuery: Search
+  if (req.query.q)
+    parseDiscussionSearchQuery(discussionListQuery, req.query.q);
+
+  // DiscussionListQuery: Sort
+  parseModelListSort(discussionListQuery, req.query.orderBy, req.query.orderDir, function(){
+    discussionListQuery.sort('-updated -rating');
+  });
+
+  // Pagination
+  var pagination = getDefaultPagination(req);
+  pagination.applyToQuery(discussionListQuery);
   options.pagination = pagination;
 };
