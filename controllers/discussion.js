@@ -10,6 +10,7 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
+var execQueryTask = require('../libs/tasks').execQueryTask;
 
 var categories = [
   {
@@ -50,7 +51,8 @@ exports.list = function (req, res, next) {
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.role < 4;
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
 
   //
   options.category = category;
@@ -64,7 +66,7 @@ exports.list = function (req, res, next) {
   // Discussion: Query: category
   discussionListQuery.find({category: category.slug});
 
-  // Scripts: Query: flagged
+  // Discussion: Query: flagged
   // Only list flagged scripts for author and user >= moderator
   if (options.isYou || options.isMod) {
     // Show
@@ -73,11 +75,11 @@ exports.list = function (req, res, next) {
     discussionListQuery.find({flagged: {$ne: true}}); 
   }
 
-  // Scripts: Query: Search
+  // Discussion: Query: Search
   if (req.query.q)
     modelQuery.parseDiscussionSearchQuery(discussionListQuery, req.query.q);
 
-  // Scripts: Query: Sort
+  // Discussion: Query: Sort
   modelQuery.parseModelListSort(discussionListQuery, req.query.orderBy, req.query.orderDir, function(){
     discussionListQuery.sort('-updated -rating');
   });
@@ -91,25 +93,12 @@ exports.list = function (req, res, next) {
   // Pagination
   tasks.push(pagination.getCountTask(discussionListQuery));
 
-  // User scripList
-  tasks.push(function (callback) {
-    discussionListQuery.exec(function(err, discussionDataList){
-      if (err) {
-        callback();
-      } else {
-        options.discussionList = _.map(discussionDataList, modelParser.parseDiscussion);
-        callback();
-      }
-    });
-  });
-
-  var getPageUrlFn = function(baseUrl, queryVarName) {
-    return function(p) {
-      return replaceUrlQueryVar(baseUrl, queryVarName, p);
-    };
-  };
+  // Discussion
+  tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   function preRender(){
+    options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
+
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
   };
@@ -208,21 +197,14 @@ exports.show = function (req, res, next) {
     tasks.push(pagination.getCountTask(commentListQuery));
 
     // Comments
-    tasks.push(function (callback) {
-      commentListQuery.exec(function(err, commentDataList){
-        if (err) {
-          callback();
-        } else {
-          options.commentList = _.map(commentDataList, modelParser.parseComment);
-          _.map(options.commentList, function(comment){
-            comment.author = modelParser.parseUser(comment._authorId);
-          });
-          callback();
-        }
-      });
-    });
+    tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
     function preRender(){
+      options.commentList = _.map(options.commentList, modelParser.parseComment);
+      _.map(options.commentList, function(comment){
+        comment.author = modelParser.parseUser(comment._authorId);
+      });
+
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
 
