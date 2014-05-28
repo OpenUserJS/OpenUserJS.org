@@ -24,13 +24,13 @@
         <span class="label label-default td-activity"><a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.name}}</a></span>
       </td>
       {{/multipleCategories}} 
-      <td class="text-center">
-        <p>{{comments}}</p>
-      </td>
       <td class="">
       {{#recentCommentors}}
         <span class="label label-info">{{name}}</span>
       {{/recentCommentors}}
+      </td>
+      <td class="text-center">
+        <p>{{comments}}</p>
       </td>
       <td class="text-center">
         <p>?</p>
