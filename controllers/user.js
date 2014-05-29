@@ -132,6 +132,7 @@ exports.view = function (req, res, next) {
       // Show
     } else {
       // Script.flagged is undefined by default.
+      // This is the result of Script.flagged be added later
       scriptListQuery.find({flagged: {$ne: true}}); 
     }
 
@@ -669,7 +670,7 @@ exports.update = function (req, res) {
 };
 
 // Submit a script through the web editor
-exports.newScript = function (req, res, next) {
+exports.submitSource = function (req, res, next) {
   var user = req.session.user;
   var isLib = req.route.params.isLib;
   var source = null;
@@ -710,69 +711,117 @@ exports.newScript = function (req, res, next) {
     });
   }
 
-  if (req.body.url) {
-    source = new Buffer(req.body.source);
-    url = req.body.url;
+  source = new Buffer(req.body.source);
+  url = req.body.url;
 
-    if (isLib) {
-      storeScript(req.body.script_name, source);
-    } else {
-      scriptStorage.getMeta([source], function (meta) {
-        if (!meta || !meta.name) { return res.redirect(url); }
-        storeScript(meta, source);
-      });
-    }
+  if (isLib) {
+    storeScript(req.body.script_name, source);
   } else {
-    res.render('scriptEditor', {
-      title: 'Write a new ' + (isLib ? 'library ' : '') + 'script',
-      source: '',
-      url: req.url,
-      owner: true,
-      readOnly: false,
-      isLib: isLib,
-      newScript: true,
-      username: user ? user.name : null
+    scriptStorage.getMeta([source], function (meta) {
+      if (!meta || !meta.name) { return res.redirect(url); }
+      storeScript(meta, source);
     });
   }
 };
 
-// Show a script in the web editor
-exports.editScript = function (req, res, next) {
-  var user = req.session.user;
-  var isLib = req.route.params.isLib;
-  var installName = null;
+function getExistingScript (req, options, authedUser, callback) {
+  options.isLib = req.route.params.isLib;
 
-  req.route.params.scriptname += isLib ? '.js' : '.user.js';
-  scriptStorage.getSource(req, function (script, stream) {
-    var bufs = [];
-    var collaborators = [];
+  if (!req.route.params.scriptname) {
 
-    if (!script) { return next(); }
+    // A user who isn't logged in can't write a new script
+    if (!authedUser) { return callback(null); }
 
-    if (script.meta.collaborator) {
-      if (typeof script.meta.collaborator === 'string') {
-        collaborators.push(script.meta.collaborator);
-      } else {
-        collaborators = script.meta.collaborator;
+    options.title = 'Write a new ' + (options.isLib ? 'library ' : '') + 'script';
+    options.source = '';
+    options.url = req.url;
+    options.owner = true;
+    options.readOnly = false;
+    options.newScript = true;
+
+    callback(options);
+  } else {
+    req.route.params.scriptname += options.isLib ? '.js' : '.user.js';
+    scriptStorage.getSource(req, function (script, stream) {
+      var bufs = [];
+      var collaborators = [];
+
+      if (!script) { return callback(null); }
+
+      if (script.meta.collaborator) {
+        if (typeof script.meta.collaborator === 'string') {
+          collaborators.push(script.meta.collaborator);
+        } else {
+          collaborators = script.meta.collaborator;
+        }
       }
-    }
 
-    stream.on('data', function (d) { bufs.push(d); });
-    stream.on('end', function () {
-      res.render('scriptEditor', {
-        title: 'Edit ' + script.name,
-        source: Buffer.concat(bufs).toString('utf8'),
-        original: script.installName,
-        url: req.url,
-        owner: user && (script._authorId == user._id 
-          || collaborators.indexOf(user.name) > -1),
-        username: user ? user.name : null,
-        isLib: script.isLib,
-        scriptName: script.name,
-        readOnly: !user
+      stream.on('data', function (d) { bufs.push(d); });
+      stream.on('end', function () {
+        options.title = 'Edit ' + script.name;
+        options.source = Buffer.concat(bufs).toString('utf8');
+        options.original = script.installName;
+        options.url = req.url;
+        options.owner = authedUser && (script._authorId == authedUser._id 
+          || collaborators.indexOf(authedUser.name) > -1);
+        options.username = authedUser ? authedUser.name : null;
+        options.isLib = script.isLib;
+        options.scriptName = script.name;
+        options.readOnly = !authedUser;
+
+        callback(options);
       });
     });
+  }
+}
+
+function pageMeta (options) {
+  options.title = (options.title || '') + ' | OpenUserJS.org';
+  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
+  var pageMetaKeywords = ['userscript', 'greasemonkey'];
+  pageMetaKeywords.concat(['web browser']);
+  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+
+  return options;
+}
+
+exports.editScript = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
+
+  // Metadata
+  options = pageMeta(options);
+
+  //--- Tasks
+  
+  // Get the info and source for an existing script for the editor
+  // Also works for writing a new script
+  tasks.push(function (callback) {
+    getExistingScript(req, options, authedUser, function (opts) {
+      options = opts;
+      callback(!opts);
+    });
   });
+
+  //---
+  function preRender (){};
+  function render () { res.render('pages/ScriptViewSourcePage', options); }
+  function asyncComplete (err) {
+    if (err) {
+      next();
+    } else {
+      preRender();
+      render();
+    }
+  }
+  async.parallel(tasks, asyncComplete);
 };
 
 // route to flag a user
