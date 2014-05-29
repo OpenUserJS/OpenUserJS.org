@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <style type="text/css">
+    #editor { 
+      position: relative;
+      width: 70%;
+      height: 550px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        <pre id="editor">{{source}}</pre>
+        {{! This should probably be put in an include }}
+        {{^readOnly}}
+        <form action="{{#isLib}}/user/add/lib/new{{/isLib}}{{^isLib}}/user/add/scripts/new{{/isLib}}" id="code_form" method="post">
+          <input type="hidden" id="source" name="source" value="" />
+          <input type="hidden" name="url" value="{{{url}}}" />
+          {{^owner}}<input type="hidden" name="original" value="{{original}}" />{{/owner}}
+          {{#isLib}}{{#newScript}}<strong>Library Name:</strong> <input type="text" name="script_name" value="" /><br /><br />
+          {{/newScript}}{{^newScript}}<input type="hidden" name="script_name" value="{{scriptName}}" />{{/newScript}}{{/isLib}}
+          <input type="button" id="submit_code" value="Submit Code{{^owner}} as Fork{{/owner}}" />
+        </form>
+        {{/readOnly}}
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  <!-- Script Editor -->
+  <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/dawn");
+      editor.getSession().setMode("ace/mode/javascript");
+
+      {{#readOnly}}editor.setReadOnly(true);{{/readOnly}}
+      {{^readOnly}}
+      <!-- TODO: Submit using AJAX -->
+      $('#submit_code').click(function () {
+        $('#source').val(editor.getValue());
+        $('#code_form').submit();
+      });
+      {{/readOnly}}
+    });
+  </script>
+</body>
+</html>

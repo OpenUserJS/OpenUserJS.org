@@ -117,11 +117,11 @@ app_route('/users/:username').get(user.view);
 app_route('/users/:username/scripts').get(user.userScriptListPage);
 app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
 app_route('/user/preferences').get(user.userEditPreferencesPage);
+app_route('/user/add/scripts/new').get(user.editScript).post(user.submitSource);
 
 // User routes: Legacy
 app_route('/user/add/scripts').get(user.scripts).post(user.scripts);
 app_route('/user/add/lib').get(script.lib(user.scripts)).post(script.lib(user.scripts));
-app_route('/user/add/scripts/new').get(user.newScript).post(user.newScript);
 app_route('/user/add/lib/new').get(script.lib(user.newScript)).post(script.lib(user.newScript));
 app_route('/user/add/:scripttype(scripts|lib)/upload').post(user.uploadScript);
 
@@ -129,15 +129,14 @@ app_route('/user/add/:scripttype(scripts|lib)/upload').post(user.uploadScript);
 // Script routes
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
 app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
-app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit); // Legacy TODO Remove
+app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit); 
+app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript); // Legacy TODO Remove
 
 // Script routes: Legacy
 app.get('/install/:username/:scriptname', scriptStorage.sendScript);
 app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
 app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
 app.get('/meta/:username/:namespace/:scriptname', scriptStorage.sendMeta);
-app.get('/scripts/:username/:scriptname/source', user.editScript);
-app.get('/scripts/:username/:namespace/:scriptname/source', user.editScript);
 app.get('/vote/scripts/:username/:scriptname/:vote', script.vote);
 app.get('/vote/scripts/:username/:namespace/:scriptname/:vote', script.vote);
 app.post('/github/hook', scriptStorage.webhook);
