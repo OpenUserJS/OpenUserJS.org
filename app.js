@@ -113,7 +113,7 @@ app.post('/user/add/lib/new', script.lib(user.newScript));
 // Script routes
 app.get('/scripts/:username/:scriptname', script.view);
 app.get('/scripts/:username/:namespace/:scriptname', script.view);
-app.get('/script/scriptname/edit', script.edit);
+app.get('/script/:scriptname/edit', script.edit);
 app.get('/script/:namespace/:scriptname/edit', script.edit);
 app.post('/script/scriptname/edit', script.edit);
 app.post('/script/:namespace/:scriptname/edit', script.edit);
