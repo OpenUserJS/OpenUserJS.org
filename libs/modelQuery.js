@@ -107,15 +107,19 @@ var parseCommentSearchQuery = function(commentListQuery, query) {
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
 
-exports.applyCommentListQueryDefaults = function(commentListQuery, options, req) {
-  // CommentListQuery: flagged
+var applyHideFlaggedFromModelListQuery = function(modeListQuery, options) {
   // Only list flagged scripts for author and user >= moderator
   if (options.isYou || options.isMod) {
     // Show
   } else {
     // Script.flagged is undefined by default.
-    commentListQuery.find({flagged: {$ne: true}}); 
+    modeListQuery.find({flagged: {$ne: true}}); 
   }
+};
+
+exports.applyCommentListQueryDefaults = function(commentListQuery, options, req) {
+  // CommentListQuery: flagged
+  applyHideFlaggedFromModelListQuery(commentListQuery, options);
 
   // CommentListQuery: Populate
   commentListQuery.populate({
@@ -141,13 +145,7 @@ exports.applyCommentListQueryDefaults = function(commentListQuery, options, req)
 
 exports.applyDiscussionListQueryDefaults = function(discussionListQuery, options, req) {
   // DiscussionListQuery: flagged
-  // Only list flagged scripts for author and user >= moderator
-  if (options.isYou || options.isMod) {
-    // Show
-  } else {
-    // Script.flagged is undefined by default.
-    discussionListQuery.find({flagged: {$ne: true}}); 
-  }
+  applyHideFlaggedFromModelListQuery(discussionListQuery, options);
 
   // DiscussionListQuery: Search
   if (req.query.q)
