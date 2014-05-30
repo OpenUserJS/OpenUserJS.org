@@ -181,3 +181,13 @@ textarea {
 input#discussion-topic {
   width: calc(100% - 18px - 4px);
 }
+
+table .script-icon img {
+  max-width: 16px;
+  max-height: 16px;
+}
+
+table .script-icon i.fa.fa-fw {
+  width: 16px;
+  max-height: 16px;
+}

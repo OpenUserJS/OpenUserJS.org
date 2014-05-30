@@ -18,6 +18,14 @@
       </td>
       <td>
         <b>
+          <span class="script-icon hidden-xs">
+          {{#meta.icon}}
+            <img src="{{{meta.icon}}}" alt="">
+          {{/meta.icon}}
+          {{^meta.icon}}
+            <i class="fa fa-fw fa-file-code-o"></i>
+          {{/meta.icon}}
+          </span>
           <a href="{{{scriptPageUrl}}}">{{name}}</a>{{#version}} <div class="label label-info">{{version}}</div>{{/version}}
         </b>
         <p>{{meta.description}}</p>
