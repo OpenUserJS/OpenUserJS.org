@@ -107,6 +107,11 @@ exports.parseScript = function(scriptData) {
   return script;
 };
 
+exports.renderScript = function(script) {
+  if (!script) return;
+  script.aboutRendered = renderMd(script.about);
+};
+
 /**
  * User
  */

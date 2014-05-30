@@ -3,15 +3,13 @@ var _ = require('underscore');
 
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
-var Strategy = require('../models/strategy.js').Strategy;
-var User = require('../models/user').User;
 
 var strategies = require('./strategies.json');
 var modelsList = require('../libs/modelsList');
-var userRoles = require('../models/userRoles.json');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
-var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
+var execQueryTask = require('../libs/tasks').execQueryTask;
+
 
 // The home page has scripts and groups in a sidebar
 exports.home = function (req, res) {
@@ -29,28 +27,22 @@ exports.home = function (req, res) {
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.role < 4;
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Scripts: Query
+  // scriptListQuery
   var scriptListQuery = Script.find();
 
-  // Scripts: Query: isLib=false
+  // scriptListQuery: isLib=false
   scriptListQuery.find({isLib: false});
 
-  // Scripts: Query: Search
-  if (req.query.q)
-    modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
+  // scriptListQuery: Defaults
+  modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
 
-  // Scripts: Query: Sort
-  modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
-    scriptListQuery.sort('-rating -installs -updated');
-  });
-  
-  // Pagination
-  var pagination = getDefaultPagination(req);
-  pagination.applyToQuery(scriptListQuery);
+  // scriptListQuery: Pagination
+  var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
-  // Groups: Query
+  // groupListQuery
   var groupListQuery = Group.find();
   groupListQuery
     .limit(25);
@@ -60,41 +52,20 @@ exports.home = function (req, res) {
   // Pagination
   tasks.push(pagination.getCountTask(scriptListQuery));
 
-  // Scripts
-  tasks.push(function (callback) {
-    scriptListQuery.exec(function(err, scriptDataList){
-      if (err) {
-        callback();
-      } else {
-        options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-        callback();
-      }
-    });
-  });
+  // scriptListQuery
+  tasks.push(execQueryTask(scriptListQuery, options, 'scriptList'));
 
-  // Groups
-  tasks.push(function (callback) {
-    groupListQuery.exec(function(err, groupDataList){
-      if (err) {
-        callback();
-      } else {
-        options.groupList = _.map(groupDataList, modelParser.parseGroup);
-        callback();
-      }
-    });
-  });
-  tasks.push(function (callback) {
-    Group.count(groupListQuery._conditions, function(err, groupListCount){
-      if (err) {
-        callback();
-      } else {
-        options.groupListCount = groupListCount;
-        callback();
-      }
-    });
-  });
+  // groupListQuery
+  tasks.push(execQueryTask(groupListQuery, options, 'groupList'));
 
+  //---
   function preRender(){
+    // scriptList
+    options.scriptList = _.map(options.scriptList, modelParser.parseScript);
+
+    // groupList
+    options.groupList = _.map(options.groupList, modelParser.parseGroup);
+
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
   };
@@ -204,7 +175,8 @@ exports.register = function (req, res) {
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.role < 4;
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
 
   //
   options.wantname = req.session.username;
@@ -225,6 +197,8 @@ exports.register = function (req, res) {
     });
   }
 
+  //--- Tasks
+
   //
   tasks.push(function (callback) {
     Strategy.find({}, function (err, availableStrategies) {
@@ -243,6 +217,7 @@ exports.register = function (req, res) {
     });
   });
 
+  //---
   function preRender(){
     // Sort the strategies
     options.strategies = _.sortBy(options.strategies, function(strategy){ return strategy.display; });

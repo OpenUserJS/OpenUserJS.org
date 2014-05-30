@@ -4,12 +4,9 @@ var _ = require('underscore');
 var Comment = require('../models/comment').Comment;
 var Discussion = require('../models/discussion').Discussion;
 
-var renderMd = require('../libs/markdown').renderMd;
-var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
-var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 
 var categories = [
@@ -47,18 +44,17 @@ exports.categoryListPage = function (req, res, next) {
   options.pageMetaDescription = '.';
   options.pageMetaKeywords = null;
 
-  // CategoryList
+  // categoryList
   options.categoryList = _.map(categories, modelParser.parseCategory);
-
   options.multipleCategories = true;
 
-  // DiscussionListQuery
+  // discussionListQuery
   var discussionListQuery = Discussion.find();
 
-  // DiscussionListQuery: Defaults
+  // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, req);
 
-  // DiscussionListQuery: Pagination
+  // discussionListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
   //--- Tasks
@@ -66,7 +62,7 @@ exports.categoryListPage = function (req, res, next) {
   // Pagination
   tasks.push(pagination.getCountTask(discussionListQuery));
 
-  // DiscussionListQuery
+  // discussionListQuery
   tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   //---
@@ -119,16 +115,16 @@ exports.list = function (req, res, next) {
   options.pageMetaDescription = category.description;
   options.pageMetaKeywords = null; // seperator = ', '
 
-  // DiscussionListQuery
+  // discussionListQuery
   var discussionListQuery = Discussion.find();
 
-  // DiscussionListQuery: category
+  // discussionListQuery: category
   discussionListQuery.find({category: category.slug});
   
-  // DiscussionListQuery: Defaults
+  // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, req);
 
-  // DiscussionListQuery: Pagination
+  // discussionListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
   //--- Tasks
@@ -136,7 +132,7 @@ exports.list = function (req, res, next) {
   // Pagination
   tasks.push(pagination.getCountTask(discussionListQuery));
 
-  // DiscussionListQuery
+  // discussionListQuery
   tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   //---
@@ -203,40 +199,17 @@ exports.show = function (req, res, next) {
     options.pageMetaDescription = discussion.topic;
     options.pageMetaKeywords = null; // seperator = ', '
 
-    // Comments: Query
+    // commentListQuery
     var commentListQuery = Comment.find();
 
-    // Comments: Query: discussion
+    // commentListQuery: discussion
     commentListQuery.find({_discussionId: discussion._id});
+    
+    // commentListQuery: Defaults
+    modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
 
-    // Comments: Query: flagged
-    // Only list flagged scripts for author and user >= moderator
-    if (options.isYou || options.isMod) {
-      // Show
-    } else {
-      // Script.flagged is undefined by default.
-      commentListQuery.find({flagged: {$ne: true}}); 
-    }
-
-    // Comments: Query: Populate
-    commentListQuery.populate({
-      path: '_authorId',
-      model: 'User',
-      select: 'name role'
-    });
-
-    // Comments: Query: Search
-    if (req.query.q)
-      modelQuery.parseCommentSearchQuery(commentListQuery, req.query.q);
-
-    // Comments: Query: Sort
-    modelQuery.parseModelListSort(commentListQuery, req.query.orderBy, req.query.orderDir, function(){
-      commentListQuery.sort('created -rating');
-    });
-
-    // Pagination
-    var pagination = getDefaultPagination(req);
-    pagination.applyToQuery(commentListQuery);
+    // commentListQuery: Pagination
+    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     //--- Tasks
 

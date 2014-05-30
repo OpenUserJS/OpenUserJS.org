@@ -131,8 +131,15 @@ var applyModelListQueryDefaults = function(modelListQuery, options, req, default
   applyHideFlaggedFromModelListQuery(modelListQuery, options);
 
   // Search
-  if (req.query.q && defaultOptions.parseSearchQueryFn)
-    defaultOptions.parseSearchQueryFn(modelListQuery, req.query.q);
+  if (req.query.q) {
+    options.searchBarValue = req.query.q;
+
+    if (defaultOptions.parseSearchQueryFn)
+      defaultOptions.parseSearchQueryFn(modelListQuery, req.query.q);
+  }
+  options.searchBarFormAction = defaultOptions.searchBarFormAction || '';
+  options.searchBarPlaceholder = defaultOptions.searchBarPlaceholder || 'Search';
+
 
   // Sort
   parseModelListSort(modelListQuery, req.query.orderBy, req.query.orderDir, function(){
@@ -149,6 +156,7 @@ exports.applyCommentListQueryDefaults = function(commentListQuery, options, req)
   applyModelListQueryDefaults(commentListQuery, options, req, {
     defaultSort: 'created -rating',
     parseSearchQueryFn: parseCommentSearchQuery,
+    searchBarPlaceholder: 'Search Comments',
   });
 
   // Populate
@@ -163,12 +171,33 @@ exports.applyDiscussionListQueryDefaults = function(discussionListQuery, options
   applyModelListQueryDefaults(discussionListQuery, options, req, {
     defaultSort: '-updated -rating',
     parseSearchQueryFn: parseDiscussionSearchQuery,
+    searchBarPlaceholder: 'Search Topics',
   });
+};
+
+exports.applyGroupListQueryDefaults = function(groupListQuery, options, req) {
+  applyModelListQueryDefaults(groupListQuery, options, req, {
+    defaultSort: '-rating name',
+    parseSearchQueryFn: parseGroupSearchQuery,
+    searchBarPlaceholder: 'Search Groups',
+  });
+};
+
+var scriptListQueryDefaults = {
+  defaultSort: '-rating -installs -updated',
+  parseSearchQueryFn: parseScriptSearchQuery,
+  searchBarPlaceholder: 'Search Scripts',
+  searchBarFormAction: '/',
+};
+exports.scriptListQueryDefaults = scriptListQueryDefaults;
+exports.applyScriptListQueryDefaults = function(scriptListQuery, options, req) {
+  applyModelListQueryDefaults(scriptListQuery, options, req, scriptListQueryDefaults);
 };
 
 exports.applyUserListQueryDefaults = function(userListQuery, options, req) {
   applyModelListQueryDefaults(userListQuery, options, req, {
     defaultSort: 'name',
     parseSearchQueryFn: parseUserSearchQuery,
+    searchBarPlaceholder: 'Search Users',
   });
 };

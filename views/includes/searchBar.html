@@ -1,3 +1,10 @@
-<form action="" method="get">
-  <input name="q" type="text" placeholder="Search" class="search form-control"/>
+<form action="{{{searchBarFormAction}}}" method="get">
+  <div class="input-group col-xs-12">
+    <input name="q" type="text" placeholder="{{searchBarPlaceholder}}" class="search form-control" value="{{searchBarValue}}" />
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </span>
+  </div>
 </form>

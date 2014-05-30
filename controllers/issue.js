@@ -5,12 +5,10 @@ var Comment = require('../models/comment').Comment;
 var Discussion = require('../models/discussion').Discussion;
 var Script = require('../models/script').Script;
 
-var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var scriptStorage = require('./scriptStorage');
 var discussionLib = require('./discussion');
-var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 
@@ -63,7 +61,7 @@ exports.list = function (req, res, next) {
     options.pageMetaDescription = category.description;
     options.pageMetaKeywords = null; // seperator = ', '
 
-    // Discussion: Query
+    // discussionListQuery
     var discussionListQuery = Discussion.find();
 
     // Discussion: Query: category
@@ -72,27 +70,14 @@ exports.list = function (req, res, next) {
     // Discussion: Query: open
     modelQuery.findOrDefaultIfNull(discussionListQuery, 'open', options.openIssuesOnly, true);
 
-    // Discussion: Query: flagged
-    // Only list flagged scripts for author and user >= moderator
-    if (options.isYou || options.isMod) {
-      // Show
-    } else {
-      // Script.flagged is undefined by default.
-      discussionListQuery.find({flagged: {$ne: true}}); 
-    }
+    // discussionListQuery: Defaults
+    modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, req);
 
-    // Discussion: Query: Search
-    if (req.query.q)
-      modelQuery.parseDiscussionSearchQuery(discussionListQuery, req.query.q);
+    // discussionListQuery: Pagination
+    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
-    // Discussion: Query: Sort
-    modelQuery.parseModelListSort(discussionListQuery, req.query.orderBy, req.query.orderDir, function(){
-      discussionListQuery.sort('-updated -rating');
-    });
-
-    // Pagination
-    var pagination = getDefaultPagination(req);
-    pagination.applyToQuery(discussionListQuery);
+    // SearchBar
+    options.searchBarPlaceholder = 'Search Issues';
 
     //--- Tasks
 
@@ -103,9 +88,10 @@ exports.list = function (req, res, next) {
     // Pagination
     tasks.push(pagination.getCountTask(discussionListQuery, options, 'issueCount'));
 
-    // Discussion
+    // discussionListQuery
     tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
+    //---
     function preRender(){
       options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
       
@@ -170,16 +156,16 @@ exports.view = function (req, res, next) {
       options.canClose = authedUser && (authedUser.name === script.author || authedUser.name === discussion.author);
       options.canOpen = authedUser && authedUser.name === script.author;
 
-      // CommentListQuery
+      // commentListQuery
       var commentListQuery = Comment.find();
 
-      // CommentListQuery: discussion
+      // commentListQuery: discussion
       commentListQuery.find({_discussionId: discussion._id});
 
-      // CommentListQuery: Defaults
+      // commentListQuery: Defaults
       modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
 
-      // CommentListQuery: Pagination
+      // commentListQuery: Pagination
       var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
       //--- Tasks
@@ -188,15 +174,15 @@ exports.view = function (req, res, next) {
       var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: {$ne: false} });
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
-      // CommentListQuery: Pagination
+      // Pagination
       tasks.push(pagination.getCountTask(commentListQuery));
 
-      // Comments
+      // commentListQuery
       tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
       function preRender(){
         // Metadata
-        options.title = discussion.topic +  + ' | OpenUserJS.org';
+        options.title = discussion.topic + ' | OpenUserJS.org';
         options.pageMetaDescription = discussion.topic;
         options.pageMetaKeywords = null; // seperator = ', '
 

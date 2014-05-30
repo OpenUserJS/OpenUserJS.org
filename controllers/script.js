@@ -1,12 +1,11 @@
 var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
+var _ = require('underscore');
 
 var Discussion = require('../models/discussion').Discussion;
-var Flag = require('../models/flag').Flag;
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
-var User = require('../models/user').User;
 var Vote = require('../models/vote').Vote;
 
 var scriptStorage = require('./scriptStorage');
@@ -14,9 +13,8 @@ var addScriptToGroups = require('./group').addScriptToGroups
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var modelsList = require('../libs/modelsList');
+var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
-var renderMd = require('../libs/markdown').renderMd;
-var formatDate = require('../libs/helpers').formatDate;
 var countTask = require('../libs/tasks').countTask;
 
 // Let script controllers know this is a lib route
@@ -232,10 +230,14 @@ exports.view = function (req, res, next) {
     //
     var script = options.script = modelParser.parseScript(scriptData);
     options.isOwner = authedUser && authedUser._id == script._authorId;
-    script.aboutRendered = renderMd(script.about);
+    modelParser.renderScript(script);
     script.installNameSlug = installNameSlug;
     options.title = script.name + ' | OpenUserJS.org';
     options.pageMetaDescription = script.meta.description ? script.meta.description : null;
+
+    // SearchBar
+    options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
+    options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
 
     tasks = tasks.concat(getScriptPageTasks(options));
 
@@ -286,6 +288,9 @@ exports.edit = function (req, res, next) {
     // If authed user is not the script author.
     if (!options.isOwner) { return next(); }
 
+    // SearchBar
+    options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
+    options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
 
     var baseUrl = script && script.isLib ? '/libs/' : '/scripts/';
 

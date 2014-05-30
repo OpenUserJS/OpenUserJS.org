@@ -10,6 +10,7 @@ var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
+var execQueryTask = require('../libs/tasks').execQueryTask;
 
 // clean the name of the group so it is url safe
 function cleanGroupName (name) {
@@ -135,48 +136,36 @@ exports.list = function (req, res) {
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.role < 4;
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
 
-  //
+  // Metadata
   options.title = 'Groups | OpenUserJS.org';
   options.pageMetaDescription = null;
-  options.pageMetaKeywords = null; // seperator = ', '
+  options.pageMetaKeywords = null;
 
-  // Scripts: Query
+  // groupListQuery
   var groupListQuery = Group.find();
 
-  // Scripts: Query: Search
-  if (req.query.q)
-    modelQuery.parseGroupSearchQuery(groupListQuery, req.query.q);
+  // groupListQuery: Defaults
+  modelQuery.applyGroupListQueryDefaults(groupListQuery, options, req);
 
-  // Scripts: Query: Sort
-  modelQuery.parseModelListSort(groupListQuery, req.query.orderBy, req.query.orderDir, function(){
-    groupListQuery.sort('-rating name');
-  });
-  
-
-  // Pagination
-  var pagination = getDefaultPagination(req);
-  pagination.applyToQuery(groupListQuery);
+  // groupListQuery: Pagination
+  var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
   //--- Tasks
 
   // Pagination
   tasks.push(pagination.getCountTask(groupListQuery));
 
-  // Groups
-  tasks.push(function (callback) {
-    groupListQuery.exec(function(err, groupDataList){
-      if (err) {
-        callback();
-      } else {
-        options.groupList = _.map(groupDataList, modelParser.parseGroup);
-        callback();
-      }
-    });
-  });
+  // groupListQuery
+  tasks.push(execQueryTask(groupListQuery, options, 'groupList'));
 
+  //---
   function preRender(){
+    // groupList
+    options.groupList = _.map(options.groupList, modelParser.parseGroup);
+
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
 
@@ -212,35 +201,31 @@ exports.view = function (req, res, next) {
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
-    //
+    // Metadata
     var group = options.group = modelParser.parseGroup(groupData);
     options.title = group.name + ' | OpenUserJS.org';
+    options.pageMetaDescription = null;
+    options.pageMetaKeywords = null;
 
-    // Scripts: Query
+    // scriptListQuery
     var scriptListQuery = Script.find();
 
-    // Scripts: Query: script in group
+    // scriptListQuery: script in group
     scriptListQuery.find({_id: {$in: group._scriptIds}});
 
-    // Scripts: Query: isLib=false
+    // scriptListQuery: isLib=false
     scriptListQuery.find({isLib: false});
 
-    // Scripts: Query: Search
-    if (req.query.q)
-      modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
+    // scriptListQuery: Defaults
+    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
 
-    // Scripts: Query: Sort
-    modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
-      scriptListQuery.sort('-rating -installs -updated');
-    });
+    // scriptListQuery: Pagination
+    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
-    // Pagination
-    var pagination = getDefaultPagination(req);
-    pagination.applyToQuery(scriptListQuery);
-
-    // Groups: Query
+    // groupListQuery
     var groupListQuery = Group.find();
     groupListQuery
       .limit(25);
@@ -250,31 +235,20 @@ exports.view = function (req, res, next) {
     // Pagination
     tasks.push(pagination.getCountTask(scriptListQuery));
 
-    // Scripts
-    tasks.push(function (callback) {
-      scriptListQuery.exec(function(err, scriptDataList){
-        if (err) {
-          callback();
-        } else {
-          options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-          callback();
-        }
-      });
-    });
+    // scriptListQuery
+    tasks.push(execQueryTask(scriptListQuery, options, 'scriptList'));
 
-    // Groups
-    tasks.push(function (callback) {
-      groupListQuery.exec(function(err, groupDataList){
-        if (err) {
-          callback();
-        } else {
-          options.groupList = _.map(groupDataList, modelParser.parseGroup);
-          callback();
-        }
-      });
-    });
+    // groupListQuery
+    tasks.push(execQueryTask(groupListQuery, options, 'groupList'));
 
+    //---
     function preRender(){
+      // scriptList
+      options.scriptList = _.map(options.scriptList, modelParser.parseScript);
+
+      // groupList
+      options.groupList = _.map(options.groupList, modelParser.parseGroup);
+
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
 
