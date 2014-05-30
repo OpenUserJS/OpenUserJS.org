@@ -1,14 +1,17 @@
-var Strategy = require('../models/strategy.js').Strategy;
+var async = require('async');
+
 var User = require('../models/user.js').User;
 var Script = require('../models/script').Script;
-var strategies = require('./strategies.json');
+var Strategy = require('../models/strategy.js').Strategy;
+
 var userRoles = require('../models/userRoles.json');
+var strategies = require('./strategies.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var scriptStorage = require('./scriptStorage');
-var help = require('../libs/helpers');
-var async = require('async');
-var nil = help.nil;
+var modelParser = require('../libs/modelParser');
+var helpers = require('../libs/helpers');
+var nil = helpers.nil;
 
 // This controller is only for use by users with a role of admin or above
 
@@ -134,22 +137,51 @@ exports.userAdminUpdate = function (req, res, next) {
 
 // This page allows admins to set oAuth keys for the available authenticators
 exports.apiAdmin = function (req, res, next) {
-  if (!userIsAdmin(req)) { return next(); }
+  var authedUser = req.session.user;
 
-  Strategy.find({}, function (err, strats) {
-    var stored = nil();
-    var strategies = null;
-    var options = null;
+  //
+  var options = {};
+  var tasks = [];
 
-    strats.forEach(function (strat) {
-      stored[strat.name] = { 'strat' : strat.name,
-        'id' : strat.id, 'key' : strat.key };
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // Metadata
+  options.title = 'Admin | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  if (!options.isAdmin) { return res.status(403); }
+
+  //--- Tasks
+
+  // strategyListQuery
+  tasks.push(function(callback){
+    Strategy.find({}, function (err, strats) {
+      var stored = nil();
+      var strategies = null;
+
+      strats.forEach(function (strat) {
+        stored[strat.name] = {
+          strat: strat.name,
+          id: strat.id,
+          key: strat.key
+        };
+      });
+
+      strategies = getOAuthStrategies(stored);
+      options.strategies = strategies;
+
+      callback();
     });
+  });
 
-    strategies = getOAuthStrategies(stored);
-    options = { 'strategies' : strategies };
-
-    res.render('apiAdmin', options);
+  //---
+  async.parallel(tasks, function(err){
+    if (err) return next();
+    res.render('pages/adminPage', options);
   });
 };
 

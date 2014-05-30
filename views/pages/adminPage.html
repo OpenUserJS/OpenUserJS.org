@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        <h1>Auth Strategy API Keys</h1>
+        <form class="form-horizontal" role="form" method="post" action="/admin/api/update">
+          <div class="list-group">
+          {{#strategies}}
+            <li class="list-group-item">
+              <h4 class="list-group-item-heading">{{strat}}</h4>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="input-group ">
+                    <span class="input-group-addon">Id</span>
+                    <input type="text" class="form-control" name="{{{strat}}}[0]" value="{{{id}}}" placeholder="Id">
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="input-group ">
+                    <span class="input-group-addon">Key</span>
+                    <input type="text" class="form-control" name="{{{strat}}}[1]" value="{{{key}}}" placeholder="Key">
+                  </div>
+                </div>
+                
+              </div>
+            </li>
+          {{/strategies}}
+          </div>
+          <div class="container-fluid row">
+            <button type="submit" class="btn btn-sucess col-sm-12">Update</button>
+          </div>
+          <hr>
+        </form>
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>
