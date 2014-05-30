@@ -636,14 +636,62 @@ exports.edit = function (req, res, next) {
   });
 };
 
+exports.newScriptPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  if (!authedUser) return res.redirect('/login');
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // Metadata
+  options.title = 'New Script | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  //---
+  function preRender(){};
+  function render(){ res.render('pages/newScriptPage', options); }
+  function asyncComplete(err){ if (err) { return next(); } else { preRender(); render(); } };
+  async.parallel(tasks, asyncComplete);
+};
+
 // Sloppy code to let a user add scripts to their acount
-exports.scripts = function (req, res, next) {
+exports.userManageGitHubPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  if (!authedUser) return res.redirect('/login');
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // Metadata
+  options.title = 'Manage GitHub Sync | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+
+  //--- Tasks
+
+  ///////////
+
   var user = req.session.user;
   var isLib = req.route.params.isLib;
   var indexOfGH = -1;
   var ghUserId = null;
   var repoManager = null;
-  var options = null;
   var loadingRepos = false;
   var reponame = null;
   var repo = null;
@@ -651,9 +699,8 @@ exports.scripts = function (req, res, next) {
   var scriptname = null;
   var loadable = null;
 
-  if (!user) { return res.redirect('/login'); }
-
-  options = { title: 'Edit Scripts', username: user.name, isLib: isLib };
+  options.username = user.name;
+  options.isLib = isLib;
 
   indexOfGH = user.strategies.indexOf('github');
   if (indexOfGH > -1) {
@@ -716,7 +763,15 @@ exports.scripts = function (req, res, next) {
     }
   }
 
-  if (!loadingRepos) { res.render('addScripts', options); }
+  if (!loadingRepos) {
+
+
+    //---
+    function preRender(){};
+    function render(){ res.render('pages/userManageGitHub', options); }
+    function asyncComplete(err){ if (err) { return next(); } else { preRender(); render(); } };
+    async.parallel(tasks, asyncComplete);
+  }
 };
 
 exports.uploadScript = function (req, res, next) {

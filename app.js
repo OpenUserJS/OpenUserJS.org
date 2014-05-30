@@ -124,13 +124,14 @@ app_route('/users').get(user.userListPage);
 app_route('/users/:username').get(user.view);
 app_route('/users/:username/comments').get(user.userCommentListPage);
 app_route('/users/:username/scripts').get(user.userScriptListPage);
+app_route('/users/:username/github').get(user.userManageGitHubPage).post(user.userManageGitHubPage);
 app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
 app_route('/user/preferences').get(user.userEditPreferencesPage);
+app_route('/user/add/scripts').get(user.newScriptPage);
 app_route('/user/add/scripts/new').get(user.editScript).post(user.submitSource);
 
 // User routes: Legacy
-app_route('/user/add/scripts').get(user.scripts).post(user.scripts);
-app_route('/user/add/lib').get(script.lib(user.scripts)).post(script.lib(user.scripts));
+app_route('/user/add/lib').get(script.lib(user.newScriptPage)).post(script.lib(user.newScriptPage));
 app_route('/user/add/lib/new').get(script.lib(user.newScript)).post(script.lib(user.newScript));
 app_route('/user/add/:scripttype(scripts|lib)/upload').post(user.uploadScript);
 

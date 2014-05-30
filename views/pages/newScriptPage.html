@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <style>
+  .script-metadata-definitions .list-group-item-heading code {
+    white-space: pre-line;
+  }
+  </style>
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="col-md-4">
+          <h2><i class="fa fa-tags"></i> Script Metadata</h2>
+          <p>You can read about most userscript metadata blocks on the <a href="http://wiki.greasespot.net/Metadata_Block">greasespot wiki</a> and at the <a href="http://sourceforge.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block">greasemonkey sourceforge wiki</a>.</p>
+          <h3>OpenUserJS.org Specific</h3>
+          <div class="list-group script-metadata-definitions">
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h4>
+              <p class="list-group-item-text">The author of the script. Required for <a href="#collaberation">Collaberation</a>. Only the author may edit.</p>
+            </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@collaborator username</code></h4>
+              <p class="list-group-item-text">Can be defined multiple times. Required for <a href="#collaberation">Collaberation</a>.</p>
+            </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@description This script even does the laundry!</code></h4>
+              <p class="list-group-item-text">Specially formatted on the script page.</p>
+            </div>
+            
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@copyright Year, Author (Author Homepage)</code></h4>
+              <p class="list-group-item-text">[<a href="http://sourceforge.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block#.40copyright">Wiki Link</a>] Specially formatted on the script page.</p>
+            </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@icon url</code></h4>
+              <p class="list-group-item-text">A url or data url. Used in the script list page at 16px and on the script page at ~45px.</p>
+            </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@license License Type; License Homepage</code></h4>
+              <p class="list-group-item-text">[<a href="http://sourceforge.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block#.40license">Wiki Link</a>] Specially formatted on the script page.</p>
+            </div>
+          </div>
+          <a name="collaberation"></a>
+          <h3>Collaberation</h3>
+          <p>To allow other users to upload modified versions of your script to your account, add <code>@author Zren</code> to the metadata of your script, along with <code>@collaborator username</code> for every user you wish to give write access. Only the real author of the script can modify these metadata keys. Collaborators cannot use GitHub integration to update the script. Add them as collaborators to the GitHub repo instead.</p>
+        </div>
+        <div class="col-md-4">
+          <h2><i class="fa fa-plus-square"></i> New Script</h2>
+          <div class="list-group">
+            <a href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">Write Script Online</h4>
+              <p class="list-group-item-text">
+                Click here to write a script using the Ace editor (used by GitHub).
+              </p>
+            </a>
+            <div href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">Upload Script</h4>
+              <p class="list-group-item-text">
+                <form action="/user/add/scripts/upload" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="uploadScript" value="true">
+                  <div class="input-group">
+                    <input type="file" class="form-control" name="script" placeholder="Enter email">  
+                    <span class="input-group-btn">
+                      <button class="btn btn-success" type="submit">Submit</button>
+                    </span> 
+                  </div>
+                </form>
+              </p>
+            </div>
+            <div href="#" class="list-group-item">
+              <h4 class="list-group-item-heading">Fork An Existing Script</h4>
+              <p class="list-group-item-text">
+                Click the fork button on any scripts main page while logged in.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h2><i class="fa fa-refresh"></i> Sync Script</h2>
+          <h3><i class="fa fa-github"></i> GitHub</h3>
+          <p>You can add a webhook to a GitHub respository to automatically keep it up to date on OpenUserJS.org. Click <a href="{{authedUser.userManageGitHubPageUrl}}">here</a> to manage your scripts synced with GitHub.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

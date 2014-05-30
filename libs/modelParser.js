@@ -130,6 +130,7 @@ exports.parseUser = function(userData) {
   user.userPageUrl = '/users/' + user.name;
   user.userCommentListPageUrl = user.userPageUrl + '/comments';
   user.userScriptListPageUrl = user.userPageUrl + '/scripts';
+  user.userManageGitHubPageUrl = user.userPageUrl + '/github';
   user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
 
   return user;
