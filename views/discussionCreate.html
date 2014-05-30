@@ -3,7 +3,7 @@
 <h1  class="pop-scripts-header">{{#issue}}Open a New Issue for {{name}}{{/issue}}{{^issue}}Start a New Discussion{{/issue}}</h1>
 </div>
 <div class="content-box creation-box">
-  <form id="start_discussion" action="{{^issue}}/post{{/issue}}/{{category}}{{#issue}}/open{{/issue}}" method="post">
+  <form id="start_discussion" action="{{^issue}}/post{{/issue}}/{{category}}{{#issue}}/issue/new{{/issue}}" method="post">
     <strong>{{#issue}}Issue{{/issue}}{{^issue}}Discussion{{/issue}} Topic:</strong>
     <input type="text" id="discussion-topic" name="discussion-topic" size="60" value="" />
     <br /><br />

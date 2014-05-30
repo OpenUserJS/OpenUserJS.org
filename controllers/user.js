@@ -435,17 +435,20 @@ exports.userEditPreferencesPage = function (req, res, next) {
 };
 
 // Let a user edit their account
-exports.edit = function (req, res) {
+exports.edit = function (req, res, next) {
   var user = req.session.user;
-  var userStrats = req.session.user.strategies.slice(0);
-  var options = {
+  var userStrats = null;
+  var options = null;
+
+  if (!user) { return res.redirect('/login'); }
+
+  userStrats = req.session.user.strategies.slice(0);
+  options = {
     title: 'Edit Yourself',
     name: user.name,
     about: user.about,
-    username: user ? user.name : null
+    username: user.name
   };
-
-  if (!user) { return res.redirect('/login'); }
 
   req.route.params.push('author');
 
@@ -500,7 +503,7 @@ exports.edit = function (req, res) {
 };
 
 // Sloppy code to let a user add scripts to their acount
-exports.scripts = function (req, res) {
+exports.scripts = function (req, res, next) {
   var user = req.session.user;
   var isLib = req.route.params.isLib;
   var indexOfGH = -1;
@@ -638,12 +641,13 @@ exports.uploadScript = function (req, res, next) {
 };
 
 // post route to update a user's account
-exports.update = function (req, res) {
+exports.update = function (req, res, next) {
   var user = req.session.user;
   var scriptUrls = req.body.urls ? Object.keys(req.body.urls) : '';
   var installRegex = null;
   var installNames = [];
   var username = user.name.toLowerCase();
+
   if (!user) { return res.redirect('/login'); }
 
   if (req.body.about) {

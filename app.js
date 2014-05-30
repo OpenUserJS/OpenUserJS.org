@@ -19,8 +19,16 @@ var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
+var dbOptions = { server : { socketOptions : { keepAlive: 1 } } };
 
 app.set('port', process.env.PORT || 8080);
+
+// Connect to the database
+mongoose.connect(connectStr, dbOptions);
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+  app.listen(app.get('port'));
+});
 
 app.configure(function(){
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
@@ -62,7 +70,7 @@ app.configure(function(){
   app.use(express.session({
     secret: sessionSecret,
     store: new MongoStore({
-      url: connectStr
+      mongoose_connection: db
     })
   }));
   app.use(passport.initialize());
@@ -73,11 +81,6 @@ app.configure(function(){
   app.set('view engine', 'html');
   app.set('views', __dirname + '/views');
 });
-
-mongoose.connect(connectStr);
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {});
-app.listen(app.get('port'));
 
 // Build the route regex for model lists
 function listRegex (root, type) {
