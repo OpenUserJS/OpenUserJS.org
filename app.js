@@ -168,7 +168,6 @@ app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic'
 
 // Issues routes: Legacy
 app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?' + '\/issues\/([^\/]+?)', ''), issue.view);
-app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/open').post(issue.open);
 app.post('/:type(scripts|libs)/:username/:scriptname/issues/:topic', issue.comment);
 app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic', issue.comment);
 app.get('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
