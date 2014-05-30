@@ -128,6 +128,7 @@ exports.parseUser = function(userData) {
 
   // Urls: Public
   user.userPageUrl = '/users/' + user.name;
+  user.userCommentListPageUrl = user.userPageUrl + '/comments';
   user.userScriptListPageUrl = user.userPageUrl + '/scripts';
   user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
 

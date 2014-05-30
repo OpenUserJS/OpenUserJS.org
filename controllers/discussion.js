@@ -216,7 +216,7 @@ exports.show = function (req, res, next) {
     // Pagination
     tasks.push(pagination.getCountTask(commentListQuery));
 
-    // Comments
+    // commentListQuery
     tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
     function preRender(){

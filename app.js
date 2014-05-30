@@ -122,6 +122,7 @@ app_route('/logout').get(main.logout);
 // User routes
 app_route('/users').get(user.userListPage);
 app_route('/users/:username').get(user.view);
+app_route('/users/:username/comments').get(user.userCommentListPage);
 app_route('/users/:username/scripts').get(user.userScriptListPage);
 app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
 app_route('/user/preferences').get(user.userEditPreferencesPage);

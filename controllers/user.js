@@ -3,6 +3,7 @@ var formidable = require('formidable');
 var async = require('async');
 var _ = require('underscore');
 
+var Comment = require('../models/comment').Comment;
 var Flag = require('../models/flag').Flag;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy.js').Strategy;
@@ -21,6 +22,7 @@ var renderMd = require('../libs/markdown').renderMd;
 var nil = require('../libs/helpers').nil;
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 var execQueryTask = require('../libs/tasks').execQueryTask;
+var countTask = require('../libs/tasks').countTask;
 
 var setupFlagUserUITask = function(options) {
   var user = options.user;
@@ -58,6 +60,72 @@ var setupFlagUserUITask = function(options) {
       });
     });
   };
+};
+
+var getUserSidePanelTasks = function(options) {
+  var tasks = [];
+
+  //--- Tasks
+
+  // Setup the flag user UI
+  tasks.push(setupFlagUserUITask(options));
+
+  return tasks;
+};
+
+var getUserPageTasks = function(options) {
+  var tasks = [];
+
+  // Shortcuts
+  var user = options.user;
+  var authedUser = options.authedUser;
+
+  //--- Tasks
+
+  // userScriptListCountQuery
+  var userScriptListCountQuery = Script.find({ _authorId: user._id, flagged: {$ne: true}});
+  tasks.push(countTask(userScriptListCountQuery, options, 'scriptListCount'));
+
+  // userCommentListCountQuery
+  var userCommentListCountQuery = Comment.find({ _authorId: user._id, flagged: {$ne: true}});
+  tasks.push(countTask(userCommentListCountQuery, options, 'commentListCount'));
+
+  return tasks;
+};
+
+var setupUserSidePanel = function(options) {
+  // Shortcuts
+  var user = options.user;
+  var authedUser = options.authedUser;
+
+  // User
+  if (options.isYou) {
+    options.userTools = {};
+  }
+
+  // Mod
+  if (authedUser && authedUser.isMod && (authedUser.role < user.role || options.isYou)) {
+    //options.userTools = {}; // TODO: Support moderator edits of user profiles?
+    options.modTools = {};
+  }
+
+  // Admin
+  if (authedUser && authedUser.isAdmin && (authedUser.role < user.role || options.isYou)) {
+    options.adminTools = {};
+
+    // user.role
+    // Allow authedUser to raise target user role to the level below him.
+    var roles = _.map(userRoles, function(roleName, index){
+      return {
+        id: index,
+        name: roleName,
+        selected: index === user.role,
+      };
+    });
+    roles = roles.splice(authedUser.role + 1);
+    roles.reverse();
+    options.adminTools.availableRoles = roles;
+  }
 };
 
 exports.userListPage = function (req, res, next) {
@@ -127,83 +195,119 @@ exports.view = function (req, res, next) {
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
-    //
+    // User
     var user = options.user = modelParser.parseUser(userData);
+    user.aboutRendered = renderMd(user.about);
     options.isYou = authedUser && user && authedUser._id == user._id;
+
+    // Metadata
     options.title = user.name + ' | OpenUserJS.org';
     options.pageMetaDescription = null;
-    options.pageMetaKeywords = null; // seperator = ', '
+    options.pageMetaKeywords = null;
     options.isUserPage = true;
 
-    //
-    user.aboutRendered = renderMd(user.about);
+    // UserSidePanel
+    setupUserSidePanel(options);
 
-    // User
-    if (options.isYou) {
-      options.userTools = {};
-    }
-
-    // Mod
-    if (authedUser && authedUser.isMod && authedUser.role < user.role) {
-      //options.userTools = {}; // TODO: Support moderator edits of user profiles?
-      options.modTools = {};
-    }
-
-    // Admin
-    if (authedUser && authedUser.isAdmin && authedUser.role < user.role) {
-      options.adminTools = {};
-
-      // user.role
-      // Allow authedUser to raise target user role to the level below him.
-      var roles = _.map(userRoles, function(roleName, index){
-        return {
-          id: index,
-          name: roleName,
-          selected: index === user.role,
-        };
-      });
-      roles = roles.splice(authedUser.role + 1);
-      roles.reverse();
-      options.adminTools.availableRoles = roles;
-    }
-
-    // Scripts: Query
+    // scriptListQuery
     var scriptListQuery = Script.find();
 
-    // Scripts: Query: author=user
+    // scriptListQuery: author=user
     scriptListQuery.find({_authorId: user._id});
-    // scriptListQuery.find({author: user.name});
 
-    // Scripts: Query: flagged
-    // Only list flagged scripts for author and user >= moderator
-    if (options.isYou || options.isMod) {
-      // Show
-    } else {
-      // Script.flagged is undefined by default.
-      // This is the result of Script.flagged be added later
-      scriptListQuery.find({flagged: {$ne: true}}); 
-    }
+    // scriptListQuery: Defaults
+    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
+
+    // scriptListQuery: Pagination
+    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     //--- Tasks
 
-    // User scripList (count)
-    tasks.push(function (callback) {
-      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-        if (err) {
-          callback();
-        } else {
-          options.scriptListCount = scriptListCount;
-          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
-          callback();
-        }
-      });
-    });
+    // UserPage tasks
+    tasks = tasks.concat(getUserPageTasks(options));
 
-    // Setup the flag user UI
-    tasks.push(setupFlagUserUITask(options));
+    // UserSidePanel tasks
+    tasks = tasks.concat(getUserSidePanelTasks(options));
 
+    //---
     function preRender(){};
     function render(){ res.render('pages/userPage', options); }
+    function asyncComplete(){ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};
+
+
+
+exports.userCommentListPage = function(req, res, next) {
+  var authedUser = req.session.user;
+
+  var username = req.route.params.username;
+
+  User.findOne({
+    name: username
+  }, function (err, userData) {
+    if (err || !userData) { return next(); }
+
+    //
+    var options = {};
+    var tasks = [];
+
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
+
+    // User
+    var user = options.user = modelParser.parseUser(userData);
+    options.isYou = authedUser && user && authedUser._id == user._id;
+
+    // Metadata
+    options.title = user.name + ' | OpenUserJS.org';
+    options.pageMetaDescription = null;
+    options.pageMetaKeywords = null;
+    options.isUserCommentListPage = true;
+
+    // commentListQuery
+    var commentListQuery = Comment.find();
+
+    // commentListQuery: author=user
+    commentListQuery.find({_authorId: user._id});
+    
+    // commentListQuery: Defaults
+    modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
+
+    // commentListQuery: Pagination
+    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+
+    // SearchBar
+    options.searchBarPlaceholder = 'Search User\'s Comments';
+    options.searchBarFormAction = '';
+
+    //--- Tasks
+
+    // Pagination
+    tasks.push(pagination.getCountTask(commentListQuery));
+
+    // commentListQuery
+    tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
+
+    // UserPage tasks
+    tasks = tasks.concat(getUserPageTasks(options));
+
+    //--
+    function preRender(){
+      // commentList
+      options.commentList = _.map(options.commentList, modelParser.parseComment);
+      _.map(options.commentList, function(comment){
+        comment.author = modelParser.parseUser(comment._authorId);
+      });
+      _.map(options.commentList, modelParser.renderComment);
+
+      // Pagination
+      options.paginationRendered = pagination.renderDefault(req);
+    };
+    function render(){ res.render('pages/userCommentListPage', options); }
     function asyncComplete(){ preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
@@ -228,72 +332,48 @@ exports.userScriptListPage = function(req, res, next) {
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
-
-    //
+    // User
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
+
+    // Metadata
     options.title = user.name + ' | OpenUserJS.org';
     options.pageMetaDescription = null;
-    options.pageMetaKeywords = null; // seperator = ', '
+    options.pageMetaKeywords = null;
     options.isUserScriptListPage = true;
 
-    // Scripts: Query
+    // scriptListQuery
     var scriptListQuery = Script.find();
 
-    // Scripts: Query: author=user
+    // scriptListQuery: author=user
     scriptListQuery.find({_authorId: user._id});
 
-    // Scripts: Query: flagged
-    // Only list flagged scripts for author and user >= moderator
-    if (options.isYou || options.isMod) {
-      // Show
-    } else {
-      // Script.flagged is undefined by default.
-      scriptListQuery.find({flagged: {$ne: true}}); 
-    }
+    // scriptListQuery: Defaults
+    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
 
-    // Scripts: Query: Search
-    if (req.query.q)
-      modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
+    // scriptListQuery: Pagination
+    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
-    // Scripts: Query: Sort
-    modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
-      scriptListQuery.sort('-rating -installs -updated');
-    });
-
-    // Pagination
-    var pagination = getDefaultPagination(req);
-    pagination.applyToQuery(scriptListQuery);
+    // SearchBar
+    options.searchBarPlaceholder = 'Search User\'s Scripts';
+    options.searchBarFormAction = '';
 
     //--- Tasks
 
     // Pagination
     tasks.push(pagination.getCountTask(scriptListQuery));
 
-    // User scripList
-    tasks.push(function (callback) {
-      scriptListQuery.exec(function(err, scriptDataList){
-        if (err) {
-          callback();
-        } else {
-          options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-          callback();
-        }
-      });
-    });
-    tasks.push(function (callback) {
-      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-        if (err) {
-          callback();
-        } else {
-          options.scriptListCount = scriptListCount;
-          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
-          callback();
-        }
-      });
-    });
+    // scriptListQuery
+    tasks.push(execQueryTask(scriptListQuery, options, 'scriptList'));
 
+    // UserPage tasks
+    tasks = tasks.concat(getUserPageTasks(options));
+
+    //---
     function preRender(){
+      // scriptList
+      options.scriptList = _.map(options.scriptList, modelParser.parseScript);
+
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
     };
@@ -322,14 +402,19 @@ exports.userEditProfilePage = function (req, res, next) {
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
-    //
+    // User
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.title = user.name + ' | OpenUserJS.org';
 
-    //
-    user.aboutRendered = renderMd(user.about);
+    // Metadata
+    options.title = user.name + ' | OpenUserJS.org';
+    options.pageMetaDescription = null;
+    options.pageMetaKeywords = null;
+
+    // UserSidePanel
+    setupUserSidePanel(options);
 
     // Scripts: Query
     var scriptListQuery = Script.find();
@@ -347,22 +432,15 @@ exports.userEditProfilePage = function (req, res, next) {
       scriptListQuery.find({flagged: {$ne: true}}); 
     }
 
-    // User scripList (count)
-    tasks.push(function (callback) {
-      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-        if (err) {
-          callback();
-        } else {
-          options.scriptListCount = scriptListCount;
-          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
-          callback();
-        }
-      });
-    });
+    //--- Tasks
 
-    // Setup the flag user UI
-    tasks.push(setupFlagUserUITask(options));
+    // UserPage tasks
+    tasks = tasks.concat(getUserPageTasks(options));
 
+    // UserSidePanel tasks
+    tasks = tasks.concat(getUserSidePanelTasks(options));
+
+    //---
     function preRender(){};
     function render(){ res.render('pages/userEditProfilePage', options); }
     function asyncComplete(){ preRender(); render(); }
@@ -386,15 +464,20 @@ exports.userEditPreferencesPage = function (req, res, next) {
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
-    //
+    // User
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
-    options.title = user.name + ' | OpenUserJS.org';
 
-    //
-    user.aboutRendered = renderMd(user.about);
+    // Metadata
+    options.title = user.name + ' | OpenUserJS.org';
+    options.pageMetaDescription = null;
+    options.pageMetaKeywords = null;
+
+    // UserSidePanel
+    setupUserSidePanel(options);
 
     // Scripts: Query
     var scriptListQuery = Script.find();
@@ -412,18 +495,7 @@ exports.userEditPreferencesPage = function (req, res, next) {
       scriptListQuery.find({flagged: {$ne: true}}); 
     }
 
-    // User scripList (count)
-    tasks.push(function (callback) {
-      Script.count(scriptListQuery._conditions, function(err, scriptListCount){
-        if (err) {
-          callback();
-        } else {
-          options.scriptListCount = scriptListCount;
-          options.scriptListNumPages = Math.ceil(options.scriptListCount / options.scriptListLimit) || 1;
-          callback();
-        }
-      });
-    });
+    //--- Tasks
 
     // User edit auth strategies
     tasks.push(function(callback) {
@@ -472,8 +544,11 @@ exports.userEditPreferencesPage = function (req, res, next) {
       });
     });
 
-    // Setup the flag user UI
-    tasks.push(setupFlagUserUITask(options));
+    // UserPage tasks
+    tasks = tasks.concat(getUserPageTasks(options));
+
+    // UserSidePanel tasks
+    tasks = tasks.concat(getUserSidePanelTasks(options));
 
     function preRender(){};
     function render(){ res.render('pages/userEditPreferencesPage', options); }

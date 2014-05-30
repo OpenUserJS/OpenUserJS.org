@@ -125,6 +125,7 @@ var applyHideFlaggedFromModelListQuery = function(modelListQuery, options) {
     modelListQuery.find({flagged: {$ne: true}}); 
   }
 };
+exports.applyHideFlaggedFromModelListQuery = applyHideFlaggedFromModelListQuery;
 
 var applyModelListQueryDefaults = function(modelListQuery, options, req, defaultOptions) {
   // flagged
