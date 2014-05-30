@@ -280,6 +280,12 @@ exports.userCommentListPage = function(req, res, next) {
     // commentListQuery: Pagination
     var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
+    // commentListQuery: Populate: discussion
+    commentListQuery.populate({
+      path: '_discussionId',
+      model: 'Discussion',
+    });
+
     // SearchBar
     options.searchBarPlaceholder = 'Search User\'s Comments';
     options.searchBarFormAction = '';
@@ -303,6 +309,11 @@ exports.userCommentListPage = function(req, res, next) {
         comment.author = modelParser.parseUser(comment._authorId);
       });
       _.map(options.commentList, modelParser.renderComment);
+
+      // comment.discussion
+      _.map(options.commentList, function(comment){
+        comment.discussion = modelParser.parseDiscussion(comment._discussionId);
+      });
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
