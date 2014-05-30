@@ -7,4 +7,4 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 See Also
 --------
 
-* [STYLEGUIDE.md](/OpenUserJs/OpenUserJS.org/blob/master/STYLEGUIDE.md)
+* [STYLEGUIDE.md](STYLEGUIDE.md)
