@@ -20,6 +20,7 @@ var strategies = require('./strategies.json');
 var renderMd = require('../libs/markdown').renderMd;
 var nil = require('../libs/helpers').nil;
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
+var execQueryTask = require('../libs/tasks').execQueryTask;
 
 var setupFlagUserUITask = function(options) {
   var user = options.user;
@@ -57,6 +58,53 @@ var setupFlagUserUITask = function(options) {
       });
     });
   };
+};
+
+exports.userListPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // Metadata
+  options.title = 'Users | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  // userListQuery
+  var userListQuery = User.find();
+  
+  // userListQuery: Defaults
+  modelQuery.applyUserListQueryDefaults(userListQuery, options, req);
+
+  // userListQuery: Pagination
+  var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+
+  //--- Tasks
+
+  // Pagination
+  tasks.push(pagination.getCountTask(userListQuery));
+
+  // userListQuery
+  tasks.push(execQueryTask(userListQuery, options, 'userList'));
+
+  //---
+  function preRender(){
+    // userList
+    options.userList = _.map(options.userList, modelParser.parseUser);
+
+    // Pagination
+    options.paginationRendered = pagination.renderDefault(req);
+  };
+  function render(){ res.render('pages/userListPage', options); }
+  function asyncComplete(err){ if (err) { return next(); } else { preRender(); render(); } };
+  async.parallel(tasks, asyncComplete);
 };
 
 // View information and scripts of a user

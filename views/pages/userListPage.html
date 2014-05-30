@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-8">
+        <h2 class="page-heading">
+          Users
+        </h2>
+        {{> includes/userList.html }}
+        <div class="text-center">
+          {{{paginationRendered}}}
+        </div>
+        
+      </div>
+      <div class="col-sm-4">
+        <div class="panel">
+          <form action="" method="get">
+            <div class="input-group col-xs-12">
+              <input name="q" type="text" placeholder="Search Users" class="search form-control"/>
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  {{> includes/tableTrLink.html }}
+</body>
+</html>
