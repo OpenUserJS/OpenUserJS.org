@@ -16,7 +16,6 @@
     "toobusy": "*",
     "underscore": "*",
     "moment": "*",
-    "url": "*",
     "passport": "*",
     "passport-github": "*",
     "passport-amazon": "*",
