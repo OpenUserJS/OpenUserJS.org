@@ -11,7 +11,7 @@
   padding-left: 0;
 }
 .tagcloud li {
-  display: inline;
+  display: inline-block;
 }
 .progress,
 .progress-bar {
