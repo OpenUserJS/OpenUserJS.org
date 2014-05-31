@@ -143,9 +143,9 @@ app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
 app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Issues routes
-app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
+app.get(listRegex('\/(scripts|libs)\/([^\/]+?)(?:\/([^\/]+?))?\/([^\/]+?)'
   + '\/issues(?:\/(closed))?', ''), issue.list);
-app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
+app.get(listRegex('\/(scripts|libs)\/([^\/]+?)(?:\/([^\/]+?))?\/([^\/]+?)'
   + '\/issues\/([^\/]+?)', ''), issue.view);
 app.get('/:type(scripts|libs)/:username/:scriptname/issue/new', issue.open);
 app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issue/new',
