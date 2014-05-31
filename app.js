@@ -1,4 +1,4 @@
-var toobusy = require('toobusy');
+var toobusy = require('toobusy-js');
 var express = require('express');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
