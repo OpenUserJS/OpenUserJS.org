@@ -201,9 +201,8 @@ app.get(listRegex('\/', 'script'), main.home);
 app.use(express.static(__dirname + '/public'));
 app.use(function (req, res, next) {
   var user = req.session.user;
-  res.render('404', {
+  res.status(404).render('404', {
     title: '404 Not Found',
     username: user ? user.name : null
   });
 });
-
