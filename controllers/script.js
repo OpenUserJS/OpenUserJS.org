@@ -27,7 +27,7 @@ exports.lib = function (controller) {
 
 // Display which scripts use a library hosted on the site
 exports.useLib = function (req, res, next) {
-  var installName = req.route.params.shift().toLowerCase() + '/' 
+  var installName = req.route.params.shift().toLowerCase() + '/'
     + req.route.params.shift();
   var user = req.session.user;
   var options = { username: user ? user.name : '' };
@@ -35,7 +35,7 @@ exports.useLib = function (req, res, next) {
   Script.findOne({ installName: installName + '.js' }, function (err, lib) {
     if (err || !lib) { return next(); }
 
-    options.title = 'Scripts that use <a href="/libs/' + installName + '">' 
+    options.title = 'Scripts that use <a href="/libs/' + installName + '">'
       + lib.name + '</a>';
     modelsList.listScripts({ uses: lib.installName },
       req.route.params, '/use/lib/' + installName,
@@ -94,8 +94,8 @@ var getScriptPageTasks = function(options) {
       Script.find({ installName: { $in: script.uses } },
         function (err, libs) {
           libs.forEach(function (lib) {
-            options.libs.push({ 
-              name: lib.name, url: lib.installName.replace(/\.js$/, '') 
+            options.libs.push({
+              name: lib.name, url: lib.installName.replace(/\.js$/, '')
             });
           });
           callback();
@@ -302,7 +302,9 @@ exports.edit = function (req, res, next) {
         });
       } else {
         scriptData.about = req.body.about;
-        addScriptToGroups(scriptData, req.body.groups.split(/,/), function () {
+        var scriptGroups = (req.body.groups || "");
+        scriptGroups = scriptGroups.split(/,/);
+        addScriptToGroups(scriptData, scriptGroups, function () {
           res.redirect(script.scriptPageUrl);
         });
       }
@@ -409,7 +411,7 @@ exports.vote = function (req, res, next) {
           if (user._id == script._authorId || (!voteModel && unvote)) {
             return res.redirect(url);
           } else if (!voteModel) {
-            voteModel = new Vote({ 
+            voteModel = new Vote({
               vote: vote,
               _scriptId: script._id,
               _userId: user._id
