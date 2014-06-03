@@ -36,5 +36,5 @@ marked.setOptions({
 });
 
 exports.renderMd = function (text) {
-  return marked(xss(text));
+  return xss(marked(text));
 };
