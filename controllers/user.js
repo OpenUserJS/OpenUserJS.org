@@ -40,9 +40,9 @@ var setupFlagUserUITask = function(options) {
       if (flag) {
         flagUrl += '/unflag';
         options.flagged = true;
-        options.flaggable = true;
+        options.canFlag = true;
       } else {
-        options.flaggable = canFlag;
+        options.canFlag = canFlag;
       }
       options.flagUrl = flagUrl;
 
@@ -147,7 +147,7 @@ exports.userListPage = function (req, res, next) {
 
   // userListQuery
   var userListQuery = User.find();
-  
+
   // userListQuery: Defaults
   modelQuery.applyUserListQueryDefaults(userListQuery, options, req);
 
@@ -273,7 +273,7 @@ exports.userCommentListPage = function(req, res, next) {
 
     // commentListQuery: author=user
     commentListQuery.find({_authorId: user._id});
-    
+
     // commentListQuery: Defaults
     modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
 
@@ -440,7 +440,7 @@ exports.userEditProfilePage = function (req, res, next) {
       // Show
     } else {
       // Script.flagged is undefined by default.
-      scriptListQuery.find({flagged: {$ne: true}}); 
+      scriptListQuery.find({flagged: {$ne: true}});
     }
 
     //--- Tasks
@@ -503,7 +503,7 @@ exports.userEditPreferencesPage = function (req, res, next) {
       // Show
     } else {
       // Script.flagged is undefined by default.
-      scriptListQuery.find({flagged: {$ne: true}}); 
+      scriptListQuery.find({flagged: {$ne: true}});
     }
 
     //--- Tasks
@@ -794,9 +794,9 @@ exports.uploadScript = function (req, res, next) {
     var failUrl = '/user/add/' + (isLib ? 'lib' : 'scripts');
 
     // Reject non-js and huge files
-    if (script.type !== 'application/javascript' && 
-      script.size > 500000) { 
-      return res.redirect(failUrl); 
+    if (script.type !== 'application/javascript' &&
+      script.size > 500000) {
+      return res.redirect(failUrl);
     }
 
     stream = fs.createReadStream(script.path);
@@ -841,7 +841,7 @@ exports.update = function (req, res, next) {
 
   if (req.body.about) {
     // Update the about section of a user's profile
-    User.findOneAndUpdate({ _id: user._id }, 
+    User.findOneAndUpdate({ _id: user._id },
       { about: req.body.about  },
       function (err, user) {
         if (err) { res.redirect('/'); }
@@ -885,7 +885,7 @@ exports.submitSource = function (req, res, next) {
           return res.redirect(redirectUrl);
         }
 
-        Script.findOne({ installName: req.body.original }, 
+        Script.findOne({ installName: req.body.original },
           function (err, origScript) {
             var fork = null;
             if (err || !origScript) { return res.redirect(redirectUrl); }
@@ -955,7 +955,7 @@ function getExistingScript (req, options, authedUser, callback) {
         options.source = Buffer.concat(bufs).toString('utf8');
         options.original = script.installName;
         options.url = req.url;
-        options.owner = authedUser && (script._authorId == authedUser._id 
+        options.owner = authedUser && (script._authorId == authedUser._id
           || collaborators.indexOf(authedUser.name) > -1);
         options.username = authedUser ? authedUser.name : null;
         options.isLib = script.isLib;
@@ -993,7 +993,7 @@ exports.editScript = function (req, res, next) {
   options = pageMeta(options);
 
   //--- Tasks
-  
+
   // Get the info and source for an existing script for the editor
   // Also works for writing a new script
   tasks.push(function (callback) {

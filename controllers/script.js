@@ -168,9 +168,9 @@ var getScriptPageTasks = function(options) {
         if (flag) {
           flagUrl += '/unflag';
           options.flagged = true;
-          options.flaggable = true;
+          options.canFlag = true;
         } else {
-          options.flaggable = canFlag;
+          options.canFlag = canFlag;
         }
         options.flagUrl = flagUrl;
 
