@@ -7,12 +7,15 @@ renderer.heading = function (text, level) {
   var escapedText = text.toLowerCase().replace(/<\/?[^>]+?>/g, '')
     .replace(/[^\w]+/g, '-');
 
-  return '<h' + level + '><a name="anchor-' +
-    escapedText +
-    '" class="anchor" href="#anchor-' +
-    escapedText +
-    '"><span class="header-link"></span></a>' +
-    text + '</h' + level + '>';
+  var name = escapedText;
+  var html = '<h' + level + '>';
+  html += '<a name="' + name + '"></a>'
+  html += text;
+  html += '<a href="#' + name + '" class="anchor">';
+  html += '<i class="fa fa-paragraph"></i>';
+  html += '</a>';
+  html += '</h' + level + '>';
+  return html;
 };
 
 // Set the options to use for rendering markdown

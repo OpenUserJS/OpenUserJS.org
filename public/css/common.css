@@ -198,3 +198,20 @@ table .script-icon i.fa.fa-fw {
   max-height: 16px;
   color: #666;
 }
+
+a.anchor {
+  position: absolute;
+  color: #666;
+  margin-left: .2em;
+  visibility: hidden;
+}
+
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+  visibility: visible;
+}
+
