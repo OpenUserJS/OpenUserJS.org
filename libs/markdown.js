@@ -12,7 +12,7 @@ renderer.heading = function (text, level) {
   html += '<a name="' + name + '"></a>'
   html += text;
   html += '<a href="#' + name + '" class="anchor">';
-  html += '<i class="fa fa-paragraph"></i>';
+  html += '<i class="fa fa-link"></i>';
   html += '</a>';
   html += '</h' + level + '>';
   return html;

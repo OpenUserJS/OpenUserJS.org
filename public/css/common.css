@@ -209,6 +209,11 @@ a.anchor {
   visibility: hidden;
 }
 
+a.anchor i.fa.fa-link {
+  vertical-align: middle;
+  font-size: 66%;
+}
+
 h1:hover a.anchor,
 h2:hover a.anchor,
 h3:hover a.anchor,
@@ -218,6 +223,6 @@ h6:hover a.anchor {
   visibility: visible;
 }
 
-.user-content :first-child {
+.user-content > :first-child {
   margin-top: 0;
 }
