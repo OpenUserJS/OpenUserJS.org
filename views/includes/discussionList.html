@@ -1,14 +1,15 @@
-<table class="table table-hover table-condensed">
+<div class="table-responsive">
+<table class="table table-hover table-condensed table-striped">
   <thead>
     <tr>
       <th class="text-center">Topic</th>
       {{#multipleCategories}}
-      <th class="text-center td-activity">Category</th>
+      <th class="text-center td-fit">Category</th>
       {{/multipleCategories}}
-      <th class="text-center">Users</th>
-      <th class="text-center">Posts</th>
-      <th class="text-center">Views</th>
-      <th class="text-center td-activity" colspan="2">Activity</th>
+      <th class="text-center td-fit">Users</th>
+      <th class="text-center td-fit">Posts</th>
+      <th class="text-center td-fit">Views</th>
+      <th class="text-center td-fit" colspan="2">Activity</th>
     </tr>
   </thead>
   <tbody>
@@ -20,28 +21,29 @@
         </b>
       </td>
       {{#multipleCategories}}
-      <td>
+      <td class="td-fit">
         <span class="label label-default"><a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.name}}</a></span>
       </td>
       {{/multipleCategories}}
-      <td class="">
+      <td class="td-fit">
       {{#recentCommentors}}
         <span class="label label-info">{{name}}</span>
       {{/recentCommentors}}
       </td>
-      <td class="text-center">
+      <td class="text-center td-fit">
         <p>{{comments}}</p>
       </td>
-      <td class="text-center">
+      <td class="text-center td-fit">
         <p>?</p>
       </td>
-      <td class="text-center td-activity">
+      <td class="text-center td-fit">
         <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
       </td>
-      <td class="text-center td-activity">
+      <td class="text-center td-fit">
         <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
       </td>
     </tr>
     {{/discussionList}}
   </tbody>
 </table>
+</div>

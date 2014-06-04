@@ -110,7 +110,10 @@ h2.page-heading {
 }
 
 /* Discussion */
-.td-activity { width: 60px; }
+.td-fit {
+  width: 1px;
+  white-space: nowrap;
+}
 
 #reply-control {
   transition: height 0.4s ease;
