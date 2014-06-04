@@ -1,9 +1,13 @@
+var process = require('process');
 var AWS = require('aws-sdk');
+
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
+
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var userRoles = require('../models/userRoles.json');
+
 var bucketName = 'OpenUserJS.org';
 
 if (process.env.NODE_ENV === 'production') {
@@ -11,16 +15,17 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   // You need to install (and ruby too): https://github.com/jubos/fake-s3
   // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
+  var DEV_AWS_URL = process.env.DEV_AWS_URL || 'localhost:10001';
   AWS.config.update({ accessKeyId: 'fakeId', secretAccessKey: 'fakeKey',
-    httpOptions: { 
-    proxy: 'localhost:10001', agent: require('http').globalAgent 
+    httpOptions: {
+    proxy: DEV_AWS_URL, agent: require('http').globalAgent
   }});
 }
 
 function getInstallName (req) {
   var username = req.route.params.username.toLowerCase();
   var namespace = req.route.params.namespace;
-  return username + '/' + (namespace ? namespace + '/' : '') 
+  return username + '/' + (namespace ? namespace + '/' : '')
     + req.route.params.scriptname;
 }
 exports.getInstallName = getInstallName;
@@ -42,8 +47,8 @@ exports.sendScript = function (req, res, next) {
   var accept = req.headers.accept;
   var installName = null;
 
-  if (0 !== req.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') { 
-    return exports.sendMeta(req, res, next); 
+  if (0 !== req.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
+    return exports.sendMeta(req, res, next);
   }
 
   exports.getSource(req, function (script, stream) {
@@ -157,7 +162,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   var libraries = [];
   var requires = null;
   var collaborators = null;
-  var libraryRegex = new RegExp('^https?:\/\/' + 
+  var libraryRegex = new RegExp('^https?:\/\/' +
     (process.env.NODE_ENV === 'production' ?
       'openuserjs\.org' : 'localhost:8080') +
     '\/libs\/src\/(.+?\/.+?\.js)$', '');
@@ -174,9 +179,9 @@ exports.storeScript = function (user, meta, buf, callback, update) {
     if (!isLibrary && meta.author
         && meta.author != user.name && meta.collaborator) {
       collaborators = meta.collaborator;
-      if ((typeof collaborators === 'string' 
+      if ((typeof collaborators === 'string'
           && collaborators === user.name)
-          || (collaborators instanceof Array 
+          || (collaborators instanceof Array
           && collaborators.indexOf(user.name) > -1)) {
         installName = meta.author.toLowerCase() + '/';
       } else {
@@ -235,7 +240,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
       } else {
         if (!script.isLib) {
           if (collaborators && (script.meta.author != meta.author
-              || JSON.stringify(script.meta.collaborator) != 
+              || JSON.stringify(script.meta.collaborator) !=
              JSON.stringify(meta.collaborator))) {
             return callback(null);
           }
@@ -282,7 +287,7 @@ exports.webhook = function (req, res) {
   if (!req.body.payload ||
     !/192\.30\.252\.(2[0-5][0-5]|1[0-9]{2}|[1-9]?\d)/
     .test(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
-    return; 
+    return;
   }
 
   payload = JSON.parse(req.body.payload);
