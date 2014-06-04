@@ -5,9 +5,7 @@ var userRoles = require('../models/userRoles.json');
 var renderMd = require('../libs/markdown').renderMd;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
-
-momentTiny = moment();
-momentTiny.lang('en', {
+moment.lang('en', {
   relativeTime : {
     future: "in %s",
     past:   "%s ago",
@@ -24,6 +22,12 @@ momentTiny.lang('en', {
     yy: "%dy"
   }
 });
+
+var parseDateProperty = function(obj, key) {
+  var date = obj[key];
+  obj[key + 'ISOFormat'] = date.toISOString();
+  obj[key + 'Humanized'] = moment(date).fromNow();
+};
 
 /**
  * Parse persisted model data and return a new object with additional generated fields used in view templates.
@@ -102,8 +106,7 @@ exports.parseScript = function(scriptData) {
   script.scriptEditSourcePageUrl = getScriptEditSourcePageUrl(script);
 
   // Dates
-  script.updatedISOFormat = script.updated.toISOString();
-  script.updatedHumanized = moment(script.updated).fromNow();
+  parseDateProperty(script, 'updated');
 
   return script;
 };
@@ -167,10 +170,8 @@ exports.parseDiscussion = function(discussionData) {
   discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
   // Dates
-  discussion.createdISOFormat = discussion.created.toISOString();
-  discussion.createdHumanized = momentTiny(discussion.created).fromNow();
-  discussion.updatedISOFormat = discussion.updated.toISOString();
-  discussion.updatedHumanized = momentTiny(discussion.updated).fromNow();
+  parseDateProperty(discussion, 'created');
+  parseDateProperty(discussion, 'updated');
 
   // RecentCommentors
   var recentCommentors = [];
@@ -214,8 +215,7 @@ exports.parseComment = function(commentData) {
   var comment = commentData.toObject ? commentData.toObject() : commentData;
 
   // Dates
-  comment.createdISOFormat = comment.created.toISOString();
-  comment.createdHumanized = momentTiny(comment.created).fromNow();
+  parseDateProperty(comment, 'created');
 
   return comment;
 };
