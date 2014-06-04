@@ -1,4 +1,3 @@
-var process = require('process');
 var AWS = require('aws-sdk');
 
 var Script = require('../models/script').Script;
