@@ -60,6 +60,7 @@ exports.list = function (req, res, next) {
     options.title = script.name + ' Issues' + ' | OpenUserJS.org';
     options.pageMetaDescription = category.description;
     options.pageMetaKeywords = null; // seperator = ', '
+    options.isScriptIssuesPage = true;
 
     // discussionListQuery
     var discussionListQuery = Discussion.find();
@@ -94,7 +95,7 @@ exports.list = function (req, res, next) {
     //---
     function preRender(){
       options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
-      
+
       // Script
       options.issuesCount = pagination.numItems;
 
@@ -192,7 +193,7 @@ exports.view = function (req, res, next) {
           comment.author = modelParser.parseUser(comment._authorId);
         });
         _.map(options.commentList, modelParser.renderComment);
-        
+
         // Script
         options.issuesCount = pagination.numItems;
 
@@ -258,7 +259,7 @@ exports.open = function (req, res, next) {
       );
     } else {
       // New Issue Page
-  
+
 
       //--- Tasks
       // ...
@@ -287,7 +288,7 @@ exports.comment = function (req, res, next) {
 
   if (!user) { return res.redirect('/login'); }
 
-  Script.findOne({ installName: installName 
+  Script.findOne({ installName: installName
     + (type === 'libs' ? '.js' : '.user.js') }, function (err, script) {
       var content = req.body['comment-content'];
 
@@ -317,7 +318,7 @@ exports.changeStatus = function (req, res, next) {
 
   if (!user) { return res.redirect('/login'); }
 
-  Script.findOne({ installName: installName 
+  Script.findOne({ installName: installName
     + (type === 'libs' ? '.js' : '.user.js') }, function (err, script) {
 
       if (err || !script) { return next(); }
@@ -327,17 +328,17 @@ exports.changeStatus = function (req, res, next) {
 
         // Both the script author and the issue creator can close the issue
         // Only the script author can reopen a closed issue
-        if (action === 'close' && issue.open 
+        if (action === 'close' && issue.open
           && (user.name === issue.author || user.name === script.author)) {
           issue.open = false;
           changed = true;
-        } else if (action === 'reopen' && !issue.open 
+        } else if (action === 'reopen' && !issue.open
           && user.name === script.author) {
           issue.open = true;
           changed = true;
         }
 
-        if (changed) { 
+        if (changed) {
           issue.save(function (err, discussion) {
             res.redirect(encodeURI(discussion.path
               + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));

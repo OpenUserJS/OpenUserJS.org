@@ -227,13 +227,16 @@ exports.view = function (req, res, next) {
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.role < 4;
 
-    //
+    // Script
     var script = options.script = modelParser.parseScript(scriptData);
     options.isOwner = authedUser && authedUser._id == script._authorId;
     modelParser.renderScript(script);
     script.installNameSlug = installNameSlug;
+
+    // Metadata
     options.title = script.name + ' | OpenUserJS.org';
     options.pageMetaDescription = script.meta.description ? script.meta.description : null;
+    options.isScriptPage = true;
 
     // SearchBar
     options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
