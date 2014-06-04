@@ -58,7 +58,7 @@ exports.categoryListPage = function (req, res, next) {
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
   //--- Tasks
-  
+
   // Pagination
   tasks.push(pagination.getCountTask(discussionListQuery));
 
@@ -76,6 +76,16 @@ exports.categoryListPage = function (req, res, next) {
           name: discussion.category,
           slug: discussion.category,
         };
+
+        var regex = /^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/;
+        var match = regex.exec('scripts/zren/httpxshade.ca/Resize_YT_To_Window_Size/issues');
+        var isScriptIssue = match;
+        if (isScriptIssue) {
+          var scriptAuthorNameSlug = match[2];
+          var scriptNameSlug = match[4];
+          var scriptName = scriptNameSlug.replace(/\_/g, ' ');
+          category.name = scriptAuthorNameSlug + '/' + scriptName;
+        }
       }
       discussion.category = modelParser.parseCategory(category);
     });
@@ -120,7 +130,7 @@ exports.list = function (req, res, next) {
 
   // discussionListQuery: category
   discussionListQuery.find({category: category.slug});
-  
+
   // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, req);
 
@@ -204,7 +214,7 @@ exports.show = function (req, res, next) {
 
     // commentListQuery: discussion
     commentListQuery.find({_discussionId: discussion._id});
-    
+
     // commentListQuery: Defaults
     modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
 
@@ -303,7 +313,7 @@ function postComment (user, discussion, content, creator, callback) {
 }
 exports.postComment = postComment;
 
-// Does all the work of submitting a new topic and 
+// Does all the work of submitting a new topic and
 // resolving topic url collisions
 function postTopic (user, category, topic, content, issue, callback) {
   var urlTopic = cleanFilename(topic, '').replace(/_\d+$/, '');
@@ -329,7 +339,7 @@ function postTopic (user, category, topic, content, issue, callback) {
       _authorId: user._id
     };
 
-    if (!err && discussion) { 
+    if (!err && discussion) {
       props.duplicateId = discussion.duplicateId + 1;
     } else {
       props.duplicateId = 0;
