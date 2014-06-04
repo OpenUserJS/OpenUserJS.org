@@ -9,16 +9,16 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-8">
-        
-        {{> includes/scriptList.html }}
-        <div class="text-center">
-          {{{paginationRendered}}}
+        <div class="panel panel-default">
+          {{> includes/scriptList.html }}
+          <div class="text-center">
+            {{{paginationRendered}}}
+          </div>
         </div>
-        
       </div>
       <div class="col-sm-4">
-        <div class="panel">
-          <div class="input-group col-xs-12">
+        <div class="panel panel-transparent">
+          <div class="input-group col-xs-12 ">
             {{> includes/searchBar.html }}
           </div>
         </div>

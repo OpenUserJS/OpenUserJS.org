@@ -12,7 +12,11 @@
         <div class="row">
           <div class="col-xs-12">
             {{> includes/userPageHeader.html }}
-            {{#user.aboutRendered}}<div class="user-content">{{{user.aboutRendered}}}</div>{{/user.aboutRendered}}
+            <div class="panel panel-main panel-main-left">
+              <div class="panel-body">
+                {{#user.aboutRendered}}<div class="user-content">{{{user.aboutRendered}}}</div>{{/user.aboutRendered}}
+              </div>
+            </div>
           </div>
         </div>
       </div>

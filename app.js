@@ -34,7 +34,7 @@ app.configure(function(){
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
   app.use(function (req, res, next) {
     // check if we're toobusy
-    if (toobusy()) { 
+    if (toobusy()) {
       res.send(503, 'I\'m busy right now, sorry :(');
     } else {
       next();
@@ -44,7 +44,7 @@ app.configure(function(){
   // Force HTTPS
   if (process.env.NODE_ENV === 'production') {
     app.use(function (req, res, next) {
-      res.setHeader('Strict-Transport-Security', 
+      res.setHeader('Strict-Transport-Security',
         'max-age=8640000; includeSubDomains');
 
       if (req.headers['x-forwarded-proto'] !== 'https') {
@@ -139,7 +139,7 @@ app_route('/user/add/:scripttype(scripts|lib)/upload').post(user.uploadScript);
 // Script routes
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
 app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
-app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit); 
+app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
 app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript); // Legacy TODO Remove
 
 // Script routes: Legacy
@@ -220,7 +220,7 @@ app.use(function (req, res, next) {
   var user = req.session.user;
   res.render('404', {
     title: '404 Not Found',
-    username: user ? user.name : null 
+    username: user ? user.name : null
   });
 });
 

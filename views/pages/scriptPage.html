@@ -10,32 +10,40 @@
   <div class="container-fluid">
     <div class="row">
       <div class="container-fluid col-sm-8">
-        {{#script}}
         <div class="row">
           <div class="col-xs-12">
             {{> includes/scriptPageHeader.html }}
-            <div class="script-meta">
-              {{#meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{meta.description}}</p>{{/meta.description}}
-              {{#meta.homepage}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{meta.homepage}}">{{meta.homepage}}</a></p>{{/meta.homepage}}
-              {{#meta.copyright}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{meta.copyright}}</p>{{/meta.copyright}}
-              {{#meta.licence}}<p><i class="fa fa-fw fa-legal"></i> <b>Licence:</b> {{meta.licence}}</p>{{/meta.licence}}
-              {{#meta.collaborator}}<p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{.}}</p>{{/meta.collaborator}}
-              {{#fork}}
-              <p><b>Fork History:</b></p>
-              <ul>
-                {{#.}}
-                <li>
-                  <i class="fa fa-fw fa-fork"></i> <a href="/script/{{{url}}">{{author}}/{{name}}</a>
-                </li>
-                {{/.}}
-              </ul>
-              {{/fork}}
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="script-meta">
+                  {{#script.meta.version}}<p><i class="fa fa-fw fa-tag"></i> <b>Version:</b> <code>{{script.meta.version}}</code> uploaded <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>{{/script.meta.version}}
+                  {{#script.meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{script.meta.description}}</p>{{/script.meta.description}}
+                  {{#script.meta.homepage}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{meta.homepage}}">{{script.meta.homepage}}</a></p>{{/script.meta.homepage}}
+                  {{#script.meta.copyright}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{script.meta.copyright}}</p>{{/script.meta.copyright}}
+                  {{#script.meta.licence}}<p><i class="fa fa-fw fa-legal"></i> <b>Licence:</b> {{script.meta.licence}}</p>{{/script.meta.licence}}
+                  {{#script.meta.collaborator}}<p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{.}}</p>{{/script.meta.collaborator}}
+                  {{#script.fork}}
+                  <p><b>Fork History:</b></p>
+                  <ul>
+                    {{#.}}
+                    <li>
+                      <i class="fa fa-fw fa-fork"></i> <a href="/script/{{{url}}">{{author}}/{{name}}</a>
+                    </li>
+                    {{/.}}
+                  </ul>
+                  {{/script.fork}}
+                </div>
+              </div>
             </div>
-            
-            {{#aboutRendered}}<div class="user-content">{{{aboutRendered}}}</div>{{/aboutRendered}}
+            {{#script.aboutRendered}}
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="user-content">{{{script.aboutRendered}}}</div>
+              </div>
+            </div>
+            {{/script.aboutRendered}}
           </div>
         </div>
-        {{/script}}
       </div>
       <div class="container-fluid col-sm-4">
         {{> includes/scriptSidePanel.html }}

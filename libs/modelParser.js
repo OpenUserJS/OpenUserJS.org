@@ -6,7 +6,8 @@ var renderMd = require('../libs/markdown').renderMd;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
 
-moment.lang('en', {
+momentTiny = moment();
+momentTiny.lang('en', {
   relativeTime : {
     future: "in %s",
     past:   "%s ago",
@@ -81,7 +82,7 @@ exports.parseScript = function(scriptData) {
   script.namespaceSlug = (script.meta && script.meta.namespace) ? cleanFilename(script.meta.namespace) : '';
   script.nameSlug = cleanFilename(script.name);
   script.installNameSlug = script.authorSlug + '/' + (script.namespaceSlug ? script.namespaceSlug + '/' : '') + script.nameSlug;
-  
+
   // Urls: Public
   script.scriptPageUrl = getScriptPageUrl(script);
   script.scriptInstallPageUrl = getScriptInstallPageUrl(script);
@@ -120,7 +121,7 @@ exports.renderScript = function(script) {
 exports.parseUser = function(userData) {
   if (!userData) return;
   var user = userData.toObject ? userData.toObject() : userData;
-  
+
   // Role
   user.isMod = user.role < 4;
   user.isAdmin = user.role < 3;
@@ -147,7 +148,7 @@ exports.parseGroup = function(groupData) {
 
   group.size = group._scriptIds.length;
   group.multiple = group._scriptIds.length > 1;
-  
+
   group.groupPageUrl = '/group/' + group.name.replace(/\s+/g, '_');
 
   return group;
@@ -167,9 +168,9 @@ exports.parseDiscussion = function(discussionData) {
 
   // Dates
   discussion.createdISOFormat = discussion.created.toISOString();
-  discussion.createdHumanized = moment(discussion.created).fromNow();
+  discussion.createdHumanized = momentTiny(discussion.created).fromNow();
   discussion.updatedISOFormat = discussion.updated.toISOString();
-  discussion.updatedHumanized = moment(discussion.updated).fromNow();
+  discussion.updatedHumanized = momentTiny(discussion.updated).fromNow();
 
   // RecentCommentors
   var recentCommentors = [];
@@ -214,7 +215,7 @@ exports.parseComment = function(commentData) {
 
   // Dates
   comment.createdISOFormat = comment.created.toISOString();
-  comment.createdHumanized = moment(comment.created).fromNow();
+  comment.createdHumanized = momentTiny(comment.created).fromNow();
 
   return comment;
 };

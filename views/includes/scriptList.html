@@ -1,7 +1,6 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th></th>
       <th class="text-center">Name</th>
       <th class="text-center">Installs</th>
       <th class="text-center">Rating</th>
@@ -12,11 +11,6 @@
     {{#scriptList}}
     <tr>
       <td>
-        <a href="{{{scriptInstallPageUrl}}}">
-          <button class="btn btn-default"><i class="fa fa-download"></i></button>
-        </a>
-      </td>
-      <td>
         <b>
           <span class="script-icon hidden-xs">
           {{#meta.icon}}
@@ -26,7 +20,7 @@
             <i class="fa fa-fw fa-file-code-o"></i>
           {{/meta.icon}}
           </span>
-          <a href="{{{scriptPageUrl}}}">{{name}}</a>{{#meta.version}} <div class="script-version label label-info">{{meta.version}}</div>{{/meta.version}}
+          <a href="{{{scriptPageUrl}}}">{{name}}</a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}}
         </b>
         <p>{{meta.description}}</p>
       </td>

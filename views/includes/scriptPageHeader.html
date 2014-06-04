@@ -1,20 +1,22 @@
 <h2 class="page-heading">
-  <a href="{{{scriptInstallPageUrl}}}" class="pull-right">
+  <a href="{{{script.scriptInstallPageUrl}}}" class="pull-right">
     <button class="btn btn-info"><i class="fa fa-download"></i> Install</button>
   </a>
-  <a href="{{{scriptPageUrl}}}" class="script-name">{{#meta.icon}}<span class="page-heading-icon"><img src="{{{meta.icon}}}" alt="" /></span>{{/meta.icon}}{{name}}</a>{{#meta.version}} <div class="script-version label label-info">{{meta.version}}</div>{{/meta.version}}
+  {{#script.meta.icon}}<span class="page-heading-icon"><img src="{{{script.meta.icon}}}" alt="" /></span> {{/script.meta.icon}} <a href="/users/{{script.author}}" class="script-author">{{script.author}}</a><span class="path-divider">/</span><a href="{{{scriptPageUrl}}}" class="script-name">{{script.name}}</a>
 </h2>
-<p>By <a href="/users/{{author}}" class="script-author">{{author}}</a> — Last updated <time class="script-updated" datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time> — Installed {{installs}} times.</p>
-
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
   <div class="navbar-header">
     <button type="button" data-toggle="collapse" data-target="#content-navbar" class="navbar-toggle"><i class="fa fa-bars"></i></button>
+    <div class="navbar-brand visible-xs"></div> {{! Cheating at padding. }}
+    <p class="navbar-text visible-xs"><i class="fa fa-fw fa-signal"></i> <b>Installs:</b> {{script.installs}}</p>
   </div>
-  <div class="collapse navbar-collapse" id="content-navbar">
+  <div class="navbar-collapse collapse in" id="content-navbar">
     <ul class="nav navbar-nav">
-      <li class="active"><a href="{{{scriptPageUrl}}}" class="">About</a></li>
-      <li><a href="{{{scriptViewSourcePageUrl}}}" class="{{^scriptViewSourcePageUrl}}disabled{{/scriptViewSourcePageUrl}}">Source Code</a></li>
-      <li><a href="{{{scriptIssuesPageUrl}}}" class="{{^scriptIssuesPageUrl}}disabled{{/scriptIssuesPageUrl}}">Issues <span class="badge">{{issueCount}}</span></a></li>
+      <li class="active"><a href="{{{script.scriptPageUrl}}}" class="">About</a></li>
+      <li><a href="{{{script.scriptViewSourcePageUrl}}}" class="{{^script.scriptViewSourcePageUrl}}disabled{{/script.scriptViewSourcePageUrl}}">Source Code</a></li>
+      <li><a href="{{{script.scriptIssuesPageUrl}}}" class="{{^script.scriptIssuesPageUrl}}disabled{{/script.scriptIssuesPageUrl}}">Issues <span class="badge">{{issueCount}}</span></a></li>
+      <li class=""></li>
     </ul>
+    <p class="navbar-text pull-right hidden-xs"><i class="fa fa-fw fa-signal"></i> <b>Installs:</b> {{script.installs}}</p>
   </div>
 </nav>
