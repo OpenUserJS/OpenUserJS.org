@@ -185,6 +185,15 @@ input#discussion-topic {
   width: calc(100% - 18px - 4px);
 }
 
+.topic-avatar i.fa.fa-user {
+  height: 45px;
+  width: 45px;
+  line-height: 45px;
+  font-size: 45px;
+  vertical-align: middle;
+  text-align: center;
+}
+
 table .script-icon {
   width: 16px;
   height: 16px;
