@@ -11,17 +11,13 @@
       <div class="col-sm-8">
         <div class="panel panel-default">
           {{> includes/scriptList.html }}
-          <div class="text-center">
-            {{{paginationRendered}}}
-          </div>
+        </div>
+        <div class="text-center">
+          {{{paginationRendered}}}
         </div>
       </div>
       <div class="col-sm-4">
-        <div class="panel panel-transparent">
-          <div class="input-group col-xs-12 ">
-            {{> includes/searchBar.html }}
-          </div>
-        </div>
+        {{> includes/searchBarPanel.html }}
         <div class="panel panel-default">
           <div class="panel-heading">
             <div class="panel-title">Popular Groups</div>

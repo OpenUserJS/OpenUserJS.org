@@ -12,18 +12,16 @@
         <h2 class="page-heading">
           <a href="{{{group.groupPageUrl}}}" class="script-name">{{group.name}}</a>
         </h2>
-        {{> includes/scriptList.html }}
+        <div class="panel panel-default">
+          {{> includes/scriptList.html }}
+        </div>
         <div class="text-center">
           {{{paginationRendered}}}
         </div>
-        
+
       </div>
       <div class="col-sm-4">
-        <div class="panel">
-          <div class="input-group col-xs-12">
-            {{> includes/searchBar.html }}
-          </div>
-        </div>
+        {{> includes/searchBarPanel.html }}
         <div class="panel panel-default">
           <div class="panel-heading">
             <div class="panel-title">Popular Groups</div>

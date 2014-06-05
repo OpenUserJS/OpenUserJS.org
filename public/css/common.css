@@ -117,9 +117,6 @@ h2.page-heading {
 
 #reply-control {
   transition: height 0.4s ease;
-}
-
-#reply-control {
   width: 100%;
   z-index: 1039;
   height: 0;
@@ -129,8 +126,12 @@ h2.page-heading {
   position: fixed;
 }
 
-.md-editor {
+#reply-control .md-editor {
   height: 300px;
+}
+
+.md-editor {
+  min-height: 300px;
 }
 
 textarea {
@@ -147,6 +148,18 @@ textarea {
   padding: 6px 4px;
 }
 
+.topic-avatar {
+  width: 60px; /* Avatar (45px) + Gutter Padding (15px) */
+}
+
+.topic-body {
+  width: calc(100% - 60px);
+}
+
+.topic-avatar a {
+  display: inline-block;
+}
+
 .post-controls {
   opacity: 0.2;
   transition: opacity linear 0.4s;
@@ -161,7 +174,7 @@ textarea {
 }
 
 .topic-post-contents {
-  margin: .5em -15px;
+
 }
 
 .btn-addon-default {
@@ -232,6 +245,11 @@ h6:hover a.anchor {
   visibility: visible;
 }
 
-.user-content > :first-child {
+.user-content > :first-child,
+.panel-body > :first-child {
   margin-top: 0;
+}
+
+.table-responsive {
+  overflow-x: auto;
 }

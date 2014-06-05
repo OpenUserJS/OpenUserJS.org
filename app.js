@@ -3,7 +3,9 @@ var express = require('express');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
 var passport = require('passport');
+
 var app = express();
+
 var main = require('./controllers/index');
 var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
@@ -15,6 +17,9 @@ var group = require('./controllers/group');
 var discussion = require('./controllers/discussion');
 var issue = require('./controllers/issue');
 var scriptStorage = require('./controllers/scriptStorage');
+
+var modelParser = require('./libs/modelParser');
+
 var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
@@ -217,10 +222,24 @@ app.get(listRegex('\/', 'script'), main.home);
 // Fallback routes
 app.use(express.static(__dirname + '/public'));
 app.use(function (req, res, next) {
-  var user = req.session.user;
-  res.render('404', {
-    title: '404 Not Found',
-    username: user ? user.name : null
-  });
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // Metadata
+  options.title = '404 | OpenUserJS.org';
+  options.pageMetaDescription = 'This is not the page your are looking for.';
+  var pageMetaKeywords = ['userscript', 'greasemonkey'];
+  pageMetaKeywords.concat(['web browser']);
+  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+
+  //---
+  res.status(404).render('pages/404Page', options);
 });
 

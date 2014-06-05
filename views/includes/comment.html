@@ -1,13 +1,13 @@
 <div class="topic-post list-group-item" id="comment-{{id}}">
   <article>
     <div class="row">
-      <div class="topic-avatar col-xs-1">
+      <div class="topic-avatar col-sm-2">
         <a href="{{{author.userPageUrl}}}">
           <i class="fa fa-user"></i>
         </a>
       </div>
-      <div class="topic-body col-xs-11">
-        <div class="topic-meta-data container-fluid row">
+      <div class="topic-body col-sm-10 container-fluid">
+        <div class="topic-meta-data row">
           <div class="names pull-left">
             <span>
               <a href="{{{author.userPageUrl}}}" class="username">{{author.name}}</a> <span class="label label-default">{{author.roleName}}</span>
@@ -19,11 +19,11 @@
             </a>
           </div>
         </div>
-        <div class="topic-post-contents container-fluid row">
+        <div class="topic-post-contents row">
           <div class="user-data">
             {{{contentRendered}}}
           </div>
-          <section class="post-menu-area container-fluid row">
+          <section class="post-menu-area">
             <nav class="post-controls text-right">
               <button class="btn btn-sm btn-info btn-comment-reply" title="begin composing a reply to this post">
                 <i class="fa fa-reply"></i> Reply

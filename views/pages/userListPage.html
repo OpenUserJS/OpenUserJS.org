@@ -12,16 +12,16 @@
         <h2 class="page-heading">
           Users
         </h2>
-        {{> includes/userList.html }}
+        <div class="panel panel-default">
+          {{> includes/userList.html }}
+        </div>
         <div class="text-center">
           {{{paginationRendered}}}
         </div>
-        
+
       </div>
       <div class="col-sm-4">
-        <div class="panel">
-          {{> includes/searchBar.html }}
-        </div>
+        {{> includes/searchBarPanel.html }}
       </div>
     </div>
   </div>

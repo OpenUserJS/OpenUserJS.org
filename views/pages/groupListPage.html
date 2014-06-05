@@ -12,18 +12,16 @@
         <h2 class="page-heading">
           Groups
         </h2>
-        {{> includes/groupList.html }}
+        <div class="panel panel-default">
+          {{> includes/groupList.html }}
+        </div>
         <div class="text-center">
           {{{paginationRendered}}}
         </div>
-        
+
       </div>
       <div class="col-sm-4">
-        <div class="panel">
-          <div class="input-group col-xs-12">
-            {{> includes/searchBar.html }}
-          </div>
-        </div>
+        {{> includes/searchBarPanel.html }}
       </div>
     </div>
   </div>

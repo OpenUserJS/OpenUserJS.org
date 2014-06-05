@@ -19,7 +19,6 @@
                   {{#commentList}}
                     <div class="topic-title row container-fluid">
                       <ol class="breadcrumb pull-left">
-                        <li class=""><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
                         <li class="active"><a href="{{{discussion.discussionPageUrl}}}">{{discussion.topic}}</a></li>
                       </ol>
                     </div>
@@ -37,11 +36,7 @@
         </div>
       </div>
       <div class="container-fluid col-sm-4">
-        <div class="panel">
-          <div class="input-group col-xs-12">
-            {{> includes/searchBar.html }}
-          </div>
-        </div>
+        {{> includes/searchBarPanel.html }}
       </div>
     </div>
   </div>

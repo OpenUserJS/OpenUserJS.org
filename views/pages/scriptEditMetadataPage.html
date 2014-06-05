@@ -14,28 +14,27 @@
     <form action="edit" method="post">
       <div class="row">
         <div class="container-fluid col-sm-8">
-          {{#script}}
           <div class="row">
             <div class="col-xs-12">
-              <h2 class="page-heading">
-                <a href="{{{scriptPageUrl}}}" class="script-name">{{name}}</a>{{#meta.version}} <div class="script-version label label-info">{{meta.version}}</div>{{/meta.version}}
-              </h2>
-                <button type="submit" class="btn btn-default pull-right">Save</button>
-                <h3>Description</h3>
-                <p><strong>Use <a target="_blank" href="https://help.github.com/articles/github-flavored-markdown">GitHub Flavored Markdown</a> for formatting.</strong></p>
-                <div class="user-content">
-                    <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="20" class="col-xs-12">{{about}}</textarea>
+              {{> includes/scriptPageHeader.html }}
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <h2>Description</h2>
+                  <p><strong>Use <a target="_blank" href="https://help.github.com/articles/github-flavored-markdown">GitHub Flavored Markdown</a> for formatting.</strong></p>
+                  <div class="user-content form-group">
+                    <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="20" class="col-xs-12">{{script.about}}</textarea>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-success">Save</button>
+                  </div>
                 </div>
+              </div>
+
+
             </div>
           </div>
-          {{/script}}
         </div>
         <div class="container-fluid col-sm-4">
-          <div class="panel">
-            <div class="input-group col-xs-12">
-              {{> includes/searchBar.html }}
-            </div>
-          </div>
           {{#script}}
           <div class="panel panel-default">
             <div class="panel-heading">
