@@ -12,7 +12,7 @@ var findOrDefaultIfNull = function(query, key, value, defaultValue) {
     condition[key] = null;
     conditions.push(condition);
   }
-  query.find({$or: conditions});
+  query.and({$or: conditions});
 };
 exports.findOrDefaultIfNull = findOrDefaultIfNull;
 
@@ -70,8 +70,8 @@ var parseModelListSearchQuery = function(modelListQuery, query, searchOptions) {
   var q = unescape(query);
   var partialWordMatchFields = ['name', 'author', 'about', 'meta.description'];
   var fullWordMatchFields = ['meta.include', 'meta.match'];
-  modelListQuery.find({
-    '$or': parseSearchConditions(q, searchOptions.partialWordMatchFields, searchOptions.fullWordMatchFields)
+  modelListQuery.and({
+    $or: parseSearchConditions(q, searchOptions.partialWordMatchFields, searchOptions.fullWordMatchFields)
   });
 };
 
@@ -122,22 +122,20 @@ var applyModelListQueryFlaggedFilter = function(modelListQuery, options, flagged
     // Mod
     if (flaggedQuery) {
       if (flaggedQuery == 'true') {
-        modelListQuery.find({flagged: true});
+        modelListQuery.and({flagged: true});
       } else if (flaggedQuery == false) {
-        modelListQuery.find({flagged: {$ne: true}});
+        modelListQuery.and({flagged: {$ne: true}});
       }
     }
   } else {
     // Hide
     // Script.flagged is undefined by default.
-    modelListQuery.find({flagged: {$ne: true}});
+    modelListQuery.and({flagged: {$ne: true}});
   }
 };
 exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
 
 var applyModelListQueryDefaults = function(modelListQuery, options, req, defaultOptions) {
-  // flagged
-  applyModelListQueryFlaggedFilter(modelListQuery, options, req.query.flagged);
 
   // Search
   if (req.query.q) {
@@ -148,6 +146,10 @@ var applyModelListQueryDefaults = function(modelListQuery, options, req, default
   }
   options.searchBarFormAction = defaultOptions.searchBarFormAction || '';
   options.searchBarPlaceholder = defaultOptions.searchBarPlaceholder || 'Search';
+  options.searchBarFormHiddenVariables = defaultOptions.searchBarFormHiddenVariables || [];
+
+  // flagged
+  applyModelListQueryFlaggedFilter(modelListQuery, options, req.query.flagged);
 
 
   // Sort
@@ -201,6 +203,20 @@ var scriptListQueryDefaults = {
 exports.scriptListQueryDefaults = scriptListQueryDefaults;
 exports.applyScriptListQueryDefaults = function(scriptListQuery, options, req) {
   applyModelListQueryDefaults(scriptListQuery, options, req, scriptListQueryDefaults);
+};
+
+var libraryListQueryDefaults = {
+  defaultSort: '-rating -installs -updated',
+  parseSearchQueryFn: parseScriptSearchQuery,
+  searchBarPlaceholder: 'Search Libraries',
+  searchBarFormAction: '/',
+  searchBarFormHiddenVariables: [
+    {name: 'library', value: 'true'},
+  ],
+};
+exports.libraryListQueryDefaults = libraryListQueryDefaults;
+exports.applyLibraryListQueryDefaults = function(libraryListQuery, options, req) {
+  applyModelListQueryDefaults(libraryListQuery, options, req, libraryListQueryDefaults);
 };
 
 exports.applyUserListQueryDefaults = function(userListQuery, options, req) {

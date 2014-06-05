@@ -41,7 +41,13 @@ exports.home = function (req, res) {
   modelQuery.findOrDefaultIfNull(scriptListQuery, 'isLib', options.librariesOnly, false);
 
   // scriptListQuery: Defaults
-  modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
+  if (options.librariesOnly) {
+    // Libraries
+    modelQuery.applyLibraryListQueryDefaults(scriptListQuery, options, req);
+  } else {
+    // Scripts
+    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
+  }
 
   // scriptListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
