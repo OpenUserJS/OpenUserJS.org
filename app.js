@@ -42,7 +42,7 @@ app.configure(function(){
   });
 
   // Force HTTPS
-  if (process.env.NODE_ENV === 'production') {
+  if (app.get('port') === 443) {
     app.use(function (req, res, next) {
       res.setHeader('Strict-Transport-Security',
         'max-age=8640000; includeSubDomains');
