@@ -2,9 +2,9 @@
   <thead>
     <tr>
       <th class="text-center">Name</th>
-      <th class="text-center">Installs</th>
-      <th class="text-center">Rating</th>
-      <th class="text-center">Last Updated</th>
+      <th class="text-center td-fit">Installs</th>
+      <th class="text-center td-fit">Rating</th>
+      <th class="text-center td-fit">Last Updated</th>
     </tr>
   </thead>
   <tbody>
@@ -24,17 +24,17 @@
         </b>
         <p>{{meta.description}}</p>
       </td>
-      <td class="text-center">
+      <td class="text-center td-fit">
         <p>{{installs}}</p>
       </td>
-      <td class="rating text-center">
+      <td class="rating text-center td-fit">
         <p>{{rating}}</p>
         <div class="progress">
           <div style="width: {{votesPercent}}%" class="progress-bar progress-bar-good"></div>
           <div style="width: {{flagsPercent}}%" class="progress-bar progress-bar-danger"></div>
         </div>
       </td>
-      <td class="text-center">
+      <td class="text-center td-fit">
         <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
       </td>
     </tr>

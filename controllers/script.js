@@ -204,6 +204,28 @@ var getScriptPageTasks = function(options) {
   return tasks;
 };
 
+var setupScriptSidePanel = function(options) {
+  // Shortcuts
+  var script = options.script;
+  var authedUser = options.authedUser;
+
+  // User
+  if (options.isOwner) {
+    options.ownerTools = {};
+  }
+
+  // Mod
+  if (authedUser && authedUser.isMod) {
+    //options.userTools = {}; // TODO: Support moderator edits on scripts?
+    options.modTools = {};
+  }
+
+  // Admin
+  if (authedUser && authedUser.isAdmin) {
+    options.adminTools = {};
+  }
+};
+
 // View a detailed description of a script
 // This is the most intensive page to render on the site
 exports.view = function (req, res, next) {
@@ -224,13 +246,15 @@ exports.view = function (req, res, next) {
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
     // Script
     var script = options.script = modelParser.parseScript(scriptData);
     options.isOwner = authedUser && authedUser._id == script._authorId;
     modelParser.renderScript(script);
     script.installNameSlug = installNameSlug;
+    script.scriptPermalinkInstallPageUrl = 'http://' + req.get('host') + script.scriptInstallPageUrl;
 
     // Metadata
     options.title = script.name + ' | OpenUserJS.org';
@@ -241,8 +265,14 @@ exports.view = function (req, res, next) {
     options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
     options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
 
+    // SideBar
+    setupScriptSidePanel(options);
+
+    //--- Tasks
     tasks = tasks.concat(getScriptPageTasks(options));
 
+
+    //---
     function preRender(){
       var pageMetaKeywords = ['userscript', 'greasemonkey'];
       if (script.groups)

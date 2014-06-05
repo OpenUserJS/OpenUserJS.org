@@ -65,10 +65,10 @@ exports.list = function (req, res, next) {
     // discussionListQuery
     var discussionListQuery = Discussion.find();
 
-    // Discussion: Query: category
+    // discussionListQuery: category
     discussionListQuery.find({category: category.slug});
 
-    // Discussion: Query: open
+    // discussionListQuery: open
     modelQuery.findOrDefaultIfNull(discussionListQuery, 'open', options.openIssuesOnly, true);
 
     // discussionListQuery: Defaults

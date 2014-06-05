@@ -13,6 +13,15 @@
         {{> includes/scriptPageHeader.html }}
         <div class="panel panel-default">
           <div class="panel-body">
+            {{#script.isLib}}
+            <div class="form-group">
+              <div class="input-group col-xs-12">
+                <div class="input-group-addon">// @require </div>
+                <input type="text" class="form-control" value="{{{script.scriptPermalinkInstallPageUrl}}}">
+              </div>
+            </div>
+            {{/script.isLib}}
+
             <div class="script-meta">
               {{#script.meta.version}}<p><i class="fa fa-fw fa-tag"></i> <b>Version:</b> <code>{{script.meta.version}}</code> uploaded <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>{{/script.meta.version}}
               {{#script.meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{script.meta.description}}</p>{{/script.meta.description}}

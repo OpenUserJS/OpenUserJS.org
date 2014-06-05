@@ -31,11 +31,14 @@ exports.home = function (req, res) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
+  //
+  options.librariesOnly = req.query.library !== undefined;
+
   // scriptListQuery
   var scriptListQuery = Script.find();
 
-  // scriptListQuery: isLib=false
-  scriptListQuery.find({isLib: false});
+  // scriptListQuery: isLib
+  modelQuery.findOrDefaultIfNull(scriptListQuery, 'isLib', options.librariesOnly, false);
 
   // scriptListQuery: Defaults
   modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
@@ -124,8 +127,8 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
 
 // Script search results
 exports.search = function (req, res, next) {
-  getSearchResults(req, res, 
-    ['name', 'author', 'about', 'meta.description'], 
+  getSearchResults(req, res,
+    ['name', 'author', 'about', 'meta.description'],
     ['meta.include', 'meta.match'], {},
     function (options) {
       res.render('index', options);

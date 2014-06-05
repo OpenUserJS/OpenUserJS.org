@@ -651,16 +651,54 @@ exports.newScriptPage = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
+  //
+  options.newUserJS = true;
+  options.newScriptEditorPageUrl = '/user/add/scripts/new';
+  options.uploadNewScriptPageUrl = '/user/add/scripts/upload';
+
   // Metadata
   options.title = 'New Script | OpenUserJS.org';
   options.pageMetaDescription = null;
   options.pageMetaKeywords = null;
 
   //---
-  function preRender(){};
-  function render(){ res.render('pages/newScriptPage', options); }
-  function asyncComplete(err){ if (err) { return next(); } else { preRender(); render(); } };
-  async.parallel(tasks, asyncComplete);
+  async.parallel(tasks, function(err) {
+    if (err) return next();
+
+    res.render('pages/newScriptPage', options);
+  });
+};
+
+exports.newLibraryPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  if (!authedUser) return res.redirect('/login');
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  //
+  options.newJSLibary = true;
+  options.newScriptEditorPageUrl = '/user/add/lib/new';
+  options.uploadNewScriptPageUrl = '/user/add/lib/upload';
+
+  // Metadata
+  options.title = 'New Libary | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  //---
+  async.parallel(tasks, function(err) {
+    if (err) return next();
+
+    res.render('pages/newScriptPage', options);
+  });
 };
 
 // Sloppy code to let a user add scripts to their acount
