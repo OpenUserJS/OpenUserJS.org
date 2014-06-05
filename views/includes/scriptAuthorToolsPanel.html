@@ -1,11 +1,13 @@
+{{#isOwner}}
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="panel-title">Author Tools</div>
   </div>
   <div class="panel-body">
     <ul class="nav nav-pills nav-justified">
-      <li><a href="{{{scriptEditMetadataPageUrl}}}" class=""><i class="fa fa-edit"></i> Edit Script Info</a></li>
-      <li><a href="{{{scruptEditSourcePageUrl}}}" class=""><i class="fa fa-file-text"></i> Edit Script</a></li>
+      <li><a href="{{{script.scriptEditMetadataPageUrl}}}" class=""><i class="fa fa-edit"></i> Edit Script Info</a></li>
+      <li><a href="{{{script.scriptEditSourcePageUrl}}}" class=""><i class="fa fa-file-text"></i> Edit Script</a></li>
     </ul>
   </div>
 </div>
+{{/isOwner}}

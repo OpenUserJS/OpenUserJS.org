@@ -8,10 +8,9 @@ var maxKarma = 10;
 // This is heavily commented so that my logic and
 // reasoning is documented for myself and others.
 function flaggable (model, content, user, callback) {
-  // Not logged in or role is above moderator
-  // No one above a moderator is part of the moderation system
-  // since they can just remove content directly
-  if (!user || user.role < 3) { return callback(false); }
+  // Not logged in.
+  if (!user) { return callback(false); }
+
 
   // You can't flag yourself
   // Only someone less than an admin can be flagged
@@ -69,7 +68,7 @@ function getThreshold (model, content, author, callback) {
   var threshold = thresholds[model.modelName] * (author.role < 4 ? 2 : 1);
 
   // Calculate karma and add it to the threshold
-  getKarma(author, maxKarma, function (karma) { 
+  getKarma(author, maxKarma, function (karma) {
     return callback(threshold + karma);
   });
 }

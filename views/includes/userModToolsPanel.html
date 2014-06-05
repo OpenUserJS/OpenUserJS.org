@@ -7,9 +7,7 @@
     </div>
   </div>
   <div class="panel-body">
-    <ul class="nav nav-pills nav-justified">
-      <li><a href="{{{flagUrl}}}" class="{{^canFlag}}disabled{{/canFlag}}"><i class="fa fa-flag{{^flagged}}-o{{/flagged}}"></i> {{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}</a></a></li>
-    </ul>
+    {{> includes/flagModelSnippet.html }}
   </div>
 </div>
 {{/modTools}}

@@ -73,8 +73,8 @@ exports.parseScript = function(scriptData) {
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
   // Script Good/Bad bar.
-  // script.votes = upvotes
-  // script.flags = downvotes + flags?
+  // script.votes = count(upvotes) + count(downvotes)
+  // script.flags = flags - count(upvotes)
   var sumVotesAndFlags = script.votes + script.flags;
   var votesRatio = sumVotesAndFlags > 0 ? script.votes / sumVotesAndFlags : 0;
   var flagsRatio = sumVotesAndFlags > 0 ? script.flags / sumVotesAndFlags : 0;

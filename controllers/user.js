@@ -31,12 +31,13 @@ var setupFlagUserUITask = function(options) {
   return function(callback) {
     var flagUrl = '/flag/users/' + user.name;
 
-    // Can't flag when not logged in or when user owns the script.
-    if (!user || options.isOwner) {
+    // Can't flag when not logged in or when is authedUser.
+    if (!authedUser || options.isYou) {
       callback();
       return;
     }
     flagLib.flaggable(User, user, authedUser, function (canFlag, author, flag) {
+      console.log(canFlag, author, flag);
       if (flag) {
         flagUrl += '/unflag';
         options.flagged = true;

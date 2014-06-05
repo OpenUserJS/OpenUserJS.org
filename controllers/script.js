@@ -118,9 +118,10 @@ var getScriptPageTasks = function(options) {
 
   // Setup the voting UI
   tasks.push(function (callback) {
-    var voteUrl = script.url + '/vote/';
-    options.voteUpUrl = voteUrl + 'up';
-    options.voteDownUrl = voteUrl + 'down';
+    var voteUrl = '/vote' + script.scriptPageUrl;
+    options.voteUpUrl = voteUrl + '/up';
+    options.voteDownUrl = voteUrl + '/down';
+    options.unvoteUrl = voteUrl + '/unvote';
 
     options.voteable = false;
     options.votedUp = false;
@@ -141,10 +142,8 @@ var getScriptPageTasks = function(options) {
       if (voteModel) {
         if (voteModel.vote) {
           options.votedUp = true;
-          options.voteUpUrl = voteUrl + 'unvote';
         } else {
           options.votedDown = true;
-          options.voteDownUrl = voteUrl + 'unvote';
         }
       }
 

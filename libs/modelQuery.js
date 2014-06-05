@@ -116,20 +116,28 @@ var parseUserSearchQuery = function(userListQuery, query) {
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
 
-var applyHideFlaggedFromModelListQuery = function(modelListQuery, options) {
+var applyModelListQueryFlaggedFilter = function(modelListQuery, options, flaggedQuery) {
   // Only list flagged items if authedUser >= moderator or if authedUser owns the item.
   if (options.isYou || options.isMod) {
-    // Show
+    // Mod
+    if (flaggedQuery) {
+      if (flaggedQuery == 'true') {
+        modelListQuery.find({flagged: true});
+      } else if (flaggedQuery == false) {
+        modelListQuery.find({flagged: {$ne: true}});
+      }
+    }
   } else {
+    // Hide
     // Script.flagged is undefined by default.
-    modelListQuery.find({flagged: {$ne: true}}); 
+    modelListQuery.find({flagged: {$ne: true}});
   }
 };
-exports.applyHideFlaggedFromModelListQuery = applyHideFlaggedFromModelListQuery;
+exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
 
 var applyModelListQueryDefaults = function(modelListQuery, options, req, defaultOptions) {
   // flagged
-  applyHideFlaggedFromModelListQuery(modelListQuery, options);
+  applyModelListQueryFlaggedFilter(modelListQuery, options, req.query.flagged);
 
   // Search
   if (req.query.q) {
