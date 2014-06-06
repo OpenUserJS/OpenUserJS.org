@@ -19,5 +19,6 @@ data
 fakeS3
 cert
 aws.json
+prod.sh
 
 /iisnode
