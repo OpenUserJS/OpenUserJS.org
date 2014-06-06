@@ -16,7 +16,7 @@ Please note: The DMCA provides that you may be liable for damages *(including co
 
 ## Send the written document to the designated address at:
 
-  *TO BE ANNOUNCED*
+  [sizzlemctwizzle@gmail.com](mailto:sizzlemctwizzle@gmail.com?subject=DMCA "By submitting an email regarding a DMCA notice you agree to the terms set forth provided in this document and the Terms of Service. Failure to provide the required information will be reason for immediate dismissal of any claim.")
 
 ## Counter Notification
 
