@@ -1,4 +1,4 @@
-var toobusy = require('toobusy');
+var toobusy = require('toobusy-js');
 var express = require('express');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
@@ -34,7 +34,7 @@ app.configure(function(){
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
   app.use(function (req, res, next) {
     // check if we're toobusy
-    if (toobusy()) { 
+    if (toobusy()) {
       res.send(503, 'I\'m busy right now, sorry :(');
     } else {
       next();
@@ -44,7 +44,7 @@ app.configure(function(){
   // Force HTTPS
   if (process.env.NODE_ENV === 'production') {
     app.use(function (req, res, next) {
-      res.setHeader('Strict-Transport-Security', 
+      res.setHeader('Strict-Transport-Security',
         'max-age=8640000; includeSubDomains');
 
       if (req.headers['x-forwarded-proto'] !== 'https') {
@@ -118,7 +118,7 @@ app.get('/scripts/:username/:scriptname', script.view);
 app.get('/scripts/:username/:namespace/:scriptname', script.view);
 app.get('/script/:scriptname/edit', script.edit);
 app.get('/script/:namespace/:scriptname/edit', script.edit);
-app.post('/script/scriptname/edit', script.edit);
+app.post('/script/:scriptname/edit', script.edit);
 app.post('/script/:namespace/:scriptname/edit', script.edit);
 app.get('/install/:username/:scriptname', scriptStorage.sendScript);
 app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
@@ -143,9 +143,9 @@ app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
 app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Issues routes
-app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
+app.get(listRegex('\/(scripts|libs)\/([^\/]+?)(?:\/([^\/]+?))?\/([^\/]+?)'
   + '\/issues(?:\/(closed))?', ''), issue.list);
-app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?'
+app.get(listRegex('\/(scripts|libs)\/([^\/]+?)(?:\/([^\/]+?))?\/([^\/]+?)'
   + '\/issues\/([^\/]+?)', ''), issue.view);
 app.get('/:type(scripts|libs)/:username/:scriptname/issue/new', issue.open);
 app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issue/new',
@@ -201,9 +201,8 @@ app.get(listRegex('\/', 'script'), main.home);
 app.use(express.static(__dirname + '/public'));
 app.use(function (req, res, next) {
   var user = req.session.user;
-  res.render('404', {
+  res.status(404).render('404', {
     title: '404 Not Found',
-    username: user ? user.name : null 
+    username: user ? user.name : null
   });
 });
-
