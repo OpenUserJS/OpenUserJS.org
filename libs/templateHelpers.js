@@ -1,5 +1,6 @@
 var countTask = require('../libs/tasks').countTask;
 var helpers = require('../libs/helpers');
+var modelParser = require('../libs/modelParser');
 
 
 var paginateTemplate = function(opts) {
@@ -73,7 +74,7 @@ var newPagination = function(currentPage, itemsPerPage) {
   //
   pagination.currentPage = currentPage ? helpers.limitMin(1, currentPage) : 1;
   pagination.itemsPerPage = itemsPerPage ? helpers.limitRange(1, itemsPerPage, maxItemsPerPage) : defaultItemsPerPage;
-  
+
   return pagination;
 };
 exports.newPagination = newPagination;
@@ -91,3 +92,25 @@ var getDefaultPagination = function(req) {
   return pagination;
 };
 exports.getDefaultPagination = getDefaultPagination;
+
+
+exports.statusCodePage = function (req, res, next, options) {
+  var authedUser = req.session.user;
+
+  //
+  options.statusCode = options.statusCode || 500;
+  options.statusMessage = options.statusMessage || 'Error';
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // Metadata
+  options.title = options.statusCode + ': ' + options.statusMessage + ' | OpenUserJS.org';
+  options.pageMetaDescription = options.statusMessage;
+  options.pageMetaKeywords = null;
+
+  //---
+  res.status(options.statusCode).render('pages/statusCodePage', options);
+};

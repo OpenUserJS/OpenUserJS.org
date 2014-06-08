@@ -17,6 +17,7 @@ var group = require('./controllers/group');
 var discussion = require('./controllers/discussion');
 var issue = require('./controllers/issue');
 var scriptStorage = require('./controllers/scriptStorage');
+var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
 var modelParser = require('./libs/modelParser');
 
@@ -223,24 +224,9 @@ app.get(listRegex('\/', 'script'), main.home);
 // Fallback routes
 app.use(express.static(__dirname + '/public'));
 app.use(function (req, res, next) {
-  var authedUser = req.session.user;
-
-  //
-  var options = {};
-
-  // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
-
-  // Metadata
-  options.title = '404 | OpenUserJS.org';
-  options.pageMetaDescription = 'This is not the page your are looking for.';
-  var pageMetaKeywords = ['userscript', 'greasemonkey'];
-  pageMetaKeywords.concat(['web browser']);
-  options.pageMetaKeywords = pageMetaKeywords.join(', ');
-
-  //---
-  res.status(404).render('pages/404Page', options);
+  statusCodePage(req, res, next, {
+    statusCode: 404,
+    statusMessage: 'This is not the page your are looking for.',
+  });
 });
 

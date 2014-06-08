@@ -11,6 +11,7 @@ var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var scriptStorage = require('./scriptStorage');
 var modelParser = require('../libs/modelParser');
 var helpers = require('../libs/helpers');
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var nil = helpers.nil;
 
 // This controller is only for use by users with a role of admin or above
@@ -76,7 +77,7 @@ exports.adminUserView = function (req, res, next) {
     function (err, user) {
       if (err || !user) { return next(); }
 
-      res.render('userAdmin', { user: { 
+      res.render('userAdmin', { user: {
         info: JSON.stringify(user.toObject(), null, ' ') } });
   });
 };
@@ -107,7 +108,7 @@ exports.userAdminUpdate = function (req, res, next) {
         var role = Number(user.role);
 
         if (role <= thisUser.role) { cb(); }
-        User.findOne({ '_id' : user.id, role : { $gt: thisUser.role } }, 
+        User.findOne({ '_id' : user.id, role : { $gt: thisUser.role } },
           function (err, user) {
             user.role = role;
             user.save(cb);
@@ -125,7 +126,7 @@ exports.userAdminUpdate = function (req, res, next) {
                   scriptStorage.deleteScript(script.installName, innerCb);
                 }, cb);
               });
-            }); 
+            });
         });
       }, callback);
     }
@@ -153,7 +154,12 @@ exports.apiAdmin = function (req, res, next) {
   options.pageMetaDescription = null;
   options.pageMetaKeywords = null;
 
-  if (!options.isAdmin) { return res.status(403); }
+  if (!options.isAdmin) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins',
+    });
+  }
 
   //--- Tasks
 
@@ -230,7 +236,7 @@ exports.apiAdminUpdate = function (req, res, next) {
           });
         }
 
-        
+
         return strategy.save(function (err, strategy) {
           loadPassport(strategy);
           cb();
