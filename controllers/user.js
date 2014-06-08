@@ -6,7 +6,7 @@ var _ = require('underscore');
 var Comment = require('../models/comment').Comment;
 var Flag = require('../models/flag').Flag;
 var Script = require('../models/script').Script;
-var Strategy = require('../models/strategy.js').Strategy;
+var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
 
 var userRoles = require('../models/userRoles.json');
@@ -23,6 +23,7 @@ var nil = require('../libs/helpers').nil;
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
+var settings = require('../models/settings.json');
 
 var setupFlagUserUITask = function(options) {
   var user = options.user;
@@ -834,7 +835,7 @@ exports.uploadScript = function (req, res, next) {
 
     // Reject non-js and huge files
     if (script.type !== 'application/javascript' &&
-      script.size > 500000) {
+      script.size > settings.maximum_upload_script_size) {
       return res.redirect(failUrl);
     }
 
