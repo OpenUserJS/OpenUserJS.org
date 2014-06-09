@@ -4,7 +4,7 @@
 
     var $comment = $(e.target).closest('.topic-post');
     var $author = $comment.find('.topic-meta-data .names .username').first();
-    var $replyTextarea = $('#reply-control textarea[name="comment-content"');
+    var $replyTextarea = $('#reply-control textarea[name="comment-content"]');
 
     document.location.hash = $comment.attr('id');
 
