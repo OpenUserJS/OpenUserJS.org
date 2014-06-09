@@ -768,12 +768,12 @@ exports.userGitHubRepoListPage = function (req, res, next) {
       // },
       function(githubRepoList, callback) {
         _.each(githubRepoList, function(githubRepo){
-          var url = authedUser.userGitHubImportPageUrl;
+          var url = authedUser.userGitHubRepoPageUrl;
           url = helpers.updateUrlQueryString(url, {
             user: options.githubUser.login,
             repo: githubRepo.name,
           });
-          githubRepo.userGitHubImportPageUrl = url;
+          githubRepo.userGitHubRepoPageUrl = url;
         });
         options.githubRepoList = githubRepoList;
 
@@ -813,9 +813,9 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // GitHub
-  var githubUserId = options.githubUserId = req.body.user || authedUser.ghUsername || authedUser.githubUserId();
-  var githubRepoName = options.githubRepoName = req.body.repo;
-  var githubBlobPath = options.githubBlobPath = req.body.path;
+  var githubUserId = options.githubUserId = req.body.user || req.query.user || authedUser.ghUsername || authedUser.githubUserId();
+  var githubRepoName = options.githubRepoName = req.body.repo || req.query.repo;
+  var githubBlobPath = options.githubBlobPath = req.body.path || req.query.path;
 
   if (!(githubUserId && githubRepoName && githubBlobPath)) {
     return statusCodePage(req, res, next, {
@@ -901,7 +901,7 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
   });
 };
 
-exports.userGitHubImportPage = function (req, res, next) {
+exports.userGitHubRepoPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -929,7 +929,7 @@ exports.userGitHubImportPage = function (req, res, next) {
   options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
     user: githubUserId,
   });
-  options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
+  options.userGitHubRepoPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoPageUrl, {
     user: githubUserId,
     repo: githubRepoName,
   });
@@ -959,7 +959,18 @@ exports.userGitHubImportPage = function (req, res, next) {
       },
       function(javascriptBlobs, callback){
         options.javascriptBlobs = javascriptBlobs;
+        _.each(javascriptBlobs, function(javascriptBlob){
+          // Urls
+          javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
+            user: githubUserId,
+            repo: githubRepoName,
+            path: javascriptBlob.path,
+          });
+        });
         _.each(javascriptBlobs, parseJavascriptBlob);
+
+        // If the repo has >1 script, keep the the current page open.
+        options.openImportInNewTab = javascriptBlobs.length > 1;
 
         callback(null);
       },
@@ -970,7 +981,7 @@ exports.userGitHubImportPage = function (req, res, next) {
   async.parallel(tasks, function(err) {
     if (err) return next();
 
-    res.render('pages/userGitHubImportPage', options);
+    res.render('pages/userGitHubRepoPage', options);
   });
 };
 
