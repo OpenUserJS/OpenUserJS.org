@@ -3,6 +3,11 @@
 <head>
   <title>{{title}}</title>
   {{> includes/head.html }}
+  <style>
+    body > .container-fluid {
+      margin-bottom: 4em;
+    }
+  </style>
 </head>
 <body>
   {{> includes/header.html }}
@@ -33,7 +38,9 @@
             </li>
           {{/repos}}
           </ul>
-          <button type="submit" class="btn btn-success col-xs-12 {{^repos}}disabled{{/repos}}">Import Scripts</button>
+          <div class="container-fluid row">
+            <button type="submit" class="btn btn-success col-xs-12 {{^repos}}disabled{{/repos}}">Import Scripts</button>
+          </div>
         </form>
       </div>
     </div>
