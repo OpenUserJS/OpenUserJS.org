@@ -25,19 +25,20 @@
                   {{/haveOtherStrategies}}
                   <form id="register" method="post" action="/auth/">
                     <p>Add another form of authentication:</p>
-                    <select name="auth">
-                      {{#openStrategies}}
-                      <option value="{{strat}}">{{display}}</option>
-                      {{/openStrategies}}
-                    </select>
-                    <input type="submit" value="Authenticate" />
+                    <div class="input-group col-xs-12">
+                      <select name="auth" class="form-control">
+                        {{#openStrategies}}
+                        <option value="{{strat}}">{{display}}</option>
+                        {{/openStrategies}}
+                      </select>
+                      <div class="input-group-btn">
+                        <button class="btn btn-success" type="submit">Authenticate</button>
+                      </div>
+                    </div>
                   </form>
                </div>
               </div>
             </div>
-
-
-
           </div>
         </div>
       </div>
