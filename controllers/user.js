@@ -19,11 +19,14 @@ var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var strategies = require('./strategies.json');
 var renderMd = require('../libs/markdown').renderMd;
+var helpers = require('../libs/helpers');
 var nil = require('../libs/helpers').nil;
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 var settings = require('../models/settings.json');
+var github = require('./../libs/githubClient');
 
 var setupFlagUserUITask = function(options) {
   var user = options.user;
@@ -700,6 +703,304 @@ exports.newLibraryPage = function (req, res, next) {
 
     res.render('pages/newScriptPage', options);
   });
+};
+
+exports.userGitHubRepoListPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  if (!authedUser) return res.redirect('/login');
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // GitHub
+  var githubUserId = options.githubUserId = req.query.user || authedUser.ghUsername || authedUser.githubUserId();
+
+  // Metadata
+  options.title = 'GitHub: List Repositories | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  var pagination = getDefaultPagination(req);
+  pagination.itemsPerPage = 30; // GitHub Default
+
+  //--- Tasks
+
+  tasks.push(function(callback){
+    async.waterfall([
+
+      // githubUser
+      function(callback) {
+        github.user.getFrom({
+          user: githubUserId,
+        }, callback);
+      },
+      function(githubUser, callback) {
+        options.githubUser = githubUser;
+        options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
+          user: githubUser.login,
+        });
+
+        // Pagination
+        pagination.numItems = githubUser.public_repos;
+
+        callback(null);
+      },
+
+      // gihubRepos
+      function(callback) {
+        github.repos.getFromUser({
+          user: githubUserId,
+          page: pagination.currentPage,
+          per_page: pagination.itemsPerPage,
+        }, callback);
+      },
+      // function(githubRepoList, callback) {
+      //   githubRepoList = _.where(githubRepoList, {language: 'JavaScript'});
+      //   callback(null, githubRepoList);
+      // },
+      function(githubRepoList, callback) {
+        _.each(githubRepoList, function(githubRepo){
+          var url = authedUser.userGitHubImportPageUrl;
+          url = helpers.updateUrlQueryString(url, {
+            user: options.githubUser.login,
+            repo: githubRepo.name,
+          });
+          githubRepo.userGitHubImportPageUrl = url;
+        });
+        options.githubRepoList = githubRepoList;
+
+        callback(null);
+      },
+    ], callback);
+  });
+
+  //---
+  async.parallel(tasks, function(err) {
+    if (err) {
+      console.error(err);
+      return statusCodePage(req, res, next, {
+        statusCode: 500,
+        statusMessage: 'Server Error',
+      });
+    }
+
+    options.paginationRendered = pagination.renderDefault(req);
+
+    res.render('pages/userGitHubRepoListPage', options);
+  });
+};
+
+exports.userGitHubImportScriptPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  if (!authedUser) return res.redirect('/login');
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // GitHub
+  var githubUserId = options.githubUserId = req.body.user || authedUser.ghUsername || authedUser.githubUserId();
+  var githubRepoName = options.githubRepoName = req.body.repo;
+  var githubBlobPath = options.githubBlobPath = req.body.path;
+
+  if (!(githubUserId && githubRepoName && githubBlobPath)) {
+    return statusCodePage(req, res, next, {
+      statusCode: 400,
+      statusMessage: 'Bad Request. Require <code>user</code>, <code>repo</code>, and <code>path</code> to be set.',
+    });
+  }
+
+  async.waterfall([
+
+    // Validate blob
+    function(callback){
+      github.gitdata.getJavascriptBlobs({
+        user: githubUserId,
+        repo: githubRepoName,
+      }, callback);
+    },
+    function(javascriptBlobs, callback){
+      var javascriptBlob = _.findWhere(javascriptBlobs, {path: githubBlobPath});
+
+      javascriptBlob = parseJavascriptBlob(javascriptBlob);
+
+      if (!javascriptBlob.canUpload)
+        return callback(javascriptBlob.errors);
+
+      options.javascriptBlob = javascriptBlob;
+      callback(null);
+    },
+
+    //
+    function(callback){
+      github.usercontent.getBlobAsUtf8({
+        user: githubUserId,
+        repo: githubRepoName,
+        path: githubBlobPath,
+      }, callback);
+    },
+    function(blobUtf8, callback){
+      // Double check file size.
+      if (blobUtf8.length > settings.maximum_upload_script_size)
+        return callback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
+
+      var onScriptStored = function(script){
+        if (script) {
+          options.script = script;
+          callback(null);
+        } else {
+          callback('Error while uploading script.');
+        }
+      };
+
+      if (options.javascriptBlob.isUserJS) {
+        //
+        var userscriptHeaderRegex = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m;
+        var m = userscriptHeaderRegex.exec(blobUtf8);
+        if (m && m[1]) {
+          var userscriptMeta = scriptStorage.parseMeta(m[1]);
+          console.log(userscriptMeta);
+          scriptStorage.storeScript(authedUser, userscriptMeta, blobUtf8, onScriptStored);
+        } else {
+          callback('Specified file does not contain a userscript header.');
+        }
+      } else if (options.javascriptBlob.isJSLibrary) {
+        var scriptName = options.javascriptBlob.path.name;
+        var jsLibraryMeta = scriptName;
+        scriptStorage.storeScript(authedUser, jsLibraryMeta, blobUtf8, onScriptStored);
+      } else {
+        callback('Invalid filetype.');
+      }
+    },
+  ], function(err) {
+    if (err) {
+      console.error(err);
+      console.error(githubUserId, githubRepoName, githubBlobPath);
+      return statusCodePage(req, res, next, {
+        statusCode: 400,
+        statusMessage: err,
+      });
+    }
+
+    var script = modelParser.parseScript(options.script);
+    return res.redirect(script.scriptPageUrl);
+  });
+};
+
+exports.userGitHubImportPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  if (!authedUser) return res.redirect('/login');
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // GitHub
+  var githubUserId = options.githubUserId = req.query.user || authedUser.ghUsername || authedUser.githubUserId();
+  var githubRepoName = options.githubRepoName = req.query.repo;
+
+  if (!(githubUserId && githubRepoName)) {
+    return statusCodePage(req, res, next, {
+      statusCode: 400,
+      statusMessage: 'Bad Request. Require <code>?user=githubUserName&repo=githubRepoName</code>',
+    });
+  }
+
+  options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
+    user: githubUserId,
+  });
+  options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
+    user: githubUserId,
+    repo: githubRepoName,
+  });
+
+  // Metadata
+  options.title = 'GitHub: Import From Repository | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  //--- Tasks
+
+  tasks.push(function(callback){
+    async.waterfall([
+      function(callback){
+        github.repos.get({
+          user: githubUserId,
+          repo: githubRepoName,
+        }, callback);
+      },
+      function(repo, callback){
+        options.repo = repo;
+
+        github.gitdata.getJavascriptBlobs({
+          user: repo.owner.login,
+          repo: repo.name,
+        }, callback);
+      },
+      function(javascriptBlobs, callback){
+        options.javascriptBlobs = javascriptBlobs;
+        _.each(javascriptBlobs, parseJavascriptBlob);
+
+        callback(null);
+      },
+    ], callback)
+  });
+
+  //---
+  async.parallel(tasks, function(err) {
+    if (err) return next();
+
+    res.render('pages/userGitHubImportPage', options);
+  });
+};
+
+var parseJavascriptBlob = function(javascriptBlob) {
+  // Parsing Script Name & Type from path
+  var blobPathRegex = /^(.*\/)?(.+?)((\.user)?\.js)$/;
+  var m = blobPathRegex.exec(javascriptBlob.path);
+  javascriptBlob.isUserJS = !!m[4]; // .user exists
+  javascriptBlob.isJSLibrary = !m[4]; // .user doesn't exist
+  javascriptBlob.path = {
+    full: javascriptBlob.path,
+    dir: m[1],
+    name: m[2],
+    ext: m[3],
+    filename: m[2] + m[3],
+  };
+
+  // Errors
+  javascriptBlob.canUpload = true;
+  javascriptBlob.errors = [];
+
+  if (javascriptBlob.size > settings.maximum_upload_script_size) {
+    javascriptBlob.errors.push({
+      msg: util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size)
+    });
+  }
+
+  if (javascriptBlob.errors.length)
+    javascriptBlob.canUpload = !javascriptBlob.errors.length;
+
+  return javascriptBlob;
 };
 
 // Sloppy code to let a user add scripts to their acount

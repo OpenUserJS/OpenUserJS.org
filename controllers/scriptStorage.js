@@ -131,6 +131,7 @@ function parseMeta(aString) {
 
   return headers;
 }
+exports.parseMeta = parseMeta;
 
 exports.getMeta = function (chunks, callback) {
   // We need to convert the array of buffers to a string to

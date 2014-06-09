@@ -3,6 +3,7 @@ var _ = require('underscore');
 
 var userRoles = require('../models/userRoles.json');
 var renderMd = require('../libs/markdown').renderMd;
+var helpers = require('../libs/helpers');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
 moment.lang('en', {
@@ -135,7 +136,19 @@ exports.parseUser = function(userData) {
   user.userCommentListPageUrl = user.userPageUrl + '/comments';
   user.userScriptListPageUrl = user.userPageUrl + '/scripts';
   user.userManageGitHubPageUrl = user.userPageUrl + '/github';
+  user.userGitHubRepoListPageUrl = user.userPageUrl + '/github/repos';
+  user.userGitHubImportPageUrl = user.userPageUrl + '/github/import';
   user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
+
+  // Funcs
+  user.githubUserId = function() {
+    var indexOfGH = user.strategies.indexOf('github');
+    if (indexOfGH > -1) {
+      return user.auths[indexOfGH];
+    } else {
+      return null;
+    }
+  };
 
   return user;
 };

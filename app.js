@@ -131,6 +131,8 @@ app_route('/users/:username').get(user.view);
 app_route('/users/:username/comments').get(user.userCommentListPage);
 app_route('/users/:username/scripts').get(user.userScriptListPage);
 app_route('/users/:username/github').get(user.userManageGitHubPage).post(user.userManageGitHubPage);
+app_route('/users/:username/github/repos').get(user.userGitHubRepoListPage);
+app_route('/users/:username/github/import').get(user.userGitHubImportPage).post(user.userGitHubImportScriptPage);
 app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
 app_route('/user/preferences').get(user.userEditPreferencesPage);
 app_route('/user/add/scripts').get(user.newScriptPage);

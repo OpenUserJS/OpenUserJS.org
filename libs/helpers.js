@@ -1,4 +1,5 @@
 var url = require("url");
+var _ = require('underscore');
 
 var months = [
   'Jan',
@@ -61,7 +62,7 @@ exports.nil = function (obj) {
   exports.forIn(obj, function (val, key) {
     nilObj[key] = val;
   });
-  
+
   return nilObj;
 };
 
@@ -95,10 +96,19 @@ exports.limitMin = function(min, x) {
   return Math.max(x, min);
 };
 
-exports.setUrlQueryValue = function(baseUrl, queryVarKey, queryVarValue) {
+var setUrlQueryValue = function(baseUrl, queryVarKey, queryVarValue) {
   var parseQueryString = true;
   var u = url.parse(baseUrl, parseQueryString);
   u.query[queryVarKey] = queryVarValue;
   delete u.search; // http://stackoverflow.com/a/7517673/947742
   return url.format(u);
+};
+exports.setUrlQueryValue = setUrlQueryValue;
+
+exports.updateUrlQueryString = function(baseUrl, dict) {
+  var url = baseUrl;
+  _.each(dict, function(value, key){
+    url = setUrlQueryValue(url, key, value);
+  });
+  return url;
 };
