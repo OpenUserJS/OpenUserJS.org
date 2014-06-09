@@ -253,3 +253,8 @@ h6:hover a.anchor {
 .table-responsive {
   overflow-x: auto;
 }
+
+th > a {
+  color: initial;
+  display: block;
+}
