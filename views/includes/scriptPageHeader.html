@@ -1,6 +1,11 @@
 <h2 class="page-heading">
   <a href="{{{script.scriptInstallPageUrl}}}" class="pull-right">
-    <button class="btn btn-info"><i class="fa fa-download"></i> Install</button>
+    {{#script.isLib}}
+      <button class="btn btn-info"><i class="fa fa-file-text-o"></i> Raw Source</button>
+    {{/script.isLib}}
+    {{^script.isLib}}
+      <button class="btn btn-info"><i class="fa fa-download"></i> Install</button>
+    {{/script.isLib}}
   </a>
   {{#script.meta.icon}}<span class="page-heading-icon"><img src="{{{script.meta.icon}}}" alt="" /></span> {{/script.meta.icon}} <a href="/users/{{script.author}}" class="script-author">{{script.author}}</a><span class="path-divider">/</span><a href="{{{scriptPageUrl}}}" class="script-name">{{script.name}}</a>
 </h2>

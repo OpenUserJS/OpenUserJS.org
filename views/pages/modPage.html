@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="list-group">
+          <a href="/graveyard" class="list-group-item">
+            <i class="fa fa-fw fa-trash-o"></i> Graveyard (Deleted Users/Scripts) <span class="label label-default">Old UI</span>
+          </a>
+          <a href="/flagged" class="list-group-item">
+            <i class="fa fa-fw fa-flag"></i> Flagged Users/Scripts <span class="label label-default">Old UI</span>
+          </a>
+          <a href="/?flagged=true" class="list-group-item">
+            <i class="fa fa-fw fa-file-code-o"></i> <i class="fa fa-fw fa-flag"></i> Flagged Scripts
+          </a>
+          <a href="/?library=true&flagged=true" class="list-group-item">
+            <i class="fa fa-fw fa-folder-open-o"></i> <i class="fa fa-fw fa-flag"></i> Flagged Libraries
+          </a>
+          <a href="/users?flagged=true" class="list-group-item">
+            <i class="fa fa-fw fa-user"></i> <i class="fa fa-fw fa-flag"></i> Flagged Users
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

@@ -194,6 +194,7 @@ app.post('/admin/user/update', admin.userAdminUpdate);
 app.post('/admin/api/update', admin.apiAdminUpdate);
 
 // Moderation routes
+app_route('/mod').get(moderation.modPage);
 app.get('/flag/users/:username/:unflag?', user.flag);
 app.get('/flag/scripts/:username/:namespace/:scriptname/:unflag?', script.flag);
 app.get('/flag/scripts/:username/:scriptname/:unflag?', script.flag);

@@ -1,4 +1,6 @@
 var modelsList = require('../libs/modelsList');
+var modelParser = require('../libs/modelParser');
+var modelQuery = require('../libs/modelQuery');
 
 // When content reaches a its threshold of flags it gets marked as flagged
 // and it can now be removed by moderators
@@ -6,7 +8,7 @@ exports.flagged = function (req, res, next) {
   var user = req.session.user;
   var type = req.route.params.shift() || 'users';
   var baseUrl = '/flagged' + (type ? '/' + type : '');
-  var options = { title: 'Flagged Content', moderation: true, 
+  var options = { title: 'Flagged Content', moderation: true,
     username: user ? user.name : '' };
 
   options[type + 'Type'] = true;
@@ -15,7 +17,7 @@ exports.flagged = function (req, res, next) {
 
   switch (type) {
   case 'users':
-    if (!req.route.params[1]) { 
+    if (!req.route.params[1]) {
       req.route.params[1] = ['flags'];
     }
 
@@ -26,7 +28,7 @@ exports.flagged = function (req, res, next) {
     });
     break;
   case 'scripts':
-    if (!req.route.params[1]) { 
+    if (!req.route.params[1]) {
       req.route.params[1] = ['flags', 'updated'];
     }
 
@@ -48,10 +50,10 @@ exports.flagged = function (req, res, next) {
 exports.graveyard = function (req, res, next) {
   var contentTypes = {
     'users' :
-    { 
+    {
       'name': 'User',
       'selected': false,
-    }, 
+    },
     'scripts':
     {
       'name': 'Script',
@@ -85,7 +87,34 @@ exports.graveyard = function (req, res, next) {
         options.contentTypes.push(type);
       }
       options.contentTypes[options.contentTypes.length - 1].last = true;
-      
+
       res.render('graveyard', options);
     });
+};
+
+exports.modPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isMod) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by moderators',
+    });
+  }
+
+  // Metadata
+  options.title = 'Moderation | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  //---
+  res.render('pages/modPage', options);
 };
