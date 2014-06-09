@@ -9,35 +9,17 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12">
-        <h1>Auth Strategy API Keys</h1>
-        <form class="form-horizontal" role="form" method="post" action="/admin/api/update">
-          <div class="list-group">
-          {{#strategies}}
-            <li class="list-group-item">
-              <h4 class="list-group-item-heading">{{strat}}</h4>
-              <div class="row">
-                <div class="col-sm-6">
-                  <div class="input-group ">
-                    <span class="input-group-addon">Id</span>
-                    <input type="text" class="form-control" name="{{{strat}}}[0]" value="{{{id}}}" placeholder="Id">
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="input-group ">
-                    <span class="input-group-addon">Key</span>
-                    <input type="text" class="form-control" name="{{{strat}}}[1]" value="{{{key}}}" placeholder="Key">
-                  </div>
-                </div>
-
-              </div>
-            </li>
-          {{/strategies}}
-          </div>
-          <div class="container-fluid row">
-            <button type="submit" class="btn btn-success col-sm-12">Update</button>
-          </div>
-          <hr>
-        </form>
+        <div class="list-group">
+          <a href="/admin/api" class="list-group-item">
+            API Keys
+          </a>
+          <a href="/admin/api/github" class="list-group-item">
+            <i class="fa fa-github"></i> GitHub Rate Limit Status
+          </a>
+          <a href="/admin/user" class="list-group-item">
+            User List
+          </a>
+        </div>
       </div>
     </div>
   </div>

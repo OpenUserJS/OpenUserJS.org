@@ -136,8 +136,8 @@ exports.userAdminUpdate = function (req, res, next) {
   });
 };
 
-// This page allows admins to set oAuth keys for the available authenticators
-exports.apiAdmin = function (req, res, next) {
+// Landing Page for admins
+exports.adminPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -149,10 +149,37 @@ exports.apiAdmin = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
+  if (!options.isAdmin) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins',
+    });
+  }
+
   // Metadata
   options.title = 'Admin | OpenUserJS.org';
   options.pageMetaDescription = null;
   options.pageMetaKeywords = null;
+
+  //---
+  async.parallel(tasks, function(err){
+    if (err) return next();
+    res.render('pages/adminPage', options);
+  });
+};
+
+// This page allows admins to set oAuth keys for the available authenticators
+exports.adminApiKeysPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isAdmin) {
     return statusCodePage(req, res, next, {
@@ -160,6 +187,11 @@ exports.apiAdmin = function (req, res, next) {
       statusMessage: 'This page is only accessible by admins',
     });
   }
+
+  // Metadata
+  options.title = 'Admin: API Keys | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
 
   //--- Tasks
 
@@ -187,7 +219,7 @@ exports.apiAdmin = function (req, res, next) {
   //---
   async.parallel(tasks, function(err){
     if (err) return next();
-    res.render('pages/adminPage', options);
+    res.render('pages/adminApiKeysPage', options);
   });
 };
 

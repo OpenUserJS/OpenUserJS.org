@@ -186,9 +186,10 @@ app.get('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|
 app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
 
 // Admin routes
+app.get('/admin', admin.adminPage);
 app.get('/admin/user', admin.userAdmin);
 app.get('/admin/user/:id', admin.adminUserView);
-app.get('/admin/api', admin.apiAdmin);
+app.get('/admin/api', admin.adminApiKeysPage);
 app.post('/admin/user/update', admin.userAdminUpdate);
 app.post('/admin/api/update', admin.apiAdminUpdate);
 
