@@ -165,7 +165,7 @@ var applyModelListQueryDefaults = function(modelListQuery, options, req, default
 
 exports.applyCommentListQueryDefaults = function(commentListQuery, options, req) {
   applyModelListQueryDefaults(commentListQuery, options, req, {
-    defaultSort: 'created -rating',
+    defaultSort: 'created',
     parseSearchQueryFn: parseCommentSearchQuery,
     searchBarPlaceholder: 'Search Comments',
   });

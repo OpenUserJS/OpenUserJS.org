@@ -281,6 +281,7 @@ exports.userCommentListPage = function(req, res, next) {
 
     // commentListQuery: Defaults
     modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
+    commentListQuery.sort('-created');
 
     // commentListQuery: Pagination
     var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults

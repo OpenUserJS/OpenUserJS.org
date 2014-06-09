@@ -211,12 +211,12 @@ var setupScriptSidePanel = function(options) {
 
   // User
   if (options.isOwner) {
-    options.ownerTools = {};
+    options.authorTools = {};
   }
 
   // Mod
   if (authedUser && authedUser.isMod) {
-    //options.userTools = {}; // TODO: Support moderator edits on scripts?
+    //options.authorTools = {}; // TODO: Support moderator edits on scripts?
     options.modTools = {};
   }
 
