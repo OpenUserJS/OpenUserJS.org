@@ -1,5 +1,6 @@
 var marked = require('marked');
 var hljs = require('highlight.js');
+var xss = require('simple-xss');
 var renderer = new marked.Renderer();
 
 // Automatically generate an anchor for each header
@@ -32,11 +33,11 @@ marked.setOptions({
   tables: true,
   breaks: true,
   pedantic: false,
-  sanitize: true,
+  sanitize: false, // we use xss to sanitize HTML
   smartLists: true,
   smartypants: false
 });
 
 exports.renderMd = function (text) {
-  return marked(text);
+  return xss(marked(text));
 };

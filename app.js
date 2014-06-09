@@ -1,4 +1,4 @@
-var toobusy = require('toobusy');
+var toobusy = require('toobusy-js');
 var express = require('express');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
@@ -48,7 +48,7 @@ app.configure(function(){
   });
 
   // Force HTTPS
-  if (process.env.NODE_ENV === 'production') {
+  if (app.get('port') === 443) {
     app.use(function (req, res, next) {
       res.setHeader('Strict-Transport-Security',
         'max-age=8640000; includeSubDomains');
