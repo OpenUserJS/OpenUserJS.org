@@ -229,7 +229,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(function (req, res, next) {
   statusCodePage(req, res, next, {
     statusCode: 404,
-    statusMessage: 'This is not the page your are looking for.',
+    statusMessage: 'This is not the page you\'re are looking for.',
   });
 });
 
