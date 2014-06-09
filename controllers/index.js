@@ -55,6 +55,7 @@ exports.home = function (req, res) {
   // groupListQuery
   var groupListQuery = Group.find();
   groupListQuery
+    .sort('-rating')
     .limit(25);
 
   //--- Tasks

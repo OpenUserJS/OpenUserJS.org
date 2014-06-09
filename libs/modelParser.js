@@ -1,9 +1,13 @@
 var moment = require('moment');
 var _ = require('underscore');
+var util = require('util');
+
+var Script = require('../models/script').Script;
 
 var userRoles = require('../models/userRoles.json');
 var renderMd = require('../libs/markdown').renderMd;
 var helpers = require('../libs/helpers');
+var getRating = require('../libs/collectiveRating').getRating;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
 moment.lang('en', {
@@ -160,12 +164,30 @@ exports.parseUser = function(userData) {
 //
 exports.parseGroup = function(groupData) {
   if (!groupData) return;
-  var group = groupData.toObject ? groupData.toObject() : groupData;
+  // var group = groupData.toObject ? groupData.toObject() : groupData;
+  var group = groupData;
 
   group.size = group._scriptIds.length;
   group.multiple = group._scriptIds.length > 1;
 
   group.groupPageUrl = '/group/' + group.name.replace(/\s+/g, '_');
+
+  // Wait two hours between group rating updates
+  // This calculation runs in the background
+  if (new Date().getTime() > (group.updated.getTime() + 1000*60*60*2)) {
+    Script.find({
+      _id: { $in: group._scriptIds }
+    }, function (err, scripts) {
+      if (!err && scripts.length > 1) {
+        group.rating = getRating(scripts);
+      }
+
+      group.updated = new Date();
+      group.save(function(err, group){
+        console.log(util.format('Group(%s) Rating Updated', group.name));
+      });
+    });
+  }
 
   return group;
 };
