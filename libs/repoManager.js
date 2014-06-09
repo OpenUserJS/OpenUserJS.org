@@ -1,7 +1,14 @@
 var https = require('https');
 var async = require('async');
+var util = require('util');
+var _ = require('underscore');
+
 var Strategy = require('../models/strategy').Strategy;
+var User = require('../models/user').User;
+
 var nil = require('./helpers').nil;
+var github = require('../libs/githubClient');
+
 var clientId = null;
 var clientKey = null;
 
@@ -51,28 +58,35 @@ function RepoManager(userId, user, repos) {
 }
 
 // Fetches the information about repos that contain user scripts
-RepoManager.prototype.fetchRepos = function (callback) {
-  var repos = [];
+RepoManager.prototype.fetchRecentRepos = function (callback) {
+  var repoList = [];
   var that = this;
 
-  fetchJSON('/user/' + this.userId + '/repos', function (json) {
-    json.forEach(function (repo) {
-      if (that.user.ghUsername !== repo.owner.login) {
-        that.user.ghUsername = repo.owner.login;
-        that.user.save(function (err, user) {});
-     }
-
+  async.waterfall([
+    function(callback) {
+      github.repos.getFromUser({
+        user: that.userId,
+        sort: 'updated',
+        order: 'desc',
+        per_page: 3,
+      }, callback);
+    },
+    function(githubRepoList, callback) {
       // Don't search through forks
-      if (repo.fork) { return; }
-      repos.push(new Repo(that, repo.owner.login, repo.name));
-    });
+      // to speedup this request.
+      // githubRepoList = _.where(githubRepoList, {fork: false});
 
-    async.each(repos, function (repo, cb) {
-      repo.fetchUserScripts(function() {
-        cb(null);
+      _.map(githubRepoList, function(githubRepo){
+        repoList.push(new Repo(that, githubRepo.owner.login, githubRepo.name));
       });
-    }, callback);
-  });
+
+      async.each(repoList, function (repo, callback) {
+        repo.fetchUserScripts(function() {
+          callback(null);
+        });
+      }, callback);
+    },
+  ], callback);
 };
 
 // Import scripts on GitHub

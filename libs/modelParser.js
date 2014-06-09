@@ -128,7 +128,8 @@ exports.renderScript = function(script) {
 //
 exports.parseUser = function(userData) {
   if (!userData) return;
-  var user = userData.toObject ? userData.toObject() : userData;
+  // var user = userData.toObject ? userData.toObject() : userData;
+  var user = userData;
 
   // Role
   user.isMod = user.role < 4;

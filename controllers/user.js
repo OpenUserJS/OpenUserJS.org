@@ -2,6 +2,7 @@ var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
 var _ = require('underscore');
+var util = require('util');
 
 var Comment = require('../models/comment').Comment;
 var Flag = require('../models/flag').Flag;
@@ -41,7 +42,6 @@ var setupFlagUserUITask = function(options) {
       return;
     }
     flagLib.flaggable(User, user, authedUser, function (canFlag, author, flag) {
-      console.log(canFlag, author, flag);
       if (flag) {
         flagUrl += '/unflag';
         options.flagged = true;
@@ -873,7 +873,6 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
         var m = userscriptHeaderRegex.exec(blobUtf8);
         if (m && m[1]) {
           var userscriptMeta = scriptStorage.parseMeta(m[1]);
-          console.log(userscriptMeta);
           scriptStorage.storeScript(authedUser, userscriptMeta, blobUtf8, onScriptStored);
         } else {
           callback('Specified file does not contain a userscript header.');
@@ -1031,100 +1030,114 @@ exports.userManageGitHubPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // Metadata
-  options.title = 'Manage GitHub Sync | OpenUserJS.org';
+  options.title = 'GitHub: Manage | OpenUserJS.org';
   options.pageMetaDescription = null;
   options.pageMetaKeywords = null;
 
+  //
+  var TOO_MANY_SCRIPTS = 'GitHub user has too many scripts to batch import.';
+  tasks.push(function(callback){
+    var githubUserName = req.query.user || authedUser.ghUsername;
 
-  //--- Tasks
-
-  ///////////
-
-  var user = req.session.user;
-  var isLib = req.route.params.isLib;
-  var indexOfGH = -1;
-  var ghUserId = null;
-  var repoManager = null;
-  var loadingRepos = false;
-  var reponame = null;
-  var repo = null;
-  var repos = null;
-  var scriptname = null;
-  var loadable = null;
-
-  options.username = user.name;
-  options.isLib = isLib;
-
-  indexOfGH = user.strategies.indexOf('github');
-  if (indexOfGH > -1) {
-    options.hasGH = true;
-
-    if (req.body.importScripts) {
-      loadingRepos = true;
-      options.showRepos = true;
-      ghUserId = user.auths[indexOfGH];
-
-      User.findOne({ _id: user._id }, function (err, user) {
-        repoManager = RepoManager.getManager(ghUserId, user);
-
-        repoManager.fetchRepos(function() {
-          // store the vaild repos in the session to prevent hijaking
-          req.session.repos = repoManager.repos;
-
+    async.waterfall([
+      // authedUser.ghUsername
+      function(callback){
+        if (githubUserName || authedUser.ghUsername) {
+          callback(null);
+        } else {
+          async.waterfall([
+            function(callback) {
+              var githubUserId = authedUser.githubUserId();
+              github.user.getFrom({
+                user: githubUserId,
+              }, callback);
+            },
+            function(githubUser, callback) {
+              options.githubUser = githubUser;
+              console.log(githubUser);
+              User.findOne({
+                _id: authedUser._id,
+              }, callback);
+            },
+            function(userData, callback) {
+              console.log(userData);
+              userData.ghUsername = options.githubUser.login;
+              userData.save(callback);
+            },
+            function(callback) {
+              console.log(util.format('Updated User(%s).ghUsername', userData.name));
+              callback(null);
+            },
+          ], callback);
+        }
+      },
+      // Fetch repos and format for template.
+      function(callback){
+        console.log(githubUserName);
+        var repoManager = RepoManager.getManager(githubUserName, authedUser);
+        repoManager.fetchRecentRepos(function() {
           // convert the repos object to something mustache can use
           options.repos = repoManager.makeRepoArray();
-          res.render('addScripts', options);
+
+          var repos = repoManager.repos;
+          callback(null, repos);
         });
-      });
-    } else if (req.body.loadScripts && req.session.repos) {
-      loadingRepos = true;
-      repos = req.session.repos;
-      loadable = nil();
+      },
+      // Import repos.
+      function(repos, callback){
+        var loadable = {};
+        console.log(req.body);
+        _.each(req.body, function(repo, reponame){
+          // Load all scripts in the repo
+          if (typeof repo === 'string' && reponame.substr(-4) === '_all') {
+            reponame = repo;
+            repo = repos[reponame];
 
-      for (reponame in req.body) {
-        repo = req.body[reponame];
-
-        // Load all scripts in the repo
-        if (typeof repo === 'string' && reponame.substr(-4) === '_all') {
-          reponame = repo;
-          repo = repos[reponame];
-
-          if (repo) {
+            if (repo) {
+              for (scriptname in repo) {
+                if (!loadable[reponame]) { loadable[reponame] = nil(); }
+                loadable[reponame][scriptname] = repo[scriptname];
+              }
+            }
+          } else if (typeof repo === 'object') { // load individual scripts
             for (scriptname in repo) {
-              if (!loadable[reponame]) { loadable[reponame] = nil(); }
-              loadable[reponame][scriptname] = repo[scriptname];
+              if (repos[reponame][scriptname]) {
+                if (!loadable[reponame]) { loadable[reponame] = nil(); }
+                loadable[reponame][scriptname] = repos[reponame][scriptname];
+              }
             }
           }
-        } else if (typeof repo === 'object') { // load individual scripts
-          for (scriptname in repo) {
-            if (repos[reponame][scriptname]) {
-              if (!loadable[reponame]) { loadable[reponame] = nil(); }
-              loadable[reponame][scriptname] = repos[reponame][scriptname];
-            }
-          }
-        }
-      }
-
-      User.findOne({ _id: user._id }, function (err, user) {
-        // Load the scripts onto the site
-        RepoManager.getManager(ghUserId, user, loadable).loadScripts(
-          function () {
-            delete req.session.repos;
-            res.redirect('/users/' + user.name);
         });
-      });
+
+        // Load the scripts onto the site
+        if (_.size(loadable) > 0) {
+          console.log('loadScripts');
+          var githubUserName = authedUser.ghUsername;
+          RepoManager.getManager(githubUserName, authedUser, loadable).loadScripts(function () {
+            console.log('preredirect');
+            res.redirect(authedUser.userScriptListPageUrl);
+            console.log('redirect');
+            callback(null);
+          });
+        } else {
+          callback(null);
+        }
+      },
+    ], callback);
+  });
+
+
+  //---
+  async.parallel(tasks, function(err){
+    if (err) {
+      return statusCodePage(req, res, next, {
+        statusMessage: err,
+      })
     }
-  }
 
-  if (!loadingRepos) {
-
-
-    //---
-    function preRender(){};
-    function render(){ res.render('pages/userManageGitHub', options); }
-    function asyncComplete(err){ if (err) { return next(); } else { preRender(); render(); } };
-    async.parallel(tasks, asyncComplete);
-  }
+    console.log('render');
+    res.render('pages/userManageGitHub', options);
+  });
 };
 
 exports.uploadScript = function (req, res, next) {
@@ -1357,17 +1370,11 @@ exports.editScript = function (req, res, next) {
   });
 
   //---
-  function preRender (){};
-  function render () { res.render('pages/ScriptViewSourcePage', options); }
-  function asyncComplete (err) {
-    if (err) {
-      next();
-    } else {
-      preRender();
-      render();
-    }
-  }
-  async.parallel(tasks, asyncComplete);
+  async.parallel(tasks, function(err){
+    if (err) return next();
+
+    res.render('pages/ScriptViewSourcePage', options);
+  });
 };
 
 // route to flag a user

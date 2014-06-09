@@ -8,7 +8,7 @@ var userRoles = require('../models/userRoles.json');
 var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
-// These functions serialize the user model so we can keep 
+// These functions serialize the user model so we can keep
 // the info in the session
 passport.serializeUser(function (user, done) {
   done(null, user._id);
@@ -23,7 +23,7 @@ passport.deserializeUser(function (id, done) {
 // Setup all our auth strategies
 var openIdStrategies = {};
 Strategy.find({}, function (err, strategies) {
-  
+
   // Get OpenId strategies
   if (process.env.NODE_ENV === 'production') {
     for (var name in allStrategies) {
@@ -33,7 +33,7 @@ Strategy.find({}, function (err, strategies) {
       }
     }
   }
-  
+
   // Load the passport module for each strategy
   strategies.forEach(function (strategy) {
     loadPassport(strategy);
@@ -96,7 +96,7 @@ exports.auth = function (req, res, next) {
         } // else use the strategy that was given in the POST
       }
 
-      if (!strategy) { 
+      if (!strategy) {
         return res.redirect('/register');
       } else {
         return auth();
@@ -116,7 +116,7 @@ exports.callback = function (req, res, next) {
 
   // Get the passport strategy instance so we can alter the _verfiy method
   strategyInstance = strategyInstances[strategy];
-  
+
 
   // Hijak the private verify method so we can fuck shit up freely
   // We use this library for things it was never intended to do
@@ -125,14 +125,15 @@ exports.callback = function (req, res, next) {
       verifyPassport(id, strategy, username, req.session.user, done);
     }
   } else {
-    strategyInstance._verify = 
+    strategyInstance._verify =
       function (token, refreshOrSecretToken, profile, done) {
+        req.session.profile = profile;
         verifyPassport(profile.id, strategy, username, req.session.user, done);
       }
   }
 
   // This callback will happen after the verify routine
-  var authenticate = passport.authenticate(strategy, 
+  var authenticate = passport.authenticate(strategy,
     function (err, user, info) {
       if (err) { return next(err); }
       if (!user) {
@@ -145,6 +146,17 @@ exports.callback = function (req, res, next) {
 
         // Store the user info in the session
         req.session.user = user;
+
+        // Save GitHub username.
+        if (req.session.profile.provider === 'github') {
+          user.ghUsername = req.session.profile.username;
+          user.save(function(err, user){
+            if (err) {
+              console.error('Error saving User(' + user.name + ').ghUsername = ' + user.ghUsername);
+            }
+          });
+        }
+
         if (newstrategy) {
           // Allow a user to link to another acount
           return res.redirect('/auth/' + newstrategy);

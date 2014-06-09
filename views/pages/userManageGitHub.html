@@ -9,40 +9,32 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12">
-        <h2>GitHub Webhook</h2>
-        <p>To keep scripts you've imported from GitHub up-to-date on OpenUserJS.org when you push changes:</p>
-        <ol>
-          <li>Add a Webhook (in the repo settings) to the repos containing the script(s)</li>
-          <li>Paste the URL below as the "Payload URL"</li>
-          <li>Change the Content type to "application/x-www-form-urlencoded"</li>
-          <li>Click "Add webhook"</li>
-        </ol>
-        <p>Use the default settings for everything else.</p>
-        {{#hasGH}}
-          <p class="indent content">
-            <form id="load_repos" action="" method="post">
-              <input type="hidden" name="importScripts" value="true" />
-              <input type="submit" value="Find {{#isLib}}a Library Script{{/isLib}}{{^isLib}}Scripts{{/isLib}} On GitHub" />
-            </form>
-          </p>
+        <div class="list-group">
+          <a href="{{authedUser.userGitHubRepoListPageUrl}}" class="list-group-item">
+            <h4 class="list-group-item-heading">Full Repository List</h4>
+            <p class="list-group-item-text">Click here to list all GitHub repositories. You can import both userscripts and javascript libraries from this list.</p>
+          </a>
+        </div>
 
-          {{#showRepos}}
-            <form id="load_scripts_from_github" method="post" action="">
-              <input type="hidden" name="loadScripts" value="true" />
-              {{#repos}}
-                <p class="indent">
-                  <input type="checkbox" name="{{{repo}}}_all" value="{{{repo}}}" />
-                  <strong><a href="https://github.com/{{{user}}}/{{{repo}}}">{{repo}}</a></strong><br />
-                  {{#scripts}}
-                    <input type="checkbox" name="{{{repo}}}[{{{name}}}]" value="true"/>
-                    <a href="https://github.com/{{{user}}}/{{{repo}}}/blob/master{{{path}}}">{{name}}</a><br />
-                  {{/scripts}}
-                </p>
-              {{/repos}}
-              <input type="submit" value="Load Scripts" />
-            </form>
-          {{/showRepos}}
-        {{/hasGH}}
+        <h2>Batch Import UserScripts <div class="small">(From Recently Updated GitHub Repositories)</div></h2>
+        <form method="post" action="">
+          <ul class="list-group">
+          {{#repos}}
+            <li class="list-group-item">
+              <input type="checkbox" name="{{{repo}}}_all" value="{{{repo}}}" /> <strong><a href="https://github.com/{{{user}}}/{{{repo}}}">{{repo}}</a></strong><br />
+              {{#scripts}}
+                <input type="checkbox" name="{{{repo}}}[{{{name}}}]" value="true"/> <a href="https://github.com/{{{user}}}/{{{repo}}}/blob/master{{{path}}}">{{name}}</a><br />
+              {{/scripts}}
+            </li>
+          {{/repos}}
+          {{^repos}}
+            <li class="list-group-item">
+              No scripts in recently updated repositories. Try the full repository list.
+            </li>
+          {{/repos}}
+          </ul>
+          <button type="submit" class="btn btn-success col-xs-12 {{^repos}}disabled{{/repos}}">Import Scripts</button>
+        </form>
       </div>
     </div>
   </div>
