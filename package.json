@@ -17,6 +17,7 @@
     "underscore": "*",
     "moment": "*",
     "github": "*",
+    "request": "*",
     "passport": "*",
     "passport-github": "*",
     "passport-amazon": "*",
