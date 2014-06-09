@@ -1373,7 +1373,7 @@ exports.editScript = function (req, res, next) {
   async.parallel(tasks, function(err){
     if (err) return next();
 
-    res.render('pages/ScriptViewSourcePage', options);
+    res.render('pages/scriptViewSourcePage', options);
   });
 };
 
