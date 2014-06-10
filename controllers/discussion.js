@@ -78,7 +78,7 @@ exports.categoryListPage = function (req, res, next) {
         };
 
         var regex = /^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/;
-        var match = regex.exec('scripts/zren/httpxshade.ca/Resize_YT_To_Window_Size/issues');
+        var match = regex.exec(category.slug);
         var isScriptIssue = match;
         if (isScriptIssue) {
           var scriptAuthorNameSlug = match[2];
