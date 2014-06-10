@@ -11,7 +11,6 @@
     {{#scriptList}}
     <tr class="tr-link">
       <td>
-        <b>
           <span class="script-icon hidden-xs">
           {{#meta.icon}}
             <img src="{{{meta.icon}}}" alt="">
@@ -20,8 +19,7 @@
             <i class="fa fa-fw fa-file-code-o"></i>
           {{/meta.icon}}
           </span>
-          <a href="{{{scriptPageUrl}}}">{{name}}</a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}}
-        </b>
+          <a href="{{{scriptPageUrl}}}"><b>{{name}}</b></a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}} <span class="inline-block">by <a>{{author}}</span></a>
         <p>{{meta.description}}</p>
       </td>
       <td class="text-center td-fit">

@@ -66,7 +66,10 @@ exports.categoryListPage = function (req, res, next) {
   tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   //---
-  function preRender(){
+  async.parallel(tasks, function(err) {
+    if (err) next();
+
+    //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
     _.map(options.discussionList, function(discussion){
@@ -92,10 +95,10 @@ exports.categoryListPage = function (req, res, next) {
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
-  };
-  function render(){ res.render('pages/categoryListPage', options); }
-  function asyncComplete(){ preRender(); render(); }
-  async.parallel(tasks, asyncComplete);
+
+    //---
+    res.render('pages/categoryListPage', options);
+  });
 };
 
 // List discussions for one of the three categories
@@ -123,7 +126,7 @@ exports.list = function (req, res, next) {
   // Metadata
   options.title = category.name + ' | OpenUserJS.org';
   options.pageMetaDescription = category.description;
-  options.pageMetaKeywords = null; // seperator = ', '
+  options.pageMetaKeywords = null;
 
   // discussionListQuery
   var discussionListQuery = Discussion.find();
@@ -146,16 +149,19 @@ exports.list = function (req, res, next) {
   tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   //---
-  function preRender(){
+  async.parallel(tasks, function(err) {
+    if (err) return next();
+
+    //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
-  };
-  function render(){ res.render('pages/discussionListPage', options); }
-  function asyncComplete(){ preRender(); render(); }
-  async.parallel(tasks, asyncComplete);
+
+    //---
+    res.render('pages/discussionListPage', options);
+  });
 };
 
 // Locate a discussion and deal with topic url collisions
@@ -196,7 +202,8 @@ exports.show = function (req, res, next) {
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
     // Category
     category = options.category = modelParser.parseCategory(category);
@@ -207,7 +214,7 @@ exports.show = function (req, res, next) {
     // Metadata
     options.title = discussion.topic + ' | OpenUserJS.org';
     options.pageMetaDescription = discussion.topic;
-    options.pageMetaKeywords = null; // seperator = ', '
+    options.pageMetaKeywords = null;
 
     // commentListQuery
     var commentListQuery = Comment.find();
@@ -229,7 +236,11 @@ exports.show = function (req, res, next) {
     // commentListQuery
     tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
-    function preRender(){
+    //---
+    async.parallel(tasks, function(err) {
+      if (err) return next();
+
+      //--- PreRender
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
       _.map(options.commentList, function(comment){
@@ -239,10 +250,10 @@ exports.show = function (req, res, next) {
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
-    };
-    function render(){ res.render('pages/discussionPage', options); }
-    function asyncComplete(){ preRender(); render(); }
-    async.parallel(tasks, asyncComplete);
+
+      //---
+      res.render('pages/discussionPage', options);
+    });
   });
 };
 
@@ -251,7 +262,7 @@ exports.newTopic = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser)
-    return redirect('/login');
+    return res.redirect('/login');
 
   var categorySlug = req.route.params.category;
 
@@ -261,31 +272,22 @@ exports.newTopic = function (req, res, next) {
 
   //
   var options = {};
-  var tasks = [];
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.role < 4;
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
 
   //
   options.category = category;
 
   // Metadata
-  options.title = 'OpenUserJS.org';
-  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
-  var pageMetaKeywords = ['userscript', 'greasemonkey'];
-  pageMetaKeywords.concat(['web browser']);
-  options.pageMetaKeywords = pageMetaKeywords.join(', ');
-
-  //--- Tasks
-  // ...
+  options.title = 'New Topic | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
 
   //---
-  function preRender(){};
-  function render(){ res.render('pages/newDiscussionPage', options); }
-  function asyncComplete(){ preRender(); render(); }
-  async.parallel(tasks, asyncComplete);
-  return;
+  res.render('pages/newDiscussionPage', options);
 };
 
 // Does all the work of submitting a new comment and updating the discussion

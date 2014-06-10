@@ -65,7 +65,7 @@ RepoManager.prototype.fetchRecentRepos = function (callback) {
   async.waterfall([
     function(callback) {
       github.repos.getFromUser({
-        user: that.userId,
+        user: encodeURIComponent(that.userId),
         sort: 'updated',
         order: 'desc',
         per_page: 3,

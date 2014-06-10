@@ -21,48 +21,11 @@
                     <input type="text" id="discussion-topic" name="discussion-topic" size="60" class="" placeholder="Topic" required>
                   </li>
                 </ol>
-              </div>            
+              </div>
               <div class="container-fluid comments">
                 <div class="row">
                   <section class="topic-area list-group">
-<div class="topic-post list-group-item" id="comment-">
-  <article>
-    <div class="row">
-      <div class="topic-avatar col-xs-1">
-        <a href="{{{authedUser.userPageUrl}}}">
-          <img src="http://lorempixel.com/45/45?name={{authedUser.name}}" alt="">
-        </a>
-      </div>
-      <div class="topic-body col-xs-11">
-        <div class="topic-meta-data container-fluid row">
-          <div class="names pull-left">
-            <span>
-              <a href="{{{authedUser.userPageUrl}}}" class="username">{{authedUser.name}}</a> <span class="label label-default">{{authedUser.roleName}}</span>
-            </span>
-          </div>
-          <div class="post-info pull-right">
-            <a href="#comment-" class="post-date">
-              <time datetime="" title="">now</time>
-            </a>
-          </div>
-        </div>
-        <div class="topic-post-contents container-fluid row">
-          <div class="user-data">
-            <textarea name="comment-content" data-provide="markdown" data-iconlibrary="fa" class="col-xs-12" placeholder="Type here using Markdown." required></textarea>
-          </div>
-          <section class="post-menu-area container-fluid row">
-            <nav class="post-controls text-right">
-              <button class="btn btn-sm btn-info" title="begin composing a reply to this post"type="submit">
-                <i class="fa fa-reply"></i> Submit
-              </button>
-            </nav>
-          </section>
-        </div>
-      </div>
-    </div>
-  </article>
-</div>
-                  
+                    {{> includes/commentEditor.html }}
                   </section>
                 </div>
               </div>

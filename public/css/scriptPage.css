@@ -9,6 +9,9 @@
 .btn-vote:not(:hover):not(.active) {
   color: #aea79f;
 }
+.btn-vote.disabled:not(:hover):not(.active) {
+  color: #ddd;
+}
 
 .vote-area {
   padding: 0 1em;

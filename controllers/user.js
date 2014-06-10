@@ -739,7 +739,7 @@ exports.userGitHubRepoListPage = function (req, res, next) {
       // githubUser
       function(callback) {
         github.user.getFrom({
-          user: githubUserId,
+          user: encodeURIComponent(githubUserId),
         }, callback);
       },
       function(githubUser, callback) {
@@ -757,7 +757,7 @@ exports.userGitHubRepoListPage = function (req, res, next) {
       // gihubRepos
       function(callback) {
         github.repos.getFromUser({
-          user: githubUserId,
+          user: encodeURIComponent(githubUserId),
           page: pagination.currentPage,
           per_page: pagination.itemsPerPage,
         }, callback);
@@ -829,8 +829,8 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
     // Validate blob
     function(callback){
       github.gitdata.getJavascriptBlobs({
-        user: githubUserId,
-        repo: githubRepoName,
+        user: encodeURIComponent(githubUserId),
+        repo: encodeURIComponent(githubRepoName),
       }, callback);
     },
     function(javascriptBlobs, callback){
@@ -848,9 +848,9 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
     //
     function(callback){
       github.usercontent.getBlobAsUtf8({
-        user: githubUserId,
-        repo: githubRepoName,
-        path: githubBlobPath,
+        user: encodeURIComponent(githubUserId),
+        repo: encodeURIComponent(githubRepoName),
+        path: encodeURIComponent(githubBlobPath),
       }, callback);
     },
     function(blobUtf8, callback){
@@ -944,16 +944,16 @@ exports.userGitHubRepoPage = function (req, res, next) {
     async.waterfall([
       function(callback){
         github.repos.get({
-          user: githubUserId,
-          repo: githubRepoName,
+          user: encodeURIComponent(githubUserId),
+          repo: encodeURIComponent(githubRepoName),
         }, callback);
       },
       function(repo, callback){
         options.repo = repo;
 
         github.gitdata.getJavascriptBlobs({
-          user: repo.owner.login,
-          repo: repo.name,
+          user: encodeURIComponent(repo.owner.login),
+          repo: encodeURIComponent(repo.name),
         }, callback);
       },
       function(javascriptBlobs, callback){
@@ -1049,7 +1049,7 @@ exports.userManageGitHubPage = function (req, res, next) {
             function(callback) {
               var githubUserId = authedUser.githubUserId();
               github.user.getFrom({
-                user: githubUserId,
+                user: encodeURIComponent(githubUserId),
               }, callback);
             },
             function(githubUser, callback) {

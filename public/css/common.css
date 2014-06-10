@@ -142,6 +142,7 @@ textarea {
 .md-editor textarea,
 .md-editor .md-preview {
   height: calc(100% - 42px);
+  min-height: 258px;
 }
 
 #reply-control .submit-panel {
@@ -257,4 +258,8 @@ h6:hover a.anchor {
 th > a {
   color: initial;
   display: block;
+}
+
+.inline-block {
+  display: inline-block;
 }

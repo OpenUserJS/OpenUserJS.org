@@ -254,8 +254,13 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
           function (err, data) {
             if (user.role === userRoles.length - 1) {
-              --user.role;
-              user.save(function (err, user) { callback(script); });
+              var userDoc = user;
+              if (!userDoc.save) {
+                // We're probably using req.session.user which may have gotten serialized.
+                userData = new User(userData);
+              }
+              --userDoc.role;
+              userDoc.save(function (err, user) { callback(script); });
             } else {
               callback(script);
             }

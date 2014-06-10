@@ -17,6 +17,10 @@
 
             <p>The following files with the file extension <code>.js</code> can be imported from this repo.</p>
 
+            {{#openImportInNewTab}}
+            <div class="alert alert-info">Multiple scripts detected. Will open a new tab when importing a script.</div>
+            {{/openImportInNewTab}}
+
             <ul class="list-group">
             {{#javascriptBlobs}}
               <li class="list-group-item {{^canUpload}}list-group-item-danger{{/canUpload}}">
