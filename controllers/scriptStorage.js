@@ -257,7 +257,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
               var userDoc = user;
               if (!userDoc.save) {
                 // We're probably using req.session.user which may have gotten serialized.
-                userData = new User(userData);
+                userDoc = new User(userDoc);
               }
               --userDoc.role;
               userDoc.save(function (err, user) { callback(script); });
