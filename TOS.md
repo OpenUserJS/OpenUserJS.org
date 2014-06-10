@@ -3,8 +3,8 @@
 ## Etiquette
 * Everyone should maintain a professional and civil demeanor towards others.
 * Staying on topic is a good thing to remember. Everyone has other duties to attend to at different times. Try to be succinct and don't obsess on a particular topic.
-* Conversations regarding "filling voids" should be avoided. Advocacy of one site or another should be minimal and gracefully done.
-* **"Open Source" is not the same as "the developers must do my bidding"**. A lot of generous time is donated by multiple developers in attempting to resolve any properly presented issues. However this does not mean there is an obligation to do it on anyones time table. Until the bills are paid by everyone involved it's a wise choice to be courteous instead of snarky.
+* Intense conversations regarding "filling voids" should be avoided. Advocacy of one site or another should be minimal and gracefully done.
+* **"Open Source" is not the same as "the developers must do my bidding"**. A lot of generous time is donated by multiple developers in attempting to resolve any properly presented issues. However this does not mean there is an obligation to do it on anyones time table. Until the site bills are paid by everyone involved it's a wise choice to be courteous instead of snarky.
 
 ## Abstraction
 
