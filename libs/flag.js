@@ -1,7 +1,7 @@
 var Flag = require('../models/flag').Flag;
 var User = require('../models/user').User;
 var getKarma = require('./collectiveRating').getKarma;
-var thresholds = { 'Script': 5, 'User': 10, 'Discussion': 3, 'Comment': 2 };
+var thresholds = { 'Script': 1, 'User': 1, 'Discussion': 1, 'Comment': 1 };
 var maxKarma = 10;
 
 // Determine whether content can be flagged by a user.
@@ -66,7 +66,7 @@ function getThreshold (model, content, author, callback) {
 
   // Hardcode the threshold at 1.
   // modelQuery.applyModelListQueryFlaggedFilter supports this hardcoded number.
-  return callback(1);
+  // return callback(1);
 
   // Moderators have a doubled threshold
   var threshold = thresholds[model.modelName] * (author.role < 4 ? 2 : 1);
