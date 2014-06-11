@@ -64,6 +64,10 @@ function getThreshold (model, content, author, callback) {
   // Admins can't be flagged so they have no threshold
   if (author.role < 3) { return callback(null); }
 
+  // Hardcode the threshold at 1.
+  // modelQuery.applyModelListQueryFlaggedFilter supports this hardcoded number.
+  return callback(1);
+
   // Moderators have a doubled threshold
   var threshold = thresholds[model.modelName] * (author.role < 4 ? 2 : 1);
 

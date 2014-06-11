@@ -130,9 +130,12 @@ var applyModelListQueryFlaggedFilter = function(modelListQuery, options, flagged
     // Mod
     if (flaggedQuery) {
       if (flaggedQuery == 'true') {
-        modelListQuery.and({flagged: true});
+        modelListQuery.and({flags: {$gt: 0 }});
       } else if (flaggedQuery == false) {
-        modelListQuery.and({flagged: {$ne: true}});
+        modelListQuery.and({$or: [
+          {flags: {$exists: false}},
+          {flags: 0 },
+        ]});
       }
     }
   } else {
