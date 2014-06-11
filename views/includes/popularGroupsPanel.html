@@ -1,0 +1,12 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">Popular Groups</div>
+  </div>
+  <div class="panel-body">
+    <ul class="tagcloud">
+      {{#popularGroupList}}
+        <li><a href="{{{groupPageUrl}}}">{{name}}</a> <span class="badge">{{size}}</span></li>
+      {{/popularGroupList}}
+    </ul>
+  </div>
+</div>

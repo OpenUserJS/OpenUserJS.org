@@ -152,6 +152,12 @@ exports.list = function (req, res) {
   // groupListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
+  // popularGroupListQuery
+  var popularGroupListQuery = Group.find();
+  popularGroupListQuery
+    .sort('-rating')
+    .limit(25);
+
   //--- Tasks
 
   // Pagination
@@ -160,6 +166,9 @@ exports.list = function (req, res) {
   // groupListQuery
   tasks.push(execQueryTask(groupListQuery, options, 'groupList'));
 
+  // popularGroupListQuery
+  tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
+
   //---
   function preRender(){
     // groupList
@@ -167,6 +176,9 @@ exports.list = function (req, res) {
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
+
+    // popularGroupList
+    options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
 
     // Page <head> meta keywords
     var pageMetaKeywords = ['userscript', 'greasemonkey'];
@@ -224,9 +236,10 @@ exports.view = function (req, res, next) {
     // scriptListQuery: Pagination
     var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
-    // groupListQuery
-    var groupListQuery = Group.find();
-    groupListQuery
+    // popularGroupListQuery
+    var popularGroupListQuery = Group.find();
+    popularGroupListQuery
+      .sort('-rating')
       .limit(25);
 
     //--- Tasks
@@ -237,16 +250,16 @@ exports.view = function (req, res, next) {
     // scriptListQuery
     tasks.push(execQueryTask(scriptListQuery, options, 'scriptList'));
 
-    // groupListQuery
-    tasks.push(execQueryTask(groupListQuery, options, 'groupList'));
+    // popularGroupListQuery
+    tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
 
     //---
     function preRender(){
       // scriptList
       options.scriptList = _.map(options.scriptList, modelParser.parseScript);
 
-      // groupList
-      options.groupList = _.map(options.groupList, modelParser.parseGroup);
+      // popularGroupList
+      options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
