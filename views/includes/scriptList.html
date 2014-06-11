@@ -12,12 +12,12 @@
     <tr class="tr-link">
       <td>
           <span class="script-icon hidden-xs">
-          {{#meta.icon}}
-            <img src="{{{meta.icon}}}" alt="">
-          {{/meta.icon}}
-          {{^meta.icon}}
+          {{#icon16Url}}
+            <img src="{{{icon16Url}}}" alt="">
+          {{/icon16Url}}
+          {{^icon16Url}}
             <i class="fa fa-fw fa-file-code-o"></i>
-          {{/meta.icon}}
+          {{/icon16Url}}
           </span>
           <a href="{{{scriptPageUrl}}}"><b>{{name}}</b></a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}} <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</span></a>
         <p>{{meta.description}}</p>

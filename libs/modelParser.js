@@ -84,10 +84,23 @@ var parseScript = function(scriptData) {
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
   // Author
-  if (typeof script.author === 'string') {
+  if (_.isString(script.author)) {
     script.author = parseUser({name: script.author});
   }
 
+  // Icons
+  if (script.meta.icon) {
+    if (_.isString(script.meta.icon)) {
+      script.icon16Url = script.meta.icon;
+      script.icon45Url = script.meta.icon;
+    } else if (_.isArray(script.meta.icon) && !_.isEmpty(script.meta.icon)) {
+      script.icon16Url = script.meta.icon[0];
+      script.icon45Url = script.meta.icon[script.meta.icon.length >= 2 ? 1 : 1];
+    }
+  }
+  if (script.meta.icon64) {
+    script.icon45Url = script.meta.icon64;
+  }
 
   //
   script.fullName = script.author.name + '/' + script.name; // GitHub-like name
