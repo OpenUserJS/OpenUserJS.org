@@ -326,20 +326,19 @@ exports.edit = function (req, res, next) {
 
     var baseUrl = script && script.isLib ? '/libs/' : '/scripts/';
 
-    if (typeof req.body.about !== 'undefined') {
+    if (req.body.remove) {
       // POST
-      if (req.body.remove) {
-        scriptStorage.deleteScript(scriptData.installName, function () {
-          res.redirect(authedUser.userPageUrl);
-        });
-      } else {
-        scriptData.about = req.body.about;
-        var scriptGroups = (req.body.groups || "");
-        scriptGroups = scriptGroups.split(/,/);
-        addScriptToGroups(scriptData, scriptGroups, function () {
-          res.redirect(script.scriptPageUrl);
-        });
-      }
+      scriptStorage.deleteScript(scriptData.installName, function () {
+        res.redirect(authedUser.userScriptListPageUrl);
+      });
+    } else if (typeof req.body.about !== 'undefined') {
+      // POST
+      scriptData.about = req.body.about;
+      var scriptGroups = (req.body.groups || "");
+      scriptGroups = scriptGroups.split(/,/);
+      addScriptToGroups(scriptData, scriptGroups, function () {
+        res.redirect(script.scriptPageUrl);
+      });
     } else {
       // GET
 

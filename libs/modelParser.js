@@ -77,6 +77,9 @@ exports.parseScript = function(scriptData) {
   if (!scriptData) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
+  //
+  script.fullName = script.author + '/' + script.name; // GitHub-like name
+
   // Script Good/Bad bar.
   // script.votes = count(upvotes) + count(downvotes)
   // script.flags = flags - count(upvotes)
