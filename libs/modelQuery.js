@@ -134,7 +134,7 @@ var applyModelListQueryFlaggedFilter = function(modelListQuery, options, flagged
       } else if (flaggedQuery == false) {
         modelListQuery.and({$or: [
           {flags: {$exists: false}},
-          {flags: 0 },
+          {flags: {$lte: 0} },
         ]});
       }
     }
