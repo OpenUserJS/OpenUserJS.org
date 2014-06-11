@@ -25,7 +25,10 @@
             {{#javascriptBlobs}}
               <li class="list-group-item {{^canUpload}}list-group-item-danger{{/canUpload}}">
                 <div>
-                  <form action="{{{userGitHubImportPageUrl}}}" method="post" {{#openImportInNewTab}}target="_blank"{{/openImportInNewTab}}>
+                  <form action="{{{authedUser.userGitHubImportPageUrl}}}" method="post" {{#openImportInNewTab}}target="_blank"{{/openImportInNewTab}}>
+                    <input type="hidden" name="user" value="{{repo.owner.login}}">
+                    <input type="hidden" name="repo" value="{{repo.name}}">
+                    <input type="hidden" name="path" value="{{path.full}}">
                     <button type="submit" class="btn btn-sm btn-success pull-right {{^canUpload}}disabled{{/canUpload}}">Import</a>
                   </form>
                 </div>
