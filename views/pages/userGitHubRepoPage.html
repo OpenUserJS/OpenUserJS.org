@@ -25,7 +25,9 @@
             {{#javascriptBlobs}}
               <li class="list-group-item {{^canUpload}}list-group-item-danger{{/canUpload}}">
                 <div>
-                  <a href="{{{userGitHubImportPageUrl}}}" class="btn btn-sm btn-success pull-right {{^canUpload}}disabled{{/canUpload}}" {{#openImportInNewTab}}target="_blank"{{/openImportInNewTab}}>Import</a>
+                  <form action="{{{userGitHubImportPageUrl}}}" method="post" {{#openImportInNewTab}}target="_blank"{{/openImportInNewTab}}>
+                    <button type="submit" class="btn btn-sm btn-success pull-right {{^canUpload}}disabled{{/canUpload}}">Import</a>
+                  </form>
                 </div>
 
                 <p>

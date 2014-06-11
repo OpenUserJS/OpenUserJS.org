@@ -310,7 +310,8 @@ exports.edit = function (req, res, next) {
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
     //
     var script = options.script = modelParser.parseScript(scriptData);
