@@ -1,0 +1,34 @@
+<table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+      <th class="text-center td-fit"><a href="?orderBy=model&orderDir=asc">Type</a></th>
+      <th class="">Item</th>
+      <th class="">Reason</th>
+      <th class="text-center td-fit"><a href="?orderBy=remover&orderDir=asc">Removed By</a></th>
+      <th class="text-center td-fit"><a href="?orderBy=removed&orderDir=desc">Date</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#removedItemList}}
+    <tr class="tr-link">
+      <td class="td-fit">
+        <p>{{model}}</p>
+      </td>
+      <td>
+        <p><a href="{{{url}}}">{{itemDescription}}</a></p>
+      </td>
+      <td>
+        <p>{{reason}}</p>
+      </td>
+      <td class="td-fit">
+        <p>
+          <a href="{{remover.userPageUrl}}">{{remover.name}}</a>
+        </p>
+      </td>
+      <td class="text-center td-fit">
+        <time datetime="{{removedISOFormat}}" title="{{removed}}">{{removedHumanized}}</time>
+      </td>
+    </tr>
+    {{/removedItemList}}
+  </tbody>
+</table>

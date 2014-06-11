@@ -180,7 +180,6 @@ app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').ge
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 
 // Issues routes: Legacy
-app.get(listRegex('\/(scripts|libs)\/([^\/]+?)\/([^\/]+?)(?:\/([^\/]+?))?' + '\/issues\/([^\/]+?)', ''), issue.view);
 app.post('/:type(scripts|libs)/:username/:scriptname/issues/:topic', issue.comment);
 app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic', issue.comment);
 app.get('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
@@ -196,6 +195,8 @@ app.post('/admin/api/update', admin.apiAdminUpdate);
 
 // Moderation routes
 app_route('/mod').get(moderation.modPage);
+app_route('/mod/removed').get(moderation.removedItemListPage);
+app_route('/mod/removed/:id').get(moderation.removedItemPage);
 app.get('/flag/users/:username/:unflag?', user.flag);
 app.get('/flag/scripts/:username/:namespace/:scriptname/:unflag?', script.flag);
 app.get('/flag/scripts/:username/:scriptname/:unflag?', script.flag);

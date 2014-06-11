@@ -10,6 +10,12 @@ var helpers = require('../libs/helpers');
 var getRating = require('../libs/collectiveRating').getRating;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
+var parseModelFnMap = {};
+
+/**
+ * Misc: Dates
+ */
+
 moment.lang('en', {
   relativeTime : {
     future: "in %s",
@@ -73,7 +79,7 @@ var getScriptInstallPageUrl = function(script) {
 };
 
 //
-exports.parseScript = function(scriptData) {
+var parseScript = function(scriptData) {
   if (!scriptData) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
@@ -113,11 +119,16 @@ exports.parseScript = function(scriptData) {
   script.scriptEditMetadataPageUrl = getScriptEditAboutPageUrl(script);
   script.scriptEditSourcePageUrl = getScriptEditSourcePageUrl(script);
 
+  // Urls: Moderation
+  script.scriptRemovePageUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
+
   // Dates
   parseDateProperty(script, 'updated');
 
   return script;
 };
+parseModelFnMap.Script = parseScript;
+exports.parseScript = parseScript;
 
 exports.renderScript = function(script) {
   if (!script) return;
@@ -129,7 +140,7 @@ exports.renderScript = function(script) {
  */
 
 //
-exports.parseUser = function(userData) {
+var parseUser = function(userData) {
   if (!userData) return;
   // var user = userData.toObject ? userData.toObject() : userData;
   var user = userData;
@@ -148,6 +159,7 @@ exports.parseUser = function(userData) {
   user.userGitHubRepoPageUrl = user.userPageUrl + '/github/repo';
   user.userGitHubImportPageUrl = user.userPageUrl + '/github/import';
   user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
+  user.userRemovePageUrl = '/remove/users/' + user.name;
 
   // Funcs
   user.githubUserId = function() {
@@ -161,13 +173,15 @@ exports.parseUser = function(userData) {
 
   return user;
 };
+parseModelFnMap.User = parseUser;
+exports.parseUser = parseUser;
 
 /**
  * Group
  */
 
 //
-exports.parseGroup = function(groupData) {
+var parseGroup = function(groupData) {
   if (!groupData) return;
   // var group = groupData.toObject ? groupData.toObject() : groupData;
   var group = groupData;
@@ -196,13 +210,15 @@ exports.parseGroup = function(groupData) {
 
   return group;
 };
+parseModelFnMap.Group = parseGroup;
+exports.parseGroup = parseGroup;
 
 /**
  * Discussion
  */
 
 //
-exports.parseDiscussion = function(discussionData) {
+var parseDiscussion = function(discussionData) {
   if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
 
@@ -231,8 +247,10 @@ exports.parseDiscussion = function(discussionData) {
 
   return discussion;
 };
+parseModelFnMap.Discussion = parseDiscussion;
+exports.parseDiscussion = parseDiscussion;
 
-exports.parseIssue = function(discussionData) {
+var parseIssue = function(discussionData) {
   if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
 
@@ -244,13 +262,15 @@ exports.parseIssue = function(discussionData) {
 
   return discussion;
 };
+parseModelFnMap.Issue = parseIssue;
+exports.parseIssue = parseIssue;
 
 /**
  * Comment
  */
 
 //
-exports.parseComment = function(commentData) {
+var parseComment = function(commentData) {
   if (!commentData) return;
   var comment = commentData.toObject ? commentData.toObject() : commentData;
 
@@ -259,6 +279,8 @@ exports.parseComment = function(commentData) {
 
   return comment;
 };
+parseModelFnMap.Comment = parseComment;
+exports.parseComment = parseComment;
 
 exports.renderComment = function(comment) {
   if (!comment) return;
@@ -271,7 +293,7 @@ exports.renderComment = function(comment) {
  */
 
 //
-exports.parseCategory = function(categoryData) {
+var parseCategory = function(categoryData) {
   if (!categoryData) return;
   var category = categoryData.toObject ? categoryData.toObject() : categoryData;
 
@@ -281,3 +303,56 @@ exports.parseCategory = function(categoryData) {
 
   return category;
 };
+parseModelFnMap.Category = parseCategory;
+exports.parseCategory = parseCategory;
+
+
+/**
+ * Remove
+ */
+
+var getRemovedItemDescription = function(remove) {
+  if (!remove.content)
+    return 'No content';
+
+  switch(remove.model) {
+    case 'User':
+      return remove.content.name;
+    case 'Script':
+      return remove.content.fullName || remove.content.name;
+    case 'Comment':
+      return util.format('by %s', remove.content.author);
+    case 'Discussion':
+      return remove.content.path;
+    default:
+      return remove.content._id;
+  }
+};
+
+//
+var parseRemovedItem = function(removedItemData) {
+  if (!removedItemData) return;
+  var removedItem = removedItemData;
+
+  // Dates
+  parseDateProperty(removedItem, 'removed');
+
+  // User
+  removedItem.remover = parseUser({name: removedItem.removerName});
+
+  // Content
+  var parseModelFn = parseModelFnMap[removedItem.model];
+  if (parseModelFn && removedItem.content)
+    removedItem.content = parseModelFn(removedItem.content);
+
+  // Item
+  removedItem.itemDescription = getRemovedItemDescription(removedItem);
+
+  // Urls
+  removedItem.url = '/mod/removed/' + removedItem._id;
+
+  return removedItem;
+};
+parseModelFnMap.Remove = parseRemovedItem;
+exports.parseRemovedItem = parseRemovedItem;
+

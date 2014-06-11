@@ -29,7 +29,7 @@ var countTask = require('../libs/tasks').countTask;
 var settings = require('../models/settings.json');
 var github = require('./../libs/githubClient');
 
-var setupFlagUserUITask = function(options) {
+var setupUserModerationUITask = function(options) {
   var user = options.user;
   var authedUser = options.authedUser;
 
@@ -52,9 +52,8 @@ var setupFlagUserUITask = function(options) {
       options.flagUrl = flagUrl;
 
       removeLib.removeable(User, user, authedUser, function (canRemove, author) {
-        options.moderation = canRemove;
+        options.canRemove = canRemove;
         options.flags = user.flags || 0;
-        options.removeUrl = '/remove/users/' + user.name;
 
         if (!canRemove) { return callback(); }
 
@@ -73,7 +72,7 @@ var getUserSidePanelTasks = function(options) {
   //--- Tasks
 
   // Setup the flag user UI
-  tasks.push(setupFlagUserUITask(options));
+  tasks.push(setupUserModerationUITask(options));
 
   return tasks;
 };

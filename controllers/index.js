@@ -130,7 +130,7 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
         'scriptsList': scriptsList
       });
   });
-}
+};
 
 // Script search results
 exports.search = function (req, res, next) {

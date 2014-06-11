@@ -10,6 +10,9 @@
     {{#user}}
     {{> includes/flagModelSnippet.html }}
     {{/user}}
+    <ul class="nav nav-pills nav-justified">
+      <li><a href="{{{user.userRemovePageUrl}}}" class="{{^canRemove}}disabled{{/canRemove}}"><i class="fa fa-trash-o"></i> Remove User</a></a></li>
+    </ul>
   </div>
 </div>
 {{/modTools}}

@@ -115,6 +115,14 @@ var parseUserSearchQuery = function(userListQuery, query) {
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
+var parseRemovedItemSearchQuery = function(removedItemListQuery, query) {
+  parseModelListSearchQuery(removedItemListQuery, query, {
+    partialWordMatchFields: ['content.*'],
+    fullWordMatchFields: ['model'],
+  });
+};
+exports.parseCommentSearchQuery = parseCommentSearchQuery;
+
 
 var applyModelListQueryFlaggedFilter = function(modelListQuery, options, flaggedQuery) {
   // Only list flagged items if authedUser >= moderator or if authedUser owns the item.
@@ -149,7 +157,8 @@ var applyModelListQueryDefaults = function(modelListQuery, options, req, default
   options.searchBarFormHiddenVariables = defaultOptions.searchBarFormHiddenVariables || [];
 
   // flagged
-  applyModelListQueryFlaggedFilter(modelListQuery, options, req.query.flagged);
+  if (defaultOptions.filterFlaggedItems)
+    applyModelListQueryFlaggedFilter(modelListQuery, options, req.query.flagged);
 
 
   // Sort
@@ -168,6 +177,7 @@ exports.applyCommentListQueryDefaults = function(commentListQuery, options, req)
     defaultSort: 'created',
     parseSearchQueryFn: parseCommentSearchQuery,
     searchBarPlaceholder: 'Search Comments',
+    filterFlaggedItems: true,
   });
 
   // Populate
@@ -183,6 +193,7 @@ exports.applyDiscussionListQueryDefaults = function(discussionListQuery, options
     defaultSort: '-updated -rating',
     parseSearchQueryFn: parseDiscussionSearchQuery,
     searchBarPlaceholder: 'Search Topics',
+    filterFlaggedItems: true,
   });
 };
 
@@ -191,6 +202,7 @@ exports.applyGroupListQueryDefaults = function(groupListQuery, options, req) {
     defaultSort: '-rating name',
     parseSearchQueryFn: parseGroupSearchQuery,
     searchBarPlaceholder: 'Search Groups',
+    filterFlaggedItems: true,
   });
 };
 
@@ -199,6 +211,7 @@ var scriptListQueryDefaults = {
   parseSearchQueryFn: parseScriptSearchQuery,
   searchBarPlaceholder: 'Search Scripts',
   searchBarFormAction: '/',
+  filterFlaggedItems: true,
 };
 exports.scriptListQueryDefaults = scriptListQueryDefaults;
 exports.applyScriptListQueryDefaults = function(scriptListQuery, options, req) {
@@ -213,6 +226,7 @@ var libraryListQueryDefaults = {
   searchBarFormHiddenVariables: [
     {name: 'library', value: 'true'},
   ],
+  filterFlaggedItems: true,
 };
 exports.libraryListQueryDefaults = libraryListQueryDefaults;
 exports.applyLibraryListQueryDefaults = function(libraryListQuery, options, req) {
@@ -224,5 +238,15 @@ exports.applyUserListQueryDefaults = function(userListQuery, options, req) {
     defaultSort: 'name',
     parseSearchQueryFn: parseUserSearchQuery,
     searchBarPlaceholder: 'Search Users',
+    filterFlaggedItems: true,
+  });
+};
+
+exports.applyRemovedItemListQueryDefaults = function(removedItemListQuery, options, req) {
+  applyModelListQueryDefaults(removedItemListQuery, options, req, {
+    defaultSort: '-removed',
+    parseSearchQueryFn: parseRemovedItemSearchQuery,
+    searchBarPlaceholder: 'Search Removed Items',
+    filterFlaggedItems: false,
   });
 };

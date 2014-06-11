@@ -1,6 +1,12 @@
+var async = require('async');
+var _ = require('underscore');
+
+var Remove = require('../models/remove').Remove;
+
 var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
+var execQueryTask = require('../libs/tasks').execQueryTask;
 
 // When content reaches a its threshold of flags it gets marked as flagged
 // and it can now be removed by moderators
@@ -90,6 +96,96 @@ exports.graveyard = function (req, res, next) {
 
       res.render('graveyard', options);
     });
+};
+
+exports.removedItemPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  var removedItemId = req.route.params.id;
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isMod) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by moderators',
+    });
+  }
+
+  Remove.find({
+    _id: removedItemId,
+  }, function(err, removedItemData) {
+    if (err || !removedItemData) { return next(); }
+
+    res.json(removedItemData);
+  })
+};
+
+exports.removedItemListPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isMod) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by moderators',
+    });
+  }
+
+  // Metadata
+  options.title = 'Graveyard | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  // removedItemListQuery
+  var removedItemListQuery = Remove.find();
+
+  // removedItemListQuery: Defaults
+  modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, req);
+
+  // removedItemListQuery: Pagination
+  var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+
+  //--- Tasks
+
+  // Pagination
+  tasks.push(pagination.getCountTask(removedItemListQuery));
+
+  // removedItemListQuery
+  tasks.push(execQueryTask(removedItemListQuery, options, 'removedItemList'));
+
+  //---
+  async.parallel(tasks, function(err) {
+    if (err) return next();
+
+    //--- PreRender
+    // removedItemList
+    options.removedItemList = _.map(options.removedItemList, modelParser.parseRemovedItem);
+
+    // groupList
+    options.groupList = _.map(options.groupList, modelParser.parseGroup);
+
+    // Pagination
+    options.paginationRendered = pagination.renderDefault(req);
+
+    //---
+    res.render('pages/removedItemListPage.html', options);
+  });
 };
 
 exports.modPage = function (req, res, next) {
