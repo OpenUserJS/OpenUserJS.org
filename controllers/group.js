@@ -9,7 +9,6 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
-var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 
 // clean the name of the group so it is url safe
@@ -44,7 +43,7 @@ exports.search = function (req, res) {
       return group.name;
     });
 
-    if (addTerm && term.length > 0 && results.indexOf(term) === -1) { 
+    if (addTerm && term.length > 0 && results.indexOf(term) === -1) {
       results.push(term);
     }
 
@@ -108,7 +107,7 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
       });
     }
 
-    async.parallel(tasks, function () { 
+    async.parallel(tasks, function () {
       script.save(callback);
 
       // Update the group ratings in the background

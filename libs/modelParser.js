@@ -83,8 +83,14 @@ var parseScript = function(scriptData) {
   if (!scriptData) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
+  // Author
+  if (typeof script.author === 'string') {
+    script.author = parseUser({name: script.author});
+  }
+
+
   //
-  script.fullName = script.author + '/' + script.name; // GitHub-like name
+  script.fullName = script.author.name + '/' + script.name; // GitHub-like name
 
   // Script Good/Bad bar.
   // script.votes = count(upvotes) + count(downvotes)
@@ -96,10 +102,10 @@ var parseScript = function(scriptData) {
   script.flagsPercent = flagsRatio * 100;
 
   // Urls: Slugs
-  script.authorSlug = script.author;
+  script.authorSlug = script.author.name;
   script.namespaceSlug = (script.meta && script.meta.namespace) ? cleanFilename(script.meta.namespace) : '';
   script.nameSlug = cleanFilename(script.name);
-  script.installNameSlug = script.authorSlug + '/' + (script.namespaceSlug ? script.namespaceSlug + '/' : '') + script.nameSlug;
+  script.installNameSlug = script.author.slug + '/' + (script.namespaceSlug ? script.namespaceSlug + '/' : '') + script.nameSlug;
 
   // Urls: Public
   script.scriptPageUrl = getScriptPageUrl(script);
@@ -108,7 +114,7 @@ var parseScript = function(scriptData) {
 
   // Urls: Issues
   var slug = (script.isLib ? 'libs' : 'scripts');
-  slug += '/' + script.authorSlug.toLowerCase();
+  slug += '/' + script.author.slug.toLowerCase();
   slug += script.meta.namespace ?  '/' + script.namespaceSlug : '';
   slug += '/' + script.nameSlug;
   script.issuesCategorySlug = slug + '/issues';
@@ -149,6 +155,9 @@ var parseUser = function(userData) {
   user.isMod = user.role < 4;
   user.isAdmin = user.role < 3;
   user.roleName = userRoles[user.role];
+
+  //
+  user.slug = user.name;
 
   // Urls: Public
   user.userPageUrl = '/users/' + user.name;

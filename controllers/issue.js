@@ -154,8 +154,8 @@ exports.view = function (req, res, next) {
       // Discussion
       var discussion = options.discussion = modelParser.parseDiscussion(discussionData);
       modelParser.parseIssue(discussion);
-      options.canClose = authedUser && (authedUser.name === script.author || authedUser.name === discussion.author);
-      options.canOpen = authedUser && authedUser.name === script.author;
+      options.canClose = authedUser && (authedUser._id == script._authorId || authedUser._id == discussion._authorId);
+      options.canOpen = authedUser && authedUser._id == script._authorId;
 
       // commentListQuery
       var commentListQuery = Comment.find();

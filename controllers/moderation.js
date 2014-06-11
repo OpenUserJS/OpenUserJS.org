@@ -7,6 +7,7 @@ var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 // When content reaches a its threshold of flags it gets marked as flagged
 // and it can now be removed by moderators
@@ -176,9 +177,6 @@ exports.removedItemListPage = function (req, res, next) {
     //--- PreRender
     // removedItemList
     options.removedItemList = _.map(options.removedItemList, modelParser.parseRemovedItem);
-
-    // groupList
-    options.groupList = _.map(options.groupList, modelParser.parseGroup);
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);

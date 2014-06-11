@@ -1,7 +1,7 @@
 {{> header.html}}
 <div class="content-box">
   <section class="sr-section">
-    
+
     <div>
 	    <h1 class="sr-script-title">{{name}}{{#version}}&nbsp;-&nbsp;<span class="version">{{version}}</span>{{/version}}</h1>
 		{{#voteable}}
@@ -19,7 +19,7 @@
     {{#isLib}}
     <span class="lib-url"><strong>Library URL: </strong><input type="text" name="lib_url" value="https://openuserjs.org{{{install}}}" size="50"/></span>
     {{/isLib}}
-	<div class="sr-main-buttons"> 
+	<div class="sr-main-buttons">
 	{{^isLib}}
 	    {{#isYou}}
 	    	<a class="button-anchor" href="{{{edit}}}">
@@ -43,13 +43,13 @@
 	    </a>
 	    {{/flaggable}}
 	</div>
-	
+
     <a class="button-anchor" href="{{{source}}}">
       <button class="sr-button sr-source-button lib-source-button" title="View Source" type="button">
         View Source
       </button>
     </a>
-    
+
     {{^isLib}}<p class="sr-description">{{description}}</p>{{/isLib}}
     <table width="100%">
       <tr class="sr-row">
@@ -129,7 +129,7 @@
 </tr>
 {{/isFork}}
 </table>
-<hr /><p>Have a feature request or found a bug? <a href="{{{openIssueUrl}}}">Let the author know.</a></p>	
+<hr /><p>Have a feature request or found a bug? <a href="{{{openIssueUrl}}}">Let the author know.</a></p>
 {{#about}}<hr /><div class="user-content">{{{about}}}</div>{{/about}}
 </section>
 </div>
