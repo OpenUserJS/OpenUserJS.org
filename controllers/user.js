@@ -126,8 +126,15 @@ var setupUserSidePanel = function(options) {
         selected: index === user.role,
       };
     });
-    roles = roles.splice(authedUser.role + 1);
-    roles.reverse();
+
+    if (options.isYou) {
+      // Only have your current role selectable.
+      roles = [roles[authedUser.role]];
+    } else {
+      roles = roles.splice(authedUser.role + 1);
+      roles.reverse();
+    }
+
     options.adminTools.availableRoles = roles;
   }
 };
