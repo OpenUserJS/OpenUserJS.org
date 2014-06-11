@@ -181,6 +181,7 @@ var parseUser = function(userData) {
   user.userGitHubRepoPageUrl = user.userPageUrl + '/github/repo';
   user.userGitHubImportPageUrl = user.userPageUrl + '/github/import';
   user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
+  user.userUpdatePageUrl = user.userPageUrl + '/update';
   user.userRemovePageUrl = '/remove/users/' + user.name;
 
   // Funcs

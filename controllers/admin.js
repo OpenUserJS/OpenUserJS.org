@@ -83,56 +83,59 @@ exports.adminUserView = function (req, res, next) {
 };
 
 // Make changes to users listed
-exports.userAdminUpdate = function (req, res, next) {
-  var users = null;
-  var thisUser = null;
-  var remove = null;
-  var name = null;
+exports.adminUserUpdate = function (req, res, next) {
+  var authedUser = req.session.user;
 
-  if (!userIsAdmin(req)) { return next(); }
+  var username = req.route.params.username;
 
-  users = req.body.user;
-  users = Object.keys(users).map(function (id) {
-    return { id: id, role: users[id] };
-  });
+  User.findOne({
+    name: username
+  }, function (err, userData) {
+    if (err || !userData) { return next(); }
 
-  thisUser = req.session.user;
-  remove = req.body.remove || {};
-  remove = Object.keys(remove);
+    //
+    var options = {};
+    var tasks = [];
 
-  // User removal and role change might be problematic
-  // But why would you change and user role and delete them?
-  async.parallel([
-    function (callback) {
-      async.each(users, function (user, cb) {
-        var role = Number(user.role);
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
 
-        if (role <= thisUser.role) { cb(); }
-        User.findOne({ '_id' : user.id, role : { $gt: thisUser.role } },
-          function (err, user) {
-            user.role = role;
-            user.save(cb);
-          });
-      }, callback);
-    },
-    function (callback) {
-      async.each(remove, function (id, cb) {
-        User.findOne({ '_id' : id, role : { $gt: thisUser.role } },
-          function (err, user) {
-            var authorId = user._id;
-            user.remove(function (err) {
-              Script.find({ _authorId: authorId }, function (err, scripts) {
-                async.each(scripts, function (script, innerCb) {
-                  scriptStorage.deleteScript(script.installName, innerCb);
-                }, cb);
-              });
-            });
-        });
-      }, callback);
+    if (!options.isAdmin) {
+      return statusCodePage(req, res, next, {
+        statusCode: 403,
+        statusMessage: 'This page is only accessible by admins',
+      });
     }
-  ],
-  function (err) {
-    res.redirect('/admin/user');
+
+    // User
+    var user = options.user = modelParser.parseUser(userData);
+    options.isYou = authedUser && user && authedUser._id == user._id;
+
+    //---
+
+    if (req.body.role) {
+      var role = Number(req.body.role);
+      if (role <= authedUser.role) {
+        return statusCodePage(req, res, next, {
+          statusCode: 403,
+          statusMessage: 'Cannot set a role equal to or higher than yourself.',
+        });
+      }
+
+      userData.role = role;
+    }
+
+    userData.save(function(err) {
+      if (err) {
+        return statusCodePage(req, res, next, {
+          statusMessage: err,
+        });
+      }
+
+      res.redirect(user.userPageUrl);
+    });
   });
 };
 

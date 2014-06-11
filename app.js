@@ -135,6 +135,7 @@ app_route('/users/:username/github/repos').get(user.userGitHubRepoListPage);
 app_route('/users/:username/github/repo').get(user.userGitHubRepoPage);
 app_route('/users/:username/github/import').post(user.userGitHubImportScriptPage);
 app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
+app_route('/users/:username/update').post(admin.adminUserUpdate);
 app_route('/user/preferences').get(user.userEditPreferencesPage);
 app_route('/user/add/scripts').get(user.newScriptPage);
 app_route('/user/add/lib').get(user.newLibraryPage);
@@ -187,10 +188,8 @@ app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic/:ac
 
 // Admin routes
 app.get('/admin', admin.adminPage);
-app.get('/admin/user', admin.userAdmin);
 app.get('/admin/user/:id', admin.adminUserView);
 app.get('/admin/api', admin.adminApiKeysPage);
-app.post('/admin/user/update', admin.userAdminUpdate);
 app.post('/admin/api/update', admin.apiAdminUpdate);
 
 // Moderation routes
