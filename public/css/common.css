@@ -1,0 +1,265 @@
+@media (max-width: 767px) {
+  span.visible-xs {
+    display: inline !important;
+  }
+  ul.nav > li > a > span.visible-xs + i.fa {
+    float: right;
+    line-height: 20px;
+  }
+}
+.tagcloud {
+  padding-left: 0;
+}
+.tagcloud li {
+  display: inline-block;
+}
+.progress,
+.progress-bar {
+  box-shadow: none;
+}
+/*.label {
+  font-family: Arial;
+  background-color: #eee;
+  color: #333333;
+}*/
+.rating .progress {
+  height: 4px;
+}
+.progress-bar-good {
+  background-color: #ccc;
+  color: #333;
+}
+.progress-bar-bad {
+  background-color: #080;
+}
+footer .navbar {
+  margin-bottom: 0;
+}
+.table {
+  margin-bottom: 0;
+}
+/*.navbar-inverse {
+  background-color: #333;
+  border-color: #222;
+}
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+  color: #fff;
+  background-color: #272727;
+}
+.navbar-inverse .navbar-toggle {
+  border-color: #222;
+  background-color: #333;
+  color: #666;
+}
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+  background-color: #272727;
+}
+.navbar-inverse .navbar-collapse,
+.navbar-inverse .navbar-form {
+  border-color: #222;
+}
+*/
+body > .container-fluid {
+  min-height: calc(100vh - 50px - 20px - 50px); /* header (50px + 20px) + footer (50px) */
+}
+
+.nav>li>a:hover,
+.nav>li>a:focus {
+  color: #333;
+}
+
+a.disabled, a[disabled] {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+/*ul.nav.navbar-nav > li > a > .badge {
+  background-color: #fff;
+  color: #666;
+}*/
+
+body > .container-fluid > .row > .container-fluid.col-sm-8 {
+  margin-bottom: 100px;
+}
+
+h2.page-heading {
+  margin-top: 0;
+}
+
+.page-heading-icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: baseline;
+  text-align: center;
+}
+
+.page-heading-icon img {
+  max-width: 1em;
+  max-height: 1em;
+}
+
+.tr-link {
+  cursor: pointer;
+}
+
+/* Discussion */
+.td-fit {
+  width: 1px;
+  white-space: nowrap;
+}
+
+#reply-control {
+  transition: height 0.4s ease;
+  width: 100%;
+  z-index: 1039;
+  height: 0;
+  background-color: #ebebeb;
+  bottom: 0;
+  font-size: 14px;
+  position: fixed;
+}
+
+#reply-control .md-editor {
+  height: 300px;
+}
+
+.md-editor {
+  min-height: 300px;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+}
+
+.md-editor textarea,
+.md-editor .md-preview {
+  height: calc(100% - 42px);
+  min-height: 258px;
+}
+
+#reply-control .submit-panel {
+  padding: 6px 4px;
+}
+
+.topic-avatar {
+  width: 60px; /* Avatar (45px) + Gutter Padding (15px) */
+}
+
+.topic-body {
+  width: calc(100% - 60px);
+}
+
+.topic-avatar a {
+  display: inline-block;
+}
+
+.post-controls {
+  opacity: 0.2;
+  transition: opacity linear 0.4s;
+}
+
+.post-controls:hover {
+  opacity: 1;
+}
+
+.topic-meta-data .names .username {
+  font-weight: bold;
+}
+
+.topic-post-contents {
+
+}
+
+.btn-addon-default {
+  color: #333333;
+  background-color: #eeeeee;
+  border: 1px solid #cccccc;
+}
+
+.btn-addon-default:hover,
+.btn-addon-default:focus {
+  color: #333;
+}
+
+.form-signin,
+.form-register {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+input#discussion-topic {
+  width: calc(100% - 18px - 4px);
+}
+
+.topic-avatar i.fa.fa-user {
+  height: 45px;
+  width: 45px;
+  line-height: 45px;
+  font-size: 45px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+table .script-icon {
+  width: 16px;
+  height: 16px;
+  text-align: center;
+}
+
+table .script-icon img {
+  max-width: 16px;
+  max-height: 16px;
+}
+
+table .script-icon i.fa.fa-fw {
+  width: 16px;
+  max-height: 16px;
+  color: #666;
+}
+
+a.anchor {
+  position: absolute;
+  color: #666;
+  margin-left: .2em;
+  visibility: hidden;
+}
+
+a.anchor i.fa.fa-link {
+  vertical-align: middle;
+  font-size: 66%;
+}
+
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+  visibility: visible;
+}
+
+.user-content > :first-child,
+.panel-body > :first-child {
+  margin-top: 0;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+th > a {
+  color: initial;
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}

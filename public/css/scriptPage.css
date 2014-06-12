@@ -1,0 +1,23 @@
+.user-content img {
+  max-width: 100%;
+}
+.btn-vote {
+  display:block;
+  width: 100%;
+  text-align: center;
+}
+.btn-vote:not(:hover):not(.active) {
+  color: #aea79f;
+}
+.btn-vote.disabled:not(:hover):not(.active) {
+  color: #ddd;
+}
+
+.vote-area {
+  padding: 0 1em;
+}
+
+.path-divider {
+  margin: 0 .25em;
+  color: #666;
+}

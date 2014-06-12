@@ -1,29 +1,54 @@
 {{> header.html}}
+{{#isMod}}
+<div class="centered-content moderator-box">
+		<h1 class="pop-scripts-header mod-header">OpenUserJS Moderator Areas: </h1>
 
-        <div id="main">
-            <div class="spacer" style="height: 15%;">
-                &nbsp;
-            </div>
+	    <a class="button-anchor" href="/flagged">
+	      <button id="flagged-button" class="sr-button sr-install-button" title="Flagged" type="button">
+	        Flagged
+	      </button>
+	    </a>
+	    <a class="button-anchor" href="/graveyard">
+	      <button id="graveyard-button" class="sr-button sr-install-button" title="Graveyard" type="button">
+	        Graveyard
+	      </button>
+	    </a>
+</div>
+{{/isMod}}
 
-            <h1>{{name}}{{#isYou}} <a href="/user/edit">Edit?</a>{{/isYou}}</h1>
-            <table class="indent content">
-                <tr class="bold">
-                    <td>
-                        About
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{about}}
-                    </td>
-                </tr>
-            </table>
-
-            <BR /><BR />
+<div class="centered-content">
+  <h1 class="pop-scripts-header mod-header">{{name}}</h1> 
+  	{{#isYou}}
+  	<a href="/user/edit">	      
+  		<button id="user-edit" class="sr-button sr-install-button" title="Graveyard" type="button">
+	        Edit Mode
+	     </button>
+	</a>
+	 {{/isYou}}
+	 
+  {{#flaggable}}
+	    <a class="button-anchor" href="{{{flagUrl}}}">
+	      <button class="sr-flag-button user-flag" title="{{#flagged}}Unflag{{/flagged}}{{^flagged}}Flag{{/flagged}}"
+		      type="button">
+	    {{#flagged}}<img src="/images/red-flag.png"/>{{/flagged}}{{^flagged}}<img src="/images/white-flag.png"/>{{/flagged}}
+	      </button>
+	    </a>
+  {{/flaggable}}
+</div>
+<div class="content-box user-about">
+	<div class="about-content">
+		  <span class="about-header"><strong>About {{name}}</strong></span>
+		  <div class="user-content">
+		  {{{about}}}
+		  </div>
+		  {{#moderation}}
+		  <br /><br /><strong>Moderation</strong><br /><br />
+		  Flags = {{flags}} | Threshold = {{threshold}}  | <a href="{{{removeUrl}}}">Remove This User?</a>
+		  {{/moderation}}
+	</div>
+</div>
+<br /><br />
+<div class="centered-content">
 {{> scriptsList.html}}
-            </table>
-        </div>
-<BR /><BR />
-<BR /><BR />
-
+</div>
 {{> footer.html}}

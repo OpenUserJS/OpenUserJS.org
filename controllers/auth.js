@@ -8,7 +8,7 @@ var userRoles = require('../models/userRoles.json');
 var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
-// These functions serialize the user model so we can keep 
+// These functions serialize the user model so we can keep
 // the info in the session
 passport.serializeUser(function (user, done) {
   done(null, user._id);
@@ -23,7 +23,7 @@ passport.deserializeUser(function (id, done) {
 // Setup all our auth strategies
 var openIdStrategies = {};
 Strategy.find({}, function (err, strategies) {
-  
+
   // Get OpenId strategies
   if (process.env.NODE_ENV === 'production') {
     for (var name in allStrategies) {
@@ -33,7 +33,7 @@ Strategy.find({}, function (err, strategies) {
       }
     }
   }
-  
+
   // Load the passport module for each strategy
   strategies.forEach(function (strategy) {
     loadPassport(strategy);
@@ -41,22 +41,9 @@ Strategy.find({}, function (err, strategies) {
 });
 
 exports.auth = function (req, res, next) {
+  var user = req.session.user;
   var strategy = req.body.auth || req.route.params.strategy;
   var username = req.body.username || req.session.username;
-
-  if (!username) { return res.redirect('/?noname'); }
-  // Clean the username of leading and trailing whitespace,
-  // and other stuff that is unsafe in a url
-  username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
-
-  // The username could be empty after the replacements
-  if (!username) { return res.redirect('/?noname'); }
-
-  // Store the username in the session so we still have it when they
-  // get back from authentication
-  if (!req.session.username) {
-    req.session.username = username;
-  }
 
   function auth() {
     var authenticate = passport.authenticate(strategy);
@@ -67,7 +54,29 @@ exports.auth = function (req, res, next) {
     authenticate(req, res);
   }
 
-  User.findOne({ name : { $regex : new RegExp(username, "i") } },
+  // Allow a logged in user to add a new strategy
+  if (strategy && user) {
+    req.session.username = user.name;
+    return auth();
+  } else if (user) {
+    return next();
+  }
+
+  if (!username) { return res.redirect('/register?noname'); }
+  // Clean the username of leading and trailing whitespace,
+  // and other stuff that is unsafe in a url
+  username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
+
+  // The username could be empty after the replacements
+  if (!username) { return res.redirect('/register?noname'); }
+
+  // Store the username in the session so we still have it when they
+  // get back from authentication
+  if (!req.session.username) {
+    req.session.username = username;
+  }
+
+  User.findOne({ name : { $regex : new RegExp('^' + username + '$', 'i') } },
     function (err, user) {
       var strategies = null;
       var strat = null;
@@ -87,8 +96,8 @@ exports.auth = function (req, res, next) {
         } // else use the strategy that was given in the POST
       }
 
-      if (!strategy) { 
-        return res.redirect('/?nostrategy');
+      if (!strategy) {
+        return res.redirect('/register');
       } else {
         return auth();
       }
@@ -100,13 +109,14 @@ exports.callback = function (req, res, next) {
   var username = req.session.username;
   var newstrategy = req.session.newstrategy;
   var strategyInstance = null;
+  var doneUrl = req.session.user ? '/user/edit' : '/';
 
-  // The callback was called inproperly
+  // The callback was called improperly
   if (!strategy || !username) { return next(); }
 
   // Get the passport strategy instance so we can alter the _verfiy method
   strategyInstance = strategyInstances[strategy];
-  
+
 
   // Hijak the private verify method so we can fuck shit up freely
   // We use this library for things it was never intended to do
@@ -115,30 +125,45 @@ exports.callback = function (req, res, next) {
       verifyPassport(id, strategy, username, req.session.user, done);
     }
   } else {
-    strategyInstance._verify = 
+    strategyInstance._verify =
       function (token, refreshOrSecretToken, profile, done) {
+        req.session.profile = profile;
         verifyPassport(profile.id, strategy, username, req.session.user, done);
       }
   }
 
   // This callback will happen after the verify routine
-  var authenticate = passport.authenticate(strategy, 
+  var authenticate = passport.authenticate(strategy,
     function (err, user, info) {
       if (err) { return next(err); }
-      if (!user) { return res.redirect('/?authfail'); }
+      if (!user) {
+        return res.redirect(doneUrl + (doneUrl === '/' ? 'register' : '')
+          + '?authfail');
+      }
 
       req.logIn(user, function(err) {
         if (err) { return next(err); }
 
         // Store the user info in the session
         req.session.user = user;
+
+        // Save GitHub username.
+        if (req.session.profile.provider === 'github') {
+          user.ghUsername = req.session.profile.username;
+          user.save(function(err, user){
+            if (err) {
+              console.error('Error saving User(' + user.name + ').ghUsername = ' + user.ghUsername);
+            }
+          });
+        }
+
         if (newstrategy) {
           // Allow a user to link to another acount
           return res.redirect('/auth/' + newstrategy);
         } else {
           // Delete the username that was temporarily stored
           delete req.session.username;
-          return res.redirect('/');
+          return res.redirect(doneUrl);
         }
       });
   });

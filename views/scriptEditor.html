@@ -1,11 +1,19 @@
 {{> header.html}}
-
+<style type="text/css">
+#editor { 
+    position: relative;
+    width: 70%;
+    height: 550px;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
 <div id="main">
-  <pre id="editor">{{{source}}}</pre>
+  <pre id="editor">{{source}}</pre>
 <script src="/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/cobalt");
+    editor.setTheme("ace/theme/dawn");
     editor.getSession().setMode("ace/mode/javascript");
     {{#readOnly}}editor.setReadOnly(true);{{/readOnly}}
     {{^readOnly}}
@@ -18,12 +26,15 @@
     {{/readOnly}}
 </script>
 {{^readOnly}}
-<form action="/user/edit/scripts/new" id="code_form" method="post">
+<div class="content-box">
+<form action="{{#isLib}}/user/add/lib/new{{/isLib}}{{^isLib}}/user/add/scripts/new{{/isLib}}" id="code_form" method="post">
   <input type="hidden" id="source" name="source" value="" />
   <input type="hidden" name="url" value="{{{url}}}" />
-  {{^owner}}<input type="hidden" name="original" value="{{{original}}}" />{{/owner}}
-  <input type="button" onclick="submitCode();" value="Submit Code{{^owner}} as Fork{{/owner}}" />
+  {{^owner}}<input type="hidden" name="original" value="{{original}}" />{{/owner}}
+  {{#isLib}}{{#newScript}}<strong>Library Name:</strong> <input type="text" name="script_name" value="" /><br /><br />{{/newScript}}{{^newScript}}<input type="hidden" name="script_name" value="{{scriptName}}" />{{/newScript}}{{/isLib}}
+  <input type="button" onclick="submitCode();" value="Submit Code{{^owner}} as Fork{{/owner}}" /><br /><br />
 </form>
+</div>
 {{/readOnly}}
 </div>
 

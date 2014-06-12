@@ -1,0 +1,18 @@
+{{#modTools}}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">
+        <i class="fa fa-fw fa-eye"></i>
+        Mod Tools
+    </div>
+  </div>
+  <div class="panel-body">
+    {{#user}}
+    {{> includes/flagModelSnippet.html }}
+    {{/user}}
+    <ul class="nav nav-pills nav-justified">
+      <li><a href="{{{user.userRemovePageUrl}}}" class="{{^canRemove}}disabled{{/canRemove}}"><i class="fa fa-trash-o"></i> Remove User</a></a></li>
+    </ul>
+  </div>
+</div>
+{{/modTools}}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/css/bootstrap-markdown.min.css">
+  <style>
+    #show-reply-form-when-visible { height: 100px; }
+  </style>
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="container-fluid col-sm-8">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="topic-title row container-fluid">
+              <ol class="breadcrumb pull-left">
+                <li class=""><a href="/forum">Forum</a></li>
+                <li class=""><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
+                <li class="active"><a href="{{{discussion.discussionPageUrl}}}">{{discussion.topic}}</a></li>
+              </ol>
+            </div>
+            <div class="container-fluid comments">
+              <div class="row">
+                <section class="topic-area list-group">
+                  {{#commentList}}
+                  {{> includes/comment.html }}
+                  {{/commentList}}
+                  <div class="text-center">
+                    {{{paginationRendered}}}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid col-sm-4">
+
+      </div>
+    </div>
+  </div>
+
+  <div id="show-reply-form-when-visible"></div>
+  {{> includes/commentForm.html }}
+
+  {{> includes/footer.html }}
+  <!-- Markdown Editor -->
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js"></script>
+  {{> includes/scripts/commentReplyScript.html }}
+</body>
+</html>

@@ -2,20 +2,26 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var scriptSchema = new Schema({
+  // Visible
   name: String,
-  about: String,
+  author: String,
   installs: Number,
   rating: Number,
-  votes: Number,
-  flags: Number,
-  disabled: Boolean,
-  removed: Boolean,
-  installable: Boolean,
-  installName: String,
+  about: String,
   updated: Date,
+
+  // Moderation
+  votes: Number, // upvotes negate flags
+  flags: Number,
+  flagged: Boolean,
+  installName: String,
+
+  // Extra info
   fork: Array,
   meta: Object,
-  author: String,
+  isLib: Boolean,
+  uses: [String],
+  _groupId: Schema.Types.ObjectId, // The group is script created
   _authorId: Schema.Types.ObjectId
 });
 

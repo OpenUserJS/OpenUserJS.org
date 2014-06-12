@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="container-fluid col-sm-8">
+        <div class="row">
+          <div class="col-xs-12">
+            {{> includes/userPageHeader.html }}
+            {{#user.aboutRendered}}
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="user-content">{{{user.aboutRendered}}}</div>
+              </div>
+            </div>
+            {{/user.aboutRendered}}
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid col-sm-4">
+        {{> includes/userSidePanel.html }}
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

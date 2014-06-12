@@ -1,32 +1,76 @@
 {{> header.html}}
-<div id="main">
-  <div class="spacer" style="height: 15%;">
-    &nbsp;
-  </div>
+{{^isLib}}
+<link href="/css/select2.css" rel="stylesheet"/>
+<script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/js/select2.min.js"></script>
+<script type="text/javascript">
+var preload_groups = {{{groups}}};
+var preload_data = $.map(preload_groups, function (group) {
+  return { id: group, text: group, locked: true };
+});
+$(document).ready(function() {
+  var canAddGroup = true;
+  var canCreateGroup = {{canCreateGroup}};
+  var prevTerm = '';
+
+  $('#groups').select2({
+    multiple: true,
+    minimumInputLength: 1,
+    query: function (query){
+      var url = '/api/group/search/' + encodeURIComponent(query.term);
+
+      if (canCreateGroup) {
+        if (canAddGroup) {
+          if ($('#groups').val().length
+            && $('#groups').val().split(',').indexOf(prevTerm) > -1) {
+            canAddGroup = false;
+          } else {
+            prevTerm = query.term;
+          }
+        } else if ($('#groups').val().split(',').indexOf(prevTerm) === -1) {
+          prevTerm = query.term;
+          canAddGroup = true;
+        }
+
+        url += '/' + (canAddGroup ? 'true' : '');
+      }
+
+      $.ajax({ url: url, success: function (data) {
+        var groups = { results: [] };
+        $.each(data, function (index, group) {
+          groups.results.push({ id: group, text: group });
+        });
+        query.callback(groups);
+      }});
+  }});
+  $('#groups').select2('data', preload_data);
+});
+    </script>
+{{/isLib}}
+<div class="content-box">
+  <section class="sr-section">
+
+    <h1 class="sr-script-title">About {{name}}</h1>
+
+    <button class="install-button" title="Install"
+	    type="button" onclick="location.href='{{{install}}}'" >
+      {{#isLib}}Raw{{/isLib}}{{^isLib}}Install{{/isLib}}
+    </button>
+    <button class="view-source-button" title="View Source"
+	    type="button" onclick="location.href='{{{source}}}'" >
+      Edit Source
+    </button>
+  </section>
+  <br /><br />
   <form id="edit_about" action="edit" method="post">
-    <table class="indent editor">
-      <tr class="bold">
-        <td colspan="2">About {{name}}</td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <textarea class="indent" id="about" name="about">{{about}}</textarea>
-        </td>
-      </tr>
-      <tr>
-        <td class="bold">
-          <a href="{{{source}}}">Edit Source</a>
-        </td>
-        <td class="bold">
-          Delete Script: <input type="checkbox" name="remove" />
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <input type="submit" value="Save" />
-        </td>
-      </tr>
-    </table>
+    <strong>Use <a target="_blank" href="https://help.github.com/articles/github-flavored-markdown">GitHub Flavored Markdown</a> for formatting.</strong><br />
+    <textarea class="indent" id="about" name="about" rows="20" style="width: 60%;">{{about}}</textarea><br /><br />
+{{^isLib}}
+    <h3>Script Groups</h3>
+    <input type="hidden" id="groups" name="groups" style="width:300px" /><br /><br />
+{{/isLib}}
+    <strong>Delete Script:</strong>&nbsp;<input type="checkbox" name="remove" />
+    <br /><br /><input type="submit" value="Save" /><br /><br />
   </form>
 </div>
 {{> footer.html}}

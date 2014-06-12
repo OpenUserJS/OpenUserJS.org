@@ -1,8 +1,12 @@
 var AWS = require('aws-sdk');
+
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
+
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var userRoles = require('../models/userRoles.json');
+
 var bucketName = 'OpenUserJS.org';
 
 if (process.env.NODE_ENV === 'production') {
@@ -10,16 +14,17 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   // You need to install (and ruby too): https://github.com/jubos/fake-s3
   // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
+  var DEV_AWS_URL = process.env.DEV_AWS_URL || 'localhost:10001';
   AWS.config.update({ accessKeyId: 'fakeId', secretAccessKey: 'fakeKey',
-    httpOptions: { 
-    proxy: 'localhost:10001', agent: require('http').globalAgent 
+    httpOptions: {
+    proxy: DEV_AWS_URL, agent: require('http').globalAgent
   }});
 }
 
 function getInstallName (req) {
   var username = req.route.params.username.toLowerCase();
   var namespace = req.route.params.namespace;
-  return username + '/' + (namespace ? namespace + '/' : '') 
+  return username + '/' + (namespace ? namespace + '/' : '')
     + req.route.params.scriptname;
 }
 exports.getInstallName = getInstallName;
@@ -38,11 +43,11 @@ exports.getSource = function (req, callback) {
 };
 
 exports.sendScript = function (req, res, next) {
-  var accept = req.headers['Accept'];
+  var accept = req.headers.accept;
   var installName = null;
 
-  if (accept === 'text/x-userscript-meta') { 
-    return exports.sendMeta(req, res, next); 
+  if (0 !== req.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
+    return exports.sendMeta(req, res, next);
   }
 
   exports.getSource(req, function (script, stream) {
@@ -52,31 +57,38 @@ exports.sendScript = function (req, res, next) {
     res.set('Content-Type', 'text/javascript; charset=utf-8');
     stream.pipe(res);
 
+    // Don't count installs on libraries
+    if (script.isLib) { return; }
+
     // Update the install count
     ++script.installs;
     script.save(function (err, script) {});
   });
 };
 
+// Send user script metadata block
 exports.sendMeta = function (req, res, next) {
   var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
 
   Script.findOne({ installName: installName }, function (err, script) {
-    var key = null;
     var meta = null;
-    var lines = [];
 
     if (!script) { return next(); }
 
-    meta = script.meta;
-    for (key in meta) {
-      lines.push('// @' + key + '    ' + meta[key]);
-    }
-
     res.set('Content-Type', 'text/javascript; charset=utf-8');
+    meta = script.meta;
+
     res.write('// ==UserScript==\n');
-    res.write(lines.reverse().join('\n'));
-    res.end('\n// ==/UserScript==\n');
+    Object.keys(meta).reverse().forEach(function (key) {
+      if (meta[key] instanceof Array) {
+        meta[key].forEach(function (value) {
+          res.write('// @' + key + '    ' + value + '\n');
+        });
+      } else {
+        res.write('// @' + key + '    ' + meta[key] + '\n');
+      }
+    });
+    res.end('// ==/UserScript==\n');
   });
 };
 
@@ -91,20 +103,35 @@ function parseMeta(aString) {
   var line = null;
   var lineMatches = null;
   var lines = {};
+  var unique = {
+    'name': true,
+    'namespace': true,
+    'description': true,
+    'version': true,
+    'author': true
+  };
 
   lines = aString.split(/[\r\n]+/).filter(function (e, i, a) {
     return (e.match(re));
   });
 
   for (line in lines) {
-    lineMatches = lines[line].replace(/\s+$/, "").match(re);
+    lineMatches = lines[line].replace(/\s+$/, '').match(re);
     name = lineMatches[1];
     value = lineMatches[2];
-    headers[name] = value || "";
+    if (!headers[name] || unique[name]) {
+      headers[name] = value || '';
+    } else {
+      if (!(headers[name] instanceof Array)) {
+        headers[name] = [headers[name]];
+      }
+      headers[name].push(value || '');
+    }
   }
 
   return headers;
 }
+exports.parseMeta = parseMeta;
 
 exports.getMeta = function (chunks, callback) {
   // We need to convert the array of buffers to a string to
@@ -128,54 +155,117 @@ exports.getMeta = function (chunks, callback) {
 
 exports.storeScript = function (user, meta, buf, callback, update) {
   var s3 = new AWS.S3();
-  var namespace = cleanFilename(meta.namespace, '');
-  var scriptName = cleanFilename(meta.name, '');
+  var namespace = null;
+  var scriptName = null;
   var installName = user.name.toLowerCase() + '/';
+  var isLibrary = typeof meta === 'string';
+  var libraries = [];
+  var requires = null;
+  var collaborators = null;
+  var libraryRegex = new RegExp('^https?:\/\/' +
+    (process.env.NODE_ENV === 'production' ?
+      'openuserjs\.org' : 'localhost:8080') +
+    '\/libs\/src\/(.+?\/.+?\.js)$', '');
 
-  // Can't install a script without a @name (maybe replace with random value)
-  if (!scriptName) { return callback(null); }
+  if (!meta) { return callback(null); }
 
-  if (namespace === user.name || !namespace) {
-    installName += scriptName + '.user.js';
-  } else {
-    installName += namespace + '/' + scriptName + '.user.js';
-  }
+  if (!isLibrary) {
+    namespace = cleanFilename(meta.namespace, '');
+    scriptName = cleanFilename(meta.name, '');
 
-  Script.findOne({ installName: installName }, function (err, script) {
+    // Can't install a script without a @name (maybe replace with random value)
+    if (!scriptName) { return callback(null); }
 
-    if (!script && update) {
-      return callback(null);
-    } else if (!script) {
-      script = new Script({
-        name: meta.name,
-        author: user.name,
-        about: '',
-        installs: 0,
-        rating: 0,
-        votes: 0,
-        installable: true,
-        installName: installName,
-        updated: new Date(),
-        fork: null,
-        meta: meta,
-        _authorId: user._id
-      });
-    } else {
-      script.meta = meta;
-      script.updated = new Date();
+    if (!isLibrary && meta.author
+        && meta.author != user.name && meta.collaborator) {
+      collaborators = meta.collaborator;
+      if ((typeof collaborators === 'string'
+          && collaborators === user.name)
+          || (collaborators instanceof Array
+          && collaborators.indexOf(user.name) > -1)) {
+        installName = meta.author.toLowerCase() + '/';
+      } else {
+        collaborators = null;
+      }
     }
 
-    script.save(function (err, script) {
-      s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
-        function (err, data) {
-           if (user.role === userRoles.length - 1) {
-             --user.role;
-             user.save(function (err, user) { callback(script); });
-           } else {
-             callback(script);
-           }
+    if (!namespace || namespace === user.name) {
+      installName += scriptName + '.user.js';
+    } else {
+      installName += namespace + '/' + scriptName + '.user.js';
+    }
+
+    if (meta.require) {
+      if (typeof meta.require === 'string') {
+        requires = [meta.require];
+      } else {
+        requires = meta.require;
+      }
+
+      requires.forEach(function (require) {
+          var match = libraryRegex.exec(require);
+          if (match && match[1]) { libraries.push(match[1]); }
+      });
+    }
+  } else {
+    scriptName = cleanFilename(meta.replace(/^\s+|\s+$/g, ''), '');
+    if (!scriptName) { return callback(null); }
+
+    installName += scriptName + '.js';
+  }
+
+  // Prevent a removed script from being reuploaded
+  findDeadorAlive(Script, { installName: installName }, true,
+    function (alive, script, removed) {
+
+      if (removed || (!script && (update || collaborators))) {
+        return callback(null);
+      } else if (!script) {
+        script = new Script({
+          name: isLibrary ? meta : meta.name,
+          author: user.name,
+          installs: 0,
+          rating: 0,
+          about: '',
+          updated: new Date(),
+          votes: 0,
+          flags: 0,
+          installName: installName,
+          fork: null,
+          meta: isLibrary ? { name: meta } : meta,
+          isLib: isLibrary,
+          uses: isLibrary ? null : libraries,
+          _authorId: user._id
         });
-    });
+      } else {
+        if (!script.isLib) {
+          if (collaborators && (script.meta.author != meta.author
+              || JSON.stringify(script.meta.collaborator) !=
+             JSON.stringify(meta.collaborator))) {
+            return callback(null);
+          }
+          script.meta = meta;
+          script.uses = libraries;
+        }
+        script.updated = new Date();
+      }
+
+      script.save(function (err, script) {
+        s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
+          function (err, data) {
+            if (user.role === userRoles.length - 1) {
+              var userDoc = user;
+              if (!userDoc.save) {
+                // We're probably using req.session.user which may have gotten serialized.
+                userDoc = new User(userDoc);
+              }
+              --userDoc.role;
+              userDoc.save(function (err, user) { callback(script); });
+            } else {
+              callback(script);
+            }
+        });
+      });
   });
 };
 
@@ -186,6 +276,8 @@ exports.deleteScript = function (installName, callback) {
   });
 };
 
+// GitHub calls this on a push if a webhook is setup
+// This controller makes sure we have the latest version of a script
 exports.webhook = function (req, res) {
   var RepoManager = require('../libs/repoManager');
   var payload = null;
@@ -200,7 +292,7 @@ exports.webhook = function (req, res) {
   if (!req.body.payload ||
     !/192\.30\.252\.(2[0-5][0-5]|1[0-9]{2}|[1-9]?\d)/
     .test(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
-    return; 
+    return;
   }
 
   payload = JSON.parse(req.body.payload);
@@ -222,7 +314,7 @@ exports.webhook = function (req, res) {
     payload.commits.forEach(function (commit) {
       commit.modified.forEach(function (filename) {
         if (filename.substr(-8) === '.user.js') {
-          repo[filename] = '/' + filename;
+          repo[filename] = '/' + encodeURI(filename);
         }
       });
     });

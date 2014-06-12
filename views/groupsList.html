@@ -1,0 +1,13 @@
+{{#groupsList}}
+<section class="scripts-section">
+  {{#groups}}
+  <ul class="scripts-list">
+    <li class="script">
+      <h2 class="group-title"><a href="{{{url}}}">{{name}}</a> - {{size}} script{{#multiple}}s{{/multiple}}</h2>
+    </li>
+  </ul>
+  {{/groups}}
+  <br />
+{{> pagination.html}}
+</section>
+{{/groupsList}}

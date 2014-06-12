@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="panel panel-default">
+          {{> includes/scriptList.html }}
+        </div>
+        <div class="text-center">
+          {{{paginationRendered}}}
+        </div>
+      </div>
+      <div class="col-sm-4">
+        {{> includes/searchBarPanel.html }}
+        {{> includes/popularGroupsPanel.html }}
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  {{> includes/scripts/tableTrLinkScript.html }}
+</body>
+</html>

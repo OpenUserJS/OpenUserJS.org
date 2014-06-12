@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="/css/scriptPage.css">
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <h2 class=""><a href="{{{userGitHubRepoListPageUrl}}}" class="script-author">{{githubUser.login}}</a></h2>
+        <div class="list-group">
+        {{#githubRepoList}}
+          <a href="{{{userGitHubRepoPageUrl}}}" class="list-group-item">
+            <h4 class="list-group-item-heading">{{full_name}}</h4>
+          </a>
+        {{/githubRepoList}}
+        </div>
+        <div class="text-center">
+          {{{paginationRendered}}}
+        </div>
+      </div>
+      <div class="col-md-4">
+
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

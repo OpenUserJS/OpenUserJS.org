@@ -1,0 +1,58 @@
+<script type="text/javascript">
+
+  $('.btn-comment-reply').click(function(e){
+    $('#reply-control').collapse('show');
+
+    var $comment = $(e.target).closest('.topic-post');
+    var $author = $comment.find('.topic-meta-data .names .username').first();
+    var $replyTextarea = $('#reply-control textarea[name="comment-content"]');
+
+    document.location.hash = $comment.attr('id');
+
+    var text = $replyTextarea.text();
+    if (!/^\s*$/.test(text))
+      text += '\n\n'; // Add linebreak if reply already started.
+    text += '[Re](' + document.location.href + '): ';
+    text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
+    text += '  \n';
+    $replyTextarea.text(text);
+  });
+
+  function isElementInViewport (el) {
+    //special bonus for those using jQuery
+    if (el instanceof jQuery) {
+      el = el[0];
+    }
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+  }
+
+  var hasShownReplyForm = false;
+  function callback (el) {
+    if (!hasShownReplyForm) {
+      $('#reply-control').collapse('show');
+      hasShownReplyForm = true;
+    }
+  }
+
+  function fireIfElementVisible (el, callback) {
+    return function () {
+      if ( isElementInViewport(el) ) {
+        callback(el);
+      }
+    }
+  }
+
+  var handler = fireIfElementVisible ($('#show-reply-form-when-visible'), callback);
+
+  //jQuery
+  $(window).on('DOMContentLoaded load resize scroll', handler);
+
+</script>

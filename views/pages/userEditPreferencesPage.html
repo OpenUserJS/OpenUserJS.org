@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="container-fluid col-sm-8">
+        <div class="row">
+          <div class="col-xs-12">
+            {{> includes/userPageHeader.html }}
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="edit-authentication-box">
+                  <h2 class="edit-authentication">Authentication</h2>
+                  <p><strong>{{defaultStrategy}}</strong> is your current form of authentication.</p>
+                  {{#haveOtherStrategies}}
+                  <p>Other verified forms of authentication:</p>
+                  {{#usedStrategies}}
+                  <strong>{{display}}</strong> - <a href="/auth/{{strat}}">Make default</a><br />
+                  {{/usedStrategies}}
+                  {{/haveOtherStrategies}}
+                  <form id="register" method="post" action="/auth/">
+                    <p>Add another form of authentication:</p>
+                    <div class="input-group col-xs-12">
+                      <select name="auth" class="form-control">
+                        {{#openStrategies}}
+                        <option value="{{strat}}">{{display}}</option>
+                        {{/openStrategies}}
+                      </select>
+                      <div class="input-group-btn">
+                        <button class="btn btn-success" type="submit">Authenticate</button>
+                      </div>
+                    </div>
+                  </form>
+               </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid col-sm-4">
+        {{> includes/userSidePanel.html }}
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

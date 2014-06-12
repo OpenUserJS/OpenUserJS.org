@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="list-controls row container-fluid">
+          <ol class="breadcrumb pull-left">
+            <li class=""><a href="/forum">Forum</a></li>
+            <li class="active"><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
+          </ol>
+          <a href="{{{category.categoryPostDiscussionPageUrl}}}" class="btn btn-success pull-right" id="create-topic">
+            <i class="fa fa-plus"></i> Create Topic
+          </a>
+        </div>
+        <div class="panel panel-default">
+          {{> includes/discussionList.html }}
+        </div>
+        <div class="text-center">
+          {{{paginationRendered}}}
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  {{> includes/scripts/tableTrLinkScript.html }}
+</body>
+</html>

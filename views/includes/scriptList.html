@@ -1,0 +1,41 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th class="text-center"><a href="?orderBy=name&orderDir=asc">Name</a></th>
+      <th class="text-center td-fit"><a href="?orderBy=installs&orderDir=desc">Installs</a></th>
+      <th class="text-center td-fit"><a href="?orderBy=rating&orderDir=desc">Rating</a></th>
+      <th class="text-center td-fit"><a href="?orderBy=updated&orderDir=desc">Last Updated</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#scriptList}}
+    <tr class="tr-link">
+      <td>
+          <span class="script-icon hidden-xs">
+          {{#icon16Url}}
+            <img src="{{{icon16Url}}}" alt="">
+          {{/icon16Url}}
+          {{^icon16Url}}
+            <i class="fa fa-fw fa-file-code-o"></i>
+          {{/icon16Url}}
+          </span>
+          <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}} <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</span></a>
+        <p>{{meta.description}}</p>
+      </td>
+      <td class="text-center td-fit">
+        <p>{{installs}}</p>
+      </td>
+      <td class="rating text-center td-fit">
+        <p>{{rating}}</p>
+        <div class="progress">
+          <div style="width: {{votesPercent}}%" class="progress-bar progress-bar-good"></div>
+          <div style="width: {{flagsPercent}}%" class="progress-bar progress-bar-danger"></div>
+        </div>
+      </td>
+      <td class="text-center td-fit">
+        <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
+      </td>
+    </tr>
+    {{/scriptList}}
+  </tbody>
+</table>

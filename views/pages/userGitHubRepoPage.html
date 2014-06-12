@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" href="/css/scriptPage.css">
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <h2 class=""><a href="{{{userGitHubRepoListPageUrl}}}" class="script-author">{{repo.owner.login}}</a><span class="path-divider">/</span><a href="{{{userGitHubRepoPageUrl}}}" class="script-name">{{repo.name}}</a></h2>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+
+            <p>The following files with the file extension <code>.js</code> can be imported from this repo.</p>
+
+            {{#openImportInNewTab}}
+            <div class="alert alert-info">Multiple scripts detected. Will open a new tab when importing a script.</div>
+            {{/openImportInNewTab}}
+
+            <ul class="list-group">
+            {{#javascriptBlobs}}
+              <li class="list-group-item {{^canUpload}}list-group-item-danger{{/canUpload}}">
+                <div>
+                  <form action="{{{authedUser.userGitHubImportPageUrl}}}" method="post" {{#openImportInNewTab}}target="_blank"{{/openImportInNewTab}}>
+                    <input type="hidden" name="user" value="{{repo.owner.login}}">
+                    <input type="hidden" name="repo" value="{{repo.name}}">
+                    <input type="hidden" name="path" value="{{path.full}}">
+                    <button type="submit" class="btn btn-sm btn-success pull-right {{^canUpload}}disabled{{/canUpload}}">Import</a>
+                  </form>
+                </div>
+
+                <p>
+                  <a href="https://github.com/{{repo.owner.login}}/{{repo.name}}/tree/HEAD/{{path.full}}">{{path.dir}}<b>{{path.name}}</b>{{path.ext}}</a>
+                  <span class="label label-default">{{size}} bytes</span>
+                </p>
+                {{#canUpload}}
+                <p>
+                  <i class="fa fa-long-arrow-right"></i>
+                  {{#isJSLibrary}}
+                    <b class="script-author">{{authedUser.name}}</b><span class="path-divider">/</span><b class="script-name">{{path.name}}</b>
+                    <span class="label label-info">Library</span>
+                  {{/isJSLibrary}}
+                  {{#isUserJS}}
+                    <b class="script-author">{{authedUser.name}}</b><span class="path-divider">/<code>Name specfied in Metadata</code>
+                    <span class="label label-info">UserScript</span>
+                  {{/isUserJS}}
+                </p>
+                {{/canUpload}}
+                {{^canUpload}}
+                  <ul>
+                  {{#errors}}
+                    <li>{{msg}}</li>
+                  {{/errors}}
+                  </ul>
+                {{/canUpload}}
+              </li>
+            {{/javascriptBlobs}}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>

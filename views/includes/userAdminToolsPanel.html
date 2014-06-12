@@ -1,0 +1,26 @@
+{{#adminTools}}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <i class="fa fa-fw fa-coffee"></i>
+      Admin Tools
+    </div>
+  </div>
+  <div class="panel-body">
+    <form class="form-horizontal" role="form" method="post" action="{{{user.userUpdatePageUrl}}}">
+      <div class="form-group container-fluid">
+        <label class="col-sm-2 control-label">Role</label>
+        <div class="col-sm-8">
+          <select class="form-control" name="role">
+          {{#availableRoles}}
+            <option value="{{{id}}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
+          {{/availableRoles}}
+          </select>
+        </div>
+        <input type="submit" class="col-sm-2 btn btn-default" value="Save">
+      </div>
+    </form>
+    <a href="/admin/json?model=User&id={{{user._id}}}" class="btn btn-link col-xs-12"><i class="fa fa-database"></i> Raw JSON Data</a>
+  </div>
+</div>
+{{/adminTools}}

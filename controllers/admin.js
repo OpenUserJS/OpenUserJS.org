@@ -1,12 +1,20 @@
-var Strategy = require('../models/strategy.js').Strategy;
+var async = require('async');
+
 var User = require('../models/user.js').User;
-var strategies = require('./strategies.json');
+var Script = require('../models/script').Script;
+var Strategy = require('../models/strategy.js').Strategy;
+
 var userRoles = require('../models/userRoles.json');
+var strategies = require('./strategies.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
-var help = require('../libs/helpers');
-var async = require('async');
-var nil = help.nil;
+var scriptStorage = require('./scriptStorage');
+var modelParser = require('../libs/modelParser');
+var helpers = require('../libs/helpers');
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+var nil = helpers.nil;
+
+// This controller is only for use by users with a role of admin or above
 
 function userIsAdmin(req) {
   return req.session.user && req.session.user.role < 3;
@@ -27,12 +35,14 @@ function getOAuthStrategies(stored) {
   return oAuthStrats;
 }
 
+// Allow admins to set user roles and delete users
 exports.userAdmin = function (req, res, next) {
   var options = nil();
   var thisUser = req.session.user;
 
   if (!userIsAdmin(req)) { return next(); }
 
+  // You can only see users with a role less than yours
   User.find({ role : { $gt: thisUser.role } }, function (err, users) {
     var i = 0;
     options.users = [];
@@ -46,72 +56,218 @@ exports.userAdmin = function (req, res, next) {
       roles = roles.splice(thisUser.role + 1);
       roles.reverse();
 
-      options.users.push({ 'name' : user.name, 'roles' : roles });
+      options.users.push({ 'id' : user._id, 'name' : user.name,
+        'roles' : roles });
     });
 
-    res.render('userAdmin', options, res);
+    res.render('userAdmin', options);
   });
 };
 
-exports.userAdminUpdate = function (req, res, next) {
-  var users = null;
-  var thisUser = null;
-  var role = null;
-  var remove = null;
-  var name = null;
+// View everything about a particular user
+// This is mostly for debugging in production
+exports.adminUserView = function (req, res, next) {
+  var id = req.route.params.id;
+  var thisUser = req.session.user;
 
   if (!userIsAdmin(req)) { return next(); }
 
-  users = req.body.user;
-  users = Object.keys(users).map(function (name) {
-    return { name: name, role: users[name] };
+  // Nothing fancy, just the stringified user object
+  User.findOne({ '_id' : id, role : { $gt: thisUser.role } },
+    function (err, user) {
+      if (err || !user) { return next(); }
+
+      res.render('userAdmin', { user: {
+        info: JSON.stringify(user.toObject(), null, ' ') } });
   });
-  thisUser = req.session.user;
-  remove = req.body.remove || {};
-  remove = Object.keys(remove);
+};
 
-  async.parallel([
-    function (callback) {
-      async.each(users, function (user, cb) {
-        role = Number(user.role);
 
-        if (role <= thisUser.role) { cb(); }
-        User.findOneAndUpdate({ 'name' : user.name, 
-          role : { $gt: thisUser.role } }, {'role' : role}, cb);
-      }, callback);
-    },
-    function (callback) {
-      async.each(remove, function (name, cb) {
-        User.findOneAndRemove({ 'name' : name,
-          role : { $gt: thisUser.role } }, cb);
-      }, callback);
+var jsonModelMap = {
+  'User': User,
+  'Script': Script,
+};
+// View everything about a particular user
+// This is mostly for debugging in production
+exports.adminJsonView = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  var modelname = req.query.model;
+  var id = req.query.id;
+
+  //
+  var options = {};
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin)
+    return res.send(403, {status: 403, message: 'Not an admin.'});
+
+
+  var model = jsonModelMap[modelname];
+  if (!model)
+    return res.send(400, {status: 400, message: 'Invalid model.'});
+
+  model.findOne({
+    _id: id
+  }, function(err, obj){
+    if (err || !obj)
+      return res.send(404, {status: 404, message: 'Id doesn\'t exist.'});
+
+    res.json(obj);
+  });
+};
+
+// Make changes to users listed
+exports.adminUserUpdate = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  var username = req.route.params.username;
+
+  User.findOne({
+    name: username
+  }, function (err, userData) {
+    if (err || !userData) { return next(); }
+
+    //
+    var options = {};
+    var tasks = [];
+
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
+
+    if (!options.isAdmin) {
+      return statusCodePage(req, res, next, {
+        statusCode: 403,
+        statusMessage: 'This page is only accessible by admins',
+      });
     }
-  ],
-  function (err) {
-    res.redirect('/admin/user');
-  });
-};
 
-exports.apiAdmin = function (req, res, next) {
-  if (!userIsAdmin(req)) { return next(); }
+    // User
+    var user = options.user = modelParser.parseUser(userData);
+    options.isYou = authedUser && user && authedUser._id == user._id;
 
-  Strategy.find({}, function (err, strats) {
-    var stored = nil();
-    var strategies = null;
-    var options = null;
+    //---
 
-    strats.forEach(function (strat) {
-      stored[strat.name] = { 'strat' : strat.name,
-        'id' : strat.id, 'key' : strat.key };
+    if (req.body.role) {
+      var role = Number(req.body.role);
+      if (role <= authedUser.role) {
+        return statusCodePage(req, res, next, {
+          statusCode: 403,
+          statusMessage: 'Cannot set a role equal to or higher than yourself.',
+        });
+      }
+
+      userData.role = role;
+    }
+
+    userData.save(function(err) {
+      if (err) {
+        return statusCodePage(req, res, next, {
+          statusMessage: err,
+        });
+      }
+
+      res.redirect(user.userPageUrl);
     });
-
-    strategies = getOAuthStrategies(stored);
-    options = { 'strategies' : strategies };
-
-    res.render('apiAdmin', options, res);
   });
 };
 
+// Landing Page for admins
+exports.adminPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins',
+    });
+  }
+
+  // Metadata
+  options.title = 'Admin | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  //---
+  async.parallel(tasks, function(err){
+    if (err) return next();
+    res.render('pages/adminPage', options);
+  });
+};
+
+// This page allows admins to set oAuth keys for the available authenticators
+exports.adminApiKeysPage = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins',
+    });
+  }
+
+  // Metadata
+  options.title = 'Admin: API Keys | OpenUserJS.org';
+  options.pageMetaDescription = null;
+  options.pageMetaKeywords = null;
+
+  //--- Tasks
+
+  // strategyListQuery
+  tasks.push(function(callback){
+    Strategy.find({}, function (err, strats) {
+      var stored = nil();
+      var strategies = null;
+
+      strats.forEach(function (strat) {
+        stored[strat.name] = {
+          strat: strat.name,
+          id: strat.id,
+          key: strat.key
+        };
+      });
+
+      strategies = getOAuthStrategies(stored);
+      options.strategies = strategies;
+
+      callback();
+    });
+  });
+
+  //---
+  async.parallel(tasks, function(err){
+    if (err) return next();
+    res.render('pages/adminApiKeysPage', options);
+  });
+};
+
+// Manage oAuth strategies without having to restart the server
+// When new keys are added, we load the new strategy
+// When keys are removed, we remove the strategy
 exports.apiAdminUpdate = function (req, res, next) {
   var postStrats = null;
 
@@ -154,7 +310,7 @@ exports.apiAdminUpdate = function (req, res, next) {
           });
         }
 
-        
+
         return strategy.save(function (err, strategy) {
           loadPassport(strategy);
           cb();

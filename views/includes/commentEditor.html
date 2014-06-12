@@ -1,0 +1,37 @@
+<div class="topic-post list-group-item">
+  <article>
+    <div class="row">
+      <div class="topic-avatar col-sm-2">
+        <a href="{{{authedUser.userPageUrl}}}">
+          <i class="fa fa-user"></i>
+        </a>
+      </div>
+      <div class="topic-body col-sm-10 container-fluid">
+        <div class="topic-meta-data row">
+          <div class="names pull-left">
+            <span>
+              <a href="{{{authedUser.userPageUrl}}}" class="username">{{authedUser.name}}</a> <span class="label label-default">{{authedUser.roleName}}</span>
+            </span>
+          </div>
+          <div class="post-info pull-right">
+            <a class="post-date">
+              <time datetime="" title=""></time>
+            </a>
+          </div>
+        </div>
+        <div class="topic-post-contents row">
+          <div class="user-data">
+            <textarea name="comment-content" data-provide="markdown" data-iconlibrary="fa" class="col-xs-12" placeholder="Type here using Markdown." required></textarea>
+          </div>
+          <section class="post-menu-area">
+            <nav class="post-controls text-right">
+              <button class="btn btn-sm btn-info" title="submit your comment" type="submit">
+                <i class="fa fa-reply"></i> Submit
+              </button>
+            </nav>
+          </section>
+        </div>
+      </div>
+    </div>
+  </article>
+</div>
