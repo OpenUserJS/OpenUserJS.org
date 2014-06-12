@@ -19,9 +19,9 @@ Within moderation we understand the occasional necessity to conserve device stor
 
 ## Target Site Abuse
 
-* If it is determined that a script is intentionally abusive towards any target site it will be removed and the account may be barred.
+* If it is determined that a script is intentionally abusive towards any target site it will be removed and the account may be barred. This includes, but not limited to, cookie stealing scripts.
 * Spamming is currently prohibited. Some minor exceptions may be allowed if it is found to be in context of a particular topic and related to User Scripts.
-* Posting script source snippets in a discussion should be properly formatted with code fences, code markup, and/or code markdown. If this is not followed both the comment and the account is, again, eligible for removal.
+* Posting script source snippets in a discussion should be properly formatted with markdown code fences, markdown code, markup pre tags,  and/or markup code tags. If this is not followed both the comment and the account is, again, eligible for removal.
 
 ## Recommendations
 
