@@ -74,7 +74,7 @@ exports.home = function (req, res) {
     // scriptList
     options.scriptList = _.map(options.scriptList, modelParser.parseScript);
 
-    // groupList
+    // popularGroupList
     options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
 
     // Pagination
