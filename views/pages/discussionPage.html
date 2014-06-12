@@ -4,6 +4,9 @@
   <title>{{title}}</title>
   {{> includes/head.html }}
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/css/bootstrap-markdown.min.css">
+  <style>
+    #show-reply-form-when-visible { height: 100px; }
+  </style>
 </head>
 <body>
   {{> includes/header.html }}
@@ -40,6 +43,7 @@
     </div>
   </div>
 
+  <div id="show-reply-form-when-visible"></div>
   {{> includes/commentForm.html }}
 
   {{> includes/footer.html }}

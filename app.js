@@ -188,6 +188,7 @@ app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic/:ac
 
 // Admin routes
 app.get('/admin', admin.adminPage);
+app.get('/admin/json', admin.adminJsonView);
 app.get('/admin/user/:id', admin.adminUserView);
 app.get('/admin/api', admin.adminApiKeysPage);
 app.post('/admin/api/update', admin.apiAdminUpdate);

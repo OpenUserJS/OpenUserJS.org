@@ -82,6 +82,45 @@ exports.adminUserView = function (req, res, next) {
   });
 };
 
+
+var jsonModelMap = {
+  'User': User,
+  'Script': Script,
+};
+// View everything about a particular user
+// This is mostly for debugging in production
+exports.adminJsonView = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  var modelname = req.query.model;
+  var id = req.query.id;
+
+  //
+  var options = {};
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin)
+    return res.send(403, {status: 403, message: 'Not an admin.'});
+
+
+  var model = jsonModelMap[modelname];
+  if (!model)
+    return res.send(400, {status: 400, message: 'Invalid model.'});
+
+  model.findOne({
+    _id: id
+  }, function(err, obj){
+    if (err || !obj)
+      return res.send(404, {status: 404, message: 'Id doesn\'t exist.'});
+
+    res.json(obj);
+  });
+};
+
 // Make changes to users listed
 exports.adminUserUpdate = function (req, res, next) {
   var authedUser = req.session.user;

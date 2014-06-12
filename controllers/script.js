@@ -75,13 +75,19 @@ var getScriptPageTasks = function(options) {
 
   // Show the groups the script belongs to
   tasks.push(function (callback) {
-    if (script.isLib) { return callback(); }
+    script.hasGroups = false;
+    script.groups = [];
 
-    Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
-      options.hasGroups = !err && groups.length > 0;
-      options.groups = (groups || []).map(function (group) {
-        return { name: group.name, url: group.name.replace(/\s+/g, '_') };
-      });
+    Group.find({
+      _scriptIds: script._id
+    }, function (err, scriptGroupList) {
+      if (err) return callback(err);
+
+      scriptGroupList = _.map(scriptGroupList, modelParser.parseGroup);
+
+      script.hasGroups = scriptGroupList.length > 0;
+      script.groups = scriptGroupList;
+
       callback();
     });
   });
@@ -355,7 +361,7 @@ exports.edit = function (req, res, next) {
       options.canCreateGroup = (!script._groupId).toString();
 
       function preRender(){
-        var groupNameList = (options.groups || []).map(function (group) {
+        var groupNameList = (options.script.groups || []).map(function (group) {
           return group.name;
         });
         options.groupNameListJSON = JSON.stringify(groupNameList);
