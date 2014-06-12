@@ -4,7 +4,7 @@
 * Everyone should maintain a professional and civil demeanor towards each other.
 * Staying on topic is a good thing to remember. Everyone has other duties to attend to at different times. Try to be succinct and don't obsess on a particular topic. Give others a chance to respond.
 * Intense conversations regarding "filling voids" should be avoided. Advocacy of one site or another should be minimal and gracefully done.
-* Passive aggressive behavior with abrasive commenting does not encourage teamwork even when it is coupled with genuine constructive feedback. Personal attacks may be eligible for removal from the site.
+* Passive aggressive behavior with abrasive commenting does not encourage teamwork even when it is coupled with genuine constructive feedback. Personal attacks may be eligible for account removal from the site.
 * **"Open Source" is not the same as "the developers must do my bidding"**. A lot of generous time is donated by multiple developers in attempting to resolve any properly presented issues. However this does not mean there is an obligation to do it on any single persons time table. Until the site bills are paid by everyone involved it's a wise choice to be courteous instead of snarky.
 
 ## Abstraction
@@ -20,8 +20,8 @@ Within moderation we understand the occasional necessity to conserve device stor
 ## Target Site Abuse
 
 * If it is determined that a script is intentionally abusive towards any target site it will be removed and the account may be barred.
-* Spamming is currently prohibited. Some minor exceptions may be allowed if it is found to be in context of a particular topic related to User Scripts.
-* Posting script source snippets in a discussion should be properly formatted with code fences, code markup, or code markdown. If this is not followed both the comment and the author is again eligible for removal.
+* Spamming is currently prohibited. Some minor exceptions may be allowed if it is found to be in context of a particular topic and related to User Scripts.
+* Posting script source snippets in a discussion should be properly formatted with code fences, code markup, and/or code markdown. If this is not followed both the comment and the account is, again, eligible for removal.
 
 ## Recommendations
 
