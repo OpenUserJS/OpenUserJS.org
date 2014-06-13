@@ -5,7 +5,7 @@
   {{> includes/head.html }}
   <link rel="stylesheet" href="/css/scriptPage.css">
 </head>
-<body>
+<body id="body">
   {{> includes/header.html }}
   <div class="container-fluid">
     <div class="row">
@@ -55,7 +55,7 @@
         {{#script.aboutRendered}}
         <div class="panel panel-default">
           <div class="panel-body">
-            <div class="user-content">{{{script.aboutRendered}}}</div>
+            <div class="user-content" id="user-content">{{{script.aboutRendered}}}</div>
           </div>
         </div>
         {{/script.aboutRendered}}
