@@ -46,7 +46,7 @@ var parseSearchConditions = function(q, prefixSearchFields, fullSearchFields) {
   terms.forEach(function (term) {
     var isNonASCII = /^\W/.test(term);
     if (isNonASCII) {
-      prefixStr += '(?=.*?(\|[ \n\r\t.,\'"\+!?-]+)' + term  + ')';
+      prefixStr += '(?=.*?([ \n\r\t.,\'"\+!?-]+)' + term  + ')';
     } else {
       prefixStr += '(?=.*?\\b' + term  + ')';
     }
