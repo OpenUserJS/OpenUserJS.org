@@ -25,12 +25,12 @@ moment.lang('en', {
     mm: "%dm",
     h:  "1h",
     hh: "%dh",
-    d:  "1d",
-    dd: "%dd",
-    M:  "1m",
-    MM: "%dm",
-    y:  "1y",
-    yy: "%dy"
+    d:  "1D",
+    dd: "%dD",
+    M:  "1M",
+    MM: "%dM",
+    y:  "1Y",
+    yy: "%dY"
   }
 });
 
