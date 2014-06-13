@@ -40,13 +40,13 @@ var parseSearchConditions = function(q, prefixSearchFields, fullSearchFields) {
   var fullStr = '';
   var prefixRegex = null;
   var fullRegex = null;
-  var terms = q.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/);
+  var terms = q.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/).map(function (e) { return e.trim(); });
 
   // Match all the terms but in any order
   terms.forEach(function (term) {
-    var isNONASCII = /^\W/.test(term);
-    if (isNONASCII) {
-      prefixStr += '(?=.*?(^\|[ \n\r\t.,\'"\+!?-]+)' + term  + ')';
+    var isNonASCII = /^\W/.test(term);
+    if (isNonASCII) {
+      prefixStr += '(?=.*?([ \n\r\t.,\'"\+!?-]+)' + term  + ')';
     } else {
       prefixStr += '(?=.*?\\b' + term  + ')';
     }
