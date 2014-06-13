@@ -44,7 +44,7 @@ var parseSearchConditions = function(q, prefixSearchFields, fullSearchFields) {
 
   // Match all the terms but in any order
   terms.forEach(function (term) {
-    var isNONASCII = unescape(encodeURIComponent(term)).length !== term.length;
+    var isNONASCII = /^\W/.test(term);
     if (isNONASCII) {
       prefixStr += '(?=.*?(^\|[ \n\r\t.,\'"\+!?-]+)' + term  + ')';
     } else {
