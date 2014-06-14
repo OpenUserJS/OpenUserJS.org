@@ -21,7 +21,7 @@ Within moderation we understand the occasional necessity to conserve device stor
 
 * If it is determined that a script is intentionally abusive towards any target site it will be removed and the account may be barred. This includes, but not limited to, cookie stealing scripts.
 * Spamming is currently prohibited. Some minor exceptions may be allowed if it is found to be in context of a particular topic and related to User Scripts.
-* Posting script source snippets in a discussion should be properly formatted with markdown code fences, markdown code, markup pre tags,  and/or markup code tags. If this is not followed both the comment and the account is, again, eligible for removal.
+* Posting script source snippets in a discussion should be properly formatted with markdown code fences, markdown code, markup pre tags,  and/or markup code tags with appropriate discussion. e.g. **Do not** post only script source without explaining what it means in human terms. If this is not followed both the comment and the account is, again, eligible for removal.
 
 ## Recommendations
 
@@ -30,7 +30,21 @@ Within moderation we understand the occasional necessity to conserve device stor
 * Have fun but at the same time not at some other persons expense.
 
 ## Licensing
-*To Be Announced*
+
+### Reserved Rights
+
+* OpenUserJs.org reserves the implied right to publish, distribute, and terminate access to your published works and code snippets.
+* OpenUserJs.org allows all published works to be forked via this sites forking capabilities.
+
+### Default Licensing
+
+* Users Scripts have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) if `@license` and/or `@licence` metadata block key is absent.
+* Libraries need to include one reference to their license(s) either via a cross-site compatible metadata block with at least one `@license` and/or `@licence` key, License Header, or full License text *(full text is not recommended for storage constraints on portable devices)*
+
+### Acceptable Licensing
+* *To Be Announced but probably going to be OSI only*
+
+*More To Be Announced*
 
 ## The Fine Print
 
