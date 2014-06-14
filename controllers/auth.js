@@ -148,7 +148,7 @@ exports.callback = function (req, res, next) {
         req.session.user = user;
 
         // Save GitHub username.
-        if (req.session.profile.provider === 'github') {
+        if (req.session.profile && req.session.profile.provider === 'github') {
           user.ghUsername = req.session.profile.username;
           user.save(function(err, user){
             if (err) {
