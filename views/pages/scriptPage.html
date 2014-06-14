@@ -41,15 +41,33 @@
               {{#script.meta.licence}}<p><i class="fa fa-fw fa-legal"></i> <b>Licence:</b> {{script.meta.licence}}</p>{{/script.meta.licence}}
               {{#script.meta.collaborator}}<p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{.}}</p>{{/script.meta.collaborator}}
               {{#script.fork}}
-              <p><b>Fork History:</b></p>
-              <ul>
+                <p><b>Fork History:</b></p>
+                <ul>
                 {{#.}}
-                <li>
-                  <i class="fa fa-fw fa-fork"></i> <a href="/script/{{{url}}">{{author}}/{{name}}</a>
-                </li>
+                  <li>
+                    <i class="fa fa-fw fa-fork"></i> <a href="/script/{{{url}}">{{author}}/{{name}}</a>
+                  </li>
                 {{/.}}
-              </ul>
+                </ul>
               {{/script.fork}}
+              {{#script.usesLibs}}
+                <h4>Libraries Used</h4>
+                <ul>
+                {{#script.libs}}
+                  <li>
+                    <span class="script-icon hidden-xs">
+                      {{#icon16Url}}
+                        <img src="{{{icon16Url}}}" alt="">
+                      {{/icon16Url}}
+                      {{^icon16Url}}
+                        <i class="fa fa-fw fa-file-code-o"></i>
+                      {{/icon16Url}}
+                    </span>
+                    <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}} <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</span></a>
+                  </li>
+                {{/script.libs}}
+                </ul>
+              {{/script.usesLibs}}
             </div>
           </div>
         </div>
@@ -60,6 +78,28 @@
           </div>
         </div>
         {{/script.aboutRendered}}
+        {{#script.isUsed}}
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h4>Scripts Using This Library</h4>
+            <ul>
+            {{#script.usedBy}}
+              <li>
+                <span class="script-icon hidden-xs">
+                  {{#icon16Url}}
+                    <img src="{{{icon16Url}}}" alt="">
+                  {{/icon16Url}}
+                  {{^icon16Url}}
+                    <i class="fa fa-fw fa-file-code-o"></i>
+                  {{/icon16Url}}
+                </span>
+                <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}} <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</span></a>
+              </li>
+            {{/script.usedBy}}
+            </ul>
+          </div>
+        </div>
+        {{/script.isUsed}}
       </div>
       <div class="container-fluid col-sm-4">
         {{> includes/scriptSidePanel.html }}

@@ -25,12 +25,10 @@ var openIdStrategies = {};
 Strategy.find({}, function (err, strategies) {
 
   // Get OpenId strategies
-  if (process.env.NODE_ENV === 'production') {
-    for (var name in allStrategies) {
-      if (!allStrategies[name].oauth) {
-        openIdStrategies[name] = true;
-        strategies.push({ 'name' : name, 'openid' : true });
-      }
+  for (var name in allStrategies) {
+    if (!allStrategies[name].oauth) {
+      openIdStrategies[name] = true;
+      strategies.push({ 'name' : name, 'openid' : true });
     }
   }
 
@@ -148,7 +146,7 @@ exports.callback = function (req, res, next) {
         req.session.user = user;
 
         // Save GitHub username.
-        if (req.session.profile.provider === 'github') {
+        if (req.session.profile && req.session.profile.provider === 'github') {
           user.ghUsername = req.session.profile.username;
           user.save(function(err, user){
             if (err) {
