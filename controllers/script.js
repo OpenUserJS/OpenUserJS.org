@@ -84,8 +84,8 @@ var getScriptPageTasks = function(options) {
         options.script.meta.licenses.push({ name: license });
       });
     }
-  } else {
-    options.script.meta.licenses = [{ name: 'MIT License (Expat)' }];
+  } else if (!script.isLib) {
+      options.script.meta.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
   // Show the groups the script belongs to
