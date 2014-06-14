@@ -2,6 +2,7 @@ var async = require('async');
 var _ = require('underscore');
 
 var Group = require('../models/group').Group;
+var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
 
@@ -10,6 +11,7 @@ var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
+var removeSession = require('../libs/modifySessions').remove;
 
 
 // The home page has scripts and groups in a sidebar
@@ -244,6 +246,13 @@ exports.register = function (req, res) {
 };
 
 exports.logout = function (req, res) {
-  delete req.session.user;
-  res.redirect('/');
+  var authedUser = req.session.user;
+
+  if (!authedUser) { return res.redirect('/'); }
+
+  User.findOne({ _id: authedUser._id }, function (err, user) {
+    removeSession(req, user, function () {
+      res.redirect('/'); 
+    });
+  });
 };

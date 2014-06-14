@@ -7,18 +7,19 @@ var User = require('../models/user').User;
 var userRoles = require('../models/userRoles.json');
 var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var addSession = require('../libs/modifySessions').add;
 
 // These functions serialize the user model so we can keep
 // the info in the session
 passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
-
+/*
 passport.deserializeUser(function (id, done) {
   User.findOne({ _id : id }, function (err, user) {
     done(err, user);
   });
-});
+});*/
 
 // Setup all our auth strategies
 var openIdStrategies = {};
@@ -147,24 +148,24 @@ exports.callback = function (req, res, next) {
         // Store the user info in the session
         req.session.user = user;
 
+        // Save the session id on the user model
+        user.sessionId = req.sessionID;
+
         // Save GitHub username.
         if (req.session.profile.provider === 'github') {
           user.ghUsername = req.session.profile.username;
-          user.save(function(err, user){
-            if (err) {
-              console.error('Error saving User(' + user.name + ').ghUsername = ' + user.ghUsername);
-            }
-          });
         }
 
-        if (newstrategy) {
-          // Allow a user to link to another acount
-          return res.redirect('/auth/' + newstrategy);
-        } else {
-          // Delete the username that was temporarily stored
-          delete req.session.username;
-          return res.redirect(doneUrl);
-        }
+        addSession(req, user, function () {
+          if (newstrategy) {
+            // Allow a user to link to another acount
+            return res.redirect('/auth/' + newstrategy);
+          } else {
+            // Delete the username that was temporarily stored
+            delete req.session.username;
+            return res.redirect(doneUrl);
+          }
+        });
       });
   });
 

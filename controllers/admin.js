@@ -12,6 +12,7 @@ var scriptStorage = require('./scriptStorage');
 var modelParser = require('../libs/modelParser');
 var helpers = require('../libs/helpers');
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+var updateSessions = require('../libs/modifySessions').update;
 var nil = helpers.nil;
 
 // This controller is only for use by users with a role of admin or above
@@ -173,7 +174,10 @@ exports.adminUserUpdate = function (req, res, next) {
         });
       }
 
-      res.redirect(user.userPageUrl);
+      // Make sure the change is reflected in the session store
+      updateSessions(req, userData, function (err, sess) {
+        res.redirect(user.userPageUrl);
+      });
     });
   });
 };
