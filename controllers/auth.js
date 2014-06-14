@@ -9,29 +9,20 @@ var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var addSession = require('../libs/modifySessions').add;
 
-// These functions serialize the user model so we can keep
-// the info in the session
+// Unused but removing it breaks passport
 passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
-/*
-passport.deserializeUser(function (id, done) {
-  User.findOne({ _id : id }, function (err, user) {
-    done(err, user);
-  });
-});*/
 
 // Setup all our auth strategies
 var openIdStrategies = {};
 Strategy.find({}, function (err, strategies) {
 
   // Get OpenId strategies
-  if (process.env.NODE_ENV === 'production') {
-    for (var name in allStrategies) {
-      if (!allStrategies[name].oauth) {
-        openIdStrategies[name] = true;
-        strategies.push({ 'name' : name, 'openid' : true });
-      }
+  for (var name in allStrategies) {
+    if (!allStrategies[name].oauth) {
+      openIdStrategies[name] = true;
+      strategies.push({ 'name' : name, 'openid' : true });
     }
   }
 
@@ -152,7 +143,7 @@ exports.callback = function (req, res, next) {
         user.sessionId = req.sessionID;
 
         // Save GitHub username.
-        if (req.session.profile.provider === 'github') {
+        if (req.session.profile && req.session.profile.provider === 'github') {
           user.ghUsername = req.session.profile.username;
         }
 

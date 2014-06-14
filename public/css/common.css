@@ -1,3 +1,7 @@
+html, body {
+  min-height: 100vh;
+}
+
 @media (max-width: 767px) {
   span.visible-xs {
     display: inline !important;

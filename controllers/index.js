@@ -199,16 +199,14 @@ exports.register = function (req, res) {
   options.strategies = [];
 
   // Get OpenId strategies
-  if (process.env.NODE_ENV === 'production') {
-    _.each(strategies, function(strategy, strategyKey){
-      if (!strategy.oauth) {
-        options.strategies.push({
-          'strat': strategyKey,
-          'display': strategy.name
-        });
-      }
-    });
-  }
+  _.each(strategies, function(strategy, strategyKey){
+    if (!strategy.oauth) {
+      options.strategies.push({
+        'strat': strategyKey,
+        'display': strategy.name
+      });
+    }
+  });
 
   //--- Tasks
 

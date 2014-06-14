@@ -94,29 +94,31 @@ var getScriptPageTasks = function(options) {
 
   // Show which libraries hosted on the site a script uses
   if (!script.isLib && script.uses && script.uses.length > 0) {
-    options.usesLibs = true;
-    options.libs = [];
+    script.usesLibs = true;
+    script.libs = [];
     tasks.push(function (callback) {
-      Script.find({ installName: { $in: script.uses } },
-        function (err, libs) {
-          libs.forEach(function (lib) {
-            options.libs.push({
-              name: lib.name, url: lib.installName.replace(/\.js$/, '')
-            });
-          });
-          callback();
+      Script.find({
+        installName: { $in: script.uses }
+      }, function (err, scriptLibraryList) {
+        if (err) return callback(err);
+
+        script.libs = scriptLibraryList;
+        script.libs = _.map(script.libs, modelParser.parseScript);
+        callback();
       });
     });
   } else if (script.isLib) {
-    // Show how many scripts use this library
+    script.isUsed = false;
+    script.usedBy = [];
     tasks.push(function (callback) {
-      Script.count({ uses: script.installName }, function (err, count) {
-        if (err) { count = 0; }
-        if (count <= 0) { return callback(); }
+      Script.find({
+        uses: script.installName
+      }, function (err, libraryScriptList) {
+        if (err) return callback(err);
 
-        options.usedBy = { count: count, url: '/use/lib/' + script.installNameSlug };
-        if (count > 1) { options.usedBy.multiple = true; }
-
+        script.isUsed = libraryScriptList.length > 0;
+        script.usedBy = libraryScriptList;
+        script.usedBy = _.map(script.usedBy, modelParser.parseScript);
         callback();
       });
     });

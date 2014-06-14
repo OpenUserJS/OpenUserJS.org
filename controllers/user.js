@@ -693,12 +693,12 @@ exports.newLibraryPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   //
-  options.newJSLibary = true;
+  options.newJSLibrary = true;
   options.newScriptEditorPageUrl = '/user/add/lib/new';
   options.uploadNewScriptPageUrl = '/user/add/lib/upload';
 
   // Metadata
-  options.title = 'New Libary | OpenUserJS.org';
+  options.title = 'New Library | OpenUserJS.org';
   options.pageMetaDescription = null;
   options.pageMetaKeywords = null;
 
@@ -1209,7 +1209,7 @@ exports.update = function (req, res, next) {
 
   if (!user) { return res.redirect('/login'); }
 
-  if (req.body.about) {
+  if (typeof req.body.about !== 'undefined') {
     // Update the about section of a user's profile
     User.findOneAndUpdate({ _id: user._id },
       { about: req.body.about  },

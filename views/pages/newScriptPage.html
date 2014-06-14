@@ -59,15 +59,15 @@
               </div>
             </div>
           {{/newUserJS}}
-          {{#newJSLibary}}
-            <h2><i class="fa fa-question"></i> Libary Docs</h2>
+          {{#newJSLibrary}}
+            <h2><i class="fa fa-question"></i> Library Docs</h2>
             <div class="panel panel-default">
               <div class="panel-body">
                 <h3>OpenUserJS.org Specific</h3>
                 <p>Any UserScript on OpenUserJS.org that <code>//@require</code>'s libraries also on OpenUserJS.org will link to the library on the UserScript page.</p>
               </div>
             </div>
-          {{/newJSLibary}}
+          {{/newJSLibrary}}
         </div>
         <div class="col-md-4">
           <h2><i class="fa fa-plus-square"></i> New Script</h2>
@@ -83,11 +83,11 @@
               <p class="list-group-item-text">
                 <form action="{{{uploadNewScriptPageUrl}}}" method="post" enctype="multipart/form-data" class="form-horizontal">
                   <input type="hidden" name="uploadScript" value="true">
-                  {{#newJSLibary}}
+                  {{#newJSLibrary}}
                   <div class="form-group">
                     <input type="text" required class="form-control" name="script_name" placeholder="Script Name" required>
                   </div>
-                  {{/newJSLibary}}
+                  {{/newJSLibrary}}
                   <div class="form-group">
                     <div class="input-group">
                       <input type="file" required class="form-control" name="script" placeholder="Enter email">

@@ -88,8 +88,18 @@ exports.update = function (req, user, callback) {
 // Destory all sessions for a user
 exports.destroy = function (req, user, callback) {
   var store = req.sessionStore;
+  var emptySess = { 
+    cookie: { 
+      path: '/',
+      _expires: null,
+      originalMaxAge: null,
+      httpOnly: true 
+    }
+  };
 
   if (!user || !user.sessionIds) { return cb('No sessions', null); }
 
-  async.each(user.sessionIds, store.destroy, callback);
+  async.each(user.sessionIds, function (id, cb) {
+    store.set(id, emptySess, cb);
+  }, callback);
 };

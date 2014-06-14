@@ -40,11 +40,16 @@ var parseSearchConditions = function(q, prefixSearchFields, fullSearchFields) {
   var fullStr = '';
   var prefixRegex = null;
   var fullRegex = null;
-  var terms = q.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/);
+  var terms = q.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/).map(function (e) { return e.trim(); });
 
   // Match all the terms but in any order
   terms.forEach(function (term) {
-    prefixStr += '(?=.*?\\b' + term  + ')';
+    var isNonASCII = /^\W/.test(term);
+    if (isNonASCII) {
+      prefixStr += '(?=.*?([ \n\r\t.,\'"\+!?-]+)' + term  + ')';
+    } else {
+      prefixStr += '(?=.*?\\b' + term  + ')';
+    }
     fullStr += '(?=.*?' + term  + ')';
   });
   prefixRegex = new RegExp(prefixStr, 'i');
@@ -68,8 +73,6 @@ exports.parseSearchConditions = parseSearchConditions;
 
 var parseModelListSearchQuery = function(modelListQuery, query, searchOptions) {
   var q = unescape(query);
-  var partialWordMatchFields = ['name', 'author', 'about', 'meta.description'];
-  var fullWordMatchFields = ['meta.include', 'meta.match'];
   modelListQuery.and({
     $or: parseSearchConditions(q, searchOptions.partialWordMatchFields, searchOptions.fullWordMatchFields)
   });
