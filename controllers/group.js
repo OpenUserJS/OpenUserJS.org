@@ -191,6 +191,22 @@ exports.list = function (req, res) {
   async.parallel(tasks, asyncComplete);
 };
 
+var setupGroupSidePanel = function(options) {
+  // Shortcuts
+  var group = options.group;
+  var authedUser = options.authedUser;
+
+  // Mod
+  if (authedUser && authedUser.isMod) {
+    options.modTools = {};
+  }
+
+  // Admin
+  if (authedUser && authedUser.isAdmin) {
+    options.adminTools = {};
+  }
+};
+
 // list the scripts in a group
 exports.view = function (req, res, next) {
   var authedUser = req.session.user;
@@ -241,6 +257,9 @@ exports.view = function (req, res, next) {
     popularGroupListQuery
       .sort('-rating')
       .limit(25);
+
+    // SideBar
+    setupGroupSidePanel(options);
 
     //--- Tasks
 

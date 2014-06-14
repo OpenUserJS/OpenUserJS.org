@@ -68,8 +68,6 @@ exports.parseSearchConditions = parseSearchConditions;
 
 var parseModelListSearchQuery = function(modelListQuery, query, searchOptions) {
   var q = unescape(query);
-  var partialWordMatchFields = ['name', 'author', 'about', 'meta.description'];
-  var fullWordMatchFields = ['meta.include', 'meta.match'];
   modelListQuery.and({
     $or: parseSearchConditions(q, searchOptions.partialWordMatchFields, searchOptions.fullWordMatchFields)
   });

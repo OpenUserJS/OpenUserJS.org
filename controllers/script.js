@@ -94,8 +94,8 @@ var getScriptPageTasks = function(options) {
 
   // Show which libraries hosted on the site a script uses
   if (!script.isLib && script.uses && script.uses.length > 0) {
-    options.usesLibs = true;
-    options.libs = [];
+    script.usesLibs = true;
+    script.libs = [];
     tasks.push(function (callback) {
       Script.find({ installName: { $in: script.uses } },
         function (err, libs) {
@@ -114,7 +114,7 @@ var getScriptPageTasks = function(options) {
         if (err) { count = 0; }
         if (count <= 0) { return callback(); }
 
-        options.usedBy = { count: count, url: '/use/lib/' + script.installNameSlug };
+        script.usedBy = { count: count, url: '/use/lib/' + script.installNameSlug };
         if (count > 1) { options.usedBy.multiple = true; }
 
         callback();
