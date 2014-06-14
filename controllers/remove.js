@@ -1,6 +1,7 @@
 var removeLib = require('../libs/remove');
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
+var destroySessions = require('../libs/modifySessions').destroy;
 
 // Simple controller to remove content and save it in the graveyard
 exports.rm = function (req, res, next) {
@@ -24,7 +25,11 @@ exports.rm = function (req, res, next) {
       function (err, user) {
         removeLib.remove(User, user, thisUser, '', function (removed) {
           if (!removed) { return next(); }
-          res.redirect('/');
+
+          // Destory all the sessions belonging to the removed user
+          destroySessions(req, user, function () {
+            res.redirect('/');
+          });
         });
     });
     break;

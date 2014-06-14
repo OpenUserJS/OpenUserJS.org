@@ -1,8 +1,13 @@
 var async = require('async');
 
-var User = require('../models/user.js').User;
+var Comment = require('../models/comment').Comment;
+var Discussion = require('../models/discussion').Discussion;
+var Flag = require('../models/flag').Flag;
+var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
-var Strategy = require('../models/strategy.js').Strategy;
+var Strategy = require('../models/strategy').Strategy;
+var User = require('../models/user').User;
+var Vote = require('../models/vote').Vote;
 
 var userRoles = require('../models/userRoles.json');
 var strategies = require('./strategies.json');
@@ -12,6 +17,7 @@ var scriptStorage = require('./scriptStorage');
 var modelParser = require('../libs/modelParser');
 var helpers = require('../libs/helpers');
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+var updateSessions = require('../libs/modifySessions').update;
 var nil = helpers.nil;
 
 // This controller is only for use by users with a role of admin or above
@@ -86,6 +92,11 @@ exports.adminUserView = function (req, res, next) {
 var jsonModelMap = {
   'User': User,
   'Script': Script,
+  'Group': Group,
+  'Discussion': Discussion,
+  'Comment': Comment,
+  'Vote': Vote,
+  'Flag': Flag,
 };
 // View everything about a particular user
 // This is mostly for debugging in production
@@ -173,7 +184,10 @@ exports.adminUserUpdate = function (req, res, next) {
         });
       }
 
-      res.redirect(user.userPageUrl);
+      // Make sure the change is reflected in the session store
+      updateSessions(req, userData, function (err, sess) {
+        res.redirect(user.userPageUrl);
+      });
     });
   });
 };

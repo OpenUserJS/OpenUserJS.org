@@ -95,7 +95,7 @@ exports.getDefaultPagination = getDefaultPagination;
 
 
 exports.statusCodePage = function (req, res, next, options) {
-  var authedUser = req.session.user;
+  var authedUser = req.session ? req.session.user : null;
 
   //
   options.statusCode = options.statusCode || 500;

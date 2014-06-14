@@ -263,7 +263,6 @@ var parseDiscussion = function(discussionData) {
       name: username,
     };
   });
-  recentCommentors.reverse();
   discussion.recentCommentors = recentCommentors;
 
   //discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');

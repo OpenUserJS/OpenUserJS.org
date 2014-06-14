@@ -21,6 +21,7 @@ var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
 var modelParser = require('./libs/modelParser');
 
+var modifySessions = require('./libs/modifySessions');
 var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
@@ -37,11 +38,16 @@ db.once('open', function () {
 });
 
 app.configure(function(){
+  var sessionStore = new MongoStore({ mongoose_connection: db });
+
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
   app.use(function (req, res, next) {
     // check if we're toobusy
     if (toobusy()) {
-      res.send(503, 'I\'m busy right now, sorry :(');
+      statusCodePage(req, res, next, {
+        statusCode: 503,
+        statusMessage: 'We\'re busy right now. Try again later.',
+      });
     } else {
       next();
     }
@@ -75,11 +81,10 @@ app.configure(function(){
   app.use(express.cookieParser());
   app.use(express.session({
     secret: sessionSecret,
-    store: new MongoStore({
-      mongoose_connection: db
-    })
+    store: sessionStore
   }));
   app.use(passport.initialize());
+  app.use(modifySessions.init(sessionStore));
   app.use(app.router);
 
   // Set up the views
