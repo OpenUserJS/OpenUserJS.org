@@ -10,7 +10,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 * [Git](http://git-scm.com/)
 * [node.js 0.10.x](http://nodejs.org/)
 * [MongoDB](http://www.mongodb.org/)
-* [Ruby](https://www.ruby-lang.org/) (required to run [FakeS3](https://github.com/jubos/fake-s3/)
+* [Ruby](https://www.ruby-lang.org/) (required to run [FakeS3](https://github.com/jubos/fake-s3/))
 * [FakeS3](https://github.com/jubos/fake-s3) (required to store libraries/scripts without [AWS S3](http://aws.amazon.com/s3/))
 
 #### GitHub Fork Setup
@@ -30,8 +30,8 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 
 1. Follow the forking instructions above to get a local copy of the project, or simply retrieve the code [as a ZIP](https://github.com/OpenUserJs/OpenUserJS.org/archive/master.zip) and extract it somewhere.
 2. Navigate to the project directory and run `npm install -d` to install the dependencies defined within [package.json](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json)
-3. If not already installed, run `sudo apt-get install ruby` (or similar for your package manager) to install Ruby
-4. If not already installed, run `sudo gem install fakes3` to install FakeS3
+3. If not already installed, run `sudo apt-get install ruby` (or similar for your package manager) to install Ruby.  Windows users should use [RubyInstaller](http://rubyinstaller.org/).
+4. If not already installed, run `sudo gem install fakes3` to install FakeS3.  Windows users should use [RubyInstaller](http://rubyinstaller.org/).
 
 #### Configuration
 
@@ -46,7 +46,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 
 **NOTE:** You may set the app to listen on a specific port by setting a `PORT` environment variable.  Additionally, if your application instance will not be accessible at either http://localhost:8080 or http://localhost:<PORT> you should set the `AUTH_CALLBACK_BASE_URL` environment variable to the root (e.g. http://myserver.local:8080)
 
-1. Open a terminal, navigate to the root of the OpenUserJS.org project, and run `./fakes3.sh`
+1. Open a terminal, navigate to the root of the OpenUserJS.org project, and run `./fakes3.sh`.  Windows users will need to run the script commands manually.
 2. Open another terminal, navigate to the root of the OpenUserJS.org project, and run `npm start`
 
 
