@@ -11,7 +11,7 @@ exports.init = function (store) {
   };
 };
 
-// Serial a user model to something that can be stored in the session data
+// Serialize a user model to something that can be stored in the session data
 function serializeUser (user) {
   var userObj = user.toObject();
 
@@ -21,7 +21,6 @@ function serializeUser (user) {
   delete userObj.sessionIds; // not kept in sync
 
   return userObj;
-  sess.user = userObj;
 }
 
 // Add a new session id to the user model
