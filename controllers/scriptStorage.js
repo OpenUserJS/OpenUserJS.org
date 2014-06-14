@@ -119,6 +119,11 @@ function parseMeta(aString) {
     lineMatches = lines[line].replace(/\s+$/, '').match(re);
     name = lineMatches[1];
     value = lineMatches[2];
+    switch (name) {
+      case "licence":
+        name = "license";
+        break;
+    }
     if (!headers[name] || unique[name]) {
       headers[name] = value || '';
     } else {

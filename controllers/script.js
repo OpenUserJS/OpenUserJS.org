@@ -65,12 +65,27 @@ var getScriptPageTasks = function(options) {
   if (script.meta.author && script.meta.collaborator) {
     options.hasCollab = true;
     if (typeof script.meta.collaborator === 'string') {
-      options.collaborators = [{ name: script.meta.collaborator }];
+      options.script.meta.collaborators = [{ name: script.meta.collaborator }];
     } else {
+      options.script.meta.collaborators = [];
       script.meta.collaborator.forEach(function (collaborator) {
-        options.collaborators.push({ name: collaborator });
+        options.script.meta.collaborators.push({ name: collaborator });
       });
     }
+  }
+
+  // Show licensings of the script
+  if (script.meta.license) {
+    if (typeof script.meta.license === 'string') {
+      options.script.meta.licenses = [{ name: script.meta.license }];
+    } else {
+      options.script.meta.licenses = [];
+      script.meta.license.forEach(function (license) {
+        options.script.meta.licenses.push({ name: license });
+      });
+    }
+  } else {
+    options.script.meta.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
   // Show the groups the script belongs to
