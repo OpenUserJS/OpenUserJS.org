@@ -24,7 +24,7 @@ Strategy.findOne({ name: 'github' }, function(err, strat) {
     });
     console.log('GitHub client authenticated');
   } else {
-    console.warning('GitHub client NOT authenticated. Will have a lower Rate Limit.');
+    console.warn('GitHub client NOT authenticated. Will have a lower Rate Limit.');
   }
 
 });
