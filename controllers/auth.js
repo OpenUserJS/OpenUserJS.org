@@ -25,12 +25,10 @@ var openIdStrategies = {};
 Strategy.find({}, function (err, strategies) {
 
   // Get OpenId strategies
-  if (process.env.NODE_ENV === 'production') {
-    for (var name in allStrategies) {
-      if (!allStrategies[name].oauth) {
-        openIdStrategies[name] = true;
-        strategies.push({ 'name' : name, 'openid' : true });
-      }
+  for (var name in allStrategies) {
+    if (!allStrategies[name].oauth) {
+      openIdStrategies[name] = true;
+      strategies.push({ 'name' : name, 'openid' : true });
     }
   }
 
