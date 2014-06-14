@@ -34,7 +34,7 @@ Within moderation we understand the occasional necessity to conserve device stor
 ### Reserved Rights
 
 * OpenUserJs.org reserves the implied right to publish, distribute, and terminate access to your published works and code snippets.
-* OpenUserJs.org allows all published works to be forked via this sites forking capabilities.
+* OpenUserJs.org allows all published works on this site to be forked via this sites forking capabilities.
 
 ### Default Licensing
 
