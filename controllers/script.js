@@ -73,6 +73,20 @@ var getScriptPageTasks = function(options) {
     }
   }
 
+  // Show licensings of the script
+  if (script.meta.license) {
+    if (typeof script.meta.license === 'string') {
+      options.script.meta.licenses = [{ name: script.meta.license }];
+    } else {
+      options.script.meta.licenses = [];
+      script.meta.license.forEach(function (license) {
+        options.script.meta.licenses.push({ name: license });
+      });
+    }
+  } else {
+    option.script.meta.licenses = [{ name: 'MIT License (Expat)' }];
+  }
+
   // Show the groups the script belongs to
   tasks.push(function (callback) {
     script.hasGroups = false;
