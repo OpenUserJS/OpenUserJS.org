@@ -1,13 +1,18 @@
 <h2 class="page-heading">
   <a href="{{{script.scriptInstallPageUrl}}}" class="pull-right">
     {{#script.isLib}}
-      <button class="btn btn-info"><i class="fa fa-file-text-o"></i> Raw Source</button>
+    <button class="btn btn-info"><i class="fa fa-file-text-o"></i> Raw Source</button>
     {{/script.isLib}}
     {{^script.isLib}}
-      <button class="btn btn-info"><i class="fa fa-download"></i> Install</button>
+    <button class="btn btn-info"><i class="fa fa-download"></i> Install</button>
     {{/script.isLib}}
   </a>
-  {{#script.icon45Url}}<span class="page-heading-icon"><img src="{{{script.icon45Url}}}" alt="" /></span> {{/script.icon45Url}} <a href="{{{script.author.userPageUrl}}}" class="script-author">{{script.author.name}}</a><span class="path-divider">/</span><a href="{{{script.scriptPageUrl}}}" class="script-name">{{script.name}}</a>
+  {{#script.icon45Url}}
+  <span class="page-heading-icon"><img src="{{{script.icon45Url}}}" alt="" /></span>
+  {{/script.icon45Url}}
+  <a href="{{{script.author.userPageUrl}}}" class="script-author">{{script.author.name}}</a>
+  <span class="path-divider">/</span>
+  <a href="{{{script.scriptPageUrl}}}" class="script-name">{{script.name}}</a>
 </h2>
 <nav class="navbar navbar-default navbar-static-top" role="navigation">
   <div class="navbar-header">
@@ -17,7 +22,7 @@
   </div>
   <div class="navbar-collapse collapse in" id="content-navbar">
     <ul class="nav navbar-nav">
-      <li class="{{#isScriptPage}}active{{/isScriptPage}}"><a href="{{{script.scriptPageUrl}}}" class="">About</a></li>
+      <li class="{{#isScriptPage}}active{{/isScriptPage}}"><a href="{{{script.scriptPageUrl}}}">About</a></li>
       <li class="{{#isScriptViewSourcePage}}active{{/isScriptViewSourcePage}}"><a href="{{{script.scriptViewSourcePageUrl}}}" class="{{^script.scriptViewSourcePageUrl}}disabled{{/script.scriptViewSourcePageUrl}}">Source Code</a></li>
       <li class="{{#isScriptIssuesPage}}active{{/isScriptIssuesPage}}"><a href="{{{script.scriptIssuesPageUrl}}}" class="{{^script.scriptIssuesPageUrl}}disabled{{/script.scriptIssuesPageUrl}}">Issues <span class="badge">{{issueCount}}</span></a></li>
     </ul>
