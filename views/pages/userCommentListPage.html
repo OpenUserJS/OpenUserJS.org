@@ -17,13 +17,20 @@
               <div class="row">
                 <section class="topic-area list-group">
                   {{#commentList}}
-                    <div class="topic-title row container-fluid">
-                      <ol class="breadcrumb pull-left">
-                        <li class="active"><a href="{{{discussion.discussionPageUrl}}}">{{discussion.topic}}</a></li>
-                      </ol>
+                  <div class="topic-title row container-fluid">
+                    <ol class="breadcrumb pull-left">
+                      <li class="active"><a href="{{{discussion.discussionPageUrl}}}">{{discussion.topic}}</a></li>
+                    </ol>
+                  </div>
+                  {{> includes/comment.html }}
+                  <hr>
+                  {{/commentList}}
+                  {{^commentList}}
+                  <div class="panel">
+                    <div class="panel-body">
+                      <em>This user hasn't posted any comments yet.</em>
                     </div>
-                    {{> includes/comment.html }}
-                    <hr>
+                  </div>
                   {{/commentList}}
                   <div class="text-center">
                     {{{paginationRendered}}}
