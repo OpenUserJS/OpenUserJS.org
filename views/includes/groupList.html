@@ -22,5 +22,14 @@
       </td>
     </tr>
     {{/groupList}}
+    {{^groupList}}
+    <tr class="tr-link">
+      <td colspan="4">
+        {{#searchBarValue}}
+        <em>We couldn't find any groups with this search value.</em>
+        {{/searchBarValue}}
+      </td>
+    </tr>
+    {{/groupList}}
   </tbody>
 </table>
