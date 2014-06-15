@@ -9,7 +9,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 
 * [Git](http://git-scm.com/)
 * [node.js 0.10.x](http://nodejs.org/)
-* [MongoDB](http://www.mongodb.org/)
+* [MongoDB](http://www.mongodb.org/) (Optional.  The project is preconfigured to use a [mongolab](https://mongolab.com/) dev DB.)
 * [Ruby](https://www.ruby-lang.org/) (required to run [FakeS3](https://github.com/jubos/fake-s3/))
 * [FakeS3](https://github.com/jubos/fake-s3) (required to store libraries/scripts without [AWS S3](http://aws.amazon.com/s3/))
 
@@ -19,19 +19,22 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 
 1. Log in to GitHub and navigate to https://github.com/OpenUserJs/OpenUserJS.org
 2. Click the "Fork" button to create your own fork of the project
-3. After your fork has been created copy the "SSH clone URL" value, open a terminal, navigate to a desired local directory, and run the following:
+3. After your fork has been created copy the "SSH clone URL" value, open a terminal, navigate to a desired local directory, and run the following (replacing the URL with your own):
   * `git clone git@github.com:your_username_here/OpenUserJS.org.git`
 4. You now have a local copy associated with your fork (referred to as the "origin" remote) on GitHub.  To ensure you can retrieve the latest code from the original project, run the following to create an "upstream" remote:
-  * `git remote add upstream https://github.com/OpenUserJs/OpenUserJS.org.git`
+  * `git remote add upstream git@github.com:OpenUserJs/OpenUserJS.org.git`
 5. You are now able to commit changes to your fork, initiate pull requests via your fork's GitHub page, and retrieve the latest code from "upstream" (e.g. `git pull upstream master`).
 
 
 #### Installation
 
 1. Follow the forking instructions above to get a local copy of the project, or simply retrieve the code [as a ZIP](https://github.com/OpenUserJs/OpenUserJS.org/archive/master.zip) and extract it somewhere.
-2. Navigate to the project directory and run `npm install -d` to install the dependencies defined within [package.json](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json)
-3. If not already installed, run `sudo apt-get install ruby` (or similar for your package manager) to install Ruby.  Windows users should use [RubyInstaller](http://rubyinstaller.org/).
-4. If not already installed, run `sudo gem install fakes3` to install FakeS3.  Windows users should use [RubyInstaller](http://rubyinstaller.org/).
+2. Navigate to the project directory and run `npm install` to install the dependencies defined within [package.json](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json)
+3. If not already installed, install Ruby:
+  * **Linux:** Run `sudo apt-get install ruby` (or similar for your package manager)
+  * **Mac:** Use [Homebrew](http://brew.sh/) and [RubyGems](https://rubygems.org/)
+  * **Windows:**  Use [RubyInstaller](http://rubyinstaller.org/)
+4. If not already installed, install FakeS3 by running `gem install fakes3`
 
 #### Configuration
 
@@ -40,7 +43,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
   * `use oujs_dev`
   * `db.createCollection("strategies")`
   * `db.strategies.insert({id: "your_GitHub_client_ID", key: "your_GitHub_secret", name: "github", display: "GitHub"})`
-3. Edit `models/settings.json`, setting your desired session secret, [MongoDB connection string](http://docs.mongodb.org/manual/reference/connection-string/), etc.
+3. Edit `models/settings.json`, setting your desired session secret, [MongoDB connection string](http://docs.mongodb.org/manual/reference/connection-string/) (if using your own MongoDB instance), etc.
 
 #### Running the Application
 
