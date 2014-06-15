@@ -40,7 +40,12 @@
     {{^scriptList}}
     <tr class="tr-link">
       <td colspan="4">
+        {{#searchBarValue}}
+        <em>We couldn't find any scripts with this search value.</em>
+        {{/searchBarValue}}
+        {{^searchBarValue}}
         <em>This user hasn't added any scripts yet.</em>
+        {{/searchBarValue}}
       </td>
     </tr>
     {{/scriptList}}
