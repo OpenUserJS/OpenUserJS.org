@@ -41,7 +41,12 @@
     <tr class="tr-link">
       <td colspan="4">
         {{#searchBarValue}}
+        {{#librariesOnly}}
+        <em>We couldn't find any libraries with this search value.</em>
+        {{/librariesOnly}}
+        {{^librariesOnly}}
         <em>We couldn't find any scripts with this search value.</em>
+        {{/librariesOnly}}
         {{/searchBarValue}}
         {{^searchBarValue}}
         <em>This user hasn't added any scripts yet.</em>
