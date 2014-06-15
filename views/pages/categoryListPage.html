@@ -13,12 +13,12 @@
           Discuss
         </h2>
         <div class="list-group">
-        {{#categoryList}}
+          {{#categoryList}}
           <a href="{{{categoryPageUrl}}}" class="list-group-item">
             <h4 class="list-group-item-heading">{{name}}</h4>
             <p class="list-group-item-text">{{description}}</p>
           </a>
-        {{/categoryList}}
+          {{/categoryList}}
         </div>
         <div class="panel panel-default">
           {{> includes/discussionList.html }}
@@ -26,7 +26,6 @@
         <div class="text-center">
           {{{paginationRendered}}}
         </div>
-
       </div>
     </div>
   </div>
