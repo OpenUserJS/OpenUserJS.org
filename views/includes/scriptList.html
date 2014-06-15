@@ -11,15 +11,15 @@
     {{#scriptList}}
     <tr class="tr-link">
       <td>
-          <span class="script-icon hidden-xs">
+        <span class="script-icon hidden-xs">
           {{#icon16Url}}
-            <img src="{{{icon16Url}}}" alt="">
+          <img src="{{{icon16Url}}}" alt="">
           {{/icon16Url}}
           {{^icon16Url}}
-            <i class="fa fa-fw fa-file-code-o"></i>
+          <i class="fa fa-fw fa-file-code-o"></i>
           {{/icon16Url}}
-          </span>
-          <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}} <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</span></a>
+        </span>
+        <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}} <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</span></a>
         <p>{{meta.description}}</p>
       </td>
       <td class="text-center td-fit">
@@ -34,6 +34,13 @@
       </td>
       <td class="text-center td-fit">
         <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
+      </td>
+    </tr>
+    {{/scriptList}}
+    {{^scriptList}}
+    <tr class="tr-link">
+      <td colspan="4">
+        <em>This user hasn't added any scripts yet.</em>
       </td>
     </tr>
     {{/scriptList}}
