@@ -88,6 +88,18 @@ var getScriptPageTasks = function(options) {
       options.script.meta.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
+  // Show homepages of the script
+  if (script.meta.homepageURL) {
+    if (typeof script.meta.homepageURL === 'string') {
+      options.script.meta.homepages = [{ name: script.meta.homepageURL }];
+    } else {
+      options.script.meta.homepages = [];
+      script.meta.homepageURL.forEach(function (homepage) {
+        options.script.meta.homepages.push({ name: homepage });
+      });
+    }
+  }
+
   // Show the groups the script belongs to
   tasks.push(function (callback) {
     script.hasGroups = false;

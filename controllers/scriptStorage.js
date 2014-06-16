@@ -120,8 +120,11 @@ function parseMeta(aString) {
     name = lineMatches[1];
     value = lineMatches[2];
     switch (name) {
-      case "licence":
-        name = "license";
+      case 'licence':
+        name = 'license';
+        break;
+      case 'homepage':
+        name = 'homepageURL';
         break;
     }
     if (!headers[name] || unique[name]) {
