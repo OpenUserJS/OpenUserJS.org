@@ -48,9 +48,19 @@
         <em>We couldn't find any scripts with this search value.</em>
         {{/librariesOnly}}
         {{/searchBarValue}}
-        {{^searchBarValue}}
+
+        {{#isUserScriptListPage}}
         <em>This user hasn't added any scripts yet.</em>
-        {{/searchBarValue}}
+        {{/isUserScriptListPage}}
+
+        {{#isFlagged}}
+        {{#librariesOnly}}
+        <em>No flagged libraries.</em>
+        {{/librariesOnly}}
+        {{^librariesOnly}}
+        <em>No flagged scripts.</em>
+        {{/librariesOnly}}
+        {{/isFlagged}}
       </td>
     </tr>
     {{/scriptList}}

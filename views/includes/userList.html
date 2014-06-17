@@ -26,6 +26,9 @@
         {{#searchBarValue}}
         <em>We couldn't find any users by this name.</em>
         {{/searchBarValue}}
+        {{#isFlagged}}
+        <em>No users.</em>
+        {{/isFlagged}}
       </td>
     </tr>
     {{/userList}}
