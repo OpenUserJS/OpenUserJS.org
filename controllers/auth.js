@@ -10,29 +10,29 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var addSession = require('../libs/modifySessions').add;
 
 // Unused but removing it breaks passport
-passport.serializeUser(function (user, done) {
+passport.serializeUser(function(user, done) {
   done(null, user._id);
 });
 
 // Setup all our auth strategies
 var openIdStrategies = {};
-Strategy.find({}, function (err, strategies) {
+Strategy.find({}, function(err, strategies) {
 
   // Get OpenId strategies
   for (var name in allStrategies) {
     if (!allStrategies[name].oauth) {
       openIdStrategies[name] = true;
-      strategies.push({ 'name' : name, 'openid' : true });
+      strategies.push({ 'name': name, 'openid': true });
     }
   }
 
   // Load the passport module for each strategy
-  strategies.forEach(function (strategy) {
+  strategies.forEach(function(strategy) {
     loadPassport(strategy);
   });
 });
 
-exports.auth = function (req, res, next) {
+exports.auth = function(req, res, next) {
   var user = req.session.user;
   var strategy = req.body.auth || req.route.params.strategy;
   var username = req.body.username || req.session.username;
@@ -68,8 +68,8 @@ exports.auth = function (req, res, next) {
     req.session.username = username;
   }
 
-  User.findOne({ name : { $regex : new RegExp('^' + username + '$', 'i') } },
-    function (err, user) {
+  User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
+    function(err, user) {
       var strategies = null;
       var strat = null;
 
@@ -93,10 +93,10 @@ exports.auth = function (req, res, next) {
       } else {
         return auth();
       }
-  });
+    });
 };
 
-exports.callback = function (req, res, next) {
+exports.callback = function(req, res, next) {
   var strategy = req.route.params.strategy;
   var username = req.session.username;
   var newstrategy = req.session.newstrategy;
@@ -109,55 +109,53 @@ exports.callback = function (req, res, next) {
   // Get the passport strategy instance so we can alter the _verfiy method
   strategyInstance = strategyInstances[strategy];
 
-
   // Hijak the private verify method so we can fuck shit up freely
   // We use this library for things it was never intended to do
   if (openIdStrategies[strategy]) {
-    strategyInstance._verify = function (id, done) {
+    strategyInstance._verify = function(id, done) {
       verifyPassport(id, strategy, username, req.session.user, done);
     }
   } else {
     strategyInstance._verify =
-      function (token, refreshOrSecretToken, profile, done) {
+      function(token, refreshOrSecretToken, profile, done) {
         req.session.profile = profile;
         verifyPassport(profile.id, strategy, username, req.session.user, done);
       }
   }
 
   // This callback will happen after the verify routine
-  var authenticate = passport.authenticate(strategy,
-    function (err, user, info) {
+  var authenticate = passport.authenticate(strategy, function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) {
+      return res.redirect(doneUrl + (doneUrl === '/' ? 'register' : '')
+        + '?authfail');
+    }
+
+    req.logIn(user, function(err) {
       if (err) { return next(err); }
-      if (!user) {
-        return res.redirect(doneUrl + (doneUrl === '/' ? 'register' : '')
-          + '?authfail');
+
+      // Store the user info in the session
+      req.session.user = user;
+
+      // Save the session id on the user model
+      user.sessionId = req.sessionID;
+
+      // Save GitHub username.
+      if (req.session.profile && req.session.profile.provider === 'github') {
+        user.ghUsername = req.session.profile.username;
       }
 
-      req.logIn(user, function(err) {
-        if (err) { return next(err); }
-
-        // Store the user info in the session
-        req.session.user = user;
-
-        // Save the session id on the user model
-        user.sessionId = req.sessionID;
-
-        // Save GitHub username.
-        if (req.session.profile && req.session.profile.provider === 'github') {
-          user.ghUsername = req.session.profile.username;
+      addSession(req, user, function() {
+        if (newstrategy) {
+          // Allow a user to link to another acount
+          return res.redirect('/auth/' + newstrategy);
+        } else {
+          // Delete the username that was temporarily stored
+          delete req.session.username;
+          return res.redirect(doneUrl);
         }
-
-        addSession(req, user, function () {
-          if (newstrategy) {
-            // Allow a user to link to another acount
-            return res.redirect('/auth/' + newstrategy);
-          } else {
-            // Delete the username that was temporarily stored
-            delete req.session.username;
-            return res.redirect(doneUrl);
-          }
-        });
       });
+    });
   });
 
   authenticate(req, res, next);

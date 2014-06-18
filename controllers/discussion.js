@@ -27,7 +27,7 @@ var categories = [
   },
 ];
 
-exports.categoryListPage = function (req, res, next) {
+exports.categoryListPage = function(req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -72,8 +72,8 @@ exports.categoryListPage = function (req, res, next) {
     //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
-    _.map(options.discussionList, function(discussion){
-      var category = _.findWhere(categories, {slug: discussion.category});
+    _.map(options.discussionList, function(discussion) {
+      var category = _.findWhere(categories, { slug: discussion.category });
       if (!category) {
         category = {
           name: discussion.category,
@@ -102,12 +102,12 @@ exports.categoryListPage = function (req, res, next) {
 };
 
 // List discussions for one of the three categories
-exports.list = function (req, res, next) {
+exports.list = function(req, res, next) {
   var authedUser = req.session.user;
 
   var categorySlug = req.route.params.shift();
 
-  var category = _.findWhere(categories, {slug: categorySlug});
+  var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
     return next();
 
@@ -132,7 +132,7 @@ exports.list = function (req, res, next) {
   var discussionListQuery = Discussion.find();
 
   // discussionListQuery: category
-  discussionListQuery.find({category: category.slug});
+  discussionListQuery.find({ category: category.slug });
 
   // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, req);
@@ -165,7 +165,7 @@ exports.list = function (req, res, next) {
 };
 
 // Locate a discussion and deal with topic url collisions
-function findDiscussion (category, topicUrl, callback) {
+function findDiscussion(category, topicUrl, callback) {
   // To prevent collisions we add an incrementing id to the topic url
   var topic = /(.+?)(?:_(\d+))?$/.exec(topicUrl);
   var query = { path: '/' + category + '/' + topic[1] };
@@ -175,7 +175,7 @@ function findDiscussion (category, topicUrl, callback) {
     query.duplicateId = Number(topic[2]);
   }
 
-  Discussion.findOne(query, function (err, discussion) {
+  Discussion.findOne(query, function(err, discussion) {
     if (err || !discussion) { return callback(null); }
     callback(discussion);
   });
@@ -183,17 +183,17 @@ function findDiscussion (category, topicUrl, callback) {
 exports.findDiscussion = findDiscussion;
 
 // List comments in a discussion
-exports.show = function (req, res, next) {
+exports.show = function(req, res, next) {
   var authedUser = req.session.user;
 
   var categorySlug = req.route.params.shift();
   var topic = req.route.params.shift();
 
-  var category = _.findWhere(categories, {slug: categorySlug});
+  var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
     return next();
 
-  findDiscussion(category.slug, topic, function (discussionData) {
+  findDiscussion(category.slug, topic, function(discussionData) {
     if (!discussionData) { return next(); }
 
     //
@@ -220,7 +220,7 @@ exports.show = function (req, res, next) {
     var commentListQuery = Comment.find();
 
     // commentListQuery: discussion
-    commentListQuery.find({_discussionId: discussion._id});
+    commentListQuery.find({ _discussionId: discussion._id });
 
     // commentListQuery: Defaults
     modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
@@ -243,7 +243,7 @@ exports.show = function (req, res, next) {
       //--- PreRender
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
-      _.map(options.commentList, function(comment){
+      _.map(options.commentList, function(comment) {
         comment.author = modelParser.parseUser(comment._authorId);
       });
       _.map(options.commentList, modelParser.renderComment);
@@ -258,7 +258,7 @@ exports.show = function (req, res, next) {
 };
 
 // UI to create a new topic
-exports.newTopic = function (req, res, next) {
+exports.newTopic = function(req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser)
@@ -266,7 +266,7 @@ exports.newTopic = function (req, res, next) {
 
   var categorySlug = req.route.params.category;
 
-  var category = _.findWhere(categories, {slug: categorySlug});
+  var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
     return next();
 
@@ -291,7 +291,7 @@ exports.newTopic = function (req, res, next) {
 };
 
 // Does all the work of submitting a new comment and updating the discussion
-function postComment (user, discussion, content, creator, callback) {
+function postComment(user, discussion, content, creator, callback) {
   var created = new Date();
   var comment = new Comment({
     content: content,
@@ -306,7 +306,7 @@ function postComment (user, discussion, content, creator, callback) {
     _authorId: user._id
   });
 
-  comment.save(function (err, comment) {
+  comment.save(function(err, comment) {
     ++discussion.comments;
     discussion.lastCommentor = user.name;
     discussion.updated = new Date();
@@ -317,7 +317,7 @@ exports.postComment = postComment;
 
 // Does all the work of submitting a new topic and
 // resolving topic url collisions
-function postTopic (user, category, topic, content, issue, callback) {
+function postTopic(user, category, topic, content, issue, callback) {
   var urlTopic = cleanFilename(topic, '').replace(/_\d+$/, '');
   var path = '/' + category + '/' + urlTopic;
   var params = { sort: {} };
@@ -325,7 +325,7 @@ function postTopic (user, category, topic, content, issue, callback) {
 
   if (!urlTopic) { callback(null); }
 
-  Discussion.findOne({ path: path }, params, function (err, discussion) {
+  Discussion.findOne({ path: path }, params, function(err, discussion) {
     var newDiscussion = null;
     var props = {
       topic: topic,
@@ -356,9 +356,9 @@ function postTopic (user, category, topic, content, issue, callback) {
 
     newDiscussion = new Discussion(props);
 
-    newDiscussion.save(function (err, discussion) {
+    newDiscussion.save(function(err, discussion) {
       // Now post the first comment
-      postComment(user, discussion, content, true, function (err, discussion) {
+      postComment(user, discussion, content, true, function(err, discussion) {
         callback(discussion);
       });
     });
@@ -367,7 +367,7 @@ function postTopic (user, category, topic, content, issue, callback) {
 exports.postTopic = postTopic;
 
 // post route to create a new topic
-exports.createTopic = function (req, res, next) {
+exports.createTopic = function(req, res, next) {
   var user = req.session.user;
   var category = req.route.params.category;
   var topic = req.body['discussion-topic'];
@@ -375,7 +375,7 @@ exports.createTopic = function (req, res, next) {
 
   if (!user) { return next(); }
 
-  postTopic(user, category, topic, content, false, function (discussion) {
+  postTopic(user, category, topic, content, false, function(discussion) {
     if (!discussion) { return exports.newTopic(req, res, next); }
 
     res.redirect(encodeURI(discussion.path
@@ -384,7 +384,7 @@ exports.createTopic = function (req, res, next) {
 };
 
 // post route to create a new comment on an existing discussion
-exports.createComment = function (req, res, next) {
+exports.createComment = function(req, res, next) {
   var category = req.route.params.category;
   var topic = req.route.params.topic;
   var user = req.session.user;
@@ -393,10 +393,10 @@ exports.createComment = function (req, res, next) {
 
   if (!user) { return next(); }
 
-  findDiscussion(category, topic, function (discussion) {
+  findDiscussion(category, topic, function(discussion) {
     if (!discussion) { return next(); }
 
-    postComment(user, discussion, content, false, function (err, discussion) {
+    postComment(user, discussion, content, false, function(err, discussion) {
       res.redirect(encodeURI(discussion.path
         + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
     });

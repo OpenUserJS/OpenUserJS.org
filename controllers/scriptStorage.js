@@ -15,13 +15,15 @@ if (process.env.NODE_ENV === 'production') {
   // You need to install (and ruby too): https://github.com/jubos/fake-s3
   // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
   var DEV_AWS_URL = process.env.DEV_AWS_URL || 'localhost:10001';
-  AWS.config.update({ accessKeyId: 'fakeId', secretAccessKey: 'fakeKey',
+  AWS.config.update({
+    accessKeyId: 'fakeId', secretAccessKey: 'fakeKey',
     httpOptions: {
-    proxy: DEV_AWS_URL, agent: require('http').globalAgent
-  }});
+      proxy: DEV_AWS_URL, agent: require('http').globalAgent
+    }
+  });
 }
 
-function getInstallName (req) {
+function getInstallName(req) {
   var username = req.route.params.username.toLowerCase();
   var namespace = req.route.params.namespace;
   return username + '/' + (namespace ? namespace + '/' : '')
@@ -29,11 +31,11 @@ function getInstallName (req) {
 }
 exports.getInstallName = getInstallName;
 
-exports.getSource = function (req, callback) {
+exports.getSource = function(req, callback) {
   var s3 = new AWS.S3();
   var installName = getInstallName(req);
 
-  Script.findOne({ installName: installName }, function (err, script) {
+  Script.findOne({ installName: installName }, function(err, script) {
     if (!script) { return callback(null); }
 
     // Get the script
@@ -42,7 +44,7 @@ exports.getSource = function (req, callback) {
   });
 };
 
-exports.sendScript = function (req, res, next) {
+exports.sendScript = function(req, res, next) {
   var accept = req.headers.accept;
   var installName = null;
 
@@ -50,7 +52,7 @@ exports.sendScript = function (req, res, next) {
     return exports.sendMeta(req, res, next);
   }
 
-  exports.getSource(req, function (script, stream) {
+  exports.getSource(req, function(script, stream) {
     if (!script) { return next(); }
 
     // Send the script
@@ -62,15 +64,15 @@ exports.sendScript = function (req, res, next) {
 
     // Update the install count
     ++script.installs;
-    script.save(function (err, script) {});
+    script.save(function(err, script) { });
   });
 };
 
 // Send user script metadata block
-exports.sendMeta = function (req, res, next) {
+exports.sendMeta = function(req, res, next) {
   var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
 
-  Script.findOne({ installName: installName }, function (err, script) {
+  Script.findOne({ installName: installName }, function(err, script) {
     var meta = null;
 
     if (!script) { return next(); }
@@ -79,9 +81,9 @@ exports.sendMeta = function (req, res, next) {
     meta = script.meta;
 
     res.write('// ==UserScript==\n');
-    Object.keys(meta).reverse().forEach(function (key) {
+    Object.keys(meta).reverse().forEach(function(key) {
       if (meta[key] instanceof Array) {
-        meta[key].forEach(function (value) {
+        meta[key].forEach(function(value) {
           res.write('// @' + key + '    ' + value + '\n');
         });
       } else {
@@ -111,7 +113,7 @@ function parseMeta(aString) {
     'author': true
   };
 
-  lines = aString.split(/[\r\n]+/).filter(function (e, i, a) {
+  lines = aString.split(/[\r\n]+/).filter(function(e, i, a) {
     return (e.match(re));
   });
 
@@ -138,7 +140,7 @@ function parseMeta(aString) {
 }
 exports.parseMeta = parseMeta;
 
-exports.getMeta = function (chunks, callback) {
+exports.getMeta = function(chunks, callback) {
   // We need to convert the array of buffers to a string to
   // parse the header. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
@@ -158,7 +160,7 @@ exports.getMeta = function (chunks, callback) {
   callback(null);
 };
 
-exports.storeScript = function (user, meta, buf, callback, update) {
+exports.storeScript = function(user, meta, buf, callback, update) {
   var s3 = new AWS.S3();
   var namespace = null;
   var scriptName = null;
@@ -207,9 +209,9 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         requires = meta.require;
       }
 
-      requires.forEach(function (require) {
-          var match = libraryRegex.exec(require);
-          if (match && match[1]) { libraries.push(match[1]); }
+      requires.forEach(function(require) {
+        var match = libraryRegex.exec(require);
+        if (match && match[1]) { libraries.push(match[1]); }
       });
     }
   } else {
@@ -221,7 +223,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
 
   // Prevent a removed script from being reuploaded
   findDeadorAlive(Script, { installName: installName }, true,
-    function (alive, script, removed) {
+    function(alive, script, removed) {
 
       if (removed || (!script && (update || collaborators))) {
         return callback(null);
@@ -255,9 +257,9 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         script.updated = new Date();
       }
 
-      script.save(function (err, script) {
-        s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
-          function (err, data) {
+      script.save(function(err, script) {
+        s3.putObject({ Bucket: bucketName, Key: installName, Body: buf },
+          function(err, data) {
             if (user.role === userRoles.length - 1) {
               var userDoc = user;
               if (!userDoc.save) {
@@ -265,25 +267,25 @@ exports.storeScript = function (user, meta, buf, callback, update) {
                 userDoc = new User(userDoc);
               }
               --userDoc.role;
-              userDoc.save(function (err, user) { callback(script); });
+              userDoc.save(function(err, user) { callback(script); });
             } else {
               callback(script);
             }
-        });
+          });
       });
-  });
+    });
 };
 
-exports.deleteScript = function (installName, callback) {
-  Script.findOneAndRemove({ installName: installName }, function (err, user) {
+exports.deleteScript = function(installName, callback) {
+  Script.findOneAndRemove({ installName: installName }, function(err, user) {
     var s3 = new AWS.S3();
-    s3.deleteObject({ Bucket : bucketName, Key : installName}, callback);
+    s3.deleteObject({ Bucket: bucketName, Key: installName }, callback);
   });
 };
 
 // GitHub calls this on a push if a webhook is setup
 // This controller makes sure we have the latest version of a script
-exports.webhook = function (req, res) {
+exports.webhook = function(req, res) {
   var RepoManager = require('../libs/repoManager');
   var payload = null;
   var username = null;
@@ -291,7 +293,7 @@ exports.webhook = function (req, res) {
   var repos = {};
   var repo = null;
 
-  res.end(); // close connection
+  res.end(); // Close connection
 
   // Test for know GH webhook ips: https://api.github.com/meta
   if (!req.body.payload ||
@@ -312,12 +314,12 @@ exports.webhook = function (req, res) {
   repo = repos[reponame] = {};
 
   // Find the user that corresponds the repo owner
-  User.findOne({ ghUsername: username }, function (err, user) {
+  User.findOne({ ghUsername: username }, function(err, user) {
     if (!user) { return; }
 
     // Gather the modified user scripts
-    payload.commits.forEach(function (commit) {
-      commit.modified.forEach(function (filename) {
+    payload.commits.forEach(function(commit) {
+      commit.modified.forEach(function(filename) {
         if (filename.substr(-8) === '.user.js') {
           repo[filename] = '/' + encodeURI(filename);
         }
@@ -326,6 +328,6 @@ exports.webhook = function (req, res) {
 
     // Update modified scripts
     var repoManager = RepoManager.getManager(null, user, repos);
-    repoManager.loadScripts(function (){}, true);
+    repoManager.loadScripts(function() { }, true);
   });
 };
