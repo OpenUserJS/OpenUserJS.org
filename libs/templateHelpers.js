@@ -15,7 +15,7 @@ var paginateTemplate = function(opts) {
 
   var linkedPages = [];
 
-  for (var i = Math.max(1, currentPage - distVisible) ; i <= Math.min(currentPage + distVisible, lastPage) ; i++)
+  for (var i = Math.max(1, currentPage - distVisible); i <= Math.min(currentPage + distVisible, lastPage); i++)
     linkedPages.push(i);
 
   if (firstVisible && linkedPages.length > 0 && linkedPages[0] != 1)

@@ -16,9 +16,11 @@ if (process.env.NODE_ENV === 'production') {
   // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
   var DEV_AWS_URL = process.env.DEV_AWS_URL || 'localhost:10001';
   AWS.config.update({
-    accessKeyId: 'fakeId', secretAccessKey: 'fakeKey',
+    accessKeyId: 'fakeId',
+    secretAccessKey: 'fakeKey',
     httpOptions: {
-      proxy: DEV_AWS_URL, agent: require('http').globalAgent
+      proxy: DEV_AWS_URL,
+      agent: require('http').globalAgent
     }
   });
 }
@@ -224,7 +226,6 @@ exports.storeScript = function(user, meta, buf, callback, update) {
   // Prevent a removed script from being reuploaded
   findDeadorAlive(Script, { installName: installName }, true,
     function(alive, script, removed) {
-
       if (removed || (!script && (update || collaborators))) {
         return callback(null);
       } else if (!script) {
