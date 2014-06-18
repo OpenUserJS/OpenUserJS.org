@@ -34,7 +34,11 @@ function getOAuthStrategies(stored) {
     strategy = strategies[type];
     if (strategy.oauth) {
       oAuthStrats.push(stored[type] ||
-        nil({ 'strat': type, 'id': '', 'key': '' }));
+        nil({
+          'strat': type,
+          'id': '',
+          'key': ''
+        }));
     }
   }
 
@@ -57,7 +61,8 @@ exports.userAdmin = function(req, res, next) {
       var roles = [];
       userRoles.forEach(function(role, index) {
         roles.push({
-          'val': index, 'display': role,
+          'val': index,
+          'display': role,
           'selected': index === user.role
         });
       });
@@ -103,7 +108,7 @@ var jsonModelMap = {
   'Discussion': Discussion,
   'Comment': Comment,
   'Vote': Vote,
-  'Flag': Flag,
+  'Flag': Flag
 };
 // View everything about a particular user
 // This is mostly for debugging in production
