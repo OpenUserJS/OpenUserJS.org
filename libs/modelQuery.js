@@ -134,7 +134,7 @@ var applyModelListQueryFlaggedFilter = function(modelListQuery, options, flagged
     if (flaggedQuery) {
       if (flaggedQuery == 'true') {
         options.isFlagged = true;
-        modelListQuery.and({flags: {$gt: 0 }});
+        modelListQuery.and({ flags: { $gt: 0 } });
       } else if (flaggedQuery == false) {
         // modelListQuery.and({$or: [
         //   {flags: {$exists: false}},

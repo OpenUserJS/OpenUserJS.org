@@ -188,6 +188,9 @@ exports.userListPage = function (req, res, next) {
     } else if (options.searchBarValue) {
       options.userListIsEmptyMessage = 'We couldn\'t find any users by this name.';
     }
+
+    // Heading
+    options.pageHeading = options.isFlagged ? 'Flagged Users' : 'Users';
   };
   function render(){ res.render('pages/userListPage', options); }
   function asyncComplete(err){ if (err) { return next(); } else { preRender(); render(); } };

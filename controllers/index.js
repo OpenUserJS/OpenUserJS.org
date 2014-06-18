@@ -99,6 +99,13 @@ exports.home = function (req, res) {
     } else if (options.isUserScriptListPage) {
       options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
     }
+
+    // Heading
+    if (options.librariesOnly) {
+      options.pageHeading = options.isFlagged ? 'Flagged Libraries' : 'Libraries';
+    } else {
+      options.pageHeading = options.isFlagged ? 'Flagged Scripts' : 'Scripts';
+    }
   };
   function render(){ res.render('pages/scriptListPage', options); }
   function asyncComplete(){ preRender(); render(); }
