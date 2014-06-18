@@ -244,6 +244,7 @@ exports.parseGroup = parseGroup;
 var parseDiscussion = function(discussionData) {
   if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
+  // var discussion = discussionData; // Can't override discussionData.category
 
   // Urls
   discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
@@ -264,6 +265,9 @@ var parseDiscussion = function(discussionData) {
     };
   });
   discussion.recentCommentors = recentCommentors;
+
+  // Replies
+  discussion.replies = (discussion.comments && discussion.comments > 0) ? discussion.comments - 1 : 0;
 
   //discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 

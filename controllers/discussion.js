@@ -11,6 +11,11 @@ var execQueryTask = require('../libs/tasks').execQueryTask;
 
 var categories = [
   {
+    slug: 'announcements',
+    name: 'Announcements',
+    description: 'UserScripts News (OpenUserJS, GreaseMonkey, etc)'
+  },
+  {
     slug: 'garage',
     name: 'The Garage',
     description: 'Talk shop, and get help with user script development'
@@ -26,6 +31,7 @@ var categories = [
     description: 'Off-topic discussion about anything related to user scripts or OpenUserJS.org'
   },
 ];
+exports.categories = categories;
 
 exports.categoryListPage = function (req, res, next) {
   var authedUser = req.session.user;

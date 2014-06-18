@@ -3,6 +3,7 @@ var express = require('express');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
 var passport = require('passport');
+var util = require('util');
 
 var app = express();
 
@@ -218,11 +219,18 @@ app_route('/api/group/search/:term/:addTerm?').get(group.search);
 
 // Discussion routes
 app_route('/forum').get(discussion.categoryListPage);
-app.get(listRegex('\/(corner|garage|discuss)', ''), discussion.list);
-app.get(listRegex('\/(corner|garage|discuss)\/([^\/]+?)', ''), discussion.show);
-app.get('/post/:category(corner|garage|discuss)', discussion.newTopic);
-app.post('/post/:category(corner|garage|discuss)', discussion.createTopic);
-app.post('/:category(corner|garage|discuss)/:topic', discussion.createComment);
+app_route('/forum/:category(announcements|corner|garage|discuss)').get(discussion.list);
+app_route('/forum/:category(announcements|corner|garage|discuss)/new').get(discussion.newTopic).post(discussion.createTopic);
+app_route('/forum/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(discussion.createComment);
+
+// Discussion routes: Legacy
+// app_route('/:category(announcements|corner|garage|discuss)').get(function(req, res, next) { res.redirect(util.format('/forum/%s', req.route.params.category)); });
+// app_route('/:category(announcements|corner|garage|discuss)/:topic').get(function(req, res, next) { res.redirect(util.format('/forum/%s/%s', req.route.params.category, req.route.params.topic)) });
+app.get(listRegex('\/(announcements|corner|garage|discuss)', ''), discussion.list);
+app.get(listRegex('\/(announcements|corner|garage|discuss)\/([^\/]+?)', ''), discussion.show);
+app.get('/post/:category(announcements|corner|garage|discuss)', discussion.newTopic);
+app.post('/post/:category(announcements|corner|garage|discuss)', discussion.createTopic);
+app.post('/:category(announcements|corner|garage|discuss)/:topic', discussion.createComment);
 
 // Search routes
 app.post('/search', function(req, res) {
