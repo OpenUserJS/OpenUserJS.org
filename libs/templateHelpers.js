@@ -2,7 +2,6 @@ var countTask = require('../libs/tasks').countTask;
 var helpers = require('../libs/helpers');
 var modelParser = require('../libs/modelParser');
 
-
 var paginateTemplate = function(opts) {
   // Required
   var currentPage = opts.currentPage;
@@ -16,15 +15,14 @@ var paginateTemplate = function(opts) {
 
   var linkedPages = [];
 
-  for (var i = Math.max(1, currentPage - distVisible); i <= Math.min(currentPage + distVisible, lastPage); i++)
+  for (var i = Math.max(1, currentPage - distVisible) ; i <= Math.min(currentPage + distVisible, lastPage) ; i++)
     linkedPages.push(i);
 
   if (firstVisible && linkedPages.length > 0 && linkedPages[0] != 1)
     linkedPages.splice(0, 0, 1); // insert the value 1 at index 0
 
-  if (lastVisible && linkedPages.length > 0 && linkedPages[linkedPages.length-1] != lastPage)
+  if (lastVisible && linkedPages.length > 0 && linkedPages[linkedPages.length - 1] != lastPage)
     linkedPages.push(lastPage);
-
 
   var html = '';
   html += '<ul class="pagination">';
@@ -56,7 +54,7 @@ var newPagination = function(currentPage, itemsPerPage) {
     currentPage: null,
     itemsPerPage: null,
     startIndex: null,
-    numItems: null,
+    numItems: null
   };
   pagination.applyToQuery = function(modelListQuery) {
     pagination.startIndex = (pagination.currentPage * pagination.itemsPerPage) - pagination.itemsPerPage;
@@ -79,7 +77,6 @@ var newPagination = function(currentPage, itemsPerPage) {
 };
 exports.newPagination = newPagination;
 
-
 var getDefaultPagination = function(req) {
   var pagination = newPagination(req.query.p, req.query.limit);
   pagination.renderDefault = function(req) {
@@ -93,8 +90,7 @@ var getDefaultPagination = function(req) {
 };
 exports.getDefaultPagination = getDefaultPagination;
 
-
-exports.statusCodePage = function (req, res, next, options) {
+exports.statusCodePage = function(req, res, next, options) {
   var authedUser = req.session ? req.session.user : null;
 
   //

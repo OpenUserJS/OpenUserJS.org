@@ -6,13 +6,13 @@ var async = require('async');
 var modelNames = ['Script'];
 var models = {};
 
-modelNames.forEach(function (modelName) {
+modelNames.forEach(function(modelName) {
   models[modelName] = require('../models/' +
     modelName.toLowerCase())[modelName];
 });
 
 // Determine whether content can be removed by a user.
-function removeable (model, content, user, callback) {
+function removeable(model, content, user, callback) {
   // The user must be logged in
   // The user is a moderator then the content must be flagged
   // If the user is an admin or greater then the content may be removed
@@ -27,7 +27,7 @@ function removeable (model, content, user, callback) {
       content);
   }
 
-  User.findOne({ _id: content._authorId }, function (err, author) {
+  User.findOne({ _id: content._authorId }, function(err, author) {
     // Content without an author shouldn't exist
     if (err || !author) { return callback(false); }
 
@@ -41,7 +41,7 @@ function removeable (model, content, user, callback) {
 }
 exports.removeable = removeable;
 
-function remove (model, content, user, reason, callback) {
+function remove(model, content, user, reason, callback) {
   var remove = new Remove({
     'model': model.modelName,
     'content': content.toObject(),
@@ -52,28 +52,28 @@ function remove (model, content, user, reason, callback) {
     '_removerId': user._id
   });
 
-  remove.save(function (err, remove) {
-    content.remove(function (err) { callback(remove); });
+  remove.save(function(err, remove) {
+    content.remove(function(err) { callback(remove); });
   });
 }
 
-exports.remove = function (model, content, user, reason, callback) {
-  removeable(model, content, user, function (canRemove, author) {
+exports.remove = function(model, content, user, reason, callback) {
+  removeable(model, content, user, function(canRemove, author) {
     if (!canRemove) { return callback(false); }
 
     if (model.modelName !== 'User') {
       remove(model, content, user, reason, callback);
     } else {
       // Remove all the user's content
-      async.each(modelNames, function (modelName, cb) {
+      async.each(modelNames, function(modelName, cb) {
         var model = models[modelName];
         model.find({ _authorId: content._id },
-          function (err, contentArr) {
-            async.each(contentArr, function (content, innerCb) {
+          function(err, contentArr) {
+            async.each(contentArr, function(content, innerCb) {
               remove(model, content, user, null, innerCb);
             }, cb);
           });
-      }, function () {
+      }, function() {
         remove(model, content, user, reason, callback);
       });
     }
@@ -96,10 +96,10 @@ exports.remove = function (model, content, user, reason, callback) {
 //
 // The removed parameter is the Remove document containing the content
 // and is always returned if found, regardless of permissions.
-exports.findDeadorAlive = function (model, query, user, callback) {
+exports.findDeadorAlive = function(model, query, user, callback) {
   var modelName = model.modelName;
 
-  model.findOne(query, function (err, content) {
+  model.findOne(query, function(err, content) {
     var name = null;
     var rmQuery = { model: modelName };
 
@@ -112,7 +112,7 @@ exports.findDeadorAlive = function (model, query, user, callback) {
       rmQuery['content.' + name] = query[name];
     }
 
-    Remove.findOne(rmQuery, function (err, removed) {
+    Remove.findOne(rmQuery, function(err, removed) {
       if (err || !removed) { return callback(null, null, null); }
       if (!user || (user !== true && user.role > removed.removerRole)) {
         return callback(false, null, removed);

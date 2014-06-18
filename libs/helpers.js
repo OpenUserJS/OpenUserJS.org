@@ -22,12 +22,12 @@ var day = hour * 24;
 var week = day * 7;
 
 // Get a formatted date that can be used everywhere a date is displayed
-exports.formatDate = function (date) {
+exports.formatDate = function(date) {
   var difference = new Date().getTime() - date.getTime();
   var ret = '';
   var days = 0;
 
-  function pluralize (number, unit) {
+  function pluralize(number, unit) {
     return number + ' ' + unit + (number > 1 ? 's' : '') + ' ago';
   }
 
@@ -54,12 +54,12 @@ exports.formatDate = function (date) {
 }
 
 // Create an object with no properties
-exports.nil = function (obj) {
+exports.nil = function(obj) {
   var nilObj = Object.create(null);
 
   if (!obj) return nilObj;
 
-  exports.forIn(obj, function (val, key) {
+  exports.forIn(obj, function(val, key) {
     nilObj[key] = val;
   });
 
@@ -67,7 +67,7 @@ exports.nil = function (obj) {
 };
 
 // Safely iterate on an object not create using nil()
-exports.forIn = function (obj, forProp) {
+exports.forIn = function(obj, forProp) {
   var key = null;
 
   for (key in obj) {
@@ -78,9 +78,9 @@ exports.forIn = function (obj, forProp) {
 
 // Clean filenames but leave them readable
 // Based on Greasemonkey modules/remoteScript.js
-exports.cleanFilename = function (filename, defaultName) {
+exports.cleanFilename = function(filename, defaultName) {
   // Blacklist problem characters (slashes, colons, etc.).
-  var cleanName = (filename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
+  var cleanName = (filename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '');
 
   // Make whitespace readable.
   .replace(/(\s|%20)+/g, '_');
@@ -107,7 +107,7 @@ exports.setUrlQueryValue = setUrlQueryValue;
 
 exports.updateUrlQueryString = function(baseUrl, dict) {
   var url = baseUrl;
-  _.each(dict, function(value, key){
+  _.each(dict, function(value, key) {
     url = setUrlQueryValue(url, key, value);
   });
   return url;

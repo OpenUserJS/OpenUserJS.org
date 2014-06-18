@@ -5,7 +5,7 @@ var userRoles = require('../models/userRoles.json');
 
 // This is a custom verification function used for Passports because
 // we needed something more powerful than what they provided
-exports.verify = function (id, strategy, username, loggedIn, done) {
+exports.verify = function(id, strategy, username, loggedIn, done) {
   var shasum = crypto.createHash('sha256');
   var digest = null;
 
@@ -19,19 +19,19 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
     digest = shasum.digest('hex');
   }
 
-  findDeadorAlive(User, { 'auths' : digest }, true,
-    function (alive, user, removed) {
+  findDeadorAlive(User, { 'auths': digest }, true,
+    function(alive, user, removed) {
       var pos = user ? user.auths.indexOf(digest) : -1;
       if (removed) { done(null, false, 'user was removed'); }
 
       if (!user) {
-        User.findOne({ 'name' : username }, function (err, user) {
+        User.findOne({ 'name': username }, function(err, user) {
           if (user && loggedIn) {
             // Add the new strategy to same account
             // This allows linking multiple external accounts to one of ours
             user.auths.push(digest);
             user.strategies.push(strategy);
-            user.save(function (err, user) {
+            user.save(function(err, user) {
               return done(err, user);
             });
           } else if (user) {
@@ -40,14 +40,14 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
           } else {
             // Create a new user
             user = new User({
-              'name' : username,
-              'auths' : [digest],
-              'strategies' : [strategy],
-              'role' : userRoles.length - 1,
+              'name': username,
+              'auths': [digest],
+              'strategies': [strategy],
+              'role': userRoles.length - 1,
               'about': '',
               'ghUsername': null
             });
-            user.save(function (err, user) {
+            user.save(function(err, user) {
               return done(err, user);
             });
           }
@@ -58,12 +58,13 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
         user.auths.splice(pos, 1);
         user.strategies.push(strategy);
         user.auths.push(digest);
-        user.save(function (err, user) {
+        user.save(function(err, user) {
           return done(err, user);
         });
       } else {
         // The user was authenticated
         return done(null, user);
       }
-  });
+    }
+  );
 }

@@ -4,7 +4,7 @@ var xss = require('simple-xss');
 var renderer = new marked.Renderer();
 
 // Automatically generate an anchor for each header
-renderer.heading = function (text, level) {
+renderer.heading = function(text, level) {
   var escapedText = text.toLowerCase().replace(/<\/?[^>]+?>/g, '')
     .replace(/[^\w]+/g, '-');
 
@@ -21,7 +21,7 @@ renderer.heading = function (text, level) {
 
 // Set the options to use for rendering markdown
 marked.setOptions({
-  highlight: function (code, lang) {
+  highlight: function(code, lang) {
     if (lang && hljs.getLanguage(lang)) {
       return hljs.highlight(lang, code).value;
     } else {
@@ -38,6 +38,6 @@ marked.setOptions({
   smartypants: false
 });
 
-exports.renderMd = function (text) {
+exports.renderMd = function(text) {
   return xss(marked(text));
 };

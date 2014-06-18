@@ -17,19 +17,19 @@ var parseModelFnMap = {};
  */
 
 moment.lang('en', {
-  relativeTime : {
+  relativeTime: {
     future: "in %s",
-    past:   "%s ago",
-    s:  function(number, withoutSuffix, key, isFuture){ return number + "s"; },
-    m:  "1m",
+    past: "%s ago",
+    s: function(number, withoutSuffix, key, isFuture) { return number + "s"; },
+    m: "1m",
     mm: "%dm",
-    h:  "1h",
+    h: "1h",
     hh: "%dh",
-    d:  "1D",
+    d: "1D",
     dd: "%dD",
-    M:  "1M",
+    M: "1M",
     MM: "%dM",
-    y:  "1Y",
+    y: "1Y",
     yy: "%dY"
   }
 });
@@ -85,7 +85,7 @@ var parseScript = function(scriptData) {
 
   // Author
   if (_.isString(script.author)) {
-    script.author = parseUser({name: script.author});
+    script.author = parseUser({ name: script.author });
   }
 
   // Icons
@@ -128,7 +128,7 @@ var parseScript = function(scriptData) {
   // Urls: Issues
   var slug = (script.isLib ? 'libs' : 'scripts');
   slug += '/' + script.author.slug.toLowerCase();
-  slug += script.meta.namespace ?  '/' + script.namespaceSlug : '';
+  slug += script.meta.namespace ? '/' + script.namespaceSlug : '';
   slug += '/' + script.nameSlug;
   script.issuesCategorySlug = slug + '/issues';
   script.scriptIssuesPageUrl = '/' + script.issuesCategorySlug;
@@ -216,16 +216,16 @@ var parseGroup = function(groupData) {
 
   // Wait two hours between group rating updates
   // This calculation runs in the background
-  if (new Date().getTime() > (group.updated.getTime() + 1000*60*60*2)) {
+  if (new Date().getTime() > (group.updated.getTime() + 1000 * 60 * 60 * 2)) {
     Script.find({
       _id: { $in: group._scriptIds }
-    }, function (err, scripts) {
+    }, function(err, scripts) {
       if (!err && scripts.length > 1) {
         group.rating = getRating(scripts);
       }
 
       group.updated = new Date();
-      group.save(function(err, group){
+      group.save(function(err, group) {
         console.log(util.format('Group(%s) Rating Updated', group.name));
       });
     });
@@ -258,7 +258,7 @@ var parseDiscussion = function(discussionData) {
     recentCommentors.push(discussion.author);
   if (discussion.lastCommentor != discussion.author)
     recentCommentors.push(discussion.lastCommentor);
-  recentCommentors = _.map(recentCommentors, function(username){
+  recentCommentors = _.map(recentCommentors, function(username) {
     return {
       name: username,
     };
@@ -309,7 +309,6 @@ exports.renderComment = function(comment) {
   comment.contentRendered = renderMd(comment.content);
 };
 
-
 /**
  * Category
  */
@@ -328,7 +327,6 @@ var parseCategory = function(categoryData) {
 parseModelFnMap.Category = parseCategory;
 exports.parseCategory = parseCategory;
 
-
 /**
  * Remove
  */
@@ -337,7 +335,7 @@ var getRemovedItemDescription = function(remove) {
   if (!remove.content)
     return 'No content';
 
-  switch(remove.model) {
+  switch (remove.model) {
     case 'User':
       return remove.content.name;
     case 'Script':
@@ -360,7 +358,7 @@ var parseRemovedItem = function(removedItemData) {
   parseDateProperty(removedItem, 'removed');
 
   // User
-  removedItem.remover = parseUser({name: removedItem.removerName});
+  removedItem.remover = parseUser({ name: removedItem.removerName });
 
   // Content
   var parseModelFn = parseModelFnMap[removedItem.model];
