@@ -17,31 +17,31 @@ var group = require('./controllers/group');
 var discussion = require('./controllers/discussion');
 var issue = require('./controllers/issue');
 var scriptStorage = require('./controllers/scriptStorage');
+
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
-
-var modelParser = require('./libs/modelParser');
-
 var modifySessions = require('./libs/modifySessions');
+
 var settings = require('./models/settings.json');
+
 var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
-var dbOptions = { server : { socketOptions : { keepAlive: 1 } } };
+var dbOptions = { server: { socketOptions: { keepAlive: 1 } } };
 
 app.set('port', process.env.PORT || 8080);
 
 // Connect to the database
 mongoose.connect(connectStr, dbOptions);
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
+db.once('open', function() {
   app.listen(app.get('port'));
 });
 
-app.configure(function(){
+app.configure(function() {
   var sessionStore = new MongoStore({ mongoose_connection: db });
 
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-  app.use(function (req, res, next) {
+  app.use(function(req, res, next) {
     // check if we're toobusy
     if (toobusy()) {
       statusCodePage(req, res, next, {
@@ -55,13 +55,12 @@ app.configure(function(){
 
   // Force HTTPS
   if (app.get('port') === 443) {
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
       res.setHeader('Strict-Transport-Security',
         'max-age=8640000; includeSubDomains');
 
       if (req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(301, 'https://' + req.headers.host
-          + encodeURI(req.url));
+        return res.redirect(301, 'https://' + req.headers.host + encodeURI(req.url));
       }
 
       next();
@@ -94,7 +93,7 @@ app.configure(function(){
 });
 
 // Build the route regex for model lists
-function listRegex (root, type) {
+function listRegex(root, type) {
   var slash = '\/';
   if (root === slash) { slash = ''; }
   return new RegExp('^' + root +
@@ -113,7 +112,7 @@ function app_route(path) {
   r.all = function(cb) {
     app.all.call(app, path, cb);
   };
-  methods.forEach(function(method){
+  methods.forEach(function(method) {
     r[method] = function(cb) {
       app[method].call(app, path, cb);
       return r;
@@ -151,7 +150,6 @@ app_route('/user/add/lib/new').get(script.lib(user.editScript)).post(script.lib(
 app_route('/user/add/scripts/upload').post(user.uploadScript);
 app_route('/user/add/lib/upload').post(script.lib(user.uploadScript));
 
-
 // Script routes
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
 app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
@@ -166,7 +164,7 @@ app.get('/meta/:username/:namespace/:scriptname', scriptStorage.sendMeta);
 app.get('/vote/scripts/:username/:scriptname/:vote', script.vote);
 app.get('/vote/scripts/:username/:namespace/:scriptname/:vote', script.vote);
 app.post('/github/hook', scriptStorage.webhook);
-app.post('/github/service', function (req, res, next) { next(); });
+app.post('/github/service', function(req, res, next) { next(); });
 
 // Library routes
 app.get(listRegex('\/toolbox', 'lib'), main.toolbox);
@@ -181,7 +179,7 @@ app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Issues routes
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
-// app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
+//app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(issue.open).post(issue.open);
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 
@@ -205,9 +203,8 @@ app_route('/mod/removed/:id').get(moderation.removedItemPage);
 app.get('/flag/users/:username/:unflag?', user.flag);
 app.get('/flag/scripts/:username/:namespace/:scriptname/:unflag?', script.flag);
 app.get('/flag/scripts/:username/:scriptname/:unflag?', script.flag);
-app.get('/flag/libs/:username/:scriptname/:unflag?', script.lib(script.flag)); //
-app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'),
-  moderation.flagged); //
+app.get('/flag/libs/:username/:scriptname/:unflag?', script.lib(script.flag));
+app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'), moderation.flagged);
 app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
 app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 
@@ -234,10 +231,9 @@ app.get(listRegex('\/', 'script'), main.home);
 
 // Fallback routes
 app.use(express.static(__dirname + '/public'));
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   statusCodePage(req, res, next, {
     statusCode: 404,
     statusMessage: 'This is not the page you\'re are looking for.',
   });
 });
-
