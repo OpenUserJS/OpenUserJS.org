@@ -86,6 +86,7 @@ app.configure(function(){
   app.use(passport.initialize());
   app.use(modifySessions.init(sessionStore));
   app.use(app.router);
+  app.use(express.favicon('public/images/favicon.ico'));
 
   // Set up the views
   app.engine('html', require('./libs/muExpress').renderFile(app));
