@@ -4,22 +4,23 @@
 </div>
 <div class="content-box creation-box">
   <h2>Content Type</h2>
-{{#usersType}}
+  {{#usersType}}
   <strong>Users</strong>
-{{/usersType}}
-{{^usersType}}
+  {{/usersType}}
+  {{^usersType}}
   <a href="/flagged/users">Users</a>
-{{/usersType}} |
-{{#scriptsType}}
+  {{/usersType}} |
+  {{#scriptsType}}
   <strong>Scripts</strong>
-{{/scriptsType}}
-{{^scriptsType}}
+  {{/scriptsType}}
+  {{^scriptsType}}
   <a href="/flagged/scripts">Scripts</a>
-{{/scriptsType}}
+  {{/scriptsType}}
 </div>
-<br /><br />
+<br />
+<br />
 <div class="centered-content">
-{{> usersList.html}}
-{{> scriptsList.html}}
+  {{> usersList.html}}
+  {{> scriptsList.html}}
 </div>
 {{> footer.html}}

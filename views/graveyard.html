@@ -4,17 +4,17 @@
 </div>
 <div class="content-box creation-box">
   <h2>Content Type</h2>
-{{#contentTypes}}
+  {{#contentTypes}}
   {{#selected}}
   <strong>{{name}}</strong>
   {{/selected}}
   {{^selected}}
   <a href="{{url}}">{{name}}</a>
   {{/selected}}{{^last}} | {{/last}}
-{{/contentTypes}}
+  {{/contentTypes}}
 </div>
 <br /><br />
 <div class="centered-content">
-{{> removedList.html}}
+  {{> removedList.html}}
 </div>
 {{> footer.html}}

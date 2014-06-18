@@ -4,15 +4,14 @@
   <ul class="scripts-list">
     <li class="script">
       {{#moderation}}
-      <button class="install-button" title="Remove"
-	      type="button" onclick="location.href='/remove{{{url}}}'" >
-	Remove
+      <button class="install-button" title="Remove" type="button" onclick="location.href='/remove{{{url}}}'">
+        Remove
       </button>
       {{/moderation}}
       <h2 class="script-title"><a href="{{{url}}}">{{name}}</a></h2>
     </li>
   </ul>
-{{/users}}
+  {{/users}}
   <br />
   {{> pagination.html}}
 </section>
