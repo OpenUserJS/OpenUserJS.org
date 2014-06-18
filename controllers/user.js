@@ -180,6 +180,9 @@ exports.userListPage = function (req, res, next) {
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
+
+    // Heading
+    options.pageHeading = options.isFlagged ? 'Flagged Users' : 'Users';
   };
   function render(){ res.render('pages/userListPage', options); }
   function asyncComplete(err){ if (err) { return next(); } else { preRender(); render(); } };

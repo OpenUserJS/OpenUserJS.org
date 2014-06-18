@@ -81,6 +81,13 @@ exports.home = function (req, res) {
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
+
+    // Heading
+    if (options.librariesOnly) {
+      options.pageHeading = options.isFlagged ? 'Flagged Libraries' : 'Libraries';
+    } else {
+      options.pageHeading = options.isFlagged ? 'Flagged Scripts' : 'Scripts';
+    }
   };
   function render(){ res.render('pages/scriptListPage', options); }
   function asyncComplete(){ preRender(); render(); }
