@@ -81,6 +81,24 @@ exports.home = function (req, res) {
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
+
+    // Empty list
+    options.scriptListIsEmptyMessage = 'No scripts.';
+    if (options.isFlagged) {
+      if (options.librariesOnly) {
+        options.scriptListIsEmptyMessage = 'No flagged libraries.';
+      } else {
+        options.scriptListIsEmptyMessage = 'No flagged scripts.';
+      }
+    } else if (options.searchBarValue) {
+      if (options.librariesOnly) {
+        options.scriptListIsEmptyMessage = 'We couldn\'t find any libraries with this search value.';
+      } else {
+        options.scriptListIsEmptyMessage = 'We couldn\'t find any scripts with this search value.';
+      }
+    } else if (options.isUserScriptListPage) {
+      options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
+    }
   };
   function render(){ res.render('pages/scriptListPage', options); }
   function asyncComplete(){ preRender(); render(); }
@@ -250,7 +268,7 @@ exports.logout = function (req, res) {
 
   User.findOne({ _id: authedUser._id }, function (err, user) {
     removeSession(req, user, function () {
-      res.redirect('/'); 
+      res.redirect('/');
     });
   });
 };

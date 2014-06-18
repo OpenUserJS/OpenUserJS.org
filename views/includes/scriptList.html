@@ -40,27 +40,7 @@
     {{^scriptList}}
     <tr class="tr-link">
       <td colspan="4">
-        {{#searchBarValue}}
-        {{#librariesOnly}}
-        <em>We couldn't find any libraries with this search value.</em>
-        {{/librariesOnly}}
-        {{^librariesOnly}}
-        <em>We couldn't find any scripts with this search value.</em>
-        {{/librariesOnly}}
-        {{/searchBarValue}}
-
-        {{#isUserScriptListPage}}
-        <em>This user hasn't added any scripts yet.</em>
-        {{/isUserScriptListPage}}
-
-        {{#isFlagged}}
-        {{#librariesOnly}}
-        <em>No flagged libraries.</em>
-        {{/librariesOnly}}
-        {{^librariesOnly}}
-        <em>No flagged scripts.</em>
-        {{/librariesOnly}}
-        {{/isFlagged}}
+        <em>{{scriptListIsEmptyMessage}}</em>
       </td>
     </tr>
     {{/scriptList}}

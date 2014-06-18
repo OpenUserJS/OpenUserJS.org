@@ -23,12 +23,7 @@
     {{^userList}}
     <tr class="tr-link">
       <td colspan="4">
-        {{#searchBarValue}}
-        <em>We couldn't find any users by this name.</em>
-        {{/searchBarValue}}
-        {{#isFlagged}}
-        <em>No users.</em>
-        {{/isFlagged}}
+        <em>{{userListIsEmptyMessage}}</em>
       </td>
     </tr>
     {{/userList}}
