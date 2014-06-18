@@ -180,6 +180,17 @@ exports.userListPage = function(req, res, next) {
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
+
+    // Empty list
+    options.userListIsEmptyMessage = 'No users.';
+    if (options.isFlagged) {
+      options.userListIsEmptyMessage = 'No flagged users.';
+    } else if (options.searchBarValue) {
+      options.userListIsEmptyMessage = 'We couldn\'t find any users by this name.';
+    }
+
+    // Heading
+    options.pageHeading = options.isFlagged ? 'Flagged Users' : 'Users';
   };
   function render() { res.render('pages/userListPage', options); }
   function asyncComplete(err) { if (err) { return next(); } else { preRender(); render(); } };
@@ -397,6 +408,24 @@ exports.userScriptListPage = function(req, res, next) {
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
+
+      // Empty list
+      options.scriptListIsEmptyMessage = 'No scripts.';
+      if (options.isFlagged) {
+        if (options.librariesOnly) {
+          options.scriptListIsEmptyMessage = 'No flagged libraries.';
+        } else {
+          options.scriptListIsEmptyMessage = 'No flagged scripts.';
+        }
+      } else if (options.searchBarValue) {
+        if (options.librariesOnly) {
+          options.scriptListIsEmptyMessage = 'We couldn\'t find any libraries with this search value.';
+        } else {
+          options.scriptListIsEmptyMessage = 'We couldn\'t find any scripts with this search value.';
+        }
+      } else if (options.isUserScriptListPage) {
+        options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
+      }
     };
     function render() { res.render('pages/userScriptListPage', options); }
     function asyncComplete() { preRender(); render(); }

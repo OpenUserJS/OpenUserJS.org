@@ -4305,6 +4305,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .label-info {
   background-color: #3498db;
 }
+.label-info a {
+  color: #fff;
+  text-decoration: none;
+}
 .label-info[href]:hover,
 .label-info[href]:focus {
   background-color: #217dbb;

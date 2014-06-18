@@ -123,9 +123,13 @@ function parseMeta(aString) {
     lineMatches = lines[line].replace(/\s+$/, '').match(re);
     name = lineMatches[1];
     value = lineMatches[2];
+    // Upmix from...
     switch (name) {
-      case "licence":
-        name = "license";
+      case 'licence':
+        name = 'license';
+        break;
+      case 'homepage':
+        name = 'homepageURL';
         break;
     }
     if (!headers[name] || unique[name]) {

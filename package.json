@@ -43,7 +43,8 @@
   },
   "licenses": [
     {
-      "type": "GPL"
+      "type": "GPL-3.0+",
+      "url": "https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/LICENSE"
     }
   ],
   "subdomain": "openuserjs",
