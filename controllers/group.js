@@ -288,6 +288,24 @@ exports.view = function (req, res, next) {
       if (options.groupList)
         pageMetaKeywords.push(group.name);
       options.pageMetaKeywords = pageMetaKeywords.join(', ');
+
+      // Empty list
+      options.scriptListIsEmptyMessage = 'No scripts.';
+      if (options.isFlagged) {
+        if (options.librariesOnly) {
+          options.scriptListIsEmptyMessage = 'No flagged libraries.';
+        } else {
+          options.scriptListIsEmptyMessage = 'No flagged scripts.';
+        }
+      } else if (options.searchBarValue) {
+        if (options.librariesOnly) {
+          options.scriptListIsEmptyMessage = 'We couldn\'t find any libraries with this search value.';
+        } else {
+          options.scriptListIsEmptyMessage = 'We couldn\'t find any scripts with this search value.';
+        }
+      } else if (options.isUserScriptListPage) {
+        options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
+      }
     };
     function render(){ res.render('pages/groupScriptListPage', options); }
     function asyncComplete(){ preRender(); render(); }
