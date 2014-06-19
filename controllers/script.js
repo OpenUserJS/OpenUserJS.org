@@ -65,11 +65,11 @@ var getScriptPageTasks = function(options) {
   if (script.meta.author && script.meta.collaborator) {
     options.hasCollab = true;
     if (typeof script.meta.collaborator === 'string') {
-      options.script.meta.collaborators = [{ name: script.meta.collaborator }];
+      options.script.collaborators = [{ name: script.meta.collaborator }];
     } else {
-      options.script.meta.collaborators = [];
+      options.script.collaborators = [];
       script.meta.collaborator.forEach(function (collaborator) {
-        options.script.meta.collaborators.push({ name: collaborator });
+        options.script.collaborators.push({ name: collaborator });
       });
     }
   }
@@ -77,11 +77,11 @@ var getScriptPageTasks = function(options) {
   // Show licensings of the script
   if (script.meta.license) {
     if (typeof script.meta.license === 'string') {
-      options.script.meta.licenses = [{ name: script.meta.license }];
+      options.script.licenses = [{ name: script.meta.license }];
     } else {
-      options.script.meta.licenses = [];
+      options.script.licenses = [];
       script.meta.license.forEach(function (license) {
-        options.script.meta.licenses.push({ name: license });
+        options.script.licenses.push({ name: license });
       });
     }
   } else if (!script.isLib) {
@@ -91,11 +91,11 @@ var getScriptPageTasks = function(options) {
   // Show homepages of the script
   if (script.meta.homepageURL) {
     if (typeof script.meta.homepageURL === 'string') {
-      options.script.meta.homepages = [{ name: script.meta.homepageURL }];
+      options.script.homepages = [{ name: script.meta.homepageURL }];
     } else {
-      options.script.meta.homepages = [];
+      options.script.homepages = [];
       script.meta.homepageURL.forEach(function (homepage) {
-        options.script.meta.homepages.push({ name: homepage });
+        options.script.homepages.push({ name: homepage });
       });
     }
   }

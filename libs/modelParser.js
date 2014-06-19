@@ -102,6 +102,15 @@ var parseScript = function(scriptData) {
     script.icon45Url = script.meta.icon64;
   }
 
+  // Support Url
+  if (script.meta.supportURL) {
+    if (_.isString(script.meta.supportURL)) {
+      script.support = script.meta.supportURL;
+    } else if (_.isArray(script.meta.supportURL) && !_.isEmpty(script.meta.supportURL)) {
+      script.support = script.meta.supportURL[script.meta.supportURL.length - 1];
+    }
+  }
+
   //
   script.fullName = script.author.name + '/' + script.name; // GitHub-like name
 
