@@ -272,7 +272,8 @@ exports.view = function (req, res, next) {
   var isLib = req.route.params.isLib;
 
   Script.findOne({
-    installName: installNameSlug + (isLib ? '.js' : '.user.js')
+    installName: scriptStorage
+      .installNameRegex(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -335,7 +336,8 @@ exports.edit = function (req, res, next) {
   var isLib = req.route.params.isLib;
 
   Script.findOne({
-    installName: installNameSlug + (isLib ? '.js' : '.user.js')
+    installName: scriptStorage
+      .installNameRegex(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -449,7 +451,7 @@ exports.vote = function (req, res, next) {
     return res.redirect(url);
   }
 
-  Script.findOne({ installName: installName },
+  Script.findOne({ installName: scriptStorage.installNameRegex(installName) },
     function (err, script) {
       if (err || !script) { return res.redirect(url); }
 
@@ -511,7 +513,8 @@ exports.flag = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);
   var unflag = req.route.params.unflag;
 
-  Script.findOne({ installName: installName + (isLib ? '.js' : '.user.js') },
+  Script.findOne({ installName:  scriptStorage
+      .installNameRegex(installName + (isLib ? '.js' : '.user.js')) },
     function (err, script) {
       var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
       if (err || !script) { return next(); }
