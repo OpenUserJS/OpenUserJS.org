@@ -14,7 +14,7 @@
             <li class=""><a href="/forum">Forum</a></li>
             <li class="active"><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
           </ol>
-          <a href="{{{category.categoryPostDiscussionPageUrl}}}" class="btn btn-success pull-right" id="create-topic">
+          <a href="{{{category.categoryPostDiscussionPageUrl}}}" class="btn btn-success pull-right {{^canPostTopicToCategory}}disabled{{/canPostTopicToCategory}}" id="create-topic">
             <i class="fa fa-plus"></i> Create Topic
           </a>
         </div>
