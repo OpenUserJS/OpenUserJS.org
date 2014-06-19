@@ -244,6 +244,7 @@ exports.parseGroup = parseGroup;
 var parseDiscussion = function(discussionData) {
   if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
+  // var discussion = discussionData; // Can't override discussionData.category
 
   // Urls
   discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
@@ -264,6 +265,9 @@ var parseDiscussion = function(discussionData) {
     };
   });
   discussion.recentCommentors = recentCommentors;
+
+  // Replies
+  discussion.replies = (discussion.comments && discussion.comments > 0) ? discussion.comments - 1 : 0;
 
   //discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
@@ -314,6 +318,21 @@ exports.renderComment = function(comment) {
  * Category
  */
 
+var canUserPostTopicToCategory = function(user, category) {
+  // Check if user is logged in.
+  if (_.isUndefined(user) || _.isNull(user))
+    return false; // Not logged in.
+
+  // Check if this category requires a minimum role to post topics.
+  console.log(category.roleReqToPostTopic, _.isNumber(category.roleReqToPostTopic), user.role, user.role <= category.roleReqToPostTopic)
+  if (_.isNumber(category.roleReqToPostTopic)) {
+    return user.role <= category.roleReqToPostTopic;
+  } else {
+    // No specified role required
+    return true;
+  }
+};
+
 //
 var parseCategory = function(categoryData) {
   if (!categoryData) return;
@@ -322,6 +341,11 @@ var parseCategory = function(categoryData) {
   // Urls
   category.categoryPageUrl = '/' + category.slug;
   category.categoryPostDiscussionPageUrl = '/post/' + category.slug;
+
+  // Functions
+  category.canUserPostTopic = function (user) {
+    return canUserPostTopicToCategory(user, category);
+  };
 
   return category;
 };

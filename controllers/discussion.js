@@ -8,8 +8,15 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var execQueryTask = require('../libs/tasks').execQueryTask;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 var categories = [
+  {
+    slug: 'announcements',
+    name: 'Announcements',
+    description: 'UserScripts News (OpenUserJS, GreaseMonkey, etc)',
+    roleReqToPostTopic: 3, // Moderator
+  },
   {
     slug: 'garage',
     name: 'The Garage',
@@ -26,6 +33,7 @@ var categories = [
     description: 'Off-topic discussion about anything related to user scripts or OpenUserJS.org'
   },
 ];
+exports.categories = categories;
 
 exports.categoryListPage = function (req, res, next) {
   var authedUser = req.session.user;
@@ -122,6 +130,7 @@ exports.list = function (req, res, next) {
 
   // Category
   category = options.category = modelParser.parseCategory(category);
+  options.canPostTopicToCategory = category.canUserPostTopic(authedUser);
 
   // Metadata
   options.title = category.name + ' | OpenUserJS.org';
@@ -278,6 +287,13 @@ exports.newTopic = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
+  if (!category.canUserPostTopic(authedUser)) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'You cannot post a topic to this category',
+    });
+  }
+
   //
   options.category = category;
 
@@ -368,14 +384,35 @@ exports.postTopic = postTopic;
 
 // post route to create a new topic
 exports.createTopic = function (req, res, next) {
-  var user = req.session.user;
-  var category = req.route.params.category;
+  var authedUser = req.session.user;
+
+  if (!authedUser)
+    return res.redirect('/login');
+
+  var categorySlug = req.route.params.category;
   var topic = req.body['discussion-topic'];
   var content = req.body['comment-content'];
 
-  if (!user) { return next(); }
+  var category = _.findWhere(categories, {slug: categorySlug});
+  if (!category)
+    return next();
 
-  postTopic(user, category, topic, content, false, function (discussion) {
+  //
+  var options = {};
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!category.canUserPostTopic(authedUser)) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'You cannot post a topic to this category',
+    });
+  }
+
+  postTopic(authedUser, category.slug, topic, content, false, function (discussion) {
     if (!discussion) { return exports.newTopic(req, res, next); }
 
     res.redirect(encodeURI(discussion.path
