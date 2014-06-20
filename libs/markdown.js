@@ -41,43 +41,61 @@ marked.setOptions({
 exports.renderMd = function (text) {
   return marked(sanitizeHtml(text), {
     allowedTags: [
+      'h1',
+      'h2',
       'h3',
       'h4',
       'h5',
       'h6',
-      'blockquote',
+      'h7',
+      'h8',
       'p',
-      'a',
-      'ul',
-      'ol',
-      'nl',
-      'li',
+      'div',
+      'blockquote',
+      'pre',
       'b',
       'i',
       'strong',
       'em',
-      'strike',
+      'tt',
       'code',
-      'hr',
-      'br',
-      'div',
+      'ins',
+      'del',
+      'sup',
+      'sub',
+      'kbd',
+      'samp',
+      'q',
+      'var',
+      'ol',
+      'ul',
+      'li',
+      'dl',
+      'dt',
+      'dd',
       'table',
       'thead',
-      'caption',
       'tbody',
+      'tfoot',
       'tr',
-      'th',
       'td',
-      'pre'
+      'th',
+      'br',
+      'hr',
+      'ruby',
+      'rt',
+      'rp'
     ],
     allowedAttributes: {
       a: [
-        'href',
-        'name',
-        'target'
+        'href'
       ],
       img: [
         'src'
+      ],
+      div: [
+        'itemscope',
+        'itemtype'
       ]
     },
     // Lots of these won't come up by default because we don't allow them
@@ -96,7 +114,6 @@ exports.renderMd = function (text) {
     allowedSchemes: [
       'http',
       'https',
-      'ftp',
       'mailto'
     ]
   });
