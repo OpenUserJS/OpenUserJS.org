@@ -27,7 +27,7 @@ exports.lib = function (controller) {
 
 // Display which scripts use a library hosted on the site
 exports.useLib = function (req, res, next) {
-  var installName = req.route.params.shift().toLowerCase() + '/'
+  var installName = req.route.params.shift() + '/'
     + req.route.params.shift();
   var user = req.session.user;
   var options = { username: user ? user.name : '' };
@@ -273,7 +273,7 @@ exports.view = function (req, res, next) {
 
   Script.findOne({
     installName: scriptStorage
-      .installNameRegex(installNameSlug + (isLib ? '.js' : '.user.js'))
+      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -337,7 +337,7 @@ exports.edit = function (req, res, next) {
 
   Script.findOne({
     installName: scriptStorage
-      .installNameRegex(installNameSlug + (isLib ? '.js' : '.user.js'))
+      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -451,7 +451,7 @@ exports.vote = function (req, res, next) {
     return res.redirect(url);
   }
 
-  Script.findOne({ installName: scriptStorage.installNameRegex(installName) },
+  Script.findOne({ installName: scriptStorage.caseInsensitive(installName) },
     function (err, script) {
       if (err || !script) { return res.redirect(url); }
 
@@ -514,7 +514,7 @@ exports.flag = function (req, res, next) {
   var unflag = req.route.params.unflag;
 
   Script.findOne({ installName:  scriptStorage
-      .installNameRegex(installName + (isLib ? '.js' : '.user.js')) },
+      .caseInsensitive(installName + (isLib ? '.js' : '.user.js')) },
     function (err, script) {
       var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
       if (err || !script) { return next(); }

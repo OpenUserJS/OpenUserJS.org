@@ -20,12 +20,29 @@ if (process.env.NODE_ENV === 'production') {
     proxy: DEV_AWS_URL, agent: require('http').globalAgent
   }});
 }
-/*
+require('../models/discussion').Discussion.find({ category: /\/issues$/ }, function (err, discussions) {
+  discussions.forEach(function (discussion) {
+    console.log(discussion.category);
+  });
+});
 Script.find({}, function (err, scripts) {
-  var s3 = new AWS.S3();
+  //var s3 = new AWS.S3();
+  var Discussion = require('../models/discussion').Discussion;
   scripts.forEach(function (script) {
-    var oldPath = script.installName;
-    var newPath =  cleanFilename(script.author) + '/' 
+/*var newPath = script.installName.replace(/(\.user)?\.js$/, '');
+var oldPath = cleanFilename(script.author).toLowerCase() + '/'
+  + (script.meta.namespace ? cleanFilename(script.meta.namespace) + '/' : '')
+  + cleanFilename(script.name);
+var newCat = (script.isLib ? 'libs' : 'scripts') + '/' + newPath  + '/issues';
+var oldCat = (script.isLib ? 'libs' : 'scripts') + '/' + oldPath  + '/issues';
+Discussion.find({ category: oldCat }, function (err, discussions) {
+  discussions.forEach(function (discussion) {
+    discussion.category = newCat;
+    discussion.save(function (){ console.log(newCat, oldCat); });
+  });
+});*/
+    /*var oldPath = script.installName;
+    var newPath = cleanFilename(script.author) + '/' 
       + cleanFilename(script.name) + (script.isLib ? '.js' : '.user.js');
     var params = {
       Bucket: bucketName,
@@ -46,32 +63,33 @@ Script.find({}, function (err, scripts) {
             console.log(newPath + ' - success');
           }
         });
-    });
+    });*/
   });
 });
-*/
+
+
 function getInstallName (req) {
-  return req.route.params.username + '/'
-    + req.route.params.scriptname;
+  return req.route.params.username + '/' + req.route.params.scriptname;
 }
 exports.getInstallName = getInstallName;
 
-function installNameRegex (installName) {
+function caseInsensitive (installName) {
   return new RegExp('^' + installName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") 
     + '$', 'i');
 }
-exports.installNameRegex = installNameRegex;
+exports.caseInsensitive = caseInsensitive;
 
 exports.getSource = function (req, callback) {
   var s3 = new AWS.S3();
   var installName = getInstallName(req);
 
-  Script.findOne({ installName: installNameRegex(installName) },
+  Script.findOne({ installName: caseInsensitive(installName) },
     function (err, script) {
+
       if (!script) { return callback(null); }
 
       // Get the script
-      callback(null, s3.getObject({ Bucket: bucketName, Key: installName })
+      callback(script, s3.getObject({ Bucket: bucketName, Key: installName })
         .createReadStream());
   });
 };
@@ -85,6 +103,7 @@ exports.sendScript = function (req, res, next) {
   }
 
   exports.getSource(req, function (script, stream) {
+
     if (!script) { return next(); }
 
     // Send the script
@@ -104,7 +123,7 @@ exports.sendScript = function (req, res, next) {
 exports.sendMeta = function (req, res, next) {
   var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
 
-  Script.findOne({ installName: installNameRegex(installName) },
+  Script.findOne({ installName: caseInsensitive(installName) },
     function (err, script) {
       var meta = null;
 
@@ -253,7 +272,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   }
 
   // Prevent a removed script from being reuploaded
-  findDeadorAlive(Script, { installName: installNameRegex(installName) }, true,
+  findDeadorAlive(Script, { installName: caseInsensitive(installName) }, true,
     function (alive, script, removed) {
 
       if (removed || (!script && (update || collaborators))) {
@@ -308,10 +327,17 @@ exports.storeScript = function (user, meta, buf, callback, update) {
 };
 
 exports.deleteScript = function (installName, callback) {
-  Script.findOneAndRemove({ installName: installNameRegex(installName) },
-    function (err, user) {
+  Script.findOne({ installName: caseInsensitive(installName) },
+    function (err, script) {
       var s3 = new AWS.S3();
-      s3.deleteObject({ Bucket : bucketName, Key : installName}, callback);
+      s3.deleteObject({ Bucket : bucketName, Key : script.installName},
+        function (err) {
+          if (!err) {
+            script.remove(callback);
+          } else {
+            callback(null);
+          }
+      });
   });
 };
 

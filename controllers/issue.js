@@ -18,15 +18,15 @@ exports.list = function (req, res, next) {
   var authedUser = req.session.user;
 
   var type = req.route.params.type;
-  var username = req.route.params.username.toLowerCase();
-  var namespace = req.route.params.namespace;
+  var username = req.route.params.username;
   var scriptname = req.route.params.scriptname;
   var open = req.route.params.open !== 'closed';
 
-  var installNameSlug = username + '/' + (namespace ? namespace + '/' : '') + scriptname;
+  var installNameSlug = username + '/' + scriptname;
 
   Script.findOne({
-    installName: installNameSlug  + (type === 'libs' ? '.js' : '.user.js')
+    installName: scriptStorage.caseInsensitive(
+      installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -113,15 +113,15 @@ exports.view = function (req, res, next) {
   var authedUser = req.session.user;
 
   var type = req.route.params.type;
-  var username = req.route.params.username.toLowerCase();
-  var namespace = req.route.params.namespace;
+  var username = req.route.params.username;
   var scriptname = req.route.params.scriptname;
   var topic = req.route.params.topic;
 
-  var installNameSlug = username + '/' + (namespace ? namespace + '/' : '') + scriptname;
+  var installNameSlug = username + '/' + scriptname;
 
   Script.findOne({
-    installName: installNameSlug  + (type === 'libs' ? '.js' : '.user.js')
+    installName: scriptStorage.caseInsensitive(
+      installNameSlug  + (type === 'libs' ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -220,7 +220,8 @@ exports.open = function (req, res, next) {
   var installNameSlug = scriptStorage.getInstallName(req);
 
   Script.findOne({
-    installName: installNameSlug  + (type === 'libs' ? '.js' : '.user.js')
+    installName: scriptStorage.caseInsensitive(
+      installNameSlug  + (type === 'libs' ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -288,8 +289,8 @@ exports.comment = function (req, res, next) {
 
   if (!user) { return res.redirect('/login'); }
 
-  Script.findOne({ installName: installName
-    + (type === 'libs' ? '.js' : '.user.js') }, function (err, script) {
+  Script.findOne({ installName: scriptStorage.caseInsensitive(installName
+    + (type === 'libs' ? '.js' : '.user.js')) }, function (err, script) {
       var content = req.body['comment-content'];
 
       if (err || !script) { return next(); }
@@ -318,8 +319,8 @@ exports.changeStatus = function (req, res, next) {
 
   if (!user) { return res.redirect('/login'); }
 
-  Script.findOne({ installName: installName
-    + (type === 'libs' ? '.js' : '.user.js') }, function (err, script) {
+  Script.findOne({ installName: scriptStorage.caseInsensitive(installName
+    + (type === 'libs' ? '.js' : '.user.js')) }, function (err, script) {
 
       if (err || !script) { return next(); }
 
