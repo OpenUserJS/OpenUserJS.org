@@ -2,7 +2,6 @@ var marked = require('marked');
 var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');
 var htmlWhitelist = require('./htmlwhitelist.json');
-
 var renderer = new marked.Renderer();
 
 // Automatically generate an anchor for each header
@@ -41,6 +40,5 @@ marked.setOptions({
 });
 
 exports.renderMd = function (text) {
-  console.log(htmlWhitelist.allowedTags);
   return marked(sanitizeHtml(text), htmlWhitelist);
 };
