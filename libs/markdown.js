@@ -39,7 +39,7 @@ marked.setOptions({
 });
 
 exports.renderMd = function (text) {
-  return sanitizeHtml(marked(text), {
+  return marked(sanitizeHtml(text), {
     allowedTags: [
       'h3',
       'h4',
@@ -68,8 +68,7 @@ exports.renderMd = function (text) {
       'tr',
       'th',
       'td',
-      'pre',
-      'img'
+      'pre'
     ],
     allowedAttributes: {
       a: [
@@ -78,9 +77,7 @@ exports.renderMd = function (text) {
         'target'
       ],
       img: [
-        'src',
-        'alt',
-        'title'
+        'src'
       ]
     },
     // Lots of these won't come up by default because we don't allow them
