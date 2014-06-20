@@ -1,0 +1,76 @@
+{
+  "allowedTags": [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "h7",
+    "h8",
+    "p",
+    "div",
+    "blockquote",
+    "pre",
+    "b",
+    "i",
+    "strong",
+    "em",
+    "tt",
+    "code",
+    "ins",
+    "del",
+    "sup",
+    "sub",
+    "kbd",
+    "samp",
+    "q",
+    "var",
+    "ol",
+    "ul",
+    "li",
+    "dl",
+    "dt",
+    "dd",
+    "table",
+    "thead",
+    "tbody",
+    "tfoot",
+    "tr",
+    "td",
+    "th",
+    "br",
+    "hr",
+    "ruby",
+    "rt",
+    "rp"
+  ],
+  "allowedAttributes": {
+    "a": [
+      "href"
+    ],
+    "img": [
+      "src"
+    ],
+    "div": [
+      "itemscope",
+      "itemtype"
+    ]
+  },
+  "selfClosing": [
+    "img",
+    "br",
+    "hr",
+    "area",
+    "base",
+    "basefont",
+    "input",
+    "link",
+    "meta"
+  ],
+  "allowedSchemes": [
+    "http",
+    "https",
+    "mailto"
+  ]
+}
