@@ -94,8 +94,8 @@ var parseScript = function(scriptData) {
       script.icon16Url = script.meta.icon;
       script.icon45Url = script.meta.icon;
     } else if (_.isArray(script.meta.icon) && !_.isEmpty(script.meta.icon)) {
-      script.icon16Url = script.meta.icon[0];
-      script.icon45Url = script.meta.icon[script.meta.icon.length >= 2 ? 1 : 1];
+      script.icon16Url = script.meta.icon[script.meta.icon.length - 1];
+      script.icon45Url = script.meta.icon[script.meta.icon.length - 1];
     }
   }
   if (script.meta.icon64) {
