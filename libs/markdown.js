@@ -1,6 +1,7 @@
 var marked = require('marked');
 var hljs = require('highlight.js');
-var xss = require('simple-xss');
+var sanitizeHtml = require('sanitize-html');
+var htmlWhitelistPost = require('./htmlWhitelistPost.json');
 var renderer = new marked.Renderer();
 
 // Automatically generate an anchor for each header
@@ -19,6 +20,10 @@ renderer.heading = function (text, level) {
   return html;
 };
 
+renderer.html = function (html) {
+  return sanitizeHtml(html, htmlWhitelistPost);
+};
+
 // Set the options to use for rendering markdown
 marked.setOptions({
   highlight: function (code, lang) {
@@ -33,11 +38,11 @@ marked.setOptions({
   tables: true,
   breaks: true,
   pedantic: false,
-  sanitize: false, // we use xss to sanitize HTML
+  sanitize: false, // we use sanitize-html to sanitize HTML
   smartLists: true,
   smartypants: false
 });
 
 exports.renderMd = function (text) {
-  return xss(marked(text));
+  return marked(text);
 };
