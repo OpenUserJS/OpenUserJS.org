@@ -20,7 +20,7 @@ renderer.heading = function (text, level) {
   return html;
 };
 
-renderer.html = function (html) {
+renderer.html = renderer.paragraph = function (html) {
   return sanitizeHtml(html, htmlWhitelistPost);
 };
 
