@@ -3,6 +3,24 @@ var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');
 var htmlWhitelistPost = require('./htmlWhitelistPost.json');
 var renderer = new marked.Renderer();
+var blockRenderers = [
+  'blockquote',
+  'html',
+  'list',
+  'paragraph',
+  'table'
+];
+
+function sanitize (html) {
+  return sanitizeHtml(html, htmlWhitelistPost);
+}
+
+// Sanitize the output from the block level renderers
+blockRenderers.forEach(function (type) {
+  renderer[type] = function () {
+    return sanitize(marked.Renderer.prototype[type].apply(renderer, arguments));
+  };
+});
 
 // Automatically generate an anchor for each header
 renderer.heading = function (text, level) {
@@ -12,16 +30,12 @@ renderer.heading = function (text, level) {
   var name = escapedText;
   var html = '<h' + level + '>';
   html += '<a name="' + name + '"></a>'
-  html += text;
+  html += sanitize(text);
   html += '<a href="#' + name + '" class="anchor">';
   html += '<i class="fa fa-link"></i>';
   html += '</a>';
   html += '</h' + level + '>';
   return html;
-};
-
-renderer.html = renderer.paragraph = function (html) {
-  return sanitizeHtml(html, htmlWhitelistPost);
 };
 
 // Set the options to use for rendering markdown
