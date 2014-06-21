@@ -20,6 +20,10 @@ renderer.heading = function (text, level) {
   return html;
 };
 
+renderer.html = function (html) {
+  return sanitizeHtml(html, htmlWhitelistPost);
+};
+
 // Set the options to use for rendering markdown
 marked.setOptions({
   highlight: function (code, lang) {
@@ -40,5 +44,5 @@ marked.setOptions({
 });
 
 exports.renderMd = function (text) {
-  return marked(sanitizeHtml(text), htmlWhitelistPost);
+  return marked(text);
 };
