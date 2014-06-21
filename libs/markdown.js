@@ -10,6 +10,20 @@ var blockRenderers = [
   'paragraph',
   'table'
 ];
+var allWhitelistAttrs = htmlWhitelistPost.allowedAttributes.all;
+
+// Whitelist a bunch of attributes for all tags
+// Doing this until we have an upstream fix
+htmlWhitelistPost.allowedTags.forEach(function (tag) {
+  var otherAttrs = htmlWhitelistPost.allowedAttributes[tag];
+
+  htmlWhitelistPost.allowedAttributes[tag] = allWhitelistAttrs;
+  if (otherAttrs) {
+    htmlWhitelistPost.allowedAttributes[tag] = htmlWhitelistPost
+      .allowedAttributes[tag].concat(otherAttrs);
+  }
+});
+delete htmlWhitelistPost.allowedAttributes.all;
 
 function sanitize (html) {
   return sanitizeHtml(html, htmlWhitelistPost);
