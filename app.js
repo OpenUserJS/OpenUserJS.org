@@ -161,12 +161,9 @@ app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.e
 app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript); // Legacy TODO Remove
 
 // Script routes: Legacy
-app.get('/install/:username/:scriptname', scriptStorage.sendScript);
-app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
-app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
-app.get('/meta/:username/:namespace/:scriptname', scriptStorage.sendMeta);
-app.get('/vote/scripts/:username/:scriptname/:vote', script.vote);
-app.get('/vote/scripts/:username/:namespace/:scriptname/:vote', script.vote);
+app.get('/install/:username/:namespace?/:scriptname', scriptStorage.sendScript);
+app.get('/meta/:username/:namespace?/:scriptname', scriptStorage.sendMeta);
+app.get('/vote/scripts/:username/:namespace?/:scriptname/:vote', script.vote);
 app.post('/github/hook', scriptStorage.webhook);
 app.post('/github/service', function (req, res, next) { next(); });
 
@@ -179,7 +176,7 @@ app.post('/lib/:scriptname/edit', script.lib(script.edit));
 app.get('/libs/:username/:scriptname/source', script.lib(user.editScript));
 app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript);
 app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
-app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
+//app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Issues routes
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
@@ -188,10 +185,8 @@ app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').ge
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 
 // Issues routes: Legacy
-app.post('/:type(scripts|libs)/:username/:scriptname/issues/:topic', issue.comment);
-app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic', issue.comment);
-app.get('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
-app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
+app.post('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic', issue.comment);
+app.get('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
 
 // Admin routes
 app.get('/admin', admin.adminPage);
@@ -205,8 +200,7 @@ app_route('/mod').get(moderation.modPage);
 app_route('/mod/removed').get(moderation.removedItemListPage);
 app_route('/mod/removed/:id').get(moderation.removedItemPage);
 app.get('/flag/users/:username/:unflag?', user.flag);
-app.get('/flag/scripts/:username/:namespace/:scriptname/:unflag?', script.flag);
-app.get('/flag/scripts/:username/:scriptname/:unflag?', script.flag);
+app.get('/flag/scripts/:username/:namespace?/:scriptname/:unflag?', script.flag);
 app.get('/flag/libs/:username/:scriptname/:unflag?', script.lib(script.flag)); //
 app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'),
   moderation.flagged); //
@@ -233,7 +227,7 @@ app.get('/post/:category(announcements|corner|garage|discuss)', discussion.newTo
 app.post('/post/:category(announcements|corner|garage|discuss)', discussion.createTopic);
 app.post('/:category(announcements|corner|garage|discuss)/:topic', discussion.createComment);
 
-// Search routes
+// Search routes: Legacy
 app.post('/search', function(req, res) {
   var search = encodeURIComponent(req.body.search.replace(/^\s+|\s+$/g, ''));
   res.redirect('/search/' + search + '/' + req.body.type + 'list');

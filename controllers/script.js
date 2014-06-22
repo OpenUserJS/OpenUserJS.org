@@ -26,7 +26,7 @@ exports.lib = function (controller) {
 };
 
 // Display which scripts use a library hosted on the site
-exports.useLib = function (req, res, next) {
+/*exports.useLib = function (req, res, next) {
   var installName = req.route.params.shift() + '/'
     + req.route.params.shift();
   var user = req.session.user;
@@ -44,7 +44,7 @@ exports.useLib = function (req, res, next) {
         res.render('group', options);
     });
   });
-};
+};*/
 
 var getScriptPageTasks = function(options) {
   var tasks = [];
@@ -57,7 +57,8 @@ var getScriptPageTasks = function(options) {
   //--- Tasks
 
   // Show the number of open issues
-  var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: {$ne: false} });
+  var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+      .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
   tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
 

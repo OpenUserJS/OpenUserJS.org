@@ -116,9 +116,8 @@ var parseScript = function(scriptData) {
 
   // Urls: Slugs
   script.authorSlug = script.author.name;
-  script.namespaceSlug = (script.meta && script.meta.namespace) ? cleanFilename(script.meta.namespace) : '';
   script.nameSlug = cleanFilename(script.name);
-  script.installNameSlug = script.author.slug + '/' + (script.namespaceSlug ? script.namespaceSlug + '/' : '') + script.nameSlug;
+  script.installNameSlug = script.author.slug + '/' + script.nameSlug;
 
   // Urls: Public
   script.scriptPageUrl = getScriptPageUrl(script);
@@ -127,8 +126,7 @@ var parseScript = function(scriptData) {
 
   // Urls: Issues
   var slug = (script.isLib ? 'libs' : 'scripts');
-  slug += '/' + script.author.slug.toLowerCase();
-  slug += script.meta.namespace ?  '/' + script.namespaceSlug : '';
+  slug += '/' + script.author.slug;
   slug += '/' + script.nameSlug;
   script.issuesCategorySlug = slug + '/issues';
   script.scriptIssuesPageUrl = '/' + script.issuesCategorySlug;
