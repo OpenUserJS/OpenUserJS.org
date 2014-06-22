@@ -21,11 +21,12 @@ if (process.env.NODE_ENV === 'production') {
   }});
 }
 
-Script.find({}, function (err, scripts) {
+/*Script.find({ installName: /^[^\/]+\/[^\/]+\/[^\/]+$/ },function (err, scripts){
   var s3 = new AWS.S3();
   var Discussion = require('../models/discussion').Discussion;
 
   scripts.forEach(function (script) {
+    //console.log(script.installName);
     var oldPath = script.installName;
     var newPath = cleanFilename(script.author) + '/' 
       + cleanFilename(script.name) + (script.isLib ? '.js' : '.user.js');
@@ -52,8 +53,8 @@ Script.find({}, function (err, scripts) {
 
     script.installName = newPath;
     s3.copyObject(params, function(err, data) {
-      script.save(function () {});
       if (err) { return console.log(oldPath + ' - copy fail'); }
+      script.save(function () {});
 
       s3.deleteObject({ Bucket : params.Bucket, Key : oldPath}, 
         function (err, data) {
@@ -65,7 +66,7 @@ Script.find({}, function (err, scripts) {
         });
     });
   });
-});
+});*/
 
 
 function getInstallName (req) {
