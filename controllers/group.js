@@ -245,7 +245,7 @@ exports.view = function(req, res, next) {
     scriptListQuery.find({ _id: { $in: group._scriptIds } });
 
     // scriptListQuery: isLib=false
-    scriptListQuery.find({ isLib: false });
+    scriptListQuery.find({ isLib: { $ne: true } });
 
     // scriptListQuery: Defaults
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);

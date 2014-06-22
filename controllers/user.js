@@ -29,6 +29,11 @@ var countTask = require('../libs/tasks').countTask;
 var settings = require('../models/settings.json');
 var github = require('./../libs/githubClient');
 
+function caseInsensitive (str) {
+  return new RegExp('^' + (str || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+    + '$', 'i');
+}
+
 var setupUserModerationUITask = function(options) {
   var user = options.user;
   var authedUser = options.authedUser;
@@ -204,7 +209,7 @@ exports.view = function(req, res, next) {
   var username = req.route.params.username;
 
   User.findOne({
-    name: username
+    name: caseInsensitive(username)
   }, function(err, userData) {
     if (err || !userData) { return next(); }
 
@@ -265,7 +270,7 @@ exports.userCommentListPage = function(req, res, next) {
   var username = req.route.params.username;
 
   User.findOne({
-    name: username
+    name: caseInsensitive(username)
   }, function(err, userData) {
     if (err || !userData) { return next(); }
 
@@ -351,7 +356,7 @@ exports.userScriptListPage = function(req, res, next) {
   var username = req.route.params.username;
 
   User.findOne({
-    name: username
+    name: caseInsensitive(username)
   }, function(err, userData) {
     if (err || !userData) { return next(); }
 
@@ -441,7 +446,7 @@ exports.userEditProfilePage = function(req, res, next) {
   var username = req.route.params.username;
 
   User.findOne({
-    name: username
+    _id: authedUser._id
   }, function(err, userData) {
     if (err || !userData) { return next(); }
 

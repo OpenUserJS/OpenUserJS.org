@@ -1,12 +1,14 @@
 var async = require('async');
 var _ = require('underscore');
 
+var Discussion = require('../models/discussion').Discussion;
 var Group = require('../models/group').Group;
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
 
 var strategies = require('./strategies.json');
+var discussionLib = require('./discussion');
 var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
@@ -59,6 +61,17 @@ exports.home = function(req, res) {
     .sort('-rating')
     .limit(25);
 
+  // Announcements
+  options.announcementsCategory = _.findWhere(discussionLib.categories, {slug: 'announcements'});
+  options.announcementsCategory = modelParser.parseCategory(options.announcementsCategory);
+
+  // announcementsDiscussionListQuery
+  var announcementsDiscussionListQuery = Discussion.find();
+  announcementsDiscussionListQuery
+    .and({category: options.announcementsCategory.slug})
+    .sort('-created')
+    .limit(5);
+
   //--- Tasks
 
   // Pagination
@@ -70,6 +83,9 @@ exports.home = function(req, res) {
   // popularGroupListQuery
   tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
 
+  // announcementsDiscussionListQuery
+  tasks.push(execQueryTask(announcementsDiscussionListQuery, options, 'announcementsDiscussionList'));
+
   //---
   function preRender() {
     // scriptList
@@ -77,6 +93,9 @@ exports.home = function(req, res) {
 
     // popularGroupList
     options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
+
+    // announcementsDiscussionList
+    options.announcementsDiscussionList = _.map(options.announcementsDiscussionList, modelParser.parseDiscussion);
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);

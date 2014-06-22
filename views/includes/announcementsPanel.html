@@ -1,0 +1,34 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <i class="fa fa-fw fa-exclamation-circle"></i>
+      Announcements
+    </div>
+  </div>
+  <div>
+    <div class="table-responsive">
+      <table class="table table-hover table-condensed table-striped">
+        <tbody>
+          {{#announcementsDiscussionList}}
+          <tr class="tr-link">
+            <td>
+              <b>
+                <a href="{{{discussionPageUrl}}}" class="tr-link-a">{{topic}}</a>
+              </b>
+            </td>
+            <td class="text-center td-fit">
+              <p>{{replies}} replies</p>
+            </td>
+            <td class="text-center td-fit">
+              <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
+            </td>
+          </tr>
+          {{/announcementsDiscussionList}}
+        </tbody>
+      </table>
+      <div class="text-center">
+        <a href="{{{announcementsCategory.categoryPageUrl}}}" class="btn btn-link">Older</a>
+      </div>
+    </div>
+  </div>
+</div>
