@@ -35,7 +35,7 @@ var categories = [
 ];
 exports.categories = categories;
 
-exports.categoryListPage = function(req, res, next) {
+exports.categoryListPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -74,13 +74,13 @@ exports.categoryListPage = function(req, res, next) {
   tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) next();
 
     //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
-    _.map(options.discussionList, function(discussion) {
+    _.map(options.discussionList, function (discussion) {
       var category = _.findWhere(categories, { slug: discussion.category });
       if (!category) {
         category = {
@@ -110,7 +110,7 @@ exports.categoryListPage = function(req, res, next) {
 };
 
 // List discussions for one of the three categories
-exports.list = function(req, res, next) {
+exports.list = function (req, res, next) {
   var authedUser = req.session.user;
 
   var categorySlug = req.route.params.shift();
@@ -158,7 +158,7 @@ exports.list = function(req, res, next) {
   tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     //--- PreRender
@@ -184,7 +184,7 @@ function findDiscussion(category, topicUrl, callback) {
     query.duplicateId = Number(topic[2]);
   }
 
-  Discussion.findOne(query, function(err, discussion) {
+  Discussion.findOne(query, function (err, discussion) {
     if (err || !discussion) { return callback(null); }
     callback(discussion);
   });
@@ -192,7 +192,7 @@ function findDiscussion(category, topicUrl, callback) {
 exports.findDiscussion = findDiscussion;
 
 // List comments in a discussion
-exports.show = function(req, res, next) {
+exports.show = function (req, res, next) {
   var authedUser = req.session.user;
 
   var categorySlug = req.route.params.shift();
@@ -202,7 +202,7 @@ exports.show = function(req, res, next) {
   if (!category)
     return next();
 
-  findDiscussion(category.slug, topic, function(discussionData) {
+  findDiscussion(category.slug, topic, function (discussionData) {
     if (!discussionData) { return next(); }
 
     //
@@ -246,13 +246,13 @@ exports.show = function(req, res, next) {
     tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
     //---
-    async.parallel(tasks, function(err) {
+    async.parallel(tasks, function (err) {
       if (err) return next();
 
       //--- PreRender
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
-      _.map(options.commentList, function(comment) {
+      _.map(options.commentList, function (comment) {
         comment.author = modelParser.parseUser(comment._authorId);
       });
       _.map(options.commentList, modelParser.renderComment);
@@ -267,7 +267,7 @@ exports.show = function(req, res, next) {
 };
 
 // UI to create a new topic
-exports.newTopic = function(req, res, next) {
+exports.newTopic = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser)
@@ -322,7 +322,7 @@ function postComment(user, discussion, content, creator, callback) {
     _authorId: user._id
   });
 
-  comment.save(function(err, comment) {
+  comment.save(function (err, comment) {
     ++discussion.comments;
     discussion.lastCommentor = user.name;
     discussion.updated = new Date();
@@ -341,7 +341,7 @@ function postTopic(user, category, topic, content, issue, callback) {
 
   if (!urlTopic) { callback(null); }
 
-  Discussion.findOne({ path: path }, params, function(err, discussion) {
+  Discussion.findOne({ path: path }, params, function (err, discussion) {
     var newDiscussion = null;
     var props = {
       topic: topic,
@@ -372,9 +372,9 @@ function postTopic(user, category, topic, content, issue, callback) {
 
     newDiscussion = new Discussion(props);
 
-    newDiscussion.save(function(err, discussion) {
+    newDiscussion.save(function (err, discussion) {
       // Now post the first comment
-      postComment(user, discussion, content, true, function(err, discussion) {
+      postComment(user, discussion, content, true, function (err, discussion) {
         callback(discussion);
       });
     });
@@ -383,7 +383,7 @@ function postTopic(user, category, topic, content, issue, callback) {
 exports.postTopic = postTopic;
 
 // post route to create a new topic
-exports.createTopic = function(req, res, next) {
+exports.createTopic = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser)
@@ -412,7 +412,7 @@ exports.createTopic = function(req, res, next) {
     });
   }
 
-  postTopic(authedUser, category.slug, topic, content, false, function(discussion) {
+  postTopic(authedUser, category.slug, topic, content, false, function (discussion) {
     if (!discussion) { return exports.newTopic(req, res, next); }
 
     res.redirect(encodeURI(discussion.path
@@ -421,7 +421,7 @@ exports.createTopic = function(req, res, next) {
 };
 
 // post route to create a new comment on an existing discussion
-exports.createComment = function(req, res, next) {
+exports.createComment = function (req, res, next) {
   var category = req.route.params.category;
   var topic = req.route.params.topic;
   var user = req.session.user;
@@ -430,10 +430,10 @@ exports.createComment = function(req, res, next) {
 
   if (!user) { return next(); }
 
-  findDiscussion(category, topic, function(discussion) {
+  findDiscussion(category, topic, function (discussion) {
     if (!discussion) { return next(); }
 
-    postComment(user, discussion, content, false, function(err, discussion) {
+    postComment(user, discussion, content, false, function (err, discussion) {
       res.redirect(encodeURI(discussion.path
         + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
     });

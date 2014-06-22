@@ -34,11 +34,11 @@ function caseInsensitive (str) {
     + '$', 'i');
 }
 
-var setupUserModerationUITask = function(options) {
+var setupUserModerationUITask = function (options) {
   var user = options.user;
   var authedUser = options.authedUser;
 
-  return function(callback) {
+  return function (callback) {
     var flagUrl = '/flag/users/' + user.name;
 
     // Can't flag when not logged in or when is authedUser.
@@ -46,7 +46,7 @@ var setupUserModerationUITask = function(options) {
       callback();
       return;
     }
-    flagLib.flaggable(User, user, authedUser, function(canFlag, author, flag) {
+    flagLib.flaggable(User, user, authedUser, function (canFlag, author, flag) {
       if (flag) {
         flagUrl += '/unflag';
         options.flagged = true;
@@ -56,13 +56,13 @@ var setupUserModerationUITask = function(options) {
       }
       options.flagUrl = flagUrl;
 
-      removeLib.removeable(User, user, authedUser, function(canRemove, author) {
+      removeLib.removeable(User, user, authedUser, function (canRemove, author) {
         options.canRemove = canRemove;
         options.flags = user.flags || 0;
 
         if (!canRemove) { return callback(); }
 
-        flagLib.getThreshold(User, user, author, function(threshold) {
+        flagLib.getThreshold(User, user, author, function (threshold) {
           options.threshold = threshold;
           callback();
         });
@@ -71,7 +71,7 @@ var setupUserModerationUITask = function(options) {
   };
 };
 
-var getUserSidePanelTasks = function(options) {
+var getUserSidePanelTasks = function (options) {
   var tasks = [];
 
   //--- Tasks
@@ -82,7 +82,7 @@ var getUserSidePanelTasks = function(options) {
   return tasks;
 };
 
-var getUserPageTasks = function(options) {
+var getUserPageTasks = function (options) {
   var tasks = [];
 
   // Shortcuts
@@ -102,7 +102,7 @@ var getUserPageTasks = function(options) {
   return tasks;
 };
 
-var setupUserSidePanel = function(options) {
+var setupUserSidePanel = function (options) {
   // Shortcuts
   var user = options.user;
   var authedUser = options.authedUser;
@@ -124,7 +124,7 @@ var setupUserSidePanel = function(options) {
 
     // user.role
     // Allow authedUser to raise target user role to the level below him.
-    var roles = _.map(userRoles, function(roleName, index) {
+    var roles = _.map(userRoles, function (roleName, index) {
       return {
         id: index,
         name: roleName,
@@ -144,7 +144,7 @@ var setupUserSidePanel = function(options) {
   }
 };
 
-exports.userListPage = function(req, res, next) {
+exports.userListPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -203,14 +203,14 @@ exports.userListPage = function(req, res, next) {
 };
 
 // View information and scripts of a user
-exports.view = function(req, res, next) {
+exports.view = function (req, res, next) {
   var authedUser = req.session.user;
 
   var username = req.route.params.username;
 
   User.findOne({
     name: caseInsensitive(username)
-  }, function(err, userData) {
+  }, function (err, userData) {
     if (err || !userData) { return next(); }
 
     //
@@ -264,14 +264,14 @@ exports.view = function(req, res, next) {
   });
 };
 
-exports.userCommentListPage = function(req, res, next) {
+exports.userCommentListPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   var username = req.route.params.username;
 
   User.findOne({
     name: caseInsensitive(username)
-  }, function(err, userData) {
+  }, function (err, userData) {
     if (err || !userData) { return next(); }
 
     //
@@ -331,13 +331,13 @@ exports.userCommentListPage = function(req, res, next) {
     function preRender() {
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
-      _.map(options.commentList, function(comment) {
+      _.map(options.commentList, function (comment) {
         comment.author = modelParser.parseUser(comment._authorId);
       });
       _.map(options.commentList, modelParser.renderComment);
 
       // comment.discussion
-      _.map(options.commentList, function(comment) {
+      _.map(options.commentList, function (comment) {
         comment.discussion = modelParser.parseDiscussion(comment._discussionId);
       });
 
@@ -350,14 +350,14 @@ exports.userCommentListPage = function(req, res, next) {
   });
 };
 
-exports.userScriptListPage = function(req, res, next) {
+exports.userScriptListPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   var username = req.route.params.username;
 
   User.findOne({
     name: caseInsensitive(username)
-  }, function(err, userData) {
+  }, function (err, userData) {
     if (err || !userData) { return next(); }
 
     //
@@ -438,7 +438,7 @@ exports.userScriptListPage = function(req, res, next) {
   });
 };
 
-exports.userEditProfilePage = function(req, res, next) {
+exports.userEditProfilePage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) { return res.redirect('/login'); }
@@ -447,7 +447,7 @@ exports.userEditProfilePage = function(req, res, next) {
 
   User.findOne({
     _id: authedUser._id
-  }, function(err, userData) {
+  }, function (err, userData) {
     if (err || !userData) { return next(); }
 
     //
@@ -502,14 +502,14 @@ exports.userEditProfilePage = function(req, res, next) {
   });
 };
 
-exports.userEditPreferencesPage = function(req, res, next) {
+exports.userEditPreferencesPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) { return res.redirect('/login'); }
 
   User.findOne({
     _id: authedUser._id
-  }, function(err, userData) {
+  }, function (err, userData) {
     if (err || !userData) { return next(); }
 
     //
@@ -551,9 +551,9 @@ exports.userEditPreferencesPage = function(req, res, next) {
     //--- Tasks
 
     // User edit auth strategies
-    tasks.push(function(callback) {
+    tasks.push(function (callback) {
       var userStrats = user.strategies.slice(0);
-      Strategy.find({}, function(err, strats) {
+      Strategy.find({}, function (err, strats) {
         var defaultStrategy = userStrats[userStrats.length - 1];
         var strategy = null;
         var name = null;
@@ -561,7 +561,7 @@ exports.userEditPreferencesPage = function(req, res, next) {
         options.usedStrategies = [];
 
         // Get the strategies we have OAuth keys for
-        strats.forEach(function(strat) {
+        strats.forEach(function (strat) {
           if (strat.name === defaultStrategy) { return; }
 
           if (userStrats.indexOf(strat.name) > -1) {
@@ -619,7 +619,7 @@ exports.userEditPreferencesPage = function(req, res, next) {
 };
 
 // Let a user edit their account
-exports.edit = function(req, res, next) {
+exports.edit = function (req, res, next) {
   var user = req.session.user;
   var userStrats = null;
   var options = null;
@@ -636,7 +636,7 @@ exports.edit = function(req, res, next) {
 
   req.route.params.push('author');
 
-  Strategy.find({}, function(err, strats) {
+  Strategy.find({}, function (err, strats) {
     var defaultStrategy = userStrats[userStrats.length - 1];
     var strategy = null;
     var name = null;
@@ -644,7 +644,7 @@ exports.edit = function(req, res, next) {
     options.usedStrategies = [];
 
     // Get the strategies we have OAuth keys for
-    strats.forEach(function(strat) {
+    strats.forEach(function (strat) {
       if (strat.name === defaultStrategy) { return; }
 
       if (userStrats.indexOf(strat.name) > -1) {
@@ -686,7 +686,7 @@ exports.edit = function(req, res, next) {
 
     scriptsList.listScripts({ _authorId: user._id, isLib: null, flagged: null },
       { size: -1 }, '/user/edit',
-      function(scriptsList) {
+      function (scriptsList) {
         scriptsList.edit = true;
         options.scriptsList = scriptsList;
         res.render('userEdit', options);
@@ -694,7 +694,7 @@ exports.edit = function(req, res, next) {
   });
 };
 
-exports.newScriptPage = function(req, res, next) {
+exports.newScriptPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -719,14 +719,14 @@ exports.newScriptPage = function(req, res, next) {
   options.pageMetaKeywords = null;
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     res.render('pages/newScriptPage', options);
   });
 };
 
-exports.newLibraryPage = function(req, res, next) {
+exports.newLibraryPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -751,14 +751,14 @@ exports.newLibraryPage = function(req, res, next) {
   options.pageMetaKeywords = null;
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     res.render('pages/newScriptPage', options);
   });
 };
 
-exports.userGitHubRepoListPage = function(req, res, next) {
+exports.userGitHubRepoListPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -784,16 +784,16 @@ exports.userGitHubRepoListPage = function(req, res, next) {
   pagination.itemsPerPage = 30; // GitHub Default
 
   //--- Tasks
-  tasks.push(function(callback) {
+  tasks.push(function (callback) {
     async.waterfall([
 
       // githubUser
-      function(callback) {
+      function (callback) {
         github.user.getFrom({
           user: encodeURIComponent(githubUserId),
         }, callback);
       },
-      function(githubUser, callback) {
+      function (githubUser, callback) {
         options.githubUser = githubUser;
         options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
           user: githubUser.login,
@@ -806,19 +806,19 @@ exports.userGitHubRepoListPage = function(req, res, next) {
       },
 
       // gihubRepos
-      function(callback) {
+      function (callback) {
         github.repos.getFromUser({
           user: encodeURIComponent(githubUserId),
           page: pagination.currentPage,
           per_page: pagination.itemsPerPage,
         }, callback);
       },
-      // function(githubRepoList, callback) {
+      // function (githubRepoList, callback) {
       //   githubRepoList = _.where(githubRepoList, {language: 'JavaScript'});
       //   callback(null, githubRepoList);
       // },
-      function(githubRepoList, callback) {
-        _.each(githubRepoList, function(githubRepo) {
+      function (githubRepoList, callback) {
+        _.each(githubRepoList, function (githubRepo) {
           var url = authedUser.userGitHubRepoPageUrl;
           url = helpers.updateUrlQueryString(url, {
             user: options.githubUser.login,
@@ -834,7 +834,7 @@ exports.userGitHubRepoListPage = function(req, res, next) {
   });
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) {
       console.error(err);
       return statusCodePage(req, res, next, {
@@ -849,7 +849,7 @@ exports.userGitHubRepoListPage = function(req, res, next) {
   });
 };
 
-exports.userGitHubImportScriptPage = function(req, res, next) {
+exports.userGitHubImportScriptPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -878,13 +878,13 @@ exports.userGitHubImportScriptPage = function(req, res, next) {
   async.waterfall([
 
     // Validate blob
-    function(callback) {
+    function (callback) {
       github.gitdata.getJavascriptBlobs({
         user: encodeURIComponent(githubUserId),
         repo: encodeURIComponent(githubRepoName),
       }, callback);
     },
-    function(javascriptBlobs, callback) {
+    function (javascriptBlobs, callback) {
       var javascriptBlob = _.findWhere(javascriptBlobs, { path: githubBlobPath });
 
       javascriptBlob = parseJavascriptBlob(javascriptBlob);
@@ -897,19 +897,19 @@ exports.userGitHubImportScriptPage = function(req, res, next) {
     },
 
     //
-    function(callback) {
+    function (callback) {
       github.usercontent.getBlobAsUtf8({
         user: encodeURIComponent(githubUserId),
         repo: encodeURIComponent(githubRepoName),
         path: encodeURIComponent(githubBlobPath),
       }, callback);
     },
-    function(blobUtf8, callback) {
+    function (blobUtf8, callback) {
       // Double check file size.
       if (blobUtf8.length > settings.maximum_upload_script_size)
         return callback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
 
-      var onScriptStored = function(script) {
+      var onScriptStored = function (script) {
         if (script) {
           options.script = script;
           callback(null);
@@ -936,7 +936,7 @@ exports.userGitHubImportScriptPage = function(req, res, next) {
         callback('Invalid filetype.');
       }
     },
-  ], function(err) {
+  ], function (err) {
     if (err) {
       console.error(err);
       console.error(githubUserId, githubRepoName, githubBlobPath);
@@ -951,7 +951,7 @@ exports.userGitHubImportScriptPage = function(req, res, next) {
   });
 };
 
-exports.userGitHubRepoPage = function(req, res, next) {
+exports.userGitHubRepoPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -991,15 +991,15 @@ exports.userGitHubRepoPage = function(req, res, next) {
 
   //--- Tasks
 
-  tasks.push(function(callback) {
+  tasks.push(function (callback) {
     async.waterfall([
-      function(callback) {
+      function (callback) {
         github.repos.get({
           user: encodeURIComponent(githubUserId),
           repo: encodeURIComponent(githubRepoName),
         }, callback);
       },
-      function(repo, callback) {
+      function (repo, callback) {
         options.repo = repo;
 
         github.gitdata.getJavascriptBlobs({
@@ -1007,9 +1007,9 @@ exports.userGitHubRepoPage = function(req, res, next) {
           repo: encodeURIComponent(repo.name),
         }, callback);
       },
-      function(javascriptBlobs, callback) {
+      function (javascriptBlobs, callback) {
         options.javascriptBlobs = javascriptBlobs;
-        _.each(javascriptBlobs, function(javascriptBlob) {
+        _.each(javascriptBlobs, function (javascriptBlob) {
           // Urls
           javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
             user: githubUserId,
@@ -1028,14 +1028,14 @@ exports.userGitHubRepoPage = function(req, res, next) {
   });
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     res.render('pages/userGitHubRepoPage', options);
   });
 };
 
-var parseJavascriptBlob = function(javascriptBlob) {
+var parseJavascriptBlob = function (javascriptBlob) {
   // Parsing Script Name & Type from path
   var blobPathRegex = /^(.*\/)?(.+?)((\.user)?\.js)$/;
   var m = blobPathRegex.exec(javascriptBlob.path);
@@ -1066,7 +1066,7 @@ var parseJavascriptBlob = function(javascriptBlob) {
 };
 
 // Sloppy code to let a user add scripts to their acount
-exports.userManageGitHubPage = function(req, res, next) {
+exports.userManageGitHubPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -1087,35 +1087,35 @@ exports.userManageGitHubPage = function(req, res, next) {
 
   //
   var TOO_MANY_SCRIPTS = 'GitHub user has too many scripts to batch import.';
-  tasks.push(function(callback) {
+  tasks.push(function (callback) {
     var githubUserName = req.query.user || authedUser.ghUsername;
 
     async.waterfall([
       // authedUser.ghUsername
-      function(callback) {
+      function (callback) {
         if (githubUserName || authedUser.ghUsername) {
           callback(null);
         } else {
           async.waterfall([
-            function(callback) {
+            function (callback) {
               var githubUserId = authedUser.githubUserId();
               github.user.getFrom({
                 user: encodeURIComponent(githubUserId),
               }, callback);
             },
-            function(githubUser, callback) {
+            function (githubUser, callback) {
               options.githubUser = githubUser;
               console.log(githubUser);
               User.findOne({
                 _id: authedUser._id,
               }, callback);
             },
-            function(userData, callback) {
+            function (userData, callback) {
               console.log(userData);
               userData.ghUsername = options.githubUser.login;
               userData.save(callback);
             },
-            function(callback) {
+            function (callback) {
               console.log(util.format('Updated User(%s).ghUsername', userData.name));
               callback(null);
             },
@@ -1123,10 +1123,10 @@ exports.userManageGitHubPage = function(req, res, next) {
         }
       },
       // Fetch repos and format for template.
-      function(callback) {
+      function (callback) {
         console.log(githubUserName);
         var repoManager = RepoManager.getManager(githubUserName, authedUser);
-        repoManager.fetchRecentRepos(function() {
+        repoManager.fetchRecentRepos(function () {
           // convert the repos object to something mustache can use
           options.repos = repoManager.makeRepoArray();
 
@@ -1135,10 +1135,10 @@ exports.userManageGitHubPage = function(req, res, next) {
         });
       },
       // Import repos.
-      function(repos, callback) {
+      function (repos, callback) {
         var loadable = {};
         console.log(req.body);
-        _.each(req.body, function(repo, reponame) {
+        _.each(req.body, function (repo, reponame) {
           // Load all scripts in the repo
           if (typeof repo === 'string' && reponame.substr(-4) === '_all') {
             reponame = repo;
@@ -1164,7 +1164,7 @@ exports.userManageGitHubPage = function(req, res, next) {
         if (_.size(loadable) > 0) {
           console.log('loadScripts');
           var githubUserName = authedUser.ghUsername;
-          RepoManager.getManager(githubUserName, authedUser, loadable).loadScripts(function() {
+          RepoManager.getManager(githubUserName, authedUser, loadable).loadScripts(function () {
             console.log('preredirect');
             res.redirect(authedUser.userScriptListPageUrl);
             console.log('redirect');
@@ -1179,7 +1179,7 @@ exports.userManageGitHubPage = function(req, res, next) {
 
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) {
       return statusCodePage(req, res, next, {
         statusMessage: err,
@@ -1191,7 +1191,7 @@ exports.userManageGitHubPage = function(req, res, next) {
   });
 };
 
-exports.uploadScript = function(req, res, next) {
+exports.uploadScript = function (req, res, next) {
   var user = req.session.user;
   var isLib = req.route.params.isLib;
   var userjsRegex = /\.user\.js$/;
@@ -1204,7 +1204,7 @@ exports.uploadScript = function(req, res, next) {
   }
 
   form = new formidable.IncomingForm();
-  form.parse(req, function(err, fields, files) {
+  form.parse(req, function (err, fields, files) {
     var script = files.script;
     var stream = null;
     var bufs = [];
@@ -1217,23 +1217,23 @@ exports.uploadScript = function(req, res, next) {
     }
 
     stream = fs.createReadStream(script.path);
-    stream.on('data', function(d) { bufs.push(d); });
+    stream.on('data', function (d) { bufs.push(d); });
 
-    stream.on('end', function() {
-      User.findOne({ _id: user._id }, function(err, user) {
+    stream.on('end', function () {
+      User.findOne({ _id: user._id }, function (err, user) {
         var scriptName = fields.script_name;
         if (isLib) {
           scriptStorage.storeScript(user, scriptName, Buffer.concat(bufs),
-            function(script) {
+            function (script) {
               if (!script) { return res.redirect(failUrl); }
 
               res.redirect('/libs/' + encodeURI(script.installName
                 .replace(jsRegex, '')));
             });
         } else {
-          scriptStorage.getMeta(bufs, function(meta) {
+          scriptStorage.getMeta(bufs, function (meta) {
             scriptStorage.storeScript(user, meta, Buffer.concat(bufs),
-              function(script) {
+              function (script) {
                 if (!script) { return res.redirect(failUrl); }
 
                 res.redirect('/scripts/' + encodeURI(script.installName
@@ -1247,7 +1247,7 @@ exports.uploadScript = function(req, res, next) {
 };
 
 // post route to update a user's account
-exports.update = function(req, res, next) {
+exports.update = function (req, res, next) {
   var user = req.session.user;
   var scriptUrls = req.body.urls ? Object.keys(req.body.urls) : '';
   var installRegex = null;
@@ -1260,7 +1260,7 @@ exports.update = function(req, res, next) {
     // Update the about section of a user's profile
     User.findOneAndUpdate({ _id: user._id },
       { about: req.body.about },
-      function(err, user) {
+      function (err, user) {
         if (err) { res.redirect('/'); }
 
         req.session.user.about = user.about;
@@ -1269,18 +1269,18 @@ exports.update = function(req, res, next) {
   } else {
     // Remove scripts (currently no UI)
     installRegex = new RegExp('^\/install\/(' + username + '\/.+)$');
-    scriptUrls.forEach(function(url) {
+    scriptUrls.forEach(function (url) {
       var matches = installRegex.exec(url);
       if (matches && matches[1]) { installNames.push(matches[1]); }
     });
-    async.each(installNames, scriptStorage.deleteScript, function() {
+    async.each(installNames, scriptStorage.deleteScript, function () {
       res.redirect('/users/' + user.name);
     });
   }
 };
 
 // Submit a script through the web editor
-exports.submitSource = function(req, res, next) {
+exports.submitSource = function (req, res, next) {
   var user = req.session.user;
   var isLib = req.route.params.isLib;
   var source = null;
@@ -1292,8 +1292,8 @@ exports.submitSource = function(req, res, next) {
     var userjsRegex = /\.user\.js$/;
     var jsRegex = /\.js$/;
 
-    User.findOne({ _id: user._id }, function(err, user) {
-      scriptStorage.storeScript(user, meta, source, function(script) {
+    User.findOne({ _id: user._id }, function (err, user) {
+      scriptStorage.storeScript(user, meta, source, function (script) {
         var redirectUrl = encodeURI(script ? (script.isLib ? '/libs/'
           + script.installName.replace(jsRegex, '') : '/scripts/'
           + script.installName.replace(userjsRegex, '')) : req.body.url);
@@ -1303,7 +1303,7 @@ exports.submitSource = function(req, res, next) {
         }
 
         Script.findOne({ installName: req.body.original },
-          function(err, origScript) {
+          function (err, origScript) {
             var fork = null;
             if (err || !origScript) { return res.redirect(redirectUrl); }
 
@@ -1314,7 +1314,7 @@ exports.submitSource = function(req, res, next) {
             });
             script.fork = fork;
 
-            script.save(function(err, script) {
+            script.save(function (err, script) {
               res.redirect(redirectUrl);
             });
           });
@@ -1328,7 +1328,7 @@ exports.submitSource = function(req, res, next) {
   if (isLib) {
     storeScript(req.body.script_name, source);
   } else {
-    scriptStorage.getMeta([source], function(meta) {
+    scriptStorage.getMeta([source], function (meta) {
       if (!meta || !meta.name) { return res.redirect(url); }
       storeScript(meta, source);
     });
@@ -1353,7 +1353,7 @@ function getExistingScript(req, options, authedUser, callback) {
     callback(options);
   } else {
     req.route.params.scriptname += options.isLib ? '.js' : '.user.js';
-    scriptStorage.getSource(req, function(script, stream) {
+    scriptStorage.getSource(req, function (script, stream) {
       var bufs = [];
       var collaborators = [];
 
@@ -1367,8 +1367,8 @@ function getExistingScript(req, options, authedUser, callback) {
         }
       }
 
-      stream.on('data', function(d) { bufs.push(d); });
-      stream.on('end', function() {
+      stream.on('data', function (d) { bufs.push(d); });
+      stream.on('end', function () {
         options.title = 'Edit ' + script.name;
         options.source = Buffer.concat(bufs).toString('utf8');
         options.original = script.installName;
@@ -1396,7 +1396,7 @@ function pageMeta(options) {
   return options;
 }
 
-exports.editScript = function(req, res, next) {
+exports.editScript = function (req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -1414,15 +1414,15 @@ exports.editScript = function(req, res, next) {
 
   // Get the info and source for an existing script for the editor
   // Also works for writing a new script
-  tasks.push(function(callback) {
-    getExistingScript(req, options, authedUser, function(opts) {
+  tasks.push(function (callback) {
+    getExistingScript(req, options, authedUser, function (opts) {
       options = opts;
       callback(!opts);
     });
   });
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     res.render('pages/scriptViewSourcePage', options);
@@ -1430,15 +1430,15 @@ exports.editScript = function(req, res, next) {
 };
 
 // route to flag a user
-exports.flag = function(req, res, next) {
+exports.flag = function (req, res, next) {
   var username = req.route.params.username;
   var unflag = req.route.params.unflag;
 
-  User.findOne({ name: username }, function(err, user) {
+  User.findOne({ name: username }, function (err, user) {
     var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
     if (err || !user) { return next(); }
 
-    fn(User, user, req.session.user, function(flagged) {
+    fn(User, user, req.session.user, function (flagged) {
       res.redirect('/users/' + username);
     });
   });

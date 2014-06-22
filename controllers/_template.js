@@ -17,7 +17,7 @@ var modelQuery = require('../libs/modelQuery');
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 //--- Views
-exports.example = function(req, res, next) {
+exports.example = function (req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -45,7 +45,7 @@ exports.example = function(req, res, next) {
   async.parallel(tasks, asyncComplete);
 };
 
-exports.example = function(req, res, next) {
+exports.example = function (req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -75,7 +75,7 @@ exports.example = function(req, res, next) {
     modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
 
   // Scripts: Query: Sort
-  modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function() {
+  modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function () {
     scriptListQuery.sort('-rating -installs -updated');
   });
 
@@ -89,8 +89,8 @@ exports.example = function(req, res, next) {
   tasks.push(pagination.getCountTask(scriptListQuery));
 
   // Scripts
-  tasks.push(function(callback) {
-    scriptListQuery.exec(function(err, scriptDataList) {
+  tasks.push(function (callback) {
+    scriptListQuery.exec(function (err, scriptDataList) {
       if (err) {
         callback();
       } else {

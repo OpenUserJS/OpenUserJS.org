@@ -12,18 +12,18 @@ function renderFile(res, path, options) {
 
 // Express doesn't have stream support for rendering templates
 // Hack express to add support for rendering a template with Mu
-exports.renderFile = function(app) {
+exports.renderFile = function (app) {
   var render = app.response.__proto__.render;
 
-  app.response.__proto__.render = function(view, options, fn) {
+  app.response.__proto__.render = function (view, options, fn) {
     var self = this;
 
     if (!fn && app.get('view engine') === 'html') {
-      fn = function(path, options) { renderFile(self, path, options); };
+      fn = function (path, options) { renderFile(self, path, options); };
     }
 
     render.call(self, view, options, fn);
   };
 
-  return (function(path, options, fn) { fn(path, options); });
+  return (function (path, options, fn) { fn(path, options); });
 };

@@ -20,7 +20,7 @@ moment.lang('en', {
   relativeTime: {
     future: "in %s",
     past: "%s ago",
-    s: function(number, withoutSuffix, key, isFuture) { return number + "s"; },
+    s: function (number, withoutSuffix, key, isFuture) { return number + "s"; },
     m: "1m",
     mm: "%dm",
     h: "1h",
@@ -34,7 +34,7 @@ moment.lang('en', {
   }
 });
 
-var parseDateProperty = function(obj, key) {
+var parseDateProperty = function (obj, key) {
   var date = obj[key];
   obj[key + 'ISOFormat'] = date.toISOString();
   obj[key + 'Humanized'] = moment(date).fromNow();
@@ -49,18 +49,18 @@ var parseDateProperty = function(obj, key) {
  */
 
 // Urls
-var getScriptPageUrl = function(script) {
+var getScriptPageUrl = function (script) {
   var isLib = script.isLib || false;
   var scriptPath = script.installName
     .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
   return (isLib ? '/libs/' : '/scripts/') + scriptPath;
 };
 
-var getScriptViewSourcePageUrl = function(script) {
+var getScriptViewSourcePageUrl = function (script) {
   return getScriptPageUrl(script) + '/source';
 };
 
-var getScriptEditAboutPageUrl = function(script) {
+var getScriptEditAboutPageUrl = function (script) {
   var isLib = script.isLib || false;
   var scriptPath = script.installName
     .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
@@ -69,17 +69,17 @@ var getScriptEditAboutPageUrl = function(script) {
   return (isLib ? '/lib/' : '/script/') + editUrl.join('/') + '/edit';
 };
 
-var getScriptEditSourcePageUrl = function(script) {
+var getScriptEditSourcePageUrl = function (script) {
   return getScriptViewSourcePageUrl(script);
 };
 
-var getScriptInstallPageUrl = function(script) {
+var getScriptInstallPageUrl = function (script) {
   var isLib = script.isLib || false;
   return (isLib ? '/libs/src/' : '/install/') + script.installName;
 };
 
 //
-var parseScript = function(scriptData) {
+var parseScript = function (scriptData) {
   if (!scriptData) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
@@ -147,7 +147,7 @@ var parseScript = function(scriptData) {
 parseModelFnMap.Script = parseScript;
 exports.parseScript = parseScript;
 
-exports.renderScript = function(script) {
+exports.renderScript = function (script) {
   if (!script) return;
   script.aboutRendered = renderMd(script.about);
 };
@@ -157,7 +157,7 @@ exports.renderScript = function(script) {
  */
 
 //
-var parseUser = function(userData) {
+var parseUser = function (userData) {
   if (!userData) return;
   // var user = userData.toObject ? userData.toObject() : userData;
   var user = userData;
@@ -183,7 +183,7 @@ var parseUser = function(userData) {
   user.userRemovePageUrl = '/remove/users/' + user.name;
 
   // Funcs
-  user.githubUserId = function() {
+  user.githubUserId = function () {
     var indexOfGH = user.strategies.indexOf('github');
     if (indexOfGH > -1) {
       return user.auths[indexOfGH];
@@ -202,7 +202,7 @@ exports.parseUser = parseUser;
  */
 
 //
-var parseGroup = function(groupData) {
+var parseGroup = function (groupData) {
   if (!groupData) return;
   // var group = groupData.toObject ? groupData.toObject() : groupData;
   var group = groupData;
@@ -217,13 +217,13 @@ var parseGroup = function(groupData) {
   if (new Date().getTime() > (group.updated.getTime() + 1000 * 60 * 60 * 2)) {
     Script.find({
       _id: { $in: group._scriptIds }
-    }, function(err, scripts) {
+    }, function (err, scripts) {
       if (!err && scripts.length > 1) {
         group.rating = getRating(scripts);
       }
 
       group.updated = new Date();
-      group.save(function(err, group) {
+      group.save(function (err, group) {
         console.log(util.format('Group(%s) Rating Updated', group.name));
       });
     });
@@ -239,7 +239,7 @@ exports.parseGroup = parseGroup;
  */
 
 //
-var parseDiscussion = function(discussionData) {
+var parseDiscussion = function (discussionData) {
   if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
   // var discussion = discussionData; // Can't override discussionData.category
@@ -257,7 +257,7 @@ var parseDiscussion = function(discussionData) {
     recentCommentors.push(discussion.author);
   if (discussion.lastCommentor != discussion.author)
     recentCommentors.push(discussion.lastCommentor);
-  recentCommentors = _.map(recentCommentors, function(username) {
+  recentCommentors = _.map(recentCommentors, function (username) {
     return {
       name: username,
     };
@@ -274,7 +274,7 @@ var parseDiscussion = function(discussionData) {
 parseModelFnMap.Discussion = parseDiscussion;
 exports.parseDiscussion = parseDiscussion;
 
-var parseIssue = function(discussionData) {
+var parseIssue = function (discussionData) {
   if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
 
@@ -294,7 +294,7 @@ exports.parseIssue = parseIssue;
  */
 
 //
-var parseComment = function(commentData) {
+var parseComment = function (commentData) {
   if (!commentData) return;
   var comment = commentData.toObject ? commentData.toObject() : commentData;
 
@@ -306,7 +306,7 @@ var parseComment = function(commentData) {
 parseModelFnMap.Comment = parseComment;
 exports.parseComment = parseComment;
 
-exports.renderComment = function(comment) {
+exports.renderComment = function (comment) {
   if (!comment) return;
   comment.contentRendered = renderMd(comment.content);
 };
@@ -315,7 +315,7 @@ exports.renderComment = function(comment) {
  * Category
  */
 
-var canUserPostTopicToCategory = function(user, category) {
+var canUserPostTopicToCategory = function (user, category) {
   // Check if user is logged in.
   if (_.isUndefined(user) || _.isNull(user))
     return false; // Not logged in.
@@ -331,7 +331,7 @@ var canUserPostTopicToCategory = function(user, category) {
 };
 
 //
-var parseCategory = function(categoryData) {
+var parseCategory = function (categoryData) {
   if (!categoryData) return;
   var category = categoryData.toObject ? categoryData.toObject() : categoryData;
 
@@ -340,7 +340,7 @@ var parseCategory = function(categoryData) {
   category.categoryPostDiscussionPageUrl = '/post/' + category.slug;
 
   // Functions
-  category.canUserPostTopic = function(user) {
+  category.canUserPostTopic = function (user) {
     return canUserPostTopicToCategory(user, category);
   };
 
@@ -353,7 +353,7 @@ exports.parseCategory = parseCategory;
  * Remove
  */
 
-var getRemovedItemDescription = function(remove) {
+var getRemovedItemDescription = function (remove) {
   if (!remove.content)
     return 'No content';
 
@@ -372,7 +372,7 @@ var getRemovedItemDescription = function(remove) {
 };
 
 //
-var parseRemovedItem = function(removedItemData) {
+var parseRemovedItem = function (removedItemData) {
   if (!removedItemData) return;
   var removedItem = removedItemData;
 

@@ -4,7 +4,7 @@ var User = require('../models/user').User;
 var destroySessions = require('../libs/modifySessions').destroy;
 
 // Simple controller to remove content and save it in the graveyard
-exports.rm = function(req, res, next) {
+exports.rm = function (req, res, next) {
   var type = req.route.params[0];
   var path = req.route.params[1];
   var thisUser = req.session.user;
@@ -13,8 +13,8 @@ exports.rm = function(req, res, next) {
     case 'scripts':
     case 'libs':
       path += type === 'libs' ? '.js' : '.user.js';
-      Script.findOne({ installName: path }, function(err, script) {
-        removeLib.remove(Script, script, thisUser, '', function(removed) {
+      Script.findOne({ installName: path }, function (err, script) {
+        removeLib.remove(Script, script, thisUser, '', function (removed) {
           if (!removed) { return next(); }
           res.redirect('/');
         });
@@ -22,12 +22,12 @@ exports.rm = function(req, res, next) {
       break;
     case 'users':
       User.findOne({ name: { $regex: new RegExp('^' + path + '$', "i") } },
-        function(err, user) {
-          removeLib.remove(User, user, thisUser, '', function(removed) {
+        function (err, user) {
+          removeLib.remove(User, user, thisUser, '', function (removed) {
             if (!removed) { return next(); }
 
             // Destory all the sessions belonging to the removed user
-            destroySessions(req, user, function() {
+            destroySessions(req, user, function () {
               res.redirect('/');
             });
           });

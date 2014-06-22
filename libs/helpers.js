@@ -22,7 +22,7 @@ var day = hour * 24;
 var week = day * 7;
 
 // Get a formatted date that can be used everywhere a date is displayed
-exports.formatDate = function(date) {
+exports.formatDate = function (date) {
   var difference = new Date().getTime() - date.getTime();
   var ret = '';
   var days = 0;
@@ -54,12 +54,12 @@ exports.formatDate = function(date) {
 }
 
 // Create an object with no properties
-exports.nil = function(obj) {
+exports.nil = function (obj) {
   var nilObj = Object.create(null);
 
   if (!obj) return nilObj;
 
-  exports.forIn(obj, function(val, key) {
+  exports.forIn(obj, function (val, key) {
     nilObj[key] = val;
   });
 
@@ -67,7 +67,7 @@ exports.nil = function(obj) {
 };
 
 // Safely iterate on an object not create using nil()
-exports.forIn = function(obj, forProp) {
+exports.forIn = function (obj, forProp) {
   var key = null;
 
   for (key in obj) {
@@ -78,7 +78,7 @@ exports.forIn = function(obj, forProp) {
 
 // Clean filenames but leave them readable
 // Based on Greasemonkey modules/remoteScript.js
-exports.cleanFilename = function(filename, defaultName) {
+exports.cleanFilename = function (filename, defaultName) {
   // Blacklist problem characters (slashes, colons, etc.).
   var cleanName = (filename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
 
@@ -88,15 +88,15 @@ exports.cleanFilename = function(filename, defaultName) {
   return cleanName || defaultName;
 };
 
-exports.limitRange = function(min, x, max) {
+exports.limitRange = function (min, x, max) {
   return Math.max(Math.min(x, max), min);
 };
 
-exports.limitMin = function(min, x) {
+exports.limitMin = function (min, x) {
   return Math.max(x, min);
 };
 
-var setUrlQueryValue = function(baseUrl, queryVarKey, queryVarValue) {
+var setUrlQueryValue = function (baseUrl, queryVarKey, queryVarValue) {
   var parseQueryString = true;
   var u = url.parse(baseUrl, parseQueryString);
   u.query[queryVarKey] = queryVarValue;
@@ -105,9 +105,9 @@ var setUrlQueryValue = function(baseUrl, queryVarKey, queryVarValue) {
 };
 exports.setUrlQueryValue = setUrlQueryValue;
 
-exports.updateUrlQueryString = function(baseUrl, dict) {
+exports.updateUrlQueryString = function (baseUrl, dict) {
   var url = baseUrl;
-  _.each(dict, function(value, key) {
+  _.each(dict, function (value, key) {
     url = setUrlQueryValue(url, key, value);
   });
   return url;

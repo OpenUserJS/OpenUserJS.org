@@ -13,7 +13,7 @@ var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 
 // List script issues
-exports.list = function(req, res, next) {
+exports.list = function (req, res, next) {
   var authedUser = req.session.user;
 
   var type = req.route.params.type;
@@ -108,7 +108,7 @@ exports.list = function(req, res, next) {
 };
 
 // Show the discussion on an issue
-exports.view = function(req, res, next) {
+exports.view = function (req, res, next) {
   var authedUser = req.session.user;
 
   var type = req.route.params.type;
@@ -147,7 +147,7 @@ exports.view = function(req, res, next) {
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
 
-    discussionLib.findDiscussion(category.slug, topic, function(discussionData) {
+    discussionLib.findDiscussion(category.slug, topic, function (discussionData) {
       if (err || !discussionData) { return next(); }
 
       // Discussion
@@ -188,7 +188,7 @@ exports.view = function(req, res, next) {
 
         // commentList
         options.commentList = _.map(options.commentList, modelParser.parseComment);
-        _.map(options.commentList, function(comment) {
+        _.map(options.commentList, function (comment) {
           comment.author = modelParser.parseUser(comment._authorId);
         });
         _.map(options.commentList, modelParser.renderComment);
@@ -207,7 +207,7 @@ exports.view = function(req, res, next) {
 };
 
 // Open a new issue
-exports.open = function(req, res, next) {
+exports.open = function (req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -250,7 +250,7 @@ exports.open = function(req, res, next) {
     if (topic && content) {
       // Issue Submission
       discussionLib.postTopic(authedUser, category.slug, topic, content, true,
-        function(discussion) {
+        function (discussion) {
           if (!discussion)
             return res.redirect('/' + encodeURI(category) + '/open');
 
@@ -278,7 +278,7 @@ exports.open = function(req, res, next) {
 };
 
 // post route to add a new comment to a discussion on an issue
-exports.comment = function(req, res, next) {
+exports.comment = function (req, res, next) {
   var type = req.route.params.type;
   var topic = req.route.params.topic;
   var installName = scriptStorage.getInstallName(req);
@@ -293,11 +293,11 @@ exports.comment = function(req, res, next) {
 
     if (err || !script) { return next(); }
 
-    discussionLib.findDiscussion(category, topic, function(issue) {
+    discussionLib.findDiscussion(category, topic, function (issue) {
       if (!issue) { return next(); }
 
       discussionLib.postComment(user, issue, content, false,
-        function(err, discussion) {
+        function (err, discussion) {
           res.redirect(encodeURI(discussion.path
             + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
         });
@@ -306,7 +306,7 @@ exports.comment = function(req, res, next) {
 };
 
 // Open or close and issue you are allowed
-exports.changeStatus = function(req, res, next) {
+exports.changeStatus = function (req, res, next) {
   var type = req.route.params.type;
   var topic = req.route.params.topic;
   var installName = scriptStorage.getInstallName(req);
@@ -323,7 +323,7 @@ exports.changeStatus = function(req, res, next) {
       if (err || !script) { return next(); }
     if (err || !script) { return next(); }
 
-    discussionLib.findDiscussion(category, topic, function(issue) {
+    discussionLib.findDiscussion(category, topic, function (issue) {
       if (!issue) { return next(); }
 
       // Both the script author and the issue creator can close the issue
@@ -339,7 +339,7 @@ exports.changeStatus = function(req, res, next) {
       }
 
       if (changed) {
-        issue.save(function(err, discussion) {
+        issue.save(function (err, discussion) {
           res.redirect(encodeURI(discussion.path
             + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
         });
