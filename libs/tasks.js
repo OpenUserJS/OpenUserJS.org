@@ -8,8 +8,8 @@ var onErr = function(err, onErrFn) {
 };
 
 exports.countTask = function(modelListQuery, dict, key, onErrFn) {
-  return function (callback) {
-    modelListQuery.model.count(modelListQuery._conditions, function(err, modelListCount){
+  return function(callback) {
+    modelListQuery.model.count(modelListQuery._conditions, function(err, modelListCount) {
       if (err) {
         onErr(err, onErrFn);
         callback();
@@ -22,8 +22,8 @@ exports.countTask = function(modelListQuery, dict, key, onErrFn) {
 };
 
 exports.execQueryTask = function(query, dict, key, onErrFn) {
-  return function (callback) {
-    query.exec(function(err, result){
+  return function(callback) {
+    query.exec(function(err, result) {
       if (err) {
         onErr(err, onErrFn);
         callback();

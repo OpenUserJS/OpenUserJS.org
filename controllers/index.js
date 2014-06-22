@@ -15,9 +15,8 @@ var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var removeSession = require('../libs/modifySessions').remove;
 
-
 // The home page has scripts and groups in a sidebar
-exports.home = function (req, res) {
+exports.home = function(req, res) {
   var authedUser = req.session.user;
 
   //
@@ -88,7 +87,7 @@ exports.home = function (req, res) {
   tasks.push(execQueryTask(announcementsDiscussionListQuery, options, 'announcementsDiscussionList'));
 
   //---
-  function preRender(){
+  function preRender() {
     // scriptList
     options.scriptList = _.map(options.scriptList, modelParser.parseScript);
 
@@ -126,13 +125,13 @@ exports.home = function (req, res) {
       options.pageHeading = options.isFlagged ? 'Flagged Scripts' : 'Scripts';
     }
   };
-  function render(){ res.render('pages/scriptListPage', options); }
-  function asyncComplete(){ preRender(); render(); }
+  function render() { res.render('pages/scriptListPage', options); }
+  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
 // Preform a script search
-function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
+function getSearchResults(req, res, prefixSearch, fullSearch, opts, callback) {
   var user = req.session.user;
   var search = req.route.params.shift();
   var baseUrl = '/search/' + encodeURIComponent(search);
@@ -146,21 +145,21 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
     .split(/\s+/);
 
   // Match all the terms but in any order
-  terms.forEach(function (term) {
-    prefixStr += '(?=.*?\\b' + term  + ')';
-    fullStr += '(?=.*?' + term  + ')';
+  terms.forEach(function(term) {
+    prefixStr += '(?=.*?\\b' + term + ')';
+    fullStr += '(?=.*?' + term + ')';
   });
   prefixRegex = new RegExp(prefixStr, 'i');
   fullRegex = new RegExp(fullStr, 'i');
 
   // One of the searchable fields must match the conditions
-  prefixSearch.forEach(function (prop) {
+  prefixSearch.forEach(function(prop) {
     var condition = {};
     condition[prop] = prefixRegex;
     conditions.push(condition);
   });
 
-  fullSearch.forEach(function (prop) {
+  fullSearch.forEach(function(prop) {
     var condition = {};
     condition[prop] = fullRegex;
     conditions.push(condition);
@@ -168,52 +167,53 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
   opts['$or'] = conditions;
 
   modelsList.listScripts(opts, req.route.params, baseUrl,
-    function (scriptsList) {
+    function(scriptsList) {
       callback({
-        'title': 'Searching for "' + search  +'"',
+        'title': 'Searching for "' + search + '"',
         'username': user ? user.name : null,
         'search': search,
         'scriptsList': scriptsList
       });
-  });
+    }
+  );
 };
 
 // Script search results
-exports.search = function (req, res, next) {
+exports.search = function(req, res, next) {
   getSearchResults(req, res,
     ['name', 'author', 'about', 'meta.description'],
     ['meta.include', 'meta.match'], {},
-    function (options) {
+    function(options) {
       res.render('index', options);
-  });
+    });
 };
 
 // Show library scripts
-exports.toolbox = function (req, res) {
+exports.toolbox = function(req, res) {
   var user = req.session.user;
 
   modelsList.listScripts({ isLib: true }, req.route.params, '/toolbox',
-    function (scriptsList) {
+    function(scriptsList) {
       res.render('index', {
         title: 'The Toolbox',
         toolbox: true,
         username: user ? user.name : null,
         scriptsList: scriptsList
       });
-  });
+    });
 };
 
 // Search library scripts
-exports.toolSearch = function (req, res) {
+exports.toolSearch = function(req, res) {
   getSearchResults(req, res, ['name', 'author', 'about'], [], { isLib: true },
-    function (options) {
+    function(options) {
       options.toolbox = true;
       res.render('index', options);
-  });
+    });
 };
 
 // UI for user registration
-exports.register = function (req, res) {
+exports.register = function(req, res) {
   var authedUser = req.session.user;
 
   // If already logged in, goto the front page.
@@ -243,7 +243,7 @@ exports.register = function (req, res) {
   options.strategies = [];
 
   // Get OpenId strategies
-  _.each(strategies, function(strategy, strategyKey){
+  _.each(strategies, function(strategy, strategyKey) {
     if (!strategy.oauth) {
       options.strategies.push({
         'strat': strategyKey,
@@ -255,13 +255,13 @@ exports.register = function (req, res) {
   //--- Tasks
 
   //
-  tasks.push(function (callback) {
-    Strategy.find({}, function (err, availableStrategies) {
+  tasks.push(function(callback) {
+    Strategy.find({}, function(err, availableStrategies) {
       if (err) {
         callback();
       } else {
         // Get the strategies we have OAuth keys for
-        availableStrategies.forEach(function (strategy) {
+        availableStrategies.forEach(function(strategy) {
           options.strategies.push({
             'strat': strategy.name,
             'display': strategy.display
@@ -273,27 +273,27 @@ exports.register = function (req, res) {
   });
 
   //---
-  function preRender(){
+  function preRender() {
     // Sort the strategies
-    options.strategies = _.sortBy(options.strategies, function(strategy){ return strategy.display; });
+    options.strategies = _.sortBy(options.strategies, function(strategy) { return strategy.display; });
 
     // Prefer GitHub
-    var githubStrategy = _.findWhere(options.strategies, {strat: 'github'});
+    var githubStrategy = _.findWhere(options.strategies, { strat: 'github' });
     if (githubStrategy)
       githubStrategy.selected = true;
   };
-  function render(){ res.render('pages/loginPage', options); }
-  function asyncComplete(){ preRender(); render(); }
+  function render() { res.render('pages/loginPage', options); }
+  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
-exports.logout = function (req, res) {
+exports.logout = function(req, res) {
   var authedUser = req.session.user;
 
   if (!authedUser) { return res.redirect('/'); }
 
-  User.findOne({ _id: authedUser._id }, function (err, user) {
-    removeSession(req, user, function () {
+  User.findOne({ _id: authedUser._id }, function(err, user) {
+    removeSession(req, user, function() {
       res.redirect('/');
     });
   });

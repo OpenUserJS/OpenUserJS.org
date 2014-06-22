@@ -12,7 +12,7 @@ var findOrDefaultIfNull = function(query, key, value, defaultValue) {
     condition[key] = null;
     conditions.push(condition);
   }
-  query.and({$or: conditions});
+  query.and({ $or: conditions });
 };
 exports.findOrDefaultIfNull = findOrDefaultIfNull;
 
@@ -40,29 +40,29 @@ var parseSearchConditions = function(q, prefixSearchFields, fullSearchFields) {
   var fullStr = '';
   var prefixRegex = null;
   var fullRegex = null;
-  var terms = q.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/).map(function (e) { return e.trim(); });
+  var terms = q.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/).map(function(e) { return e.trim(); });
 
   // Match all the terms but in any order
-  terms.forEach(function (term) {
+  terms.forEach(function(term) {
     var isNonASCII = /^\W/.test(term);
     if (isNonASCII) {
-      prefixStr += '(?=.*?([ \n\r\t.,\'"\+!?-]+)' + term  + ')';
+      prefixStr += '(?=.*?([ \n\r\t.,\'"\+!?-]+)' + term + ')';
     } else {
-      prefixStr += '(?=.*?\\b' + term  + ')';
+      prefixStr += '(?=.*?\\b' + term + ')';
     }
-    fullStr += '(?=.*?' + term  + ')';
+    fullStr += '(?=.*?' + term + ')';
   });
   prefixRegex = new RegExp(prefixStr, 'i');
   fullRegex = new RegExp(fullStr, 'i');
 
   // One of the searchable fields must match the conditions
-  prefixSearchFields.forEach(function (prop) {
+  prefixSearchFields.forEach(function(prop) {
     var condition = {};
     condition[prop] = prefixRegex;
     conditions.push(condition);
   });
 
-  fullSearchFields.forEach(function (prop) {
+  fullSearchFields.forEach(function(prop) {
     var condition = {};
     condition[prop] = fullRegex;
     conditions.push(condition);
@@ -126,7 +126,6 @@ var parseRemovedItemSearchQuery = function(removedItemListQuery, query) {
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
-
 var applyModelListQueryFlaggedFilter = function(modelListQuery, options, flaggedQuery) {
   // Only list flagged items if authedUser >= moderator or if authedUser owns the item.
   if (options.isYou || options.isMod) {
@@ -145,7 +144,7 @@ var applyModelListQueryFlaggedFilter = function(modelListQuery, options, flagged
   } else {
     // Hide
     // Script.flagged is undefined by default.
-    modelListQuery.and({flagged: {$ne: true}});
+    modelListQuery.and({ flagged: { $ne: true } });
   }
 };
 exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
@@ -167,9 +166,8 @@ var applyModelListQueryDefaults = function(modelListQuery, options, req, default
   if (defaultOptions.filterFlaggedItems)
     applyModelListQueryFlaggedFilter(modelListQuery, options, req.query.flagged);
 
-
   // Sort
-  parseModelListSort(modelListQuery, req.query.orderBy, req.query.orderDir, function(){
+  parseModelListSort(modelListQuery, req.query.orderBy, req.query.orderDir, function() {
     modelListQuery.sort(defaultOptions.defaultSort);
   });
 
@@ -184,7 +182,7 @@ exports.applyCommentListQueryDefaults = function(commentListQuery, options, req)
     defaultSort: 'created',
     parseSearchQueryFn: parseCommentSearchQuery,
     searchBarPlaceholder: 'Search Comments',
-    filterFlaggedItems: true,
+    filterFlaggedItems: true
   });
 
   // Populate
@@ -200,7 +198,7 @@ exports.applyDiscussionListQueryDefaults = function(discussionListQuery, options
     defaultSort: '-updated -rating',
     parseSearchQueryFn: parseDiscussionSearchQuery,
     searchBarPlaceholder: 'Search Topics',
-    filterFlaggedItems: true,
+    filterFlaggedItems: true
   });
 };
 
@@ -209,7 +207,7 @@ exports.applyGroupListQueryDefaults = function(groupListQuery, options, req) {
     defaultSort: '-rating name',
     parseSearchQueryFn: parseGroupSearchQuery,
     searchBarPlaceholder: 'Search Groups',
-    filterFlaggedItems: true,
+    filterFlaggedItems: true
   });
 };
 
@@ -218,7 +216,7 @@ var scriptListQueryDefaults = {
   parseSearchQueryFn: parseScriptSearchQuery,
   searchBarPlaceholder: 'Search Scripts',
   searchBarFormAction: '/',
-  filterFlaggedItems: true,
+  filterFlaggedItems: true
 };
 exports.scriptListQueryDefaults = scriptListQueryDefaults;
 exports.applyScriptListQueryDefaults = function(scriptListQuery, options, req) {
@@ -231,9 +229,9 @@ var libraryListQueryDefaults = {
   searchBarPlaceholder: 'Search Libraries',
   searchBarFormAction: '/',
   searchBarFormHiddenVariables: [
-    {name: 'library', value: 'true'},
+    { name: 'library', value: 'true' },
   ],
-  filterFlaggedItems: true,
+  filterFlaggedItems: true
 };
 exports.libraryListQueryDefaults = libraryListQueryDefaults;
 exports.applyLibraryListQueryDefaults = function(libraryListQuery, options, req) {
@@ -245,7 +243,7 @@ exports.applyUserListQueryDefaults = function(userListQuery, options, req) {
     defaultSort: 'name',
     parseSearchQueryFn: parseUserSearchQuery,
     searchBarPlaceholder: 'Search Users',
-    filterFlaggedItems: true,
+    filterFlaggedItems: true
   });
 };
 
@@ -254,6 +252,6 @@ exports.applyRemovedItemListQueryDefaults = function(removedItemListQuery, optio
     defaultSort: '-removed',
     parseSearchQueryFn: parseRemovedItemSearchQuery,
     searchBarPlaceholder: 'Search Removed Items',
-    filterFlaggedItems: false,
+    filterFlaggedItems: false
   });
 };

@@ -12,13 +12,13 @@ var getRating = require('../libs/collectiveRating').getRating;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 
 // clean the name of the group so it is url safe
-function cleanGroupName (name) {
+function cleanGroupName(name) {
   return cleanFilename(name, '').replace(/_/g, ' ')
     .replace(/^\s+|\s+$/g, '').replace(/,/g, '');
 }
 
 // api for the client side javascript select2 library
-exports.search = function (req, res) {
+exports.search = function(req, res) {
   var queryStr = '';
   var queryRegex = null;
   var addTerm = req.route.params.addTerm;
@@ -31,15 +31,15 @@ exports.search = function (req, res) {
     return res.end(JSON.stringify([]));
   }
 
-  terms.forEach(function (term) {
-    queryStr += '(?=.*?' + term  + ')';
+  terms.forEach(function(term) {
+    queryStr += '(?=.*?' + term + ')';
   });
   queryRegex = new RegExp(queryStr, 'i');
 
-  Group.find({ name: queryRegex }, 'name', function (err, groups) {
+  Group.find({ name: queryRegex }, 'name', function(err, groups) {
     if (err) { groups = []; }
 
-    results = groups.map(function (group) {
+    results = groups.map(function(group) {
       return group.name;
     });
 
@@ -52,12 +52,12 @@ exports.search = function (req, res) {
 };
 
 // When the select2 library submits
-exports.addScriptToGroups = function (script, groupNames, callback) {
+exports.addScriptToGroups = function(script, groupNames, callback) {
   if (script.isLib || !groupNames || groupNames[0].length === 0) {
     return script.save(callback);
   }
 
-  Group.find({ name: { $in: groupNames } }, function (err, groups) {
+  Group.find({ name: { $in: groupNames } }, function(err, groups) {
     var existingNames = null;
     var newGroup = null;
     var tasks = [];
@@ -67,23 +67,23 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
     // Groups to add the script to
     // This could have been added to the above query but
     // We need to figure out which groups don't exist as well (see below)
-    existingGroups = groups.filter(function (group) {
+    existingGroups = groups.filter(function(group) {
       return group._scriptIds.indexOf(script._id) === -1;
     });
 
     // Names of existing groups
-    existingNames = groups.map(function (group) {
-        return group.name;
+    existingNames = groups.map(function(group) {
+      return group.name;
     });
 
     // Name of a group that doesn't exist
-    newGroup = cleanGroupName(groupNames.filter(function (name) {
+    newGroup = cleanGroupName(groupNames.filter(function(name) {
       return existingNames.indexOf(name) === -1;
     }).shift());
 
     // Add script to exising groups
-    tasks.push(function (cb) {
-      async.each(existingGroups, function (group, innerCb) {
+    tasks.push(function(cb) {
+      async.each(existingGroups, function(group, innerCb) {
         group._scriptIds.push(script._id);
         group.update = new Date();
         group.save(innerCb);
@@ -92,7 +92,7 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
 
     // Create a custom group for the script
     if (!script._groupId && newGroup) {
-      tasks.push(function (cb) {
+      tasks.push(function(cb) {
         var group = new Group({
           name: newGroup,
           rating: 0,
@@ -100,33 +100,34 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
           _scriptIds: [script._id]
         });
 
-        group.save(function (err, group) {
+        group.save(function(err, group) {
           script._groupId = group._id;
           cb();
         });
       });
     }
 
-    async.parallel(tasks, function () {
+    async.parallel(tasks, function() {
       script.save(callback);
 
       // Update the group ratings in the background
-      groups.forEach(function (group) {
+      groups.forEach(function(group) {
         Script.find({ _id: { $in: group._scriptIds } },
-          function (err, scripts) {
+          function(err, scripts) {
             if (err || scripts.length < 2) { return; }
 
             group.rating = getRating(scripts);
             group.updated = new Date();
-            group.save(function () {});
-        });
+            group.save(function() { });
+          }
+        );
       });
     });
   });
 };
 
 // list groups
-exports.list = function (req, res) {
+exports.list = function(req, res) {
   var authedUser = req.session.user;
 
   //
@@ -170,7 +171,7 @@ exports.list = function (req, res) {
   tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
 
   //---
-  function preRender(){
+  function preRender() {
     // groupList
     options.groupList = _.map(options.groupList, modelParser.parseGroup);
 
@@ -186,8 +187,8 @@ exports.list = function (req, res) {
       pageMetaKeywords.concat(_.pluck(options.groupList, 'name'));
     options.pageMetaKeywords = pageMetaKeywords.join(', ');
   };
-  function render(){ res.render('pages/groupListPage', options); }
-  function asyncComplete(){ preRender(); render(); }
+  function render() { res.render('pages/groupListPage', options); }
+  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
@@ -208,7 +209,7 @@ var setupGroupSidePanel = function(options) {
 };
 
 // list the scripts in a group
-exports.view = function (req, res, next) {
+exports.view = function(req, res, next) {
   var authedUser = req.session.user;
 
   var groupNameSlug = req.route.params.groupname;
@@ -216,7 +217,7 @@ exports.view = function (req, res, next) {
 
   Group.findOne({
     name: groupName
-  }, function (err, groupData) {
+  }, function(err, groupData) {
     if (err || !groupData) { return next(); }
 
     // Don't show page if we have no scripts assigned to it yet.
@@ -241,10 +242,10 @@ exports.view = function (req, res, next) {
     var scriptListQuery = Script.find();
 
     // scriptListQuery: script in group
-    scriptListQuery.find({_id: {$in: group._scriptIds}});
+    scriptListQuery.find({ _id: { $in: group._scriptIds } });
 
     // scriptListQuery: isLib=false
-    scriptListQuery.find({isLib: {$ne: true}});
+    scriptListQuery.find({ isLib: { $ne: true } });
 
     // scriptListQuery: Defaults
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
@@ -273,7 +274,7 @@ exports.view = function (req, res, next) {
     tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
 
     //---
-    function preRender(){
+    function preRender() {
       // scriptList
       options.scriptList = _.map(options.scriptList, modelParser.parseScript);
 
@@ -307,8 +308,8 @@ exports.view = function (req, res, next) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
     };
-    function render(){ res.render('pages/groupScriptListPage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function render() { res.render('pages/groupScriptListPage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };

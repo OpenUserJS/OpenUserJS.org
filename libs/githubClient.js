@@ -6,7 +6,7 @@ var request = require('request');
 
 // Client
 var github = new GitHubApi({
-    version: "3.0.0",
+  version: "3.0.0"
 });
 module.exports = github;
 
@@ -32,12 +32,12 @@ Strategy.findOne({ name: 'github' }, function(err, strat) {
 // Util functions for the client.
 github.usercontent = github.usercontent || {};
 
-var githubGitDataGetBlobAsUtf8 = function (msg, callback) {
+var githubGitDataGetBlobAsUtf8 = function(msg, callback) {
   async.waterfall([
-    function(callback){
+    function(callback) {
       github.gitdata.getBlob(msg, callback);
     },
-    function(blob, callback){
+    function(blob, callback) {
       var content = blob.content;
       if (blob.encoding == 'base64') {
         var buf = new Buffer(content, 'base64');
@@ -49,18 +49,18 @@ var githubGitDataGetBlobAsUtf8 = function (msg, callback) {
 };
 github.gitdata.getBlobAsUtf8 = githubGitDataGetBlobAsUtf8;
 
-var githubUserContentBuildUrl = function (user, repo, path) {
+var githubUserContentBuildUrl = function(user, repo, path) {
   return util.format('https://raw.githubusercontent.com/%s/%s/HEAD/%s', user, repo, path);
 };
 github.usercontent.buildUrl = githubUserContentBuildUrl;
 
-var githubUserContentGetBlobAsUtf8 = function (msg, callback) {
+var githubUserContentGetBlobAsUtf8 = function(msg, callback) {
   async.waterfall([
-    function(callback){
+    function(callback) {
       var url = githubUserContentBuildUrl(msg.user, msg.repo, msg.path);
       request.get(url, callback);
     },
-    function(response, body, callback){
+    function(response, body, callback) {
       if (response.statusCode != 200)
         return callback(util.format('Status Code %s', response.statusCode));
 
@@ -76,16 +76,16 @@ var githubGitDataIsJavascriptBlob = function(blob) {
 };
 github.gitdata.isJavascriptBlob = githubGitDataIsJavascriptBlob;
 
-var githubGitDataGetJavascriptBlobs = function (msg, callback) {
+var githubGitDataGetJavascriptBlobs = function(msg, callback) {
   async.waterfall([
-    function(callback){
+    function(callback) {
       msg.sha = 'HEAD';
       msg.recursive = true;
       github.gitdata.getTree(msg, callback);
     },
-    function(repoTree, callback){
+    function(repoTree, callback) {
       var entries = repoTree.tree;
-      var blobs = _.where(entries, {type: 'blob'});
+      var blobs = _.where(entries, { type: 'blob' });
       var javascriptBlobs = _.filter(blobs, githubGitDataIsJavascriptBlob);
       callback(null, javascriptBlobs);
     },

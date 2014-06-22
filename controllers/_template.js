@@ -16,9 +16,8 @@ var modelQuery = require('../libs/modelQuery');
 // Generate a bootstrap3 pagination widget.
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
-
 //--- Views
-exports.example = function (req, res, next) {
+exports.example = function(req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -38,16 +37,15 @@ exports.example = function (req, res, next) {
   options.pageMetaKeywords = pageMetaKeywords.join(', ');
 
   //--- Tasks
-  // ...
 
   //---
-  function preRender(){};
-  function render(){ res.render('pages/_templatePage', options); }
-  function asyncComplete(){ preRender(); render(); }
+  function preRender() { };
+  function render() { res.render('pages/_templatePage', options); }
+  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
-exports.example = function (req, res, next) {
+exports.example = function(req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -70,17 +68,16 @@ exports.example = function (req, res, next) {
   var scriptListQuery = Script.find();
 
   // Scripts: Query: isLib=false
-  scriptListQuery.find({isLib: false});
+  scriptListQuery.find({ isLib: false });
 
   // Scripts: Query: Search
   if (req.query.q)
     modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
 
   // Scripts: Query: Sort
-  modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function(){
+  modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function() {
     scriptListQuery.sort('-rating -installs -updated');
   });
-  
 
   // Pagination
   var pagination = getDefaultPagination(req);
@@ -90,10 +87,10 @@ exports.example = function (req, res, next) {
 
   // Pagination
   tasks.push(pagination.getCountTask(scriptListQuery));
-  
+
   // Scripts
-  tasks.push(function (callback) {
-    scriptListQuery.exec(function(err, scriptDataList){
+  tasks.push(function(callback) {
+    scriptListQuery.exec(function(err, scriptDataList) {
       if (err) {
         callback();
       } else {
@@ -104,12 +101,12 @@ exports.example = function (req, res, next) {
   });
 
   //---
-  function preRender(){
+  function preRender() {
     // Pagination
     options.paginationRendered = pagination.renderDefault(req);
   };
-  function render(){ res.render('pages/_templatePage', options); }
-  function asyncComplete(){ preRender(); render(); }
+  function render() { res.render('pages/_templatePage', options); }
+  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 

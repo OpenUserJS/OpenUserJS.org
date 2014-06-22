@@ -20,23 +20,29 @@
             <p class="list-group-item-text">Click here to list all GitHub repositories. You can import both userscripts and javascript libraries from this list.</p>
           </a>
         </div>
-
-        <h2>Batch Import UserScripts <div class="small">(From Recently Updated GitHub Repositories)</div></h2>
+        <h2>
+          Batch Import UserScripts
+          <span class="help-block small">(From Recently Updated GitHub Repositories)</span>
+        </h2>
         <form method="post" action="">
           <ul class="list-group">
-          {{#repos}}
+            {{#repos}}
             <li class="list-group-item">
-              <input type="checkbox" name="{{{repo}}}_all" value="{{{repo}}}" /> <strong><a href="https://github.com/{{{user}}}/{{{repo}}}">{{repo}}</a></strong><br />
+              <input type="checkbox" name="{{{repo}}}_all" value="{{{repo}}}" />
+              <strong><a href="https://github.com/{{{user}}}/{{{repo}}}">{{repo}}</a></strong>
+              <br />
               {{#scripts}}
-                <input type="checkbox" name="{{{repo}}}[{{{name}}}]" value="true"/> <a href="https://github.com/{{{user}}}/{{{repo}}}/blob/master{{{path}}}">{{name}}</a><br />
+              <input type="checkbox" name="{{{repo}}}[{{{name}}}]" value="true" />
+              <a href="https://github.com/{{{user}}}/{{{repo}}}/blob/master{{{path}}}">{{name}}</a>
+              <br />
               {{/scripts}}
             </li>
-          {{/repos}}
-          {{^repos}}
+            {{/repos}}
+            {{^repos}}
             <li class="list-group-item">
-              No scripts in recently updated repositories. Try the full repository list.
+              <em>No scripts in recently updated repositories. Try the full repository list.</em>
             </li>
-          {{/repos}}
+            {{/repos}}
           </ul>
           <div class="container-fluid row">
             <button type="submit" class="btn btn-success col-xs-12 {{^repos}}disabled{{/repos}}">Import Scripts</button>

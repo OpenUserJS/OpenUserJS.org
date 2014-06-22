@@ -11,8 +11,8 @@
       <div class="col-xs-12">
         <h1>Auth Strategy API Keys</h1>
         <form class="form-horizontal" role="form" method="post" action="/admin/api/update">
-          <div class="list-group">
-          {{#strategies}}
+          <ul class="list-group">
+            {{#strategies}}
             <li class="list-group-item">
               <h4 class="list-group-item-heading">{{strat}}</h4>
               <div class="row">
@@ -28,11 +28,10 @@
                     <input type="text" class="form-control" name="{{{strat}}}[1]" value="{{{key}}}" placeholder="Key">
                   </div>
                 </div>
-
               </div>
             </li>
-          {{/strategies}}
-          </div>
+            {{/strategies}}
+          </ul>
           <div class="container-fluid row">
             <button type="submit" class="btn btn-success col-sm-12">Update</button>
           </div>

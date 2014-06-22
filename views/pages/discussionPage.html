@@ -5,7 +5,9 @@
   {{> includes/head.html }}
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/css/bootstrap-markdown.min.css">
   <style>
-    #show-reply-form-when-visible { height: 100px; }
+    #show-reply-form-when-visible {
+      height: 100px;
+    }
   </style>
 </head>
 <body>
@@ -17,8 +19,8 @@
           <div class="col-xs-12">
             <div class="topic-title row container-fluid">
               <ol class="breadcrumb pull-left">
-                <li class=""><a href="/forum">Forum</a></li>
-                <li class=""><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
+                <li><a href="/forum">Forum</a></li>
+                <li><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
                 <li class="active"><a href="{{{discussion.discussionPageUrl}}}">{{discussion.topic}}</a></li>
               </ol>
             </div>
@@ -38,14 +40,11 @@
         </div>
       </div>
       <div class="container-fluid col-sm-4">
-
       </div>
     </div>
   </div>
-
   <div id="show-reply-form-when-visible"></div>
   {{> includes/commentForm.html }}
-
   {{> includes/footer.html }}
   <!-- Markdown Editor -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>

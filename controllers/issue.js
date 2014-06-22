@@ -12,9 +12,8 @@ var discussionLib = require('./discussion');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 
-
 // List script issues
-exports.list = function (req, res, next) {
+exports.list = function(req, res, next) {
   var authedUser = req.session.user;
 
   var type = req.route.params.type;
@@ -66,7 +65,7 @@ exports.list = function (req, res, next) {
     var discussionListQuery = Discussion.find();
 
     // discussionListQuery: category
-    discussionListQuery.find({category: category.slug});
+    discussionListQuery.find({ category: category.slug });
 
     // discussionListQuery: open
     modelQuery.findOrDefaultIfNull(discussionListQuery, 'open', options.openIssuesOnly, true);
@@ -83,7 +82,7 @@ exports.list = function (req, res, next) {
     //--- Tasks
 
     // Show the number of open issues
-    var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: {$ne: false} });
+    var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: { $ne: false } });
     tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
     // Pagination
@@ -93,7 +92,7 @@ exports.list = function (req, res, next) {
     tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
     //---
-    function preRender(){
+    function preRender() {
       options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
 
       // Script
@@ -102,14 +101,14 @@ exports.list = function (req, res, next) {
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
     };
-    function render(){ res.render('pages/scriptIssueListPage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function render() { res.render('pages/scriptIssueListPage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
 
 // Show the discussion on an issue
-exports.view = function (req, res, next) {
+exports.view = function(req, res, next) {
   var authedUser = req.session.user;
 
   var type = req.route.params.type;
@@ -148,7 +147,7 @@ exports.view = function (req, res, next) {
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
 
-    discussionLib.findDiscussion(category.slug, topic, function (discussionData) {
+    discussionLib.findDiscussion(category.slug, topic, function(discussionData) {
       if (err || !discussionData) { return next(); }
 
       // Discussion
@@ -161,7 +160,7 @@ exports.view = function (req, res, next) {
       var commentListQuery = Comment.find();
 
       // commentListQuery: discussion
-      commentListQuery.find({_discussionId: discussion._id});
+      commentListQuery.find({ _discussionId: discussion._id });
 
       // commentListQuery: Defaults
       modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
@@ -172,7 +171,7 @@ exports.view = function (req, res, next) {
       //--- Tasks
 
       // Show the number of open issues
-      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: {$ne: false} });
+      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: { $ne: false } });
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
       // Pagination
@@ -181,7 +180,7 @@ exports.view = function (req, res, next) {
       // commentListQuery
       tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
-      function preRender(){
+      function preRender() {
         // Metadata
         options.title = discussion.topic + ' | OpenUserJS.org';
         options.pageMetaDescription = discussion.topic;
@@ -189,7 +188,7 @@ exports.view = function (req, res, next) {
 
         // commentList
         options.commentList = _.map(options.commentList, modelParser.parseComment);
-        _.map(options.commentList, function(comment){
+        _.map(options.commentList, function(comment) {
           comment.author = modelParser.parseUser(comment._authorId);
         });
         _.map(options.commentList, modelParser.renderComment);
@@ -200,15 +199,15 @@ exports.view = function (req, res, next) {
         // Pagination
         options.paginationRendered = pagination.renderDefault(req);
       };
-      function render(){ res.render('pages/scriptIssuePage', options); }
-      function asyncComplete(){ preRender(); render(); }
+      function render() { res.render('pages/scriptIssuePage', options); }
+      function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
     });
   });
 };
 
 // Open a new issue
-exports.open = function (req, res, next) {
+exports.open = function(req, res, next) {
   var authedUser = req.session.user;
 
   if (!authedUser) return res.redirect('/login');
@@ -251,7 +250,7 @@ exports.open = function (req, res, next) {
     if (topic && content) {
       // Issue Submission
       discussionLib.postTopic(authedUser, category.slug, topic, content, true,
-        function (discussion) {
+        function(discussion) {
           if (!discussion)
             return res.redirect('/' + encodeURI(category) + '/open');
 
@@ -261,26 +260,25 @@ exports.open = function (req, res, next) {
     } else {
       // New Issue Page
 
-
       //--- Tasks
       // ...
 
       //---
-      function preRender(){
+      function preRender() {
         // Metadata
         options.title = 'New Issue for ' + script.name + ' | OpenUserJS.org';
         options.pageMetaDescription = '';
         options.pageMetaKeywords = null; // seperator = ', '
       };
-      function render(){ res.render('pages/scriptNewIssuePage', options); }
-      function asyncComplete(){ preRender(); render(); }
+      function render() { res.render('pages/scriptNewIssuePage', options); }
+      function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
     }
   });
 };
 
 // post route to add a new comment to a discussion on an issue
-exports.comment = function (req, res, next) {
+exports.comment = function(req, res, next) {
   var type = req.route.params.type;
   var topic = req.route.params.topic;
   var installName = scriptStorage.getInstallName(req);
@@ -293,22 +291,22 @@ exports.comment = function (req, res, next) {
     + (type === 'libs' ? '.js' : '.user.js')) }, function (err, script) {
       var content = req.body['comment-content'];
 
-      if (err || !script) { return next(); }
+    if (err || !script) { return next(); }
 
-      discussionLib.findDiscussion(category, topic, function (issue) {
-        if (!issue) { return next(); }
+    discussionLib.findDiscussion(category, topic, function(issue) {
+      if (!issue) { return next(); }
 
-        discussionLib.postComment(user, issue, content, false,
-          function (err, discussion) {
-            res.redirect(encodeURI(discussion.path
-              + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
+      discussionLib.postComment(user, issue, content, false,
+        function(err, discussion) {
+          res.redirect(encodeURI(discussion.path
+            + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
         });
-      });
+    });
   });
 };
 
 // Open or close and issue you are allowed
-exports.changeStatus = function (req, res, next) {
+exports.changeStatus = function(req, res, next) {
   var type = req.route.params.type;
   var topic = req.route.params.topic;
   var installName = scriptStorage.getInstallName(req);
@@ -323,30 +321,31 @@ exports.changeStatus = function (req, res, next) {
     + (type === 'libs' ? '.js' : '.user.js')) }, function (err, script) {
 
       if (err || !script) { return next(); }
+    if (err || !script) { return next(); }
 
-      discussionLib.findDiscussion(category, topic, function (issue) {
-        if (!issue) { return next(); }
+    discussionLib.findDiscussion(category, topic, function(issue) {
+      if (!issue) { return next(); }
 
-        // Both the script author and the issue creator can close the issue
-        // Only the script author can reopen a closed issue
-        if (action === 'close' && issue.open
-          && (user.name === issue.author || user.name === script.author)) {
-          issue.open = false;
-          changed = true;
-        } else if (action === 'reopen' && !issue.open
-          && user.name === script.author) {
-          issue.open = true;
-          changed = true;
-        }
+      // Both the script author and the issue creator can close the issue
+      // Only the script author can reopen a closed issue
+      if (action === 'close' && issue.open
+      && (user.name === issue.author || user.name === script.author)) {
+        issue.open = false;
+        changed = true;
+      } else if (action === 'reopen' && !issue.open
+        && user.name === script.author) {
+        issue.open = true;
+        changed = true;
+      }
 
-        if (changed) {
-          issue.save(function (err, discussion) {
-            res.redirect(encodeURI(discussion.path
-              + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
-          });
-        } else {
-          next();
-        }
-      });
+      if (changed) {
+        issue.save(function(err, discussion) {
+          res.redirect(encodeURI(discussion.path
+            + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
+        });
+      } else {
+        next();
+      }
+    });
   });
 };
