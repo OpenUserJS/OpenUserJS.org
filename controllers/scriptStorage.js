@@ -20,36 +20,30 @@ if (process.env.NODE_ENV === 'production') {
     proxy: DEV_AWS_URL, agent: require('http').globalAgent
   }});
 }
-/*require('../models/discussion').Discussion.find({ category: /issues$/ }, function (err, discussions) {
-  discussions.forEach(function (discussion) {
-  //var urlTopic = cleanFilename(discussion.topic, '').replace(/_\d+$/, '');
-  //var path = '/' + discussion.category + '/' + urlTopic;
-    console.log(discussion.path);
-  });
-});*/
 
-/*Script.find({}, function (err, scripts) {
-  //var s3 = new AWS.S3();
+Script.find({}, function (err, scripts) {
+  var s3 = new AWS.S3();
   var Discussion = require('../models/discussion').Discussion;
+
   scripts.forEach(function (script) {
-var newPath = script.installName.replace(/(\.user)?\.js$/, '');
-var oldPath = cleanFilename(script.author).toLowerCase() + '/'
-  + (script.meta.namespace ? cleanFilename(script.meta.namespace) + '/' : '')
-  + cleanFilename(script.name);
-var newCat = (script.isLib ? 'libs' : 'scripts') + '/' + newPath  + '/issues';
-var oldCat = (script.isLib ? 'libs' : 'scripts') + '/' + oldPath  + '/issues';
-Discussion.find({ category: oldCat }, function (err, discussions) {
-  discussions.forEach(function (discussion) {
-    var urlTopic = cleanFilename(discussion.topic, '').replace(/_\d+$/, '');
-    var path = '/' + discussion.category + '/' + urlTopic;
-    discussion.path = path;
-    //discussion.category = newCat;
-    discussion.save(function (){ console.log(path); });
-  });
-});*/
-    /*var oldPath = script.installName;
+    var oldPath = script.installName;
     var newPath = cleanFilename(script.author) + '/' 
       + cleanFilename(script.name) + (script.isLib ? '.js' : '.user.js');
+    var newCat = (script.isLib ? 'libs' : 'scripts') + '/' + newPath
+      .replace(/(\.user)?\.js$/, '')  + '/issues';
+    var oldCat = (script.isLib ? 'libs' : 'scripts') + '/' + oldPath
+      .replace(/(\.user)?\.js$/, '')  + '/issues';
+
+    Discussion.find({ category: oldCat }, function (err, discussions) {
+      discussions.forEach(function (discussion) {
+        var urlTopic = cleanFilename(discussion.topic, '').replace(/_\d+$/, '');
+        var path = '/' + newCat + '/' + urlTopic;
+        discussion.path = path;
+        discussion.category = newCat;
+        discussion.save(function (){ console.log(newCat, path); });
+      });
+    });
+    
     var params = {
       Bucket: bucketName,
       CopySource: bucketName + '/' + oldPath,
@@ -69,9 +63,9 @@ Discussion.find({ category: oldCat }, function (err, discussions) {
             console.log(newPath + ' - success');
           }
         });
-    });*/
-  //});
-//});
+    });
+  });
+});
 
 
 function getInstallName (req) {
