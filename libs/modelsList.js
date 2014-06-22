@@ -12,7 +12,7 @@ var listSize = 10;
 // /scriptlist/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of scripts and build the options object
 // for the corresponding Mustache partial template
-exports.listScripts = function(query, params, baseUrl, callback) {
+exports.listScripts = function (query, params, baseUrl, callback) {
 
   // Don't list flagged scripts by default
   if (query.flagged === null) {
@@ -30,7 +30,7 @@ exports.listScripts = function(query, params, baseUrl, callback) {
   }
 
   listModels(Script, query, params, ['rating', 'installs', 'updated'],
-    function(scripts, scriptsList) {
+    function (scripts, scriptsList) {
       /*var headings = {
         'name': { label: 'Name', width: 50 },
         'author': { label: 'Author', width: 15 },
@@ -44,7 +44,7 @@ exports.listScripts = function(query, params, baseUrl, callback) {
       scriptsList.hasAuthor = params[4] ?
         params[4].indexOf('author') === -1 : true;
 
-      scripts.forEach(function(script) {
+      scripts.forEach(function (script) {
         var isLib = script.isLib || false;
         var scriptPath = script.installName
           .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
@@ -91,12 +91,12 @@ exports.listScripts = function(query, params, baseUrl, callback) {
 // /userlist/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of users and build the options object
 // for the corresponding Mustache partial template
-exports.listUsers = function(query, params, baseUrl, callback) {
+exports.listUsers = function (query, params, baseUrl, callback) {
   listModels(User, query, params, ['name'],
-    function(users, usersList) {
+    function (users, usersList) {
       usersList.users = [];
 
-      users.forEach(function(user) {
+      users.forEach(function (user) {
         usersList.users.push({
           name: user.name,
           url: '/users/' + user.name,
@@ -111,12 +111,12 @@ exports.listUsers = function(query, params, baseUrl, callback) {
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of removed content and build the options object
 // for the corresponding Mustache partial template
-exports.listRemoved = function(query, params, baseUrl, callback) {
+exports.listRemoved = function (query, params, baseUrl, callback) {
   listModels(Remove, query, params, ['removed'],
-    function(results, removedList) {
+    function (results, removedList) {
       removedList.removed = [];
 
-      results.forEach(function(result) {
+      results.forEach(function (result) {
         var content = result.content;
         var key = null;
         var contentArr = [];
@@ -144,12 +144,12 @@ exports.listRemoved = function(query, params, baseUrl, callback) {
 // /groups/list/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of groups and build the options object
 // for the corresponding Mustache partial template
-exports.listGroups = function(query, params, baseUrl, callback) {
+exports.listGroups = function (query, params, baseUrl, callback) {
   listModels(Group, query, params, ['rating'],
-    function(groups, groupsList) {
+    function (groups, groupsList) {
       groupsList.groups = [];
 
-      groups.forEach(function(group) {
+      groups.forEach(function (group) {
         groupsList.groups.push({
           name: group.name,
           url: '/group/' + group.name.replace(/\s+/g, '_'),
@@ -161,13 +161,13 @@ exports.listGroups = function(query, params, baseUrl, callback) {
         // This calculation runs in the background
         if (new Date().getTime() > (group.updated.getTime() + 1000 * 60 * 60 * 2)) {
           Script.find({ _id: { $in: group._scriptIds } },
-            function(err, scripts) {
+            function (err, scripts) {
               if (!err && scripts.length > 1) {
                 group.rating = getRating(scripts);
               }
 
               group.updated = new Date();
-              group.save(function() { });
+              group.save(function () { });
             });
         }
       });
@@ -180,12 +180,12 @@ exports.listGroups = function(query, params, baseUrl, callback) {
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of discussions and build the options object
 // for the corresponding Mustache partial template
-exports.listDiscussions = function(query, params, baseUrl, callback) {
+exports.listDiscussions = function (query, params, baseUrl, callback) {
   listModels(Discussion, query, params, ['updated', 'rating'],
-    function(discussions, discussionsList) {
+    function (discussions, discussionsList) {
       discussionsList.discussions = [];
 
-      discussions.forEach(function(discussion) {
+      discussions.forEach(function (discussion) {
         discussionsList.discussions.push({
           topic: discussion.topic,
           comments: discussion.comments,
@@ -208,12 +208,12 @@ exports.listDiscussions = function(query, params, baseUrl, callback) {
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of comments and build the options object
 // for the corresponding Mustache partial template
-exports.listComments = function(query, params, baseUrl, callback) {
+exports.listComments = function (query, params, baseUrl, callback) {
   listModels(Comment, query, params, ['created'],
-    function(comments, commentsList) {
+    function (comments, commentsList) {
       commentsList.comments = [];
 
-      comments.forEach(function(comment) {
+      comments.forEach(function (comment) {
         commentsList.comments.push({
           author: comment.author,
           content: renderMd(comment.content),
@@ -265,7 +265,7 @@ function listModels(model, query, options, defaultOrder, callback) {
       .instance === 'String' ? 1 : -1;
     params.sort[orderBy] = direction;
   } else if (orderBy instanceof Array) {
-    orderBy.forEach(function(order) {
+    orderBy.forEach(function (order) {
       params.sort[order] = -1 !== fields.indexOf(order) &&
         model.schema.paths[order].instance === 'String' ? 1 : -1;
     });
@@ -281,7 +281,7 @@ function listModels(model, query, options, defaultOrder, callback) {
   }
 
   if (options.omit instanceof Array) {
-    options.omit.forEach(function(field) {
+    options.omit.forEach(function (field) {
       var index = fields.indexOf(field);
       if (index > -1) { fields.splice(index, 1); }
     });
@@ -295,7 +295,7 @@ function listModels(model, query, options, defaultOrder, callback) {
   }
 
   model.find(query, omit, params,
-    function(err, models) {
+    function (err, models) {
       var list = {};
       if (!models) { models = [] }
       if (size < 0) { size = models.length; }

@@ -11,7 +11,7 @@ var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 // When content reaches a its threshold of flags it gets marked as flagged
 // and it can now be removed by moderators
-exports.flagged = function(req, res, next) {
+exports.flagged = function (req, res, next) {
   var user = req.session.user;
   var type = req.route.params.shift() || 'users';
   var baseUrl = '/flagged' + (type ? '/' + type : '');
@@ -31,7 +31,7 @@ exports.flagged = function(req, res, next) {
       }
 
       modelsList.listUsers({ flagged: true }, req.route.params, baseUrl,
-        function(usersList) {
+        function (usersList) {
           options.usersList = usersList;
           res.render('flagged', options);
         });
@@ -43,7 +43,7 @@ exports.flagged = function(req, res, next) {
 
       modelsList.listScripts({ flagged: true, isLib: null },
         req.route.params, baseUrl,
-        function(scriptsList) {
+        function (scriptsList) {
           options.scriptsList = scriptsList;
           res.render('flagged', options);
         });
@@ -56,7 +56,7 @@ exports.flagged = function(req, res, next) {
 // When content is remove via the community moderation system it isn't
 // actually deleted. Instead it is sent to the graveyard where hopefully
 // any mistakes can be undone.
-exports.graveyard = function(req, res, next) {
+exports.graveyard = function (req, res, next) {
   var contentTypes = {
     'users':
     {
@@ -81,7 +81,7 @@ exports.graveyard = function(req, res, next) {
   // Hopefully one day it can actually be viewed read-only by
   // those who have the authority
   modelsList.listRemoved({ model: contentType.name }, req.route.params, baseUrl,
-    function(removedList) {
+    function (removedList) {
       var type = null;
       var name = null;
       contentType.selected = true;
@@ -101,7 +101,7 @@ exports.graveyard = function(req, res, next) {
     });
 };
 
-exports.removedItemPage = function(req, res, next) {
+exports.removedItemPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   var removedItemId = req.route.params.id;
@@ -124,14 +124,14 @@ exports.removedItemPage = function(req, res, next) {
 
   Remove.find({
     _id: removedItemId,
-  }, function(err, removedItemData) {
+  }, function (err, removedItemData) {
     if (err || !removedItemData) { return next(); }
 
     res.json(removedItemData);
   });
 };
 
-exports.removedItemListPage = function(req, res, next) {
+exports.removedItemListPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   //
@@ -173,7 +173,7 @@ exports.removedItemListPage = function(req, res, next) {
   tasks.push(execQueryTask(removedItemListQuery, options, 'removedItemList'));
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     //--- PreRender
@@ -188,7 +188,7 @@ exports.removedItemListPage = function(req, res, next) {
   });
 };
 
-exports.modPage = function(req, res, next) {
+exports.modPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   //

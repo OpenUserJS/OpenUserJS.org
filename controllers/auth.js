@@ -10,13 +10,13 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var addSession = require('../libs/modifySessions').add;
 
 // Unused but removing it breaks passport
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
 
 // Setup all our auth strategies
 var openIdStrategies = {};
-Strategy.find({}, function(err, strategies) {
+Strategy.find({}, function (err, strategies) {
 
   // Get OpenId strategies
   for (var name in allStrategies) {
@@ -27,12 +27,12 @@ Strategy.find({}, function(err, strategies) {
   }
 
   // Load the passport module for each strategy
-  strategies.forEach(function(strategy) {
+  strategies.forEach(function (strategy) {
     loadPassport(strategy);
   });
 });
 
-exports.auth = function(req, res, next) {
+exports.auth = function (req, res, next) {
   var user = req.session.user;
   var strategy = req.body.auth || req.route.params.strategy;
   var username = req.body.username || req.session.username;
@@ -69,7 +69,7 @@ exports.auth = function(req, res, next) {
   }
 
   User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
-    function(err, user) {
+    function (err, user) {
       var strategies = null;
       var strat = null;
 
@@ -96,7 +96,7 @@ exports.auth = function(req, res, next) {
     });
 };
 
-exports.callback = function(req, res, next) {
+exports.callback = function (req, res, next) {
   var strategy = req.route.params.strategy;
   var username = req.session.username;
   var newstrategy = req.session.newstrategy;
@@ -112,26 +112,26 @@ exports.callback = function(req, res, next) {
   // Hijak the private verify method so we can fuck shit up freely
   // We use this library for things it was never intended to do
   if (openIdStrategies[strategy]) {
-    strategyInstance._verify = function(id, done) {
+    strategyInstance._verify = function (id, done) {
       verifyPassport(id, strategy, username, req.session.user, done);
     }
   } else {
     strategyInstance._verify =
-      function(token, refreshOrSecretToken, profile, done) {
+      function (token, refreshOrSecretToken, profile, done) {
         req.session.profile = profile;
         verifyPassport(profile.id, strategy, username, req.session.user, done);
       }
   }
 
   // This callback will happen after the verify routine
-  var authenticate = passport.authenticate(strategy, function(err, user, info) {
+  var authenticate = passport.authenticate(strategy, function (err, user, info) {
     if (err) { return next(err); }
     if (!user) {
       return res.redirect(doneUrl + (doneUrl === '/' ? 'register' : '')
         + '?authfail');
     }
 
-    req.logIn(user, function(err) {
+    req.logIn(user, function (err) {
       if (err) { return next(err); }
 
       // Store the user info in the session
@@ -145,7 +145,7 @@ exports.callback = function(req, res, next) {
         user.ghUsername = req.session.profile.username;
       }
 
-      addSession(req, user, function() {
+      addSession(req, user, function () {
         if (newstrategy) {
           // Allow a user to link to another acount
           return res.redirect('/auth/' + newstrategy);

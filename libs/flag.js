@@ -17,12 +17,12 @@ function flaggable(model, content, user, callback) {
   // It is not the responsibility of the community
   // to police the site administration
   if (model.modelName === 'User') {
-    return getFlag(model, content, user, function(flag) {
+    return getFlag(model, content, user, function (flag) {
       callback(content._id != user._id && content.role > 2, content, flag);
     });
   }
 
-  getAuthor(content, function(author) {
+  getAuthor(content, function (author) {
     // Content without an author shouldn't exist
     if (!author) { return callback(false); }
 
@@ -33,7 +33,7 @@ function flaggable(model, content, user, callback) {
     if (author.role < 3) { return callback(author.role > 2, author); }
 
     // You can't flag something twice
-    getFlag(model, content, user, function(flag) {
+    getFlag(model, content, user, function (flag) {
       return callback(!flag, author, flag);
     });
   });
@@ -45,13 +45,13 @@ function getFlag(model, content, user, callback) {
     'model': model.modelName,
     '_contentId': content._id,
     '_userId': user._id
-  }, function(err, flag) {
+  }, function (err, flag) {
     callback(err || !flag ? null : flag);
   });
 }
 
 function getAuthor(content, callback) {
-  User.findOne({ _id: content._authorId }, function(err, author) {
+  User.findOne({ _id: content._authorId }, function (err, author) {
     // Content without an author shouldn't exist
     if (err || !author) { return callback(null); }
 
@@ -72,7 +72,7 @@ function getThreshold(model, content, author, callback) {
   var threshold = thresholds[model.modelName] * (author.role < 4 ? 2 : 1);
 
   // Calculate karma and add it to the threshold
-  getKarma(author, maxKarma, function(karma) {
+  getKarma(author, maxKarma, function (karma) {
     return callback(threshold + karma);
   });
 }
@@ -83,13 +83,13 @@ function saveContent(model, content, author, flags, callback) {
   content.flags += flags;
 
   if (content.flags >= thresholds[model.modelName] * (author.role < 4 ? 2 : 1)) {
-    return getThreshold(model, content, author, function(threshold) {
+    return getThreshold(model, content, author, function (threshold) {
       content.flagged = content.flags >= threshold;
-      content.save(function(err, content) { callback(content.flagged); });
+      content.save(function (err, content) { callback(content.flagged); });
     });
   }
 
-  content.save(function(err, content) { callback(content.flagged); });
+  content.save(function (err, content) { callback(content.flagged); });
 }
 exports.saveContent = saveContent;
 
@@ -100,7 +100,7 @@ function flag(model, content, user, author, callback) {
     '_userId': user._id
   });
 
-  flag.save(function(err, flag) {
+  flag.save(function (err, flag) {
     if (!content.flags) { content.flags = 0; }
     if (!content.flagged) { content.flagged = false; }
 
@@ -108,25 +108,25 @@ function flag(model, content, user, author, callback) {
   });
 }
 
-exports.flag = function(model, content, user, callback) {
-  flaggable(model, content, user, function(canFlag, author) {
+exports.flag = function (model, content, user, callback) {
+  flaggable(model, content, user, function (canFlag, author) {
     if (!canFlag) { return callback(false); }
 
     flag(model, content, user, author, callback);
   });
 };
 
-exports.unflag = function(model, content, user, callback) {
+exports.unflag = function (model, content, user, callback) {
   if (!user) { return callback(null); }
 
-  getFlag(model, content, user, function(flag) {
+  getFlag(model, content, user, function (flag) {
     if (!flag) { return callback(null); }
 
     if (!content.flags) { content.flags = 0; }
     if (!content.flagged) { content.flagged = false; }
 
     function removeFlag(author) {
-      flag.remove(function(err) {
+      flag.remove(function (err) {
         saveContent(model, content, author, user.role < 4 ? -2 : -1, callback);
       });
     }

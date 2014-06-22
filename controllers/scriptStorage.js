@@ -56,7 +56,7 @@ if (process.env.NODE_ENV === 'production') {
     };
 
     script.installName = newPath;
-    s3.copyObject(params, function(err, data) {
+    s3.copyObject(params, function (err, data) {
       if (err) { return console.log(oldPath + ' - copy fail'); }
       script.save(function () {});
 
@@ -99,7 +99,7 @@ exports.getSource = function (req, callback) {
   });
 };
 
-exports.sendScript = function(req, res, next) {
+exports.sendScript = function (req, res, next) {
   var accept = req.headers.accept;
   var installName = null;
 
@@ -107,7 +107,7 @@ exports.sendScript = function(req, res, next) {
     return exports.sendMeta(req, res, next);
   }
 
-  exports.getSource(req, function(script, stream) {
+  exports.getSource(req, function (script, stream) {
 
     if (!script) { return next(); }
 
@@ -120,12 +120,12 @@ exports.sendScript = function(req, res, next) {
 
     // Update the install count
     ++script.installs;
-    script.save(function(err, script) { });
+    script.save(function (err, script) { });
   });
 };
 
 // Send user script metadata block
-exports.sendMeta = function(req, res, next) {
+exports.sendMeta = function (req, res, next) {
   var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
 
   Script.findOne({ installName: caseInsensitive(installName) },
@@ -170,7 +170,7 @@ function parseMeta(aString) {
     'author': true
   };
 
-  lines = aString.split(/[\r\n]+/).filter(function(e, i, a) {
+  lines = aString.split(/[\r\n]+/).filter(function (e, i, a) {
     return (e.match(re));
   });
 
@@ -201,7 +201,7 @@ function parseMeta(aString) {
 }
 exports.parseMeta = parseMeta;
 
-exports.getMeta = function(chunks, callback) {
+exports.getMeta = function (chunks, callback) {
   // We need to convert the array of buffers to a string to
   // parse the header. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
@@ -221,7 +221,7 @@ exports.getMeta = function(chunks, callback) {
   callback(null);
 };
 
-exports.storeScript = function(user, meta, buf, callback, update) {
+exports.storeScript = function (user, meta, buf, callback, update) {
   var s3 = new AWS.S3();
   var scriptName = null;
   var installName = user.name + '/';
@@ -264,7 +264,7 @@ exports.storeScript = function(user, meta, buf, callback, update) {
         requires = meta.require;
       }
 
-      requires.forEach(function(require) {
+      requires.forEach(function (require) {
         var match = libraryRegex.exec(require);
         if (match && match[1]) { libraries.push(match[1]); }
       });
@@ -278,7 +278,7 @@ exports.storeScript = function(user, meta, buf, callback, update) {
 
   // Prevent a removed script from being reuploaded
   findDeadorAlive(Script, { installName: caseInsensitive(installName) }, true,
-    function(alive, script, removed) {
+    function (alive, script, removed) {
       if (removed || (!script && (update || collaborators))) {
         return callback(null);
       } else if (!script) {
@@ -311,9 +311,9 @@ exports.storeScript = function(user, meta, buf, callback, update) {
         script.updated = new Date();
       }
 
-      script.save(function(err, script) {
+      script.save(function (err, script) {
         s3.putObject({ Bucket: bucketName, Key: installName, Body: buf },
-          function(err, data) {
+          function (err, data) {
             if (user.role === userRoles.length - 1) {
               var userDoc = user;
               if (!userDoc.save) {
@@ -321,7 +321,7 @@ exports.storeScript = function(user, meta, buf, callback, update) {
                 userDoc = new User(userDoc);
               }
               --userDoc.role;
-              userDoc.save(function(err, user) { callback(script); });
+              userDoc.save(function (err, user) { callback(script); });
             } else {
               callback(script);
             }
@@ -347,7 +347,7 @@ exports.deleteScript = function (installName, callback) {
 
 // GitHub calls this on a push if a webhook is setup
 // This controller makes sure we have the latest version of a script
-exports.webhook = function(req, res) {
+exports.webhook = function (req, res) {
   var RepoManager = require('../libs/repoManager');
   var payload = null;
   var username = null;
@@ -376,12 +376,12 @@ exports.webhook = function(req, res) {
   repo = repos[reponame] = {};
 
   // Find the user that corresponds the repo owner
-  User.findOne({ ghUsername: username }, function(err, user) {
+  User.findOne({ ghUsername: username }, function (err, user) {
     if (!user) { return; }
 
     // Gather the modified user scripts
-    payload.commits.forEach(function(commit) {
-      commit.modified.forEach(function(filename) {
+    payload.commits.forEach(function (commit) {
+      commit.modified.forEach(function (filename) {
         if (filename.substr(-8) === '.user.js') {
           repo[filename] = '/' + encodeURI(filename);
         }
@@ -390,6 +390,6 @@ exports.webhook = function(req, res) {
 
     // Update modified scripts
     var repoManager = RepoManager.getManager(null, user, repos);
-    repoManager.loadScripts(function() { }, true);
+    repoManager.loadScripts(function () { }, true);
   });
 };

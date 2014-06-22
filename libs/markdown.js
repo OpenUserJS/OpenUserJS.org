@@ -14,7 +14,7 @@ var allWhitelistAttrs = htmlWhitelistPost.allowedAttributes.all;
 
 // Whitelist a bunch of attributes for all tags
 // Doing this until we have an upstream fix
-htmlWhitelistPost.allowedTags.forEach(function(tag) {
+htmlWhitelistPost.allowedTags.forEach(function (tag) {
   var otherAttrs = htmlWhitelistPost.allowedAttributes[tag];
 
   htmlWhitelistPost.allowedAttributes[tag] = allWhitelistAttrs;
@@ -30,14 +30,14 @@ function sanitize(html) {
 }
 
 // Sanitize the output from the block level renderers
-blockRenderers.forEach(function(type) {
-  renderer[type] = function() {
+blockRenderers.forEach(function (type) {
+  renderer[type] = function () {
     return sanitize(marked.Renderer.prototype[type].apply(renderer, arguments));
   };
 });
 
 // Automatically generate an anchor for each header
-renderer.heading = function(text, level) {
+renderer.heading = function (text, level) {
   var escapedText = text.toLowerCase().replace(/<\/?[^>]+?>/g, '')
     .replace(/[^\w]+/g, '-');
 
@@ -54,7 +54,7 @@ renderer.heading = function(text, level) {
 
 // Set the options to use for rendering markdown
 marked.setOptions({
-  highlight: function(code, lang) {
+  highlight: function (code, lang) {
     if (lang && hljs.getLanguage(lang)) {
       return hljs.highlight(lang, code).value;
     } else {
@@ -71,6 +71,6 @@ marked.setOptions({
   smartypants: false
 });
 
-exports.renderMd = function(text) {
+exports.renderMd = function (text) {
   return marked(text);
 };
