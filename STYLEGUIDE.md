@@ -24,7 +24,7 @@ To help with the above rules, we use [EditorConfig][editorconfig]. Install the p
 
 ### Variable Declarations
 
-All variables should be declared before used. JavaScript does not require this, but doing so makes the program easier to read and makes it easier to detect undeclared variables that may become implied globals. Implied global variables should never be used.  
+All variables should be declared before used. JavaScript does not require this, but doing so makes the program easier to read and makes it easier to detect undeclared variables that may become implied globals. Implied global variables should never be used.
 Variable declarations without value should be initialized to `null`
 
 All variable statements should be the first statements within the function body.
@@ -36,7 +36,7 @@ var foo = true;
 var qux = 50;
 ```
 
-JavaScript does not have block scope, so defining variables in blocks can confuse programmers who are experienced with other C family languages. Define all variables at the top of the function.
+Some ECMAScript5 JavaScript implementations do not have block scope, so defining variables in blocks can confuse programmers who are not experienced with other C family languages. Define all variables at the top of the function.
 
 Use of global variables should be minimized. Implied global variables should never be used.
 
@@ -71,7 +71,7 @@ var collection = (function () {
 }());
 ```
 
-If a function literal is anonymous, there should be one space between the word `function` and the left-parenthesis.  
+If a function literal is anonymous, there should be one space between the word `function` and the left-parenthesis.
 If the space is omitted, then it can appear that the function's name is `function`, which is incorrect.
 
 ```javascript
@@ -93,11 +93,11 @@ that = {
 
 JavaScript programs should be stored in and delivered as `.js` files.
 
-JavaScript code should not be embedded in HTML files unless the code is specific to a single session.  
+JavaScript code should not be embedded in HTML files unless the code is specific to a single session.
 Code in HTML adds significantly to pageweight with no opportunity for mitigation by caching and compression.
 
-`<script src="filename.js">` tags should be placed as late in the `<body>` as possible.  
-This reduces the effects of delays imposed by script loading on other page components.  
+`<script src="filename.js">` tags should be placed as late in the `<body>` as possible.
+This reduces the effects of delays imposed by script loading on other page components.
 There is no need to use the *language* or *type* attributes. It is the server, not the script tag, that determines the MIME type.
 
 ---
@@ -122,15 +122,15 @@ Blank spaces should be used in the following circumstances:
 
 ### Line Length
 
-Avoid lines longer than 100 characters. When a statement will not fit on a single line, it may be necessary to break it.  
-Place the break after an operator, ideally after a comma. A break after an operator decreases the likelihood that a copy-paste error will be masked by semicolon insertion.  
+Avoid lines longer than 100 characters. When a statement will not fit on a single line, it may be necessary to break it.
+Place the break after an operator, ideally after a comma. A break after an operator decreases the likelihood that a copy-paste error will be masked by semicolon insertion.
 The next line should be indented 2 spaces more than the previous line on a line-break.
 
 ---
 
 ### Comments
 
-Be generous with comments. It is useful to leave information that will be read at a later time by people *(possibly yourself)* who will need to understand what you have done.  
+Be generous with comments. It is useful to leave information that will be read at a later time by people *(possibly yourself)* who will need to understand what you have done.
 The comments should be well-written and clear, just like the code they are annotating. An occasional nugget of humor might be appreciated. Frustrations and resentments will not.
 
 It is important that comments be kept up-to-date. Erroneous comments can make programs even harder to read and understand.
@@ -142,7 +142,7 @@ var i = 0; // set i to zero.
 
 Instead, add comments that clarify what a line or block of code is doing, if not already obvious.
 
-Generally, use line comments. Save block comments for formal documentation and for commenting out. 
+Generally, use line comments. Save block comments for formal documentation and for commenting out.
 
 ---
 
@@ -150,15 +150,15 @@ Generally, use line comments. Save block comments for formal documentation and f
 
 Variable and function names should be clearly descriptive of what they contain, in the context of the application.
 
-Names should be formed from the 26 upper and lower case letters *(A-Z, a-z)*, the 10 digits _(0-9)_, and the underscore *(_)*.  
+Names should be formed from the 26 upper and lower case letters *(A-Z, a-z)*, the 10 digits _(0-9)_, and the underscore *(_)*.
 Avoid use of international characters because they may not read well or be understood everywhere. Do not use the dollar sign *($)* or backslash *(\)* in names.
 
-Do not use an underscore *(_)* as the first character of a name. It is sometimes used to indicate privacy, but it does not actually provide privacy.  
+Do not use an underscore *(_)* as the first character of a name. It is sometimes used to indicate privacy, but it does not actually provide privacy.
 If privacy is important, use the forms that provide private members. Avoid conventions that demonstrate a lack of competence.
 
 Normal variables and functions should be [camel-case][camelcase], starting with a lower-case letter.
 
-Constructor functions which must be used with the new prefix should start with a capital letter.  
+Constructor functions which must be used with the new prefix should start with a capital letter.
 JavaScript issues neither a compile-time warning nor a run-time warning if a required `new` is omitted. Bad things can happen if `new` is not used, so the capitalization convention is the only defense we have.
 
 Global variables should be in all caps. *(JavaScript does not have macros or constants, so there isn't much point in using all caps to signify features that JavaScript doesn't have.)*
@@ -175,10 +175,10 @@ var rHTML = /<[^>]+>/;                                              // matches a
 
 #### Simple Statements
 
-Each line should contain, at most, one statement. Put a semi-colon at the end of every simple statement.  
+Each line should contain, at most, one statement. Put a semi-colon at the end of every simple statement.
 Note that an assignment statement, which is assigning a function literal or object literal, is still an assignment statement and must end with a semicolon.
 
-JavaScript allows any expression to be used as a statement. This can mask some errors, particularly in the presence of semi-colon insertion.  
+JavaScript allows any expression to be used as a statement. This can mask some errors, particularly in the presence of semi-colon insertion.
 The only expressions that should be used as statements are assignments and invocations.
 
 #### Compound Statements
@@ -192,7 +192,7 @@ Compound statements are statements that contain lists of statements enclosed in 
 
 #### return Statement
 
-A `return` statement with a value should not use parentheses around the value.  
+A `return` statement with a value should not use parentheses around the value.
 The return value expression must start on the same line as the `return` keyword in order to avoid semi-colon insertion.
 
 #### if Statement
@@ -237,7 +237,7 @@ for (variable in object) {
 
 The first form should be used with arrays and with loops of a predeterminable number of iterations.
 
-The second form should be used with objects. Be aware that members that are added to the prototype of the object will be included in the enumeration.  
+The second form should be used with objects. Be aware that members that are added to the prototype of the object will be included in the enumeration.
 It is wise to program defensively by using the `hasOwnProperty` method to distinguish the true members of the object.
 
 #### while Statement
@@ -308,8 +308,8 @@ try {
 * Use `[]` instead of `new Array()`
 * Use `/foo/` instead of `new RegExp('foo')` except where the latter is necessary
 
-Use arrays when the member names would be sequential integers.  
-Use objects when the member names are arbitrary strings or names. 
+Use arrays when the member names would be sequential integers.
+Use objects when the member names are arbitrary strings or names.
 
 ---
 
@@ -317,28 +317,28 @@ Use objects when the member names are arbitrary strings or names.
 
 Avoid doing assignments in the condition part of `if` and `while` statements.
 
-is `if (a = b) {` intentional? Or was `if (a == b) {` intended?  
+is `if (a = b) {` intentional? Or was `if (a == b) {` intended?
 Avoid forms that are indistinguishable from common errors.
 
 ---
 
 ### Comma Operator
 
-Avoid the use of the comma operator, except for very disciplined use, in the control part of `for` statements  
+Avoid the use of the comma operator, except for very disciplined use, in the control part of `for` statements
 *(this does not apply to the comma separator, which is used in object literals, array literals, var statements, and parameter lists).*
 
 ---
 
 ### === and !== Operators
 
-It is almost always better to use the `===` and `!==` operators.  
+It is almost always better to use the `===` and `!==` operators.
 The `==` and `!=` operators do [type coercion][typecoercion] and can produce unexpected results.
 
 ---
 
 ### Confusing Pluses and Minuses
 
-Be careful to not follow a `+` with `+` or `++`. This pattern can be confusing.  
+Be careful to not follow a `+` with `+` or `++`. This pattern can be confusing.
 Insert parenthesis between them to make your intention clear.
 
 ```javascript
