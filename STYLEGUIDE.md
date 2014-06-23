@@ -36,7 +36,7 @@ var foo = true;
 var qux = 50;
 ```
 
-Some ECMAScript5 JavaScript implementations do not have block scope, so defining variables in blocks can confuse programmers who are not experienced with other C family languages. Define all variables at the top of the function.
+Some ECMAScript5.x JavaScript implementations do not have block scope, so defining variables in blocks can confuse programmers who are not experienced with other C family languages. Define all variables at the top of the function.
 
 Use of global variables should be minimized. Implied global variables should never be used.
 
