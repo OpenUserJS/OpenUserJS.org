@@ -97,14 +97,22 @@ var getScriptPageTasks = function (options) {
     if (typeof script.meta.homepageURL === 'string') {
       htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        options.script.homepages = [{ url: script.meta.homepageURL, text: decodeURI(script.meta.homepageURL) }];
+        options.script.homepages = [{
+          url: script.meta.homepageURL,
+          text: decodeURI(script.meta.homepageURL),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
+        }];
       }
     } else {
       options.script.homepages = [];
       script.meta.homepageURL.forEach(function (homepage) {
         htmlStub = '<a href="' + homepage + '"></a>';
         if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-          options.script.homepages.push({ url: homepage, text: decodeURI(homepage) });
+          options.script.homepages.push({
+            url: homepage,
+            text: decodeURI(homepage),
+            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(homepage)
+          });
         }
       });
     }

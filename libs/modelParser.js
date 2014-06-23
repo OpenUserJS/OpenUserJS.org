@@ -112,12 +112,20 @@ var parseScript = function (scriptData) {
     if (_.isString(script.meta.supportURL)) {
       htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        script.support = [{ url: script.meta.supportURL, text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]) }];
+        script.support = [{
+          url: script.meta.supportURL,
+          text: decodeURI(script.meta.supportURL),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL)
+        }];
       }
     } else if (_.isArray(script.meta.supportURL) && !_.isEmpty(script.meta.supportURL)) {
       htmlStub = '<a href="' + script.meta.supportURL[script.meta.supportURL.length - 1] + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        script.support = [{ url:  script.meta.supportURL[script.meta.supportURL.length - 1], text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]) }];
+        script.support = [{
+          url:  script.meta.supportURL[script.meta.supportURL.length - 1],
+          text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]),
+          hasNoFollow:  !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL[script.meta.supportURL.length - 1])
+        }];
       }
     }
   }
