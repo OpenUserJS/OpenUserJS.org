@@ -40,7 +40,7 @@
               {{#script.meta.copyright}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{script.meta.copyright}}</p>{{/script.meta.copyright}}
               {{#script.licenses}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{name}}</p>{{/script.licenses}}
               {{#hasCollab}}
-              <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span> {{/script.collaborators}}</p>
+              <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>
               {{/hasCollab}}
               {{#script.fork}}
                 <p><b>Fork History:</b></p>

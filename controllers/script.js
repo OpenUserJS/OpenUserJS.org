@@ -64,11 +64,11 @@ var getScriptPageTasks = function (options) {
   if (script.meta.author && script.meta.collaborator) {
     options.hasCollab = true;
     if (typeof script.meta.collaborator === 'string') {
-      options.script.collaborators = [{ name: script.meta.collaborator }];
+      options.script.collaborators = [{ url: encodeURIComponent(script.meta.collaborator), text: script.meta.collaborator }];
     } else {
       options.script.collaborators = [];
       script.meta.collaborator.forEach(function (collaborator) {
-        options.script.collaborators.push({ name: collaborator });
+        options.script.collaborators.push({ url: encodeURIComponent(collaborator), text: collaborator });
       });
     }
   }
