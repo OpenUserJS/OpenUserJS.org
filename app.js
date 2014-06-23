@@ -18,16 +18,16 @@ var group = require('./controllers/group');
 var discussion = require('./controllers/discussion');
 var issue = require('./controllers/issue');
 var scriptStorage = require('./controllers/scriptStorage');
+
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
-
-var modelParser = require('./libs/modelParser');
-
 var modifySessions = require('./libs/modifySessions');
+
 var settings = require('./models/settings.json');
+
 var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
-var dbOptions = { server : { socketOptions : { keepAlive: 1 } } };
+var dbOptions = { server: { socketOptions: { keepAlive: 1 } } };
 
 app.set('port', process.env.PORT || 8080);
 
@@ -38,7 +38,7 @@ db.once('open', function () {
   app.listen(app.get('port'));
 });
 
-app.configure(function(){
+app.configure(function () {
   var sessionStore = new MongoStore({ mongoose_connection: db });
 
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
@@ -61,8 +61,7 @@ app.configure(function(){
         'max-age=8640000; includeSubDomains');
 
       if (req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(301, 'https://' + req.headers.host
-          + encodeURI(req.url));
+        return res.redirect(301, 'https://' + req.headers.host + encodeURI(req.url));
       }
 
       next();
@@ -96,7 +95,7 @@ app.configure(function(){
 });
 
 // Build the route regex for model lists
-function listRegex (root, type) {
+function listRegex(root, type) {
   var slash = '\/';
   if (root === slash) { slash = ''; }
   return new RegExp('^' + root +
@@ -112,11 +111,11 @@ function listRegex (root, type) {
 var methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
 function app_route(path) {
   var r = {};
-  r.all = function(cb) {
+  r.all = function (cb) {
     app.all.call(app, path, cb);
   };
-  methods.forEach(function(method){
-    r[method] = function(cb) {
+  methods.forEach(function (method) {
+    r[method] = function (cb) {
       app[method].call(app, path, cb);
       return r;
     };
@@ -153,7 +152,6 @@ app_route('/user/add/lib/new').get(script.lib(user.editScript)).post(script.lib(
 app_route('/user/add/scripts/upload').post(user.uploadScript);
 app_route('/user/add/lib/upload').post(script.lib(user.uploadScript));
 
-
 // Script routes
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
 app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
@@ -161,12 +159,9 @@ app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.e
 app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript); // Legacy TODO Remove
 
 // Script routes: Legacy
-app.get('/install/:username/:scriptname', scriptStorage.sendScript);
-app.get('/install/:username/:namespace/:scriptname', scriptStorage.sendScript);
-app.get('/meta/:username/:scriptname', scriptStorage.sendMeta);
-app.get('/meta/:username/:namespace/:scriptname', scriptStorage.sendMeta);
-app.get('/vote/scripts/:username/:scriptname/:vote', script.vote);
-app.get('/vote/scripts/:username/:namespace/:scriptname/:vote', script.vote);
+app.get('/install/:username/:namespace?/:scriptname', scriptStorage.sendScript);
+app.get('/meta/:username/:namespace?/:scriptname', scriptStorage.sendMeta);
+app.get('/vote/scripts/:username/:namespace?/:scriptname/:vote', script.vote);
 app.post('/github/hook', scriptStorage.webhook);
 app.post('/github/service', function (req, res, next) { next(); });
 
@@ -179,19 +174,17 @@ app.post('/lib/:scriptname/edit', script.lib(script.edit));
 app.get('/libs/:username/:scriptname/source', script.lib(user.editScript));
 app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript);
 app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
-app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
+//app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Issues routes
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
-// app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
+//app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(issue.open).post(issue.open);
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 
 // Issues routes: Legacy
-app.post('/:type(scripts|libs)/:username/:scriptname/issues/:topic', issue.comment);
-app.post('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic', issue.comment);
-app.get('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
-app.get('/:type(scripts|libs)/:username/:namespace/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
+app.post('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic', issue.comment);
+app.get('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
 
 // Admin routes
 app.get('/admin', admin.adminPage);
@@ -205,11 +198,9 @@ app_route('/mod').get(moderation.modPage);
 app_route('/mod/removed').get(moderation.removedItemListPage);
 app_route('/mod/removed/:id').get(moderation.removedItemPage);
 app.get('/flag/users/:username/:unflag?', user.flag);
-app.get('/flag/scripts/:username/:namespace/:scriptname/:unflag?', script.flag);
-app.get('/flag/scripts/:username/:scriptname/:unflag?', script.flag);
-app.get('/flag/libs/:username/:scriptname/:unflag?', script.lib(script.flag)); //
-app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'),
-  moderation.flagged); //
+app.get('/flag/scripts/:username/:namespace?/:scriptname/:unflag?', script.flag);
+app.get('/flag/libs/:username/:scriptname/:unflag?', script.lib(script.flag));
+app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'), moderation.flagged);
 app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
 app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 
@@ -225,16 +216,16 @@ app_route('/forum/:category(announcements|corner|garage|discuss)/new').get(discu
 app_route('/forum/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(discussion.createComment);
 
 // Discussion routes: Legacy
-// app_route('/:category(announcements|corner|garage|discuss)').get(function(req, res, next) { res.redirect(util.format('/forum/%s', req.route.params.category)); });
-// app_route('/:category(announcements|corner|garage|discuss)/:topic').get(function(req, res, next) { res.redirect(util.format('/forum/%s/%s', req.route.params.category, req.route.params.topic)) });
+// app_route('/:category(announcements|corner|garage|discuss)').get(function (req, res, next) { res.redirect(util.format('/forum/%s', req.route.params.category)); });
+// app_route('/:category(announcements|corner|garage|discuss)/:topic').get(function (req, res, next) { res.redirect(util.format('/forum/%s/%s', req.route.params.category, req.route.params.topic)) });
 app.get(listRegex('\/(announcements|corner|garage|discuss)', ''), discussion.list);
 app.get(listRegex('\/(announcements|corner|garage|discuss)\/([^\/]+?)', ''), discussion.show);
 app.get('/post/:category(announcements|corner|garage|discuss)', discussion.newTopic);
 app.post('/post/:category(announcements|corner|garage|discuss)', discussion.createTopic);
 app.post('/:category(announcements|corner|garage|discuss)/:topic', discussion.createComment);
 
-// Search routes
-app.post('/search', function(req, res) {
+// Search routes: Legacy
+app.post('/search', function (req, res) {
   var search = encodeURIComponent(req.body.search.replace(/^\s+|\s+$/g, ''));
   res.redirect('/search/' + search + '/' + req.body.type + 'list');
 });
@@ -249,4 +240,3 @@ app.use(function (req, res, next) {
     statusMessage: 'This is not the page you\'re are looking for.',
   });
 });
-

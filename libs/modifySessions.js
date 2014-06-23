@@ -12,7 +12,7 @@ exports.init = function (store) {
 };
 
 // Serialize a user model to something that can be stored in the session data
-function serializeUser (user) {
+function serializeUser(user) {
   var userObj = user.toObject();
 
   // Some things don't need to be kept in the session store
@@ -27,7 +27,7 @@ function serializeUser (user) {
 exports.add = function (req, user, callback) {
   var store = req.sessionStore;
 
-  function finish (err, user) {
+  function finish(err, user) {
     req.session.user = serializeUser(user);
     callback();
   }
@@ -53,7 +53,7 @@ exports.add = function (req, user, callback) {
 
 // Remove a session id from the user model
 exports.remove = function (req, user, callback) {
-  var pos = user && user.sessionIds ? 
+  var pos = user && user.sessionIds ?
     user.sessionIds.indexOf(req.sessionID) : -1;
 
   delete req.session.user;
@@ -87,12 +87,12 @@ exports.update = function (req, user, callback) {
 // Destory all sessions for a user
 exports.destroy = function (req, user, callback) {
   var store = req.sessionStore;
-  var emptySess = { 
-    cookie: { 
+  var emptySess = {
+    cookie: {
       path: '/',
       _expires: null,
       originalMaxAge: null,
-      httpOnly: true 
+      httpOnly: true
     }
   };
 

@@ -29,8 +29,6 @@
                   </div>
                 </div>
               </div>
-
-
             </div>
           </div>
         </div>
@@ -44,13 +42,12 @@
               <input type="hidden" id="groups" name="groups" style="width: 100%;" />
             </div>
           </div>
-
           {{> includes/scriptAuthorToolsPanel.html }}
           {{> includes/scriptModToolsPanel.html }}
           {{/script}}
         </div>
       </div>
-   </form>
+    </form>
   </div>
   {{> includes/footer.html }}
   <!-- Markdown Editor -->
@@ -63,7 +60,7 @@
     var preload_data = $.map(preload_groups, function (group) {
       return { id: group, text: group, locked: true };
     });
-    $(document).ready(function() {
+    $(document).ready(function () {
       var canAddGroup = true;
       var canCreateGroup = {{canCreateGroup}};
       var prevTerm = '';
@@ -97,7 +94,7 @@
             });
             query.callback(groups);
           }});
-      }});
+        }});
       $('#groups').select2('data', preload_data);
     });
   </script>

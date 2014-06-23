@@ -11,7 +11,7 @@
       <form action="/auth/" method="post" class="form-signin">
         <h3>
           Login
-          <p class="small">Login with your preferred OAuth/OpenID service.</p>
+          <span class="help-block small">Login with your preferred OAuth/OpenID service.</span>
         </h3>
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
@@ -26,17 +26,16 @@
       <form action="/auth/" method="post" class="form-register">
         <h3>
           Register
-          <p class="small">Sign up with a OAuth/OpenID service.</p>
+          <span class="help-block small">Sign up with a OAuth/OpenID service.</span>
         </h3>
-        
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
           <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username">
           <span class="input-group-btn">
             <select name="auth" class="btn btn-addon-default" style="border-radius: 0px;">
-            {{#strategies}}
+              {{#strategies}}
               <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}>{{display}}</option>
-            {{/strategies}}
+              {{/strategies}}
             </select>
           </span>
           <span class="input-group-btn">

@@ -10,7 +10,7 @@ var formatDate = require('./helpers').formatDate;
 var listSize = 10;
 
 // /scriptlist/size/:size/sort/:orderBy/dir/:direction/page/:page
-// Get a list of scripts and build the options object 
+// Get a list of scripts and build the options object
 // for the corresponding Mustache partial template
 exports.listScripts = function (query, params, baseUrl, callback) {
 
@@ -41,7 +41,7 @@ exports.listScripts = function (query, params, baseUrl, callback) {
       var name = null;
       scriptsList.scripts = [];
       scriptsList.headings = [];
-      scriptsList.hasAuthor = params[4] ? 
+      scriptsList.hasAuthor = params[4] ?
         params[4].indexOf('author') === -1 : true;
 
       scripts.forEach(function (script) {
@@ -52,7 +52,7 @@ exports.listScripts = function (query, params, baseUrl, callback) {
 
         editUrl.shift();
 
-        scriptsList.scripts.push({ 
+        scriptsList.scripts.push({
           name: script.name,
           author: script.author,
           description: script.meta.description || '',
@@ -72,7 +72,7 @@ exports.listScripts = function (query, params, baseUrl, callback) {
         heading = headings[name];
 
         if (orderBy === name) {
-          heading.direction = '/dir/' + 
+          heading.direction = '/dir/' +
             (direction === 'asc' ? 'desc' : 'asc');
         } else {
           heading.direction = '';
@@ -82,14 +82,14 @@ exports.listScripts = function (query, params, baseUrl, callback) {
         scriptsList.headings.push(heading);
       }*/
 
-      scriptsList.baseUrl = baseUrl + (query.isLib === true ? 
+      scriptsList.baseUrl = baseUrl + (query.isLib === true ?
         '/liblist' : '/scriptlist');
       callback(scriptsList);
-  });
+    });
 };
 
 // /userlist/size/:size/sort/:orderBy/dir/:direction/page/:page
-// Get a list of users and build the options object 
+// Get a list of users and build the options object
 // for the corresponding Mustache partial template
 exports.listUsers = function (query, params, baseUrl, callback) {
   listModels(User, query, params, ['name'],
@@ -97,7 +97,7 @@ exports.listUsers = function (query, params, baseUrl, callback) {
       usersList.users = [];
 
       users.forEach(function (user) {
-        usersList.users.push({ 
+        usersList.users.push({
           name: user.name,
           url: '/users/' + user.name,
         });
@@ -105,11 +105,11 @@ exports.listUsers = function (query, params, baseUrl, callback) {
 
       usersList.baseUrl = baseUrl + '/userlist';
       callback(usersList);
-  });
+    });
 };
 
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
-// Get a list of removed content and build the options object 
+// Get a list of removed content and build the options object
 // for the corresponding Mustache partial template
 exports.listRemoved = function (query, params, baseUrl, callback) {
   listModels(Remove, query, params, ['removed'],
@@ -121,14 +121,14 @@ exports.listRemoved = function (query, params, baseUrl, callback) {
         var key = null;
         var contentArr = [];
         var val = null;
-        
+
         for (key in content) {
           val = content[key];
           val = val && typeof val === 'object' ? JSON.stringify(val) : val;
           contentArr.push({ 'key': key, 'value': val });
         }
 
-        removedList.removed.push({ 
+        removedList.removed.push({
           remover: result.removerName,
           removed: formatDate(result.removed),
           reason: result.reason,
@@ -138,11 +138,11 @@ exports.listRemoved = function (query, params, baseUrl, callback) {
 
       removedList.baseUrl = baseUrl + '/list';
       callback(removedList);
-  });
+    });
 };
 
 // /groups/list/size/:size/sort/:orderBy/dir/:direction/page/:page
-// Get a list of groups and build the options object 
+// Get a list of groups and build the options object
 // for the corresponding Mustache partial template
 exports.listGroups = function (query, params, baseUrl, callback) {
   listModels(Group, query, params, ['rating'],
@@ -150,7 +150,7 @@ exports.listGroups = function (query, params, baseUrl, callback) {
       groupsList.groups = [];
 
       groups.forEach(function (group) {
-        groupsList.groups.push({ 
+        groupsList.groups.push({
           name: group.name,
           url: '/group/' + group.name.replace(/\s+/g, '_'),
           size: group._scriptIds.length,
@@ -159,7 +159,7 @@ exports.listGroups = function (query, params, baseUrl, callback) {
 
         // Wait two hours between group rating updates
         // This calculation runs in the background
-        if (new Date().getTime() > (group.updated.getTime() + 1000*60*60*2)) {
+        if (new Date().getTime() > (group.updated.getTime() + 1000 * 60 * 60 * 2)) {
           Script.find({ _id: { $in: group._scriptIds } },
             function (err, scripts) {
               if (!err && scripts.length > 1) {
@@ -167,18 +167,18 @@ exports.listGroups = function (query, params, baseUrl, callback) {
               }
 
               group.updated = new Date();
-              group.save(function () {});
-          });
+              group.save(function () { });
+            });
         }
       });
 
       groupsList.baseUrl = baseUrl + '/list';
       callback(groupsList);
-  });
+    });
 };
 
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
-// Get a list of discussions and build the options object 
+// Get a list of discussions and build the options object
 // for the corresponding Mustache partial template
 exports.listDiscussions = function (query, params, baseUrl, callback) {
   listModels(Discussion, query, params, ['updated', 'rating'],
@@ -186,7 +186,7 @@ exports.listDiscussions = function (query, params, baseUrl, callback) {
       discussionsList.discussions = [];
 
       discussions.forEach(function (discussion) {
-        discussionsList.discussions.push({ 
+        discussionsList.discussions.push({
           topic: discussion.topic,
           comments: discussion.comments,
           author: discussion.author,
@@ -202,11 +202,11 @@ exports.listDiscussions = function (query, params, baseUrl, callback) {
 
       discussionsList.baseUrl = baseUrl + '/list';
       callback(discussionsList);
-  });
+    });
 };
 
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
-// Get a list of comments and build the options object 
+// Get a list of comments and build the options object
 // for the corresponding Mustache partial template
 exports.listComments = function (query, params, baseUrl, callback) {
   listModels(Comment, query, params, ['created'],
@@ -214,7 +214,7 @@ exports.listComments = function (query, params, baseUrl, callback) {
       commentsList.comments = [];
 
       comments.forEach(function (comment) {
-        commentsList.comments.push({ 
+        commentsList.comments.push({
           author: comment.author,
           content: renderMd(comment.content),
           created: formatDate(comment.created),
@@ -225,14 +225,14 @@ exports.listComments = function (query, params, baseUrl, callback) {
 
       commentsList.baseUrl = baseUrl + '/list';
       callback(commentsList);
-  });
+    });
 };
 
-// options = { 
+// options = {
 //   size: (Number), orderBy: (String or Array or Object),
 //   direction: (String), page: (Number), omit: (Array)
 // }
-function listModels (model, query, options, defaultOrder, callback) {
+function listModels(model, query, options, defaultOrder, callback) {
   var optArr = null;
   var fields = Object.keys(model.schema.tree);
   var orderBy = null;
@@ -266,7 +266,7 @@ function listModels (model, query, options, defaultOrder, callback) {
     params.sort[orderBy] = direction;
   } else if (orderBy instanceof Array) {
     orderBy.forEach(function (order) {
-      params.sort[order] = -1 !== fields.indexOf(order) && 
+      params.sort[order] = -1 !== fields.indexOf(order) &&
         model.schema.paths[order].instance === 'String' ? 1 : -1;
     });
   } else if (typeof orderBy === 'object') {
@@ -314,5 +314,5 @@ function listModels (model, query, options, defaultOrder, callback) {
 
       if (list.next) { models.pop(); }
       callback(models, list);
-  });
+    });
 };

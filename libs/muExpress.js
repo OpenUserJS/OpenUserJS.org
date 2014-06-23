@@ -2,7 +2,7 @@ var mu = require('mu2');
 
 mu.root = __dirname + '/../views';
 
-function renderFile (res, path, options) {
+function renderFile(res, path, options) {
   // If you need to render a file with a different content
   // type, do it directly on the response object
   if (process.env.NODE_ENV !== 'production') { mu.clearCache(); }

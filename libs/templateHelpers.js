@@ -2,8 +2,7 @@ var countTask = require('../libs/tasks').countTask;
 var helpers = require('../libs/helpers');
 var modelParser = require('../libs/modelParser');
 
-
-var paginateTemplate = function(opts) {
+var paginateTemplate = function (opts) {
   // Required
   var currentPage = opts.currentPage;
   var lastPage = opts.lastPage;
@@ -22,9 +21,8 @@ var paginateTemplate = function(opts) {
   if (firstVisible && linkedPages.length > 0 && linkedPages[0] != 1)
     linkedPages.splice(0, 0, 1); // insert the value 1 at index 0
 
-  if (lastVisible && linkedPages.length > 0 && linkedPages[linkedPages.length-1] != lastPage)
+  if (lastVisible && linkedPages.length > 0 && linkedPages[linkedPages.length - 1] != lastPage)
     linkedPages.push(lastPage);
-
 
   var html = '';
   html += '<ul class="pagination">';
@@ -46,7 +44,7 @@ var paginateTemplate = function(opts) {
 };
 exports.paginateTemplate = paginateTemplate;
 
-var newPagination = function(currentPage, itemsPerPage) {
+var newPagination = function (currentPage, itemsPerPage) {
   // Options
   var maxItemsPerPage = 100;
   var defaultItemsPerPage = 25;
@@ -56,18 +54,18 @@ var newPagination = function(currentPage, itemsPerPage) {
     currentPage: null,
     itemsPerPage: null,
     startIndex: null,
-    numItems: null,
+    numItems: null
   };
-  pagination.applyToQuery = function(modelListQuery) {
+  pagination.applyToQuery = function (modelListQuery) {
     pagination.startIndex = (pagination.currentPage * pagination.itemsPerPage) - pagination.itemsPerPage;
     modelListQuery
       .skip(pagination.startIndex)
       .limit(pagination.itemsPerPage);
   };
-  pagination.getCountTask = function(modelListQuery) {
+  pagination.getCountTask = function (modelListQuery) {
     return countTask(modelListQuery, pagination, 'numItems');
   };
-  pagination.render = function() {
+  pagination.render = function () {
     return paginateTemplate(pagination);
   };
 
@@ -79,12 +77,11 @@ var newPagination = function(currentPage, itemsPerPage) {
 };
 exports.newPagination = newPagination;
 
-
-var getDefaultPagination = function(req) {
+var getDefaultPagination = function (req) {
   var pagination = newPagination(req.query.p, req.query.limit);
-  pagination.renderDefault = function(req) {
+  pagination.renderDefault = function (req) {
     pagination.lastPage = Math.ceil(pagination.numItems / pagination.itemsPerPage) || 1;
-    pagination.urlFn = function(p) {
+    pagination.urlFn = function (p) {
       return helpers.setUrlQueryValue(req.url, 'p', p);
     };
     return pagination.render();
@@ -92,7 +89,6 @@ var getDefaultPagination = function(req) {
   return pagination;
 };
 exports.getDefaultPagination = getDefaultPagination;
-
 
 exports.statusCodePage = function (req, res, next, options) {
   var authedUser = req.session ? req.session.user : null;

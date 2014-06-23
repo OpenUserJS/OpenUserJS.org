@@ -1,14 +1,17 @@
 {{#modTools}}
 <div class="panel panel-default">
   <div class="panel-heading">
-    <div class="panel-title">Mod Tools</div>
+    <div class="panel-title">
+      <i class="fa fa-fw fa-eye"></i>
+      Mod Tools
+    </div>
   </div>
   <div class="panel-body">
     {{#script}}
     {{> includes/flagModelSnippet.html }}
     {{/script}}
     <ul class="nav nav-pills nav-justified">
-      <li><a href="{{{script.scriptRemovePageUrl}}}" class="{{^canRemove}}disabled{{/canRemove}}"><i class="fa fa-trash-o"></i> Remove Script</a></a></li>
+      <li><a href="{{{script.scriptRemovePageUrl}}}" class="{{^canRemove}}disabled{{/canRemove}}"><i class="fa fa-trash-o"></i> Remove Script</a></li>
     </ul>
   </div>
 </div>

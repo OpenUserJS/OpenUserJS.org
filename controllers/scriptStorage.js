@@ -15,30 +15,87 @@ if (process.env.NODE_ENV === 'production') {
   // You need to install (and ruby too): https://github.com/jubos/fake-s3
   // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
   var DEV_AWS_URL = process.env.DEV_AWS_URL || 'localhost:10001';
-  AWS.config.update({ accessKeyId: 'fakeId', secretAccessKey: 'fakeKey',
+  AWS.config.update({
+    accessKeyId: 'fakeId',
+    secretAccessKey: 'fakeKey',
     httpOptions: {
-    proxy: DEV_AWS_URL, agent: require('http').globalAgent
-  }});
+      proxy: DEV_AWS_URL,
+      agent: require('http').globalAgent
+    }
+  });
 }
 
+/*Script.find({ installName: /^[^\/]+\/[^\/]+\/[^\/]+$/ },function (err, scripts){
+  var s3 = new AWS.S3();
+  var Discussion = require('../models/discussion').Discussion;
+
+  scripts.forEach(function (script) {
+    //console.log(script.installName);
+    var oldPath = script.installName;
+    var newPath = cleanFilename(script.author) + '/' 
+      + cleanFilename(script.name) + (script.isLib ? '.js' : '.user.js');
+    var newCat = (script.isLib ? 'libs' : 'scripts') + '/' + newPath
+      .replace(/(\.user)?\.js$/, '')  + '/issues';
+    var oldCat = (script.isLib ? 'libs' : 'scripts') + '/' + oldPath
+      .replace(/(\.user)?\.js$/, '')  + '/issues';
+
+    Discussion.find({ category: oldCat }, function (err, discussions) {
+      discussions.forEach(function (discussion) {
+        var urlTopic = cleanFilename(discussion.topic, '').replace(/_\d+$/, '');
+        var path = '/' + newCat + '/' + urlTopic;
+        discussion.path = path;
+        discussion.category = newCat;
+        discussion.save(function (){ console.log(newCat, path); });
+      });
+    });
+    
+    var params = {
+      Bucket: bucketName,
+      CopySource: bucketName + '/' + oldPath,
+      Key: newPath
+    };
+
+    script.installName = newPath;
+    s3.copyObject(params, function (err, data) {
+      if (err) { return console.log(oldPath + ' - copy fail'); }
+      script.save(function () {});
+
+      s3.deleteObject({ Bucket : params.Bucket, Key : oldPath}, 
+        function (err, data) {
+          if (err) {
+            console.log(oldPath + '- delete fail');
+          } else {
+            console.log(newPath + ' - success');
+          }
+        });
+    });
+  });
+});*/
+
+
 function getInstallName (req) {
-  var username = req.route.params.username.toLowerCase();
-  var namespace = req.route.params.namespace;
-  return username + '/' + (namespace ? namespace + '/' : '')
-    + req.route.params.scriptname;
+  return req.route.params.username + '/' + req.route.params.scriptname;
 }
 exports.getInstallName = getInstallName;
+
+function caseInsensitive (installName) {
+  return new RegExp('^' + installName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") 
+    + '$', 'i');
+}
+exports.caseInsensitive = caseInsensitive;
 
 exports.getSource = function (req, callback) {
   var s3 = new AWS.S3();
   var installName = getInstallName(req);
 
-  Script.findOne({ installName: installName }, function (err, script) {
-    if (!script) { return callback(null); }
+  Script.findOne({ installName: caseInsensitive(installName) },
+    function (err, script) {
 
-    // Get the script
-    callback(script, s3.getObject({ Bucket: bucketName, Key: installName })
-      .createReadStream());
+      if (!script) { return callback(null); }
+
+      // Get the script
+      callback(script, s3.getObject({ Bucket: bucketName, Key: installName })
+        .createReadStream());
   });
 };
 
@@ -51,6 +108,7 @@ exports.sendScript = function (req, res, next) {
   }
 
   exports.getSource(req, function (script, stream) {
+
     if (!script) { return next(); }
 
     // Send the script
@@ -62,7 +120,7 @@ exports.sendScript = function (req, res, next) {
 
     // Update the install count
     ++script.installs;
-    script.save(function (err, script) {});
+    script.save(function (err, script) { });
   });
 };
 
@@ -70,25 +128,26 @@ exports.sendScript = function (req, res, next) {
 exports.sendMeta = function (req, res, next) {
   var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
 
-  Script.findOne({ installName: installName }, function (err, script) {
-    var meta = null;
+  Script.findOne({ installName: caseInsensitive(installName) },
+    function (err, script) {
+      var meta = null;
 
-    if (!script) { return next(); }
+      if (!script) { return next(); }
 
-    res.set('Content-Type', 'text/javascript; charset=utf-8');
-    meta = script.meta;
+      res.set('Content-Type', 'text/javascript; charset=utf-8');
+      meta = script.meta;
 
-    res.write('// ==UserScript==\n');
-    Object.keys(meta).reverse().forEach(function (key) {
-      if (meta[key] instanceof Array) {
-        meta[key].forEach(function (value) {
-          res.write('// @' + key + '    ' + value + '\n');
-        });
-      } else {
-        res.write('// @' + key + '    ' + meta[key] + '\n');
-      }
-    });
-    res.end('// ==/UserScript==\n');
+      res.write('// ==UserScript==\n');
+      Object.keys(meta).reverse().forEach(function (key) {
+        if (meta[key] instanceof Array) {
+          meta[key].forEach(function (value) {
+            res.write('// @' + key + '    ' + value + '\n');
+          });
+        } else {
+          res.write('// @' + key + '    ' + meta[key] + '\n');
+        }
+      });
+      res.end('// ==/UserScript==\n');
   });
 };
 
@@ -164,9 +223,8 @@ exports.getMeta = function (chunks, callback) {
 
 exports.storeScript = function (user, meta, buf, callback, update) {
   var s3 = new AWS.S3();
-  var namespace = null;
   var scriptName = null;
-  var installName = user.name.toLowerCase() + '/';
+  var installName = user.name + '/';
   var isLibrary = typeof meta === 'string';
   var libraries = [];
   var requires = null;
@@ -179,7 +237,6 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   if (!meta) { return callback(null); }
 
   if (!isLibrary) {
-    namespace = cleanFilename(meta.namespace, '');
     scriptName = cleanFilename(meta.name, '');
 
     // Can't install a script without a @name (maybe replace with random value)
@@ -192,17 +249,13 @@ exports.storeScript = function (user, meta, buf, callback, update) {
           && collaborators === user.name)
           || (collaborators instanceof Array
           && collaborators.indexOf(user.name) > -1)) {
-        installName = meta.author.toLowerCase() + '/';
+        installName = meta.author + '/';
       } else {
         collaborators = null;
       }
     }
 
-    if (!namespace || namespace === user.name) {
-      installName += scriptName + '.user.js';
-    } else {
-      installName += namespace + '/' + scriptName + '.user.js';
-    }
+    installName += scriptName + '.user.js';
 
     if (meta.require) {
       if (typeof meta.require === 'string') {
@@ -212,8 +265,8 @@ exports.storeScript = function (user, meta, buf, callback, update) {
       }
 
       requires.forEach(function (require) {
-          var match = libraryRegex.exec(require);
-          if (match && match[1]) { libraries.push(match[1]); }
+        var match = libraryRegex.exec(require);
+        if (match && match[1]) { libraries.push(match[1]); }
       });
     }
   } else {
@@ -224,9 +277,8 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   }
 
   // Prevent a removed script from being reuploaded
-  findDeadorAlive(Script, { installName: installName }, true,
+  findDeadorAlive(Script, { installName: caseInsensitive(installName) }, true,
     function (alive, script, removed) {
-
       if (removed || (!script && (update || collaborators))) {
         return callback(null);
       } else if (!script) {
@@ -260,7 +312,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
       }
 
       script.save(function (err, script) {
-        s3.putObject({ Bucket : bucketName, Key : installName, Body : buf },
+        s3.putObject({ Bucket: bucketName, Key: installName, Body: buf },
           function (err, data) {
             if (user.role === userRoles.length - 1) {
               var userDoc = user;
@@ -273,15 +325,23 @@ exports.storeScript = function (user, meta, buf, callback, update) {
             } else {
               callback(script);
             }
-        });
+          });
       });
-  });
+    });
 };
 
 exports.deleteScript = function (installName, callback) {
-  Script.findOneAndRemove({ installName: installName }, function (err, user) {
-    var s3 = new AWS.S3();
-    s3.deleteObject({ Bucket : bucketName, Key : installName}, callback);
+  Script.findOne({ installName: caseInsensitive(installName) },
+    function (err, script) {
+      var s3 = new AWS.S3();
+      s3.deleteObject({ Bucket : bucketName, Key : script.installName},
+        function (err) {
+          if (!err) {
+            script.remove(callback);
+          } else {
+            callback(null);
+          }
+      });
   });
 };
 
@@ -295,7 +355,7 @@ exports.webhook = function (req, res) {
   var repos = {};
   var repo = null;
 
-  res.end(); // close connection
+  res.end(); // Close connection
 
   // Test for know GH webhook ips: https://api.github.com/meta
   if (!req.body.payload ||
@@ -330,6 +390,6 @@ exports.webhook = function (req, res) {
 
     // Update modified scripts
     var repoManager = RepoManager.getManager(null, user, repos);
-    repoManager.loadScripts(function (){}, true);
+    repoManager.loadScripts(function () { }, true);
   });
 };

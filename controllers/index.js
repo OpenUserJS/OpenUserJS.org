@@ -15,7 +15,6 @@ var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var removeSession = require('../libs/modifySessions').remove;
 
-
 // The home page has scripts and groups in a sidebar
 exports.home = function (req, res) {
   var authedUser = req.session.user;
@@ -88,7 +87,7 @@ exports.home = function (req, res) {
   tasks.push(execQueryTask(announcementsDiscussionListQuery, options, 'announcementsDiscussionList'));
 
   //---
-  function preRender(){
+  function preRender() {
     // scriptList
     options.scriptList = _.map(options.scriptList, modelParser.parseScript);
 
@@ -126,13 +125,13 @@ exports.home = function (req, res) {
       options.pageHeading = options.isFlagged ? 'Flagged Scripts' : 'Scripts';
     }
   };
-  function render(){ res.render('pages/scriptListPage', options); }
-  function asyncComplete(){ preRender(); render(); }
+  function render() { res.render('pages/scriptListPage', options); }
+  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
 // Preform a script search
-function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
+function getSearchResults(req, res, prefixSearch, fullSearch, opts, callback) {
   var user = req.session.user;
   var search = req.route.params.shift();
   var baseUrl = '/search/' + encodeURIComponent(search);
@@ -147,8 +146,8 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
 
   // Match all the terms but in any order
   terms.forEach(function (term) {
-    prefixStr += '(?=.*?\\b' + term  + ')';
-    fullStr += '(?=.*?' + term  + ')';
+    prefixStr += '(?=.*?\\b' + term + ')';
+    fullStr += '(?=.*?' + term + ')';
   });
   prefixRegex = new RegExp(prefixStr, 'i');
   fullRegex = new RegExp(fullStr, 'i');
@@ -170,12 +169,13 @@ function getSearchResults (req, res, prefixSearch, fullSearch, opts, callback) {
   modelsList.listScripts(opts, req.route.params, baseUrl,
     function (scriptsList) {
       callback({
-        'title': 'Searching for "' + search  +'"',
+        'title': 'Searching for "' + search + '"',
         'username': user ? user.name : null,
         'search': search,
         'scriptsList': scriptsList
       });
-  });
+    }
+  );
 };
 
 // Script search results
@@ -185,7 +185,7 @@ exports.search = function (req, res, next) {
     ['meta.include', 'meta.match'], {},
     function (options) {
       res.render('index', options);
-  });
+    });
 };
 
 // Show library scripts
@@ -200,7 +200,7 @@ exports.toolbox = function (req, res) {
         username: user ? user.name : null,
         scriptsList: scriptsList
       });
-  });
+    });
 };
 
 // Search library scripts
@@ -209,7 +209,7 @@ exports.toolSearch = function (req, res) {
     function (options) {
       options.toolbox = true;
       res.render('index', options);
-  });
+    });
 };
 
 // UI for user registration
@@ -243,7 +243,7 @@ exports.register = function (req, res) {
   options.strategies = [];
 
   // Get OpenId strategies
-  _.each(strategies, function(strategy, strategyKey){
+  _.each(strategies, function (strategy, strategyKey) {
     if (!strategy.oauth) {
       options.strategies.push({
         'strat': strategyKey,
@@ -273,17 +273,17 @@ exports.register = function (req, res) {
   });
 
   //---
-  function preRender(){
+  function preRender() {
     // Sort the strategies
-    options.strategies = _.sortBy(options.strategies, function(strategy){ return strategy.display; });
+    options.strategies = _.sortBy(options.strategies, function (strategy) { return strategy.display; });
 
     // Prefer GitHub
-    var githubStrategy = _.findWhere(options.strategies, {strat: 'github'});
+    var githubStrategy = _.findWhere(options.strategies, { strat: 'github' });
     if (githubStrategy)
       githubStrategy.selected = true;
   };
-  function render(){ res.render('pages/loginPage', options); }
-  function asyncComplete(){ preRender(); render(); }
+  function render() { res.render('pages/loginPage', options); }
+  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 

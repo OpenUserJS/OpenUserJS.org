@@ -12,13 +12,13 @@ var github = require('../libs/githubClient');
 var clientId = null;
 var clientKey = null;
 
-Strategy.findOne({ name: 'github' }, function(err, strat) {
+Strategy.findOne({ name: 'github' }, function (err, strat) {
   clientId = strat.id;
   clientKey = strat.key;
 });
 
 // Requests a GitHub url and returns the chunks as buffers
-function fetchRaw (host, path, callback) {
+function fetchRaw(host, path, callback) {
   var options = {
     hostname: host,
     port: 443,
@@ -28,22 +28,22 @@ function fetchRaw (host, path, callback) {
   };
 
   var req = https.request(options,
-    function(res) {
+    function (res) {
       var bufs = [];
-      if (res.statusCode != 200) { console.log(res.statusCode);return callback([new Buffer('')]); }
+      if (res.statusCode != 200) { console.log(res.statusCode); return callback([new Buffer('')]); }
       else {
-        res.on('data', function(d) { bufs.push(d); });
-        res.on('end', function() {
+        res.on('data', function (d) { bufs.push(d); });
+        res.on('end', function () {
           callback(bufs);
         });
       }
-  });
+    });
   req.end();
 }
 
 // Use for call the GitHub JSON api
 // Returns the JSON parsed object
-function fetchJSON (path, callback) {
+function fetchJSON(path, callback) {
   path += '?client_id=' + clientId + '&client_secret=' + clientKey;
   fetchRaw('api.github.com', path, function (bufs) {
     callback(JSON.parse(Buffer.concat(bufs).toString()));
@@ -63,7 +63,7 @@ RepoManager.prototype.fetchRecentRepos = function (callback) {
   var that = this;
 
   async.waterfall([
-    function(callback) {
+    function (callback) {
       github.repos.getFromUser({
         user: encodeURIComponent(that.userId),
         sort: 'updated',
@@ -71,17 +71,17 @@ RepoManager.prototype.fetchRecentRepos = function (callback) {
         per_page: 3,
       }, callback);
     },
-    function(githubRepoList, callback) {
+    function (githubRepoList, callback) {
       // Don't search through forks
       // to speedup this request.
       // githubRepoList = _.where(githubRepoList, {fork: false});
 
-      _.map(githubRepoList, function(githubRepo){
+      _.map(githubRepoList, function (githubRepo) {
         repoList.push(new Repo(that, githubRepo.owner.login, githubRepo.name));
       });
 
       async.each(repoList, function (repo, callback) {
-        repo.fetchUserScripts(function() {
+        repo.fetchUserScripts(function () {
           callback(null);
         });
       }, callback);
@@ -99,7 +99,7 @@ RepoManager.prototype.loadScripts = function (callback, update) {
   // TODO: remove usage of makeRepoArray since it causes redundant looping
   arrayOfRepos.forEach(function (repo) {
     async.each(repo.scripts, function (script, cb) {
-      var url = '/' + encodeURI(repo.user)  + '/' + encodeURI(repo.repo)
+      var url = '/' + encodeURI(repo.user) + '/' + encodeURI(repo.repo)
         + '/master' + script.path;
       fetchRaw('raw.githubusercontent.com', url, function (bufs) {
         scriptStorage.getMeta(bufs, function (meta) {
@@ -160,15 +160,17 @@ Repo.prototype.parseTree = function (tree, path, done) {
 
   tree.forEach(function (object) {
     if (object.type === 'tree') {
-      trees.push({ sha: object.sha, path: path + '/'
-        + encodeURI(object.path) });
+      trees.push({
+        sha: object.sha, path: path + '/'
+          + encodeURI(object.path)
+      });
     } else if (object.path.substr(-8) === '.user.js') {
       if (!repos[that.repo]) { repos[that.repo] = nil(); }
       repos[that.repo][object.path] = path + '/' + encodeURI(object.path);
     }
   });
 
-  async.each(trees, function(tree, cb) {
+  async.each(trees, function (tree, cb) {
     that.getTree(tree.sha, tree.path, cb);
   }, function () {
     done();
@@ -178,11 +180,12 @@ Repo.prototype.parseTree = function (tree, path, done) {
 // Gets information about a directory
 Repo.prototype.getTree = function (sha, path, cb) {
   var that = this;
-  fetchJSON('/repos/' + encodeURI(this.user)  + '/' + encodeURI(this.repo)
+  fetchJSON('/repos/' + encodeURI(this.user) + '/' + encodeURI(this.repo)
     + '/git/trees/' + sha,
     function (json) {
       that.parseTree(json.tree, path, cb);
-  });
+    }
+  );
 };
 
 exports.getManager = function (userId, user, repos) {

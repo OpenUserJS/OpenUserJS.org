@@ -12,7 +12,7 @@ var getRating = require('../libs/collectiveRating').getRating;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 
 // clean the name of the group so it is url safe
-function cleanGroupName (name) {
+function cleanGroupName(name) {
   return cleanFilename(name, '').replace(/_/g, ' ')
     .replace(/^\s+|\s+$/g, '').replace(/,/g, '');
 }
@@ -32,7 +32,7 @@ exports.search = function (req, res) {
   }
 
   terms.forEach(function (term) {
-    queryStr += '(?=.*?' + term  + ')';
+    queryStr += '(?=.*?' + term + ')';
   });
   queryRegex = new RegExp(queryStr, 'i');
 
@@ -73,7 +73,7 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
 
     // Names of existing groups
     existingNames = groups.map(function (group) {
-        return group.name;
+      return group.name;
     });
 
     // Name of a group that doesn't exist
@@ -118,8 +118,9 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
 
             group.rating = getRating(scripts);
             group.updated = new Date();
-            group.save(function () {});
-        });
+            group.save(function () { });
+          }
+        );
       });
     });
   });
@@ -170,7 +171,7 @@ exports.list = function (req, res) {
   tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
 
   //---
-  function preRender(){
+  function preRender() {
     // groupList
     options.groupList = _.map(options.groupList, modelParser.parseGroup);
 
@@ -186,12 +187,12 @@ exports.list = function (req, res) {
       pageMetaKeywords.concat(_.pluck(options.groupList, 'name'));
     options.pageMetaKeywords = pageMetaKeywords.join(', ');
   };
-  function render(){ res.render('pages/groupListPage', options); }
-  function asyncComplete(){ preRender(); render(); }
+  function render() { res.render('pages/groupListPage', options); }
+  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
-var setupGroupSidePanel = function(options) {
+var setupGroupSidePanel = function (options) {
   // Shortcuts
   var group = options.group;
   var authedUser = options.authedUser;
@@ -241,10 +242,10 @@ exports.view = function (req, res, next) {
     var scriptListQuery = Script.find();
 
     // scriptListQuery: script in group
-    scriptListQuery.find({_id: {$in: group._scriptIds}});
+    scriptListQuery.find({ _id: { $in: group._scriptIds } });
 
     // scriptListQuery: isLib=false
-    scriptListQuery.find({isLib: {$ne: true}});
+    scriptListQuery.find({ isLib: { $ne: true } });
 
     // scriptListQuery: Defaults
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
@@ -273,7 +274,7 @@ exports.view = function (req, res, next) {
     tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
 
     //---
-    function preRender(){
+    function preRender() {
       // scriptList
       options.scriptList = _.map(options.scriptList, modelParser.parseScript);
 
@@ -307,8 +308,8 @@ exports.view = function (req, res, next) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
     };
-    function render(){ res.render('pages/groupScriptListPage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function render() { res.render('pages/groupScriptListPage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };

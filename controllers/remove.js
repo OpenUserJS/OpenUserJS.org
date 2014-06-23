@@ -10,30 +10,30 @@ exports.rm = function (req, res, next) {
   var thisUser = req.session.user;
 
   switch (type) {
-  case 'scripts':
-  case 'libs':
-    path += type === 'libs' ? '.js' : '.user.js';
-    Script.findOne({ installName: path }, function (err, script) {
-      removeLib.remove(Script, script, thisUser, '', function (removed) {
-        if (!removed) { return next(); }
-        res.redirect('/');
-      });
-    });
-    break;
-  case 'users':
-    User.findOne({ name : { $regex : new RegExp('^' + path + '$', "i") } },
-      function (err, user) {
-        removeLib.remove(User, user, thisUser, '', function (removed) {
+    case 'scripts':
+    case 'libs':
+      path += type === 'libs' ? '.js' : '.user.js';
+      Script.findOne({ installName: path }, function (err, script) {
+        removeLib.remove(Script, script, thisUser, '', function (removed) {
           if (!removed) { return next(); }
+          res.redirect('/');
+        });
+      });
+      break;
+    case 'users':
+      User.findOne({ name: { $regex: new RegExp('^' + path + '$', "i") } },
+        function (err, user) {
+          removeLib.remove(User, user, thisUser, '', function (removed) {
+            if (!removed) { return next(); }
 
-          // Destory all the sessions belonging to the removed user
-          destroySessions(req, user, function () {
-            res.redirect('/');
+            // Destory all the sessions belonging to the removed user
+            destroySessions(req, user, function () {
+              res.redirect('/');
+            });
           });
         });
-    });
-    break;
-  default:
-    next();
+      break;
+    default:
+      next();
   }
 };

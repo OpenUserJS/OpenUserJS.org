@@ -34,7 +34,11 @@ function getOAuthStrategies(stored) {
     strategy = strategies[type];
     if (strategy.oauth) {
       oAuthStrats.push(stored[type] ||
-        nil({ 'strat' : type, 'id' : '', 'key' : ''}));
+        nil({
+          'strat': type,
+          'id': '',
+          'key': ''
+        }));
     }
   }
 
@@ -49,21 +53,27 @@ exports.userAdmin = function (req, res, next) {
   if (!userIsAdmin(req)) { return next(); }
 
   // You can only see users with a role less than yours
-  User.find({ role : { $gt: thisUser.role } }, function (err, users) {
+  User.find({ role: { $gt: thisUser.role } }, function (err, users) {
     var i = 0;
     options.users = [];
 
     users.forEach(function (user) {
       var roles = [];
       userRoles.forEach(function (role, index) {
-        roles.push({ 'val' : index, 'display' : role,
-          'selected' : index === user.role });
+        roles.push({
+          'val': index,
+          'display': role,
+          'selected': index === user.role
+        });
       });
       roles = roles.splice(thisUser.role + 1);
       roles.reverse();
 
-      options.users.push({ 'id' : user._id, 'name' : user.name,
-        'roles' : roles });
+      options.users.push({
+        'id': user._id,
+        'name': user.name,
+        'roles': roles
+      });
     });
 
     res.render('userAdmin', options);
@@ -79,15 +89,17 @@ exports.adminUserView = function (req, res, next) {
   if (!userIsAdmin(req)) { return next(); }
 
   // Nothing fancy, just the stringified user object
-  User.findOne({ '_id' : id, role : { $gt: thisUser.role } },
+  User.findOne({ '_id': id, role: { $gt: thisUser.role } },
     function (err, user) {
       if (err || !user) { return next(); }
 
-      res.render('userAdmin', { user: {
-        info: JSON.stringify(user.toObject(), null, ' ') } });
-  });
+      res.render('userAdmin', {
+        user: {
+          info: JSON.stringify(user.toObject(), null, ' ')
+        }
+      });
+    });
 };
-
 
 var jsonModelMap = {
   'User': User,
@@ -96,7 +108,7 @@ var jsonModelMap = {
   'Discussion': Discussion,
   'Comment': Comment,
   'Vote': Vote,
-  'Flag': Flag,
+  'Flag': Flag
 };
 // View everything about a particular user
 // This is mostly for debugging in production
@@ -115,18 +127,17 @@ exports.adminJsonView = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isAdmin)
-    return res.send(403, {status: 403, message: 'Not an admin.'});
-
+    return res.send(403, { status: 403, message: 'Not an admin.' });
 
   var model = jsonModelMap[modelname];
   if (!model)
-    return res.send(400, {status: 400, message: 'Invalid model.'});
+    return res.send(400, { status: 400, message: 'Invalid model.' });
 
   model.findOne({
     _id: id
-  }, function(err, obj){
+  }, function (err, obj) {
     if (err || !obj)
-      return res.send(404, {status: 404, message: 'Id doesn\'t exist.'});
+      return res.send(404, { status: 404, message: 'Id doesn\'t exist.' });
 
     res.json(obj);
   });
@@ -177,7 +188,7 @@ exports.adminUserUpdate = function (req, res, next) {
       userData.role = role;
     }
 
-    userData.save(function(err) {
+    userData.save(function (err) {
       if (err) {
         return statusCodePage(req, res, next, {
           statusMessage: err,
@@ -218,7 +229,7 @@ exports.adminPage = function (req, res, next) {
   options.pageMetaKeywords = null;
 
   //---
-  async.parallel(tasks, function(err){
+  async.parallel(tasks, function (err) {
     if (err) return next();
     res.render('pages/adminPage', options);
   });
@@ -252,7 +263,7 @@ exports.adminApiKeysPage = function (req, res, next) {
   //--- Tasks
 
   // strategyListQuery
-  tasks.push(function(callback){
+  tasks.push(function (callback) {
     Strategy.find({}, function (err, strats) {
       var stored = nil();
       var strategies = null;
@@ -273,7 +284,7 @@ exports.adminApiKeysPage = function (req, res, next) {
   });
 
   //---
-  async.parallel(tasks, function(err){
+  async.parallel(tasks, function (err) {
     if (err) return next();
     res.render('pages/adminApiKeysPage', options);
   });
@@ -295,7 +306,7 @@ exports.apiAdminUpdate = function (req, res, next) {
   Strategy.find({}, function (err, strats) {
     var stored = nil();
 
-    strats.forEach(function(strat) {
+    strats.forEach(function (strat) {
       stored[strat.name] = strat;
     });
     async.each(postStrats, function (postStrat, cb) {
@@ -317,13 +328,12 @@ exports.apiAdminUpdate = function (req, res, next) {
           strategy.key = key;
         } else {
           strategy = new Strategy({
-            'id' : id,
-            'key' : key,
-            'name' : name,
-            'display' : strategies[name].name
+            'id': id,
+            'key': key,
+            'name': name,
+            'display': strategies[name].name
           });
         }
-
 
         return strategy.save(function (err, strategy) {
           loadPassport(strategy);

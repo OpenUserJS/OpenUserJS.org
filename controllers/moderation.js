@@ -15,39 +15,41 @@ exports.flagged = function (req, res, next) {
   var user = req.session.user;
   var type = req.route.params.shift() || 'users';
   var baseUrl = '/flagged' + (type ? '/' + type : '');
-  var options = { title: 'Flagged Content', moderation: true,
-    username: user ? user.name : '' };
+  var options = {
+    title: 'Flagged Content', moderation: true,
+    username: user ? user.name : ''
+  };
 
   options[type + 'Type'] = true;
 
   if (!user || user.role > 3) { return next(); }
 
   switch (type) {
-  case 'users':
-    if (!req.route.params[1]) {
-      req.route.params[1] = ['flags'];
-    }
+    case 'users':
+      if (!req.route.params[1]) {
+        req.route.params[1] = ['flags'];
+      }
 
-    modelsList.listUsers({ flagged: true }, req.route.params, baseUrl,
-      function (usersList) {
-        options.usersList = usersList;
-        res.render('flagged', options);
-    });
-    break;
-  case 'scripts':
-    if (!req.route.params[1]) {
-      req.route.params[1] = ['flags', 'updated'];
-    }
+      modelsList.listUsers({ flagged: true }, req.route.params, baseUrl,
+        function (usersList) {
+          options.usersList = usersList;
+          res.render('flagged', options);
+        });
+      break;
+    case 'scripts':
+      if (!req.route.params[1]) {
+        req.route.params[1] = ['flags', 'updated'];
+      }
 
-    modelsList.listScripts({ flagged: true, isLib: null },
-      req.route.params, baseUrl,
-      function (scriptsList) {
-        options.scriptsList = scriptsList;
-        res.render('flagged', options);
-    });
-    break;
-  default:
-    next();
+      modelsList.listScripts({ flagged: true, isLib: null },
+        req.route.params, baseUrl,
+        function (scriptsList) {
+          options.scriptsList = scriptsList;
+          res.render('flagged', options);
+        });
+      break;
+    default:
+      next();
   }
 };
 
@@ -56,7 +58,7 @@ exports.flagged = function (req, res, next) {
 // any mistakes can be undone.
 exports.graveyard = function (req, res, next) {
   var contentTypes = {
-    'users' :
+    'users':
     {
       'name': 'User',
       'selected': false,
@@ -122,11 +124,11 @@ exports.removedItemPage = function (req, res, next) {
 
   Remove.find({
     _id: removedItemId,
-  }, function(err, removedItemData) {
+  }, function (err, removedItemData) {
     if (err || !removedItemData) { return next(); }
 
     res.json(removedItemData);
-  })
+  });
 };
 
 exports.removedItemListPage = function (req, res, next) {
@@ -171,7 +173,7 @@ exports.removedItemListPage = function (req, res, next) {
   tasks.push(execQueryTask(removedItemListQuery, options, 'removedItemList'));
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     //--- PreRender

@@ -22,7 +22,7 @@ Strategy.find({}, function (err, strategies) {
   for (var name in allStrategies) {
     if (!allStrategies[name].oauth) {
       openIdStrategies[name] = true;
-      strategies.push({ 'name' : name, 'openid' : true });
+      strategies.push({ 'name': name, 'openid': true });
     }
   }
 
@@ -68,7 +68,7 @@ exports.auth = function (req, res, next) {
     req.session.username = username;
   }
 
-  User.findOne({ name : { $regex : new RegExp('^' + username + '$', 'i') } },
+  User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
     function (err, user) {
       var strategies = null;
       var strat = null;
@@ -93,7 +93,7 @@ exports.auth = function (req, res, next) {
       } else {
         return auth();
       }
-  });
+    });
 };
 
 exports.callback = function (req, res, next) {
@@ -108,7 +108,6 @@ exports.callback = function (req, res, next) {
 
   // Get the passport strategy instance so we can alter the _verfiy method
   strategyInstance = strategyInstances[strategy];
-
 
   // Hijak the private verify method so we can fuck shit up freely
   // We use this library for things it was never intended to do
@@ -125,39 +124,38 @@ exports.callback = function (req, res, next) {
   }
 
   // This callback will happen after the verify routine
-  var authenticate = passport.authenticate(strategy,
-    function (err, user, info) {
+  var authenticate = passport.authenticate(strategy, function (err, user, info) {
+    if (err) { return next(err); }
+    if (!user) {
+      return res.redirect(doneUrl + (doneUrl === '/' ? 'register' : '')
+        + '?authfail');
+    }
+
+    req.logIn(user, function (err) {
       if (err) { return next(err); }
-      if (!user) {
-        return res.redirect(doneUrl + (doneUrl === '/' ? 'register' : '')
-          + '?authfail');
+
+      // Store the user info in the session
+      req.session.user = user;
+
+      // Save the session id on the user model
+      user.sessionId = req.sessionID;
+
+      // Save GitHub username.
+      if (req.session.profile && req.session.profile.provider === 'github') {
+        user.ghUsername = req.session.profile.username;
       }
 
-      req.logIn(user, function(err) {
-        if (err) { return next(err); }
-
-        // Store the user info in the session
-        req.session.user = user;
-
-        // Save the session id on the user model
-        user.sessionId = req.sessionID;
-
-        // Save GitHub username.
-        if (req.session.profile && req.session.profile.provider === 'github') {
-          user.ghUsername = req.session.profile.username;
+      addSession(req, user, function () {
+        if (newstrategy) {
+          // Allow a user to link to another acount
+          return res.redirect('/auth/' + newstrategy);
+        } else {
+          // Delete the username that was temporarily stored
+          delete req.session.username;
+          return res.redirect(doneUrl);
         }
-
-        addSession(req, user, function () {
-          if (newstrategy) {
-            // Allow a user to link to another acount
-            return res.redirect('/auth/' + newstrategy);
-          } else {
-            // Delete the username that was temporarily stored
-            delete req.session.username;
-            return res.redirect(doneUrl);
-          }
-        });
       });
+    });
   });
 
   authenticate(req, res, next);

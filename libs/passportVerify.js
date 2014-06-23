@@ -19,13 +19,13 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
     digest = shasum.digest('hex');
   }
 
-  findDeadorAlive(User, { 'auths' : digest }, true,
+  findDeadorAlive(User, { 'auths': digest }, true,
     function (alive, user, removed) {
       var pos = user ? user.auths.indexOf(digest) : -1;
       if (removed) { done(null, false, 'user was removed'); }
 
       if (!user) {
-        User.findOne({ 'name' : username }, function (err, user) {
+        User.findOne({ 'name': username }, function (err, user) {
           if (user && loggedIn) {
             // Add the new strategy to same account
             // This allows linking multiple external accounts to one of ours
@@ -40,10 +40,10 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
           } else {
             // Create a new user
             user = new User({
-              'name' : username,
-              'auths' : [digest],
-              'strategies' : [strategy],
-              'role' : userRoles.length - 1,
+              'name': username,
+              'auths': [digest],
+              'strategies': [strategy],
+              'role': userRoles.length - 1,
               'about': '',
               'ghUsername': null
             });
@@ -65,5 +65,6 @@ exports.verify = function (id, strategy, username, loggedIn, done) {
         // The user was authenticated
         return done(null, user);
       }
-  });
+    }
+  );
 }

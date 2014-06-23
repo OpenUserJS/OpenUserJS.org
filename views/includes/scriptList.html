@@ -13,13 +13,17 @@
       <td>
         <span class="script-icon hidden-xs">
           {{#icon16Url}}
-          <img src="{{{icon16Url}}}" alt="">
+          <img src="{{{icon16Url}}}" alt="{{! Leave me empty! }}" width="16" height="16" />
           {{/icon16Url}}
           {{^icon16Url}}
           <i class="fa fa-fw fa-file-code-o"></i>
           {{/icon16Url}}
         </span>
-        <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>{{#meta.version}} <div class="script-version label label-default">{{meta.version}}</div>{{/meta.version}} <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</span></a>
+        <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>
+        {{#meta.version}}
+        <span class="script-version label label-default">{{meta.version}}</span>
+        {{/meta.version}}
+        <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</a></span>
         <p>{{meta.description}}</p>
       </td>
       <td class="text-center td-fit">

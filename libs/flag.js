@@ -7,7 +7,7 @@ var maxKarma = 10;
 // Determine whether content can be flagged by a user.
 // This is heavily commented so that my logic and
 // reasoning is documented for myself and others.
-function flaggable (model, content, user, callback) {
+function flaggable(model, content, user, callback) {
   // Not logged in.
   if (!user) { return callback(false); }
 
@@ -50,7 +50,7 @@ function getFlag(model, content, user, callback) {
   });
 }
 
-function getAuthor (content, callback) {
+function getAuthor(content, callback) {
   User.findOne({ _id: content._authorId }, function (err, author) {
     // Content without an author shouldn't exist
     if (err || !author) { return callback(null); }
@@ -60,7 +60,7 @@ function getAuthor (content, callback) {
 }
 exports.getAuthor = getAuthor;
 
-function getThreshold (model, content, author, callback) {
+function getThreshold(model, content, author, callback) {
   // Admins can't be flagged so they have no threshold
   if (author.role < 3) { return callback(null); }
 
@@ -78,7 +78,7 @@ function getThreshold (model, content, author, callback) {
 }
 exports.getThreshold = getThreshold;
 
-function saveContent (model, content, author, flags, callback) {
+function saveContent(model, content, author, flags, callback) {
   if (!content.flags) { content.flags = 0; }
   content.flags += flags;
 
@@ -93,7 +93,7 @@ function saveContent (model, content, author, flags, callback) {
 }
 exports.saveContent = saveContent;
 
-function flag (model, content, user, author, callback) {
+function flag(model, content, user, author, callback) {
   var flag = new Flag({
     'model': model.modelName,
     '_contentId': content._id,
@@ -125,7 +125,7 @@ exports.unflag = function (model, content, user, callback) {
     if (!content.flags) { content.flags = 0; }
     if (!content.flagged) { content.flagged = false; }
 
-    function removeFlag (author) {
+    function removeFlag(author) {
       flag.remove(function (err) {
         saveContent(model, content, author, user.role < 4 ? -2 : -1, callback);
       });

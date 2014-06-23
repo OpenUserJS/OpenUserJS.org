@@ -1,5 +1,7 @@
 <h2 class="page-heading">
-  <span class="page-heading-icon"><i class="fa fa-user"></i></span> <a href="{{{user.userPageUrl}}}" class="user-name">{{user.name}}</a>{{#user.roleName}} <div class=" label label-inverse">{{user.roleName}}</div>{{/user.roleName}}
+  <span class="page-heading-icon"><i class="fa fa-user"></i></span>
+  <a href="{{{user.userPageUrl}}}" class="user-name">{{user.name}}</a>
+  {{#user.roleName}}<span class="label label-inverse">{{user.roleName}}</span>{{/user.roleName}}
 </h2>
 
 <nav class="navbar navbar-default navbar-static-top" role="navigation">
@@ -8,7 +10,7 @@
   </div>
   <div class="navbar-collapse collapse in" id="content-navbar">
     <ul class="nav navbar-nav">
-      <li class="{{#isUserPage}}active{{/isUserPage}}"><a href="{{{user.userPageUrl}}}" class="">Profile</a></li>
+      <li class="{{#isUserPage}}active{{/isUserPage}}"><a href="{{{user.userPageUrl}}}">Profile</a></li>
       <li class="{{#isUserScriptListPage}}active{{/isUserScriptListPage}}"><a href="{{{user.userScriptListPageUrl}}}" class="{{^user.userScriptListPageUrl}}disabled{{/user.userScriptListPageUrl}}">Scripts <span class="badge">{{scriptListCount}}</span></a></li>
       <li class="{{#isUserCommentListPage}}active{{/isUserCommentListPage}}"><a href="{{{user.userCommentListPageUrl}}}" class="{{^user.userCommentListPageUrl}}disabled{{/user.userCommentListPageUrl}}">Comments <span class="badge">{{commentListCount}}</span></a></li>
     </ul>

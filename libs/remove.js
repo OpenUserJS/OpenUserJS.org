@@ -12,7 +12,7 @@ modelNames.forEach(function (modelName) {
 });
 
 // Determine whether content can be removed by a user.
-function removeable (model, content, user, callback) {
+function removeable(model, content, user, callback) {
   // The user must be logged in
   // The user is a moderator then the content must be flagged
   // If the user is an admin or greater then the content may be removed
@@ -41,7 +41,7 @@ function removeable (model, content, user, callback) {
 }
 exports.removeable = removeable;
 
-function remove (model, content, user, reason, callback) {
+function remove(model, content, user, reason, callback) {
   var remove = new Remove({
     'model': model.modelName,
     'content': content.toObject(),

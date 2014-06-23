@@ -14,7 +14,7 @@
     "async": "*",
     "aws-sdk": "*",
     "toobusy-js": "*",
-    "simple-xss": "*",
+    "sanitize-html": "*",
     "underscore": "*",
     "moment": "*",
     "github": "*",

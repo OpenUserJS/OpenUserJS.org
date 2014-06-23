@@ -27,7 +27,7 @@ exports.formatDate = function (date) {
   var ret = '';
   var days = 0;
 
-  function pluralize (number, unit) {
+  function pluralize(number, unit) {
     return number + ' ' + unit + (number > 1 ? 's' : '') + ' ago';
   }
 
@@ -88,15 +88,15 @@ exports.cleanFilename = function (filename, defaultName) {
   return cleanName || defaultName;
 };
 
-exports.limitRange = function(min, x, max) {
+exports.limitRange = function (min, x, max) {
   return Math.max(Math.min(x, max), min);
 };
 
-exports.limitMin = function(min, x) {
+exports.limitMin = function (min, x) {
   return Math.max(x, min);
 };
 
-var setUrlQueryValue = function(baseUrl, queryVarKey, queryVarValue) {
+var setUrlQueryValue = function (baseUrl, queryVarKey, queryVarValue) {
   var parseQueryString = true;
   var u = url.parse(baseUrl, parseQueryString);
   u.query[queryVarKey] = queryVarValue;
@@ -105,9 +105,9 @@ var setUrlQueryValue = function(baseUrl, queryVarKey, queryVarValue) {
 };
 exports.setUrlQueryValue = setUrlQueryValue;
 
-exports.updateUrlQueryString = function(baseUrl, dict) {
+exports.updateUrlQueryString = function (baseUrl, dict) {
   var url = baseUrl;
-  _.each(dict, function(value, key){
+  _.each(dict, function (value, key) {
     url = setUrlQueryValue(url, key, value);
   });
   return url;

@@ -29,11 +29,16 @@ var countTask = require('../libs/tasks').countTask;
 var settings = require('../models/settings.json');
 var github = require('./../libs/githubClient');
 
-var setupUserModerationUITask = function(options) {
+function caseInsensitive (str) {
+  return new RegExp('^' + (str || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+    + '$', 'i');
+}
+
+var setupUserModerationUITask = function (options) {
   var user = options.user;
   var authedUser = options.authedUser;
 
-  return function(callback) {
+  return function (callback) {
     var flagUrl = '/flag/users/' + user.name;
 
     // Can't flag when not logged in or when is authedUser.
@@ -66,7 +71,7 @@ var setupUserModerationUITask = function(options) {
   };
 };
 
-var getUserSidePanelTasks = function(options) {
+var getUserSidePanelTasks = function (options) {
   var tasks = [];
 
   //--- Tasks
@@ -77,7 +82,7 @@ var getUserSidePanelTasks = function(options) {
   return tasks;
 };
 
-var getUserPageTasks = function(options) {
+var getUserPageTasks = function (options) {
   var tasks = [];
 
   // Shortcuts
@@ -87,17 +92,17 @@ var getUserPageTasks = function(options) {
   //--- Tasks
 
   // userScriptListCountQuery
-  var userScriptListCountQuery = Script.find({ _authorId: user._id, flagged: {$ne: true}});
+  var userScriptListCountQuery = Script.find({ _authorId: user._id, flagged: { $ne: true } });
   tasks.push(countTask(userScriptListCountQuery, options, 'scriptListCount'));
 
   // userCommentListCountQuery
-  var userCommentListCountQuery = Comment.find({ _authorId: user._id, flagged: {$ne: true}});
+  var userCommentListCountQuery = Comment.find({ _authorId: user._id, flagged: { $ne: true } });
   tasks.push(countTask(userCommentListCountQuery, options, 'commentListCount'));
 
   return tasks;
 };
 
-var setupUserSidePanel = function(options) {
+var setupUserSidePanel = function (options) {
   // Shortcuts
   var user = options.user;
   var authedUser = options.authedUser;
@@ -119,7 +124,7 @@ var setupUserSidePanel = function(options) {
 
     // user.role
     // Allow authedUser to raise target user role to the level below him.
-    var roles = _.map(userRoles, function(roleName, index){
+    var roles = _.map(userRoles, function (roleName, index) {
       return {
         id: index,
         name: roleName,
@@ -174,7 +179,7 @@ exports.userListPage = function (req, res, next) {
   tasks.push(execQueryTask(userListQuery, options, 'userList'));
 
   //---
-  function preRender(){
+  function preRender() {
     // userList
     options.userList = _.map(options.userList, modelParser.parseUser);
 
@@ -192,8 +197,8 @@ exports.userListPage = function (req, res, next) {
     // Heading
     options.pageHeading = options.isFlagged ? 'Flagged Users' : 'Users';
   };
-  function render(){ res.render('pages/userListPage', options); }
-  function asyncComplete(err){ if (err) { return next(); } else { preRender(); render(); } };
+  function render() { res.render('pages/userListPage', options); }
+  function asyncComplete(err) { if (err) { return next(); } else { preRender(); render(); } };
   async.parallel(tasks, asyncComplete);
 };
 
@@ -204,7 +209,7 @@ exports.view = function (req, res, next) {
   var username = req.route.params.username;
 
   User.findOne({
-    name: username
+    name: caseInsensitive(username)
   }, function (err, userData) {
     if (err || !userData) { return next(); }
 
@@ -235,7 +240,7 @@ exports.view = function (req, res, next) {
     var scriptListQuery = Script.find();
 
     // scriptListQuery: author=user
-    scriptListQuery.find({_authorId: user._id});
+    scriptListQuery.find({ _authorId: user._id });
 
     // scriptListQuery: Defaults
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
@@ -252,22 +257,20 @@ exports.view = function (req, res, next) {
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
     //---
-    function preRender(){};
-    function render(){ res.render('pages/userPage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function preRender() { };
+    function render() { res.render('pages/userPage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
 
-
-
-exports.userCommentListPage = function(req, res, next) {
+exports.userCommentListPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   var username = req.route.params.username;
 
   User.findOne({
-    name: username
+    name: caseInsensitive(username)
   }, function (err, userData) {
     if (err || !userData) { return next(); }
 
@@ -294,7 +297,7 @@ exports.userCommentListPage = function(req, res, next) {
     var commentListQuery = Comment.find();
 
     // commentListQuery: author=user
-    commentListQuery.find({_authorId: user._id});
+    commentListQuery.find({ _authorId: user._id });
 
     // commentListQuery: Defaults
     modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
@@ -325,35 +328,35 @@ exports.userCommentListPage = function(req, res, next) {
     tasks = tasks.concat(getUserPageTasks(options));
 
     //--
-    function preRender(){
+    function preRender() {
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
-      _.map(options.commentList, function(comment){
+      _.map(options.commentList, function (comment) {
         comment.author = modelParser.parseUser(comment._authorId);
       });
       _.map(options.commentList, modelParser.renderComment);
 
       // comment.discussion
-      _.map(options.commentList, function(comment){
+      _.map(options.commentList, function (comment) {
         comment.discussion = modelParser.parseDiscussion(comment._discussionId);
       });
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
     };
-    function render(){ res.render('pages/userCommentListPage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function render() { res.render('pages/userCommentListPage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
 
-exports.userScriptListPage = function(req, res, next) {
+exports.userScriptListPage = function (req, res, next) {
   var authedUser = req.session.user;
 
   var username = req.route.params.username;
 
   User.findOne({
-    name: username
+    name: caseInsensitive(username)
   }, function (err, userData) {
     if (err || !userData) { return next(); }
 
@@ -380,7 +383,7 @@ exports.userScriptListPage = function(req, res, next) {
     var scriptListQuery = Script.find();
 
     // scriptListQuery: author=user
-    scriptListQuery.find({_authorId: user._id});
+    scriptListQuery.find({ _authorId: user._id });
 
     // scriptListQuery: Defaults
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
@@ -404,7 +407,7 @@ exports.userScriptListPage = function(req, res, next) {
     tasks = tasks.concat(getUserPageTasks(options));
 
     //---
-    function preRender(){
+    function preRender() {
       // scriptList
       options.scriptList = _.map(options.scriptList, modelParser.parseScript);
 
@@ -429,8 +432,8 @@ exports.userScriptListPage = function(req, res, next) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
     };
-    function render(){ res.render('pages/userScriptListPage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function render() { res.render('pages/userScriptListPage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
@@ -443,7 +446,7 @@ exports.userEditProfilePage = function (req, res, next) {
   var username = req.route.params.username;
 
   User.findOne({
-    name: username
+    _id: authedUser._id
   }, function (err, userData) {
     if (err || !userData) { return next(); }
 
@@ -472,7 +475,7 @@ exports.userEditProfilePage = function (req, res, next) {
     var scriptListQuery = Script.find();
 
     // Scripts: Query: author=user
-    scriptListQuery.find({_authorId: user._id});
+    scriptListQuery.find({ _authorId: user._id });
 
     // Scripts: Query: flagged
     // Only list flagged scripts for author and user >= moderator
@@ -480,7 +483,7 @@ exports.userEditProfilePage = function (req, res, next) {
       // Show
     } else {
       // Script.flagged is undefined by default.
-      scriptListQuery.find({flagged: {$ne: true}});
+      scriptListQuery.find({ flagged: { $ne: true } });
     }
 
     //--- Tasks
@@ -492,9 +495,9 @@ exports.userEditProfilePage = function (req, res, next) {
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
     //---
-    function preRender(){};
-    function render(){ res.render('pages/userEditProfilePage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function preRender() { };
+    function render() { res.render('pages/userEditProfilePage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
@@ -534,7 +537,7 @@ exports.userEditPreferencesPage = function (req, res, next) {
     var scriptListQuery = Script.find();
 
     // Scripts: Query: author=user
-    scriptListQuery.find({_authorId: user._id});
+    scriptListQuery.find({ _authorId: user._id });
 
     // Scripts: Query: flagged
     // Only list flagged scripts for author and user >= moderator
@@ -542,13 +545,13 @@ exports.userEditPreferencesPage = function (req, res, next) {
       // Show
     } else {
       // Script.flagged is undefined by default.
-      scriptListQuery.find({flagged: {$ne: true}});
+      scriptListQuery.find({ flagged: { $ne: true } });
     }
 
     //--- Tasks
 
     // User edit auth strategies
-    tasks.push(function(callback) {
+    tasks.push(function (callback) {
       var userStrats = user.strategies.slice(0);
       Strategy.find({}, function (err, strats) {
         var defaultStrategy = userStrats[userStrats.length - 1];
@@ -562,11 +565,15 @@ exports.userEditPreferencesPage = function (req, res, next) {
           if (strat.name === defaultStrategy) { return; }
 
           if (userStrats.indexOf(strat.name) > -1) {
-            options.usedStrategies.push({ 'strat' : strat.name,
-              'display' : strat.display });
+            options.usedStrategies.push({
+              'strat': strat.name,
+              'display': strat.display
+            });
           } else {
-            options.openStrategies.push({ 'strat' : strat.name,
-              'display' : strat.display });
+            options.openStrategies.push({
+              'strat': strat.name,
+              'display': strat.display
+            });
           }
         });
 
@@ -577,11 +584,15 @@ exports.userEditPreferencesPage = function (req, res, next) {
 
             if (!strategy.oauth && name !== defaultStrategy) {
               if (userStrats.indexOf(name) > -1) {
-                options.usedStrategies.push({ 'strat' : name,
-                  'display' : strategy.name });
+                options.usedStrategies.push({
+                  'strat': name,
+                  'display': strategy.name
+                });
               } else {
-                options.openStrategies.push({ 'strat' : name,
-                  'display' : strategy.name });
+                options.openStrategies.push({
+                  'strat': name,
+                  'display': strategy.name
+                });
               }
             }
           }
@@ -600,9 +611,9 @@ exports.userEditPreferencesPage = function (req, res, next) {
     // UserSidePanel tasks
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
-    function preRender(){};
-    function render(){ res.render('pages/userEditPreferencesPage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function preRender() { };
+    function render() { res.render('pages/userEditPreferencesPage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
@@ -637,11 +648,15 @@ exports.edit = function (req, res, next) {
       if (strat.name === defaultStrategy) { return; }
 
       if (userStrats.indexOf(strat.name) > -1) {
-        options.usedStrategies.push({ 'strat' : strat.name,
-          'display' : strat.display });
+        options.usedStrategies.push({
+          'strat': strat.name,
+          'display': strat.display
+        });
       } else {
-        options.openStrategies.push({ 'strat' : strat.name,
-          'display' : strat.display });
+        options.openStrategies.push({
+          'strat': strat.name,
+          'display': strat.display
+        });
       }
     });
 
@@ -652,11 +667,15 @@ exports.edit = function (req, res, next) {
 
         if (!strategy.oauth && name !== defaultStrategy) {
           if (userStrats.indexOf(name) > -1) {
-            options.usedStrategies.push({ 'strat' : name,
-              'display' : strategy.name });
+            options.usedStrategies.push({
+              'strat': name,
+              'display': strategy.name
+            });
           } else {
-            options.openStrategies.push({ 'strat' : name,
-              'display' : strategy.name });
+            options.openStrategies.push({
+              'strat': name,
+              'display': strategy.name
+            });
           }
         }
       }
@@ -671,7 +690,7 @@ exports.edit = function (req, res, next) {
         scriptsList.edit = true;
         options.scriptsList = scriptsList;
         res.render('userEdit', options);
-    });
+      });
   });
 };
 
@@ -700,7 +719,7 @@ exports.newScriptPage = function (req, res, next) {
   options.pageMetaKeywords = null;
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     res.render('pages/newScriptPage', options);
@@ -732,7 +751,7 @@ exports.newLibraryPage = function (req, res, next) {
   options.pageMetaKeywords = null;
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     res.render('pages/newScriptPage', options);
@@ -765,17 +784,16 @@ exports.userGitHubRepoListPage = function (req, res, next) {
   pagination.itemsPerPage = 30; // GitHub Default
 
   //--- Tasks
-
-  tasks.push(function(callback){
+  tasks.push(function (callback) {
     async.waterfall([
 
       // githubUser
-      function(callback) {
+      function (callback) {
         github.user.getFrom({
           user: encodeURIComponent(githubUserId),
         }, callback);
       },
-      function(githubUser, callback) {
+      function (githubUser, callback) {
         options.githubUser = githubUser;
         options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
           user: githubUser.login,
@@ -788,19 +806,19 @@ exports.userGitHubRepoListPage = function (req, res, next) {
       },
 
       // gihubRepos
-      function(callback) {
+      function (callback) {
         github.repos.getFromUser({
           user: encodeURIComponent(githubUserId),
           page: pagination.currentPage,
           per_page: pagination.itemsPerPage,
         }, callback);
       },
-      // function(githubRepoList, callback) {
+      // function (githubRepoList, callback) {
       //   githubRepoList = _.where(githubRepoList, {language: 'JavaScript'});
       //   callback(null, githubRepoList);
       // },
-      function(githubRepoList, callback) {
-        _.each(githubRepoList, function(githubRepo){
+      function (githubRepoList, callback) {
+        _.each(githubRepoList, function (githubRepo) {
           var url = authedUser.userGitHubRepoPageUrl;
           url = helpers.updateUrlQueryString(url, {
             user: options.githubUser.login,
@@ -816,7 +834,7 @@ exports.userGitHubRepoListPage = function (req, res, next) {
   });
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) {
       console.error(err);
       return statusCodePage(req, res, next, {
@@ -860,14 +878,14 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
   async.waterfall([
 
     // Validate blob
-    function(callback){
+    function (callback) {
       github.gitdata.getJavascriptBlobs({
         user: encodeURIComponent(githubUserId),
         repo: encodeURIComponent(githubRepoName),
       }, callback);
     },
-    function(javascriptBlobs, callback){
-      var javascriptBlob = _.findWhere(javascriptBlobs, {path: githubBlobPath});
+    function (javascriptBlobs, callback) {
+      var javascriptBlob = _.findWhere(javascriptBlobs, { path: githubBlobPath });
 
       javascriptBlob = parseJavascriptBlob(javascriptBlob);
 
@@ -879,19 +897,19 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
     },
 
     //
-    function(callback){
+    function (callback) {
       github.usercontent.getBlobAsUtf8({
         user: encodeURIComponent(githubUserId),
         repo: encodeURIComponent(githubRepoName),
         path: encodeURIComponent(githubBlobPath),
       }, callback);
     },
-    function(blobUtf8, callback){
+    function (blobUtf8, callback) {
       // Double check file size.
       if (blobUtf8.length > settings.maximum_upload_script_size)
         return callback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
 
-      var onScriptStored = function(script){
+      var onScriptStored = function (script) {
         if (script) {
           options.script = script;
           callback(null);
@@ -918,7 +936,7 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
         callback('Invalid filetype.');
       }
     },
-  ], function(err) {
+  ], function (err) {
     if (err) {
       console.error(err);
       console.error(githubUserId, githubRepoName, githubBlobPath);
@@ -973,15 +991,15 @@ exports.userGitHubRepoPage = function (req, res, next) {
 
   //--- Tasks
 
-  tasks.push(function(callback){
+  tasks.push(function (callback) {
     async.waterfall([
-      function(callback){
+      function (callback) {
         github.repos.get({
           user: encodeURIComponent(githubUserId),
           repo: encodeURIComponent(githubRepoName),
         }, callback);
       },
-      function(repo, callback){
+      function (repo, callback) {
         options.repo = repo;
 
         github.gitdata.getJavascriptBlobs({
@@ -989,9 +1007,9 @@ exports.userGitHubRepoPage = function (req, res, next) {
           repo: encodeURIComponent(repo.name),
         }, callback);
       },
-      function(javascriptBlobs, callback){
+      function (javascriptBlobs, callback) {
         options.javascriptBlobs = javascriptBlobs;
-        _.each(javascriptBlobs, function(javascriptBlob){
+        _.each(javascriptBlobs, function (javascriptBlob) {
           // Urls
           javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
             user: githubUserId,
@@ -1010,14 +1028,14 @@ exports.userGitHubRepoPage = function (req, res, next) {
   });
 
   //---
-  async.parallel(tasks, function(err) {
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     res.render('pages/userGitHubRepoPage', options);
   });
 };
 
-var parseJavascriptBlob = function(javascriptBlob) {
+var parseJavascriptBlob = function (javascriptBlob) {
   // Parsing Script Name & Type from path
   var blobPathRegex = /^(.*\/)?(.+?)((\.user)?\.js)$/;
   var m = blobPathRegex.exec(javascriptBlob.path);
@@ -1069,35 +1087,35 @@ exports.userManageGitHubPage = function (req, res, next) {
 
   //
   var TOO_MANY_SCRIPTS = 'GitHub user has too many scripts to batch import.';
-  tasks.push(function(callback){
+  tasks.push(function (callback) {
     var githubUserName = req.query.user || authedUser.ghUsername;
 
     async.waterfall([
       // authedUser.ghUsername
-      function(callback){
+      function (callback) {
         if (githubUserName || authedUser.ghUsername) {
           callback(null);
         } else {
           async.waterfall([
-            function(callback) {
+            function (callback) {
               var githubUserId = authedUser.githubUserId();
               github.user.getFrom({
                 user: encodeURIComponent(githubUserId),
               }, callback);
             },
-            function(githubUser, callback) {
+            function (githubUser, callback) {
               options.githubUser = githubUser;
               console.log(githubUser);
               User.findOne({
                 _id: authedUser._id,
               }, callback);
             },
-            function(userData, callback) {
+            function (userData, callback) {
               console.log(userData);
               userData.ghUsername = options.githubUser.login;
               userData.save(callback);
             },
-            function(callback) {
+            function (callback) {
               console.log(util.format('Updated User(%s).ghUsername', userData.name));
               callback(null);
             },
@@ -1105,10 +1123,10 @@ exports.userManageGitHubPage = function (req, res, next) {
         }
       },
       // Fetch repos and format for template.
-      function(callback){
+      function (callback) {
         console.log(githubUserName);
         var repoManager = RepoManager.getManager(githubUserName, authedUser);
-        repoManager.fetchRecentRepos(function() {
+        repoManager.fetchRecentRepos(function () {
           // convert the repos object to something mustache can use
           options.repos = repoManager.makeRepoArray();
 
@@ -1117,10 +1135,10 @@ exports.userManageGitHubPage = function (req, res, next) {
         });
       },
       // Import repos.
-      function(repos, callback){
+      function (repos, callback) {
         var loadable = {};
         console.log(req.body);
-        _.each(req.body, function(repo, reponame){
+        _.each(req.body, function (repo, reponame) {
           // Load all scripts in the repo
           if (typeof repo === 'string' && reponame.substr(-4) === '_all') {
             reponame = repo;
@@ -1161,7 +1179,7 @@ exports.userManageGitHubPage = function (req, res, next) {
 
 
   //---
-  async.parallel(tasks, function(err){
+  async.parallel(tasks, function (err) {
     if (err) {
       return statusCodePage(req, res, next, {
         statusMessage: err,
@@ -1212,17 +1230,17 @@ exports.uploadScript = function (req, res, next) {
               res.redirect('/libs/' + encodeURI(script.installName
                 .replace(jsRegex, '')));
             });
-          } else {
-            scriptStorage.getMeta(bufs, function (meta) {
-              scriptStorage.storeScript(user, meta, Buffer.concat(bufs),
-                function (script) {
-                  if (!script) { return res.redirect(failUrl); }
+        } else {
+          scriptStorage.getMeta(bufs, function (meta) {
+            scriptStorage.storeScript(user, meta, Buffer.concat(bufs),
+              function (script) {
+                if (!script) { return res.redirect(failUrl); }
 
-                  res.redirect('/scripts/' + encodeURI(script.installName
-                    .replace(userjsRegex, '')));
-                });
-            });
-          }
+                res.redirect('/scripts/' + encodeURI(script.installName
+                  .replace(userjsRegex, '')));
+              });
+          });
+        }
       });
     });
   });
@@ -1241,13 +1259,13 @@ exports.update = function (req, res, next) {
   if (typeof req.body.about !== 'undefined') {
     // Update the about section of a user's profile
     User.findOneAndUpdate({ _id: user._id },
-      { about: req.body.about  },
+      { about: req.body.about },
       function (err, user) {
         if (err) { res.redirect('/'); }
 
         req.session.user.about = user.about;
         res.redirect('/users/' + user.name);
-    });
+      });
   } else {
     // Remove scripts (currently no UI)
     installRegex = new RegExp('^\/install\/(' + username + '\/.+)$');
@@ -1290,15 +1308,16 @@ exports.submitSource = function (req, res, next) {
             if (err || !origScript) { return res.redirect(redirectUrl); }
 
             fork = origScript.fork || [];
-            fork.unshift({ author: origScript.author, url: origScript
-              .installName.replace(origScript.isLib ? jsRegex : userjsRegex, '')
+            fork.unshift({
+              author: origScript.author, url: origScript
+                .installName.replace(origScript.isLib ? jsRegex : userjsRegex, '')
             });
             script.fork = fork;
 
             script.save(function (err, script) {
               res.redirect(redirectUrl);
             });
-        });
+          });
       });
     });
   }
@@ -1316,7 +1335,7 @@ exports.submitSource = function (req, res, next) {
   }
 };
 
-function getExistingScript (req, options, authedUser, callback) {
+function getExistingScript(req, options, authedUser, callback) {
   options.isLib = req.route.params.isLib;
 
   if (!req.route.params.scriptname) {
@@ -1367,7 +1386,7 @@ function getExistingScript (req, options, authedUser, callback) {
   }
 }
 
-function pageMeta (options) {
+function pageMeta(options) {
   options.title = (options.title || '') + ' | OpenUserJS.org';
   options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
   var pageMetaKeywords = ['userscript', 'greasemonkey'];
@@ -1403,7 +1422,7 @@ exports.editScript = function (req, res, next) {
   });
 
   //---
-  async.parallel(tasks, function(err){
+  async.parallel(tasks, function (err) {
     if (err) return next();
 
     res.render('pages/scriptViewSourcePage', options);

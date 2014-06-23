@@ -4,9 +4,9 @@
   <title>{{title}}</title>
   {{> includes/head.html }}
   <style>
-  .script-metadata-definitions .list-group-item-heading code {
-    white-space: pre-line;
-  }
+    .script-metadata-definitions .list-group-item-heading code {
+      white-space: pre-line;
+    }
   </style>
 </head>
 <body>
@@ -16,57 +16,57 @@
       <div class="col-xs-12">
         <div class="col-md-4">
           {{#newUserJS}}
-            <h2><i class="fa fa-tags"></i> Script Metadata</h2>
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <p>You can read about most userscript metadata blocks on the <a href="http://wiki.greasespot.net/Metadata_Block">greasespot wiki</a> and at the <a href="https://sf.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block">greasemonkey sourceforge wiki</a>.</p>
-              </div>
+          <h2><i class="fa fa-tags"></i> Script Metadata</h2>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <p>You can read about most userscript metadata blocks on the <a href="http://wiki.greasespot.net/Metadata_Block">greasespot wiki</a> and at the <a href="https://sf.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block">greasemonkey sourceforge wiki</a>.</p>
             </div>
-            <h3>OpenUserJS.org Specific</h3>
-            <div class="list-group script-metadata-definitions">
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h4>
-                <p class="list-group-item-text">The author of the script. Required for <a href="#collaboration">Collaboration</a>. Only the author may edit.</p>
-              </div>
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading"><code>@collaborator username</code></h4>
-                <p class="list-group-item-text">Can be defined multiple times. Required for <a href="#collaboration">Collaboration</a>.</p>
-              </div>
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading"><code>@description This script even does the laundry!</code></h4>
-                <p class="list-group-item-text">Specially formatted on the script page.</p>
-              </div>
-
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading"><code>@copyright Year, Author (Author Homepage)</code></h4>
-                <p class="list-group-item-text">[<a href="https://sf.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block#.40copyright">Wiki Link</a>] Specially formatted on the script page.</p>
-              </div>
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading"><code>@icon url</code></h4>
-                <p class="list-group-item-text">A url or data url. Used in the script list page at 16px and on the script page at ~45px.</p>
-              </div>
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading"><code>@license License Type; License Homepage</code></h4>
-                <p class="list-group-item-text">[<a href="https://sf.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block#.40license">Wiki Link</a>] Specially formatted on the script page.</p>
-              </div>
+          </div>
+          <h3>OpenUserJS.org Specific</h3>
+          <div class="list-group script-metadata-definitions">
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h4>
+              <p class="list-group-item-text">The author of the script. Required for <a href="#collaboration">Collaboration</a>. Only the author may edit.</p>
+            </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@collaborator username</code></h4>
+              <p class="list-group-item-text">Can be defined multiple times. Required for <a href="#collaboration">Collaboration</a>.</p>
+            </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@description This script even does the laundry!</code></h4>
+              <p class="list-group-item-text">Specially formatted on the script page.</p>
             </div>
 
-            <a name="collaboration"></a>
-            <h3>Collaboration</h3>
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <p>To allow other users to upload modified versions of your script to your account, add <code>@author Zren</code> to the metadata of your script, along with <code>@collaborator username</code> for every user you wish to give write access. Only the real author of the script can modify these metadata keys. Collaborators cannot use GitHub integration to update the script. Add them as collaborators to the GitHub repo instead.</p>
-              </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@copyright Year, Author (Author Homepage)</code></h4>
+              <p class="list-group-item-text">[<a href="https://sf.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block#.40copyright">Wiki Link</a>] Specially formatted on the script page.</p>
             </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@icon url</code></h4>
+              <p class="list-group-item-text">A url or data url. Used in the script list page at 16px and on the script page at ~45px.</p>
+            </div>
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading"><code>@license License Type; License Homepage</code></h4>
+              <p class="list-group-item-text">[<a href="https://sf.net/apps/mediawiki/greasemonkey/index.php?title=Metadata_Block#.40license">Wiki Link</a>] Specially formatted on the script page.</p>
+            </div>
+          </div>
+
+          <a name="collaboration"></a>
+          <h3>Collaboration</h3>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <p>To allow other users to upload modified versions of your script to your account, add <code>@author Zren</code> to the metadata of your script, along with <code>@collaborator username</code> for every user you wish to give write access. Only the real author of the script can modify these metadata keys. Collaborators cannot use GitHub integration to update the script. Add them as collaborators to the GitHub repo instead.</p>
+            </div>
+          </div>
           {{/newUserJS}}
           {{#newJSLibrary}}
-            <h2><i class="fa fa-question"></i> Library Docs</h2>
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <h3>OpenUserJS.org Specific</h3>
-                <p>Any UserScript on OpenUserJS.org that <code>//@require</code>'s libraries also on OpenUserJS.org will link to the library on the UserScript page.</p>
-              </div>
+          <h2><i class="fa fa-question"></i> Library Docs</h2>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <h3>OpenUserJS.org Specific</h3>
+              <p>Any UserScript on OpenUserJS.org that <code>//@require</code>'s libraries also on OpenUserJS.org will link to the library on the UserScript page.</p>
             </div>
+          </div>
           {{/newJSLibrary}}
         </div>
         <div class="col-md-4">
@@ -85,12 +85,12 @@
                   <input type="hidden" name="uploadScript" value="true">
                   {{#newJSLibrary}}
                   <div class="form-group">
-                    <input type="text" required class="form-control" name="script_name" placeholder="Script Name" required>
+                    <input type="text" class="form-control" name="script_name" placeholder="Script Name" required />
                   </div>
                   {{/newJSLibrary}}
                   <div class="form-group">
                     <div class="input-group">
-                      <input type="file" required class="form-control" name="script" placeholder="Enter email">
+                      <input type="file" class="form-control" name="script" placeholder="Enter email" required />
                       <span class="input-group-btn">
                         <button class="btn btn-success" type="submit">Submit</button>
                       </span>

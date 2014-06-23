@@ -17,24 +17,24 @@ var parseModelFnMap = {};
  */
 
 moment.lang('en', {
-  relativeTime : {
+  relativeTime: {
     future: "in %s",
-    past:   "%s ago",
-    s:  function(number, withoutSuffix, key, isFuture){ return number + "s"; },
-    m:  "1m",
+    past: "%s ago",
+    s: function (number, withoutSuffix, key, isFuture) { return number + "s"; },
+    m: "1m",
     mm: "%dm",
-    h:  "1h",
+    h: "1h",
     hh: "%dh",
-    d:  "1D",
+    d: "1D",
     dd: "%dD",
-    M:  "1M",
+    M: "1M",
     MM: "%dM",
-    y:  "1Y",
+    y: "1Y",
     yy: "%dY"
   }
 });
 
-var parseDateProperty = function(obj, key) {
+var parseDateProperty = function (obj, key) {
   var date = obj[key];
   obj[key + 'ISOFormat'] = date.toISOString();
   obj[key + 'Humanized'] = moment(date).fromNow();
@@ -49,18 +49,18 @@ var parseDateProperty = function(obj, key) {
  */
 
 // Urls
-var getScriptPageUrl = function(script) {
+var getScriptPageUrl = function (script) {
   var isLib = script.isLib || false;
   var scriptPath = script.installName
     .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
   return (isLib ? '/libs/' : '/scripts/') + scriptPath;
 };
 
-var getScriptViewSourcePageUrl = function(script) {
+var getScriptViewSourcePageUrl = function (script) {
   return getScriptPageUrl(script) + '/source';
 };
 
-var getScriptEditAboutPageUrl = function(script) {
+var getScriptEditAboutPageUrl = function (script) {
   var isLib = script.isLib || false;
   var scriptPath = script.installName
     .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
@@ -69,23 +69,23 @@ var getScriptEditAboutPageUrl = function(script) {
   return (isLib ? '/lib/' : '/script/') + editUrl.join('/') + '/edit';
 };
 
-var getScriptEditSourcePageUrl = function(script) {
+var getScriptEditSourcePageUrl = function (script) {
   return getScriptViewSourcePageUrl(script);
 };
 
-var getScriptInstallPageUrl = function(script) {
+var getScriptInstallPageUrl = function (script) {
   var isLib = script.isLib || false;
   return (isLib ? '/libs/src/' : '/install/') + script.installName;
 };
 
 //
-var parseScript = function(scriptData) {
+var parseScript = function (scriptData) {
   if (!scriptData) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
   // Author
   if (_.isString(script.author)) {
-    script.author = parseUser({name: script.author});
+    script.author = parseUser({ name: script.author });
   }
 
   // Icons
@@ -94,8 +94,8 @@ var parseScript = function(scriptData) {
       script.icon16Url = script.meta.icon;
       script.icon45Url = script.meta.icon;
     } else if (_.isArray(script.meta.icon) && !_.isEmpty(script.meta.icon)) {
-      script.icon16Url = script.meta.icon[0];
-      script.icon45Url = script.meta.icon[script.meta.icon.length >= 2 ? 1 : 1];
+      script.icon16Url = script.meta.icon[script.meta.icon.length - 1];
+      script.icon45Url = script.meta.icon[script.meta.icon.length - 1];
     }
   }
   if (script.meta.icon64) {
@@ -125,9 +125,8 @@ var parseScript = function(scriptData) {
 
   // Urls: Slugs
   script.authorSlug = script.author.name;
-  script.namespaceSlug = (script.meta && script.meta.namespace) ? cleanFilename(script.meta.namespace) : '';
   script.nameSlug = cleanFilename(script.name);
-  script.installNameSlug = script.author.slug + '/' + (script.namespaceSlug ? script.namespaceSlug + '/' : '') + script.nameSlug;
+  script.installNameSlug = script.author.slug + '/' + script.nameSlug;
 
   // Urls: Public
   script.scriptPageUrl = getScriptPageUrl(script);
@@ -136,8 +135,7 @@ var parseScript = function(scriptData) {
 
   // Urls: Issues
   var slug = (script.isLib ? 'libs' : 'scripts');
-  slug += '/' + script.author.slug.toLowerCase();
-  slug += script.meta.namespace ?  '/' + script.namespaceSlug : '';
+  slug += '/' + script.author.slug;
   slug += '/' + script.nameSlug;
   script.issuesCategorySlug = slug + '/issues';
   script.scriptIssuesPageUrl = '/' + script.issuesCategorySlug;
@@ -158,7 +156,7 @@ var parseScript = function(scriptData) {
 parseModelFnMap.Script = parseScript;
 exports.parseScript = parseScript;
 
-exports.renderScript = function(script) {
+exports.renderScript = function (script) {
   if (!script) return;
   script.aboutRendered = renderMd(script.about);
 };
@@ -168,7 +166,7 @@ exports.renderScript = function(script) {
  */
 
 //
-var parseUser = function(userData) {
+var parseUser = function (userData) {
   if (!userData) return;
   // var user = userData.toObject ? userData.toObject() : userData;
   var user = userData;
@@ -194,7 +192,7 @@ var parseUser = function(userData) {
   user.userRemovePageUrl = '/remove/users/' + user.name;
 
   // Funcs
-  user.githubUserId = function() {
+  user.githubUserId = function () {
     var indexOfGH = user.strategies.indexOf('github');
     if (indexOfGH > -1) {
       return user.auths[indexOfGH];
@@ -213,7 +211,7 @@ exports.parseUser = parseUser;
  */
 
 //
-var parseGroup = function(groupData) {
+var parseGroup = function (groupData) {
   if (!groupData) return;
   // var group = groupData.toObject ? groupData.toObject() : groupData;
   var group = groupData;
@@ -225,7 +223,7 @@ var parseGroup = function(groupData) {
 
   // Wait two hours between group rating updates
   // This calculation runs in the background
-  if (new Date().getTime() > (group.updated.getTime() + 1000*60*60*2)) {
+  if (new Date().getTime() > (group.updated.getTime() + 1000 * 60 * 60 * 2)) {
     Script.find({
       _id: { $in: group._scriptIds }
     }, function (err, scripts) {
@@ -234,7 +232,7 @@ var parseGroup = function(groupData) {
       }
 
       group.updated = new Date();
-      group.save(function(err, group){
+      group.save(function (err, group) {
         console.log(util.format('Group(%s) Rating Updated', group.name));
       });
     });
@@ -250,7 +248,7 @@ exports.parseGroup = parseGroup;
  */
 
 //
-var parseDiscussion = function(discussionData) {
+var parseDiscussion = function (discussionData) {
   if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
   // var discussion = discussionData; // Can't override discussionData.category
@@ -268,7 +266,7 @@ var parseDiscussion = function(discussionData) {
     recentCommentors.push(discussion.author);
   if (discussion.lastCommentor != discussion.author)
     recentCommentors.push(discussion.lastCommentor);
-  recentCommentors = _.map(recentCommentors, function(username){
+  recentCommentors = _.map(recentCommentors, function (username) {
     return {
       name: username,
     };
@@ -285,7 +283,7 @@ var parseDiscussion = function(discussionData) {
 parseModelFnMap.Discussion = parseDiscussion;
 exports.parseDiscussion = parseDiscussion;
 
-var parseIssue = function(discussionData) {
+var parseIssue = function (discussionData) {
   if (!discussionData) return;
   var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
 
@@ -305,7 +303,7 @@ exports.parseIssue = parseIssue;
  */
 
 //
-var parseComment = function(commentData) {
+var parseComment = function (commentData) {
   if (!commentData) return;
   var comment = commentData.toObject ? commentData.toObject() : commentData;
 
@@ -317,17 +315,16 @@ var parseComment = function(commentData) {
 parseModelFnMap.Comment = parseComment;
 exports.parseComment = parseComment;
 
-exports.renderComment = function(comment) {
+exports.renderComment = function (comment) {
   if (!comment) return;
   comment.contentRendered = renderMd(comment.content);
 };
-
 
 /**
  * Category
  */
 
-var canUserPostTopicToCategory = function(user, category) {
+var canUserPostTopicToCategory = function (user, category) {
   // Check if user is logged in.
   if (_.isUndefined(user) || _.isNull(user))
     return false; // Not logged in.
@@ -343,7 +340,7 @@ var canUserPostTopicToCategory = function(user, category) {
 };
 
 //
-var parseCategory = function(categoryData) {
+var parseCategory = function (categoryData) {
   if (!categoryData) return;
   var category = categoryData.toObject ? categoryData.toObject() : categoryData;
 
@@ -361,16 +358,15 @@ var parseCategory = function(categoryData) {
 parseModelFnMap.Category = parseCategory;
 exports.parseCategory = parseCategory;
 
-
 /**
  * Remove
  */
 
-var getRemovedItemDescription = function(remove) {
+var getRemovedItemDescription = function (remove) {
   if (!remove.content)
     return 'No content';
 
-  switch(remove.model) {
+  switch (remove.model) {
     case 'User':
       return remove.content.name;
     case 'Script':
@@ -385,7 +381,7 @@ var getRemovedItemDescription = function(remove) {
 };
 
 //
-var parseRemovedItem = function(removedItemData) {
+var parseRemovedItem = function (removedItemData) {
   if (!removedItemData) return;
   var removedItem = removedItemData;
 
@@ -393,7 +389,7 @@ var parseRemovedItem = function(removedItemData) {
   parseDateProperty(removedItem, 'removed');
 
   // User
-  removedItem.remover = parseUser({name: removedItem.removerName});
+  removedItem.remover = parseUser({ name: removedItem.removerName });
 
   // Content
   var parseModelFn = parseModelFnMap[removedItem.model];
@@ -410,4 +406,3 @@ var parseRemovedItem = function(removedItemData) {
 };
 parseModelFnMap.Remove = parseRemovedItem;
 exports.parseRemovedItem = parseRemovedItem;
-

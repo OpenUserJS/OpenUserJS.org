@@ -20,12 +20,12 @@ exports.loadPassport = function (strategy) {
   if (strategy.openid) {
     instance = new PassportStrategy(
       {
-        returnURL: AUTH_CALLBACK_BASE_URL  + '/auth/' + strategy.name + '/callback/',
-        realm: AUTH_CALLBACK_BASE_URL  + '/',
+        returnURL: AUTH_CALLBACK_BASE_URL + '/auth/' + strategy.name + '/callback/',
+        realm: AUTH_CALLBACK_BASE_URL + '/',
         profile: false,
         stateless: true
       },
-      function () {} // we replace this callback later (_verify)
+      function () { } // we replace this callback later (_verify)
     );
   } else {
     instance = new PassportStrategy(
@@ -35,9 +35,9 @@ exports.loadPassport = function (strategy) {
         clientID: strategy.id,
         clientSecret: strategy.key,
         state: 'a bullshit string reddit requires',
-        callbackURL: AUTH_CALLBACK_BASE_URL  + '/auth/' + strategy.name + '/callback/'
+        callbackURL: AUTH_CALLBACK_BASE_URL + '/auth/' + strategy.name + '/callback/'
       },
-      function () {} // we replace this callback later (_verify)
+      function () { } // we replace this callback later (_verify)
     );
   }
 

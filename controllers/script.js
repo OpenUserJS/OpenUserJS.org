@@ -26,8 +26,8 @@ exports.lib = function (controller) {
 };
 
 // Display which scripts use a library hosted on the site
-exports.useLib = function (req, res, next) {
-  var installName = req.route.params.shift().toLowerCase() + '/'
+/*exports.useLib = function (req, res, next) {
+  var installName = req.route.params.shift() + '/'
     + req.route.params.shift();
   var user = req.session.user;
   var options = { username: user ? user.name : '' };
@@ -42,24 +42,23 @@ exports.useLib = function (req, res, next) {
       function (scriptsList) {
         options.scriptsList = scriptsList;
         res.render('group', options);
-    });
+      });
   });
-};
+};*/
 
-var getScriptPageTasks = function(options) {
+var getScriptPageTasks = function (options) {
   var tasks = [];
 
   // Shortcuts
   var script = options.script;
   var authedUser = options.authedUser;
 
-
   //--- Tasks
 
   // Show the number of open issues
-  var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: {$ne: false} });
+  var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+      .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
   tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
-
 
   // Show collaborators of the script
   if (script.meta.author && script.meta.collaborator) {
@@ -85,7 +84,7 @@ var getScriptPageTasks = function(options) {
       });
     }
   } else if (!script.isLib) {
-      options.script.meta.licenses = [{ name: 'MIT License (Expat)' }];
+    options.script.meta.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
   // Show homepages of the script
@@ -209,7 +208,7 @@ var getScriptPageTasks = function(options) {
         options.flagUrl = flagUrl;
 
         callback();
-    });
+      });
   });
 
   // Set up the removal UI
@@ -232,14 +231,14 @@ var getScriptPageTasks = function(options) {
           function (threshold) {
             options.threshold = threshold;
             callback();
-        });
-    });
+          });
+      });
   });
 
   return tasks;
 };
 
-var setupScriptSidePanel = function(options) {
+var setupScriptSidePanel = function (options) {
   // Shortcuts
   var script = options.script;
   var authedUser = options.authedUser;
@@ -272,7 +271,8 @@ exports.view = function (req, res, next) {
   var isLib = req.route.params.isLib;
 
   Script.findOne({
-    installName: installNameSlug + (isLib ? '.js' : '.user.js')
+    installName: scriptStorage
+      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -306,16 +306,15 @@ exports.view = function (req, res, next) {
     //--- Tasks
     tasks = tasks.concat(getScriptPageTasks(options));
 
-
     //---
-    function preRender(){
+    function preRender() {
       var pageMetaKeywords = ['userscript', 'greasemonkey'];
       if (script.groups)
         pageMetaKeywords.concat(_.pluck(script.groups, 'name'));
       options.pageMetaKeywords = pageMetaKeywords.join(', ');
     };
-    function render(){ res.render('pages/scriptPage', options); }
-    function asyncComplete(){ preRender(); render(); }
+    function render() { res.render('pages/scriptPage', options); }
+    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
@@ -335,7 +334,8 @@ exports.edit = function (req, res, next) {
   var isLib = req.route.params.isLib;
 
   Script.findOne({
-    installName: installNameSlug + (isLib ? '.js' : '.user.js')
+    installName: scriptStorage
+      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (err, scriptData) {
     if (err || !scriptData) { return next(); }
 
@@ -389,15 +389,15 @@ exports.edit = function (req, res, next) {
       // Groups
       options.canCreateGroup = (!script._groupId).toString();
 
-      function preRender(){
+      function preRender() {
         var groupNameList = (options.script.groups || []).map(function (group) {
           return group.name;
         });
         options.groupNameListJSON = JSON.stringify(groupNameList);
 
       };
-      function render(){ res.render('pages/scriptEditMetadataPage', options); }
-      function asyncComplete(){ preRender(); render(); }
+      function render() { res.render('pages/scriptEditMetadataPage', options); }
+      function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
 
       // Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
@@ -449,7 +449,7 @@ exports.vote = function (req, res, next) {
     return res.redirect(url);
   }
 
-  Script.findOne({ installName: installName },
+  Script.findOne({ installName: scriptStorage.caseInsensitive(installName) },
     function (err, script) {
       if (err || !script) { return res.redirect(url); }
 
@@ -459,16 +459,16 @@ exports.vote = function (req, res, next) {
           var votes = script.votes || 0;
           var flags = 0;
 
-          function saveScript () {
+          function saveScript() {
             if (!flags) {
               return script.save(function (err, script) { res.redirect(url); });
             }
 
-            flagLib.getAuthor(script, function(author) {
+            flagLib.getAuthor(script, function (author) {
               flagLib.saveContent(Script, script, author, flags,
                 function (flagged) {
                   res.redirect(url);
-              });
+                });
             });
           }
 
@@ -501,8 +501,10 @@ exports.vote = function (req, res, next) {
           }
 
           voteModel.save(saveScript);
-      });
-  });
+        }
+      );
+    }
+  );
 };
 
 // Script flagging
@@ -511,7 +513,8 @@ exports.flag = function (req, res, next) {
   var installName = scriptStorage.getInstallName(req);
   var unflag = req.route.params.unflag;
 
-  Script.findOne({ installName: installName + (isLib ? '.js' : '.user.js') },
+  Script.findOne({ installName:  scriptStorage
+      .caseInsensitive(installName + (isLib ? '.js' : '.user.js')) },
     function (err, script) {
       var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
       if (err || !script) { return next(); }
@@ -519,5 +522,6 @@ exports.flag = function (req, res, next) {
       fn(Script, script, req.session.user, function (flagged) {
         res.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
       });
-  });
+    }
+  );
 };
