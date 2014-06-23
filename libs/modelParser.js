@@ -85,6 +85,9 @@ var parseScript = function (scriptData) {
   if (!scriptData) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
+  // Temporaries
+  var htmlStub;
+
   // Author
   if (_.isString(script.author)) {
     script.author = parseUser({ name: script.author });
@@ -107,12 +110,12 @@ var parseScript = function (scriptData) {
   // Support Url
   if (script.meta.supportURL) {
     if (_.isString(script.meta.supportURL)) {
-      var htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
+      htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         script.support = [{ url: script.meta.supportURL, text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]) }];
       }
     } else if (_.isArray(script.meta.supportURL) && !_.isEmpty(script.meta.supportURL)) {
-      var htmlStub = '<a href="' + script.meta.supportURL[script.meta.supportURL.length - 1] + '"></a>';
+      htmlStub = '<a href="' + script.meta.supportURL[script.meta.supportURL.length - 1] + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         script.support = [{ url:  script.meta.supportURL[script.meta.supportURL.length - 1], text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]) }];
       }

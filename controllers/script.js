@@ -55,6 +55,9 @@ var getScriptPageTasks = function (options) {
   var script = options.script;
   var authedUser = options.authedUser;
 
+  // Temporaries
+  var htmlStub;
+
   //--- Tasks
 
   // Show the number of open issues
@@ -92,14 +95,14 @@ var getScriptPageTasks = function (options) {
   // Show homepages of the script
   if (script.meta.homepageURL) {
     if (typeof script.meta.homepageURL === 'string') {
-      var htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
+      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         options.script.homepages = [{ url: script.meta.homepageURL, text: decodeURI(script.meta.homepageURL) }];
       }
     } else {
       options.script.homepages = [];
       script.meta.homepageURL.forEach(function (homepage) {
-        var htmlStub = '<a href="' + homepage + '"></a>';
+        htmlStub = '<a href="' + homepage + '"></a>';
         if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
           options.script.homepages.push({ url: homepage, text: decodeURI(homepage) });
         }
