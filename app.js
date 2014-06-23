@@ -34,15 +34,15 @@ app.set('port', process.env.PORT || 8080);
 // Connect to the database
 mongoose.connect(connectStr, dbOptions);
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
+db.once('open', function () {
   app.listen(app.get('port'));
 });
 
-app.configure(function() {
+app.configure(function () {
   var sessionStore = new MongoStore({ mongoose_connection: db });
 
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-  app.use(function(req, res, next) {
+  app.use(function (req, res, next) {
     // check if we're toobusy
     if (toobusy()) {
       statusCodePage(req, res, next, {
@@ -56,7 +56,7 @@ app.configure(function() {
 
   // Force HTTPS
   if (app.get('port') === 443) {
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
       res.setHeader('Strict-Transport-Security',
         'max-age=8640000; includeSubDomains');
 
@@ -111,11 +111,11 @@ function listRegex(root, type) {
 var methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
 function app_route(path) {
   var r = {};
-  r.all = function(cb) {
+  r.all = function (cb) {
     app.all.call(app, path, cb);
   };
-  methods.forEach(function(method) {
-    r[method] = function(cb) {
+  methods.forEach(function (method) {
+    r[method] = function (cb) {
       app[method].call(app, path, cb);
       return r;
     };
@@ -163,7 +163,7 @@ app.get('/install/:username/:namespace?/:scriptname', scriptStorage.sendScript);
 app.get('/meta/:username/:namespace?/:scriptname', scriptStorage.sendMeta);
 app.get('/vote/scripts/:username/:namespace?/:scriptname/:vote', script.vote);
 app.post('/github/hook', scriptStorage.webhook);
-app.post('/github/service', function(req, res, next) { next(); });
+app.post('/github/service', function (req, res, next) { next(); });
 
 // Library routes
 app.get(listRegex('\/toolbox', 'lib'), main.toolbox);
@@ -216,8 +216,8 @@ app_route('/forum/:category(announcements|corner|garage|discuss)/new').get(discu
 app_route('/forum/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(discussion.createComment);
 
 // Discussion routes: Legacy
-// app_route('/:category(announcements|corner|garage|discuss)').get(function(req, res, next) { res.redirect(util.format('/forum/%s', req.route.params.category)); });
-// app_route('/:category(announcements|corner|garage|discuss)/:topic').get(function(req, res, next) { res.redirect(util.format('/forum/%s/%s', req.route.params.category, req.route.params.topic)) });
+// app_route('/:category(announcements|corner|garage|discuss)').get(function (req, res, next) { res.redirect(util.format('/forum/%s', req.route.params.category)); });
+// app_route('/:category(announcements|corner|garage|discuss)/:topic').get(function (req, res, next) { res.redirect(util.format('/forum/%s/%s', req.route.params.category, req.route.params.topic)) });
 app.get(listRegex('\/(announcements|corner|garage|discuss)', ''), discussion.list);
 app.get(listRegex('\/(announcements|corner|garage|discuss)\/([^\/]+?)', ''), discussion.show);
 app.get('/post/:category(announcements|corner|garage|discuss)', discussion.newTopic);
@@ -225,7 +225,7 @@ app.post('/post/:category(announcements|corner|garage|discuss)', discussion.crea
 app.post('/:category(announcements|corner|garage|discuss)/:topic', discussion.createComment);
 
 // Search routes: Legacy
-app.post('/search', function(req, res) {
+app.post('/search', function (req, res) {
   var search = encodeURIComponent(req.body.search.replace(/^\s+|\s+$/g, ''));
   res.redirect('/search/' + search + '/' + req.body.type + 'list');
 });
@@ -234,7 +234,7 @@ app.get(listRegex('\/', 'script'), main.home);
 
 // Fallback routes
 app.use(express.static(__dirname + '/public'));
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   statusCodePage(req, res, next, {
     statusCode: 404,
     statusMessage: 'This is not the page you\'re are looking for.',
