@@ -2,6 +2,8 @@ var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
 var _ = require('underscore');
+var sanitizeHtml = require('sanitize-html');
+var htmlWhitelistLink = require('../libs/htmlWhitelistLink.json');
 
 var Discussion = require('../models/discussion').Discussion;
 var Group = require('../models/group').Group;
@@ -90,11 +92,17 @@ var getScriptPageTasks = function (options) {
   // Show homepages of the script
   if (script.meta.homepageURL) {
     if (typeof script.meta.homepageURL === 'string') {
-      options.script.homepages = [{ name: script.meta.homepageURL }];
+      var htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
+      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        options.script.homepages = [{ url: script.meta.homepageURL, text: decodeURI(script.meta.homepageURL) }];
+      }
     } else {
       options.script.homepages = [];
       script.meta.homepageURL.forEach(function (homepage) {
-        options.script.homepages.push({ name: homepage });
+        var htmlStub = '<a href="' + homepage + '"></a>';
+        if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+          options.script.homepages.push({ url: homepage, text: decodeURI(homepage) });
+        }
       });
     }
   }

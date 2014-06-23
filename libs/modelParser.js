@@ -1,6 +1,8 @@
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');
+var sanitizeHtml = require('sanitize-html');
+var htmlWhitelistLink = require('./htmlWhitelistLink.json');
 
 var Script = require('../models/script').Script;
 
@@ -105,9 +107,15 @@ var parseScript = function (scriptData) {
   // Support Url
   if (script.meta.supportURL) {
     if (_.isString(script.meta.supportURL)) {
-      script.support = script.meta.supportURL;
+      var htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
+      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        script.support = [{ url: script.meta.supportURL, text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]) }];
+      }
     } else if (_.isArray(script.meta.supportURL) && !_.isEmpty(script.meta.supportURL)) {
-      script.support = script.meta.supportURL[script.meta.supportURL.length - 1];
+      var htmlStub = '<a href="' + script.meta.supportURL[script.meta.supportURL.length - 1] + '"></a>';
+      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        script.support = [{ url:  script.meta.supportURL[script.meta.supportURL.length - 1], text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]) }];
+      }
     }
   }
 
