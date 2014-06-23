@@ -86,7 +86,7 @@ var parseScript = function (scriptData) {
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
   // Temporaries
-  var htmlStub;
+  var htmlStub = null;
 
   // Author
   if (_.isString(script.author)) {

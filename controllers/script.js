@@ -56,7 +56,7 @@ var getScriptPageTasks = function (options) {
   var authedUser = options.authedUser;
 
   // Temporaries
-  var htmlStub;
+  var htmlStub = null;
 
   //--- Tasks
 
