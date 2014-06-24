@@ -1,0 +1,17 @@
+{
+  "allowedTags": [
+    "a"
+  ],
+  "allowedAttributes": {
+    "a": [
+      "href"
+    ]
+  },
+  "selfClosing": [
+  ],
+  "allowedSchemes": [
+    "http",
+    "https",
+    "mailto"
+  ]
+}

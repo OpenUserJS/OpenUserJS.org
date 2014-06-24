@@ -35,11 +35,12 @@
                   </ul>
                 </span>
               {{/script.hasGroups}}
-              {{#script.meta.homepages}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{name}}">{{name}}</a></p>{{/script.meta.homepages}}
+              {{#script.homepages}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.homepages}}
+              {{#script.support}}<p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.support}}
               {{#script.meta.copyright}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{script.meta.copyright}}</p>{{/script.meta.copyright}}
-              {{#script.meta.licenses}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{name}}</p>{{/script.meta.licenses}}
+              {{#script.licenses}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{name}}</p>{{/script.licenses}}
               {{#hasCollab}}
-              <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.meta.collaborators}} <span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span> {{/script.meta.collaborators}}</p>
+              <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>
               {{/hasCollab}}
               {{#script.fork}}
                 <p><b>Fork History:</b></p>

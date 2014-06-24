@@ -1,6 +1,8 @@
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');
+var sanitizeHtml = require('sanitize-html');
+var htmlWhitelistLink = require('./htmlWhitelistLink.json');
 
 var Script = require('../models/script').Script;
 
@@ -83,6 +85,9 @@ var parseScript = function (scriptData) {
   if (!scriptData) return;
   var script = scriptData.toObject ? scriptData.toObject() : scriptData;
 
+  // Temporaries
+  var htmlStub = null;
+
   // Author
   if (_.isString(script.author)) {
     script.author = parseUser({ name: script.author });
@@ -100,6 +105,29 @@ var parseScript = function (scriptData) {
   }
   if (script.meta.icon64) {
     script.icon45Url = script.meta.icon64;
+  }
+
+  // Support Url
+  if (script.meta.supportURL) {
+    if (_.isString(script.meta.supportURL)) {
+      htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
+      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        script.support = [{
+          url: script.meta.supportURL,
+          text: decodeURI(script.meta.supportURL),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL)
+        }];
+      }
+    } else if (_.isArray(script.meta.supportURL) && !_.isEmpty(script.meta.supportURL)) {
+      htmlStub = '<a href="' + script.meta.supportURL[script.meta.supportURL.length - 1] + '"></a>';
+      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        script.support = [{
+          url:  script.meta.supportURL[script.meta.supportURL.length - 1],
+          text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]),
+          hasNoFollow:  !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL[script.meta.supportURL.length - 1])
+        }];
+      }
+    }
   }
 
   //

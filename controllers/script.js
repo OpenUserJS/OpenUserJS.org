@@ -2,6 +2,8 @@ var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
 var _ = require('underscore');
+var sanitizeHtml = require('sanitize-html');
+var htmlWhitelistLink = require('../libs/htmlWhitelistLink.json');
 
 var Discussion = require('../models/discussion').Discussion;
 var Group = require('../models/group').Group;
@@ -53,6 +55,9 @@ var getScriptPageTasks = function (options) {
   var script = options.script;
   var authedUser = options.authedUser;
 
+  // Temporaries
+  var htmlStub = null;
+
   //--- Tasks
 
   // Show the number of open issues
@@ -64,11 +69,11 @@ var getScriptPageTasks = function (options) {
   if (script.meta.author && script.meta.collaborator) {
     options.hasCollab = true;
     if (typeof script.meta.collaborator === 'string') {
-      options.script.meta.collaborators = [{ name: script.meta.collaborator }];
+      options.script.collaborators = [{ url: encodeURIComponent(script.meta.collaborator), text: script.meta.collaborator }];
     } else {
-      options.script.meta.collaborators = [];
+      options.script.collaborators = [];
       script.meta.collaborator.forEach(function (collaborator) {
-        options.script.meta.collaborators.push({ name: collaborator });
+        options.script.collaborators.push({ url: encodeURIComponent(collaborator), text: collaborator });
       });
     }
   }
@@ -76,11 +81,11 @@ var getScriptPageTasks = function (options) {
   // Show licensings of the script
   if (script.meta.license) {
     if (typeof script.meta.license === 'string') {
-      options.script.meta.licenses = [{ name: script.meta.license }];
+      options.script.licenses = [{ name: script.meta.license }];
     } else {
-      options.script.meta.licenses = [];
+      options.script.licenses = [];
       script.meta.license.forEach(function (license) {
-        options.script.meta.licenses.push({ name: license });
+        options.script.licenses.push({ name: license });
       });
     }
   } else if (!script.isLib) {
@@ -90,11 +95,25 @@ var getScriptPageTasks = function (options) {
   // Show homepages of the script
   if (script.meta.homepageURL) {
     if (typeof script.meta.homepageURL === 'string') {
-      options.script.meta.homepages = [{ name: script.meta.homepageURL }];
+      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
+      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        options.script.homepages = [{
+          url: script.meta.homepageURL,
+          text: decodeURI(script.meta.homepageURL),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
+        }];
+      }
     } else {
-      options.script.meta.homepages = [];
+      options.script.homepages = [];
       script.meta.homepageURL.forEach(function (homepage) {
-        options.script.meta.homepages.push({ name: homepage });
+        htmlStub = '<a href="' + homepage + '"></a>';
+        if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+          options.script.homepages.push({
+            url: homepage,
+            text: decodeURI(homepage),
+            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(homepage)
+          });
+        }
       });
     }
   }
