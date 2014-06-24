@@ -122,6 +122,9 @@ var setupUserSidePanel = function (options) {
   if (authedUser && authedUser.isAdmin && (authedUser.role < user.role || options.isYou)) {
     options.adminTools = {};
 
+    // Auth As This User
+    options.adminTools.authAsUserUrl = '/admin/authas?username=' + encodeURIComponent(user.name);
+
     // user.role
     // Allow authedUser to raise target user role to the level below him.
     var roles = _.map(userRoles, function (roleName, index) {
