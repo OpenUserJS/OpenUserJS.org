@@ -347,3 +347,54 @@ exports.apiAdminUpdate = function (req, res, next) {
     });
   });
 };
+
+// Landing Page for admins
+exports.authAsUser = function (req, res, next) {
+  var authedUser = req.session.user;
+
+  //
+  var options = {};
+  var tasks = [];
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin) {
+    return statusCodePage(req, res, next, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins',
+    });
+  }
+
+  var username = req.query.username;
+
+  if (!username) {
+    return statusCodePage(req, res, next, {
+      statusCode: 400,
+      statusMessage: '<code>username</code> must be set.',
+    });
+  }
+
+  // You can only see users with a role less than yours
+  User.findOne({
+    name: username
+  }, function (err, userData) {
+    if (err || !userData) { return next(); }
+
+    // User
+    var user = options.user = modelParser.parseUser(userData);
+
+    if (authedUser.role >= user.role) {
+      return statusCodePage(req, res, next, {
+        statusCode: 403,
+        statusMessage: 'Cannot auth as a user with a higher rank.',
+      });
+    }
+
+    req.session.user = user;
+
+    res.redirect(user.userPageUrl);
+  });
+};
