@@ -55,7 +55,7 @@ var getScriptPageUrl = function (script) {
   var isLib = script.isLib || false;
   var scriptPath = script.installName
     .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
-  return (isLib ? '/libs/' : '/scripts/') + scriptPath;
+  return (isLib ? '/libs/' : '/scripts/') + encodeURI(scriptPath);
 };
 
 var getScriptViewSourcePageUrl = function (script) {
