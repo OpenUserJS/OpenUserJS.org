@@ -116,7 +116,7 @@ Blank spaces should be used in the following circumstances:
 * All binary operators except period, left-parenthesis, and left-bracket should be separated from their operands by a space.
 * No space should separate a unary operator and its operand except when the operator is a word such as `typeof`
 * Each semi-colon in the control part of a `for` statement should be followed with a space.
-* Whitespace should follow every comma.
+* Whitespace should follow every comma except when adding a newline
 
 ---
 
@@ -324,8 +324,11 @@ Avoid forms that are indistinguishable from common errors.
 
 ### Comma Operator
 
-Avoid the use of the comma operator, except for very disciplined use, in the control part of `for` statements
-*(this does not apply to the comma separator, which is used in object literals, array literals, var statements, and parameter lists).*
+Avoid the use of the comma operator, except for very disciplined use, in the control part of `for` statements.
+
+### Comma Separator
+
+Object literals, array literals, and parameter lists should not have a trailing comma on the last item.
 
 ---
 
