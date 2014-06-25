@@ -1044,12 +1044,21 @@ var parseJavascriptBlob = function (javascriptBlob) {
   var m = blobPathRegex.exec(javascriptBlob.path);
   javascriptBlob.isUserJS = !!m[4]; // .user exists
   javascriptBlob.isJSLibrary = !m[4]; // .user doesn't exist
+
   javascriptBlob.path = {
     full: javascriptBlob.path,
     dir: m[1],
     name: m[2],
     ext: m[3],
     filename: m[2] + m[3]
+  };
+
+  javascriptBlob.pathAsEncoded = {
+    full: encodeURIComponent(javascriptBlob.path.full),
+    dir: encodeURIComponent(javascriptBlob.path.dir),
+    name: encodeURIComponent(javascriptBlob.path.name),
+    ext: encodeURIComponent(javascriptBlob.path.ext),
+    filename: encodeURIComponent(javascriptBlob.path.filename)
   };
 
   // Errors
