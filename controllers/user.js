@@ -131,7 +131,7 @@ var setupUserSidePanel = function (options) {
       return {
         id: index,
         name: roleName,
-        selected: index === user.role,
+        selected: index === user.role
       };
     });
 
@@ -312,7 +312,7 @@ exports.userCommentListPage = function (req, res, next) {
     // commentListQuery: Populate: discussion
     commentListQuery.populate({
       path: '_discussionId',
-      model: 'Discussion',
+      model: 'Discussion'
     });
 
     // SearchBar
@@ -799,7 +799,7 @@ exports.userGitHubRepoListPage = function (req, res, next) {
       function (githubUser, callback) {
         options.githubUser = githubUser;
         options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
-          user: githubUser.login,
+          user: githubUser.login
         });
 
         // Pagination
@@ -813,7 +813,7 @@ exports.userGitHubRepoListPage = function (req, res, next) {
         github.repos.getFromUser({
           user: encodeURIComponent(githubUserId),
           page: pagination.currentPage,
-          per_page: pagination.itemsPerPage,
+          per_page: pagination.itemsPerPage
         }, callback);
       },
       // function (githubRepoList, callback) {
@@ -825,7 +825,7 @@ exports.userGitHubRepoListPage = function (req, res, next) {
           var url = authedUser.userGitHubRepoPageUrl;
           url = helpers.updateUrlQueryString(url, {
             user: options.githubUser.login,
-            repo: githubRepo.name,
+            repo: githubRepo.name
           });
           githubRepo.userGitHubRepoPageUrl = url;
         });
@@ -842,7 +842,7 @@ exports.userGitHubRepoListPage = function (req, res, next) {
       console.error(err);
       return statusCodePage(req, res, next, {
         statusCode: 500,
-        statusMessage: 'Server Error',
+        statusMessage: 'Server Error'
       });
     }
 
@@ -874,7 +874,7 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
   if (!(githubUserId && githubRepoName && githubBlobPath)) {
     return statusCodePage(req, res, next, {
       statusCode: 400,
-      statusMessage: 'Bad Request. Require <code>user</code>, <code>repo</code>, and <code>path</code> to be set.',
+      statusMessage: 'Bad Request. Require <code>user</code>, <code>repo</code>, and <code>path</code> to be set.'
     });
   }
 
@@ -884,7 +884,7 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
     function (callback) {
       github.gitdata.getJavascriptBlobs({
         user: encodeURIComponent(githubUserId),
-        repo: encodeURIComponent(githubRepoName),
+        repo: encodeURIComponent(githubRepoName)
       }, callback);
     },
     function (javascriptBlobs, callback) {
@@ -904,7 +904,7 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
       github.usercontent.getBlobAsUtf8({
         user: encodeURIComponent(githubUserId),
         repo: encodeURIComponent(githubRepoName),
-        path: encodeURIComponent(githubBlobPath),
+        path: encodeURIComponent(githubBlobPath)
       }, callback);
     },
     function (blobUtf8, callback) {
@@ -945,7 +945,7 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
       console.error(githubUserId, githubRepoName, githubBlobPath);
       return statusCodePage(req, res, next, {
         statusCode: 400,
-        statusMessage: err,
+        statusMessage: err
       });
     }
 
@@ -975,7 +975,7 @@ exports.userGitHubRepoPage = function (req, res, next) {
   if (!(githubUserId && githubRepoName)) {
     return statusCodePage(req, res, next, {
       statusCode: 400,
-      statusMessage: 'Bad Request. Require <code>?user=githubUserName&repo=githubRepoName</code>',
+      statusMessage: 'Bad Request. Require <code>?user=githubUserName&repo=githubRepoName</code>'
     });
   }
 
@@ -984,7 +984,7 @@ exports.userGitHubRepoPage = function (req, res, next) {
   });
   options.userGitHubRepoPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoPageUrl, {
     user: githubUserId,
-    repo: githubRepoName,
+    repo: githubRepoName
   });
 
   // Metadata
@@ -999,7 +999,7 @@ exports.userGitHubRepoPage = function (req, res, next) {
       function (callback) {
         github.repos.get({
           user: encodeURIComponent(githubUserId),
-          repo: encodeURIComponent(githubRepoName),
+          repo: encodeURIComponent(githubRepoName)
         }, callback);
       },
       function (repo, callback) {
@@ -1007,7 +1007,7 @@ exports.userGitHubRepoPage = function (req, res, next) {
 
         github.gitdata.getJavascriptBlobs({
           user: encodeURIComponent(repo.owner.login),
-          repo: encodeURIComponent(repo.name),
+          repo: encodeURIComponent(repo.name)
         }, callback);
       },
       function (javascriptBlobs, callback) {
@@ -1017,7 +1017,7 @@ exports.userGitHubRepoPage = function (req, res, next) {
           javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
             user: githubUserId,
             repo: githubRepoName,
-            path: javascriptBlob.path,
+            path: javascriptBlob.path
           });
         });
         _.each(javascriptBlobs, parseJavascriptBlob);
@@ -1049,7 +1049,7 @@ var parseJavascriptBlob = function (javascriptBlob) {
     dir: m[1],
     name: m[2],
     ext: m[3],
-    filename: m[2] + m[3],
+    filename: m[2] + m[3]
   };
 
   // Errors
@@ -1103,14 +1103,14 @@ exports.userManageGitHubPage = function (req, res, next) {
             function (callback) {
               var githubUserId = authedUser.githubUserId();
               github.user.getFrom({
-                user: encodeURIComponent(githubUserId),
+                user: encodeURIComponent(githubUserId)
               }, callback);
             },
             function (githubUser, callback) {
               options.githubUser = githubUser;
               console.log(githubUser);
               User.findOne({
-                _id: authedUser._id,
+                _id: authedUser._id
               }, callback);
             },
             function (userData, callback) {
@@ -1185,7 +1185,7 @@ exports.userManageGitHubPage = function (req, res, next) {
   async.parallel(tasks, function (err) {
     if (err) {
       return statusCodePage(req, res, next, {
-        statusMessage: err,
+        statusMessage: err
       })
     }
 
