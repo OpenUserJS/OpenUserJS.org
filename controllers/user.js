@@ -1054,11 +1054,11 @@ var parseJavascriptBlob = function (javascriptBlob) {
   };
 
   javascriptBlob.pathAsEncoded = {
-    full: encodeURIComponent(javascriptBlob.path.full),
-    dir: encodeURIComponent(javascriptBlob.path.dir),
-    name: encodeURIComponent(javascriptBlob.path.name),
-    ext: encodeURIComponent(javascriptBlob.path.ext),
-    filename: encodeURIComponent(javascriptBlob.path.filename)
+    full: encodeURI(javascriptBlob.path.full),
+    dir: encodeURI(javascriptBlob.path.dir),
+    name: encodeURI(javascriptBlob.path.name),
+    ext: encodeURI(javascriptBlob.path.ext),
+    filename: encodeURI(javascriptBlob.path.filename)
   };
 
   // Errors
