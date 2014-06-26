@@ -89,7 +89,7 @@ var getScriptPageTasks = function (options) {
       });
     }
   } else if (!script.isLib) {
-    options.script.meta.licenses = [{ name: 'MIT License (Expat)' }];
+    options.script.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
   // Show homepages of the script
