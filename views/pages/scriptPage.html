@@ -37,7 +37,7 @@
               {{/script.hasGroups}}
               {{#script.homepages}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.homepages}}
               {{#script.support}}<p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.support}}
-              {{#script.meta.copyright}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{script.meta.copyright}}</p>{{/script.meta.copyright}}
+              {{#script.copyrights}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{name}}</p>{{/script.copyrights}}
               {{#script.licenses}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{name}}</p>{{/script.licenses}}
               {{#hasCollab}}
               <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>
