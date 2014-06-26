@@ -148,15 +148,15 @@ Generally, use line comments. Save block comments for formal documentation and f
 
 ### Naming
 
-Variable and function names should be clearly descriptive of what they contain, in the context of the application.
+**Variable and function names should be clearly descriptive of what they contain, in the context of the application**.
 
 Names should be formed from the 26 upper and lower case letters *(A-Z, a-z)*, the 10 digits _(0-9)_, and the underscore *(_)*.
-Avoid use of international characters because they may not read well or be understood everywhere. Do not use the dollar sign *($)* or backslash *(\)* in names.
+Avoid use of international characters because they may not read well or be understood everywhere and may cause [BOM][WIKIPEDIABOM]s to appear. Do not use the dollar sign *($)* or backslash *(\)* in names.
 
 Do not use an underscore *(_)* as the first character of a name. It is sometimes used to indicate privacy, but it does not actually provide privacy.
 If privacy is important, use the forms that provide private members. Avoid conventions that demonstrate a lack of competence.
 
-Normal variables and functions should be [camel-case][camelcase], starting with a lower-case letter.
+Normal variables and functions should be [camel-case][camelcase] *(a.k.a interCaps)*, starting with a lower-case letter.
 
 Constructor functions which must be used with the new prefix should start with a capital letter.
 JavaScript issues neither a compile-time warning nor a run-time warning if a required `new` is omitted. Bad things can happen if `new` is not used, so the capitalization convention is the only defense we have.
@@ -360,7 +360,9 @@ so that the `+ +` is not misread as `++`
 
 ### Restrictions
 
-The following may not be used:
+The following **may not** be used:
+* Coffee scripts are prohibited from pull requests.
+* Lowercase UTF-8 character encoding assignment... always use uppercase as per [IETF][IETFRFC3629S4].
 * implied global variables *([read more][impliedglobals])*
 * `eval()`
 * `Function` constructor (it uses `eval()`)
@@ -375,8 +377,8 @@ var i = parseInt(num, 10); // base 10 - decimal system
 
 Read more on the [awful parts of JavaScript][awfulparts].
 
-
-
+  [WIKIPEDIABOM]: http://www.wikipedia.org/wiki/Byte_order_mark
+  [IETFRFC3629S4]: http://tools.ietf.org/html/rfc3629#section-4
   [awfulparts]: http://oreilly.com/javascript/excerpts/javascript-good-parts/awful-parts.html
   [camelcase]: http://en.wikipedia.org/wiki/CamelCase
   [codeconventions]: http://javascript.crockford.com/code.html
