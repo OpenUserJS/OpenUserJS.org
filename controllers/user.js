@@ -1004,6 +1004,9 @@ exports.userGitHubRepoPage = function (req, res, next) {
       },
       function (repo, callback) {
         options.repo = repo;
+        options.repoAsEncoded = {
+          default_branch: encodeURI(options.repo.default_branch)
+        }
 
         github.gitdata.getJavascriptBlobs({
           user: encodeURIComponent(repo.owner.login),
