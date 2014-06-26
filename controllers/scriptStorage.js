@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === 'production') {
   scripts.forEach(function (script) {
     //console.log(script.installName);
     var oldPath = script.installName;
-    var newPath = cleanFilename(script.author) + '/' 
+    var newPath = cleanFilename(script.author) + '/'
       + cleanFilename(script.name) + (script.isLib ? '.js' : '.user.js');
     var newCat = (script.isLib ? 'libs' : 'scripts') + '/' + newPath
       .replace(/(\.user)?\.js$/, '')  + '/issues';
@@ -48,7 +48,7 @@ if (process.env.NODE_ENV === 'production') {
         discussion.save(function (){ console.log(newCat, path); });
       });
     });
-    
+
     var params = {
       Bucket: bucketName,
       CopySource: bucketName + '/' + oldPath,
@@ -60,7 +60,7 @@ if (process.env.NODE_ENV === 'production') {
       if (err) { return console.log(oldPath + ' - copy fail'); }
       script.save(function () {});
 
-      s3.deleteObject({ Bucket : params.Bucket, Key : oldPath}, 
+      s3.deleteObject({ Bucket : params.Bucket, Key : oldPath},
         function (err, data) {
           if (err) {
             console.log(oldPath + '- delete fail');
@@ -79,7 +79,7 @@ function getInstallName (req) {
 exports.getInstallName = getInstallName;
 
 function caseInsensitive (installName) {
-  return new RegExp('^' + installName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") 
+  return new RegExp('^' + installName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
     + '$', 'i');
 }
 exports.caseInsensitive = caseInsensitive;
@@ -112,7 +112,7 @@ exports.sendScript = function (req, res, next) {
     if (!script) { return next(); }
 
     // Send the script
-    res.set('Content-Type', 'text/javascript; charset=utf-8');
+    res.set('Content-Type', 'text/javascript; charset=UTF-8');
     stream.pipe(res);
 
     // Don't count installs on libraries
@@ -134,7 +134,7 @@ exports.sendMeta = function (req, res, next) {
 
       if (!script) { return next(); }
 
-      res.set('Content-Type', 'text/javascript; charset=utf-8');
+      res.set('Content-Type', 'text/javascript; charset=UTF-8');
       meta = script.meta;
 
       res.write('// ==UserScript==\n');
