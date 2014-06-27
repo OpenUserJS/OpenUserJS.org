@@ -25,14 +25,6 @@
           <h3>OpenUserJS.org Specific</h3>
           <div class="list-group script-metadata-definitions">
             <div class="list-group-item active">
-              <h4 class="list-group-item-heading"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h4>
-              <p class="list-group-item-text">The author of the script. Required for <a href="#collaboration">Collaboration</a>. Only the author may edit. Last value shown.</p>
-            </div>
-            <div class="list-group-item active">
-              <h4 class="list-group-item-heading"><code>@collaborator username</code></h4>
-              <p class="list-group-item-text">Can be defined multiple times. Required for <a href="#collaboration">Collaboration</a>. All values shown</p>
-            </div>
-            <div class="list-group-item active">
               <h4 class="list-group-item-heading"><code>@description This script even does the laundry!</code></h4>
               <p class="list-group-item-text">Specially formatted on the script page. Last value shown.</p>
             </div>
@@ -56,6 +48,14 @@
             <div class="list-group-item active">
               <h4 class="list-group-item-heading"><code>@supportURL url</code></h4>
               <p class="list-group-item-text">A url of http, https or mailto protocol. Specially formatted on the script page. Last value shown.</p>
+            </div>
+            <div class="list-group-item inactive">
+              <h4 class="list-group-item-heading"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h4>
+              <p class="list-group-item-text">The author of the script. Required for <a href="#collaboration">Collaboration</a>. Only the author may edit. Last value shown. This key is subject to change.</p>
+            </div>
+            <div class="list-group-item inactive">
+              <h4 class="list-group-item-heading"><code>@collaborator username</code></h4>
+              <p class="list-group-item-text">Can be defined multiple times. Required for <a href="#collaboration">Collaboration</a>. All values shown. This key is subject to change.</p>
             </div>
           </div>
 
