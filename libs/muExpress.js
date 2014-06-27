@@ -6,7 +6,7 @@ function renderFile(res, path, options) {
   // If you need to render a file with a different content
   // type, do it directly on the response object
   if (process.env.NODE_ENV !== 'production') { mu.clearCache(); }
-  res.set('Content-Type', 'text/html; charset=utf-8');
+  res.set('Content-Type', 'text/html; charset=UTF-8');
   mu.compileAndRender(path, options).pipe(res);
 }
 
