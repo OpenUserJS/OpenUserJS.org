@@ -100,12 +100,11 @@ var getScriptPageTasks = function (options) {
       script.meta.homepageURL.forEach(function (homepage) {
         htmlStub = '<a href="' + homepage + '"></a>';
         if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-          options.script.homepages.push({
+          options.script.homepages.unshift({
             url: homepage,
             text: decodeURI(homepage),
             hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(homepage)
           });
-          options.script.homepages = options.script.homepages.reverse();
         }
       });
     }
@@ -118,9 +117,8 @@ var getScriptPageTasks = function (options) {
     } else {
       options.script.copyrights = [];
       script.meta.copyright.forEach(function (copyright) {
-        options.script.copyrights.push({ name: copyright });
+        options.script.copyrights.unshift({ name: copyright });
       });
-      options.script.copyrights = options.script.copyrights.reverse();
     }
   }
 
@@ -131,9 +129,8 @@ var getScriptPageTasks = function (options) {
     } else {
       options.script.licenses = [];
       script.meta.license.forEach(function (license) {
-        options.script.licenses.push({ name: license });
+        options.script.licenses.unshift({ name: license });
       });
-      options.script.licenses = options.script.licenses.reverse();
     }
   } else if (!script.isLib) {
     options.script.licenses = [{ name: 'MIT License (Expat)' }];
@@ -147,9 +144,8 @@ var getScriptPageTasks = function (options) {
     } else {
       options.script.collaborators = [];
       script.meta.collaborator.forEach(function (collaborator) {
-        options.script.collaborators.push({ url: encodeURIComponent(collaborator), text: collaborator });
+        options.script.collaborators.unshift({ url: encodeURIComponent(collaborator), text: collaborator });
       });
-      options.script.collaborators = options.script.collaborators.reverse();
     }
   }
 
