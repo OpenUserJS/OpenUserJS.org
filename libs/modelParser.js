@@ -18,28 +18,46 @@ var parseModelFnMap = {};
  * Misc: Dates
  */
 
-moment.lang('en', {
-  relativeTime: {
-    future: "in %s",
-    past: "%s ago",
-    s: function (number, withoutSuffix, key, isFuture) { return number + "s"; },
-    m: "1m",
-    mm: "%dm",
-    h: "1h",
-    hh: "%dh",
-    d: "1D",
-    dd: "%dD",
-    M: "1M",
-    MM: "%dM",
-    y: "1Y",
-    yy: "%dY"
+var momentLangFromNow = function(date) {
+  return '[' + date.fromNow() + ']';
+};
+var momentLangTinyDate = function(date) {
+  if(date.year() === moment().year()) {
+    return '[' + date.format("D MMM") + ']';
+  } else {
+    return '[' + date.format("MMM 'YY") + ']';
+  }
+};
+moment.lang('en-tiny', {
+  calendar : {
+    sameDay : function() {return momentLangFromNow(this); },
+    lastDay : function() {return momentLangFromNow(this); },
+    lastWeek : function() {return momentLangFromNow(this); },
+    nextDay : function(){ return momentLangTinyDate(this); },
+    nextWeek : function(){ return momentLangTinyDate(this); },
+    sameElse : function(){ return momentLangTinyDate(this); },
+  },
+  relativeTime : {
+    future : "in %s",
+    past : "%s ago",
+    s : function (number, withoutSuffix, key, isFuture) { return number + "s"; },
+    m : "1m",
+    mm : "%dm",
+    h : "1h",
+    hh : "%dh",
+    d : "1d",
+    dd : "%dd",
+    M : "1M",
+    MM : "%dM",
+    y : "1y",
+    yy : "%dy"
   }
 });
 
 var parseDateProperty = function (obj, key) {
   var date = obj[key];
   obj[key + 'ISOFormat'] = date.toISOString();
-  obj[key + 'Humanized'] = moment(date).fromNow();
+  obj[key + 'Humanized'] = moment(date).lang('en-tiny').calendar();
 };
 
 /**
