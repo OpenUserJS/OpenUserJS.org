@@ -65,15 +65,47 @@ var getScriptPageTasks = function (options) {
       .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
   tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
-  // Show collaborators of the script
-  if (script.meta.author && script.meta.collaborator) {
-    options.hasCollab = true;
-    if (typeof script.meta.collaborator === 'string') {
-      options.script.collaborators = [{ url: encodeURIComponent(script.meta.collaborator), text: script.meta.collaborator }];
+  // Show the groups the script belongs to
+  tasks.push(function (callback) {
+    script.hasGroups = false;
+    script.groups = [];
+
+    Group.find({
+      _scriptIds: script._id
+    }, function (err, scriptGroupList) {
+      if (err) return callback(err);
+
+      scriptGroupList = _.map(scriptGroupList, modelParser.parseGroup);
+
+      script.hasGroups = scriptGroupList.length > 0;
+      script.groups = scriptGroupList;
+
+      callback();
+    });
+  });
+
+  // Show homepages of the script
+  if (script.meta.homepageURL) {
+    if (typeof script.meta.homepageURL === 'string') {
+      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
+      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        options.script.homepages = [{
+          url: script.meta.homepageURL,
+          text: decodeURI(script.meta.homepageURL),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
+        }];
+      }
     } else {
-      options.script.collaborators = [];
-      script.meta.collaborator.forEach(function (collaborator) {
-        options.script.collaborators.unshift({ url: encodeURIComponent(collaborator), text: collaborator });
+      options.script.homepages = [];
+      script.meta.homepageURL.forEach(function (homepage) {
+        htmlStub = '<a href="' + homepage + '"></a>';
+        if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+          options.script.homepages.unshift({
+            url: homepage,
+            text: decodeURI(homepage),
+            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(homepage)
+          });
+        }
       });
     }
   }
@@ -104,50 +136,18 @@ var getScriptPageTasks = function (options) {
     options.script.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
-  // Show homepages of the script
-  if (script.meta.homepageURL) {
-    if (typeof script.meta.homepageURL === 'string') {
-      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
-      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        options.script.homepages = [{
-          url: script.meta.homepageURL,
-          text: decodeURI(script.meta.homepageURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
-        }];
-      }
+  // Show collaborators of the script
+  if (script.meta.author && script.meta.collaborator) {
+    options.hasCollab = true;
+    if (typeof script.meta.collaborator === 'string') {
+      options.script.collaborators = [{ url: encodeURIComponent(script.meta.collaborator), text: script.meta.collaborator }];
     } else {
-      options.script.homepages = [];
-      script.meta.homepageURL.forEach(function (homepage) {
-        htmlStub = '<a href="' + homepage + '"></a>';
-        if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-          options.script.homepages.unshift({
-            url: homepage,
-            text: decodeURI(homepage),
-            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(homepage)
-          });
-        }
+      options.script.collaborators = [];
+      script.meta.collaborator.forEach(function (collaborator) {
+        options.script.collaborators.unshift({ url: encodeURIComponent(collaborator), text: collaborator });
       });
     }
   }
-
-  // Show the groups the script belongs to
-  tasks.push(function (callback) {
-    script.hasGroups = false;
-    script.groups = [];
-
-    Group.find({
-      _scriptIds: script._id
-    }, function (err, scriptGroupList) {
-      if (err) return callback(err);
-
-      scriptGroupList = _.map(scriptGroupList, modelParser.parseGroup);
-
-      script.hasGroups = scriptGroupList.length > 0;
-      script.groups = scriptGroupList;
-
-      callback();
-    });
-  });
 
   // Show which libraries hosted on the site a script uses
   if (!script.isLib && script.uses && script.uses.length > 0) {
