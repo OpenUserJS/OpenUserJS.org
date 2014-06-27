@@ -17,6 +17,7 @@ node_modules
 
 data
 fakeS3
+dev/fakeS3
 cert
 aws.json
 prod.sh

@@ -49,7 +49,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 
 **NOTE:** You may set the app to listen on a specific port by setting a `PORT` environment variable.  Additionally, if your application instance will not be accessible at either http://localhost:8080 or http://localhost:<PORT> you should set the `AUTH_CALLBACK_BASE_URL` environment variable to the root (e.g. http://myserver.local:8080)
 
-1. Open a terminal, navigate to the root of the OpenUserJS.org project, and run `./fakes3.sh`.  Windows users will need to run the script commands manually.
+1. Open a terminal, navigate to the root of the OpenUserJS.org project, and run `dev/fakes3.sh`.  Windows users will need to run the script commands manually.
 2. Open another terminal, navigate to the root of the OpenUserJS.org project, and run `npm start`
 
 
