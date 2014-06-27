@@ -115,8 +115,8 @@ exports.sendScript = function (req, res, next) {
     res.set('Content-Type', 'text/javascript; charset=utf-8');
     stream.pipe(res);
 
-    // Don't count installs on libraries
-    if (script.isLib) { return; }
+    // Don't count installs on raw source route
+    if (script.isLib || req.route.params.type) { return; }
 
     // Update the install count
     ++script.installs;
@@ -232,7 +232,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   var libraryRegex = new RegExp('^https?:\/\/' +
     (process.env.NODE_ENV === 'production' ?
       'openuserjs\.org' : 'localhost:8080') +
-    '\/libs\/src\/(.+?\/.+?\.js)$', '');
+    '\/(?:libs\/src|src\/libs)\/(.+?\/.+?\.js)$', '');
 
   if (!meta) { return callback(null); }
 

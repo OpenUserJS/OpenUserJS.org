@@ -172,9 +172,13 @@ app.get('/libs/:username/:scriptname', script.lib(script.view));
 app.get('/lib/:scriptname/edit', script.lib(script.edit));
 app.post('/lib/:scriptname/edit', script.lib(script.edit));
 app.get('/libs/:username/:scriptname/source', script.lib(user.editScript));
-app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript);
 app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
 //app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
+
+// Raw source
+app.get('/src/:type(scripts|libs)/:username/:scriptname',
+  scriptStorage.sendScript);
+app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript); // Legacy
 
 // Issues routes
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
