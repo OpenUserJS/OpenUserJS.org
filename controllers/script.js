@@ -78,6 +78,18 @@ var getScriptPageTasks = function (options) {
     }
   }
 
+  // Show copyrights of the script
+  if (script.meta.copyright) {
+    if (typeof script.meta.copyright === 'string') {
+      options.script.copyrights = [{ name: script.meta.copyright }];
+    } else {
+      options.script.copyrights = [];
+      script.meta.copyright.forEach(function (copyright) {
+        options.script.copyrights.push({ name: copyright });
+      });
+    }
+  }
+
   // Show licensings of the script
   if (script.meta.license) {
     if (typeof script.meta.license === 'string') {
