@@ -19,6 +19,7 @@ var helpers = require('../libs/helpers');
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var updateSessions = require('../libs/modifySessions').update;
 var nil = helpers.nil;
+var metaData = require('../libs/templateHelpers').metaData;
 
 // This controller is only for use by users with a role of admin or above
 
@@ -224,9 +225,7 @@ exports.adminPage = function (req, res, next) {
   }
 
   // Metadata
-  options.title = 'Admin | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, 'Admin');
 
   //---
   async.parallel(tasks, function (err) {
@@ -256,9 +255,7 @@ exports.adminApiKeysPage = function (req, res, next) {
   }
 
   // Metadata
-  options.title = 'Admin: API Keys | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, ['API Keys', 'Admin']);
 
   //--- Tasks
 

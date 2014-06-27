@@ -8,6 +8,7 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+var metaData = require('../libs/templateHelpers').metaData;
 
 // When content reaches a its threshold of flags it gets marked as flagged
 // and it can now be removed by moderators
@@ -16,9 +17,12 @@ exports.flagged = function (req, res, next) {
   var type = req.route.params.shift() || 'users';
   var baseUrl = '/flagged' + (type ? '/' + type : '');
   var options = {
-    title: 'Flagged Content', moderation: true,
+    moderation: true,
     username: user ? user.name : ''
   };
+
+  // Metadata
+  metaData(options, 'Flagged Content');
 
   options[type + 'Type'] = true;
 
@@ -73,7 +77,10 @@ exports.graveyard = function (req, res, next) {
   var type = req.route.params.shift() || 'users';
   var baseUrl = '/graveyard' + (type ? '/' + type : '');
   var contentType = contentTypes[type];
-  var options = { title: 'The Graveyard', username: user ? user.name : '' };
+  var options = { username: user ? user.name : '' };
+
+  // Metadata
+  metaData(options, 'Graveyard');
 
   if (!contentType || !user || user.role > 3) { return next(); }
 
@@ -151,9 +158,7 @@ exports.removedItemListPage = function (req, res, next) {
   }
 
   // Metadata
-  options.title = 'Graveyard | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, 'Graveyard');
 
   // removedItemListQuery
   var removedItemListQuery = Remove.find();
@@ -207,9 +212,7 @@ exports.modPage = function (req, res, next) {
   }
 
   // Metadata
-  options.title = 'Moderation | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, 'Moderation');
 
   //---
   res.render('pages/modPage', options);

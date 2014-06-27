@@ -9,6 +9,7 @@ var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+var metaData = require('../libs/templateHelpers').metaData;
 
 var categories = [
   {
@@ -48,9 +49,7 @@ exports.categoryListPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // Metadata
-  options.title = 'OpenUserJS.org';
-  options.pageMetaDescription = '.';
-  options.pageMetaKeywords = null;
+  metaData(options, 'Discussions');
 
   // categoryList
   options.categoryList = _.map(categories, modelParser.parseCategory);
@@ -133,9 +132,7 @@ exports.list = function (req, res, next) {
   options.canPostTopicToCategory = category.canUserPostTopic(authedUser);
 
   // Metadata
-  options.title = category.name + ' | OpenUserJS.org';
-  options.pageMetaDescription = category.description;
-  options.pageMetaKeywords = null;
+  metaData(options, [category.name, 'Discussions'], category.description);
 
   // discussionListQuery
   var discussionListQuery = Discussion.find();
@@ -221,9 +218,7 @@ exports.show = function (req, res, next) {
     var discussion = options.discussion = modelParser.parseDiscussion(discussionData);
 
     // Metadata
-    options.title = discussion.topic + ' | OpenUserJS.org';
-    options.pageMetaDescription = discussion.topic;
-    options.pageMetaKeywords = null;
+    metaData(options, [discussion.topic, 'Discussions'], discussion.topic);
 
     // commentListQuery
     var commentListQuery = Comment.find();
@@ -298,9 +293,7 @@ exports.newTopic = function (req, res, next) {
   options.category = category;
 
   // Metadata
-  options.title = 'New Topic | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, ['New Topic', 'Discussions']);
 
   //---
   res.render('pages/newDiscussionPage', options);

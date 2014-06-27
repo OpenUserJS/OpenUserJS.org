@@ -10,6 +10,7 @@ var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
 var execQueryTask = require('../libs/tasks').execQueryTask;
+var metaData = require('../libs/templateHelpers').metaData;
 
 // clean the name of the group so it is url safe
 function cleanGroupName(name) {
@@ -140,9 +141,7 @@ exports.list = function (req, res) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // Metadata
-  options.title = 'Groups | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, 'Groups');
 
   // groupListQuery
   var groupListQuery = Group.find();
@@ -181,11 +180,10 @@ exports.list = function (req, res) {
     // popularGroupList
     options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
 
-    // Page <head> meta keywords
-    var pageMetaKeywords = ['userscript', 'greasemonkey'];
-    if (options.groupList)
-      pageMetaKeywords.concat(_.pluck(options.groupList, 'name'));
-    options.pageMetaKeywords = pageMetaKeywords.join(', ');
+    // Metadata
+    if (options.groupList) {
+      metaData(options, 'Groups', null, _.pluck(options.groupList, 'name'));
+    }
   };
   function render() { res.render('pages/groupListPage', options); }
   function asyncComplete() { preRender(); render(); }
@@ -234,9 +232,7 @@ exports.view = function (req, res, next) {
 
     // Metadata
     var group = options.group = modelParser.parseGroup(groupData);
-    options.title = group.name + ' | OpenUserJS.org';
-    options.pageMetaDescription = null;
-    options.pageMetaKeywords = null;
+    metaData(options, [group.name, 'Groups']);
 
     // scriptListQuery
     var scriptListQuery = Script.find();
@@ -283,12 +279,6 @@ exports.view = function (req, res, next) {
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(req);
-
-      // Page <head> meta keywords
-      var pageMetaKeywords = ['userscript', 'greasemonkey'];
-      if (options.groupList)
-        pageMetaKeywords.push(group.name);
-      options.pageMetaKeywords = pageMetaKeywords.join(', ');
 
       // Empty list
       options.scriptListIsEmptyMessage = 'No scripts.';

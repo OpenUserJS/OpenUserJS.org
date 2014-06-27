@@ -18,6 +18,7 @@ var modelsList = require('../libs/modelsList');
 var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
 var countTask = require('../libs/tasks').countTask;
+var metaData = require('../libs/templateHelpers').metaData;
 
 // Let script controllers know this is a lib route
 exports.lib = function (controller) {
@@ -323,8 +324,8 @@ exports.view = function (req, res, next) {
     script.scriptPermalinkInstallPageUrl = 'http://' + req.get('host') + script.scriptInstallPageUrl;
 
     // Metadata
-    options.title = script.name + ' | OpenUserJS.org';
-    options.pageMetaDescription = script.meta.description ? script.meta.description : null;
+    metaData(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+      script.meta.description);
     options.isScriptPage = true;
 
     // SearchBar
@@ -339,10 +340,10 @@ exports.view = function (req, res, next) {
 
     //---
     function preRender() {
-      var pageMetaKeywords = ['userscript', 'greasemonkey'];
-      if (script.groups)
-        pageMetaKeywords.concat(_.pluck(script.groups, 'name'));
-      options.pageMetaKeywords = pageMetaKeywords.join(', ');
+      if (script.groups) {
+        metaData(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+          script.meta.description, _.pluck(script.groups, 'name'));
+      }
     };
     function render() { res.render('pages/scriptPage', options); }
     function asyncComplete() { preRender(); render(); }
@@ -379,10 +380,11 @@ exports.edit = function (req, res, next) {
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
-    //
+    // Metadata
     var script = options.script = modelParser.parseScript(scriptData);
     options.isOwner = authedUser && authedUser._id == script._authorId;
-    options.title = 'Edit Metadata: ' + script.name + ' | OpenUserJS.org';
+    metaData(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+      script.name);
 
     // If authed user is not the script author.
     if (!options.isOwner) { return next(); }

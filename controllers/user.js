@@ -28,6 +28,7 @@ var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 var settings = require('../models/settings.json');
 var github = require('./../libs/githubClient');
+var metaData = require('../libs/templateHelpers').metaData;
 
 function caseInsensitive (str) {
   return new RegExp('^' + (str || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
@@ -160,9 +161,7 @@ exports.userListPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // Metadata
-  options.title = 'Users | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, 'Users');
 
   // userListQuery
   var userListQuery = User.find();
@@ -199,6 +198,11 @@ exports.userListPage = function (req, res, next) {
 
     // Heading
     options.pageHeading = options.isFlagged ? 'Flagged Users' : 'Users';
+
+    // Metadata
+    if (options.isFlagged) {
+      metaData(options, ['Flagged Users', 'Moderation']);
+    }
   };
   function render() { res.render('pages/userListPage', options); }
   function asyncComplete(err) { if (err) { return next(); } else { preRender(); render(); } };
@@ -231,9 +235,7 @@ exports.view = function (req, res, next) {
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Metadata
-    options.title = user.name + ' | OpenUserJS.org';
-    options.pageMetaDescription = null;
-    options.pageMetaKeywords = null;
+    metaData(options, [user.name, 'Users']);
     options.isUserPage = true;
 
     // UserSidePanel
@@ -291,9 +293,7 @@ exports.userCommentListPage = function (req, res, next) {
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Metadata
-    options.title = user.name + ' | OpenUserJS.org';
-    options.pageMetaDescription = null;
-    options.pageMetaKeywords = null;
+    metaData(options, [user.name, 'Users']);
     options.isUserCommentListPage = true;
 
     // commentListQuery
@@ -377,9 +377,7 @@ exports.userScriptListPage = function (req, res, next) {
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Metadata
-    options.title = user.name + ' | OpenUserJS.org';
-    options.pageMetaDescription = null;
-    options.pageMetaKeywords = null;
+    metaData(options, [user.name, 'Users']);
     options.isUserScriptListPage = true;
 
     // scriptListQuery
@@ -467,9 +465,7 @@ exports.userEditProfilePage = function (req, res, next) {
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Metadata
-    options.title = user.name + ' | OpenUserJS.org';
-    options.pageMetaDescription = null;
-    options.pageMetaKeywords = null;
+    metaData(options, [user.name, 'Users']);
 
     // UserSidePanel
     setupUserSidePanel(options);
@@ -529,9 +525,7 @@ exports.userEditPreferencesPage = function (req, res, next) {
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Metadata
-    options.title = user.name + ' | OpenUserJS.org';
-    options.pageMetaDescription = null;
-    options.pageMetaKeywords = null;
+    metaData(options, [user.name, 'Users']);
 
     // UserSidePanel
     setupUserSidePanel(options);
@@ -631,11 +625,13 @@ exports.edit = function (req, res, next) {
 
   userStrats = req.session.user.strategies.slice(0);
   options = {
-    title: 'Edit Yourself',
     name: user.name,
     about: user.about,
     username: user.name
   };
+
+  // Metadata
+  metaData(options, ['Edit Yourself', 'Users']);
 
   req.route.params.push('author');
 
@@ -717,9 +713,7 @@ exports.newScriptPage = function (req, res, next) {
   options.uploadNewScriptPageUrl = '/user/add/scripts/upload';
 
   // Metadata
-  options.title = 'New Script | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, 'New Script');
 
   //---
   async.parallel(tasks, function (err) {
@@ -749,9 +743,7 @@ exports.newLibraryPage = function (req, res, next) {
   options.uploadNewScriptPageUrl = '/user/add/lib/upload';
 
   // Metadata
-  options.title = 'New Library | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, 'New Library');
 
   //---
   async.parallel(tasks, function (err) {
@@ -779,9 +771,7 @@ exports.userGitHubRepoListPage = function (req, res, next) {
   var githubUserId = options.githubUserId = req.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
   // Metadata
-  options.title = 'GitHub: List Repositories | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, ['Repositories', 'GitHub']);
 
   var pagination = getDefaultPagination(req);
   pagination.itemsPerPage = 30; // GitHub Default
@@ -988,9 +978,7 @@ exports.userGitHubRepoPage = function (req, res, next) {
   });
 
   // Metadata
-  options.title = 'GitHub: Import From Repository | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, ['Import', 'GitHub']);
 
   //--- Tasks
 
@@ -1096,9 +1084,7 @@ exports.userManageGitHubPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // Metadata
-  options.title = 'GitHub: Manage | OpenUserJS.org';
-  options.pageMetaDescription = null;
-  options.pageMetaKeywords = null;
+  metaData(options, ['Manage', 'GitHub']);
 
   //
   var TOO_MANY_SCRIPTS = 'GitHub user has too many scripts to batch import.';
@@ -1358,7 +1344,9 @@ function getExistingScript(req, options, authedUser, callback) {
     // A user who isn't logged in can't write a new script
     if (!authedUser) { return callback(null); }
 
-    options.title = 'Write a new ' + (options.isLib ? 'library ' : '') + 'script';
+    // Metadata
+    metaData(options, 'New ' + (options.isLib ? 'Library ' : 'Script'));
+
     options.source = '';
     options.url = req.url;
     options.owner = true;
@@ -1384,7 +1372,9 @@ function getExistingScript(req, options, authedUser, callback) {
 
       stream.on('data', function (d) { bufs.push(d); });
       stream.on('end', function () {
-        options.title = 'Edit ' + script.name;
+        // Metadata
+        metaData(options, 'Edit ' + script.name);
+
         options.source = Buffer.concat(bufs).toString('utf8');
         options.original = script.installName;
         options.url = req.url;
@@ -1401,16 +1391,6 @@ function getExistingScript(req, options, authedUser, callback) {
   }
 }
 
-function pageMeta(options) {
-  options.title = (options.title || '') + ' | OpenUserJS.org';
-  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
-  var pageMetaKeywords = ['userscript', 'greasemonkey'];
-  pageMetaKeywords.concat(['web browser']);
-  options.pageMetaKeywords = pageMetaKeywords.join(', ');
-
-  return options;
-}
-
 exports.editScript = function (req, res, next) {
   var authedUser = req.session.user;
 
@@ -1423,7 +1403,7 @@ exports.editScript = function (req, res, next) {
   options.isMod = authedUser && authedUser.role < 4;
 
   // Metadata
-  options = pageMeta(options);
+  metaData(options);
 
   //--- Tasks
 
