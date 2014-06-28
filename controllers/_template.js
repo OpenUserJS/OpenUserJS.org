@@ -30,8 +30,8 @@ exports.example = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  metaData(options);
+  // Page metadata
+  pageMetadata(options);
 
   //--- Tasks
 
@@ -54,8 +54,8 @@ exports.example = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  metaData(options);
+  // Page metadata
+  pageMetadata(options);
 
   // Scripts: Query
   var scriptListQuery = Script.find();

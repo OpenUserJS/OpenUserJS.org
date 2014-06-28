@@ -21,8 +21,8 @@ exports.flagged = function (req, res, next) {
     username: user ? user.name : ''
   };
 
-  // Metadata
-  metaData(options, 'Flagged Content');
+  // Page metadata
+  pageMetadata(options, 'Flagged Content');
 
   options[type + 'Type'] = true;
 
@@ -79,8 +79,8 @@ exports.graveyard = function (req, res, next) {
   var contentType = contentTypes[type];
   var options = { username: user ? user.name : '' };
 
-  // Metadata
-  metaData(options, 'Graveyard');
+  // Page metadata
+  pageMetadata(options, 'Graveyard');
 
   if (!contentType || !user || user.role > 3) { return next(); }
 
@@ -157,8 +157,8 @@ exports.removedItemListPage = function (req, res, next) {
     });
   }
 
-  // Metadata
-  metaData(options, 'Graveyard');
+  // Page metadata
+  pageMetadata(options, 'Graveyard');
 
   // removedItemListQuery
   var removedItemListQuery = Remove.find();
@@ -211,8 +211,8 @@ exports.modPage = function (req, res, next) {
     });
   }
 
-  // Metadata
-  metaData(options, 'Moderation');
+  // Page metadata
+  pageMetadata(options, 'Moderation');
 
   //---
   res.render('pages/modPage', options);

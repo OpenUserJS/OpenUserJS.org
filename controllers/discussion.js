@@ -48,8 +48,8 @@ exports.categoryListPage = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  metaData(options, 'Discussions');
+  // Page metadata
+  pageMetadata(options, 'Discussions');
 
   // categoryList
   options.categoryList = _.map(categories, modelParser.parseCategory);
@@ -131,8 +131,8 @@ exports.list = function (req, res, next) {
   category = options.category = modelParser.parseCategory(category);
   options.canPostTopicToCategory = category.canUserPostTopic(authedUser);
 
-  // Metadata
-  metaData(options, [category.name, 'Discussions'], category.description);
+  // Page metadata
+  pageMetadata(options, [category.name, 'Discussions'], category.description);
 
   // discussionListQuery
   var discussionListQuery = Discussion.find();
@@ -217,8 +217,8 @@ exports.show = function (req, res, next) {
     // Discussion
     var discussion = options.discussion = modelParser.parseDiscussion(discussionData);
 
-    // Metadata
-    metaData(options, [discussion.topic, 'Discussions'], discussion.topic);
+    // Page metadata
+    pageMetadata(options, [discussion.topic, 'Discussions'], discussion.topic);
 
     // commentListQuery
     var commentListQuery = Comment.find();
@@ -292,8 +292,8 @@ exports.newTopic = function (req, res, next) {
   //
   options.category = category;
 
-  // Metadata
-  metaData(options, ['New Topic', 'Discussions']);
+  // Page metadata
+  pageMetadata(options, ['New Topic', 'Discussions']);
 
   //---
   res.render('pages/newDiscussionPage', options);

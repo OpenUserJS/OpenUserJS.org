@@ -103,15 +103,15 @@ exports.statusCodePage = function (req, res, next, options) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  metaData(options, [options.statusCode, options.statusMessage], options.statusMessage);
+  // Page metadata
+  pageMetadata(options, [options.statusCode, options.statusMessage], options.statusMessage);
 
   //---
   res.status(options.statusCode).render('pages/statusCodePage', options);
 };
 
 // Add page metadata, containing title, description and keywords.
-function metaData(options, title, description, keywords) {
+function pageMetadata(options, title, description, keywords) {
   var titles = ['OpenUserJS'];
   if (typeof (title) === "string" && title !== "") {
     titles.unshift(title);

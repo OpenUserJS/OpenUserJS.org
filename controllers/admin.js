@@ -224,8 +224,8 @@ exports.adminPage = function (req, res, next) {
     });
   }
 
-  // Metadata
-  metaData(options, 'Admin');
+  // Page metadata
+  pageMetadata(options, 'Admin');
 
   //---
   async.parallel(tasks, function (err) {
@@ -254,8 +254,8 @@ exports.adminApiKeysPage = function (req, res, next) {
     });
   }
 
-  // Metadata
-  metaData(options, ['Site API Keys', 'Admin']);
+  // Page metadata
+  pageMetadata(options, ['Site API Keys', 'Admin']);
 
   //--- Tasks
 

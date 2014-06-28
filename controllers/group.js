@@ -140,8 +140,8 @@ exports.list = function (req, res) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  metaData(options, 'Groups');
+  // Page metadata
+  pageMetadata(options, 'Groups');
 
   // groupListQuery
   var groupListQuery = Group.find();
@@ -180,9 +180,9 @@ exports.list = function (req, res) {
     // popularGroupList
     options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
 
-    // Metadata
+    // Page metadata
     if (options.groupList) {
-      metaData(options, 'Groups', null, _.pluck(options.groupList, 'name'));
+      pageMetadata(options, 'Groups', null, _.pluck(options.groupList, 'name'));
     }
   };
   function render() { res.render('pages/groupListPage', options); }
@@ -230,9 +230,9 @@ exports.view = function (req, res, next) {
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
-    // Metadata
+    // Page metadata
     var group = options.group = modelParser.parseGroup(groupData);
-    metaData(options, [group.name, 'Groups']);
+    pageMetadata(options, [group.name, 'Groups']);
 
     // scriptListQuery
     var scriptListQuery = Script.find();

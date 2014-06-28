@@ -160,8 +160,8 @@ exports.userListPage = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  metaData(options, 'Users');
+  // Page metadata
+  pageMetadata(options, 'Users');
 
   // userListQuery
   var userListQuery = User.find();
@@ -199,9 +199,9 @@ exports.userListPage = function (req, res, next) {
     // Heading
     options.pageHeading = options.isFlagged ? 'Flagged Users' : 'Users';
 
-    // Metadata
+    // Page metadata
     if (options.isFlagged) {
-      metaData(options, ['Flagged Users', 'Moderation']);
+      pageMetadata(options, ['Flagged Users', 'Moderation']);
     }
   };
   function render() { res.render('pages/userListPage', options); }
@@ -234,8 +234,8 @@ exports.view = function (req, res, next) {
     user.aboutRendered = renderMd(user.about);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
-    // Metadata
-    metaData(options, [user.name, 'Users']);
+    // Page metadata
+    pageMetadata(options, [user.name, 'Users']);
     options.isUserPage = true;
 
     // UserSidePanel
@@ -292,8 +292,8 @@ exports.userCommentListPage = function (req, res, next) {
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
-    // Metadata
-    metaData(options, [user.name, 'Users']);
+    // Page metadata
+    pageMetadata(options, [user.name, 'Users']);
     options.isUserCommentListPage = true;
 
     // commentListQuery
@@ -376,8 +376,8 @@ exports.userScriptListPage = function (req, res, next) {
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
-    // Metadata
-    metaData(options, [user.name, 'Users']);
+    // Page metadata
+    pageMetadata(options, [user.name, 'Users']);
     options.isUserScriptListPage = true;
 
     // scriptListQuery
@@ -464,8 +464,8 @@ exports.userEditProfilePage = function (req, res, next) {
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
-    // Metadata
-    metaData(options, [user.name, 'Users']);
+    // Page metadata
+    pageMetadata(options, [user.name, 'Users']);
 
     // UserSidePanel
     setupUserSidePanel(options);
@@ -524,8 +524,8 @@ exports.userEditPreferencesPage = function (req, res, next) {
     var user = options.user = modelParser.parseUser(userData);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
-    // Metadata
-    metaData(options, [user.name, 'Users']);
+    // Page metadata
+    pageMetadata(options, [user.name, 'Users']);
 
     // UserSidePanel
     setupUserSidePanel(options);
@@ -630,8 +630,8 @@ exports.edit = function (req, res, next) {
     username: user.name
   };
 
-  // Metadata
-  metaData(options, ['Edit Yourself', 'Users']);
+  // Page metadata
+  pageMetadata(options, ['Edit Yourself', 'Users']);
 
   req.route.params.push('author');
 
@@ -712,8 +712,8 @@ exports.newScriptPage = function (req, res, next) {
   options.newScriptEditorPageUrl = '/user/add/scripts/new';
   options.uploadNewScriptPageUrl = '/user/add/scripts/upload';
 
-  // Metadata
-  metaData(options, 'New Script');
+  // Page metadata
+  pageMetadata(options, 'New Script');
 
   //---
   async.parallel(tasks, function (err) {
@@ -742,8 +742,8 @@ exports.newLibraryPage = function (req, res, next) {
   options.newScriptEditorPageUrl = '/user/add/lib/new';
   options.uploadNewScriptPageUrl = '/user/add/lib/upload';
 
-  // Metadata
-  metaData(options, 'New Library');
+  // Page metadata
+  pageMetadata(options, 'New Library');
 
   //---
   async.parallel(tasks, function (err) {
@@ -770,8 +770,8 @@ exports.userGitHubRepoListPage = function (req, res, next) {
   // GitHub
   var githubUserId = options.githubUserId = req.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
-  // Metadata
-  metaData(options, ['Repositories', 'GitHub']);
+  // Page metadata
+  pageMetadata(options, ['Repositories', 'GitHub']);
 
   var pagination = getDefaultPagination(req);
   pagination.itemsPerPage = 30; // GitHub Default
@@ -977,8 +977,8 @@ exports.userGitHubRepoPage = function (req, res, next) {
     repo: githubRepoName
   });
 
-  // Metadata
-  metaData(options, ['Import', 'GitHub']);
+  // Page metadata
+  pageMetadata(options, ['Import', 'GitHub']);
 
   //--- Tasks
 
@@ -1083,8 +1083,8 @@ exports.userManageGitHubPage = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  metaData(options, ['Manage', 'GitHub']);
+  // Page metadata
+  pageMetadata(options, ['Manage', 'GitHub']);
 
   //
   var TOO_MANY_SCRIPTS = 'GitHub user has too many scripts to batch import.';
@@ -1344,8 +1344,8 @@ function getExistingScript(req, options, authedUser, callback) {
     // A user who isn't logged in can't write a new script
     if (!authedUser) { return callback(null); }
 
-    // Metadata
-    metaData(options, 'New ' + (options.isLib ? 'Library ' : 'Script'));
+    // Page metadata
+    pageMetadata(options, 'New ' + (options.isLib ? 'Library ' : 'Script'));
 
     options.source = '';
     options.url = req.url;
@@ -1372,8 +1372,8 @@ function getExistingScript(req, options, authedUser, callback) {
 
       stream.on('data', function (d) { bufs.push(d); });
       stream.on('end', function () {
-        // Metadata
-        metaData(options, 'Edit ' + script.name);
+        // Page metadata
+        pageMetadata(options, 'Edit ' + script.name);
 
         options.source = Buffer.concat(bufs).toString('utf8');
         options.original = script.installName;
@@ -1402,8 +1402,8 @@ exports.editScript = function (req, res, next) {
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.role < 4;
 
-  // Metadata
-  metaData(options);
+  // Page metadata
+  pageMetadata(options);
 
   //--- Tasks
 

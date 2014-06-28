@@ -27,8 +27,8 @@ exports.home = function (req, res) {
   //
   options.librariesOnly = req.query.library !== undefined;
 
-  // Metadata
-  metaData(options, options.librariesOnly ? 'Libraries' : '');
+  // Page metadata
+  pageMetadata(options, options.librariesOnly ? 'Libraries' : '');
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -123,12 +123,12 @@ exports.home = function (req, res) {
       options.pageHeading = options.isFlagged ? 'Flagged Scripts' : 'Scripts';
     }
 
-    // Metadata
+    // Page metadata
     if (options.isFlagged) {
       if (options.librariesOnly) {
-        metaData(options, ['Flagged Libraries', 'Moderation']);
+        pageMetadata(options, ['Flagged Libraries', 'Moderation']);
       } else {
-        metaData(options, ['Flagged Scripts', 'Moderation']);
+        pageMetadata(options, ['Flagged Scripts', 'Moderation']);
       }
     }
   };
@@ -179,8 +179,8 @@ function getSearchResults(req, res, prefixSearch, fullSearch, opts, callback) {
     'scriptsList': scriptsList
   };
 
-  // Metadata
-  metaData(options, 'Searching for "' + search + '"');
+  // Page metadata
+  pageMetadata(options, 'Searching for "' + search + '"');
 
   modelsList.listScripts(opts, req.route.params, baseUrl,
     function (scriptsList) {
@@ -209,8 +209,8 @@ exports.toolbox = function (req, res) {
     scriptsList: scriptsList
   };
 
-  // Metadata
-  metaData(options, 'Toolbox');
+  // Page metadata
+  pageMetadata(options, 'Toolbox');
 
   modelsList.listScripts({ isLib: true }, req.route.params, '/toolbox',
     function (scriptsList) {
@@ -239,8 +239,8 @@ exports.register = function (req, res) {
   var options = {};
   var tasks = [];
 
-  // Metadata
-  metaData(options, 'Login / Register');
+  // Page metadata
+  pageMetadata(options, 'Login / Register');
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);

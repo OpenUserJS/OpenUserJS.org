@@ -56,8 +56,8 @@ exports.list = function (req, res, next) {
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
 
-    // Metadata
-    metaData(
+    // Page metadata
+    pageMetadata(
       options,
       [(open ? 'Issues' : 'Closed Issues'), script.name, (script.isLib ? 'Libraries' : 'Scripts')],
       category.description);
@@ -183,8 +183,8 @@ exports.view = function (req, res, next) {
       tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
       function preRender() {
-        // Metadata
-        metaData(options, [discussion.topic, 'Discussions'], discussion.topic);
+        // Page metadata
+        pageMetadata(options, [discussion.topic, 'Discussions'], discussion.topic);
 
         // commentList
         options.commentList = _.map(options.commentList, modelParser.parseComment);
@@ -265,8 +265,8 @@ exports.open = function (req, res, next) {
 
       //---
       function preRender() {
-        // Metadata
-        metaData(options, ['New Issue', script.name]);
+        // Page metadata
+        pageMetadata(options, ['New Issue', script.name]);
       };
       function render() { res.render('pages/scriptNewIssuePage', options); }
       function asyncComplete() { preRender(); render(); }

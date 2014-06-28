@@ -323,8 +323,8 @@ exports.view = function (req, res, next) {
     script.installNameSlug = installNameSlug;
     script.scriptPermalinkInstallPageUrl = 'http://' + req.get('host') + script.scriptInstallPageUrl;
 
-    // Metadata
-    metaData(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+    // Page metadata
+    pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
       script.meta.description);
     options.isScriptPage = true;
 
@@ -341,7 +341,7 @@ exports.view = function (req, res, next) {
     //---
     function preRender() {
       if (script.groups) {
-        metaData(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+        pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
           script.meta.description, _.pluck(script.groups, 'name'));
       }
     };
@@ -380,10 +380,10 @@ exports.edit = function (req, res, next) {
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
-    // Metadata
+    // Page metadata
     var script = options.script = modelParser.parseScript(scriptData);
     options.isOwner = authedUser && authedUser._id == script._authorId;
-    metaData(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+    pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
       script.name);
 
     // If authed user is not the script author.
