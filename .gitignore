@@ -22,4 +22,10 @@ cert
 aws.json
 prod.sh
 
+# Visual Studio
 /iisnode
+*.njsproj
+*.sln
+*.suo
+[Oo]bj/
+.jshintrc
