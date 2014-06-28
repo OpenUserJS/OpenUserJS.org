@@ -255,7 +255,7 @@ exports.adminApiKeysPage = function (req, res, next) {
   }
 
   // Metadata
-  metaData(options, ['API Keys', 'Admin']);
+  metaData(options, ['Site API Keys', 'Admin']);
 
   //--- Tasks
 
