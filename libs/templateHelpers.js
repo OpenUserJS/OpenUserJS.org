@@ -133,4 +133,4 @@ function pageMetadata(options, title, description, keywords) {
 
   options.pageMetaKeywords = pageMetaKeywords.join(', ');
 }
-exports.metaData = metaData;
+exports.pageMetadata = pageMetadata;

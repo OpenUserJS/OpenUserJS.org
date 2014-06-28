@@ -18,7 +18,7 @@ var modelsList = require('../libs/modelsList');
 var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
 var countTask = require('../libs/tasks').countTask;
-var metaData = require('../libs/templateHelpers').metaData;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // Let script controllers know this is a lib route
 exports.lib = function (controller) {

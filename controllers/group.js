@@ -10,7 +10,7 @@ var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
 var execQueryTask = require('../libs/tasks').execQueryTask;
-var metaData = require('../libs/templateHelpers').metaData;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // clean the name of the group so it is url safe
 function cleanGroupName(name) {

@@ -28,7 +28,7 @@ var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 var settings = require('../models/settings.json');
 var github = require('./../libs/githubClient');
-var metaData = require('../libs/templateHelpers').metaData;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 function caseInsensitive (str) {
   return new RegExp('^' + (str || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")

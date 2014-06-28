@@ -1,6 +1,6 @@
 var async = require('async');
 var _ = require('underscore');
-var metaData = require('../libs/templateHelpers').metaData;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Models
 var Group = require('../models/group').Group;

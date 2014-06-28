@@ -14,7 +14,7 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var removeSession = require('../libs/modifySessions').remove;
-var metaData = require('../libs/templateHelpers').metaData;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // The home page has scripts and groups in a sidebar
 exports.home = function (req, res) {

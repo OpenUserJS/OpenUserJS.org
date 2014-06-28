@@ -11,7 +11,7 @@ var scriptStorage = require('./scriptStorage');
 var discussionLib = require('./discussion');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
-var metaData = require('../libs/templateHelpers').metaData;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // List script issues
 exports.list = function (req, res, next) {

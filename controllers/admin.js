@@ -19,7 +19,7 @@ var helpers = require('../libs/helpers');
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var updateSessions = require('../libs/modifySessions').update;
 var nil = helpers.nil;
-var metaData = require('../libs/templateHelpers').metaData;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // This controller is only for use by users with a role of admin or above
 
