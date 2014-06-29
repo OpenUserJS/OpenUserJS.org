@@ -362,6 +362,14 @@ exports.storeScript = function (user, meta, buf, callback, update) {
       script.save(function (err, script) {
         s3.putObject({ Bucket: bucketName, Key: installName, Body: buf },
           function (err, data) {
+            // Don't save a script if storing failed
+            if (err) {
+              console.error(user.name, '-', installName);
+              console.error(JSON.stringify(err));
+              console.error(JSON.stringify(script.toObject()));
+              return callback(null);
+            }
+
             if (user.role === userRoles.length - 1) {
               var userDoc = user;
               if (!userDoc.save) {
