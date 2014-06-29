@@ -153,7 +153,7 @@ exports.sendMeta = function (req, res, next) {
           for (key in meta[name]) {
             data = meta[prefix][key];
             if (data instanceof Array) {
-              meta[prefix][key].forEach(function (value) {
+              data.forEach(function (value) {
                 res.write('// @' + prefix + ':' + key + (value ? whitespace + value : '') + '\n');
               });
             }
