@@ -187,6 +187,7 @@ function parseMeta(aString) {
     'namespace': true,
     'description': true,
     'version': true,
+    'author': true,
     'oujs:author': true
   };
   var unique = null;
