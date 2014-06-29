@@ -141,7 +141,7 @@ var getScriptPageTasks = function (options) {
   if (script.meta.oujs && script.meta.oujs.author && script.meta.oujs.collaborator) {
     options.hasCollab = true;
     if (typeof script.meta.oujs.collaborator === 'string') {
-      options.script.oujs.collaborators = [{ url: encodeURIComponent(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];
+      options.script.collaborators = [{ url: encodeURIComponent(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];
     } else {
       options.script.collaborators = [];
       script.meta.oujs.collaborator.forEach(function (collaborator) {
