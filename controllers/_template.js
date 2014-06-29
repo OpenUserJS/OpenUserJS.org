@@ -1,5 +1,6 @@
 var async = require('async');
 var _ = require('underscore');
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Models
 var Group = require('../models/group').Group;
@@ -29,12 +30,8 @@ exports.example = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  options.title = 'OpenUserJS.org';
-  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
-  var pageMetaKeywords = ['userscript', 'greasemonkey'];
-  pageMetaKeywords.concat(['web browser']);
-  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+  // Page metadata
+  pageMetadata(options);
 
   //--- Tasks
 
@@ -57,12 +54,8 @@ exports.example = function (req, res, next) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  options.title = 'OpenUserJS.org';
-  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
-  var pageMetaKeywords = ['userscript', 'greasemonkey'];
-  pageMetaKeywords.concat(['web browser']);
-  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+  // Page metadata
+  pageMetadata(options);
 
   // Scripts: Query
   var scriptListQuery = Script.find();

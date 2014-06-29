@@ -18,6 +18,7 @@ var modelsList = require('../libs/modelsList');
 var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
 var countTask = require('../libs/tasks').countTask;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // Let script controllers know this is a lib route
 exports.lib = function (controller) {
@@ -65,71 +66,6 @@ var getScriptPageTasks = function (options) {
       .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
   tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
-  // Show collaborators of the script
-  if (script.meta.oujs && script.meta.oujs.author && script.meta.oujs.collaborator) {
-    options.hasCollab = true;
-    if (typeof script.meta.oujs.collaborator === 'string') {
-      options.script.collaborators = [{ url: encodeURIComponent(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];
-    } else {
-      options.script.collaborators = [];
-      script.meta.oujs.collaborator.forEach(function (collaborator) {
-        options.script.collaborators.push({ url: encodeURIComponent(collaborator), text: collaborator });
-      });
-    }
-  }
-
-  // Show copyrights of the script
-  if (script.meta.copyright) {
-    if (typeof script.meta.copyright === 'string') {
-      options.script.copyrights = [{ name: script.meta.copyright }];
-    } else {
-      options.script.copyrights = [];
-      script.meta.copyright.forEach(function (copyright) {
-        options.script.copyrights.push({ name: copyright });
-      });
-    }
-  }
-
-  // Show licensings of the script
-  if (script.meta.license) {
-    if (typeof script.meta.license === 'string') {
-      options.script.licenses = [{ name: script.meta.license }];
-    } else {
-      options.script.licenses = [];
-      script.meta.license.forEach(function (license) {
-        options.script.licenses.push({ name: license });
-      });
-    }
-  } else if (!script.isLib) {
-    options.script.licenses = [{ name: 'MIT License (Expat)' }];
-  }
-
-  // Show homepages of the script
-  if (script.meta.homepageURL) {
-    if (typeof script.meta.homepageURL === 'string') {
-      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
-      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        options.script.homepages = [{
-          url: script.meta.homepageURL,
-          text: decodeURI(script.meta.homepageURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
-        }];
-      }
-    } else {
-      options.script.homepages = [];
-      script.meta.homepageURL.forEach(function (homepage) {
-        htmlStub = '<a href="' + homepage + '"></a>';
-        if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-          options.script.homepages.push({
-            url: homepage,
-            text: decodeURI(homepage),
-            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(homepage)
-          });
-        }
-      });
-    }
-  }
-
   // Show the groups the script belongs to
   tasks.push(function (callback) {
     script.hasGroups = false;
@@ -148,6 +84,71 @@ var getScriptPageTasks = function (options) {
       callback();
     });
   });
+
+  // Show homepages of the script
+  if (script.meta.homepageURL) {
+    if (typeof script.meta.homepageURL === 'string') {
+      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
+      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        options.script.homepages = [{
+          url: script.meta.homepageURL,
+          text: decodeURI(script.meta.homepageURL),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
+        }];
+      }
+    } else {
+      options.script.homepages = [];
+      script.meta.homepageURL.forEach(function (homepage) {
+        htmlStub = '<a href="' + homepage + '"></a>';
+        if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+          options.script.homepages.unshift({
+            url: homepage,
+            text: decodeURI(homepage),
+            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(homepage)
+          });
+        }
+      });
+    }
+  }
+
+  // Show copyrights of the script
+  if (script.meta.copyright) {
+    if (typeof script.meta.copyright === 'string') {
+      options.script.copyrights = [{ name: script.meta.copyright }];
+    } else {
+      options.script.copyrights = [];
+      script.meta.copyright.forEach(function (copyright) {
+        options.script.copyrights.unshift({ name: copyright });
+      });
+    }
+  }
+
+  // Show licensings of the script
+  if (script.meta.license) {
+    if (typeof script.meta.license === 'string') {
+      options.script.licenses = [{ name: script.meta.license }];
+    } else {
+      options.script.licenses = [];
+      script.meta.license.forEach(function (license) {
+        options.script.licenses.unshift({ name: license });
+      });
+    }
+  } else if (!script.isLib) {
+    options.script.licenses = [{ name: 'MIT License (Expat)' }];
+  }
+
+  // Show collaborators of the script
+  if (script.meta.author && script.meta.collaborator) {
+    options.hasCollab = true;
+    if (typeof script.meta.collaborator === 'string') {
+      options.script.collaborators = [{ url: encodeURIComponent(script.meta.collaborator), text: script.meta.collaborator }];
+    } else {
+      options.script.collaborators = [];
+      script.meta.collaborator.forEach(function (collaborator) {
+        options.script.collaborators.unshift({ url: encodeURIComponent(collaborator), text: collaborator });
+      });
+    }
+  }
 
   // Show which libraries hosted on the site a script uses
   if (!script.isLib && script.uses && script.uses.length > 0) {
@@ -322,9 +323,9 @@ exports.view = function (req, res, next) {
     script.installNameSlug = installNameSlug;
     script.scriptPermalinkInstallPageUrl = 'http://' + req.get('host') + script.scriptInstallPageUrl;
 
-    // Metadata
-    options.title = script.name + ' | OpenUserJS.org';
-    options.pageMetaDescription = script.meta.description ? script.meta.description : null;
+    // Page metadata
+    pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+      script.meta.description);
     options.isScriptPage = true;
 
     // SearchBar
@@ -339,10 +340,10 @@ exports.view = function (req, res, next) {
 
     //---
     function preRender() {
-      var pageMetaKeywords = ['userscript', 'greasemonkey'];
-      if (script.groups)
-        pageMetaKeywords.concat(_.pluck(script.groups, 'name'));
-      options.pageMetaKeywords = pageMetaKeywords.join(', ');
+      if (script.groups) {
+        pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+          script.meta.description, _.pluck(script.groups, 'name'));
+      }
     };
     function render() { res.render('pages/scriptPage', options); }
     function asyncComplete() { preRender(); render(); }
@@ -379,10 +380,11 @@ exports.edit = function (req, res, next) {
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
-    //
+    // Page metadata
     var script = options.script = modelParser.parseScript(scriptData);
     options.isOwner = authedUser && authedUser._id == script._authorId;
-    options.title = 'Edit Metadata: ' + script.name + ' | OpenUserJS.org';
+    pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+      script.name);
 
     // If authed user is not the script author.
     if (!options.isOwner) { return next(); }

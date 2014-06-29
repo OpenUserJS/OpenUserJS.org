@@ -1,6 +1,7 @@
 var countTask = require('../libs/tasks').countTask;
 var helpers = require('../libs/helpers');
 var modelParser = require('../libs/modelParser');
+var _ = require('underscore');
 
 var paginateTemplate = function (opts) {
   // Required
@@ -102,11 +103,34 @@ exports.statusCodePage = function (req, res, next, options) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  // Metadata
-  options.title = options.statusCode + ': ' + options.statusMessage + ' | OpenUserJS.org';
-  options.pageMetaDescription = options.statusMessage;
-  options.pageMetaKeywords = null;
+  // Page metadata
+  pageMetadata(options, [options.statusCode, options.statusMessage], options.statusMessage);
 
   //---
   res.status(options.statusCode).render('pages/statusCodePage', options);
 };
+
+// Add page metadata, containing title, description and keywords.
+function pageMetadata(options, title, description, keywords) {
+  var titles = ['OpenUserJS'];
+  if (typeof (title) === "string" && title !== "") {
+    titles.unshift(title);
+  } else if (_.isArray(title)) {
+    titles = title.concat(titles);
+  }
+  options.title = titles.join(' | ');
+
+  options.pageMetaDescription = 'Download userscripts to enhance your browser.';
+  if (typeof (description) !== "undefined" && description !== null) {
+    options.pageMetaDescription = description;
+  }
+
+  var pageMetaKeywords = ['userscript', 'userscripts', 'javascript', 'Greasemonkey', 'Scriptish',
+    'Tampermonkey', 'extension', 'browser'];
+  if (typeof (keywords) !== "undefined" && keywords !== null && _.isArray(keywords)) {
+    pageMetaKeywords = _.union(pageMetaKeywords, keywords);
+  }
+
+  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+}
+exports.pageMetadata = pageMetadata;
