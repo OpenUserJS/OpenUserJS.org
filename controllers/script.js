@@ -138,13 +138,13 @@ var getScriptPageTasks = function (options) {
   }
 
   // Show collaborators of the script
-  if (script.meta.author && script.meta.collaborator) {
+  if (script.meta.oujs && script.meta.oujs.author && script.meta.oujs.collaborator) {
     options.hasCollab = true;
-    if (typeof script.meta.collaborator === 'string') {
-      options.script.collaborators = [{ url: encodeURIComponent(script.meta.collaborator), text: script.meta.collaborator }];
+    if (typeof script.meta.oujs.collaborator === 'string') {
+      options.script.collaborators = [{ url: encodeURIComponent(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];
     } else {
       options.script.collaborators = [];
-      script.meta.collaborator.forEach(function (collaborator) {
+      script.meta.oujs.collaborator.forEach(function (collaborator) {
         options.script.collaborators.unshift({ url: encodeURIComponent(collaborator), text: collaborator });
       });
     }
