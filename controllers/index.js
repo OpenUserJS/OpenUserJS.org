@@ -14,6 +14,7 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var removeSession = require('../libs/modifySessions').remove;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // The home page has scripts and groups in a sidebar
 exports.home = function (req, res) {
@@ -23,19 +24,16 @@ exports.home = function (req, res) {
   var options = {};
   var tasks = [];
 
-  options.title = 'OpenUserJS.org';
-  options.pageMetaDescription = 'Download Userscripts to enhance your browser.';
-  var pageMetaKeywords = ['userscript', 'greasemonkey'];
-  pageMetaKeywords.concat(['web browser']);
-  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+  //
+  options.librariesOnly = req.query.library !== undefined;
+
+  // Page metadata
+  pageMetadata(options, options.librariesOnly ? 'Libraries' : '');
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
-
-  //
-  options.librariesOnly = req.query.library !== undefined;
 
   // scriptListQuery
   var scriptListQuery = Script.find();
@@ -124,6 +122,15 @@ exports.home = function (req, res) {
     } else {
       options.pageHeading = options.isFlagged ? 'Flagged Scripts' : 'Scripts';
     }
+
+    // Page metadata
+    if (options.isFlagged) {
+      if (options.librariesOnly) {
+        pageMetadata(options, ['Flagged Libraries', 'Moderation']);
+      } else {
+        pageMetadata(options, ['Flagged Scripts', 'Moderation']);
+      }
+    }
   };
   function render() { res.render('pages/scriptListPage', options); }
   function asyncComplete() { preRender(); render(); }
@@ -166,14 +173,18 @@ function getSearchResults(req, res, prefixSearch, fullSearch, opts, callback) {
   });
   opts['$or'] = conditions;
 
+  var options = {
+    'username': user ? user.name : null,
+    'search': search,
+    'scriptsList': scriptsList
+  };
+
+  // Page metadata
+  pageMetadata(options, 'Searching for "' + search + '"');
+
   modelsList.listScripts(opts, req.route.params, baseUrl,
     function (scriptsList) {
-      callback({
-        'title': 'Searching for "' + search + '"',
-        'username': user ? user.name : null,
-        'search': search,
-        'scriptsList': scriptsList
-      });
+      callback(options);
     }
   );
 };
@@ -192,14 +203,18 @@ exports.search = function (req, res, next) {
 exports.toolbox = function (req, res) {
   var user = req.session.user;
 
+  var options = {
+    toolbox: true,
+    username: user ? user.name : null,
+    scriptsList: scriptsList
+  };
+
+  // Page metadata
+  pageMetadata(options, 'Toolbox');
+
   modelsList.listScripts({ isLib: true }, req.route.params, '/toolbox',
     function (scriptsList) {
-      res.render('index', {
-        title: 'The Toolbox',
-        toolbox: true,
-        username: user ? user.name : null,
-        scriptsList: scriptsList
-      });
+      res.render('index', options);
     });
 };
 
@@ -224,11 +239,8 @@ exports.register = function (req, res) {
   var options = {};
   var tasks = [];
 
-  //
-  options.title = 'Register | OpenUserJS.org';
-  options.pageMetaDescription = 'Login to OpenUserJS.org using OAuth.';
-  var pageMetaKeywords = ['login', 'register'];
-  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+  // Page metadata
+  pageMetadata(options, 'Login / Register');
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);

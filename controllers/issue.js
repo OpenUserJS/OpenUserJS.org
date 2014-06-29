@@ -11,6 +11,7 @@ var scriptStorage = require('./scriptStorage');
 var discussionLib = require('./discussion');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // List script issues
 exports.list = function (req, res, next) {
@@ -55,10 +56,11 @@ exports.list = function (req, res, next) {
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
 
-    // Metadata
-    options.title = script.name + ' Issues' + ' | OpenUserJS.org';
-    options.pageMetaDescription = category.description;
-    options.pageMetaKeywords = null; // seperator = ', '
+    // Page metadata
+    pageMetadata(
+      options,
+      [(open ? 'Issues' : 'Closed Issues'), script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+      category.description);
     options.isScriptIssuesPage = true;
 
     // discussionListQuery
@@ -181,10 +183,8 @@ exports.view = function (req, res, next) {
       tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
       function preRender() {
-        // Metadata
-        options.title = discussion.topic + ' | OpenUserJS.org';
-        options.pageMetaDescription = discussion.topic;
-        options.pageMetaKeywords = null; // seperator = ', '
+        // Page metadata
+        pageMetadata(options, [discussion.topic, 'Discussions'], discussion.topic);
 
         // commentList
         options.commentList = _.map(options.commentList, modelParser.parseComment);
@@ -265,10 +265,8 @@ exports.open = function (req, res, next) {
 
       //---
       function preRender() {
-        // Metadata
-        options.title = 'New Issue for ' + script.name + ' | OpenUserJS.org';
-        options.pageMetaDescription = '';
-        options.pageMetaKeywords = null; // seperator = ', '
+        // Page metadata
+        pageMetadata(options, ['New Issue', script.name]);
       };
       function render() { res.render('pages/scriptNewIssuePage', options); }
       function asyncComplete() { preRender(); render(); }
