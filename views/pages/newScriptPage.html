@@ -50,11 +50,11 @@
               <p class="list-group-item-text">A url of http, https or mailto protocol. Specially formatted on the script page. Last value shown.</p>
             </div>
             <div class="list-group-item inactive">
-              <h4 class="list-group-item-heading"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h4>
-              <p class="list-group-item-text">The author of the script. Required for <a href="#collaboration">Collaboration</a>. Only the author may edit. Last value shown. This key is subject to change.</p>
+              <h4 class="list-group-item-heading"><code>@oujs:author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h4>
+              <p class="list-group-item-text">The author of the script. Required to enable <a href="#collaboration">Collaboration</a>. Last value shown.</p>
             </div>
             <div class="list-group-item inactive">
-              <h4 class="list-group-item-heading"><code>@collaborator username</code></h4>
+              <h4 class="list-group-item-heading"><code>@oujs:collaborator username</code></h4>
               <p class="list-group-item-text">Can be defined multiple times. Required for <a href="#collaboration">Collaboration</a>. All values shown in reverse order. This key is subject to change.</p>
             </div>
           </div>
@@ -63,7 +63,7 @@
           <h3>Collaboration</h3>
           <div class="panel panel-default">
             <div class="panel-body">
-              <p>To allow other users to upload modified versions of your script to your account, add <code>@author Zren</code> to the metadata of your script, along with <code>@collaborator username</code> for every user you wish to give write access. Only the real author of the script can modify these metadata keys. Collaborators cannot use GitHub integration to update the script. Add them as collaborators to the GitHub repo instead.</p>
+              <p>To allow other users to upload modified versions of your script to your account, add <code>@oujs:author Zren</code> to the metadata of your script, along with <code>@oujs:collaborator username</code> for every user you wish to give write access. Only the real author of the script can modify these metadata keys. Collaborators cannot use GitHub integration to update the script. Add them as collaborators to the GitHub repo instead.</p>
             </div>
           </div>
           {{/newUserJS}}
