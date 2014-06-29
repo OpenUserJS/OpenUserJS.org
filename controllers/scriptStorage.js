@@ -187,7 +187,6 @@ function parseMeta(aString) {
     'namespace': true,
     'description': true,
     'version': true,
-    'author': true,
     'oujs:author': true
   };
   var unique = null;
@@ -291,14 +290,14 @@ exports.storeScript = function (user, meta, buf, callback, update) {
     // Can't install a script without a @name (maybe replace with random value)
     if (!scriptName) { return callback(null); }
 
-    if (!isLibrary && meta.author
-        && meta.author != user.name && meta.collaborator) {
-      collaborators = meta.collaborator;
+    if (!isLibrary && meta.oujs && meta.oujs.author
+        && meta.oujs.author != user.name && meta.oujs && meta.oujs.collaborator) {
+      collaborators = meta.oujs.collaborator;
       if ((typeof collaborators === 'string'
           && collaborators === user.name)
           || (collaborators instanceof Array
           && collaborators.indexOf(user.name) > -1)) {
-        installName = meta.author + '/';
+        installName = meta.oujs.author + '/';
       } else {
         collaborators = null;
       }
@@ -349,9 +348,9 @@ exports.storeScript = function (user, meta, buf, callback, update) {
         });
       } else {
         if (!script.isLib) {
-          if (collaborators && (script.meta.author != meta.author
-              || JSON.stringify(script.meta.collaborator) !=
-             JSON.stringify(meta.collaborator))) {
+          if (collaborators && (script.meta.oujs && script.meta.oujs.author != meta.oujs.author
+              || (script.meta.oujs && JSON.stringify(script.meta.oujs.collaborator) !=
+             JSON.stringify(meta.oujs.collaborator)))) {
             return callback(null);
           }
           script.meta = meta;

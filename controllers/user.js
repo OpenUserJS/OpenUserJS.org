@@ -1374,11 +1374,11 @@ function getExistingScript(req, options, authedUser, callback) {
 
       if (!script) { return callback(null); }
 
-      if (script.meta.collaborator) {
-        if (typeof script.meta.collaborator === 'string') {
-          collaborators.push(script.meta.collaborator);
+      if (script.meta.oujs && script.meta.oujs.collaborator) {
+        if (typeof script.meta.oujs.collaborator === 'string') {
+          collaborators.push(script.meta.oujs.collaborator);
         } else {
-          collaborators = script.meta.collaborator;
+          collaborators = script.meta.oujs.collaborator;
         }
       }
 
