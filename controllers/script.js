@@ -66,7 +66,7 @@ var getScriptPageTasks = function (options) {
   tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
   // Show collaborators of the script
-  if (script.meta.oujs && script.meta.oujs.author && script.meta.oujs && script.meta.oujs.collaborator) {
+  if (script.meta.oujs && script.meta.oujs.author && script.meta.oujs.collaborator) {
     options.hasCollab = true;
     if (typeof script.meta.oujs.collaborator === 'string') {
       options.script.collaborators = [{ url: encodeURIComponent(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];

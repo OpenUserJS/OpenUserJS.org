@@ -291,7 +291,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
     if (!scriptName) { return callback(null); }
 
     if (!isLibrary && meta.oujs && meta.oujs.author
-        && meta.oujs.author != user.name && meta.oujs && meta.oujs.collaborator) {
+        && meta.oujs.author != user.name && meta.oujs.collaborator) {
       collaborators = meta.oujs.collaborator;
       if ((typeof collaborators === 'string'
           && collaborators === user.name)
