@@ -131,6 +131,11 @@ exports.sendMeta = function (req, res, next) {
   Script.findOne({ installName: caseInsensitive(installName) },
     function (err, script) {
       var meta = null;
+      var name = null;
+      var data = null;
+      var prefix = null;
+      var key = null;
+      var whitespace = '    ';
 
       if (!script) { return next(); }
 
@@ -138,13 +143,27 @@ exports.sendMeta = function (req, res, next) {
       meta = script.meta;
 
       res.write('// ==UserScript==\n');
-      Object.keys(meta).reverse().forEach(function (key) {
-        if (meta[key] instanceof Array) {
-          meta[key].forEach(function (value) {
-            res.write('// @' + key + '    ' + value + '\n');
+      Object.keys(meta).reverse().forEach(function (name) {
+        if (meta[name] instanceof Array) {
+          meta[name].forEach(function (value) {
+            res.write('// @' + name + (value ? whitespace + value : '') + '\n');
           });
+        } else if (meta[name] instanceof Object) {
+          prefix = name;
+          for (key in meta[name]) {
+            data = meta[prefix][key];
+            if (data instanceof Array) {
+              meta[prefix][key].forEach(function (value) {
+                res.write('// @' + prefix + ':' + key + (value ? whitespace + value : '') + '\n');
+              });
+            }
+            else {
+              res.write('// @' + prefix + ':' + key + (data ? whitespace + data : '') + '\n');
+            }
+          }
         } else {
-          res.write('// @' + key + '    ' + meta[key] + '\n');
+          data = meta[name];
+          res.write('// @' + name + (data ? whitespace + data : '') + '\n');
         }
       });
       res.end('// ==/UserScript==\n');
@@ -157,18 +176,22 @@ function parseMeta(aString) {
   var re = /\/\/ @(\S+)(?:\s+(.*))?/;
   var headers = {};
   var name = null;
+  var prefix = null;
   var key = null;
   var value = null;
   var line = null;
   var lineMatches = null;
   var lines = {};
-  var unique = {
+  var uniques = {
     'name': true,
     'namespace': true,
     'description': true,
     'version': true,
-    'author': true
+    'oujs:author': true
   };
+  var unique = null;
+  var one = null;
+  var matches = null;
 
   lines = aString.split(/[\r\n]+/).filter(function (e, i, a) {
     return (e.match(re));
@@ -187,16 +210,41 @@ function parseMeta(aString) {
         name = 'homepageURL';
         break;
     }
-    if (!headers[name] || unique[name]) {
-      headers[name] = value || '';
-    } else {
-      if (!(headers[name] instanceof Array)) {
-        headers[name] = [headers[name]];
+    name = name.split(/:/).reverse();
+    key = name[0];
+    prefix = name[1];
+    if (key) {
+      if (prefix) {
+        if (!headers[prefix]) {
+          headers[prefix] = {};
+        }
+        header = headers[prefix];
+        unique = {};
+        for (one in uniques) {
+          matches = one.match(/(.*):(.*)$/);
+          if (uniques[one] && matches && matches[1] === prefix) {
+            unique[matches[2]] = true;
+          }
+        }
+      } else {
+        header = headers;
+        unique = {};
+        for (one in uniques) {
+          if (uniques[one] && !/:/.test(one)) {
+            unique[one] = true;
+          }
+        }
       }
-      headers[name].push(value || '');
+      if (!header[key] || unique[key]) {
+        header[key] = value || '';
+      } else {
+        if (!(header[key] instanceof Array)) {
+          header[key] = [header[key]];
+        }
+        header[key].push(value || '');
+      }
     }
   }
-
   return headers;
 }
 exports.parseMeta = parseMeta;
