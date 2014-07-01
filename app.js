@@ -143,27 +143,35 @@ app_route('/users/:username/github/import').post(user.userGitHubImportScriptPage
 app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
 app_route('/users/:username/update').post(admin.adminUserUpdate);
 app_route('/user/preferences').get(user.userEditPreferencesPage);
-app_route('/user/add/scripts').get(user.newScriptPage);
-app_route('/user/add/lib').get(user.newLibraryPage);
-app_route('/user/add/scripts/new').get(user.editScript).post(user.submitSource);
+app_route('/user').get(function(req, res) { res.redirect('/users'); });
 
-// User routes: Legacy
-app_route('/user/add/lib/new').get(script.lib(user.editScript)).post(script.lib(user.submitSource));
+// Adding script/library routes
+app_route('/user/add/scripts').get(user.newScriptPage);
+app_route('/user/add/scripts/new').get(user.editScript).post(user.submitSource);
 app_route('/user/add/scripts/upload').post(user.uploadScript);
+app_route('/user/add/lib').get(user.newLibraryPage);
+app_route('/user/add/lib/new').get(script.lib(user.editScript)).post(script.lib(user.submitSource));
 app_route('/user/add/lib/upload').post(script.lib(user.uploadScript));
+app_route('/user/add').get(function(req, res) { res.redirect('/user/add/scripts'); });
 
 // Script routes
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
 app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
 app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
 app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript); // Legacy TODO Remove
+app_route('/scripts/:username').get(function(req, res) {
+  res.redirect('/users/' + req.route.params.username + '/scripts');
+});
 
 // Script routes: Legacy
 app.get('/install/:username/:namespace?/:scriptname', scriptStorage.sendScript);
 app.get('/meta/:username/:namespace?/:scriptname', scriptStorage.sendMeta);
 app.get('/vote/scripts/:username/:namespace?/:scriptname/:vote', script.vote);
-app.post('/github/hook', scriptStorage.webhook);
-app.post('/github/service', function (req, res, next) { next(); });
+
+// Github hook routes
+app_route('/github/hook').post(scriptStorage.webhook);
+app_route('/github/service').post(function(req, res, next) { next(); });
+app_route('/github').get(function(req, res) { res.redirect('/'); });
 
 // Library routes
 app.get(listRegex('\/toolbox', 'lib'), main.toolbox);
@@ -178,13 +186,9 @@ app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
 
 // Issues routes
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
-//app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(issue.open).post(issue.open);
-app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view);
-
-// Issues routes: Legacy
-app.post('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic', issue.comment);
-app.get('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)', issue.changeStatus);
+app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view).post(issue.comment);
+app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)').get(issue.changeStatus);
 
 // Admin routes
 app.get('/admin', admin.adminPage);
@@ -208,6 +212,7 @@ app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
 // Group routes
 app_route('/groups').get(group.list);
 app_route('/group/:groupname').get(group.view);
+app_route('/group').get(function(req, res) { res.redirect('/groups'); });
 app_route('/api/group/search/:term/:addTerm?').get(group.search);
 
 // Discussion routes
