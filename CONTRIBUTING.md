@@ -87,7 +87,7 @@ Pertains inclusively to the User Interface
 Pertains inclusively to the Database operations.
 
 ##### DOC
-Pertains inclusely to the documentation operations.
+Pertains inclusively to the Documentation operations.
 
 ##### CODE
 This one hasn't actually been created and we don't actually use it. The entire project is code based... but it is in this guide for clarity of labeling and documentation.
@@ -96,7 +96,7 @@ This one hasn't actually been created and we don't actually use it. The entire p
 Anyone can put this label on an issue if it is applicable. This means everyone involved with the project should consider adding input.
 
 ##### needs discussion
-After an Assignee takes an Issue with announcement there may need to be further discussion on a particular resolution. The Asignee is asking for additional support from the rest of the community.
+After an Assignee takes an Issue with announcement there may need to be further discussion on a particular resolution. The Assignee is asking for additional support from the rest of the community.
 
 ##### needs testing
 Anyone can add this but it is primarily there for the Assignee indiciating that Testers are wanted and needed.
@@ -120,16 +120,16 @@ This means a security issue may have been identified or applies to a reported se
 This means an issue is hung up or ponied as GM refers to it. E.g. not sure what to do about a particular issue to continue. Assignee may optionally unassign themselves or be unassigned.
 
 ##### PR READY
-This is used to indicate that a pull request *(PR)* is ready for evaluation. This can be toggled on by only the originating pull request author... within reason anyone can remove it if there is a major bug found in a PR.
+This is used to indicate that a pull request *(PR)* is ready for evaluation. This can be toggled on by only the originating pull request author... within reason anyone can remove it if there is a major bug found in a PR... just comment as to why.
 
 ##### expedite
-Strong recommendation to do this as soon as possible. Don't abuse this unless you feel strongly enough to have this addressed as an Emergency Service Release *(esr)*. This should always be cleared on any PR and Issue that is merged.
+Strong recommendation to do this as soon as possible. Don't abuse this unless you feel strongly enough to have this addressed as an Emergency Service Release *(esr)*. This should always be cleared on any PR and related Issue that is merged.
 
 ##### sooner
-Recommendation to have this done sooner rather than later. These should always be cleared on any PR and Issue that is merged.
+Recommendation to have this done sooner rather than later. This should always be cleared on any PR and related Issue that is merged.
 
 ##### later
-Recommendation to have this done later. This doesn't mean never *(that is a mightfix or wontfix label)*. This label should always be cleared on any PR and Issue that is merged.
+Recommendation to have this done later. This doesn't mean never *(that is a mightfix or wontfix label)*. This label should always be cleared on any PR and related Issue that is merged.
 
 ##### question
 This means a question has been encountered by anyone and may remain unanswered until cleared.
