@@ -131,6 +131,12 @@ Recommendation to have this done sooner rather than later. This should always be
 ##### later
 Recommendation to have this done later. This doesn't mean never *(that is a mightfix or wontfix label)*. This label should always be cleared on any PR and related Issue that is merged.
 
+##### mightfix
+Someone with privileges is considering adding a fix in to acccomodate a feature or enhancement.
+
+#### wontfix
+Someone with privileges is stating that a feature or enhancement will not be currently implemented.
+
 ##### question
 This means a question has been encountered by anyone and may remain unanswered until cleared.
 
