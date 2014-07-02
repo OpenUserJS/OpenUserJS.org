@@ -58,8 +58,9 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 To contribute code to OpenUserJS.org the following process should generally be used:
 
 1. Search the [issue tracker](https://github.com/OpenUserJs/OpenUserJS.org/issues) to see if the topic has already been discussed and/or resolved.
-  * If you find a **related open issue**, consider whether or not your planned work is unique enough to merit a separate issue.  If someone else is working on a solution for the issue, or a discussion is ongoing, consider joining that effort rather than doing something completely separate.
+  * If you find a **related open issue**, consider whether or not your planned work is unique enough to merit a separate issue.  If someone else is working on a solution for the issue e.g. the Assignee, or a discussion is ongoing, consider joining that effort rather than doing something completely separate.
   * If you find a **related closed issue and feel it should be readdressed**, consider simply commenting on that issue to help determine whether it should be reopened or a new issue created.
+  * Pay attention to the labels created. These may change over time as the project matures.
 2. If you don't find a related issue, or it's determined a new issue would be more appropriate, visit the [issue tracker](https://github.com/OpenUserJs/OpenUserJS.org/issues) and create a new issue with a descriptive title and body.  The body should describe the change you would like to see implemented.  Additionally, and if possible, bug reports should include clear steps to reproduce the bug.
 3. Open a terminal, navigate to the root of the OpenUserJS.org project, and run the following commands to update your local project from "upstream" and create a branch named `issue-NUM` (where `NUM` is the number of the issue you either created or discovered from the previous steps):
   * `git pull upstream master`
@@ -72,10 +73,88 @@ To contribute code to OpenUserJS.org the following process should generally be u
 8. Click the "Create pull request" button and enter a descriptive title and comment, referencing the original issue number.
 9. Click the "Create pull request" button to submit your pull request.
 
+#### Usage of Labels
+
+The following is a brief list of **some** of the labels used on the project and is used to establish teamwork. Not everyone has permission to set these and usually will be set by someone unless expressly prohibited:
+
+##### BLOCKING
+Only the establishing owner of the project may add and remove this. Recommendations by other contributors and collaborators are always accepted to have this put on or removed.
+
+##### UI
+Pertains inclusively to the User Interface
+
+##### DB
+Pertains inclusively to the Database operations.
+
+##### DOC
+Pertains inclusely to the documentation operations.
+
+##### CODE
+This one hasn't actually been created and we don't actually use it. The entire project is code based... but it is in this guide for clarity of labeling and documentation.
+
+##### team biz
+Anyone can put this label on an issue if it is applicable. This means everyone involved with the project should consider adding input.
+
+##### needs discussion
+After an Assignee takes an Issue with announcement there may need to be further discussion on a particular resolution. The Asignee is asking for additional support from the rest of the community.
+
+##### needs testing
+Anyone can add this but it is primarily there for the Assignee indiciating that Testers are wanted and needed.
+
+##### feature
+Something we don't already have implemented to the best of your knowledge but would like to see.
+
+##### enhancement
+Something we do have implemented already but needs improvement upon to the best of your knowledge.
+
+##### bug
+You've guessed it... this means a bug is reported.
+
+##### migration
+Migration issues come up occasionally when a large refactor is done on UI, DB or CODE. Use this to indicate that it may apply to an existing migration.
+
+##### security
+This means a security issue may have been identified or applies to a reported security issue.
+
+##### hung
+This means an issue is hung up or ponied as GM refers to it. E.g. not sure what to do about a particular issue to continue. Assignee may optionally unassign themselves or be unassigned.
+
+##### PR READY
+This is used to indicate that a pull request *(PR)* is ready for evaluation. This can be toggled on by only the originating pull request author... within reason anyone can remove it if there is a major bug found in a PR.
+
+##### expedite
+Strong recommendation to do this as soon as possible. Don't abuse this unless you feel strongly enough to have this addressed as an Emergency Service Release *(esr)*. This should always be cleared on any PR and Issue that is merged.
+
+##### sooner
+Recommendation to have this done sooner rather than later. These should always be cleared on any PR and Issue that is merged.
+
+##### later
+Recommendation to have this done later. This doesn't mean never *(that is a mightfix or wontfix label)*. This label should always be cleared on any PR and Issue that is merged.
+
+##### question
+This means a question has been encountered by anyone and may remain unanswered until cleared.
+
+##### intended behavior
+This means this is how it was intended to be implemented and is usually used for reports from non-collaborators and non-owners.
+
+##### duplicate
+This means already been reported. Always reference in a comment what issue or pull request number it is used in context with.
+
+##### invalid
+This means it works for me and is usually used for reports from non-collaborators and non-owners.
+
+##### tracking upstream
+Means somewhere upstream we're waiting on an answer for something.
+
+##### upstream
+**No clue what this means**. ;)
+
+On a final note... Assignees should be cleared on Issues when a particular Issue is closed and optionally merged from a PR to avoid accidental reassigning back to the original Collaborator taking on the issue.
+
 
 ### Testing
 
-#### Pull Requests
+#### Fetching Pull Requests
 
 Optionally after setting up the innards of authentication, cloning the `origin` repository, setting the `upstream` remote, etc. ... it is possible to checkout a pull request *(often abbreviated as pr or PR)*
 
