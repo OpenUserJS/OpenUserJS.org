@@ -134,7 +134,7 @@ Recommendation to have this done later. This doesn't mean never *(that is a migh
 ##### mightfix
 Someone with privileges is considering adding a fix in to acccomodate a feature or enhancement.
 
-#### wontfix
+##### wontfix
 Someone with privileges is stating that a feature or enhancement will not be currently implemented.
 
 ##### question
