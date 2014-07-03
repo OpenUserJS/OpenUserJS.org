@@ -138,7 +138,7 @@ Someone with privileges is considering adding a fix in to acccomodate a feature 
 Someone with privileges is stating that a feature or enhancement will not be currently implemented.
 
 ##### question
-This means a question has been encountered by anyone and may remain unanswered until cleared.
+This means a question has been encountered by anyone and has remained unanswered until cleared.
 
 ##### intended behavior
 This means this is how it was intended to be implemented and is usually used for reports from non-collaborators and non-owners.
