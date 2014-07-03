@@ -360,6 +360,9 @@ so that the `+ +` is not misread as `++`
 
 ### Restrictions
 
+The following is **strongly** recommended:
+* When creating a class or id value try to use a dash instead of underscores and of course camel casing *(a.k.a. interCaps)*.
+
 The following **may not** be used:
 * Coffee scripts are prohibited from pull requests.
 * Lowercase UTF-8 character encoding assignment... always use uppercase as per [IETF][IETFRFC3629S4].
