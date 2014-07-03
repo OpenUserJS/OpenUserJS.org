@@ -38,7 +38,7 @@ Within moderation we understand the occasional necessity to conserve device stor
 
 ### Default Licensing
 
-* Users Scripts have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) if `@license` or `@licence` metadata block key is absent.
+* Users Scripts have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) if the `@license` *(including the alternate spelling of `@licence`) metadata block key is absent.
 * Libraries need to include one reference to their license(s) either via a cross-site compatible metadata block with at least one `@license` and/or `@licence` key, License Header, or full License text *(full text is not recommended for storage constraints on portable devices)*
 
 ### Acceptable Licensing
