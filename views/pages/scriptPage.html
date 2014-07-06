@@ -43,16 +43,16 @@
               {{#hasCollab}}
               <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>
               {{/hasCollab}}
-              {{#script.fork}}
+              {{#script.isFork}}
                 <p><b>Fork History:</b></p>
                 <ul>
-                {{#.}}
+                {{#script.fork}}
                   <li>
-                    <i class="fa fa-fw fa-fork"></i> <a href="/script/{{{url}}">{{author}}/{{name}}</a>
+                    <i class="fa fa-fw fa-fork"></i> <a href="/scripts/{{{url}}">{{url}}</a>
                   </li>
-                {{/.}}
+                {{/script.fork}}
                 </ul>
-              {{/script.fork}}
+              {{/script.isFork}}
               {{#script.usesLibs}}
                 <h4>Libraries Used</h4>
                 <ul>

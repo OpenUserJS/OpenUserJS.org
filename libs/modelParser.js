@@ -151,6 +151,9 @@ var parseScript = function (scriptData) {
   //
   script.fullName = script.author.name + '/' + script.name; // GitHub-like name
 
+  // Fork
+  script.isFork = script.fork && script.fork.length > 0;
+
   // Script Good/Bad bar.
   // script.votes = count(upvotes) + count(downvotes)
   // script.flags = flags - count(upvotes)
