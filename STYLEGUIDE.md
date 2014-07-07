@@ -268,7 +268,9 @@ A `switch` statement should have the following form:
 
 ```javascript
 switch (expression) {
-    case expression: {
+    case expression1:
+    case expression2:
+    case expressionNth: {
         // statements
         break;
     }
@@ -278,7 +280,7 @@ switch (expression) {
 }
 ```
 
-Each group of statements *(except the default)* should end with `break`, `return`, or `throw`. **Do not fall through.**
+Each group of statements *(except the default)* should end with `break`, `return`, or `throw`. **Complex conditionaling may be better described if there are no fall throughs. In these cases it may be preferred to use an `if...else` syntax for readability** Curly braces are used only for code folding in some editors and can be used as a visual aid to ensure that `break` is included in a pull request.
 
 #### try Statement
 
