@@ -415,7 +415,7 @@ exports.webhook = function (req, res) {
 
   // Test for know GH webhook ips: https://api.github.com/meta
   if (!req.body.payload ||
-    !/192\.30\.252\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
+    !/192\.30\.25[2-5]\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
     .test(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
     return;
   }
