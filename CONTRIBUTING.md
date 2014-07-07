@@ -92,7 +92,7 @@ Pertains inclusively to the Database operations.
 Pertains inclusively to the Documentation operations.
 
 ##### CODE
-If it's not any of the above three then it's probably some other Code releated issue and it should clearly describe what it is affecting in a comment.
+If it's not any of the above three then it's probably some other Code related issue and it should clearly describe what it is affecting in a comment.
 
 ---
 
