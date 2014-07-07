@@ -237,7 +237,8 @@ function parseMeta(aString) {
       }
       if (!header[key] || unique[key]) {
         header[key] = value || '';
-      } else {
+      } else if (header[key] !== (value || '')
+          && !(header[key] instanceof Array && header[key].indexOf(value) > -1)) {
         if (!(header[key] instanceof Array)) {
           header[key] = [header[key]];
         }
