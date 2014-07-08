@@ -201,21 +201,21 @@ The `if` class of statements should have the following form:
 
 ```javascript
 if (condition) {
-    // statements
+    /* statements */
 }
 
 if (condition) {
-    // statements
+    /* statements */
 } else {
-    // statements
+    /* statements */
 }
 
 if (condition) {
-    // statements
+    /* statements */
 } else if (condition) {
-    // statements
+    /* statements */
 } else {
-    // statements
+    /* statements */
 }
 ```
 
@@ -225,12 +225,12 @@ A for class of statements should have the following form:
 
 ```javascript
 for (initialization; condition; update) {
-    // statements
+    /* statements */
 }
 
 for (variable in object) {
     if (filter) {
-        // statements
+        /* statements */
     }
 }
 ```
@@ -246,7 +246,7 @@ A `while` statement should have the following form:
 
 ```javascript
 while (condition) {
-    // statements
+    /* statements */
 }
 ```
 
@@ -256,7 +256,7 @@ A `do` statement should have the following form:
 
 ```javascript
 do {
-    // statements
+    /* statements */
 } while (condition);
 ```
 
@@ -268,19 +268,23 @@ A `switch` statement should have the following form:
 
 ```javascript
 switch (expression) {
-    case expression1:
-    case expression2:
-    case expressionNth: {
-        // statements
-        break;
-    }
-    default: {
-        // statements
-    }
+  case expression1:
+    /* statements */
+    // fallthrough
+  case expression2:
+    /* previously declared `// fallthrough` statements */
+    break;
+  case expression3:
+  case expression4:
+  case expressionNth:
+    /* statements */
+    break;
+  default:
+    /* default statements */
 }
 ```
 
-Each group of statements *(except the default)* should end with `break`, `return`, or `throw`. **Complex conditionaling may be better described if there are no fall throughs. In these cases it may be preferred to use an `if...else` syntax for readability** Curly braces are used only for code folding in some editors and can be used as a visual aid to ensure that `break` is included in a pull request.
+Each logical grouping of statements *(except the default)* should end with `// fallthrough`, `break`, `return`, or `throw`. **NOTE: Complex conditionaling may sometimes be better described with an `if...else` or other ECMAScript syntax for readability purposes.**
 
 #### try Statement
 
@@ -288,17 +292,17 @@ The `try` class of statements should have the following form:
 
 ```javascript
 try {
-    // statements
+    /* statements */
 } catch (variable) {
-    // statements
+    /* statements */
 }
 
 try {
-    // statements
+    /* statements */
 } catch (variable) {
-    // statements
+    /* statements */
 } finally {
-    // statements
+    /* statements */
 }
 ```
 
