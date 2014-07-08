@@ -56,7 +56,7 @@ function outer(c, d) {
   var e = c * d;
 
   function inner(a, b) {
-      return (e * a) + b;
+    return (e * a) + b;
   }
 
   return inner(0, 1);
