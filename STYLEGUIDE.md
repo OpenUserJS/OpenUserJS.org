@@ -377,7 +377,7 @@ The following **may not** be used:
 * `Function` constructor (it uses `eval()`)
 * `with()` *(it can be highly inconsistent)*
 
-Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`
+Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`. If you're trying to force some function to run asynchronously use [`setImmediate`](http://nodejs.org/api/timers.html#timers_setimmediate_callback_arg) *(or [`process.nextTick`](http://nodejs.org/api/process.html#process_process_nexttick_callback) if you really know what you're doing)*.
 
 `parseInt()` must be used with a radix parameter, e.g.,
 ```javascript
