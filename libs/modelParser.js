@@ -127,6 +127,7 @@ var parseScript = function (scriptData) {
 
   // Support Url
   if (script.meta.supportURL) {
+    script.hasSupport = true;
     if (_.isString(script.meta.supportURL)) {
       htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
