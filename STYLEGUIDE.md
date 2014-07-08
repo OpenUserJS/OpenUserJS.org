@@ -53,13 +53,13 @@ All functions should be declared, before they are used, after the variable decla
 
 ```javascript
 function outer(c, d) {
-    var e = c * d;
+  var e = c * d;
 
-    function inner(a, b) {
-        return (e * a) + b;
-    }
+  function inner(a, b) {
+      return (e * a) + b;
+  }
 
-    return inner(0, 1);
+  return inner(0, 1);
 }
 ```
 
@@ -67,7 +67,7 @@ When a function is to be invoked immediately, the entire invocation expression s
 
 ```javascript
 var collection = (function () {
-    // code here
+  /* code here */
 }());
 ```
 
@@ -76,14 +76,14 @@ If the space is omitted, then it can appear that the function's name is `functio
 
 ```javascript
 div.onclick = function (e) {
-    return false;
+  return false;
 };
 
 that = {
-    method: function () {
-        return this.datum;
-    },
-    datum: 0
+  method: function () {
+    return this.datum;
+  },
+  datum: 0
 };
 ```
 
@@ -201,21 +201,21 @@ The `if` class of statements should have the following form:
 
 ```javascript
 if (condition) {
-    /* statements */
+  /* statements */
 }
 
 if (condition) {
-    /* statements */
+  /* statements */
 } else {
-    /* statements */
+  /* statements */
 }
 
 if (condition) {
-    /* statements */
+  /* statements */
 } else if (condition) {
-    /* statements */
+  /* statements */
 } else {
-    /* statements */
+  /* statements */
 }
 ```
 
@@ -225,13 +225,13 @@ A for class of statements should have the following form:
 
 ```javascript
 for (initialization; condition; update) {
-    /* statements */
+  /* statements */
 }
 
 for (variable in object) {
-    if (filter) {
-        /* statements */
-    }
+  if (filter) {
+    /* statements */
+  }
 }
 ```
 
@@ -246,7 +246,7 @@ A `while` statement should have the following form:
 
 ```javascript
 while (condition) {
-    /* statements */
+  /* statements */
 }
 ```
 
@@ -256,7 +256,7 @@ A `do` statement should have the following form:
 
 ```javascript
 do {
-    /* statements */
+  /* statements */
 } while (condition);
 ```
 
@@ -292,17 +292,17 @@ The `try` class of statements should have the following form:
 
 ```javascript
 try {
-    /* statements */
+  /* statements */
 } catch (variable) {
-    /* statements */
+  /* statements */
 }
 
 try {
-    /* statements */
+  /* statements */
 } catch (variable) {
-    /* statements */
+  /* statements */
 } finally {
-    /* statements */
+  /* statements */
 }
 ```
 
