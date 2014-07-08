@@ -183,9 +183,10 @@ function parseMeta(aString, aNormalize) {
   var lineMatches = null;
   var lines = {};
   var uniques = {
+    'description': true,
+    'icon': true,
     'name': true,
     'namespace': true,
-    'description': true,
     'version': true,
     'oujs:author': true
   };
@@ -204,11 +205,17 @@ function parseMeta(aString, aNormalize) {
     if (aNormalize) {
       // Upmix from...
       switch (name) {
+        case 'homepage':
+        case 'source':
+        case 'website':
+          name = 'homepageURL';
+          break;
+        case 'defaulticon':
+        case 'iconURL':
+          name = 'icon';
+          break;
         case 'licence':
           name = 'license';
-          break;
-        case 'homepage':
-          name = 'homepageURL';
           break;
       }
     }
