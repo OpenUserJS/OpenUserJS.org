@@ -1,4 +1,5 @@
 <h2 class="page-heading">
+  {{#isScriptPage}}
   <a href="{{{script.scriptInstallPageUrl}}}" class="btn btn-info pull-right">
     {{#script.isLib}}
     <i class="fa fa-file-text-o"></i> Raw Source
@@ -7,6 +8,7 @@
     <i class="fa fa-download"></i> Install
     {{/script.isLib}}
   </a>
+  {{/isScriptPage}}
   {{#script.icon45Url}}
   <span class="page-heading-icon"><img src="{{{script.icon45Url}}}" alt="" /></span>
   {{/script.icon45Url}}
