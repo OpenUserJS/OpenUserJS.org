@@ -25,6 +25,40 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+
+var script_getSource = function (script, callback) {
+  var s3 = new AWS.S3();
+  s3.getObject({
+    Bucket: bucketName,
+    Key: script.installName
+  }, function(err, data) {
+    if (err) return callback(err);
+
+    callback(null, data.Body);
+  });
+};
+exports.script_getSource = script_getSource;
+
+var script_setSource = function (script, source, callback) {
+  var s3 = new AWS.S3();
+  s3.putObject({
+    Bucket: bucketName,
+    Key: script.installName,
+    Body: source
+  }, callback);
+};
+exports.script_setSource = script_setSource;
+
+var script_deleteSource = function (script, callback) {
+  var s3 = new AWS.S3();
+  s3.deleteObject({
+    Bucket : bucketName,
+    Key : script.installName
+  }, callback);
+};
+exports.script_deleteSource = script_deleteSource;
+
+
 /*Script.find({ installName: /^[^\/]+\/[^\/]+\/[^\/]+$/ },function (err, scripts){
   var s3 = new AWS.S3();
   var Discussion = require('../models/discussion').Discussion;
