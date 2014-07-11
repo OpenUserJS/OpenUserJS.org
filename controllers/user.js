@@ -916,7 +916,7 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
         var userscriptHeaderRegex = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m;
         var m = userscriptHeaderRegex.exec(blobUtf8);
         if (m && m[1]) {
-          var userscriptMeta = scriptStorage.parseMeta(m[1]);
+          var userscriptMeta = scriptStorage.parseMeta(m[1], true);
           scriptStorage.storeScript(authedUser, userscriptMeta, blobUtf8, onScriptStored);
         } else {
           callback('Specified file does not contain a userscript header.');
