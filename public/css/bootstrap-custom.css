@@ -1,4 +1,15 @@
-@import url("https://fonts.googleapis.com/css?family=Squada+One");
+/*
+ * Homepage: http://www.google.com/fonts/specimen/Squada+One
+ * License: SIL Open Font License, 1.1
+ * From: @import url("https://fonts.googleapis.com/css?family=Squada+One");
+ */
+@font-face {
+  font-family: 'Squada One';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Squada One'), local('SquadaOne-Regular'), url(../fonts/squadaone.woff) format('woff');
+}
+
 /*!
  * Bootswatch v3.1.1+1
  * Homepage: http://bootswatch.com
