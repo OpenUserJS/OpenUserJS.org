@@ -95,7 +95,7 @@ var getScriptEditSourcePageUrl = function (script) {
 
 var getScriptInstallPageUrl = function (script) {
   var isLib = script.isLib || false;
-  return (isLib ? '/libs/src/' : '/install/') + script.installName;
+  return (isLib ? '/src/libs/' : '/install/') + script.installName;
 };
 
 //
