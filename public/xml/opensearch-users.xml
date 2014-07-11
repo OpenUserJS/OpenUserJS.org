@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
   <Description>Search OpenUserJS Users</Description>
-  <ShortName>OpenUserJS.org Users</ShortName>
+  <ShortName>OpenUserJS Users</ShortName>
   <Url type="text/html"
        method="get"
        template="https://openuserjs.org/users?q={searchTerms}" />
