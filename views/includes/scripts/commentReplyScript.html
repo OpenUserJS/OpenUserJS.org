@@ -10,9 +10,10 @@
     document.location.hash = $comment.attr('id');
 
     var text = $replyTextarea.text();
-    if (!/^\s*$/.test(text))
+    if (!/^\s*$/.test(text)) {
       text += '\n\n'; // Add linebreak if reply already started.
-    text += '[Re](' + document.location.href + '): ';
+    }
+    text += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
     text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
     text += '  \n';
     $replyTextarea.text(text);
