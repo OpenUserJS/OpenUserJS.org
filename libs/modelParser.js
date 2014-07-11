@@ -1,3 +1,5 @@
+'use strict';
+
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');

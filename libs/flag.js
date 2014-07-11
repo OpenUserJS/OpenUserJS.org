@@ -1,3 +1,5 @@
+'use strict';
+
 var Flag = require('../models/flag').Flag;
 var User = require('../models/user').User;
 var getKarma = require('./collectiveRating').getKarma;

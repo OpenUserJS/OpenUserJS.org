@@ -1,3 +1,5 @@
+'use strict';
+
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 var Remove = require('../models/remove').Remove;

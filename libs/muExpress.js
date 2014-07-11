@@ -1,3 +1,5 @@
+'use strict';
+
 var mu = require('mu2');
 
 mu.root = __dirname + '/../views';

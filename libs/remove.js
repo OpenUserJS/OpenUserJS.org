@@ -1,3 +1,5 @@
+'use strict';
+
 var Remove = require('../models/remove').Remove;
 var User = require('../models/user').User;
 var async = require('async');

@@ -1,3 +1,5 @@
+'use strict';
+
 var toobusy = require('toobusy-js');
 var express = require('express');
 var MongoStore = require('connect-mongo')(express);

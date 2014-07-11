@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var _ = require('underscore');
 
@@ -59,6 +61,7 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
   }
 
   Group.find({ name: { $in: groupNames } }, function (err, groups) {
+    var existingGroups = null;
     var existingNames = null;
     var newGroup = null;
     var tasks = [];

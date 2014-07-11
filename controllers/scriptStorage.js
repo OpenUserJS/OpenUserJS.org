@@ -1,3 +1,5 @@
+'use strict';
+
 var AWS = require('aws-sdk');
 
 var Script = require('../models/script').Script;
@@ -198,6 +200,8 @@ function parseMeta(aString) {
   });
 
   for (line in lines) {
+    var header = null;
+
     lineMatches = lines[line].replace(/\s+$/, '').match(re);
     name = lineMatches[1];
     value = lineMatches[2];

@@ -1,3 +1,5 @@
+'use strict';
+
 var GitHubApi = require("github");
 var _ = require("underscore");
 var async = require('async');

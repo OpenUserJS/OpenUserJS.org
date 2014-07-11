@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');

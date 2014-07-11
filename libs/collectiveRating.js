@@ -1,3 +1,5 @@
+'use strict';
+
 var Script = require('../models/script').Script;
 
 function median(values) {
@@ -43,7 +45,7 @@ exports.getKarma = function (user, maxKarma, callback) {
   Script.find({ _authorId: user._id }, 'rating', function (err, scripts) {
     if (err) { return callback(karma); }
 
-    karm = Math.floor(getRating(scripts) / 10);
+    karma = Math.floor(getRating(scripts) / 10);
     if (karma > maxKarma) { karma = maxKarma; }
 
     callback(karma);

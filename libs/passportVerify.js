@@ -1,3 +1,5 @@
+'use strict';
+
 var crypto = require('crypto');
 var User = require('../models/user').User;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
