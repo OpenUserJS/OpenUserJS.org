@@ -199,6 +199,8 @@ function parseMeta(aString, aNormalize) {
   });
 
   for (line in lines) {
+    var header = null;
+
     lineMatches = lines[line].replace(/\s+$/, '').match(rLine);
     name = lineMatches[1];
     value = lineMatches[2];
