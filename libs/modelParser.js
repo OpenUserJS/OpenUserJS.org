@@ -97,7 +97,7 @@ var getScriptEditSourcePageUrl = function (script) {
 
 var getScriptInstallPageUrl = function (script) {
   var isLib = script.isLib || false;
-  return (isLib ? '/libs/src/' : '/install/') + script.installName;
+  return (isLib ? '/src/libs/' : '/install/') + script.installName;
 };
 
 //
@@ -129,6 +129,7 @@ var parseScript = function (scriptData) {
 
   // Support Url
   if (script.meta.supportURL) {
+    script.hasSupport = true;
     if (_.isString(script.meta.supportURL)) {
       htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {

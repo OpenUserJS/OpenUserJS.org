@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <Description>Search OpenUserJS Groups</Description>
+  <ShortName>OpenUserJS Groups</ShortName>
+  <Url type="text/html"
+       method="get"
+       template="https://openuserjs.org/groups?q={searchTerms}" />
+  <Image height="16" width="16" type="image/x-icon">https://openuserjs.org/images/favicon16.ico</Image>
+  <Image height="64" width="64" type="image/png">https://openuserjs.org/images/favicon64.png</Image>
+  <InputEncoding>UTF-8</InputEncoding>
+  <OutputEncoding>UTF-8</OutputEncoding>
+</OpenSearchDescription>

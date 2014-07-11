@@ -55,13 +55,13 @@ All functions should be declared, before they are used, after the variable decla
 
 ```javascript
 function outer(c, d) {
-    var e = c * d;
+  var e = c * d;
 
-    function inner(a, b) {
-        return (e * a) + b;
-    }
+  function inner(a, b) {
+    return (e * a) + b;
+  }
 
-    return inner(0, 1);
+  return inner(0, 1);
 }
 ```
 
@@ -69,7 +69,7 @@ When a function is to be invoked immediately, the entire invocation expression s
 
 ```javascript
 var collection = (function () {
-    // code here
+  /* code here */
 }());
 ```
 
@@ -78,14 +78,14 @@ If the space is omitted, then it can appear that the function's name is `functio
 
 ```javascript
 div.onclick = function (e) {
-    return false;
+  return false;
 };
 
 that = {
-    method: function () {
-        return this.datum;
-    },
-    datum: 0
+  method: function () {
+    return this.datum;
+  },
+  datum: 0
 };
 ```
 
@@ -203,21 +203,21 @@ The `if` class of statements should have the following form:
 
 ```javascript
 if (condition) {
-    // statements
+  /* statements */
 }
 
 if (condition) {
-    // statements
+  /* statements */
 } else {
-    // statements
+  /* statements */
 }
 
 if (condition) {
-    // statements
+  /* statements */
 } else if (condition) {
-    // statements
+  /* statements */
 } else {
-    // statements
+  /* statements */
 }
 ```
 
@@ -227,13 +227,13 @@ A for class of statements should have the following form:
 
 ```javascript
 for (initialization; condition; update) {
-    // statements
+  /* statements */
 }
 
 for (variable in object) {
-    if (filter) {
-        // statements
-    }
+  if (filter) {
+    /* statements */
+  }
 }
 ```
 
@@ -248,7 +248,7 @@ A `while` statement should have the following form:
 
 ```javascript
 while (condition) {
-    // statements
+  /* statements */
 }
 ```
 
@@ -258,7 +258,7 @@ A `do` statement should have the following form:
 
 ```javascript
 do {
-    // statements
+  /* statements */
 } while (condition);
 ```
 
@@ -270,17 +270,23 @@ A `switch` statement should have the following form:
 
 ```javascript
 switch (expression) {
-    case expression: {
-        // statements
-        break;
-    }
-    default: {
-        // statements
-    }
+  case expression1:
+    /* statements */
+    // fallthrough
+  case expression2:
+    /* previously declared `// fallthrough` statements */
+    break;
+  case expression3:
+  case expression4:
+  case expressionNth:
+    /* statements */
+    break;
+  default:
+    /* default statements */
 }
 ```
 
-Each group of statements *(except the default)* should end with `break`, `return`, or `throw`. **Do not fall through.**
+Each logical grouping of statements *(except the default)* should end with `// fallthrough`, `break`, `return`, or `throw`. **NOTE: Complex conditionaling may sometimes be better described with an `if...else` or other ECMAScript syntax for readability purposes.**
 
 #### try Statement
 
@@ -288,17 +294,17 @@ The `try` class of statements should have the following form:
 
 ```javascript
 try {
-    // statements
+  /* statements */
 } catch (variable) {
-    // statements
+  /* statements */
 }
 
 try {
-    // statements
+  /* statements */
 } catch (variable) {
-    // statements
+  /* statements */
 } finally {
-    // statements
+  /* statements */
 }
 ```
 
@@ -373,7 +379,7 @@ The following **may not** be used:
 * `Function` constructor (it uses `eval()`)
 * `with()` *(it can be highly inconsistent)*
 
-Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`
+Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`. If you're trying to force a server side function to run asynchronously use [`setImmediate`](http://nodejs.org/api/timers.html#timers_setimmediate_callback_arg) *(or [`process.nextTick`](http://nodejs.org/api/process.html#process_process_nexttick_callback) if you really know what you're doing)*.
 
 `parseInt()` must be used with a radix parameter, e.g.,
 ```javascript

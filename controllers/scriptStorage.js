@@ -117,8 +117,8 @@ exports.sendScript = function (req, res, next) {
     res.set('Content-Type', 'text/javascript; charset=UTF-8');
     stream.pipe(res);
 
-    // Don't count installs on libraries
-    if (script.isLib) { return; }
+    // Don't count installs on raw source route
+    if (script.isLib || req.route.params.type) { return; }
 
     // Update the install count
     ++script.installs;
@@ -174,8 +174,8 @@ exports.sendMeta = function (req, res, next) {
 
 // Modified from Count Issues (http://userscripts.org/scripts/show/69307)
 // By Marti Martz (http://userscripts.org/users/37004)
-function parseMeta(aString) {
-  var re = /\/\/ @(\S+)(?:\s+(.*))?/;
+function parseMeta(aString, aNormalize) {
+  var rLine = /\/\/ @(\S+)(?:\s+(.*))?/;
   var headers = {};
   var name = null;
   var prefix = null;
@@ -185,9 +185,10 @@ function parseMeta(aString) {
   var lineMatches = null;
   var lines = {};
   var uniques = {
+    'description': true,
+    'icon': true,
     'name': true,
     'namespace': true,
-    'description': true,
     'version': true,
     'oujs:author': true
   };
@@ -195,53 +196,65 @@ function parseMeta(aString) {
   var one = null;
   var matches = null;
 
-  lines = aString.split(/[\r\n]+/).filter(function (e, i, a) {
-    return (e.match(re));
+  lines = aString.split(/[\r\n]+/).filter(function (aElement, aIndex, aArray) {
+    return (aElement.match(rLine));
   });
 
   for (line in lines) {
     var header = null;
 
-    lineMatches = lines[line].replace(/\s+$/, '').match(re);
+    lineMatches = lines[line].replace(/\s+$/, '').match(rLine);
     name = lineMatches[1];
     value = lineMatches[2];
-    // Upmix from...
-    switch (name) {
-      case 'licence':
-        name = 'license';
-        break;
-      case 'homepage':
-        name = 'homepageURL';
-        break;
+    if (aNormalize) {
+      // Upmix from...
+      switch (name) {
+        case 'homepage':
+        case 'source':
+        case 'website':
+          name = 'homepageURL';
+          break;
+        case 'defaulticon':
+        case 'iconURL':
+          name = 'icon';
+          break;
+        case 'licence':
+          name = 'license';
+          break;
+      }
     }
     name = name.split(/:/).reverse();
     key = name[0];
     prefix = name[1];
     if (key) {
+      unique = {};
       if (prefix) {
         if (!headers[prefix]) {
           headers[prefix] = {};
         }
         header = headers[prefix];
-        unique = {};
-        for (one in uniques) {
-          matches = one.match(/(.*):(.*)$/);
-          if (uniques[one] && matches && matches[1] === prefix) {
-            unique[matches[2]] = true;
+        if (aNormalize) {
+          for (one in uniques) {
+            matches = one.match(/(.*):(.*)$/);
+            if (uniques[one] && matches && matches[1] === prefix) {
+              unique[matches[2]] = true;
+            }
           }
         }
       } else {
         header = headers;
-        unique = {};
-        for (one in uniques) {
-          if (uniques[one] && !/:/.test(one)) {
-            unique[one] = true;
+        if (aNormalize) {
+          for (one in uniques) {
+            if (uniques[one] && !/:/.test(one)) {
+              unique[one] = true;
+            }
           }
         }
       }
-      if (!header[key] || unique[key]) {
+      if (!header[key] || aNormalize && unique[key]) {
         header[key] = value || '';
-      } else {
+      } else if (!aNormalize || header[key] !== (value || '')
+          && !(header[key] instanceof Array && header[key].indexOf(value) > -1)) {
         if (!(header[key] instanceof Array)) {
           header[key] = [header[key]];
         }
@@ -267,7 +280,7 @@ exports.getMeta = function (chunks, callback) {
     str += chunks[i];
     header = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m.exec(str);
 
-    if (header && header[1]) { return callback(parseMeta(header[1])); }
+    if (header && header[1]) { return callback(parseMeta(header[1], true)); }
   }
 
   callback(null);
@@ -284,7 +297,7 @@ exports.storeScript = function (user, meta, buf, callback, update) {
   var libraryRegex = new RegExp('^https?:\/\/' +
     (process.env.NODE_ENV === 'production' ?
       'openuserjs\.org' : 'localhost:8080') +
-    '\/libs\/src\/(.+?\/.+?\.js)$', '');
+    '\/(?:libs\/src|src\/libs)\/(.+?\/.+?\.js)$', '');
 
   if (!meta) { return callback(null); }
 

@@ -318,7 +318,7 @@ exports.userCommentListPage = function (req, res, next) {
     });
 
     // SearchBar
-    options.searchBarPlaceholder = 'Search User\'s Comments';
+    options.searchBarPlaceholder = 'Search ' + user.name + '\'s Comments';
     options.searchBarFormAction = '';
 
     //--- Tasks
@@ -395,7 +395,7 @@ exports.userScriptListPage = function (req, res, next) {
     var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     // SearchBar
-    options.searchBarPlaceholder = 'Search User\'s Scripts';
+    options.searchBarPlaceholder = 'Search ' + user.name + '\'s Scripts';
     options.searchBarFormAction = '';
 
     //--- Tasks
@@ -918,7 +918,7 @@ exports.userGitHubImportScriptPage = function (req, res, next) {
         var userscriptHeaderRegex = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m;
         var m = userscriptHeaderRegex.exec(blobUtf8);
         if (m && m[1]) {
-          var userscriptMeta = scriptStorage.parseMeta(m[1]);
+          var userscriptMeta = scriptStorage.parseMeta(m[1], true);
           scriptStorage.storeScript(authedUser, userscriptMeta, blobUtf8, onScriptStored);
         } else {
           callback('Specified file does not contain a userscript header.');
