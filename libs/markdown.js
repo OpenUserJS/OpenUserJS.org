@@ -1,3 +1,5 @@
+'use strict';
+
 var marked = require('marked');
 var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');

@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var _ = require('underscore');
 
@@ -222,6 +224,14 @@ exports.open = function (req, res, next) {
     installName: scriptStorage.caseInsensitive(
       installNameSlug  + (type === 'libs' ? '.js' : '.user.js'))
   }, function (err, scriptData) {
+    function preRender() {
+      // Page metadata
+      pageMetadata(options, ['New Issue', script.name]);
+    };
+    function render() { res.render('pages/scriptNewIssuePage', options); }
+    function asyncComplete() { preRender(); render(); }
+
+    // ---
     if (err || !scriptData) { return next(); }
 
     //
@@ -264,12 +274,6 @@ exports.open = function (req, res, next) {
       // ...
 
       //---
-      function preRender() {
-        // Page metadata
-        pageMetadata(options, ['New Issue', script.name]);
-      };
-      function render() { res.render('pages/scriptNewIssuePage', options); }
-      function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
     }
   });

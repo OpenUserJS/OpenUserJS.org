@@ -1,3 +1,5 @@
+'use strict';
+
 var defaultOnErrFn = console.log;
 
 var onErr = function (err, onErrFn) {

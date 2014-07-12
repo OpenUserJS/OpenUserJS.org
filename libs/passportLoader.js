@@ -1,3 +1,5 @@
+'use strict';
+
 var passport = require('passport');
 
 var nil = require('../libs/helpers').nil;

@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
@@ -306,6 +308,16 @@ exports.view = function (req, res, next) {
     installName: scriptStorage
       .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (err, scriptData) {
+    function preRender() {
+      if (script.groups) {
+        pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+          script.meta.description, _.pluck(script.groups, 'name'));
+      }
+    };
+    function render() { res.render('pages/scriptPage', options); }
+    function asyncComplete() { preRender(); render(); }
+
+    //---
     if (err || !scriptData) { return next(); }
 
     var options = {};
@@ -339,14 +351,6 @@ exports.view = function (req, res, next) {
     tasks = tasks.concat(getScriptPageTasks(options));
 
     //---
-    function preRender() {
-      if (script.groups) {
-        pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-          script.meta.description, _.pluck(script.groups, 'name'));
-      }
-    };
-    function render() { res.render('pages/scriptPage', options); }
-    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
@@ -369,6 +373,17 @@ exports.edit = function (req, res, next) {
     installName: scriptStorage
       .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (err, scriptData) {
+    function preRender() {
+      var groupNameList = (options.script.groups || []).map(function (group) {
+        return group.name;
+      });
+      options.groupNameListJSON = JSON.stringify(groupNameList);
+
+    };
+    function render() { res.render('pages/scriptEditMetadataPage', options); }
+    function asyncComplete() { preRender(); render(); }
+
+    // ---
     if (err || !scriptData) { return next(); }
 
     //
@@ -422,15 +437,6 @@ exports.edit = function (req, res, next) {
       // Groups
       options.canCreateGroup = (!script._groupId).toString();
 
-      function preRender() {
-        var groupNameList = (options.script.groups || []).map(function (group) {
-          return group.name;
-        });
-        options.groupNameListJSON = JSON.stringify(groupNameList);
-
-      };
-      function render() { res.render('pages/scriptEditMetadataPage', options); }
-      function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
 
       // Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {

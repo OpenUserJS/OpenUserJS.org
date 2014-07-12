@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var _ = require('underscore');
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;

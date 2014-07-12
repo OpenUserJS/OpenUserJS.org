@@ -1,3 +1,5 @@
+'use strict';
+
 // This library allows for the modifications of user sessions
 var async = require('async');
 

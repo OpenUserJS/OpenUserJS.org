@@ -1,3 +1,5 @@
+'use strict';
+
 var passport = require('passport');
 var allStrategies = require('./strategies.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;

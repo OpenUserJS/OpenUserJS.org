@@ -1,3 +1,5 @@
+'use strict';
+
 var removeLib = require('../libs/remove');
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;

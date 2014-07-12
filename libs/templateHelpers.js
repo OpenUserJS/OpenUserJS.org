@@ -1,3 +1,5 @@
+'use strict';
+
 var countTask = require('../libs/tasks').countTask;
 var helpers = require('../libs/helpers');
 var modelParser = require('../libs/modelParser');

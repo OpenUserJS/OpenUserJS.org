@@ -14,6 +14,8 @@ All of our JavaScript code is sent directly to the public. It should always be o
 
 Neatness counts.
 
+**Always use `'use strict';` in all .js files**
+
 ---
 
 ### EditorConfig
