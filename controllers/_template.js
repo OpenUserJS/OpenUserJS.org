@@ -94,13 +94,13 @@ exports.example = function (aReq, aRes, aNext) {
   tasks.push(pagination.getCountTask(scriptListQuery));
 
   // Scripts
-  tasks.push(function (aCb) {
+  tasks.push(function (aCallback) {
     scriptListQuery.exec(function (aErr, aScriptDataList) {
       if (aErr) {
-        aCb();
+        aCallback();
       } else {
         options.scriptList = _.map(aScriptDataList, modelParser.parseScript);
-        aCb();
+        aCallback();
       }
     });
   });

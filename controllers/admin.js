@@ -262,7 +262,7 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
   //--- Tasks
 
   // strategyListQuery
-  tasks.push(function (aCb) {
+  tasks.push(function (aCallback) {
     Strategy.find({}, function (aErr, aStrats) {
       var stored = nil();
       var strategies = null;
@@ -278,7 +278,7 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
       strategies = getOAuthStrategies(stored);
       options.strategies = strategies;
 
-      aCb();
+      aCallback();
     });
   });
 
@@ -308,7 +308,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
     aStrats.forEach(function (aStrat) {
       stored[aStrat.name] = aStrat;
     });
-    async.each(postStrats, function (aPostStrat, aCb) {
+    async.each(postStrats, function (aPostStrat, aCallback) {
       var strategy = null;
       var name = aPostStrat.name;
       var id = aPostStrat.id;
@@ -317,7 +317,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
       if (stored[name] && !id && !key) {
         stored[name].remove(function () {
           delete strategyInstances[name];
-          aCb();
+          aCallback();
         });
         return;
       } else if (id && key) {
@@ -336,11 +336,11 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
 
         return strategy.save(function (aErr, aStrategy) {
           loadPassport(aStrategy);
-          aCb();
+          aCallback();
         });
       }
 
-      aCb();
+      aCallback();
     }, function (aErr) {
       aRes.redirect('/admin/api');
     });

@@ -113,12 +113,12 @@ function listRegex(aRoot, aType) {
 var methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
 function app_route(aPath) {
   var r = {};
-  r.all = function (aCb) {
-    app.all.call(app, aPath, aCb);
+  r.all = function (aCallback) {
+    app.all.call(app, aPath, aCallback);
   };
   methods.forEach(function (aMethod) {
-    r[aMethod] = function (aCb) {
-      app[aMethod].call(app, aPath, aCb);
+    r[aMethod] = function (aCallback) {
+      app[aMethod].call(app, aPath, aCallback);
       return r;
     };
   });
