@@ -1,6 +1,5 @@
+
 # OpenUserJS.org Style Guide
-
-
 
 ### Preliminary Notes
 
@@ -26,7 +25,7 @@ To help with the above rules, we use [EditorConfig][editorconfig]. Install the p
 
 ### Variable Declarations
 
-All variables should be declared before used. JavaScript does not require this, but doing so makes the program easier to read and makes it easier to detect undeclared variables that may become implied globals. Implied global variables should never be used.
+All variables should be declared before used. JavaScript does not require this by default, but doing so makes the program easier to read and makes it easier to detect undeclared variables that may become implied globals. Implied global variables should never be used.
 Variable declarations without value should be initialized to `null`
 
 All variable statements should be the first statements within the function body.
@@ -52,13 +51,14 @@ All functions should be declared, before they are used, after the variable decla
 * There should be one space between the right-parenthesis and the left-curly-brace that begins the statement body.
 * The body itself is indented two spaces.
 * The right-curly-brace is aligned with the line containing the beginning of the function declaration.
+* Declared parameter lists variables should start with a lower case a, which stands for argument, and continue with [camel casing][camelcase] *(except if the phrase is an acronym like HTML)*.
 
 ```javascript
-function outer(c, d) {
-  var e = c * d;
+function outer(aC, aD) {
+  var e = aC * aD;
 
-  function inner(a, b) {
-    return (e * a) + b;
+  function inner(aA, aB) {
+    return (e * aA) + aB;
   }
 
   return inner(0, 1);
@@ -77,7 +77,7 @@ If a function literal is anonymous, there should be one space between the word `
 If the space is omitted, then it can appear that the function's name is `function`, which is incorrect.
 
 ```javascript
-div.onclick = function (e) {
+div.onclick = function (aE) {
   return false;
 };
 
@@ -169,6 +169,13 @@ Variables that contain regular expressions should begin with `r` and be camel-ca
 ```javascript
 var rSelector = /^\*|^\.[a-z][\w\d-]*|^#[^ ]+|^[a-z]+|^\[a-z]+/i;   // matches a CSS selector
 var rHTML = /<[^>]+>/;                                              // matches a string of HTML
+```
+
+Declared parameter lists variables should start with a lower case a, which stands for argument, and continue with [camel casing][camelcase] *(except if the phrase is an acronym like HTML)*.
+
+```javascript
+function foo(aName, aValue) {
+}
 ```
 
 ---
@@ -391,7 +398,7 @@ Read more on the [awful parts of JavaScript][awfulparts].
   [WIKIPEDIABOM]: http://www.wikipedia.org/wiki/Byte_order_mark
   [IETFRFC3629S4]: http://tools.ietf.org/html/rfc3629#section-4
   [awfulparts]: http://oreilly.com/javascript/excerpts/javascript-good-parts/awful-parts.html
-  [camelcase]: http://en.wikipedia.org/wiki/CamelCase
+  [camelcase]: http://www.wikipedia.org/wiki/CamelCase
   [codeconventions]: http://javascript.crockford.com/code.html
   [editorconfig]: http://editorconfig.org/
   [impliedglobals]: http://www.adequatelygood.com/Finding-Improper-JavaScript-Globals.html
