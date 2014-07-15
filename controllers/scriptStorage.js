@@ -27,27 +27,27 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-/*Script.find({ installName: /^[^\/]+\/[^\/]+\/[^\/]+$/ },function (err, scripts){
+/*Script.find({ installName: /^[^\/]+\/[^\/]+\/[^\/]+$/ },function (aErr, aScripts){
   var s3 = new AWS.S3();
   var Discussion = require('../models/discussion').Discussion;
 
-  scripts.forEach(function (script) {
-    //console.log(script.installName);
-    var oldPath = script.installName;
-    var newPath = cleanFilename(script.author) + '/'
-      + cleanFilename(script.name) + (script.isLib ? '.js' : '.user.js');
-    var newCat = (script.isLib ? 'libs' : 'scripts') + '/' + newPath
+  aScripts.forEach(function (aScript) {
+    //console.log(aScript.installName);
+    var oldPath = aScript.installName;
+    var newPath = cleanFilename(aScript.author) + '/'
+      + cleanFilename(aScript.name) + (aScript.isLib ? '.js' : '.user.js');
+    var newCat = (aScript.isLib ? 'libs' : 'scripts') + '/' + newPath
       .replace(/(\.user)?\.js$/, '')  + '/issues';
-    var oldCat = (script.isLib ? 'libs' : 'scripts') + '/' + oldPath
+    var oldCat = (aScript.isLib ? 'libs' : 'scripts') + '/' + oldPath
       .replace(/(\.user)?\.js$/, '')  + '/issues';
 
-    Discussion.find({ category: oldCat }, function (err, discussions) {
-      discussions.forEach(function (discussion) {
-        var urlTopic = cleanFilename(discussion.topic, '').replace(/_\d+$/, '');
+    Discussion.find({ category: oldCat }, function (aErr, aDiscussions) {
+      aDiscussions.forEach(function (aDiscussion) {
+        var urlTopic = cleanFilename(aDiscussion.topic, '').replace(/_\d+$/, '');
         var path = '/' + newCat + '/' + urlTopic;
-        discussion.path = path;
-        discussion.category = newCat;
-        discussion.save(function (){ console.log(newCat, path); });
+        aDiscussion.path = path;
+        aDiscussion.category = newCat;
+        aDiscussion.save(function (){ console.log(newCat, path); });
       });
     });
 
@@ -57,14 +57,14 @@ if (process.env.NODE_ENV === 'production') {
       Key: newPath
     };
 
-    script.installName = newPath;
-    s3.copyObject(params, function (err, data) {
-      if (err) { return console.log(oldPath + ' - copy fail'); }
-      script.save(function () {});
+    aScript.installName = newPath;
+    s3.copyObject(params, function (aErr, aData) {
+      if (aErr) { return console.log(oldPath + ' - copy fail'); }
+      aScript.save(function () {});
 
       s3.deleteObject({ Bucket : params.Bucket, Key : oldPath},
-        function (err, data) {
-          if (err) {
+        function (aErr, aData) {
+          if (aErr) {
             console.log(oldPath + '- delete fail');
           } else {
             console.log(newPath + ' - success');
@@ -75,100 +75,99 @@ if (process.env.NODE_ENV === 'production') {
 });*/
 
 
-function getInstallName (req) {
-  return req.route.params.username + '/' + req.route.params.scriptname;
+function getInstallName (aReq) {
+  return aReq.route.params.username + '/' + aReq.route.params.scriptname;
 }
 exports.getInstallName = getInstallName;
 
-function caseInsensitive (installName) {
-  return new RegExp('^' + installName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+function caseInsensitive (aInstallName) {
+  return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
     + '$', 'i');
 }
 exports.caseInsensitive = caseInsensitive;
 
-exports.getSource = function (req, callback) {
+exports.getSource = function (aReq, aCallback) {
   var s3 = new AWS.S3();
-  var installName = getInstallName(req);
+  var installName = getInstallName(aReq);
 
   Script.findOne({ installName: caseInsensitive(installName) },
-    function (err, script) {
+    function (aErr, aScript) {
 
-      if (!script) { return callback(null); }
+      if (!aScript) { return aCallback(null); }
 
       // Get the script
-      callback(script, s3.getObject({ Bucket: bucketName, Key: installName })
+      aCallback(aScript, s3.getObject({ Bucket: bucketName, Key: installName })
         .createReadStream());
   });
 };
 
-exports.sendScript = function (req, res, next) {
-  var accept = req.headers.accept;
+exports.sendScript = function (aReq, aRes, aNext) {
+  var accept = aReq.headers.accept;
   var installName = null;
 
-  if (0 !== req.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
-    return exports.sendMeta(req, res, next);
+  if (0 !== aReq.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
+    return exports.sendMeta(aReq, aRes, aNext);
   }
 
-  exports.getSource(req, function (script, stream) {
+  exports.getSource(aReq, function (aScript, aStream) {
 
-    if (!script) { return next(); }
+    if (!aScript) { return aNext(); }
 
     // Send the script
-    res.set('Content-Type', 'text/javascript; charset=UTF-8');
-    stream.pipe(res);
+    aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+    aStream.pipe(aRes);
 
     // Don't count installs on raw source route
-    if (script.isLib || req.route.params.type) { return; }
+    if (aScript.isLib || aReq.route.params.type) { return; }
 
     // Update the install count
-    ++script.installs;
-    script.save(function (err, script) { });
+    ++aScript.installs;
+    aScript.save(function (aErr, aScript) { });
   });
 };
 
 // Send user script metadata block
-exports.sendMeta = function (req, res, next) {
-  var installName = getInstallName(req).replace(/\.meta\.js$/, '.user.js');
+exports.sendMeta = function (aReq, aRes, aNext) {
+  var installName = getInstallName(aReq).replace(/\.meta\.js$/, '.user.js');
 
   Script.findOne({ installName: caseInsensitive(installName) },
-    function (err, script) {
+    function (aErr, aScript) {
       var meta = null;
-      var name = null;
       var data = null;
       var prefix = null;
       var key = null;
-      var whitespace = '    ';
+      var whitespace = '\u0020\u0020\u0020\u0020';
 
-      if (!script) { return next(); }
+      if (!aScript) { return aNext(); }
 
-      res.set('Content-Type', 'text/javascript; charset=UTF-8');
-      meta = script.meta;
+      aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+      meta = aScript.meta; // NOTE: Watchpoint
 
-      res.write('// ==UserScript==\n');
-      Object.keys(meta).reverse().forEach(function (name) {
-        if (meta[name] instanceof Array) {
-          meta[name].forEach(function (value) {
-            res.write('// @' + name + (value ? whitespace + value : '') + '\n');
+      aRes.write('// ==UserScript==\n');
+      Object.keys(meta).reverse().forEach(function (aName) {
+        if (meta[aName] instanceof Array) {
+          meta[aName].forEach(function (aValue) {
+            aRes.write('// @' + aName + (aValue ? whitespace + aValue : '') + '\n');
           });
-        } else if (meta[name] instanceof Object) {
-          prefix = name;
-          for (key in meta[name]) {
+        } else if (meta[aName] instanceof Object) {
+          prefix = aName;
+          for (key in meta[aName]) {
             data = meta[prefix][key];
             if (data instanceof Array) {
-              data.forEach(function (value) {
-                res.write('// @' + prefix + ':' + key + (value ? whitespace + value : '') + '\n');
+              data.forEach(function (aValue) {
+                aRes.write('// @' + prefix + ':' + key + (aValue ? whitespace + aValue : '') + '\n');
               });
             }
             else {
-              res.write('// @' + prefix + ':' + key + (data ? whitespace + data : '') + '\n');
+              aRes.write('// @' + prefix + ':' + key + (data ? whitespace + data : '') + '\n');
             }
           }
         } else {
-          data = meta[name];
-          res.write('// @' + name + (data ? whitespace + data : '') + '\n');
+          data = meta[aName];
+          aRes.write('// @' + aName + (data ? whitespace + data : '') + '\n');
         }
       });
-      res.end('// ==/UserScript==\n');
+      aRes.end('// ==/UserScript==\n');
   });
 };
 
@@ -266,31 +265,31 @@ function parseMeta(aString, aNormalize) {
 }
 exports.parseMeta = parseMeta;
 
-exports.getMeta = function (chunks, callback) {
+exports.getMeta = function (aChunks, aCallback) {
   // We need to convert the array of buffers to a string to
   // parse the header. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
   // get the user script header.
   var str = '';
   var i = 0;
-  var len = chunks.length;
+  var len = aChunks.length;
 
-  for (; i < chunks.length; ++i) {
+  for (; i < aChunks.length; ++i) {
     var header = null;
-    str += chunks[i];
+    str += aChunks[i];
     header = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m.exec(str);
 
-    if (header && header[1]) { return callback(parseMeta(header[1], true)); }
+    if (header && header[1]) { return aCallback(parseMeta(header[1], true)); }
   }
 
-  callback(null);
+  aCallback(null);
 };
 
-exports.storeScript = function (user, meta, buf, callback, update) {
+exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var s3 = new AWS.S3();
   var scriptName = null;
-  var installName = user.name + '/';
-  var isLibrary = typeof meta === 'string';
+  var installName = aUser.name + '/';
+  var isLibrary = typeof aMeta === 'string';
   var libraries = [];
   var requires = null;
   var collaborators = null;
@@ -299,22 +298,22 @@ exports.storeScript = function (user, meta, buf, callback, update) {
       'openuserjs\.org' : 'localhost:8080') +
     '\/(?:libs\/src|src\/libs)\/(.+?\/.+?\.js)$', '');
 
-  if (!meta) { return callback(null); }
+  if (!aMeta) { return aCallback(null); }
 
   if (!isLibrary) {
-    scriptName = cleanFilename(meta.name, '');
+    scriptName = cleanFilename(aMeta.name, '');
 
     // Can't install a script without a @name (maybe replace with random value)
-    if (!scriptName) { return callback(null); }
+    if (!scriptName) { return aCallback(null); }
 
-    if (!isLibrary && meta.oujs && meta.oujs.author
-        && meta.oujs.author != user.name && meta.oujs.collaborator) {
-      collaborators = meta.oujs.collaborator;
+    if (!isLibrary && aMeta.oujs && aMeta.oujs.author
+        && aMeta.oujs.author != aUser.name && aMeta.oujs.collaborator) {
+      collaborators = aMeta.oujs.collaborator;
       if ((typeof collaborators === 'string'
-          && collaborators === user.name)
+          && collaborators === aUser.name)
           || (collaborators instanceof Array
-          && collaborators.indexOf(user.name) > -1)) {
-        installName = meta.oujs.author + '/';
+          && collaborators.indexOf(aUser.name) > -1)) {
+        installName = aMeta.oujs.author + '/';
       } else {
         collaborators = null;
       }
@@ -322,34 +321,34 @@ exports.storeScript = function (user, meta, buf, callback, update) {
 
     installName += scriptName + '.user.js';
 
-    if (meta.require) {
-      if (typeof meta.require === 'string') {
-        requires = [meta.require];
+    if (aMeta.require) {
+      if (typeof aMeta.require === 'string') {
+        requires = [aMeta.require];
       } else {
-        requires = meta.require;
+        requires = aMeta.require;
       }
 
-      requires.forEach(function (require) {
-        var match = libraryRegex.exec(require);
+      requires.forEach(function (aRequire) {
+        var match = libraryRegex.exec(aRequire);
         if (match && match[1]) { libraries.push(match[1]); }
       });
     }
   } else {
-    scriptName = cleanFilename(meta.replace(/^\s+|\s+$/g, ''), '');
-    if (!scriptName) { return callback(null); }
+    scriptName = cleanFilename(aMeta.replace(/^\s+|\s+$/g, ''), '');
+    if (!scriptName) { return aCallback(null); }
 
     installName += scriptName + '.js';
   }
 
   // Prevent a removed script from being reuploaded
   findDeadorAlive(Script, { installName: caseInsensitive(installName) }, true,
-    function (alive, script, removed) {
-      if (removed || (!script && (update || collaborators))) {
-        return callback(null);
-      } else if (!script) {
-        script = new Script({
-          name: isLibrary ? meta : meta.name,
-          author: user.name,
+    function (aAlive, aScript, aRemoved) {
+      if (aRemoved || (!aScript && (aUpdate || collaborators))) {
+        return aCallback(null);
+      } else if (!aScript) {
+        aScript = new Script({
+          name: isLibrary ? aMeta : aMeta.name,
+          author: aUser.name,
           installs: 0,
           rating: 0,
           about: '',
@@ -358,61 +357,61 @@ exports.storeScript = function (user, meta, buf, callback, update) {
           flags: 0,
           installName: installName,
           fork: null,
-          meta: isLibrary ? { name: meta } : meta,
+          meta: isLibrary ? { name: aMeta } : aMeta,
           isLib: isLibrary,
           uses: isLibrary ? null : libraries,
-          _authorId: user._id
+          _authorId: aUser._id
         });
       } else {
-        if (!script.isLib) {
-          if (collaborators && (script.meta.oujs && script.meta.oujs.author != meta.oujs.author
-              || (script.meta.oujs && JSON.stringify(script.meta.oujs.collaborator) !=
+        if (!aScript.isLib) {
+          if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author != aMeta.oujs.author
+              || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !=
              JSON.stringify(meta.oujs.collaborator)))) {
-            return callback(null);
+            return aCallback(null);
           }
-          script.meta = meta;
-          script.uses = libraries;
+          aScript.meta = aMeta;
+          aScript.uses = libraries;
         }
-        script.updated = new Date();
+        aScript.updated = new Date();
       }
 
-      script.save(function (err, script) {
-        s3.putObject({ Bucket: bucketName, Key: installName, Body: buf },
-          function (err, data) {
+      aScript.save(function (aErr, aScript) {
+        s3.putObject({ Bucket: bucketName, Key: installName, Body: aBuf },
+          function (aErr, aData) {
             // Don't save a script if storing failed
-            if (err) {
-              console.error(user.name, '-', installName);
-              console.error(JSON.stringify(err));
-              console.error(JSON.stringify(script.toObject()));
-              return callback(null);
+            if (aErr) {
+              console.error(aUser.name, '-', installName);
+              console.error(JSON.stringify(aErr));
+              console.error(JSON.stringify(aScript.toObject()));
+              return aCallback(null);
             }
 
-            if (user.role === userRoles.length - 1) {
-              var userDoc = user;
+            if (aUser.role === userRoles.length - 1) {
+              var userDoc = aUser;
               if (!userDoc.save) {
                 // We're probably using req.session.user which may have gotten serialized.
                 userDoc = new User(userDoc);
               }
               --userDoc.role;
-              userDoc.save(function (err, user) { callback(script); });
+              userDoc.save(function (aErr, aUser) { aCallback(aScript); });
             } else {
-              callback(script);
+              aCallback(aScript);
             }
           });
       });
     });
 };
 
-exports.deleteScript = function (installName, callback) {
-  Script.findOne({ installName: caseInsensitive(installName) },
-    function (err, script) {
+exports.deleteScript = function (aInstallName, aCallback) {
+  Script.findOne({ installName: caseInsensitive(aInstallName) },
+    function (aErr, aScript) {
       var s3 = new AWS.S3();
-      s3.deleteObject({ Bucket : bucketName, Key : script.installName},
-        function (err) {
-          if (!err) {
-            script.remove(callback);
+      s3.deleteObject({ Bucket : bucketName, Key : aScript.installName},
+        function (aErr) {
+          if (!aErr) {
+            aScript.remove(aCallback);
           } else {
-            callback(null);
+            aCallback(null);
           }
       });
   });
@@ -420,7 +419,7 @@ exports.deleteScript = function (installName, callback) {
 
 // GitHub calls this on a push if a webhook is setup
 // This controller makes sure we have the latest version of a script
-exports.webhook = function (req, res) {
+exports.webhook = function (aReq, aRes) {
   var RepoManager = require('../libs/repoManager');
   var payload = null;
   var username = null;
@@ -428,16 +427,16 @@ exports.webhook = function (req, res) {
   var repos = {};
   var repo = null;
 
-  res.end(); // Close connection
+  aRes.end(); // Close connection
 
   // Test for know GH webhook ips: https://api.github.com/meta
-  if (!req.body.payload ||
+  if (!aReq.body.payload ||
     !/192\.30\.25[2-5]\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
-    .test(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
+    .test(aReq.headers['x-forwarded-for'] || aReq.connection.remoteAddress)) {
     return;
   }
 
-  payload = JSON.parse(req.body.payload);
+  payload = JSON.parse(aReq.body.payload);
 
   // Only accept commits to the master branch
   if (!payload || payload.ref !== 'refs/heads/master') { return; }
@@ -449,20 +448,20 @@ exports.webhook = function (req, res) {
   repo = repos[reponame] = {};
 
   // Find the user that corresponds the repo owner
-  User.findOne({ ghUsername: username }, function (err, user) {
-    if (!user) { return; }
+  User.findOne({ ghUsername: username }, function (aErr, aUser) {
+    if (!aUser) { return; }
 
     // Gather the modified user scripts
-    payload.commits.forEach(function (commit) {
-      commit.modified.forEach(function (filename) {
-        if (filename.substr(-8) === '.user.js') {
-          repo[filename] = '/' + encodeURI(filename);
+    payload.commits.forEach(function (aCommit) {
+      aCommit.modified.forEach(function (aFilename) {
+        if (aFilename.substr(-8) === '.user.js') {
+          repo[aFilename] = '/' + encodeURI(aFilename);
         }
       });
     });
 
     // Update modified scripts
-    var repoManager = RepoManager.getManager(null, user, repos);
+    var repoManager = RepoManager.getManager(null, aUser, repos);
     repoManager.loadScripts(function () { }, true);
   });
 };
