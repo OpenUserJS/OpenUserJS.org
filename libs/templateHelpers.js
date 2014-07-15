@@ -5,16 +5,16 @@ var helpers = require('../libs/helpers');
 var modelParser = require('../libs/modelParser');
 var _ = require('underscore');
 
-var paginateTemplate = function (opts) {
+var paginateTemplate = function (aOpts) {
   // Required
-  var currentPage = opts.currentPage;
-  var lastPage = opts.lastPage;
-  var urlFn = opts.urlFn;
+  var currentPage = aOpts.currentPage;
+  var lastPage = aOpts.lastPage;
+  var urlFn = aOpts.urlFn;
 
   // Optional
-  var distVisible = opts.distVisible || 4;
-  var firstVisible = opts.firstVisible || true;
-  var lastVisible = opts.firstVisible || true;
+  var distVisible = aOpts.distVisible || 4;
+  var firstVisible = aOpts.firstVisible || true;
+  var lastVisible = aOpts.firstVisible || true;
 
   var linkedPages = [];
 
@@ -47,7 +47,7 @@ var paginateTemplate = function (opts) {
 };
 exports.paginateTemplate = paginateTemplate;
 
-var newPagination = function (currentPage, itemsPerPage) {
+var newPagination = function (aCurrentPage, aItemsPerPage) {
   // Options
   var maxItemsPerPage = 100;
   var defaultItemsPerPage = 25;
@@ -59,33 +59,33 @@ var newPagination = function (currentPage, itemsPerPage) {
     startIndex: null,
     numItems: null
   };
-  pagination.applyToQuery = function (modelListQuery) {
+  pagination.applyToQuery = function (aModelListQuery) {
     pagination.startIndex = (pagination.currentPage * pagination.itemsPerPage) - pagination.itemsPerPage;
-    modelListQuery
+    aModelListQuery
       .skip(pagination.startIndex)
       .limit(pagination.itemsPerPage);
   };
-  pagination.getCountTask = function (modelListQuery) {
-    return countTask(modelListQuery, pagination, 'numItems');
+  pagination.getCountTask = function (aModelListQuery) {
+    return countTask(aModelListQuery, pagination, 'numItems');
   };
   pagination.render = function () {
     return paginateTemplate(pagination);
   };
 
   //
-  pagination.currentPage = currentPage ? helpers.limitMin(1, currentPage) : 1;
-  pagination.itemsPerPage = itemsPerPage ? helpers.limitRange(1, itemsPerPage, maxItemsPerPage) : defaultItemsPerPage;
+  pagination.currentPage = aCurrentPage ? helpers.limitMin(1, aCurrentPage) : 1;
+  pagination.itemsPerPage = aItemsPerPage ? helpers.limitRange(1, aItemsPerPage, maxItemsPerPage) : defaultItemsPerPage;
 
   return pagination;
 };
 exports.newPagination = newPagination;
 
-var getDefaultPagination = function (req) {
-  var pagination = newPagination(req.query.p, req.query.limit);
-  pagination.renderDefault = function (req) {
+var getDefaultPagination = function (aReq) {
+  var pagination = newPagination(aReq.query.p, aReq.query.limit);
+  pagination.renderDefault = function (aReq) {
     pagination.lastPage = Math.ceil(pagination.numItems / pagination.itemsPerPage) || 1;
-    pagination.urlFn = function (p) {
-      return helpers.setUrlQueryValue(req.url, 'p', p);
+    pagination.urlFn = function (aP) { // TODO: Short parameter
+      return helpers.setUrlQueryValue(aReq.url, 'p', aP);
     };
     return pagination.render();
   };
@@ -93,46 +93,46 @@ var getDefaultPagination = function (req) {
 };
 exports.getDefaultPagination = getDefaultPagination;
 
-exports.statusCodePage = function (req, res, next, options) {
-  var authedUser = req.session ? req.session.user : null;
+exports.statusCodePage = function (aReq, aRes, aNext, aOptions) {
+  var authedUser = aReq.session ? aReq.session.user : null;
 
   //
-  options.statusCode = options.statusCode || 500;
-  options.statusMessage = options.statusMessage || 'Error';
+  aOptions.statusCode = aOptions.statusCode || 500;
+  aOptions.statusMessage = aOptions.statusMessage || 'Error';
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
+  authedUser = aOptions.authedUser = modelParser.parseUser(authedUser);
+  aOptions.isMod = authedUser && authedUser.isMod;
+  aOptions.isAdmin = authedUser && authedUser.isAdmin;
 
   // Page metadata
-  pageMetadata(options, [options.statusCode, options.statusMessage], options.statusMessage);
+  pageMetadata(aOptions, [aOptions.statusCode, aOptions.statusMessage], aOptions.statusMessage);
 
   //---
-  res.status(options.statusCode).render('pages/statusCodePage', options);
+  aRes.status(aOptions.statusCode).render('pages/statusCodePage', aOptions);
 };
 
 // Add page metadata, containing title, description and keywords.
-function pageMetadata(options, title, description, keywords) {
+function pageMetadata(aOptions, aTitle, aDescription, aKeywords) {
   var titles = ['OpenUserJS'];
-  if (typeof (title) === "string" && title !== "") {
-    titles.unshift(title);
-  } else if (_.isArray(title)) {
-    titles = title.concat(titles);
+  if (typeof (aTitle) === "string" && aTitle !== "") {
+    titles.unshift(aTitle);
+  } else if (_.isArray(aTitle)) {
+    titles = aTitle.concat(titles);
   }
-  options.title = titles.join(' | ');
+  aOptions.aTitle = titles.join(' | ');
 
-  options.pageMetaDescription = 'Download userscripts to enhance your browser.';
-  if (typeof (description) !== "undefined" && description !== null) {
-    options.pageMetaDescription = description;
+  aOptions.pageMetaDescription = 'Download userscripts to enhance your browser.';
+  if (typeof (aDescription) !== "undefined" && aDescription !== null) {
+    aOptions.pageMetaDescription = aDescription;
   }
 
   var pageMetaKeywords = ['userscript', 'userscripts', 'javascript', 'Greasemonkey', 'Scriptish',
     'Tampermonkey', 'extension', 'browser'];
-  if (typeof (keywords) !== "undefined" && keywords !== null && _.isArray(keywords)) {
-    pageMetaKeywords = _.union(pageMetaKeywords, keywords);
+  if (typeof (aKeywords) !== "undefined" && aKeywords !== null && _.isArray(aKeywords)) {
+    pageMetaKeywords = _.union(pageMetaKeywords, aKeywords);
   }
 
-  options.pageMetaKeywords = pageMetaKeywords.join(', ');
+  aOptions.pageMetaKeywords = pageMetaKeywords.join(', ');
 }
 exports.pageMetadata = pageMetadata;
