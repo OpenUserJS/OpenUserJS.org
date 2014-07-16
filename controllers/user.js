@@ -685,7 +685,7 @@ exports.edit = function (aReq, aRes, aNext) {
     options.defaultStrategy = strategies[defaultStrategy].name;
     options.haveOtherStrategies = options.usedStrategies.length > 0;
 
-    scriptsList.listScripts({ _authorId: user._id, isLib: null, flagged: null }, // TODO: Another possible global
+    scriptsList.listScripts({ _authorId: user._id, isLib: null, flagged: null }, // TODO: Global detected
       { size: -1 }, '/user/edit',
       function (aScriptsList) {
         aScriptsList.edit = true;
@@ -1119,7 +1119,7 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
               aUserData.save(aCallback);
             },
             function (aCallback) {
-              console.log(util.format('Updated User(%s).ghUsername', aUserData.name)); // WATCHPOINT
+              console.log(util.format('Updated User(%s).ghUsername', aUserData.name));
               aCallback(null);
             },
           ], aCallback);
@@ -1222,7 +1222,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     }
 
     stream = fs.createReadStream(script.path);
-    stream.on('data', function (aD) { bufs.push(aD); }); // TODO: Non-script function parm name
+    stream.on('data', function (aD) { bufs.push(aD); }); // TODO: Non-descript function parm
 
     stream.on('end', function () {
       User.findOne({ _id: user._id }, function (aErr, aUser) {
@@ -1374,7 +1374,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         }
       }
 
-      aStream.on('data', function (aD) { bufs.push(aD); }); // TODO: Small function parm
+      aStream.on('data', function (aD) { bufs.push(aD); }); // TODO: Non-descript function parm
       aStream.on('end', function () {
         // Page metadata
         pageMetadata(aOptions, 'Edit ' + aScript.name);

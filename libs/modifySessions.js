@@ -30,7 +30,7 @@ exports.add = function (aReq, aUser, aCallback) {
   var store = aReq.sessionStore;
 
   function finish(aErr, aUser) {
-    aReq.session.user = serializeUser(aUser); // TODO: Ambiguous
+    aReq.session.user = serializeUser(aUser);
     aCallback();
   }
 
@@ -44,7 +44,7 @@ exports.add = function (aReq, aUser, aCallback) {
         aSessionIds.push(aReq.sessionID);
       }
 
-      aUser.sessionIds = aSessionIds; // TODO: Ambiguous
+      aUser.sessionIds = aSessionIds;
       aUser.save(finish);
     });
   } else {

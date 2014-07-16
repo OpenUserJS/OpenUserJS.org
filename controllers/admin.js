@@ -56,7 +56,7 @@ exports.userAdmin = function (aReq, aRes, aNext) {
   if (!userIsAdmin(aReq)) { return aNext(); }
 
   // You can only see users with a role less than yours
-  User.find({ role: { $gt: thisUser.role } }, function (aErr, aUsers) { // TODO: STYLEGUIDE conformance needed here with $
+  User.find({ role: { $gt: thisUser.role } }, function (aErr, aUsers) { // TODO: STYLEGUIDE.md conformance needed here
     var i = 0;
     options.users = [];
 

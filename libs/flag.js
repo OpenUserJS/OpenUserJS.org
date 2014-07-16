@@ -80,9 +80,9 @@ function getThreshold(aModel, aContent, aAuthor, aCallback) {
 }
 exports.getThreshold = getThreshold;
 
-function saveContent(aModel, aContent, aAuthor, flags, aCallback) { // TODO: Ambiguous
+function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
   if (!aContent.flags) { aContent.flags = 0; }
-  aContent.flags += flags;
+  aContent.flags += aFlags;
 
   if (aContent.flags >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
     return getThreshold(aModel, aContent, aAuthor, function (aThreshold) {

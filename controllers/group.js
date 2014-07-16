@@ -116,7 +116,7 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
 
       // Update the group ratings in the background
       aGroups.forEach(function (aGroup) {
-        Script.find({ _id: { $in: aGroup._scriptIds } }, // TODO: STYLEGUIDE conformance needed here
+        Script.find({ _id: { $in: aGroup._scriptIds } }, // TODO: STYLEGUIDE.md conformance needed here
           function (aErr, aScripts) {
             if (aErr || aScripts.length < 2) { return; }
 

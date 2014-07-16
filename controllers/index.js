@@ -173,12 +173,12 @@ function getSearchResults(aReq, aRes, aPrefixSearch, aFullSearch, aOpts, aCallba
     condition[aProp] = fullRegex;
     conditions.push(condition);
   });
-  aOpts['$or'] = conditions; // TODO: STYLEGUIDE.md conformance needed here
+  aOpts['$or'] = conditions;
 
   var options = {
     'username': user ? user.name : null,
     'search': search,
-    'scriptsList': scriptsList              // TODO: Where did this identifier come from?? Possibly a global
+    'scriptsList': scriptsList              // TODO: Ambiguous - Where did this identifier come from?? Possibly a global
   };
 
   // Page metadata
@@ -206,7 +206,7 @@ exports.toolbox = function (aReq, aRes) {
   var options = {
     toolbox: true,
     username: user ? user.name : null,
-    scriptsList: scriptsList              // TODO: Where did this identifier come from?? Possibly a global
+    scriptsList: scriptsList              // TODO: Ambiguous - Where did this identifier come from?? Possibly a global
   };
 
   // Page metadata

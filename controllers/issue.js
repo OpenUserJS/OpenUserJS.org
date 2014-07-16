@@ -175,7 +175,7 @@ exports.view = function (aReq, aRes, aNext) {
       //--- Tasks
 
       // Show the number of open issues
-      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: { $ne: false } }); // STYLEGUIDE.md conformance needed here
+      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: { $ne: false } }); // TODO: STYLEGUIDE.md conformance needed here
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
       // Pagination
