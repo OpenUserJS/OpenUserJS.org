@@ -34,7 +34,7 @@ function fetchRaw(aHost, aPath, aCallback) {
       var bufs = [];
       if (aRes.statusCode != 200) { console.log(aRes.statusCode); return aCallback([new Buffer('')]); }
       else {
-        aRes.on('data', function (aD) { bufs.push(aD); }); // TODO: Short parm
+        aRes.on('data', function (aD) { bufs.push(aD); }); // TODO: Non-descript function parm
         aRes.on('end', function () {
           aCallback(bufs);
         });

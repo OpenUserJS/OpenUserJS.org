@@ -84,7 +84,7 @@ var getDefaultPagination = function (aReq) {
   var pagination = newPagination(aReq.query.p, aReq.query.limit);
   pagination.renderDefault = function (aReq) {
     pagination.lastPage = Math.ceil(pagination.numItems / pagination.itemsPerPage) || 1;
-    pagination.urlFn = function (aP) { // TODO: Short parameter
+    pagination.urlFn = function (aP) { // TODO: Non-descript function parm
       return helpers.setUrlQueryValue(aReq.url, 'p', aP);
     };
     return pagination.render();

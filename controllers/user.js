@@ -685,7 +685,7 @@ exports.edit = function (aReq, aRes, aNext) {
     options.defaultStrategy = strategies[defaultStrategy].name;
     options.haveOtherStrategies = options.usedStrategies.length > 0;
 
-    scriptsList.listScripts({ _authorId: user._id, isLib: null, flagged: null }, // TODO: Global detected
+    scriptsList.listScripts({ _authorId: user._id, isLib: null, flagged: null }, // TODO: Global detected... may need renaming
       { size: -1 }, '/user/edit',
       function (aScriptsList) {
         aScriptsList.edit = true;
@@ -809,7 +809,7 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
         }, aCallback);
       },
       // function (aGithubRepoList, aCallback) {
-      //   githubRepoList = _.where(aGithubRepoList, {language: 'JavaScript'}); // TODO: Undefined `githubRepoList`
+      //   githubRepoList = _.where(aGithubRepoList, {language: 'JavaScript'});
       //   aCallback(null, githubRepoList);
       // },
       function (aGithubRepoList, aCallback) {
@@ -1437,7 +1437,7 @@ exports.flag = function (aReq, aRes, aNext) {
     var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
     if (aErr || !aUser) { return aNext(); }
 
-    fn(User, aUser, aReq.session.user, function (flagged) { // TODO: Non-descript function name
+    fn(User, aUser, aReq.session.user, function (aFlagged) { // TODO: Non-descript function name
       aRes.redirect('/users/' + username);
     });
   });

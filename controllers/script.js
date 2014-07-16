@@ -558,7 +558,7 @@ exports.flag = function (aReq, aRes, aNext) {
       var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
       if (aErr || !aScript) { return aNext(); }
 
-      fn(Script, aScript, aReq.session.user, function (aFlagged) { // TODO: Very short, non-descript, function name
+      fn(Script, aScript, aReq.session.user, function (aFlagged) { // TODO: Non-descript function name
         aRes.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
       });
     }

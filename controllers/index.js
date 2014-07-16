@@ -178,7 +178,7 @@ function getSearchResults(aReq, aRes, aPrefixSearch, aFullSearch, aOpts, aCallba
   var options = {
     'username': user ? user.name : null,
     'search': search,
-    'scriptsList': scriptsList              // TODO: Ambiguous - Where did this identifier come from?? Possibly a global
+    'scriptsList': scriptsList // TODO: Ambiguous - Global detected
   };
 
   // Page metadata
@@ -206,7 +206,7 @@ exports.toolbox = function (aReq, aRes) {
   var options = {
     toolbox: true,
     username: user ? user.name : null,
-    scriptsList: scriptsList              // TODO: Ambiguous - Where did this identifier come from?? Possibly a global
+    scriptsList: scriptsList              // TODO: Ambiguous - Global detected
   };
 
   // Page metadata
