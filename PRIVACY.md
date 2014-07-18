@@ -48,7 +48,7 @@ Some operations of this site may need third party cookies enabled. This is an on
 
 OUJS does not currently utilize Flash based technology at this time thus no "Flash Cookies".
 
-## Ads:
+## Ads
 
 While we at OUJS don't currently have Ads if any ever are implemented Ads appearing on any of our websites may be delivered to users by advertising partners, who may set cookies. These cookies allow the ad server to recognize your computer each time they send you an online advertisement to compile information about you or others who use your computer. This information allows ad networks to, among other things, deliver targeted advertisements that they believe will be of most interest to you. This Privacy Policy covers the use of cookies by OUJS and does not cover the use of cookies by any advertisers.
 
