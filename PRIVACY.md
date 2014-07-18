@@ -42,11 +42,11 @@ A cookie is a string of information that a website stores on a visitor’s compu
 
 ### Third Party
 
-Some operations of this site may need third party cookies enabled. This is an ongoing disucsion on development.
+Some operations of this site may need third party cookies enabled. This is an ongoing discussion on development.
 
-### LSO
+### Local Shared Object
 
-OUJS does not currently utilize Flash based technology at this time.
+OUJS does not currently utilize Flash based technology at this time thus no "Flash Cookies".
 
 ## Ads:
 
