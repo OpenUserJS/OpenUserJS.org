@@ -132,7 +132,7 @@ app_route('/users/:username/github/import').post(user.userGitHubImportScriptPage
 app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
 app_route('/users/:username/update').post(admin.adminUserUpdate);
 app_route('/user/preferences').get(user.userEditPreferencesPage);
-app_route('/user').get(function(aReq, aRes) { aRes.redirect('/users'); });
+app_route('/user').get(function (aReq, aRes) { aRes.redirect('/users'); });
 
 // Adding script/library routes
 app_route('/user/add/scripts').get(user.newScriptPage);
@@ -141,14 +141,14 @@ app_route('/user/add/scripts/upload').post(user.uploadScript);
 app_route('/user/add/lib').get(user.newLibraryPage);
 app_route('/user/add/lib/new').get(script.lib(user.editScript)).post(script.lib(user.submitSource));
 app_route('/user/add/lib/upload').post(script.lib(user.uploadScript));
-app_route('/user/add').get(function(aReq, aRes) { aRes.redirect('/user/add/scripts'); });
+app_route('/user/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
 
 // Script routes
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
 app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
 app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
 app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript);
-app_route('/scripts/:username').get(function(aReq, aRes) {
+app_route('/scripts/:username').get(function (aReq, aRes) {
   aRes.redirect('/users/' + aReq.route.params.username + '/scripts');
 });
 app_route('/install/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
@@ -156,8 +156,8 @@ app_route('/meta/:username/:namespace?/:scriptname').get(scriptStorage.sendMeta)
 
 // Github hook routes
 app_route('/github/hook').post(scriptStorage.webhook);
-app_route('/github/service').post(function(aReq, aRes, aNext) { aNext(); });
-app_route('/github').get(function(aReq, aRes) { aRes.redirect('/'); });
+app_route('/github/service').post(function (aReq, aRes, aNext) { aNext(); });
+app_route('/github').get(function (aReq, aRes) { aRes.redirect('/'); });
 
 // Library routes
 app.get('/libs/:username/:scriptname', script.lib(script.view));
@@ -208,7 +208,7 @@ app_route(/^\/remove\/(.+?)\/(.+)$/).get(remove.rm);
 // Group routes
 app_route('/groups').get(group.list);
 app_route('/group/:groupname').get(group.view);
-app_route('/group').get(function(aReq, aRes) { aRes.redirect('/groups'); });
+app_route('/group').get(function (aReq, aRes) { aRes.redirect('/groups'); });
 app_route('/api/group/search/:term/:addTerm?').get(group.search);
 
 // Discussion routes

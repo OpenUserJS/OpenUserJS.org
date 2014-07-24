@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-/*Script.find({ installName: /^[^\/]+\/[^\/]+\/[^\/]+$/ },function (aErr, aScripts){
+/*Script.find({ installName: /^[^\/]+\/[^\/]+\/[^\/]+$/ },function (aErr, aScripts) {
   var s3 = new AWS.S3();
   var Discussion = require('../models/discussion').Discussion;
 
@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === 'production') {
         var path = '/' + newCat + '/' + urlTopic;
         aDiscussion.path = path;
         aDiscussion.category = newCat;
-        aDiscussion.save(function (){ console.log(newCat, path); });
+        aDiscussion.save(function () { console.log(newCat, path); });
       });
     });
 
