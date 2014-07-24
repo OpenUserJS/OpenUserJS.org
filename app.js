@@ -152,7 +152,7 @@ app_route('/scripts/:username').get(function(aReq, aRes) {
   aRes.redirect('/users/' + aReq.route.params.username + '/scripts');
 });
 app_route('/install/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
-app_route('/meta/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
+app_route('/meta/:username/:namespace?/:scriptname').get(scriptStorage.sendMeta);
 
 // Github hook routes
 app_route('/github/hook').post(scriptStorage.webhook);
