@@ -14,25 +14,25 @@ var listSize = 10;
 // /scriptlist/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of scripts and build the options object
 // for the corresponding Mustache partial template
-exports.listScripts = function (query, params, baseUrl, callback) {
+exports.listScripts = function (aQuery, aParams, aBaseUrl, aCallback) {
 
   // Don't list flagged scripts by default
-  if (query.flagged === null) {
-    delete query.flagged;
-  } else if (query.flagged !== true) {
-    query.flagged = { $ne: true };
+  if (aQuery.flagged === null) {
+    delete aQuery.flagged;
+  } else if (aQuery.flagged !== true) {
+    aQuery.flagged = { $ne: true };
   }
 
   // List both libraries and scripts if isLib is null
   // Only list scripts and omit libraries by default
-  if (query.isLib === null) {
-    delete query.isLib;
-  } else if (!query.isLib) {
-    query.isLib = { $ne: true };
+  if (aQuery.isLib === null) {
+    delete aQuery.isLib;
+  } else if (!aQuery.isLib) {
+    aQuery.isLib = { $ne: true };
   }
 
-  listModels(Script, query, params, ['rating', 'installs', 'updated'],
-    function (scripts, scriptsList) {
+  listModels(Script, aQuery, aParams, ['rating', 'installs', 'updated'],
+    function (aScripts, aScriptsList) {
       /*var headings = {
         'name': { label: 'Name', width: 50 },
         'author': { label: 'Author', width: 15 },
@@ -41,36 +41,36 @@ exports.listScripts = function (query, params, baseUrl, callback) {
       };*/
       var heading = null;
       var name = null;
-      scriptsList.scripts = [];
-      scriptsList.headings = [];
-      scriptsList.hasAuthor = params[4] ?
-        params[4].indexOf('author') === -1 : true;
+      aScriptsList.scripts = [];
+      aScriptsList.headings = [];
+      aScriptsList.hasAuthor = aParams[4] ?
+        aParams[4].indexOf('author') === -1 : true;
 
-      scripts.forEach(function (script) {
-        var isLib = script.isLib || false;
-        var scriptPath = script.installName
+      aScripts.forEach(function (aScript) {
+        var isLib = aScript.isLib || false;
+        var scriptPath = aScript.installName
           .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
         var editUrl = scriptPath.split('/');
 
         editUrl.shift();
 
-        scriptsList.scripts.push({
-          name: script.name,
-          author: script.author,
-          description: script.meta.description || '',
+        aScriptsList.scripts.push({
+          name: aScript.name,
+          author: aScript.author,
+          description: aScript.meta.description || '',
           url: (isLib ? '/libs/' : '/scripts/') + scriptPath,
-          install: (isLib ? '/libs/src/' : '/install/') + script.installName,
+          install: (isLib ? '/libs/src/' : '/install/') + aScript.installName,
           editUrl: (isLib ? '/lib/' : '/script/') + editUrl.join('/') + '/edit',
-          rating: script.rating,
-          installs: script.installs,
-          version: script.meta.version || '',
-          isLib: script.isLib,
-          updated: formatDate(script.updated)
+          rating: aScript.rating,
+          installs: aScript.installs,
+          version: aScript.meta.version || '',
+          isLib: aScript.isLib,
+          updated: formatDate(aScript.updated)
         });
       });
 
       /*for (name in headings) {
-        if (!scriptsList.hasAuthor && name === 'author') { continue; }
+        if (!aScriptsList.hasAuthor && name === 'author') { continue; }
         heading = headings[name];
 
         if (orderBy === name) {
@@ -81,45 +81,45 @@ exports.listScripts = function (query, params, baseUrl, callback) {
         }
 
         heading.name = name;
-        scriptsList.headings.push(heading);
+        aScriptsList.headings.push(heading);
       }*/
 
-      scriptsList.baseUrl = baseUrl + (query.isLib === true ?
+      aScriptsList.baseUrl = aBaseUrl + (aQuery.isLib === true ?
         '/liblist' : '/scriptlist');
-      callback(scriptsList);
+      aCallback(aScriptsList);
     });
 };
 
 // /userlist/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of users and build the options object
 // for the corresponding Mustache partial template
-exports.listUsers = function (query, params, baseUrl, callback) {
-  listModels(User, query, params, ['name'],
-    function (users, usersList) {
-      usersList.users = [];
+exports.listUsers = function (aQuery, aParams, aBaseUrl, aCallback) {
+  listModels(User, aQuery, aParams, ['name'],
+    function (aUsers, aUsersList) {
+      aUsersList.users = [];
 
-      users.forEach(function (user) {
-        usersList.users.push({
-          name: user.name,
-          url: '/users/' + user.name,
+      aUsers.forEach(function (aUser) {
+        aUsersList.users.push({
+          name: aUser.name,
+          url: '/users/' + aUser.name,
         });
       });
 
-      usersList.baseUrl = baseUrl + '/userlist';
-      callback(usersList);
+      aUsersList.baseUrl = aBaseUrl + '/userlist';
+      aCallback(aUsersList);
     });
 };
 
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of removed content and build the options object
 // for the corresponding Mustache partial template
-exports.listRemoved = function (query, params, baseUrl, callback) {
-  listModels(Remove, query, params, ['removed'],
-    function (results, removedList) {
-      removedList.removed = [];
+exports.listRemoved = function (aQuery, aParams, aBaseUrl, aCallback) {
+  listModels(Remove, aQuery, aParams, ['removed'],
+    function (aResults, aRemovedList) {
+      aRemovedList.removed = [];
 
-      results.forEach(function (result) {
-        var content = result.content;
+      aResults.forEach(function (aResult) {
+        var content = aResult.content;
         var key = null;
         var contentArr = [];
         var val = null;
@@ -130,103 +130,103 @@ exports.listRemoved = function (query, params, baseUrl, callback) {
           contentArr.push({ 'key': key, 'value': val });
         }
 
-        removedList.removed.push({
-          remover: result.removerName,
-          removed: formatDate(result.removed),
-          reason: result.reason,
+        aRemovedList.removed.push({
+          remover: aResult.removerName,
+          removed: formatDate(aResult.removed),
+          reason: aResult.reason,
           content: contentArr
         });
       });
 
-      removedList.baseUrl = baseUrl + '/list';
-      callback(removedList);
+      aRemovedList.baseUrl = aBaseUrl + '/list';
+      aCallback(aRemovedList);
     });
 };
 
 // /groups/list/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of groups and build the options object
 // for the corresponding Mustache partial template
-exports.listGroups = function (query, params, baseUrl, callback) {
-  listModels(Group, query, params, ['rating'],
-    function (groups, groupsList) {
-      groupsList.groups = [];
+exports.listGroups = function (aQuery, aParams, aBaseUrl, aCallback) {
+  listModels(Group, aQuery, aParams, ['rating'],
+    function (aGroups, aGroupsList) {
+      aGroupsList.groups = [];
 
-      groups.forEach(function (group) {
-        groupsList.groups.push({
-          name: group.name,
-          url: '/group/' + group.name.replace(/\s+/g, '_'),
-          size: group._scriptIds.length,
-          multiple: group._scriptIds.length > 1
+      aGroups.forEach(function (aGroup) {
+        aGroupsList.groups.push({
+          name: aGroup.name,
+          url: '/group/' + aGroup.name.replace(/\s+/g, '_'),
+          size: aGroup._scriptIds.length,
+          multiple: aGroup._scriptIds.length > 1
         });
 
         // Wait two hours between group rating updates
         // This calculation runs in the background
-        if (new Date().getTime() > (group.updated.getTime() + 1000 * 60 * 60 * 2)) {
-          Script.find({ _id: { $in: group._scriptIds } },
-            function (err, scripts) {
-              if (!err && scripts.length > 1) {
-                group.rating = getRating(scripts);
+        if (new Date().getTime() > (aGroup.updated.getTime() + 1000 * 60 * 60 * 2)) {
+          Script.find({ _id: { $in: aGroup._scriptIds } },
+            function (aErr, aScripts) {
+              if (!aErr && aScripts.length > 1) {
+                aGroup.rating = getRating(aScripts);
               }
 
-              group.updated = new Date();
-              group.save(function () { });
+              aGroup.updated = new Date();
+              aGroup.save(function () { });
             });
         }
       });
 
-      groupsList.baseUrl = baseUrl + '/list';
-      callback(groupsList);
+      aGroupsList.baseUrl = aBaseUrl + '/list';
+      aCallback(aGroupsList);
     });
 };
 
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of discussions and build the options object
 // for the corresponding Mustache partial template
-exports.listDiscussions = function (query, params, baseUrl, callback) {
-  listModels(Discussion, query, params, ['updated', 'rating'],
-    function (discussions, discussionsList) {
-      discussionsList.discussions = [];
+exports.listDiscussions = function (aQuery, aParams, aBaseUrl, aCallback) {
+  listModels(Discussion, aQuery, aParams, ['updated', 'rating'],
+    function (aDiscussions, aDiscussionsList) {
+      aDiscussionsList.discussions = [];
 
-      discussions.forEach(function (discussion) {
-        discussionsList.discussions.push({
-          topic: discussion.topic,
-          comments: discussion.comments,
-          author: discussion.author,
-          created: discussion.created,
-          lastCommentor: discussion.author != discussion.lastCommentor ?
-            discussion.lastCommentor : null,
-          updated: formatDate(discussion.updated),
-          rating: discussion.rating,
-          url: discussion.path
-            + (discussion.duplicateId ? '_' + discussion.duplicateId : '')
+      aDiscussions.forEach(function (aDiscussion) {
+        aDiscussionsList.discussions.push({
+          topic: aDiscussion.topic,
+          comments: aDiscussion.comments,
+          author: aDiscussion.author,
+          created: aDiscussion.created,
+          lastCommentor: aDiscussion.author != aDiscussion.lastCommentor ?
+            aDiscussion.lastCommentor : null,
+          updated: formatDate(aDiscussion.updated),
+          rating: aDiscussion.rating,
+          url: aDiscussion.path
+            + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')
         });
       });
 
-      discussionsList.baseUrl = baseUrl + '/list';
-      callback(discussionsList);
+      aDiscussionsList.baseUrl = aBaseUrl + '/list';
+      aCallback(aDiscussionsList);
     });
 };
 
 // /list/size/:size/sort/:orderBy/dir/:direction/page/:page
 // Get a list of comments and build the options object
 // for the corresponding Mustache partial template
-exports.listComments = function (query, params, baseUrl, callback) {
-  listModels(Comment, query, params, ['created'],
-    function (comments, commentsList) {
-      commentsList.comments = [];
+exports.listComments = function (aQuery, aParams, aBaseUrl, aCallback) {
+  listModels(Comment, aQuery, aParams, ['created'],
+    function (aComments, aCommentsList) {
+      aCommentsList.comments = [];
 
-      comments.forEach(function (comment) {
-        commentsList.comments.push({
-          author: comment.author,
-          content: renderMd(comment.content),
-          created: formatDate(comment.created),
-          rating: comment.rating,
-          id: comment.id,
+      aComments.forEach(function (aComment) {
+        aCommentsList.comments.push({
+          author: aComment.author,
+          content: renderMd(aComment.content),
+          created: formatDate(aComment.created),
+          rating: aComment.rating,
+          id: aComment.id,
         });
       });
 
-      commentsList.baseUrl = baseUrl + '/list';
-      callback(commentsList);
+      aCommentsList.baseUrl = aBaseUrl + '/list';
+      aCallback(aCommentsList);
     });
 };
 
@@ -234,9 +234,9 @@ exports.listComments = function (query, params, baseUrl, callback) {
 //   size: (Number), orderBy: (String or Array or Object),
 //   direction: (String), page: (Number), omit: (Array)
 // }
-function listModels(model, query, options, defaultOrder, callback) {
+function listModels(aModel, aQuery, aOptions, aDefaultOrder, aCallback) {
   var optArr = null;
-  var fields = Object.keys(model.schema.tree);
+  var fields = Object.keys(aModel.schema.tree);
   var orderBy = null;
   var page = 0;
   var direction = 0;
@@ -245,46 +245,46 @@ function listModels(model, query, options, defaultOrder, callback) {
   var params = { sort: {} };
 
   // Either use route params or an object
-  if (options instanceof Array) {
-    optArr = options;
-    options = {};
-    options.size = optArr[0];
-    options.orderBy = optArr[1];
-    options.direction = optArr[2];
-    options.page = optArr[3];
-    options.omit = optArr[4];
+  if (aOptions instanceof Array) {
+    optArr = aOptions;
+    aOptions = {};
+    aOptions.size = optArr[0];
+    aOptions.orderBy = optArr[1];
+    aOptions.direction = optArr[2];
+    aOptions.page = optArr[3];
+    aOptions.omit = optArr[4];
   }
 
-  orderBy = options.orderBy || defaultOrder;
-  page = options.page && !isNaN(options.page) ? options.page - 1 : 0;
-  size = options.size || listSize;
+  orderBy = aOptions.orderBy || aDefaultOrder;
+  page = aOptions.page && !isNaN(aOptions.page) ? aOptions.page - 1 : 0;
+  size = aOptions.size || listSize;
 
   if (page < 0) { page = 0; }
 
   // Set the sort order for the model list
   if (typeof orderBy === 'string' && -1 !== fields.indexOf(orderBy)) {
-    direction = options.direction || model.schema.paths[orderBy]
+    direction = aOptions.direction || aModel.schema.paths[orderBy]
       .instance === 'String' ? 1 : -1;
     params.sort[orderBy] = direction;
   } else if (orderBy instanceof Array) {
-    orderBy.forEach(function (order) {
-      params.sort[order] = -1 !== fields.indexOf(order) &&
-        model.schema.paths[order].instance === 'String' ? 1 : -1;
+    orderBy.forEach(function (aOrder) {
+      params.sort[aOrder] = -1 !== fields.indexOf(aOrder) &&
+        aModel.schema.paths[aOrder].instance === 'String' ? 1 : -1;
     });
   } else if (typeof orderBy === 'object') {
     params.sort = orderBy;
   }
 
   // Omit certain fields from the models in the list
-  if (typeof options.omit === 'string') {
-    options.omit = options.omit.split(' ');
-  } else if (!options.omit) {
-    options.omit = [];
+  if (typeof aOptions.omit === 'string') {
+    aOptions.omit = aOptions.omit.split(' ');
+  } else if (!aOptions.omit) {
+    aOptions.omit = [];
   }
 
-  if (options.omit instanceof Array) {
-    options.omit.forEach(function (field) {
-      var index = fields.indexOf(field);
+  if (aOptions.omit instanceof Array) {
+    aOptions.omit.forEach(function (aField) {
+      var index = fields.indexOf(aField);
       if (index > -1) { fields.splice(index, 1); }
     });
     omit = fields.join(' ');
@@ -296,25 +296,25 @@ function listModels(model, query, options, defaultOrder, callback) {
     params.skip = size * page;
   }
 
-  model.find(query, omit, params,
-    function (err, models) {
+  aModel.find(aQuery, omit, params,
+    function (aErr, aModels) {
       var list = {};
-      if (!models) { models = [] }
-      if (size < 0) { size = models.length; }
+      if (!aModels) { aModels = [] }
+      if (size < 0) { size = aModels.length; }
       orderBy = typeof orderBy === 'string' ? orderBy : '';
       direction = direction === 1 ? 'asc' : 'desc';
 
       // Build the pagination for the Mustache template
-      list.size = options.size ? '/size/' + size : '';
-      list.orderBy = options.orderBy ? '/sort/' + orderBy : '';
-      list.direction = options.direction ? '/dir/' + direction : '';
+      list.size = aOptions.size ? '/size/' + size : '';
+      list.orderBy = aOptions.orderBy ? '/sort/' + orderBy : '';
+      list.direction = aOptions.direction ? '/dir/' + direction : '';
       page += 1;
 
       list.pageNumber = page;
-      list.next = models.length > size ? '/page/' + (page + 1) : '';
+      list.next = aModels.length > size ? '/page/' + (page + 1) : '';
       list.previous = page > 1 ? '/page/' + (page - 1) : '';
 
-      if (list.next) { models.pop(); }
-      callback(models, list);
+      if (list.next) { aModels.pop(); }
+      aCallback(aModels, list);
     });
 };

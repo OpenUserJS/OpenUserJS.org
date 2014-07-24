@@ -15,114 +15,114 @@ var execQueryTask = require('../libs/tasks').execQueryTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // clean the name of the group so it is url safe
-function cleanGroupName(name) {
-  return cleanFilename(name, '').replace(/_/g, ' ')
+function cleanGroupName(aName) {
+  return cleanFilename(aName, '').replace(/_/g, ' ')
     .replace(/^\s+|\s+$/g, '').replace(/,/g, '');
 }
 
 // api for the client side javascript select2 library
-exports.search = function (req, res) {
+exports.search = function (aReq, aRes) {
   var queryStr = '';
   var queryRegex = null;
-  var addTerm = req.route.params.addTerm;
-  var term = cleanGroupName(req.route.params.term);
+  var addTerm = aReq.route.params.addTerm;
+  var term = cleanGroupName(aReq.route.params.term);
   var terms = term.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/);
   var results = null;
 
-  res.set('Content-Type', 'application/json');
+  aRes.set('Content-Type', 'application/json');
   if (terms.length === 0) {
-    return res.end(JSON.stringify([]));
+    return aRes.end(JSON.stringify([]));
   }
 
-  terms.forEach(function (term) {
-    queryStr += '(?=.*?' + term + ')';
+  terms.forEach(function (aTerm) {
+    queryStr += '(?=.*?' + aTerm + ')';
   });
   queryRegex = new RegExp(queryStr, 'i');
 
-  Group.find({ name: queryRegex }, 'name', function (err, groups) {
-    if (err) { groups = []; }
+  Group.find({ name: queryRegex }, 'name', function (aErr, aGroups) {
+    if (aErr) { aGroups = []; }
 
-    results = groups.map(function (group) {
-      return group.name;
+    results = aGroups.map(function (aGroup) {
+      return aGroup.name;
     });
 
     if (addTerm && term.length > 0 && results.indexOf(term) === -1) {
       results.push(term);
     }
 
-    res.end(JSON.stringify(results));
+    aRes.end(JSON.stringify(results));
   });
 };
 
 // When the select2 library submits
-exports.addScriptToGroups = function (script, groupNames, callback) {
-  if (script.isLib || !groupNames || groupNames[0].length === 0) {
-    return script.save(callback);
+exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
+  if (aScript.isLib || !aGroupNames || aGroupNames[0].length === 0) {
+    return aScript.save(aCallback);
   }
 
-  Group.find({ name: { $in: groupNames } }, function (err, groups) {
+  Group.find({ name: { $in: aGroupNames } }, function (aErr, aGroups) { // TODO: STYLEGUIDE.md conformance needed here
     var existingGroups = null;
     var existingNames = null;
     var newGroup = null;
     var tasks = [];
 
-    if (err || !groups) { groups = []; }
+    if (aErr || !aGroups) { aGroups = []; }
 
     // Groups to add the script to
     // This could have been added to the above query but
     // We need to figure out which groups don't exist as well (see below)
-    existingGroups = groups.filter(function (group) {
-      return group._scriptIds.indexOf(script._id) === -1;
+    existingGroups = aGroups.filter(function (aGroup) {
+      return aGroup._scriptIds.indexOf(aScript._id) === -1;
     });
 
     // Names of existing groups
-    existingNames = groups.map(function (group) {
-      return group.name;
+    existingNames = aGroups.map(function (aGroup) {
+      return aGroup.name;
     });
 
     // Name of a group that doesn't exist
-    newGroup = cleanGroupName(groupNames.filter(function (name) {
-      return existingNames.indexOf(name) === -1;
+    newGroup = cleanGroupName(aGroupNames.filter(function (aName) {
+      return existingNames.indexOf(aName) === -1;
     }).shift());
 
     // Add script to exising groups
-    tasks.push(function (cb) {
-      async.each(existingGroups, function (group, innerCb) {
-        group._scriptIds.push(script._id);
-        group.update = new Date();
-        group.save(innerCb);
-      }, cb);
+    tasks.push(function (aCallback) {
+      async.each(existingGroups, function (aGroup, aInnerCallback) {
+        aGroup._scriptIds.push(aScript._id);
+        aGroup.update = new Date();
+        aGroup.save(aInnerCallback);
+      }, aCallback);
     });
 
     // Create a custom group for the script
-    if (!script._groupId && newGroup) {
-      tasks.push(function (cb) {
+    if (!aScript._groupId && newGroup) {
+      tasks.push(function (aCallback) {
         var group = new Group({
           name: newGroup,
           rating: 0,
           updated: new Date(),
-          _scriptIds: [script._id]
+          _scriptIds: [aScript._id]
         });
 
-        group.save(function (err, group) {
-          script._groupId = group._id;
-          cb();
+        group.save(function (aErr, aGroup) {
+          aScript._groupId = aGroup._id;
+          aCallback();
         });
       });
     }
 
     async.parallel(tasks, function () {
-      script.save(callback);
+      aScript.save(aCallback);
 
       // Update the group ratings in the background
-      groups.forEach(function (group) {
-        Script.find({ _id: { $in: group._scriptIds } },
-          function (err, scripts) {
-            if (err || scripts.length < 2) { return; }
+      aGroups.forEach(function (aGroup) {
+        Script.find({ _id: { $in: aGroup._scriptIds } }, // TODO: STYLEGUIDE.md conformance needed here
+          function (aErr, aScripts) {
+            if (aErr || aScripts.length < 2) { return; }
 
-            group.rating = getRating(scripts);
-            group.updated = new Date();
-            group.save(function () { });
+            aGroup.rating = getRating(aScripts);
+            aGroup.updated = new Date();
+            aGroup.save(function () { });
           }
         );
       });
@@ -131,12 +131,31 @@ exports.addScriptToGroups = function (script, groupNames, callback) {
 };
 
 // list groups
-exports.list = function (req, res) {
-  var authedUser = req.session.user;
+exports.list = function (aReq, aRes) {
+  var authedUser = aReq.session.user;
 
   //
   var options = {};
   var tasks = [];
+
+  //---
+  function preRender() {
+    // groupList
+    options.groupList = _.map(options.groupList, modelParser.parseGroup);
+
+    // Pagination
+    options.paginationRendered = pagination.renderDefault(aReq);
+
+    // popularGroupList
+    options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
+
+    // Page metadata
+    if (options.groupList) {
+      pageMetadata(options, 'Groups', null, _.pluck(options.groupList, 'name'));
+    }
+  };
+  function render() { aRes.render('pages/groupListPage', options); }
+  function asyncComplete() { preRender(); render(); }
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -147,10 +166,10 @@ exports.list = function (req, res) {
   pageMetadata(options, 'Groups');
 
   // groupListQuery
-  var groupListQuery = Group.find();
+  var groupListQuery = Group.find();  // TODO: STYLEGUIDE.md conformance needed here
 
   // groupListQuery: Defaults
-  modelQuery.applyGroupListQueryDefaults(groupListQuery, options, req);
+  modelQuery.applyGroupListQueryDefaults(groupListQuery, options, aReq);
 
   // groupListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
@@ -173,60 +192,75 @@ exports.list = function (req, res) {
   tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
 
   //---
-  function preRender() {
-    // groupList
-    options.groupList = _.map(options.groupList, modelParser.parseGroup);
-
-    // Pagination
-    options.paginationRendered = pagination.renderDefault(req);
-
-    // popularGroupList
-    options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
-
-    // Page metadata
-    if (options.groupList) {
-      pageMetadata(options, 'Groups', null, _.pluck(options.groupList, 'name'));
-    }
-  };
-  function render() { res.render('pages/groupListPage', options); }
-  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
-var setupGroupSidePanel = function (options) {
+var setupGroupSidePanel = function (aOptions) {
   // Shortcuts
-  var group = options.group;
-  var authedUser = options.authedUser;
+  var group = aOptions.group;
+  var authedUser = aOptions.authedUser;
 
   // Mod
   if (authedUser && authedUser.isMod) {
-    options.modTools = {};
+    aOptions.modTools = {};
   }
 
   // Admin
   if (authedUser && authedUser.isAdmin) {
-    options.adminTools = {};
+    aOptions.adminTools = {};
   }
 };
 
 // list the scripts in a group
-exports.view = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.view = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
-  var groupNameSlug = req.route.params.groupname;
+  var groupNameSlug = aReq.route.params.groupname;
   var groupName = groupNameSlug.replace(/_+/g, ' ');
 
   Group.findOne({
     name: groupName
-  }, function (err, groupData) {
-    if (err || !groupData) { return next(); }
+  }, function (aErr, aGroupData) {
+    if (aErr || !aGroupData) { return aNext(); }
 
     // Don't show page if we have no scripts assigned to it yet.
-    if (groupData._scriptIds.length === 0) { return next(); }
+    if (aGroupData._scriptIds.length === 0) { return aNext(); }
 
     //
     var options = {};
     var tasks = [];
+
+    //---
+    function preRender() {
+      // scriptList
+      options.scriptList = _.map(options.scriptList, modelParser.parseScript);
+
+      // popularGroupList
+      options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
+
+      // Pagination
+      options.paginationRendered = pagination.renderDefault(aReq);
+
+      // Empty list
+      options.scriptListIsEmptyMessage = 'No scripts.';
+      if (options.isFlagged) {
+        if (options.librariesOnly) {
+          options.scriptListIsEmptyMessage = 'No flagged libraries.';
+        } else {
+          options.scriptListIsEmptyMessage = 'No flagged scripts.';
+        }
+      } else if (options.searchBarValue) {
+        if (options.librariesOnly) {
+          options.scriptListIsEmptyMessage = 'We couldn\'t find any libraries with this search value.';
+        } else {
+          options.scriptListIsEmptyMessage = 'We couldn\'t find any scripts with this search value.';
+        }
+      } else if (options.isUserScriptListPage) {
+        options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
+      }
+    };
+    function render() { aRes.render('pages/groupScriptListPage', options); }
+    function asyncComplete() { preRender(); render(); }
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -234,7 +268,7 @@ exports.view = function (req, res, next) {
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // Page metadata
-    var group = options.group = modelParser.parseGroup(groupData);
+    var group = options.group = modelParser.parseGroup(aGroupData);
     pageMetadata(options, [group.name, 'Groups']);
 
     // scriptListQuery
@@ -247,7 +281,7 @@ exports.view = function (req, res, next) {
     scriptListQuery.find({ isLib: { $ne: true } });
 
     // scriptListQuery: Defaults
-    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
+    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
 
     // scriptListQuery: Pagination
     var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
@@ -273,36 +307,6 @@ exports.view = function (req, res, next) {
     tasks.push(execQueryTask(popularGroupListQuery, options, 'popularGroupList'));
 
     //---
-    function preRender() {
-      // scriptList
-      options.scriptList = _.map(options.scriptList, modelParser.parseScript);
-
-      // popularGroupList
-      options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);
-
-      // Pagination
-      options.paginationRendered = pagination.renderDefault(req);
-
-      // Empty list
-      options.scriptListIsEmptyMessage = 'No scripts.';
-      if (options.isFlagged) {
-        if (options.librariesOnly) {
-          options.scriptListIsEmptyMessage = 'No flagged libraries.';
-        } else {
-          options.scriptListIsEmptyMessage = 'No flagged scripts.';
-        }
-      } else if (options.searchBarValue) {
-        if (options.librariesOnly) {
-          options.scriptListIsEmptyMessage = 'We couldn\'t find any libraries with this search value.';
-        } else {
-          options.scriptListIsEmptyMessage = 'We couldn\'t find any scripts with this search value.';
-        }
-      } else if (options.isUserScriptListPage) {
-        options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
-      }
-    };
-    function render() { res.render('pages/groupScriptListPage', options); }
-    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };

@@ -14,15 +14,15 @@ exports.strategyInstances = nil();
 
 // This will load a single passport
 // Notice it is general so it can load any passport strategy
-exports.loadPassport = function (strategy) {
-  var requireStr = 'passport-' + strategy.name;
+exports.loadPassport = function (aStrategy) {
+  var requireStr = 'passport-' + aStrategy.name;
   var PassportStrategy = require(requireStr).Strategy;
   var instance = null;
 
-  if (strategy.openid) {
+  if (aStrategy.openid) {
     instance = new PassportStrategy(
       {
-        returnURL: AUTH_CALLBACK_BASE_URL + '/auth/' + strategy.name + '/callback/',
+        returnURL: AUTH_CALLBACK_BASE_URL + '/auth/' + aStrategy.name + '/callback/',
         realm: AUTH_CALLBACK_BASE_URL + '/',
         profile: false,
         stateless: true
@@ -32,17 +32,17 @@ exports.loadPassport = function (strategy) {
   } else {
     instance = new PassportStrategy(
       {
-        consumerKey: strategy.id,
-        consumerSecret: strategy.key,
-        clientID: strategy.id,
-        clientSecret: strategy.key,
+        consumerKey: aStrategy.id,
+        consumerSecret: aStrategy.key,
+        clientID: aStrategy.id,
+        clientSecret: aStrategy.key,
         state: 'a bullshit string reddit requires',
-        callbackURL: AUTH_CALLBACK_BASE_URL + '/auth/' + strategy.name + '/callback/'
+        callbackURL: AUTH_CALLBACK_BASE_URL + '/auth/' + aStrategy.name + '/callback/'
       },
       function () { } // we replace this callback later (_verify)
     );
   }
 
-  exports.strategyInstances[strategy.name] = instance;
+  exports.strategyInstances[aStrategy.name] = instance;
   passport.use(instance);
 };

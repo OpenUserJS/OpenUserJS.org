@@ -5,8 +5,8 @@
 <script type="text/javascript" src="/js/select2.min.js"></script>
 <script type="text/javascript">
   var preload_groups = {{{groups}}};
-  var preload_data = $.map(preload_groups, function (group) {
-    return { id: group, text: group, locked: true };
+  var preload_data = $.map(preload_groups, function (aGroup) {
+    return { id: aGroup, text: aGroup, locked: true };
   });
   $(document).ready(function () {
     var canAddGroup = true;
@@ -16,8 +16,8 @@
     $('#groups').select2({
       multiple: true,
       minimumInputLength: 1,
-      query: function (query){
-        var url = '/api/group/search/' + encodeURIComponent(query.term);
+      query: function (aQuery){
+        var url = '/api/group/search/' + encodeURIComponent(aQuery.term);
 
         if (canCreateGroup) {
           if (canAddGroup) {
@@ -25,22 +25,22 @@
               && $('#groups').val().split(',').indexOf(prevTerm) > -1) {
               canAddGroup = false;
             } else {
-              prevTerm = query.term;
+              prevTerm = aQuery.term;
             }
           } else if ($('#groups').val().split(',').indexOf(prevTerm) === -1) {
-            prevTerm = query.term;
+            prevTerm = aQuery.term;
             canAddGroup = true;
           }
 
           url += '/' + (canAddGroup ? 'true' : '');
         }
 
-        $.ajax({ url: url, success: function (data) {
+        $.ajax({ url: url, success: function (aData) {
           var groups = { results: [] };
-          $.each(data, function (index, group) {
-            groups.results.push({ id: group, text: group });
+          $.each(aData, function (aIndex, aGroup) {
+            groups.results.push({ id: aGroup, text: aGroup });
           });
-          query.callback(groups);
+          aQuery.callback(groups);
         }});
       }});
     $('#groups').select2('data', preload_data);

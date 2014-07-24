@@ -24,19 +24,19 @@ var day = hour * 24;
 var week = day * 7;
 
 // Get a formatted date that can be used everywhere a date is displayed
-exports.formatDate = function (date) {
-  var difference = new Date().getTime() - date.getTime();
+exports.formatDate = function (aDate) {
+  var difference = new Date().getTime() - aDate.getTime();
   var ret = '';
   var days = 0;
 
-  function pluralize(number, unit) {
-    return number + ' ' + unit + (number > 1 ? 's' : '') + ' ago';
+  function pluralize(aNumber, aUnit) {
+    return aNumber + ' ' + aUnit + (aNumber > 1 ? 's' : '') + ' ago';
   }
 
   if (difference > week) {
-    ret = date.getDate() + ' '
-      + months[date.getMonth()] + ' '
-      + date.getFullYear();
+    ret = aDate.getDate() + ' '
+      + months[aDate.getMonth()] + ' '
+      + aDate.getFullYear();
   } else if (difference > day) {
     days = Math.round(difference / day);
     if (days <= 1) {
@@ -56,61 +56,61 @@ exports.formatDate = function (date) {
 }
 
 // Create an object with no properties
-exports.nil = function (obj) {
+exports.nil = function (aObj) {
   var nilObj = Object.create(null);
 
-  if (!obj) return nilObj;
+  if (!aObj) return nilObj;
 
-  exports.forIn(obj, function (val, key) {
-    nilObj[key] = val;
+  exports.forIn(aObj, function (aVal, aKey) {
+    nilObj[aKey] = aVal;
   });
 
   return nilObj;
 };
 
 // Safely iterate on an object not create using nil()
-exports.forIn = function (obj, forProp) {
+exports.forIn = function (aObj, aForProp) {
   var key = null;
 
-  for (key in obj) {
-    if (!Object.prototype.hasOwnProperty.call(obj, key)) { continue; }
-    forProp(obj[key], key, obj);
+  for (key in aObj) {
+    if (!Object.prototype.hasOwnProperty.call(aObj, key)) { continue; }
+    aForProp(aObj[key], key, aObj);
   }
 };
 
 // Clean filenames but leave them readable
 // Based on Greasemonkey modules/remoteScript.js
-exports.cleanFilename = function (filename, defaultName) {
+exports.cleanFilename = function (aFilename, aDefaultName) {
   // Blacklist problem characters (slashes, colons, etc.).
-  var cleanName = (filename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
+  var cleanName = (aFilename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
 
   // Make whitespace readable.
   .replace(/(\s|%20)+/g, '_');
 
-  return cleanName || defaultName;
+  return cleanName || aDefaultName;
 };
 
-exports.limitRange = function (min, x, max) {
-  return Math.max(Math.min(x, max), min);
+exports.limitRange = function (aMin, aX, aMax) {
+  return Math.max(Math.min(aX, aMax), aMin);
 };
 
-exports.limitMin = function (min, x) {
-  return Math.max(x, min);
+exports.limitMin = function (aMin, aX) {
+  return Math.max(aX, aMin);
 };
 
-var setUrlQueryValue = function (baseUrl, queryVarKey, queryVarValue) {
+var setUrlQueryValue = function (aBaseUrl, aQueryVarKey, aQueryVarValue) {
   var parseQueryString = true;
-  var u = url.parse(baseUrl, parseQueryString);
-  u.query[queryVarKey] = queryVarValue;
+  var u = url.parse(aBaseUrl, parseQueryString);
+  u.query[aQueryVarKey] = aQueryVarValue;
   delete u.search; // http://stackoverflow.com/a/7517673/947742
   return url.format(u);
 };
 exports.setUrlQueryValue = setUrlQueryValue;
 
-exports.updateUrlQueryString = function (baseUrl, dict) {
-  var url = baseUrl;
-  _.each(dict, function (value, key) {
-    url = setUrlQueryValue(url, key, value);
+exports.updateUrlQueryString = function (aBaseUrl, aDict) {
+  var url = aBaseUrl;
+  _.each(aDict, function (aValue, aKey) {
+    url = setUrlQueryValue(url, aKey, aValue);
   });
   return url;
 };

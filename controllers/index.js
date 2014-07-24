@@ -19,15 +19,15 @@ var removeSession = require('../libs/modifySessions').remove;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // The home page has scripts and groups in a sidebar
-exports.home = function (req, res) {
-  var authedUser = req.session.user;
+exports.home = function (aReq, aRes) {
+  var authedUser = aReq.session.user;
 
   //
   var options = {};
   var tasks = [];
 
   //
-  options.librariesOnly = req.query.library !== undefined;
+  options.librariesOnly = aReq.query.library !== undefined;
 
   // Page metadata
   pageMetadata(options, options.librariesOnly ? 'Libraries' : '');
@@ -46,10 +46,10 @@ exports.home = function (req, res) {
   // scriptListQuery: Defaults
   if (options.librariesOnly) {
     // Libraries
-    modelQuery.applyLibraryListQueryDefaults(scriptListQuery, options, req);
+    modelQuery.applyLibraryListQueryDefaults(scriptListQuery, options, aReq);
   } else {
     // Scripts
-    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
+    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
   }
 
   // scriptListQuery: Pagination
@@ -98,7 +98,7 @@ exports.home = function (req, res) {
     options.announcementsDiscussionList = _.map(options.announcementsDiscussionList, modelParser.parseDiscussion);
 
     // Pagination
-    options.paginationRendered = pagination.renderDefault(req);
+    options.paginationRendered = pagination.renderDefault(aReq);
 
     // Empty list
     options.scriptListIsEmptyMessage = 'No scripts.';
@@ -134,15 +134,15 @@ exports.home = function (req, res) {
       }
     }
   };
-  function render() { res.render('pages/scriptListPage', options); }
+  function render() { aRes.render('pages/scriptListPage', options); }
   function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
 // Preform a script search
-function getSearchResults(req, res, prefixSearch, fullSearch, opts, callback) {
-  var user = req.session.user;
-  var search = req.route.params.shift();
+function getSearchResults(aReq, aRes, aPrefixSearch, aFullSearch, aOpts, aCallback) {
+  var user = aReq.session.user;
+  var search = aReq.route.params.shift();
   var baseUrl = '/search/' + encodeURIComponent(search);
   var conditions = [];
   var query = null;
@@ -154,88 +154,86 @@ function getSearchResults(req, res, prefixSearch, fullSearch, opts, callback) {
     .split(/\s+/);
 
   // Match all the terms but in any order
-  terms.forEach(function (term) {
-    prefixStr += '(?=.*?\\b' + term + ')';
-    fullStr += '(?=.*?' + term + ')';
+  terms.forEach(function (aTerm) {
+    prefixStr += '(?=.*?\\b' + aTerm + ')';
+    fullStr += '(?=.*?' + aTerm + ')';
   });
   prefixRegex = new RegExp(prefixStr, 'i');
   fullRegex = new RegExp(fullStr, 'i');
 
   // One of the searchable fields must match the conditions
-  prefixSearch.forEach(function (prop) {
+  aPrefixSearch.forEach(function (aProp) {
     var condition = {};
-    condition[prop] = prefixRegex;
+    condition[aProp] = prefixRegex;
     conditions.push(condition);
   });
 
-  fullSearch.forEach(function (prop) {
+  aFullSearch.forEach(function (aProp) {
     var condition = {};
-    condition[prop] = fullRegex;
+    condition[aProp] = fullRegex;
     conditions.push(condition);
   });
-  opts['$or'] = conditions;
+  aOpts['$or'] = conditions;
 
   var options = {
     'username': user ? user.name : null,
     'search': search,
-    'scriptsList': scriptsList
+    'scriptsList': scriptsList // TODO: Ambiguous - Global detected
   };
 
   // Page metadata
   pageMetadata(options, 'Searching for "' + search + '"');
 
-  modelsList.listScripts(opts, req.route.params, baseUrl,
-    function (scriptsList) {
-      callback(options);
-    }
-  );
+  modelsList.listScripts(aOpts, aReq.route.params, baseUrl, function (aScriptsList) {
+    aCallback(options);
+  });
 };
 
 // Script search results
-exports.search = function (req, res, next) {
-  getSearchResults(req, res,
+exports.search = function (aReq, aRes, aNext) {
+  getSearchResults(aReq, aRes,
     ['name', 'author', 'about', 'meta.description'],
     ['meta.include', 'meta.match'], {},
-    function (options) {
-      res.render('index', options);
+    function (aOptions) {
+      aRes.render('index', aOptions);
     });
 };
 
 // Show library scripts
-exports.toolbox = function (req, res) {
-  var user = req.session.user;
+exports.toolbox = function (aReq, aRes) {
+  var user = aReq.session.user;
 
   var options = {
     toolbox: true,
     username: user ? user.name : null,
-    scriptsList: scriptsList
+    scriptsList: scriptsList              // TODO: Ambiguous - Global detected
   };
 
   // Page metadata
   pageMetadata(options, 'Toolbox');
 
-  modelsList.listScripts({ isLib: true }, req.route.params, '/toolbox',
-    function (scriptsList) {
-      res.render('index', options);
+  modelsList.listScripts({ isLib: true }, aReq.route.params, '/toolbox',
+    function (aScriptsList) {
+      aRes.render('index', options);
     });
 };
 
 // Search library scripts
-exports.toolSearch = function (req, res) {
-  getSearchResults(req, res, ['name', 'author', 'about'], [], { isLib: true },
-    function (options) {
-      options.toolbox = true;
-      res.render('index', options);
+exports.toolSearch = function (aReq, aRes) {
+  getSearchResults(aReq, aRes, ['name', 'author', 'about'], [], { isLib: true },
+    function (aOptions) {
+      aOptions.toolbox = true;
+      aRes.render('index', aOptions);
     });
 };
 
 // UI for user registration
-exports.register = function (req, res) {
-  var authedUser = req.session.user;
+exports.register = function (aReq, aRes) {
+  var authedUser = aReq.session.user;
 
   // If already logged in, goto the front page.
   if (authedUser)
-    return res.redirect('/');
+    return aRes.redirect('/');
 
   //
   var options = {};
@@ -250,18 +248,18 @@ exports.register = function (req, res) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   //
-  options.wantname = req.session.username;
-  delete req.session.username;
+  options.wantname = aReq.session.username;
+  delete aReq.session.username;
 
   //
   options.strategies = [];
 
   // Get OpenId strategies
-  _.each(strategies, function (strategy, strategyKey) {
-    if (!strategy.oauth) {
+  _.each(strategies, function (aStrategy, aStrategyKey) {
+    if (!aStrategy.oauth) {
       options.strategies.push({
-        'strat': strategyKey,
-        'display': strategy.name
+        'strat': aStrategyKey,
+        'display': aStrategy.name
       });
     }
   });
@@ -269,19 +267,19 @@ exports.register = function (req, res) {
   //--- Tasks
 
   //
-  tasks.push(function (callback) {
-    Strategy.find({}, function (err, availableStrategies) {
-      if (err) {
-        callback();
+  tasks.push(function (aCallback) {
+    Strategy.find({}, function (aErr, aAvailableStrategies) {
+      if (aErr) {
+        aCallback();
       } else {
         // Get the strategies we have OAuth keys for
-        availableStrategies.forEach(function (strategy) {
+        aAvailableStrategies.forEach(function (aStrategy) {
           options.strategies.push({
-            'strat': strategy.name,
-            'display': strategy.display
+            'strat': aStrategy.name,
+            'display': aStrategy.display
           });
         });
-        callback();
+        aCallback();
       }
     });
   });
@@ -289,26 +287,26 @@ exports.register = function (req, res) {
   //---
   function preRender() {
     // Sort the strategies
-    options.strategies = _.sortBy(options.strategies, function (strategy) { return strategy.display; });
+    options.strategies = _.sortBy(options.strategies, function (aStrategy) { return aStrategy.display; });
 
     // Prefer GitHub
     var githubStrategy = _.findWhere(options.strategies, { strat: 'github' });
     if (githubStrategy)
       githubStrategy.selected = true;
   };
-  function render() { res.render('pages/loginPage', options); }
+  function render() { aRes.render('pages/loginPage', options); }
   function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
-exports.logout = function (req, res) {
-  var authedUser = req.session.user;
+exports.logout = function (aReq, aRes) {
+  var authedUser = aReq.session.user;
 
-  if (!authedUser) { return res.redirect('/'); }
+  if (!authedUser) { return aRes.redirect('/'); }
 
-  User.findOne({ _id: authedUser._id }, function (err, user) {
-    removeSession(req, user, function () {
-      res.redirect('/');
+  User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
+    removeSession(aReq, aUser, function () {
+      aRes.redirect('/');
     });
   });
 };
