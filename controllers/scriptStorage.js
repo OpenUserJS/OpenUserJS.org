@@ -27,54 +27,6 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-/*Script.find({ installName: /^[^\/]+\/[^\/]+\/[^\/]+$/ },function (aErr, aScripts) {
-  var s3 = new AWS.S3();
-  var Discussion = require('../models/discussion').Discussion;
-
-  aScripts.forEach(function (aScript) {
-    //console.log(aScript.installName);
-    var oldPath = aScript.installName;
-    var newPath = cleanFilename(aScript.author) + '/'
-      + cleanFilename(aScript.name) + (aScript.isLib ? '.js' : '.user.js');
-    var newCat = (aScript.isLib ? 'libs' : 'scripts') + '/' + newPath
-      .replace(/(\.user)?\.js$/, '')  + '/issues';
-    var oldCat = (aScript.isLib ? 'libs' : 'scripts') + '/' + oldPath
-      .replace(/(\.user)?\.js$/, '')  + '/issues';
-
-    Discussion.find({ category: oldCat }, function (aErr, aDiscussions) {
-      aDiscussions.forEach(function (aDiscussion) {
-        var urlTopic = cleanFilename(aDiscussion.topic, '').replace(/_\d+$/, '');
-        var path = '/' + newCat + '/' + urlTopic;
-        aDiscussion.path = path;
-        aDiscussion.category = newCat;
-        aDiscussion.save(function () { console.log(newCat, path); });
-      });
-    });
-
-    var params = {
-      Bucket: bucketName,
-      CopySource: bucketName + '/' + oldPath,
-      Key: newPath
-    };
-
-    aScript.installName = newPath;
-    s3.copyObject(params, function (aErr, aData) {
-      if (aErr) { return console.log(oldPath + ' - copy fail'); }
-      aScript.save(function () {});
-
-      s3.deleteObject({ Bucket : params.Bucket, Key : oldPath},
-        function (aErr, aData) {
-          if (aErr) {
-            console.log(oldPath + '- delete fail');
-          } else {
-            console.log(newPath + ' - success');
-          }
-        });
-    });
-  });
-});*/
-
-
 function getInstallName (aReq) {
   return aReq.route.params.username + '/' + aReq.route.params.scriptname;
 }
