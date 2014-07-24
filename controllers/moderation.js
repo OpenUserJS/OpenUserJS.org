@@ -5,7 +5,6 @@ var _ = require('underscore');
 
 var Remove = require('../models/remove').Remove;
 
-var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;

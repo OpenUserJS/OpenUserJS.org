@@ -11,7 +11,6 @@ var Strategy = require('../models/strategy').Strategy;
 
 var strategies = require('./strategies.json');
 var discussionLib = require('./discussion');
-var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;

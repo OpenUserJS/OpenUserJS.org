@@ -16,7 +16,6 @@ var scriptStorage = require('./scriptStorage');
 var addScriptToGroups = require('./group').addScriptToGroups
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
-var modelsList = require('../libs/modelsList');
 var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
 var countTask = require('../libs/tasks').countTask;

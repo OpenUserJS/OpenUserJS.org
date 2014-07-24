@@ -6,7 +6,6 @@ var _ = require('underscore');
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
 
-var modelsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var cleanFilename = require('../libs/helpers').cleanFilename;

@@ -15,7 +15,6 @@ var User = require('../models/user').User;
 var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
 var RepoManager = require('../libs/repoManager');
-var scriptsList = require('../libs/modelsList');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var flagLib = require('../libs/flag');
