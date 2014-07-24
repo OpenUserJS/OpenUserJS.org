@@ -32,12 +32,12 @@ var momentLangTinyDate = function (aDate) {
 };
 moment.lang('en-tiny', {
   calendar : {
-    sameDay : function () {return momentLangFromNow(this); },
-    lastDay : function () {return momentLangFromNow(this); },
-    lastWeek : function () {return momentLangFromNow(this); },
-    nextDay : function (){ return momentLangTinyDate(this); },
-    nextWeek : function (){ return momentLangTinyDate(this); },
-    sameElse : function (){ return momentLangTinyDate(this); },
+    sameDay : function () { return momentLangFromNow(this); },
+    lastDay : function () { return momentLangFromNow(this); },
+    lastWeek : function () { return momentLangFromNow(this); },
+    nextDay : function () { return momentLangTinyDate(this); },
+    nextWeek : function () { return momentLangTinyDate(this); },
+    sameElse : function () { return momentLangTinyDate(this); },
   },
   relativeTime : {
     future : "in %s",

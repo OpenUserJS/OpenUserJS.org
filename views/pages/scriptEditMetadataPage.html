@@ -68,7 +68,7 @@
       $('#groups').select2({
         multiple: true,
         minimumInputLength: 1,
-        query: function (aQuery){
+        query: function (aQuery) {
           var url = '/api/group/search/' + encodeURIComponent(aQuery.term);
 
           if (canCreateGroup) {
