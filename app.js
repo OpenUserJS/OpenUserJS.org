@@ -197,7 +197,7 @@ app_route('/vote/libs/:username/:scriptname/:vote').get(script.lib(script.vote))
 
 // Flag routes
 // TODO: Single flag route + POST
-app_route('/flag/users/:username/:unflag?', user.flag);
+app_route('/flag/users/:username/:unflag?').get(user.flag);
 app_route('/flag/scripts/:username/:namespace?/:scriptname/:unflag?').get(script.flag);
 app_route('/flag/libs/:username/:scriptname/:unflag?').get(script.lib(script.flag));
 
