@@ -2,6 +2,7 @@
   "github" : { "name" : "GitHub", "oauth" : true },
   "facebook" : { "name" : "Facebook", "oauth" : true },
   "google" : { "name" : "Google", "oauth" : false },
+  "persona" : { "name" : "Mozilla Persona", "oauth" : false },
   "yahoo" : { "name" : "Yahoo!", "oauth" : false },
   "aol" : { "name" : "AOL", "oauth" : false },
   "twitter" : { "name" : "Twitter", "oauth" : true },

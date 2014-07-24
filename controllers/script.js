@@ -28,27 +28,6 @@ exports.lib = function (controller) {
   });
 };
 
-// Display which scripts use a library hosted on the site
-/*exports.useLib = function (req, res, next) {
-  var installName = req.route.params.shift() + '/'
-    + req.route.params.shift();
-  var user = req.session.user;
-  var options = { username: user ? user.name : '' };
-
-  Script.findOne({ installName: installName + '.js' }, function (err, lib) {
-    if (err || !lib) { return next(); }
-
-    options.title = 'Scripts that use <a href="/libs/' + installName + '">'
-      + lib.name + '</a>';
-    modelsList.listScripts({ uses: lib.installName },
-      req.route.params, '/use/lib/' + installName,
-      function (scriptsList) {
-        options.scriptsList = scriptsList;
-        res.render('group', options);
-      });
-  });
-};*/
-
 var getScriptPageTasks = function (options) {
   var tasks = [];
 
@@ -432,25 +411,6 @@ exports.edit = function (req, res, next) {
       function render() { res.render('pages/scriptEditMetadataPage', options); }
       function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
-
-      // Group.find({ _scriptIds: script._id }, 'name', function (err, groups) {
-      //   var groupsArr = (groups || []).map(function (group) {
-      //     return group.name;
-      //   });
-
-      //   res.render('scriptEdit', {
-      //     title: script.name,
-      //     name: script.name,
-      //     install: (script.isLib ? '/libs/src/' : '/install/')
-      //       + script.installName,
-      //     source: baseUrl + installName + '/source',
-      //     about: script.about,
-      //     groups: JSON.stringify(groupsArr),
-      //     canCreateGroup: (!script._groupId).toString(),
-      //     isLib: script.isLib,
-      //     username: user ? user.name : null
-      //   });
-      // });
     }
   });
 };

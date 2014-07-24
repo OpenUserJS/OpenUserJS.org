@@ -94,19 +94,6 @@ app.configure(function () {
   app.set('views', __dirname + '/views');
 });
 
-// Build the route regex for model lists
-function listRegex(root, type) {
-  var slash = '\/';
-  if (root === slash) { slash = ''; }
-  return new RegExp('^' + root +
-    '(?:' + slash + '(?:' + type + ')list' +
-    '(?:\/size\/(\d+))?' +
-    '(?:\/sort\/([^\/]+))?' +
-    '(?:\/dir\/(asc|desc))?' +
-    '(?:\/page\/([1-9][0-9]*))?' +
-    ')?$');
-}
-
 // Emulate app.route('/').VERB(callback).VERB(callback); from ExpressJS 4.x
 var methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
 function app_route(path) {
@@ -158,15 +145,12 @@ app_route('/user/add').get(function(req, res) { res.redirect('/user/add/scripts'
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
 app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
 app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
-app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript); // Legacy TODO Remove
+app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript);
 app_route('/scripts/:username').get(function(req, res) {
   res.redirect('/users/' + req.route.params.username + '/scripts');
 });
-
-// Script routes: Legacy
-app.get('/install/:username/:namespace?/:scriptname', scriptStorage.sendScript);
-app.get('/meta/:username/:namespace?/:scriptname', scriptStorage.sendMeta);
-app.get('/vote/scripts/:username/:namespace?/:scriptname/:vote', script.vote);
+app_route('/install/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
+app_route('/meta/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
 
 // Github hook routes
 app_route('/github/hook').post(scriptStorage.webhook);
@@ -174,15 +158,11 @@ app_route('/github/service').post(function(req, res, next) { next(); });
 app_route('/github').get(function(req, res) { res.redirect('/'); });
 
 // Library routes
-app.get(listRegex('\/toolbox', 'lib'), main.toolbox);
-app.get(listRegex('\/search\/([^\/]+?)', 'lib'), main.toolSearch);
 app.get('/libs/:username/:scriptname', script.lib(script.view));
 app.get('/lib/:scriptname/edit', script.lib(script.edit));
 app.post('/lib/:scriptname/edit', script.lib(script.edit));
 app.get('/libs/:username/:scriptname/source', script.lib(user.editScript));
 app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript);
-app.get('/vote/libs/:username/:scriptname/:vote', script.lib(script.vote));
-//app.get(listRegex('\/use\/lib\/([^\/]+?)\/([^\/]+?)', 'script'), script.useLib);
 
 // Issues routes
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
@@ -202,12 +182,21 @@ app.post('/admin/api/update', admin.apiAdminUpdate);
 app_route('/mod').get(moderation.modPage);
 app_route('/mod/removed').get(moderation.removedItemListPage);
 app_route('/mod/removed/:id').get(moderation.removedItemPage);
-app.get('/flag/users/:username/:unflag?', user.flag);
-app.get('/flag/scripts/:username/:namespace?/:scriptname/:unflag?', script.flag);
-app.get('/flag/libs/:username/:scriptname/:unflag?', script.lib(script.flag));
-app.get(listRegex('\/flagged(?:\/([^\/]+?))?', 'user|script'), moderation.flagged);
-app.get(listRegex('\/graveyard(?:\/([^\/]+?))?', ''), moderation.graveyard);
-app.get(/^\/remove\/(.+?)\/(.+)$/, remove.rm);
+
+// Vote routes
+// TODO: Single vote route + POST
+app_route('/vote/scripts/:username/:namespace?/:scriptname/:vote').get(script.vote);
+app_route('/vote/libs/:username/:scriptname/:vote').get(script.lib(script.vote));
+
+// Flag routes
+// TODO: Single flag route + POST
+app_route('/flag/users/:username/:unflag?', user.flag);
+app_route('/flag/scripts/:username/:namespace?/:scriptname/:unflag?').get(script.flag);
+app_route('/flag/libs/:username/:scriptname/:unflag?').get(script.lib(script.flag));
+
+// Remove route
+// TODO: Make POST route
+app_route(/^\/remove\/(.+?)\/(.+)$/).get(remove.rm);
 
 // Group routes
 app_route('/groups').get(group.list);
@@ -216,27 +205,16 @@ app_route('/group').get(function(req, res) { res.redirect('/groups'); });
 app_route('/api/group/search/:term/:addTerm?').get(group.search);
 
 // Discussion routes
+// TODO: Update templates for new discussion routes
 app_route('/forum').get(discussion.categoryListPage);
-app_route('/forum/:category(announcements|corner|garage|discuss)').get(discussion.list);
-app_route('/forum/:category(announcements|corner|garage|discuss)/new').get(discussion.newTopic).post(discussion.createTopic);
-app_route('/forum/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(discussion.createComment);
+app_route('/:p(forum)?/:category(announcements|corner|garage|discuss)').get(discussion.list);
+app_route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(discussion.createComment);
+app_route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(discussion.newTopic).post(discussion.createTopic);
+// dupe
+app_route('/post/:category(announcements|corner|garage|discuss)').get(discussion.newTopic).post(discussion.createTopic);
 
-// Discussion routes: Legacy
-// app_route('/:category(announcements|corner|garage|discuss)').get(function (req, res, next) { res.redirect(util.format('/forum/%s', req.route.params.category)); });
-// app_route('/:category(announcements|corner|garage|discuss)/:topic').get(function (req, res, next) { res.redirect(util.format('/forum/%s/%s', req.route.params.category, req.route.params.topic)) });
-app.get(listRegex('\/(announcements|corner|garage|discuss)', ''), discussion.list);
-app.get(listRegex('\/(announcements|corner|garage|discuss)\/([^\/]+?)', ''), discussion.show);
-app.get('/post/:category(announcements|corner|garage|discuss)', discussion.newTopic);
-app.post('/post/:category(announcements|corner|garage|discuss)', discussion.createTopic);
-app.post('/:category(announcements|corner|garage|discuss)/:topic', discussion.createComment);
-
-// Search routes: Legacy
-app.post('/search', function (req, res) {
-  var search = encodeURIComponent(req.body.search.replace(/^\s+|\s+$/g, ''));
-  res.redirect('/search/' + search + '/' + req.body.type + 'list');
-});
-app.get(listRegex('\/search\/([^\/]+?)', 'script'), main.search);
-app.get(listRegex('\/', 'script'), main.home);
+// Home route
+app_route('/').get(main.home);
 
 // Fallback routes
 app.use(express.static(__dirname + '/public'));

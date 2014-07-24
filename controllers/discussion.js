@@ -112,7 +112,7 @@ exports.categoryListPage = function (req, res, next) {
 exports.list = function (req, res, next) {
   var authedUser = req.session.user;
 
-  var categorySlug = req.route.params.shift();
+  var categorySlug = req.route.params.category;
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
@@ -192,8 +192,8 @@ exports.findDiscussion = findDiscussion;
 exports.show = function (req, res, next) {
   var authedUser = req.session.user;
 
-  var categorySlug = req.route.params.shift();
-  var topic = req.route.params.shift();
+  var categorySlug = req.route.params.category;
+  var topic = req.route.params.topic;
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
