@@ -1,3 +1,5 @@
+'use strict';
+
 var GitHubApi = require("github");
 var _ = require("underscore");
 var async = require('async');
@@ -12,15 +14,15 @@ module.exports = github;
 
 // Authenticate Client
 var Strategy = require('../models/strategy').Strategy;
-Strategy.findOne({ name: 'github' }, function (err, strat) {
-  if (err)
-    console.error(err);
+Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
+  if (aErr)
+    console.error(aErr);
 
-  if (strat) {
+  if (aStrat) {
     github.authenticate({
       type: 'oauth',
-      key: strat.id,
-      secret: strat.key,
+      key: aStrat.id,
+      secret: aStrat.key,
     });
     console.log('GitHub client authenticated');
   } else {
@@ -32,63 +34,63 @@ Strategy.findOne({ name: 'github' }, function (err, strat) {
 // Util functions for the client.
 github.usercontent = github.usercontent || {};
 
-var githubGitDataGetBlobAsUtf8 = function (msg, callback) {
+var githubGitDataGetBlobAsUtf8 = function (aMsg, aCallback) {
   async.waterfall([
-    function (callback) {
-      github.gitdata.getBlob(msg, callback);
+    function (aCallback) {
+      github.gitdata.getBlob(aMsg, aCallback);
     },
-    function (blob, callback) {
-      var content = blob.content;
-      if (blob.encoding == 'base64') {
+    function (aBlob, aCallback) {
+      var content = aBlob.content;
+      if (aBlob.encoding == 'base64') {
         var buf = new Buffer(content, 'base64');
         content = buf.toString('utf8');
       }
-      callback(null, content);
+      aCallback(null, content);
     },
-  ], callback);
+  ], aCallback);
 };
 github.gitdata.getBlobAsUtf8 = githubGitDataGetBlobAsUtf8;
 
-var githubUserContentBuildUrl = function (user, repo, path) {
-  return util.format('https://raw.githubusercontent.com/%s/%s/HEAD/%s', user, repo, path);
+var githubUserContentBuildUrl = function (aUser, aRepo, aPath) {
+  return util.format('https://raw.githubusercontent.com/%s/%s/HEAD/%s', aUser, aRepo, aPath);
 };
 github.usercontent.buildUrl = githubUserContentBuildUrl;
 
-var githubUserContentGetBlobAsUtf8 = function (msg, callback) {
+var githubUserContentGetBlobAsUtf8 = function (aMsg, aCallback) {
   async.waterfall([
-    function (callback) {
-      var url = githubUserContentBuildUrl(msg.user, msg.repo, msg.path);
-      request.get(url, callback);
+    function (aCallback) {
+      var url = githubUserContentBuildUrl(aMsg.user, aMsg.repo, aMsg.path);
+      request.get(url, aCallback);
     },
-    function (response, body, callback) {
-      if (response.statusCode != 200)
-        return callback(util.format('Status Code %s', response.statusCode));
+    function (aResponse, aBody, aCallback) {
+      if (aResponse.statusCode != 200)
+        return aCallback(util.format('Status Code %s', aResponse.statusCode));
 
-      callback(null, body);
+      aCallback(null, aBody);
     },
-  ], callback);
+  ], aCallback);
 };
 
 github.usercontent.getBlobAsUtf8 = githubUserContentGetBlobAsUtf8;
 
-var githubGitDataIsJavascriptBlob = function (blob) {
-  return blob.path.match(/\.js$/);
+var githubGitDataIsJavascriptBlob = function (aBlob) {
+  return aBlob.path.match(/\.js$/);
 };
 github.gitdata.isJavascriptBlob = githubGitDataIsJavascriptBlob;
 
-var githubGitDataGetJavascriptBlobs = function (msg, callback) {
+var githubGitDataGetJavascriptBlobs = function (aMsg, aCallback) {
   async.waterfall([
-    function (callback) {
-      msg.sha = 'HEAD';
-      msg.recursive = true;
-      github.gitdata.getTree(msg, callback);
+    function (aCallback) {
+      aMsg.sha = 'HEAD';
+      aMsg.recursive = true;
+      github.gitdata.getTree(aMsg, aCallback);
     },
-    function (repoTree, callback) {
-      var entries = repoTree.tree;
+    function (aRepoTree, aCallback) {
+      var entries = aRepoTree.tree;
       var blobs = _.where(entries, { type: 'blob' });
       var javascriptBlobs = _.filter(blobs, githubGitDataIsJavascriptBlob);
-      callback(null, javascriptBlobs);
+      aCallback(null, javascriptBlobs);
     },
-  ], callback);
+  ], aCallback);
 };
 github.gitdata.getJavascriptBlobs = githubGitDataGetJavascriptBlobs;

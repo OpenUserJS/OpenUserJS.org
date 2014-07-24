@@ -1,3 +1,5 @@
+'use strict';
+
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');
@@ -18,14 +20,14 @@ var parseModelFnMap = {};
  * Misc: Dates
  */
 
-var momentLangFromNow = function(date) {
-  return '[' + date.fromNow() + ']';
+var momentLangFromNow = function(aDate) {
+  return '[' + aDate.fromNow() + ']';
 };
-var momentLangTinyDate = function(date) {
-  if(date.year() === moment().year()) {
-    return '[' + date.format("D MMM") + ']';
+var momentLangTinyDate = function(aDate) {
+  if(aDate.year() === moment().year()) {
+    return '[' + aDate.format("D MMM") + ']';
   } else {
-    return '[' + date.format("MMM 'YY") + ']';
+    return '[' + aDate.format("MMM 'YY") + ']';
   }
 };
 moment.lang('en-tiny', {
@@ -40,7 +42,7 @@ moment.lang('en-tiny', {
   relativeTime : {
     future : "in %s",
     past : "%s ago",
-    s : function (number, withoutSuffix, key, isFuture) { return number + "s"; },
+    s : function (aNumber, aWithoutSuffix, aKey, aIsFuture) { return aNumber + "s"; },
     m : "1m",
     mm : "%dm",
     h : "1h",
@@ -54,10 +56,10 @@ moment.lang('en-tiny', {
   }
 });
 
-var parseDateProperty = function (obj, key) {
-  var date = obj[key];
-  obj[key + 'ISOFormat'] = date.toISOString();
-  obj[key + 'Humanized'] = moment(date).lang('en-tiny').calendar();
+var parseDateProperty = function (aObj, aKey) {
+  var date = aObj[aKey];
+  aObj[aKey + 'ISOFormat'] = date.toISOString();
+  aObj[aKey + 'Humanized'] = moment(date).lang('en-tiny').calendar();
 };
 
 /**
@@ -69,39 +71,39 @@ var parseDateProperty = function (obj, key) {
  */
 
 // Urls
-var getScriptPageUrl = function (script) {
-  var isLib = script.isLib || false;
-  var scriptPath = script.installName
+var getScriptPageUrl = function (aScript) {
+  var isLib = aScript.isLib || false;
+  var scriptPath = aScript.installName
     .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
   return (isLib ? '/libs/' : '/scripts/') + encodeURI(scriptPath);
 };
 
-var getScriptViewSourcePageUrl = function (script) {
-  return getScriptPageUrl(script) + '/source';
+var getScriptViewSourcePageUrl = function (aScript) {
+  return getScriptPageUrl(aScript) + '/source';
 };
 
-var getScriptEditAboutPageUrl = function (script) {
-  var isLib = script.isLib || false;
-  var scriptPath = script.installName
+var getScriptEditAboutPageUrl = function (aScript) {
+  var isLib = aScript.isLib || false;
+  var scriptPath = aScript.installName
     .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
   var editUrl = scriptPath.split('/');
   editUrl.shift();
   return (isLib ? '/lib/' : '/script/') + editUrl.join('/') + '/edit';
 };
 
-var getScriptEditSourcePageUrl = function (script) {
-  return getScriptViewSourcePageUrl(script);
+var getScriptEditSourcePageUrl = function (aScript) {
+  return getScriptViewSourcePageUrl(aScript);
 };
 
-var getScriptInstallPageUrl = function (script) {
-  var isLib = script.isLib || false;
-  return (isLib ? '/libs/src/' : '/install/') + script.installName;
+var getScriptInstallPageUrl = function (aScript) {
+  var isLib = aScript.isLib || false;
+  return (isLib ? '/src/libs/' : '/install/') + aScript.installName;
 };
 
 //
-var parseScript = function (scriptData) {
-  if (!scriptData) return;
-  var script = scriptData.toObject ? scriptData.toObject() : scriptData;
+var parseScript = function (aScriptData) {
+  if (!aScriptData) return;
+  var script = aScriptData.toObject ? aScriptData.toObject() : aScriptData;
 
   // Temporaries
   var htmlStub = null;
@@ -127,6 +129,7 @@ var parseScript = function (scriptData) {
 
   // Support Url
   if (script.meta.supportURL) {
+    script.hasSupport = true;
     if (_.isString(script.meta.supportURL)) {
       htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
@@ -196,9 +199,9 @@ var parseScript = function (scriptData) {
 parseModelFnMap.Script = parseScript;
 exports.parseScript = parseScript;
 
-exports.renderScript = function (script) {
-  if (!script) return;
-  script.aboutRendered = renderMd(script.about);
+exports.renderScript = function (aScript) {
+  if (!aScript) return;
+  aScript.aboutRendered = renderMd(aScript.about);
 };
 
 /**
@@ -206,10 +209,12 @@ exports.renderScript = function (script) {
  */
 
 //
-var parseUser = function (userData) {
-  if (!userData) return;
-  // var user = userData.toObject ? userData.toObject() : userData;
-  var user = userData;
+var parseUser = function (aUserData) {
+  if (!aUserData) return;
+  // var user = aUserData.toObject ? aUserData.toObject() : aUserData;
+
+  // Intermediates
+  var user = aUserData;
 
   // Role
   user.isMod = user.role < 4;
@@ -251,10 +256,12 @@ exports.parseUser = parseUser;
  */
 
 //
-var parseGroup = function (groupData) {
-  if (!groupData) return;
-  // var group = groupData.toObject ? groupData.toObject() : groupData;
-  var group = groupData;
+var parseGroup = function (aGroupData) {
+  if (!aGroupData) return;
+  // var group = aGroupData.toObject ? aGroupData.toObject() : aGroupData;
+
+  // Intermediates
+  var group = aGroupData;
 
   group.size = group._scriptIds.length;
   group.multiple = group._scriptIds.length > 1;
@@ -266,14 +273,14 @@ var parseGroup = function (groupData) {
   if (new Date().getTime() > (group.updated.getTime() + 1000 * 60 * 60 * 2)) {
     Script.find({
       _id: { $in: group._scriptIds }
-    }, function (err, scripts) {
-      if (!err && scripts.length > 1) {
-        group.rating = getRating(scripts);
+    }, function (aErr, aScripts) {
+      if (!aErr && aScripts.length > 1) {
+        group.rating = getRating(aScripts);
       }
 
       group.updated = new Date();
-      group.save(function (err, group) {
-        console.log(util.format('Group(%s) Rating Updated', group.name));
+      group.save(function (aErr, aGroup) {
+        console.log(util.format('Group(%s) Rating Updated', aGroup.name));
       });
     });
   }
@@ -288,10 +295,10 @@ exports.parseGroup = parseGroup;
  */
 
 //
-var parseDiscussion = function (discussionData) {
-  if (!discussionData) return;
-  var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
-  // var discussion = discussionData; // Can't override discussionData.category
+var parseDiscussion = function (aDiscussionData) {
+  if (!aDiscussionData) return;
+  var discussion = aDiscussionData.toObject ? aDiscussionData.toObject() : aDiscussionData;
+  // var discussion = aDiscussionData; // Can't override discussionData.category
 
   // Urls
   discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
@@ -306,9 +313,9 @@ var parseDiscussion = function (discussionData) {
     recentCommentors.push(discussion.author);
   if (discussion.lastCommentor != discussion.author)
     recentCommentors.push(discussion.lastCommentor);
-  recentCommentors = _.map(recentCommentors, function (username) {
+  recentCommentors = _.map(recentCommentors, function (aUsername) {
     return {
-      name: username,
+      name: aUsername
     };
   });
   discussion.recentCommentors = recentCommentors;
@@ -323,9 +330,9 @@ var parseDiscussion = function (discussionData) {
 parseModelFnMap.Discussion = parseDiscussion;
 exports.parseDiscussion = parseDiscussion;
 
-var parseIssue = function (discussionData) {
-  if (!discussionData) return;
-  var discussion = discussionData.toObject ? discussionData.toObject() : discussionData;
+var parseIssue = function (aDiscussionData) {
+  if (!aDiscussionData) return;
+  var discussion = aDiscussionData.toObject ? aDiscussionData.toObject() : aDiscussionData;
 
   discussion.issue = true;
   discussion.open = (discussion.open === undefined || discussion.open === null) ? true : discussion.open;
@@ -343,9 +350,9 @@ exports.parseIssue = parseIssue;
  */
 
 //
-var parseComment = function (commentData) {
-  if (!commentData) return;
-  var comment = commentData.toObject ? commentData.toObject() : commentData;
+var parseComment = function (aCommentData) {
+  if (!aCommentData) return;
+  var comment = aCommentData.toObject ? aCommentData.toObject() : aCommentData;
 
   // Dates
   parseDateProperty(comment, 'created');
@@ -355,24 +362,24 @@ var parseComment = function (commentData) {
 parseModelFnMap.Comment = parseComment;
 exports.parseComment = parseComment;
 
-exports.renderComment = function (comment) {
-  if (!comment) return;
-  comment.contentRendered = renderMd(comment.content);
+exports.renderComment = function (aComment) {
+  if (!aComment) return;
+  aComment.contentRendered = renderMd(aComment.content);
 };
 
 /**
  * Category
  */
 
-var canUserPostTopicToCategory = function (user, category) {
+var canUserPostTopicToCategory = function (aUser, aCategory) {
   // Check if user is logged in.
-  if (_.isUndefined(user) || _.isNull(user))
+  if (_.isUndefined(aUser) || _.isNull(aUser))
     return false; // Not logged in.
 
   // Check if this category requires a minimum role to post topics.
-  console.log(category.roleReqToPostTopic, _.isNumber(category.roleReqToPostTopic), user.role, user.role <= category.roleReqToPostTopic)
-  if (_.isNumber(category.roleReqToPostTopic)) {
-    return user.role <= category.roleReqToPostTopic;
+  console.log(aCategory.roleReqToPostTopic, _.isNumber(aCategory.roleReqToPostTopic), aUser.role, aUser.role <= aCategory.roleReqToPostTopic)
+  if (_.isNumber(aCategory.roleReqToPostTopic)) {
+    return aUser.role <= aCategory.roleReqToPostTopic;
   } else {
     // No specified role required
     return true;
@@ -380,17 +387,17 @@ var canUserPostTopicToCategory = function (user, category) {
 };
 
 //
-var parseCategory = function (categoryData) {
-  if (!categoryData) return;
-  var category = categoryData.toObject ? categoryData.toObject() : categoryData;
+var parseCategory = function (aCategoryData) {
+  if (!aCategoryData) return;
+  var category = aCategoryData.toObject ? aCategoryData.toObject() : aCategoryData;
 
   // Urls
   category.categoryPageUrl = '/' + category.slug;
   category.categoryPostDiscussionPageUrl = '/post/' + category.slug;
 
   // Functions
-  category.canUserPostTopic = function (user) {
-    return canUserPostTopicToCategory(user, category);
+  category.canUserPostTopic = function (aUser) {
+    return canUserPostTopicToCategory(aUser, category);
   };
 
   return category;
@@ -402,28 +409,28 @@ exports.parseCategory = parseCategory;
  * Remove
  */
 
-var getRemovedItemDescription = function (remove) {
-  if (!remove.content)
+var getRemovedItemDescription = function (aRemove) {
+  if (!aRemove.content)
     return 'No content';
 
-  switch (remove.model) {
+  switch (aRemove.model) {
     case 'User':
-      return remove.content.name;
+      return aRemove.content.name;
     case 'Script':
-      return remove.content.fullName || remove.content.name;
+      return aRemove.content.fullName || aRemove.content.name;
     case 'Comment':
-      return util.format('by %s', remove.content.author);
+      return util.format('by %s', aRemove.content.author);
     case 'Discussion':
-      return remove.content.path;
+      return aRemove.content.path;
     default:
-      return remove.content._id;
+      return aRemove.content._id;
   }
 };
 
 //
-var parseRemovedItem = function (removedItemData) {
-  if (!removedItemData) return;
-  var removedItem = removedItemData;
+var parseRemovedItem = function (aRemovedItemData) {
+  if (!aRemovedItemData) return;
+  var removedItem = aRemovedItemData;
 
   // Dates
   parseDateProperty(removedItem, 'removed');

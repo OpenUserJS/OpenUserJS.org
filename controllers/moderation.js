@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var _ = require('underscore');
 
@@ -10,10 +12,10 @@ var execQueryTask = require('../libs/tasks').execQueryTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
-exports.removedItemPage = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.removedItemPage = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
-  var removedItemId = req.route.params.id;
+  var removedItemId = aReq.route.params.id;
 
   //
   var options = {};
@@ -25,7 +27,7 @@ exports.removedItemPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isMod) {
-    return statusCodePage(req, res, next, {
+    return statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by moderators',
     });
@@ -33,15 +35,15 @@ exports.removedItemPage = function (req, res, next) {
 
   Remove.find({
     _id: removedItemId,
-  }, function (err, removedItemData) {
-    if (err || !removedItemData) { return next(); }
+  }, function (aErr, aRemovedItemData) {
+    if (aErr || !aRemovedItemData) { return aNext(); }
 
-    res.json(removedItemData);
+    aRes.json(aRemovedItemData);
   });
 };
 
-exports.removedItemListPage = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.removedItemListPage = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
   //
   var options = {};
@@ -53,7 +55,7 @@ exports.removedItemListPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isMod) {
-    return statusCodePage(req, res, next, {
+    return statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by moderators',
     });
@@ -66,7 +68,7 @@ exports.removedItemListPage = function (req, res, next) {
   var removedItemListQuery = Remove.find();
 
   // removedItemListQuery: Defaults
-  modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, req);
+  modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, aReq);
 
   // removedItemListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
@@ -80,23 +82,23 @@ exports.removedItemListPage = function (req, res, next) {
   tasks.push(execQueryTask(removedItemListQuery, options, 'removedItemList'));
 
   //---
-  async.parallel(tasks, function (err) {
-    if (err) return next();
+  async.parallel(tasks, function (aErr) {
+    if (aErr) return aNext();
 
     //--- PreRender
     // removedItemList
     options.removedItemList = _.map(options.removedItemList, modelParser.parseRemovedItem);
 
     // Pagination
-    options.paginationRendered = pagination.renderDefault(req);
+    options.paginationRendered = pagination.renderDefault(aReq);
 
     //---
-    res.render('pages/removedItemListPage.html', options);
+    aRes.render('pages/removedItemListPage.html', options);
   });
 };
 
-exports.modPage = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.modPage = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
   //
   var options = {};
@@ -107,7 +109,7 @@ exports.modPage = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isMod) {
-    return statusCodePage(req, res, next, {
+    return statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by moderators',
     });
@@ -117,5 +119,5 @@ exports.modPage = function (req, res, next) {
   pageMetadata(options, 'Moderation');
 
   //---
-  res.render('pages/modPage', options);
+  aRes.render('pages/modPage', options);
 };

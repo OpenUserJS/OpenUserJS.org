@@ -1,3 +1,5 @@
+'use strict';
+
 var Remove = require('../models/remove').Remove;
 var User = require('../models/user').User;
 var async = require('async');
@@ -6,75 +8,75 @@ var async = require('async');
 var modelNames = ['Script'];
 var models = {};
 
-modelNames.forEach(function (modelName) {
-  models[modelName] = require('../models/' +
-    modelName.toLowerCase())[modelName];
+modelNames.forEach(function (aModelName) {
+  models[aModelName] = require('../models/' +
+    aModelName.toLowerCase())[aModelName];
 });
 
 // Determine whether content can be removed by a user.
-function removeable(model, content, user, callback) {
+function removeable(aModel, aContent, aUser, aCallback) {
   // The user must be logged in
   // The user is a moderator then the content must be flagged
   // If the user is an admin or greater then the content may be removed
-  if (!user || (!content.flagged && user.role > 3) || user.role > 2) {
-    return callback(false);
+  if (!aUser || (!aContent.flagged && aUser.role > 3) || aUser.role > 2) {
+    return aCallback(false);
   }
 
   // You can't remove yourself
   // You can only remove a remove a user with a lesser role than yourself
-  if (model.modelName === 'User') {
-    return callback(content._id != user._id && content.role > user.role,
-      content);
+  if (aModel.modelName === 'User') {
+    return aCallback(aContent._id != aUser._id && aContent.role > aUser.role,
+      aContent);
   }
 
-  User.findOne({ _id: content._authorId }, function (err, author) {
+  User.findOne({ _id: aContent._authorId }, function (aErr, aAuthor) {
     // Content without an author shouldn't exist
-    if (err || !author) { return callback(false); }
+    if (aErr || !aAuthor) { return aCallback(false); }
 
     // You can't remove your own content this way
     // When you remove your own content it's removed for good
-    if (author._id == user._id) { return callback(false, author); }
+    if (aAuthor._id == aUser._id) { return aCallback(false, aAuthor); }
 
     // You can only remove content by an author with a lesser user role
-    callback(author.role > user.role, author);
+    aCallback(aAuthor.role > aUser.role, aAuthor);
   });
 }
 exports.removeable = removeable;
 
-function remove(model, content, user, reason, callback) {
+function remove(aModel, aContent, aUser, aReason, aCallback) {
   var remove = new Remove({
-    'model': model.modelName,
-    'content': content.toObject(),
+    'model': aModel.modelName,
+    'content': aContent.toObject(),
     'removed': new Date(),
-    'reason': reason,
-    'removerName': user.name,
-    'removerRole': user.role,
-    '_removerId': user._id
+    'reason': aReason,
+    'removerName': aUser.name,
+    'removerRole': aUser.role,
+    '_removerId': aUser._id
   });
 
-  remove.save(function (err, remove) {
-    content.remove(function (err) { callback(remove); });
+  remove.save(function (aErr, aRemove) {
+    aContent.remove(function (aErr) { aCallback(aRemove); });
   });
 }
 
-exports.remove = function (model, content, user, reason, callback) {
-  removeable(model, content, user, function (canRemove, author) {
-    if (!canRemove) { return callback(false); }
+exports.remove = function (aModel, aContent, aUser, aReason, aCallback) {
+  removeable(aModel, aContent, aUser, function (aCanRemove, aAuthor) {
+    if (!aCanRemove) { return aCallback(false); }
 
-    if (model.modelName !== 'User') {
-      remove(model, content, user, reason, callback);
+    if (aModel.modelName !== 'User') {
+      remove(aModel, aContent, aUser, aReason, aCallback);
     } else {
       // Remove all the user's content
-      async.each(modelNames, function (modelName, cb) {
-        var model = models[modelName];
-        model.find({ _authorId: content._id },
-          function (err, contentArr) {
-            async.each(contentArr, function (content, innerCb) {
-              remove(model, content, user, null, innerCb);
-            }, cb);
+      async.each(modelNames, function (aModelName, aCallback) {
+        var model = models[aModelName];
+        model.find({ _authorId: aContent._id },
+          function (aErr, aContentArr) {
+            async.each(aContentArr, function (aContent, innerCb) {
+              remove(model, aContent, aUser, null, innerCb);
+            }, aCallback);
           });
       }, function () {
-        remove(model, content, user, reason, callback);
+        remove(aModel, aContent, aUser, aReason, aCallback);
       });
     }
   });
@@ -96,29 +98,29 @@ exports.remove = function (model, content, user, reason, callback) {
 //
 // The removed parameter is the Remove document containing the content
 // and is always returned if found, regardless of permissions.
-exports.findDeadorAlive = function (model, query, user, callback) {
-  var modelName = model.modelName;
+exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
+  var modelName = aModel.modelName;
 
-  model.findOne(query, function (err, content) {
+  aModel.findOne(aQuery, function (aErr, aContent) {
     var name = null;
     var rmQuery = { model: modelName };
 
-    if (!err && content) { return callback(true, content, null); }
+    if (!aErr && aContent) { return aCallback(true, aContent, null); }
     if (modelName != 'User' && -1 === modelNames.indexOf(modelName)) {
-      return callback(null, null, null);
+      return aCallback(null, null, null);
     }
 
-    for (name in query) {
-      rmQuery['content.' + name] = query[name];
+    for (name in aQuery) {
+      rmQuery['content.' + name] = aQuery[name];
     }
 
-    Remove.findOne(rmQuery, function (err, removed) {
-      if (err || !removed) { return callback(null, null, null); }
-      if (!user || (user !== true && user.role > removed.removerRole)) {
-        return callback(false, null, removed);
+    Remove.findOne(rmQuery, function (aErr, aRemoved) {
+      if (aErr || !aRemoved) { return aCallback(null, null, null); }
+      if (!aUser || (aUser !== true && aUser.role > aRemoved.removerRole)) {
+        return aCallback(false, null, aRemoved);
       }
 
-      callback(false, new model(removed.content), removed);
+      aCallback(false, new model(aRemoved.content), aRemoved); // TODO: Ambiguous
     });
   });
 };

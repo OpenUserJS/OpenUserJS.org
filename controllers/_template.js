@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var _ = require('underscore');
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
@@ -18,12 +20,17 @@ var modelQuery = require('../libs/modelQuery');
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
 //--- Views
-exports.example = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.example = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
   //
   var options = {};
   var tasks = [];
+
+  //---
+  function preRender() { };
+  function render() { aRes.render('pages/_templatePage', options); }
+  function asyncComplete() { preRender(); render(); }
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -36,18 +43,23 @@ exports.example = function (req, res, next) {
   //--- Tasks
 
   //---
-  function preRender() { };
-  function render() { res.render('pages/_templatePage', options); }
-  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
-exports.example = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.example = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
   //
   var options = {};
   var tasks = [];
+
+  //---
+  function preRender() {
+    // Pagination
+    options.paginationRendered = pagination.renderDefault(aReq);
+  };
+  function render() { aRes.render('pages/_templatePage', options); }
+  function asyncComplete() { preRender(); render(); }
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -64,16 +76,16 @@ exports.example = function (req, res, next) {
   scriptListQuery.find({ isLib: false });
 
   // Scripts: Query: Search
-  if (req.query.q)
-    modelQuery.parseScriptSearchQuery(scriptListQuery, req.query.q);
+  if (aReq.query.q)
+    modelQuery.parseScriptSearchQuery(scriptListQuery, aReq.query.q);
 
   // Scripts: Query: Sort
-  modelQuery.parseModelListSort(scriptListQuery, req.query.orderBy, req.query.orderDir, function () {
+  modelQuery.parseModelListSort(scriptListQuery, aReq.query.orderBy, aReq.query.orderDir, function () {
     scriptListQuery.sort('-rating -installs -updated');
   });
 
   // Pagination
-  var pagination = getDefaultPagination(req);
+  var pagination = getDefaultPagination(aReq);
   pagination.applyToQuery(scriptListQuery);
 
   //--- Tasks
@@ -82,24 +94,18 @@ exports.example = function (req, res, next) {
   tasks.push(pagination.getCountTask(scriptListQuery));
 
   // Scripts
-  tasks.push(function (callback) {
-    scriptListQuery.exec(function (err, scriptDataList) {
-      if (err) {
-        callback();
+  tasks.push(function (aCallback) {
+    scriptListQuery.exec(function (aErr, aScriptDataList) {
+      if (aErr) {
+        aCallback();
       } else {
-        options.scriptList = _.map(scriptDataList, modelParser.parseScript);
-        callback();
+        options.scriptList = _.map(aScriptDataList, modelParser.parseScript);
+        aCallback();
       }
     });
   });
 
   //---
-  function preRender() {
-    // Pagination
-    options.paginationRendered = pagination.renderDefault(req);
-  };
-  function render() { res.render('pages/_templatePage', options); }
-  function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 

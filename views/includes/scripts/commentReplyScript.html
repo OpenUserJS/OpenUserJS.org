@@ -1,30 +1,31 @@
 <script type="text/javascript">
 
-  $('.btn-comment-reply').click(function (e){
+  $('.btn-comment-reply').click(function (aE){
     $('#reply-control').collapse('show');
 
-    var $comment = $(e.target).closest('.topic-post');
+    var $comment = $(aE.target).closest('.topic-post');
     var $author = $comment.find('.topic-meta-data .names .username').first();
     var $replyTextarea = $('#reply-control textarea[name="comment-content"]');
 
     document.location.hash = $comment.attr('id');
 
     var text = $replyTextarea.text();
-    if (!/^\s*$/.test(text))
+    if (!/^\s*$/.test(text)) {
       text += '\n\n'; // Add linebreak if reply already started.
-    text += '[Re](' + document.location.href + '): ';
+    }
+    text += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
     text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
     text += '  \n';
     $replyTextarea.text(text);
   });
 
-  function isElementInViewport (el) {
+  function isElementInViewport (aEl) {
     //special bonus for those using jQuery
-    if (el instanceof jQuery) {
-      el = el[0];
+    if (aEl instanceof jQuery) {
+      aEl = aEl[0];
     }
 
-    var rect = el.getBoundingClientRect();
+    var rect = aEl.getBoundingClientRect();
 
     return (
       rect.top >= 0 &&
@@ -35,17 +36,17 @@
   }
 
   var hasShownReplyForm = false;
-  function callback (el) {
+  function callback (aEl) {
     if (!hasShownReplyForm) {
       $('#reply-control').collapse('show');
       hasShownReplyForm = true;
     }
   }
 
-  function fireIfElementVisible (el, callback) {
+  function fireIfElementVisible (aEl, aCallback) {
     return function () {
-      if ( isElementInViewport(el) ) {
-        callback(el);
+      if ( isElementInViewport(aEl) ) {
+        aCallback(aEl);
       }
     }
   }

@@ -1,35 +1,37 @@
+'use strict';
+
 var defaultOnErrFn = console.log;
 
-var onErr = function (err, onErrFn) {
-  if (onErrFn)
-    onErrFn(err);
+var onErr = function (aErr, aOnErrFn) {
+  if (aOnErrFn)
+    aOnErrFn(aErr);
   else
-    defaultOnErrFn(err);
+    defaultOnErrFn(aErr);
 };
 
-exports.countTask = function (modelListQuery, dict, key, onErrFn) {
-  return function (callback) {
-    modelListQuery.model.count(modelListQuery._conditions, function (err, modelListCount) {
-      if (err) {
-        onErr(err, onErrFn);
-        callback();
+exports.countTask = function (aModelListQuery, aDict, aKey, aOnErrFn) {
+  return function (aCallback) {
+    aModelListQuery.model.count(aModelListQuery._conditions, function (aErr, aModelListCount) {
+      if (aErr) {
+        onErr(aErr, aOnErrFn);
+        aCallback();
       } else {
-        dict[key] = modelListCount;
-        callback();
+        aDict[aKey] = aModelListCount;
+        aCallback();
       }
     });
   };
 };
 
-exports.execQueryTask = function (query, dict, key, onErrFn) {
-  return function (callback) {
-    query.exec(function (err, result) {
-      if (err) {
-        onErr(err, onErrFn);
-        callback();
+exports.execQueryTask = function (aQuery, aDict, aKey, aOnErrFn) {
+  return function (aCallback) {
+    aQuery.exec(function (aErr, result) {
+      if (aErr) {
+        onErr(aErr, aOnErrFn);
+        aCallback();
       } else {
-        dict[key] = result
-        callback();
+        aDict[aKey] = result
+        aCallback();
       }
     });
   };

@@ -1,6 +1,5 @@
+
 # OpenUserJS.org Style Guide
-
-
 
 ### Preliminary Notes
 
@@ -14,6 +13,8 @@ All of our JavaScript code is sent directly to the public. It should always be o
 
 Neatness counts.
 
+**Always use `'use strict';` in all .js files**
+
 ---
 
 ### EditorConfig
@@ -24,7 +25,7 @@ To help with the above rules, we use [EditorConfig][editorconfig]. Install the p
 
 ### Variable Declarations
 
-All variables should be declared before used. JavaScript does not require this, but doing so makes the program easier to read and makes it easier to detect undeclared variables that may become implied globals. Implied global variables should never be used.
+All variables should be declared before used. JavaScript does not require this by default, but doing so makes the program easier to read and makes it easier to detect undeclared variables that may become implied globals. Implied global variables should never be used.
 Variable declarations without value should be initialized to `null`
 
 All variable statements should be the first statements within the function body.
@@ -50,16 +51,17 @@ All functions should be declared, before they are used, after the variable decla
 * There should be one space between the right-parenthesis and the left-curly-brace that begins the statement body.
 * The body itself is indented two spaces.
 * The right-curly-brace is aligned with the line containing the beginning of the function declaration.
+* Declared parameter lists variables should start with a lower case a, which stands for argument, and continue with [camel casing][camelcase] *(except if the phrase is an acronym like HTML)*.
 
 ```javascript
-function outer(c, d) {
-    var e = c * d;
+function outer(aC, aD) {
+  var e = aC * aD;
 
-    function inner(a, b) {
-        return (e * a) + b;
-    }
+  function inner(aA, aB) {
+    return (e * aA) + aB;
+  }
 
-    return inner(0, 1);
+  return inner(0, 1);
 }
 ```
 
@@ -67,7 +69,7 @@ When a function is to be invoked immediately, the entire invocation expression s
 
 ```javascript
 var collection = (function () {
-    // code here
+  /* code here */
 }());
 ```
 
@@ -75,15 +77,15 @@ If a function literal is anonymous, there should be one space between the word `
 If the space is omitted, then it can appear that the function's name is `function`, which is incorrect.
 
 ```javascript
-div.onclick = function (e) {
-    return false;
+div.onclick = function (aE) {
+  return false;
 };
 
 that = {
-    method: function () {
-        return this.datum;
-    },
-    datum: 0
+  method: function () {
+    return this.datum;
+  },
+  datum: 0
 };
 ```
 
@@ -169,6 +171,13 @@ var rSelector = /^\*|^\.[a-z][\w\d-]*|^#[^ ]+|^[a-z]+|^\[a-z]+/i;   // matches a
 var rHTML = /<[^>]+>/;                                              // matches a string of HTML
 ```
 
+Declared parameter lists variables should start with a lower case a, which stands for argument, and continue with [camel casing][camelcase] *(except if the phrase is an acronym like HTML)*.
+
+```javascript
+function foo(aName, aValue) {
+}
+```
+
 ---
 
 ### Statements
@@ -201,21 +210,21 @@ The `if` class of statements should have the following form:
 
 ```javascript
 if (condition) {
-    // statements
+  /* statements */
 }
 
 if (condition) {
-    // statements
+  /* statements */
 } else {
-    // statements
+  /* statements */
 }
 
 if (condition) {
-    // statements
+  /* statements */
 } else if (condition) {
-    // statements
+  /* statements */
 } else {
-    // statements
+  /* statements */
 }
 ```
 
@@ -225,13 +234,13 @@ A for class of statements should have the following form:
 
 ```javascript
 for (initialization; condition; update) {
-    // statements
+  /* statements */
 }
 
 for (variable in object) {
-    if (filter) {
-        // statements
-    }
+  if (filter) {
+    /* statements */
+  }
 }
 ```
 
@@ -246,7 +255,7 @@ A `while` statement should have the following form:
 
 ```javascript
 while (condition) {
-    // statements
+  /* statements */
 }
 ```
 
@@ -256,7 +265,7 @@ A `do` statement should have the following form:
 
 ```javascript
 do {
-    // statements
+  /* statements */
 } while (condition);
 ```
 
@@ -268,17 +277,23 @@ A `switch` statement should have the following form:
 
 ```javascript
 switch (expression) {
-    case expression: {
-        // statements
-        break;
-    }
-    default: {
-        // statements
-    }
+  case expression1:
+    /* statements */
+    // fallthrough
+  case expression2:
+    /* previously declared `// fallthrough` statements */
+    break;
+  case expression3:
+  case expression4:
+  case expressionNth:
+    /* statements */
+    break;
+  default:
+    /* default statements */
 }
 ```
 
-Each group of statements *(except the default)* should end with `break`, `return`, or `throw`. **Do not fall through.**
+Each logical grouping of statements *(except the default)* should end with `// fallthrough`, `break`, `return`, or `throw`. **NOTE: Complex conditionaling may sometimes be better described with an `if...else` or other ECMAScript syntax for readability purposes.**
 
 #### try Statement
 
@@ -286,17 +301,17 @@ The `try` class of statements should have the following form:
 
 ```javascript
 try {
-    // statements
+  /* statements */
 } catch (variable) {
-    // statements
+  /* statements */
 }
 
 try {
-    // statements
+  /* statements */
 } catch (variable) {
-    // statements
+  /* statements */
 } finally {
-    // statements
+  /* statements */
 }
 ```
 
@@ -371,7 +386,7 @@ The following **may not** be used:
 * `Function` constructor (it uses `eval()`)
 * `with()` *(it can be highly inconsistent)*
 
-Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`
+Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`. If you're trying to force a server side function to run asynchronously use [`setImmediate`](http://nodejs.org/api/timers.html#timers_setimmediate_callback_arg) *(or [`process.nextTick`](http://nodejs.org/api/process.html#process_process_nexttick_callback) if you really know what you're doing)*.
 
 `parseInt()` must be used with a radix parameter, e.g.,
 ```javascript
@@ -383,7 +398,7 @@ Read more on the [awful parts of JavaScript][awfulparts].
   [WIKIPEDIABOM]: http://www.wikipedia.org/wiki/Byte_order_mark
   [IETFRFC3629S4]: http://tools.ietf.org/html/rfc3629#section-4
   [awfulparts]: http://oreilly.com/javascript/excerpts/javascript-good-parts/awful-parts.html
-  [camelcase]: http://en.wikipedia.org/wiki/CamelCase
+  [camelcase]: http://www.wikipedia.org/wiki/CamelCase
   [codeconventions]: http://javascript.crockford.com/code.html
   [editorconfig]: http://editorconfig.org/
   [impliedglobals]: http://www.adequatelygood.com/Finding-Improper-JavaScript-Globals.html

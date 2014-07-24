@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var _ = require('underscore');
 
@@ -17,15 +19,15 @@ var removeSession = require('../libs/modifySessions').remove;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 // The home page has scripts and groups in a sidebar
-exports.home = function (req, res) {
-  var authedUser = req.session.user;
+exports.home = function (aReq, aRes) {
+  var authedUser = aReq.session.user;
 
   //
   var options = {};
   var tasks = [];
 
   //
-  options.librariesOnly = req.query.library !== undefined;
+  options.librariesOnly = aReq.query.library !== undefined;
 
   // Page metadata
   pageMetadata(options, options.librariesOnly ? 'Libraries' : '');
@@ -44,10 +46,10 @@ exports.home = function (req, res) {
   // scriptListQuery: Defaults
   if (options.librariesOnly) {
     // Libraries
-    modelQuery.applyLibraryListQueryDefaults(scriptListQuery, options, req);
+    modelQuery.applyLibraryListQueryDefaults(scriptListQuery, options, aReq);
   } else {
     // Scripts
-    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, req);
+    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
   }
 
   // scriptListQuery: Pagination
@@ -96,7 +98,7 @@ exports.home = function (req, res) {
     options.announcementsDiscussionList = _.map(options.announcementsDiscussionList, modelParser.parseDiscussion);
 
     // Pagination
-    options.paginationRendered = pagination.renderDefault(req);
+    options.paginationRendered = pagination.renderDefault(aReq);
 
     // Empty list
     options.scriptListIsEmptyMessage = 'No scripts.';
@@ -132,18 +134,18 @@ exports.home = function (req, res) {
       }
     }
   };
-  function render() { res.render('pages/scriptListPage', options); }
+  function render() { aRes.render('pages/scriptListPage', options); }
   function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
 // UI for user registration
-exports.register = function (req, res) {
-  var authedUser = req.session.user;
+exports.register = function (aReq, aRes) {
+  var authedUser = aReq.session.user;
 
   // If already logged in, goto the front page.
   if (authedUser)
-    return res.redirect('/');
+    return aRes.redirect('/');
 
   //
   var options = {};
@@ -158,18 +160,18 @@ exports.register = function (req, res) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   //
-  options.wantname = req.session.username;
-  delete req.session.username;
+  options.wantname = aReq.session.username;
+  delete aReq.session.username;
 
   //
   options.strategies = [];
 
   // Get OpenId strategies
-  _.each(strategies, function (strategy, strategyKey) {
-    if (!strategy.oauth) {
+  _.each(strategies, function (aStrategy, aStrategyKey) {
+    if (!aStrategy.oauth) {
       options.strategies.push({
-        'strat': strategyKey,
-        'display': strategy.name
+        'strat': aStrategyKey,
+        'display': aStrategy.name
       });
     }
   });
@@ -177,19 +179,19 @@ exports.register = function (req, res) {
   //--- Tasks
 
   //
-  tasks.push(function (callback) {
-    Strategy.find({}, function (err, availableStrategies) {
-      if (err) {
-        callback();
+  tasks.push(function (aCallback) {
+    Strategy.find({}, function (aErr, aAvailableStrategies) {
+      if (aErr) {
+        aCallback();
       } else {
         // Get the strategies we have OAuth keys for
-        availableStrategies.forEach(function (strategy) {
+        aAvailableStrategies.forEach(function (aStrategy) {
           options.strategies.push({
-            'strat': strategy.name,
-            'display': strategy.display
+            'strat': aStrategy.name,
+            'display': aStrategy.display
           });
         });
-        callback();
+        aCallback();
       }
     });
   });
@@ -197,26 +199,26 @@ exports.register = function (req, res) {
   //---
   function preRender() {
     // Sort the strategies
-    options.strategies = _.sortBy(options.strategies, function (strategy) { return strategy.display; });
+    options.strategies = _.sortBy(options.strategies, function (aStrategy) { return aStrategy.display; });
 
     // Prefer GitHub
     var githubStrategy = _.findWhere(options.strategies, { strat: 'github' });
     if (githubStrategy)
       githubStrategy.selected = true;
   };
-  function render() { res.render('pages/loginPage', options); }
+  function render() { aRes.render('pages/loginPage', options); }
   function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
 };
 
-exports.logout = function (req, res) {
-  var authedUser = req.session.user;
+exports.logout = function (aReq, aRes) {
+  var authedUser = aReq.session.user;
 
-  if (!authedUser) { return res.redirect('/'); }
+  if (!authedUser) { return aRes.redirect('/'); }
 
-  User.findOne({ _id: authedUser._id }, function (err, user) {
-    removeSession(req, user, function () {
-      res.redirect('/');
+  User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
+    removeSession(aReq, aUser, function () {
+      aRes.redirect('/');
     });
   });
 };

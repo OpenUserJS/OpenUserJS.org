@@ -1,33 +1,35 @@
+'use strict';
+
 var Script = require('../models/script').Script;
 
-function median(values) {
-  var middle = Math.floor(values.length / 2);
-  values.sort(function (a, b) { return a - b; });
+function median(aValues) {
+  var middle = Math.floor(aValues.length / 2);
+  aValues.sort(function (aA, aB) { return aA - aB; });
 
-  return values.length % 2 ? values[middle] :
-    (values[middle - 1] + values[middle]) / 2;
+  return aValues.length % 2 ? aValues[middle] :
+    (aValues[middle - 1] + aValues[middle]) / 2;
 }
 
-function mean(values) {
+function mean(aValues) {
   var sum = 0;
   var i = 0;
-  for (; i < values.length; ++i) {
-    sum += values[i];
+  for (; i < aValues.length; ++i) {
+    sum += aValues[i];
   }
 
-  return sum / values.length;
+  return sum / aValues.length;
 }
 
 // Generate a collective rating by averaging the median and mean of
 // scripts in a group. I think this gives a more fair rating than just
 // using one of them alone.
-function getRating(scripts) {
+function getRating(aScripts) {
   var ratings = null;
 
-  if (scripts.length < 2) { return 0; }
+  if (aScripts.length < 2) { return 0; }
 
-  ratings = scripts.map(function (script) {
-    return script.rating;
+  ratings = aScripts.map(function (aScript) {
+    return aScript.rating;
   });
 
   return Math.round((median(ratings) + mean(ratings)) / 2);
@@ -37,15 +39,15 @@ exports.getRating = getRating;
 // TODO: Memoize this function with an
 // expiring cache (either memory or DB based) to
 // speed up voting and flagging
-exports.getKarma = function (user, maxKarma, callback) {
+exports.getKarma = function (aUser, aMaxKarma, aCallback) {
   var ratings = [];
   var karma = 0;
-  Script.find({ _authorId: user._id }, 'rating', function (err, scripts) {
-    if (err) { return callback(karma); }
+  Script.find({ _authorId: aUser._id }, 'rating', function (aErr, aScripts) {
+    if (aErr) { return aCallback(karma); }
 
-    karm = Math.floor(getRating(scripts) / 10);
-    if (karma > maxKarma) { karma = maxKarma; }
+    karma = Math.floor(getRating(aScripts) / 10);
+    if (karma > aMaxKarma) { karma = aMaxKarma; }
 
-    callback(karma);
+    aCallback(karma);
   });
 };

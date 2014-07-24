@@ -1,19 +1,21 @@
+'use strict';
+
 // This library allows for the modifications of user sessions
 var async = require('async');
 
-exports.init = function (store) {
-  return function (req, res, next) {
+exports.init = function (aStore) {
+  return function (aReq, aRes, aNext) {
     // http://www.senchalabs.org/connect/session.html
     // Keep a reference to the session store on the request
     // so we can access and modify its data later
-    req.sessionStore = store;
-    next();
+    aReq.sessionStore = aStore;
+    aNext();
   };
 };
 
 // Serialize a user model to something that can be stored in the session data
-function serializeUser(user) {
-  var userObj = user.toObject();
+function serializeUser(aUser) {
+  var userObj = aUser.toObject();
 
   // Some things don't need to be kept in the session store
   // More could be removed (auths, strategies, flags, flagged?)
@@ -24,69 +26,69 @@ function serializeUser(user) {
 }
 
 // Add a new session id to the user model
-exports.add = function (req, user, callback) {
-  var store = req.sessionStore;
+exports.add = function (aReq, aUser, aCallback) {
+  var store = aReq.sessionStore;
 
-  function finish(err, user) {
-    req.session.user = serializeUser(user);
-    callback();
+  function finish(aErr, aUser) {
+    aReq.session.user = serializeUser(aUser);
+    aCallback();
   }
 
   // Remove invalid session ids from user model
-  if (user.sessionIds && user.sessionIds.length > 0) {
-    async.filter(user.sessionIds, function (id, cb) {
-      store.get(id, function (err, sess) { cb(!err && sess); });
-    }, function (sessionIds) {
+  if (aUser.sessionIds && aUser.sessionIds.length > 0) {
+    async.filter(aUser.sessionIds, function (aId, aCb) {
+      store.get(aId, function (aErr, aSess) { aCb(!aErr && aSess); });
+    }, function (aSessionIds) {
       // No duplicates
-      if (sessionIds.indexOf(req.sessionID) === -1) {
-        sessionIds.push(req.sessionID);
+      if (aSessionIds.indexOf(aReq.sessionID) === -1) {
+        aSessionIds.push(aReq.sessionID);
       }
 
-      user.sessionIds = sessionIds;
-      user.save(finish);
+      aUser.sessionIds = aSessionIds;
+      aUser.save(finish);
     });
   } else {
-    user.sessionIds = [req.sessionID];
-    user.save(finish);
+    aUser.sessionIds = [aReq.sessionID];
+    aUser.save(finish);
   }
 };
 
 // Remove a session id from the user model
-exports.remove = function (req, user, callback) {
-  var pos = user && user.sessionIds ?
-    user.sessionIds.indexOf(req.sessionID) : -1;
+exports.remove = function (aReq, aUser, aCallback) {
+  var pos = aUser && aUser.sessionIds ?
+    aUser.sessionIds.indexOf(aReq.sessionID) : -1;
 
-  delete req.session.user;
+  delete aReq.session.user;
 
   if (pos > -1) {
-    user.sessionIds.splice(pos, 1);
-    user.save(callback);
+    aUser.sessionIds.splice(pos, 1);
+    aUser.save(aCallback);
   } else {
-    callback();
+    aCallback();
   }
 };
 
 // Update all sessions for a user
-exports.update = function (req, user, callback) {
-  var store = req.sessionStore;
-  var userObj = user ? serializeUser(user) : null;
+exports.update = function (aReq, aUser, aCallback) {
+  var store = aReq.sessionStore;
+  var userObj = aUser ? serializeUser(aUser) : null;
 
-  if (!user || !user.sessionIds) { return callback('No sessions', null); }
+  if (!aUser || !aUser.sessionIds) { return aCallback('No sessions', null); }
 
-  async.each(user.sessionIds, function (id, cb) {
-    store.get(id, function (err, sess) {
+  async.each(aUser.sessionIds, function (aId, aCb) {
+    store.get(aId, function (aErr, aSess) {
       // Invalid session, will be removed on login
-      if (err || !sess) { return cb(null); }
+      if (aErr || !aSess) { return aCb(null); }
 
-      sess.user = userObj;
-      store.set(id, sess, cb);
+      aSess.user = userObj;
+      store.set(aId, aSess, aCb);
     });
-  }, callback);
+  }, aCallback);
 };
 
 // Destory all sessions for a user
-exports.destroy = function (req, user, callback) {
-  var store = req.sessionStore;
+exports.destroy = function (aReq, aUser, aCallback) {
+  var store = aReq.sessionStore;
   var emptySess = {
     cookie: {
       path: '/',
@@ -96,9 +98,9 @@ exports.destroy = function (req, user, callback) {
     }
   };
 
-  if (!user || !user.sessionIds) { return cb('No sessions', null); }
+  if (!aUser || !aUser.sessionIds) { return aCb('No sessions', null); }
 
-  async.each(user.sessionIds, function (id, cb) {
-    store.set(id, emptySess, cb);
-  }, callback);
+  async.each(aUser.sessionIds, function (aId, aCb) {
+    store.set(aId, emptySess, aCb);
+  }, aCallback);
 };

@@ -119,6 +119,13 @@ h2.page-heading {
   white-space: nowrap;
 }
 
+.td-fit span.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 32em;
+  max-width: 20vw;
+}
+
 #reply-control {
   transition: height 0.4s ease;
   width: 100%;

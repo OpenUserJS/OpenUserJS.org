@@ -1,3 +1,5 @@
+'use strict';
+
 var crypto = require('crypto');
 var User = require('../models/user').User;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
@@ -5,65 +7,65 @@ var userRoles = require('../models/userRoles.json');
 
 // This is a custom verification function used for Passports because
 // we needed something more powerful than what they provided
-exports.verify = function (id, strategy, username, loggedIn, done) {
+exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
   var shasum = crypto.createHash('sha256');
   var digest = null;
 
   // We only keep plaintext ids for GH since that's all we need
-  if (strategy === 'github') {
-    digest = id;
+  if (aStrategy === 'github') {
+    digest = aId;
   } else {
     // Having these ids would allow us to do things with the user's
     // account and that is something we DO NOT want to do
-    shasum.update(String(id));
+    shasum.update(String(aId));
     digest = shasum.digest('hex');
   }
 
   findDeadorAlive(User, { 'auths': digest }, true,
-    function (alive, user, removed) {
-      var pos = user ? user.auths.indexOf(digest) : -1;
-      if (removed) { done(null, false, 'user was removed'); }
+    function (aAlive, aUser, aRemoved) {
+      var pos = aUser ? aUser.auths.indexOf(digest) : -1;
+      if (aRemoved) { aDone(null, false, 'user was removed'); }
 
-      if (!user) {
-        User.findOne({ 'name': username }, function (err, user) {
-          if (user && loggedIn) {
+      if (!aUser) {
+        User.findOne({ 'name': aUsername }, function (aErr, aUser) {
+          if (aUser && aLoggedIn) {
             // Add the new strategy to same account
             // This allows linking multiple external accounts to one of ours
-            user.auths.push(digest);
-            user.strategies.push(strategy);
-            user.save(function (err, user) {
-              return done(err, user);
+            aUser.auths.push(digest);
+            aUser.strategies.push(aStrategy);
+            aUser.save(function (aErr, aUser) {
+              return aDone(aErr, aUser);
             });
-          } else if (user) {
+          } else if (aUser) {
             // user was found matching name but not can't be authenticated
-            return done(null, false, 'username is taken');
+            return aDone(null, false, 'username is taken');
           } else {
             // Create a new user
-            user = new User({
-              'name': username,
+            aUser = new User({
+              'name': aUsername,
               'auths': [digest],
-              'strategies': [strategy],
+              'strategies': [aStrategy],
               'role': userRoles.length - 1,
               'about': '',
               'ghUsername': null
             });
-            user.save(function (err, user) {
-              return done(err, user);
+            aUser.save(function (aErr, aUser) {
+              return aDone(aErr, aUser);
             });
           }
         });
-      } else if (pos > -1 && pos < user.auths.length - 1) {
+      } else if (pos > -1 && pos < aUser.auths.length - 1) {
         // Set the default strategy
-        user.strategies.splice(pos, 1);
-        user.auths.splice(pos, 1);
-        user.strategies.push(strategy);
-        user.auths.push(digest);
-        user.save(function (err, user) {
-          return done(err, user);
+        aUser.strategies.splice(pos, 1);
+        aUser.auths.splice(pos, 1);
+        aUser.strategies.push(aStrategy);
+        aUser.auths.push(digest);
+        aUser.save(function (aErr, aUser) {
+          return aDone(aErr, aUser);
         });
       } else {
         // The user was authenticated
-        return done(null, user);
+        return aDone(null, aUser);
       }
     }
   );

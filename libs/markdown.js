@@ -1,3 +1,5 @@
+'use strict';
+
 var marked = require('marked');
 var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');
@@ -14,51 +16,51 @@ var allWhitelistAttrs = htmlWhitelistPost.allowedAttributes.all;
 
 // Whitelist a bunch of attributes for all tags
 // Doing this until we have an upstream fix
-htmlWhitelistPost.allowedTags.forEach(function (tag) {
-  var otherAttrs = htmlWhitelistPost.allowedAttributes[tag];
+htmlWhitelistPost.allowedTags.forEach(function (aTag) {
+  var otherAttrs = htmlWhitelistPost.allowedAttributes[aTag];
 
-  htmlWhitelistPost.allowedAttributes[tag] = allWhitelistAttrs;
+  htmlWhitelistPost.allowedAttributes[aTag] = allWhitelistAttrs;
   if (otherAttrs) {
-    htmlWhitelistPost.allowedAttributes[tag] = htmlWhitelistPost
-      .allowedAttributes[tag].concat(otherAttrs);
+    htmlWhitelistPost.allowedAttributes[aTag] = htmlWhitelistPost
+      .allowedAttributes[aTag].concat(otherAttrs);
   }
 });
 delete htmlWhitelistPost.allowedAttributes.all;
 
-function sanitize(html) {
-  return sanitizeHtml(html, htmlWhitelistPost);
+function sanitize(aHtml) {
+  return sanitizeHtml(aHtml, htmlWhitelistPost);
 }
 
 // Sanitize the output from the block level renderers
-blockRenderers.forEach(function (type) {
-  renderer[type] = function () {
-    return sanitize(marked.Renderer.prototype[type].apply(renderer, arguments));
+blockRenderers.forEach(function (aType) {
+  renderer[aType] = function () {
+    return sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments));
   };
 });
 
 // Automatically generate an anchor for each header
-renderer.heading = function (text, level) {
-  var escapedText = text.toLowerCase().replace(/<\/?[^>]+?>/g, '')
+renderer.heading = function (aText, aLevel) {
+  var escapedText = aText.toLowerCase().replace(/<\/?[^>]+?>/g, '')
     .replace(/[^\w]+/g, '-');
 
   var name = escapedText;
-  var html = '<h' + level + '>';
+  var html = '<h' + aLevel + '>';
   html += '<a name="' + name + '"></a>'
-  html += sanitize(text);
+  html += sanitize(aText);
   html += '<a href="#' + name + '" class="anchor">';
   html += '<i class="fa fa-link"></i>';
   html += '</a>';
-  html += '</h' + level + '>';
+  html += '</h' + aLevel + '>';
   return html;
 };
 
 // Set the options to use for rendering markdown
 marked.setOptions({
-  highlight: function (code, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      return hljs.highlight(lang, code).value;
+  highlight: function (aCode, aLang) {
+    if (aLang && hljs.getLanguage(aLang)) {
+      return hljs.highlight(aLang, aCode).value;
     } else {
-      return hljs.highlightAuto(code).value;
+      return hljs.highlightAuto(aCode).value;
     }
   },
   renderer: renderer,
@@ -71,6 +73,6 @@ marked.setOptions({
   smartypants: false
 });
 
-exports.renderMd = function (text) {
-  return marked(text);
+exports.renderMd = function (aText) {
+  return marked(aText);
 };

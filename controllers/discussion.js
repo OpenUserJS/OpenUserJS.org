@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var _ = require('underscore');
 
@@ -36,8 +38,8 @@ var categories = [
 ];
 exports.categories = categories;
 
-exports.categoryListPage = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.categoryListPage = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
   //
   var options = {};
@@ -59,7 +61,7 @@ exports.categoryListPage = function (req, res, next) {
   var discussionListQuery = Discussion.find();
 
   // discussionListQuery: Defaults
-  modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, req);
+  modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
 
   // discussionListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
@@ -73,18 +75,18 @@ exports.categoryListPage = function (req, res, next) {
   tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   //---
-  async.parallel(tasks, function (err) {
-    if (err) next();
+  async.parallel(tasks, function (aErr) {
+    if (aErr) aNext();
 
     //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
-    _.map(options.discussionList, function (discussion) {
-      var category = _.findWhere(categories, { slug: discussion.category });
+    _.map(options.discussionList, function (aDiscussion) {
+      var category = _.findWhere(categories, { slug: aDiscussion.category });
       if (!category) {
         category = {
-          name: discussion.category,
-          slug: discussion.category,
+          name: aDiscussion.category,
+          slug: aDiscussion.category,
         };
 
         var regex = /^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/;
@@ -97,26 +99,26 @@ exports.categoryListPage = function (req, res, next) {
           category.name = scriptAuthorNameSlug + '/' + scriptName;
         }
       }
-      discussion.category = modelParser.parseCategory(category);
+      aDiscussion.category = modelParser.parseCategory(category);
     });
 
     // Pagination
-    options.paginationRendered = pagination.renderDefault(req);
+    options.paginationRendered = pagination.renderDefault(aReq);
 
     //---
-    res.render('pages/categoryListPage', options);
+    aRes.render('pages/categoryListPage', options);
   });
 };
 
 // List discussions for one of the three categories
-exports.list = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.list = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
-  var categorySlug = req.route.params.category;
+  var categorySlug = aReq.route.params.category;
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
-    return next();
+    return aNext();
 
   //
   var options = {};
@@ -141,7 +143,7 @@ exports.list = function (req, res, next) {
   discussionListQuery.find({ category: category.slug });
 
   // discussionListQuery: Defaults
-  modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, req);
+  modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
 
   // discussionListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
@@ -155,52 +157,52 @@ exports.list = function (req, res, next) {
   tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
   //---
-  async.parallel(tasks, function (err) {
-    if (err) return next();
+  async.parallel(tasks, function (aErr) {
+    if (aErr) return aNext();
 
     //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
 
     // Pagination
-    options.paginationRendered = pagination.renderDefault(req);
+    options.paginationRendered = pagination.renderDefault(aReq);
 
     //---
-    res.render('pages/discussionListPage', options);
+    aRes.render('pages/discussionListPage', options);
   });
 };
 
 // Locate a discussion and deal with topic url collisions
-function findDiscussion(category, topicUrl, callback) {
+function findDiscussion(aCategory, aTopicUrl, aCallback) {
   // To prevent collisions we add an incrementing id to the topic url
-  var topic = /(.+?)(?:_(\d+))?$/.exec(topicUrl);
-  var query = { path: '/' + category + '/' + topic[1] };
+  var topic = /(.+?)(?:_(\d+))?$/.exec(aTopicUrl);
+  var query = { path: '/' + aCategory + '/' + topic[1] };
 
   // We only need to look for the proper duplicate if there is one
   if (topic[2]) {
     query.duplicateId = Number(topic[2]);
   }
 
-  Discussion.findOne(query, function (err, discussion) {
-    if (err || !discussion) { return callback(null); }
-    callback(discussion);
+  Discussion.findOne(query, function (aErr, aDiscussion) {
+    if (aErr || !aDiscussion) { return aCallback(null); }
+    aCallback(aDiscussion);
   });
 }
 exports.findDiscussion = findDiscussion;
 
 // List comments in a discussion
-exports.show = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.show = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
-  var categorySlug = req.route.params.category;
-  var topic = req.route.params.topic;
+  var categorySlug = aReq.route.params.category;
+  var topic = aReq.route.params.topic;
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
-    return next();
+    return aNext();
 
-  findDiscussion(category.slug, topic, function (discussionData) {
-    if (!discussionData) { return next(); }
+  findDiscussion(category.slug, topic, function (aDiscussionData) {
+    if (!aDiscussionData) { return aNext(); }
 
     //
     var options = {};
@@ -215,7 +217,7 @@ exports.show = function (req, res, next) {
     category = options.category = modelParser.parseCategory(category);
 
     // Discussion
-    var discussion = options.discussion = modelParser.parseDiscussion(discussionData);
+    var discussion = options.discussion = modelParser.parseDiscussion(aDiscussionData);
 
     // Page metadata
     pageMetadata(options, [discussion.topic, 'Discussions'], discussion.topic);
@@ -227,7 +229,7 @@ exports.show = function (req, res, next) {
     commentListQuery.find({ _discussionId: discussion._id });
 
     // commentListQuery: Defaults
-    modelQuery.applyCommentListQueryDefaults(commentListQuery, options, req);
+    modelQuery.applyCommentListQueryDefaults(commentListQuery, options, aReq);
 
     // commentListQuery: Pagination
     var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
@@ -241,38 +243,38 @@ exports.show = function (req, res, next) {
     tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
     //---
-    async.parallel(tasks, function (err) {
-      if (err) return next();
+    async.parallel(tasks, function (aErr) {
+      if (aErr) return aNext();
 
       //--- PreRender
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
-      _.map(options.commentList, function (comment) {
-        comment.author = modelParser.parseUser(comment._authorId);
+      _.map(options.commentList, function (aComment) {
+        aComment.author = modelParser.parseUser(aComment._authorId);
       });
       _.map(options.commentList, modelParser.renderComment);
 
       // Pagination
-      options.paginationRendered = pagination.renderDefault(req);
+      options.paginationRendered = pagination.renderDefault(aReq);
 
       //---
-      res.render('pages/discussionPage', options);
+      aRes.render('pages/discussionPage', options);
     });
   });
 };
 
 // UI to create a new topic
-exports.newTopic = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.newTopic = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
   if (!authedUser)
-    return res.redirect('/login');
+    return aRes.redirect('/login');
 
-  var categorySlug = req.route.params.category;
+  var categorySlug = aReq.route.params.category;
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
-    return next();
+    return aNext();
 
   //
   var options = {};
@@ -283,7 +285,7 @@ exports.newTopic = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!category.canUserPostTopic(authedUser)) {
-    return statusCodePage(req, res, next, {
+    return statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'You cannot post a topic to this category',
     });
@@ -296,68 +298,68 @@ exports.newTopic = function (req, res, next) {
   pageMetadata(options, ['New Topic', 'Discussions']);
 
   //---
-  res.render('pages/newDiscussionPage', options);
+  aRes.render('pages/newDiscussionPage', options);
 };
 
 // Does all the work of submitting a new comment and updating the discussion
-function postComment(user, discussion, content, creator, callback) {
+function postComment(aUser, aDiscussion, aContent, aCreator, aCallback) {
   var created = new Date();
   var comment = new Comment({
-    content: content,
-    author: user.name,
+    content: aContent,
+    author: aUser.name,
     created: created,
     rating: 0,
-    creator: creator,
+    creator: aCreator,
     flags: 0,
     flagged: false,
     id: created.getTime().toString(16),
-    _discussionId: discussion._id,
-    _authorId: user._id
+    _discussionId: aDiscussion._id,
+    _authorId: aUser._id
   });
 
-  comment.save(function (err, comment) {
-    ++discussion.comments;
-    discussion.lastCommentor = user.name;
-    discussion.updated = new Date();
-    discussion.save(callback);
+  comment.save(function (aErr, aComment) {
+    ++aDiscussion.comments;
+    aDiscussion.lastCommentor = aUser.name;
+    aDiscussion.updated = new Date();
+    aDiscussion.save(aCallback);
   });
 }
 exports.postComment = postComment;
 
 // Does all the work of submitting a new topic and
 // resolving topic url collisions
-function postTopic(user, category, topic, content, issue, callback) {
-  var urlTopic = cleanFilename(topic, '').replace(/_\d+$/, '');
-  var path = '/' + category + '/' + urlTopic;
+function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aCallback) {
+  var urlTopic = cleanFilename(aTopic, '').replace(/_\d+$/, '');
+  var path = '/' + aCategory + '/' + urlTopic;
   var params = { sort: {} };
   params.sort.duplicateId = -1;
 
-  if (!urlTopic) { callback(null); }
+  if (!urlTopic) { aCallback(null); }
 
-  Discussion.findOne({ path: path }, params, function (err, discussion) {
+  Discussion.findOne({ path: path }, params, function (aErr, aDiscussion) {
     var newDiscussion = null;
     var props = {
-      topic: topic,
-      category: category,
+      topic: aTopic,
+      category: aCategory,
       comments: 0,
-      author: user.name,
+      author: aUser.name,
       created: new Date(),
-      lastCommentor: user.name,
+      lastCommentor: aUser.name,
       updated: new Date(),
       rating: 0,
       flagged: false,
       path: path,
-      _authorId: user._id
+      _authorId: aUser._id
     };
 
-    if (!err && discussion) {
-      props.duplicateId = discussion.duplicateId + 1;
+    if (!aErr && aDiscussion) {
+      props.duplicateId = aDiscussion.duplicateId + 1;
     } else {
       props.duplicateId = 0;
     }
 
     // Issues are just discussions with special properties
-    if (issue) {
+    if (aIssue) {
       props.issue = true;
       props.open = true;
       props.labels = [];
@@ -365,10 +367,10 @@ function postTopic(user, category, topic, content, issue, callback) {
 
     newDiscussion = new Discussion(props);
 
-    newDiscussion.save(function (err, discussion) {
+    newDiscussion.save(function (aErr, aDiscussion) {
       // Now post the first comment
-      postComment(user, discussion, content, true, function (err, discussion) {
-        callback(discussion);
+      postComment(aUser, aDiscussion, aContent, true, function (aErr, aDiscussion) {
+        aCallback(aDiscussion);
       });
     });
   });
@@ -376,19 +378,19 @@ function postTopic(user, category, topic, content, issue, callback) {
 exports.postTopic = postTopic;
 
 // post route to create a new topic
-exports.createTopic = function (req, res, next) {
-  var authedUser = req.session.user;
+exports.createTopic = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
 
   if (!authedUser)
-    return res.redirect('/login');
+    return aRes.redirect('/login');
 
-  var categorySlug = req.route.params.category;
-  var topic = req.body['discussion-topic'];
-  var content = req.body['comment-content'];
+  var categorySlug = aReq.route.params.category;
+  var topic = aReq.body['discussion-topic'];
+  var content = aReq.body['comment-content'];
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
-    return next();
+    return aNext();
 
   //
   var options = {};
@@ -399,35 +401,35 @@ exports.createTopic = function (req, res, next) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!category.canUserPostTopic(authedUser)) {
-    return statusCodePage(req, res, next, {
+    return statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'You cannot post a topic to this category',
     });
   }
 
-  postTopic(authedUser, category.slug, topic, content, false, function (discussion) {
-    if (!discussion) { return exports.newTopic(req, res, next); }
+  postTopic(authedUser, category.slug, topic, content, false, function (aDiscussion) {
+    if (!aDiscussion) { return exports.newTopic(aReq, aRes, aNext); }
 
-    res.redirect(encodeURI(discussion.path
-      + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
+    aRes.redirect(encodeURI(aDiscussion.path
+      + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
   });
 };
 
 // post route to create a new comment on an existing discussion
-exports.createComment = function (req, res, next) {
-  var category = req.route.params.category;
-  var topic = req.route.params.topic;
-  var user = req.session.user;
-  var content = req.body['comment-content'];
-  var commentId = req.body['comment-id']; // for editing
+exports.createComment = function (aReq, aRes, aNext) {
+  var category = aReq.route.params.category;
+  var topic = aReq.route.params.topic;
+  var user = aReq.session.user;
+  var content = aReq.body['comment-content'];
+  var commentId = aReq.body['comment-id']; // for editing
 
-  if (!user) { return next(); }
+  if (!user) { return aNext(); }
 
   findDiscussion(category, topic, function (discussion) {
-    if (!discussion) { return next(); }
+    if (!discussion) { return aNext(); }
 
     postComment(user, discussion, content, false, function (err, discussion) {
-      res.redirect(encodeURI(discussion.path
+      aRes.redirect(encodeURI(discussion.path
         + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
     });
   });

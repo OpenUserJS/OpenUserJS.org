@@ -1,141 +1,143 @@
+'use strict';
+
 var _ = require('underscore');
 
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
-var findOrDefaultIfNull = function (query, key, value, defaultValue) {
+var findOrDefaultIfNull = function (aQuery, aKey, aValue, aDefaultValue) {
   var conditions = [];
   var condition = {};
-  condition[key] = value;
+  condition[aKey] = aValue;
   conditions.push(condition);
-  if (value == defaultValue) {
+  if (aValue == aDefaultValue) {
     condition = {};
-    condition[key] = null;
+    condition[aKey] = null;
     conditions.push(condition);
   }
-  query.and({ $or: conditions });
+  aQuery.and({ $or: conditions });
 };
 exports.findOrDefaultIfNull = findOrDefaultIfNull;
 
 var orderDirs = ['asc', 'desc'];
-var parseModelListSort = function (modelListQuery, orderBy, orderDir, defaultSortFn) {
-  if (orderBy) {
-    if (_.isUndefined(orderDir) || !_.contains(orderDirs, orderDir))
-      orderDir = 'asc';
+var parseModelListSort = function (aModelListQuery, aOrderBy, aOrderDir, aDefaultSortFn) {
+  if (aOrderBy) {
+    if (_.isUndefined(aOrderDir) || !_.contains(orderDirs, aOrderDir))
+      aOrderDir = 'asc';
 
-    if (_.has(modelListQuery.model.schema.paths, orderBy)) {
+    if (_.has(aModelListQuery.model.schema.paths, aOrderBy)) {
       var sortBy = {};
-      sortBy[orderBy] = orderDir;
-      modelListQuery.sort(sortBy);
+      sortBy[aOrderBy] = aOrderDir;
+      aModelListQuery.sort(sortBy);
       return;
     }
   }
-  defaultSortFn(modelListQuery);
+  aDefaultSortFn(aModelListQuery);
 };
 exports.parseModelListSort = parseModelListSort;
 
-var parseSearchConditions = function (q, prefixSearchFields, fullSearchFields) {
+var parseSearchConditions = function (aQ, aPrefixSearchFields, aFullSearchFields) { // NOTE: This code is duplicated elsewhere but this is primary
   var conditions = [];
   var query = null;
   var prefixStr = '';
   var fullStr = '';
   var prefixRegex = null;
   var fullRegex = null;
-  var terms = q.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/).map(function (e) { return e.trim(); });
+  var terms = aQ.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/).map(function (aE) { return aE.trim(); });
 
   // Match all the terms but in any order
-  terms.forEach(function (term) {
-    var isNonASCII = /^\W/.test(term);
+  terms.forEach(function (aTerm) {
+    var isNonASCII = /^\W/.test(aTerm);
     if (isNonASCII) {
-      prefixStr += '(?=.*?([ \n\r\t.,\'"\+!?-]+)' + term + ')';
+      prefixStr += '(?=.*?([ \n\r\t.,\'"\+!?-]+)' + aTerm + ')';
     } else {
-      prefixStr += '(?=.*?\\b' + term + ')';
+      prefixStr += '(?=.*?\\b' + aTerm + ')';
     }
-    fullStr += '(?=.*?' + term + ')';
+    fullStr += '(?=.*?' + aTerm + ')';
   });
   prefixRegex = new RegExp(prefixStr, 'i');
   fullRegex = new RegExp(fullStr, 'i');
 
   // One of the searchable fields must match the conditions
-  prefixSearchFields.forEach(function (prop) {
+  aPrefixSearchFields.forEach(function (aProp) {
     var condition = {};
-    condition[prop] = prefixRegex;
+    condition[aProp] = prefixRegex;
     conditions.push(condition);
   });
 
-  fullSearchFields.forEach(function (prop) {
+  aFullSearchFields.forEach(function (aProp) {
     var condition = {};
-    condition[prop] = fullRegex;
+    condition[aProp] = fullRegex;
     conditions.push(condition);
   });
   return conditions;
 };
 exports.parseSearchConditions = parseSearchConditions;
 
-var parseModelListSearchQuery = function (modelListQuery, query, searchOptions) {
-  var q = unescape(query);
-  modelListQuery.and({
-    $or: parseSearchConditions(q, searchOptions.partialWordMatchFields, searchOptions.fullWordMatchFields)
+var parseModelListSearchQuery = function (aModelListQuery, aQuery, aSearchOptions) {
+  var q = unescape(aQuery);
+  aModelListQuery.and({
+    $or: parseSearchConditions(q, aSearchOptions.partialWordMatchFields, aSearchOptions.fullWordMatchFields)
   });
 };
 
-var parseScriptSearchQuery = function (scriptListQuery, query) {
-  parseModelListSearchQuery(scriptListQuery, query, {
+var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
+  parseModelListSearchQuery(aScriptListQuery, aQuery, {
     partialWordMatchFields: ['name', 'author', 'about', 'meta.description'],
     fullWordMatchFields: ['meta.include', 'meta.match'],
   });
 };
 exports.parseScriptSearchQuery = parseScriptSearchQuery;
 
-var parseGroupSearchQuery = function (groupListQuery, query) {
-  parseModelListSearchQuery(groupListQuery, query, {
+var parseGroupSearchQuery = function (aGroupListQuery, aQuery) {
+  parseModelListSearchQuery(aGroupListQuery, query, {
     partialWordMatchFields: ['name'],
     fullWordMatchFields: [],
   });
 };
 exports.parseGroupSearchQuery = parseGroupSearchQuery;
 
-var parseDiscussionSearchQuery = function (discussionListQuery, query) {
-  parseModelListSearchQuery(discussionListQuery, query, {
+var parseDiscussionSearchQuery = function (aDiscussionListQuery, aQuery) {
+  parseModelListSearchQuery(aDiscussionListQuery, query, {
     partialWordMatchFields: ['topic'],
     fullWordMatchFields: ['author'],
   });
 };
 exports.parseDiscussionSearchQuery = parseDiscussionSearchQuery;
 
-var parseCommentSearchQuery = function (commentListQuery, query) {
-  parseModelListSearchQuery(commentListQuery, query, {
+var parseCommentSearchQuery = function (aCommentListQuery, aQuery) {
+  parseModelListSearchQuery(aCommentListQuery, aQuery, {
     partialWordMatchFields: ['content'],
     fullWordMatchFields: ['author'],
   });
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
-var parseUserSearchQuery = function (userListQuery, query) {
-  parseModelListSearchQuery(userListQuery, query, {
+var parseUserSearchQuery = function (aUserListQuery, aQuery) {
+  parseModelListSearchQuery(aUserListQuery, aQuery, {
     partialWordMatchFields: ['name'],
     fullWordMatchFields: [],
   });
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
-var parseRemovedItemSearchQuery = function (removedItemListQuery, query) {
-  parseModelListSearchQuery(removedItemListQuery, query, {
+var parseRemovedItemSearchQuery = function (aRemovedItemListQuery, aQuery) {
+  parseModelListSearchQuery(aRemovedItemListQuery, aQuery, {
     partialWordMatchFields: ['content.*'],
     fullWordMatchFields: ['model'],
   });
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
-var applyModelListQueryFlaggedFilter = function (modelListQuery, options, flaggedQuery) {
+var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFlaggedQuery) {
   // Only list flagged items if authedUser >= moderator or if authedUser owns the item.
-  if (options.isYou || options.isMod) {
+  if (aOptions.isYou || aOptions.isMod) {
     // Mod
-    if (flaggedQuery) {
-      if (flaggedQuery == 'true') {
-        options.isFlagged = true;
-        modelListQuery.and({ flags: { $gt: 0 } });
-      } else if (flaggedQuery == false) {
-        // modelListQuery.and({$or: [
+    if (aFlaggedQuery) {
+      if (aFlaggedQuery == 'true') {
+        aOptions.isFlagged = true;
+        aModelListQuery.and({ flags: { $gt: 0 } });
+      } else if (aFlaggedQuery == false) {
+        // aModelListQuery.and({$or: [
         //   {flags: {$exists: false}},
         //   {flags: {$lte: 0} },
         // ]});
@@ -144,41 +146,41 @@ var applyModelListQueryFlaggedFilter = function (modelListQuery, options, flagge
   } else {
     // Hide
     // Script.flagged is undefined by default.
-    modelListQuery.and({ flagged: { $ne: true } });
+    aModelListQuery.and({ flagged: { $ne: true } });
   }
 };
 exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
 
-var applyModelListQueryDefaults = function (modelListQuery, options, req, defaultOptions) {
+var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDefaultOptions) {
 
   // Search
-  if (req.query.q) {
-    options.searchBarValue = req.query.q;
+  if (aReq.query.q) {
+    aOptions.searchBarValue = aReq.query.q;
 
-    if (defaultOptions.parseSearchQueryFn)
-      defaultOptions.parseSearchQueryFn(modelListQuery, req.query.q);
+    if (aDefaultOptions.parseSearchQueryFn)
+      aDefaultOptions.parseSearchQueryFn(aModelListQuery, aReq.query.q);
   }
-  options.searchBarFormAction = defaultOptions.searchBarFormAction || '';
-  options.searchBarPlaceholder = defaultOptions.searchBarPlaceholder || 'Search';
-  options.searchBarFormHiddenVariables = defaultOptions.searchBarFormHiddenVariables || [];
+  aOptions.searchBarFormAction = aDefaultOptions.searchBarFormAction || '';
+  aOptions.searchBarPlaceholder = aDefaultOptions.searchBarPlaceholder || 'Search';
+  aOptions.searchBarFormHiddenVariables = aDefaultOptions.searchBarFormHiddenVariables || [];
 
   // flagged
-  if (defaultOptions.filterFlaggedItems)
-    applyModelListQueryFlaggedFilter(modelListQuery, options, req.query.flagged);
+  if (aDefaultOptions.filterFlaggedItems)
+    applyModelListQueryFlaggedFilter(aModelListQuery, aOptions, aReq.query.flagged);
 
   // Sort
-  parseModelListSort(modelListQuery, req.query.orderBy, req.query.orderDir, function () {
-    modelListQuery.sort(defaultOptions.defaultSort);
+  parseModelListSort(aModelListQuery, aReq.query.orderBy, aReq.query.orderDir, function () {
+    aModelListQuery.sort(aDefaultOptions.defaultSort);
   });
 
   // Pagination
-  var pagination = getDefaultPagination(req);
-  pagination.applyToQuery(modelListQuery);
-  options.pagination = pagination;
+  var pagination = getDefaultPagination(aReq);
+  pagination.applyToQuery(aModelListQuery);
+  aOptions.pagination = pagination;
 };
 
-exports.applyCommentListQueryDefaults = function (commentListQuery, options, req) {
-  applyModelListQueryDefaults(commentListQuery, options, req, {
+exports.applyCommentListQueryDefaults = function (aCommentListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aCommentListQuery, aOptions, aReq, {
     defaultSort: 'created',
     parseSearchQueryFn: parseCommentSearchQuery,
     searchBarPlaceholder: 'Search Comments',
@@ -186,15 +188,15 @@ exports.applyCommentListQueryDefaults = function (commentListQuery, options, req
   });
 
   // Populate
-  commentListQuery.populate({
+  aCommentListQuery.populate({
     path: '_authorId',
     model: 'User',
     select: 'name role'
   });
 };
 
-exports.applyDiscussionListQueryDefaults = function (discussionListQuery, options, req) {
-  applyModelListQueryDefaults(discussionListQuery, options, req, {
+exports.applyDiscussionListQueryDefaults = function (aDiscussionListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aDiscussionListQuery, aOptions, aReq, {
     defaultSort: '-updated -rating',
     parseSearchQueryFn: parseDiscussionSearchQuery,
     searchBarPlaceholder: 'Search Topics',
@@ -202,8 +204,8 @@ exports.applyDiscussionListQueryDefaults = function (discussionListQuery, option
   });
 };
 
-exports.applyGroupListQueryDefaults = function (groupListQuery, options, req) {
-  applyModelListQueryDefaults(groupListQuery, options, req, {
+exports.applyGroupListQueryDefaults = function (aGroupListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aGroupListQuery, aOptions, aReq, {
     defaultSort: '-rating name',
     parseSearchQueryFn: parseGroupSearchQuery,
     searchBarPlaceholder: 'Search Groups',
@@ -219,8 +221,8 @@ var scriptListQueryDefaults = {
   filterFlaggedItems: true
 };
 exports.scriptListQueryDefaults = scriptListQueryDefaults;
-exports.applyScriptListQueryDefaults = function (scriptListQuery, options, req) {
-  applyModelListQueryDefaults(scriptListQuery, options, req, scriptListQueryDefaults);
+exports.applyScriptListQueryDefaults = function (aScriptListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aScriptListQuery, aOptions, aReq, scriptListQueryDefaults);
 };
 
 var libraryListQueryDefaults = {
@@ -234,12 +236,12 @@ var libraryListQueryDefaults = {
   filterFlaggedItems: true
 };
 exports.libraryListQueryDefaults = libraryListQueryDefaults;
-exports.applyLibraryListQueryDefaults = function (libraryListQuery, options, req) {
-  applyModelListQueryDefaults(libraryListQuery, options, req, libraryListQueryDefaults);
+exports.applyLibraryListQueryDefaults = function (aLibraryListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aLibraryListQuery, aOptions, aReq, libraryListQueryDefaults);
 };
 
-exports.applyUserListQueryDefaults = function (userListQuery, options, req) {
-  applyModelListQueryDefaults(userListQuery, options, req, {
+exports.applyUserListQueryDefaults = function (aUserListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aUserListQuery, aOptions, aReq, {
     defaultSort: 'name',
     parseSearchQueryFn: parseUserSearchQuery,
     searchBarPlaceholder: 'Search Users',
@@ -247,8 +249,8 @@ exports.applyUserListQueryDefaults = function (userListQuery, options, req) {
   });
 };
 
-exports.applyRemovedItemListQueryDefaults = function (removedItemListQuery, options, req) {
-  applyModelListQueryDefaults(removedItemListQuery, options, req, {
+exports.applyRemovedItemListQueryDefaults = function (aRemovedItemListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aRemovedItemListQuery, aOptions, aReq, {
     defaultSort: '-removed',
     parseSearchQueryFn: parseRemovedItemSearchQuery,
     searchBarPlaceholder: 'Search Removed Items',

@@ -1,3 +1,5 @@
+'use strict';
+
 var toobusy = require('toobusy-js');
 var express = require('express');
 var MongoStore = require('connect-mongo')(express);
@@ -42,29 +44,29 @@ app.configure(function () {
   var sessionStore = new MongoStore({ mongoose_connection: db });
 
   // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-  app.use(function (req, res, next) {
+  app.use(function (aReq, aRes, aNext) {
     // check if we're toobusy
     if (toobusy()) {
-      statusCodePage(req, res, next, {
+      statusCodePage(aReq, aRes, aNext, {
         statusCode: 503,
         statusMessage: 'We\'re busy right now. Try again later.',
       });
     } else {
-      next();
+      aNext();
     }
   });
 
   // Force HTTPS
   if (app.get('port') === 443) {
-    app.use(function (req, res, next) {
-      res.setHeader('Strict-Transport-Security',
+    app.use(function (aReq, aRes, aNext) {
+      aRes.setHeader('Strict-Transport-Security',
         'max-age=8640000; includeSubDomains');
 
-      if (req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(301, 'https://' + req.headers.host + encodeURI(req.url));
+      if (aReq.headers['x-forwarded-proto'] !== 'https') {
+        return aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
       }
 
-      next();
+      aNext();
     });
   }
 
@@ -96,14 +98,14 @@ app.configure(function () {
 
 // Emulate app.route('/').VERB(callback).VERB(callback); from ExpressJS 4.x
 var methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
-function app_route(path) {
+function app_route(aPath) {
   var r = {};
-  r.all = function (cb) {
-    app.all.call(app, path, cb);
+  r.all = function (aCallback) {
+    app.all.call(app, aPath, aCallback);
   };
-  methods.forEach(function (method) {
-    r[method] = function (cb) {
-      app[method].call(app, path, cb);
+  methods.forEach(function (aMethod) {
+    r[aMethod] = function (aCallback) {
+      app[aMethod].call(app, aPath, aCallback);
       return r;
     };
   });
@@ -130,7 +132,7 @@ app_route('/users/:username/github/import').post(user.userGitHubImportScriptPage
 app_route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
 app_route('/users/:username/update').post(admin.adminUserUpdate);
 app_route('/user/preferences').get(user.userEditPreferencesPage);
-app_route('/user').get(function(req, res) { res.redirect('/users'); });
+app_route('/user').get(function(aReq, aRes) { aRes.redirect('/users'); });
 
 // Adding script/library routes
 app_route('/user/add/scripts').get(user.newScriptPage);
@@ -139,23 +141,23 @@ app_route('/user/add/scripts/upload').post(user.uploadScript);
 app_route('/user/add/lib').get(user.newLibraryPage);
 app_route('/user/add/lib/new').get(script.lib(user.editScript)).post(script.lib(user.submitSource));
 app_route('/user/add/lib/upload').post(script.lib(user.uploadScript));
-app_route('/user/add').get(function(req, res) { res.redirect('/user/add/scripts'); });
+app_route('/user/add').get(function(aReq, aRes) { aRes.redirect('/user/add/scripts'); });
 
 // Script routes
 app_route('/scripts/:username/:namespace?/:scriptname').get(script.view);
 app_route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
 app_route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
 app_route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript);
-app_route('/scripts/:username').get(function(req, res) {
-  res.redirect('/users/' + req.route.params.username + '/scripts');
+app_route('/scripts/:username').get(function(aReq, aRes) {
+  aRes.redirect('/users/' + aReq.route.params.username + '/scripts');
 });
 app_route('/install/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
 app_route('/meta/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
 
 // Github hook routes
 app_route('/github/hook').post(scriptStorage.webhook);
-app_route('/github/service').post(function(req, res, next) { next(); });
-app_route('/github').get(function(req, res) { res.redirect('/'); });
+app_route('/github/service').post(function(aReq, aRes, aNext) { aNext(); });
+app_route('/github').get(function(aReq, aRes) { aRes.redirect('/'); });
 
 // Library routes
 app.get('/libs/:username/:scriptname', script.lib(script.view));
@@ -163,6 +165,11 @@ app.get('/lib/:scriptname/edit', script.lib(script.edit));
 app.post('/lib/:scriptname/edit', script.lib(script.edit));
 app.get('/libs/:username/:scriptname/source', script.lib(user.editScript));
 app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript);
+
+// Raw source
+app.get('/src/:type(scripts|libs)/:username/:scriptname',
+  scriptStorage.sendScript);
+app.get('/libs/src/:username/:scriptname', scriptStorage.sendScript); // Legacy
 
 // Issues routes
 app_route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
@@ -201,7 +208,7 @@ app_route(/^\/remove\/(.+?)\/(.+)$/).get(remove.rm);
 // Group routes
 app_route('/groups').get(group.list);
 app_route('/group/:groupname').get(group.view);
-app_route('/group').get(function(req, res) { res.redirect('/groups'); });
+app_route('/group').get(function(aReq, aRes) { aRes.redirect('/groups'); });
 app_route('/api/group/search/:term/:addTerm?').get(group.search);
 
 // Discussion routes
@@ -218,8 +225,8 @@ app_route('/').get(main.home);
 
 // Fallback routes
 app.use(express.static(__dirname + '/public'));
-app.use(function (req, res, next) {
-  statusCodePage(req, res, next, {
+app.use(function (aReq, aRes, aNext) {
+  statusCodePage(aReq, aRes, aNext, {
     statusCode: 404,
     statusMessage: 'This is not the page you\'re are looking for.',
   });
