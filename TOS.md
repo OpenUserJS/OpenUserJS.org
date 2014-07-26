@@ -48,6 +48,7 @@ Within moderation we understand the occasional necessity to conserve device stor
 * Non-reusable licenses, of course, may not be used.
 * Public domain type licenses may mean different things in different jurisdictions and therefore are not allowed and eligible for removal.
 * Any attempt to unlicense a published work will be eligible for removal.
+* In the event of any licensing dispute the [Default Code Licensing](#default-code-licensing) shall prevail.
 
 ## The Fine Print
 
