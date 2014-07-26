@@ -38,13 +38,13 @@ Within moderation we understand the occasional necessity to conserve device stor
 
 ### Default Code Licensing
 
-* Users Scripts have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) if the `@license` *(including the alternate spelling of `@licence`)* metadata block key is absent.
+* User Scripts have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) if the `@license` *(including the alternate spelling of `@licence`)* metadata block key is absent.
 * Libraries need to include one reference to their license(s) either via a cross-site compatible metadata block with at least one `@license` and/or `@licence` key, License Header, or full License text *(full text is not recommended for storage constraints on portable devices)*
 
 ### Acceptable Licensing
 * Licensing must be [Open Source Initiative approved](http://opensource.org/licenses/category).
 * If a Content only license is included then the [Default Code Licensing](#default-code-licensing) will be applied with licensing arbitration, but may not always be visibly indicated on a script home page.
-* No derivative licenses will be eligible for removal.
+* Any license that prohibit derivatives is eligible for removal.
 * Non-reusable licenses, of course, may not be used.
 * Public domain type licenses may mean different things in different jurisdictions and therefore are not allowed and eligible for removal.
 * Any attempt to unlicense a published work will be eligible for removal.
