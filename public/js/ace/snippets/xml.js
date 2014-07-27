@@ -1,1 +1,7 @@
-ace.define("ace/snippets/xml",["require","exports","module"],function(e,t,n){t.snippetText="",t.scope="xml"})
+define("ace/snippets/xml",["require","exports","module"], function(require, exports, module) {
+"use strict";
+
+exports.snippetText =undefined;
+exports.scope = "xml";
+
+});
