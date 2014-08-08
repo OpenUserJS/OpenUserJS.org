@@ -36,7 +36,7 @@ exports.tosPage = function (aReq, aRes, aNext) {
     }
 
     // Page metadata
-    pageMetadata(options, 'Terms of Service');
+    pageMetadata(options, ['Terms of Service', 'About']);
 
     options.pageHeading = 'Terms of Service';
     options.pageData = renderMd(aData);
@@ -72,7 +72,7 @@ exports.dmcaPage = function (aReq, aRes, aNext) {
     }
 
     // Page metadata
-    pageMetadata(options, 'Digital Millenium Copyright Act');
+    pageMetadata(options, ['Digital Millenium Copyright Act', 'About']);
 
     options.pageHeading = 'Digital Millenium Copyright Act';
     options.pageData = renderMd(aData);
@@ -108,7 +108,7 @@ exports.ppPage = function (aReq, aRes, aNext) {
     }
 
     // Page metadata
-    pageMetadata(options, 'Privacy Policy');
+    pageMetadata(options, ['Privacy Policy', 'About']);
 
     options.pageHeading = 'Privacy Policy';
     options.pageData = renderMd(aData);
