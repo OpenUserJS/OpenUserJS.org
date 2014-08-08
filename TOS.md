@@ -1,5 +1,3 @@
-# Terms of Service
-
 ## Etiquette
 * Everyone should maintain a professional and civil demeanor towards each other.
 * Staying on topic is a good thing to remember. Everyone has other duties to attend to at different times. Try to be succinct and don't obsess on a particular topic. Give others a chance to respond.

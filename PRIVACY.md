@@ -1,5 +1,3 @@
-# Privacy
-
 Your privacy is critically important to us. At OpenUserJS.org *(OUJS)* we have a few fundamental principles:
 
 * We don’t ask you for personal information unless we truly need it. *(We also can’t stand services that ask you for things like your gender or income level for no apparent reason.)*

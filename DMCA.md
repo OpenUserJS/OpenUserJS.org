@@ -1,5 +1,3 @@
-# Digital Millenium Copyright Act
-
 ## Filing a Notification
 
 A written notification must be made. This can be done by written email to the owner. Letters or faxes will not be accepted unless a prior arrangement has been made. The notification must:
