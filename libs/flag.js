@@ -84,20 +84,13 @@ function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
   if (!aContent.flags) { aContent.flags = 0; }
   aContent.flags += aFlags;
 
-  switch (aModel.modelName) {
-    case 'User':
-      if (aContent.flags <= 0) { aContent.flagged = false; }
-      break;
-    case 'Script':
-      if (aContent.votes + aContent.flags <= 0) { aContent.flagged = false; }
-      break;
-  }
-
   if (aContent.flags >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
     return getThreshold(aModel, aContent, aAuthor, function (aThreshold) {
       aContent.flagged = aContent.flags >= aThreshold;
       aContent.save(function (aErr, aContent) { aCallback(aContent.flagged); });
     });
+  } else {
+    aContent.flagged = false;
   }
 
   aContent.save(function (aErr, aContent) { aCallback(aContent.flagged); });
