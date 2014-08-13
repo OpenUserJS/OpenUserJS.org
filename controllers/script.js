@@ -435,7 +435,6 @@ exports.vote = function (aReq, aRes, aNext) {
   url.shift();
   url.shift();
   url = '/' + url.join('/');
-  url = encodeURI(url);
 
   if (vote === 'up') {
     vote = true;
