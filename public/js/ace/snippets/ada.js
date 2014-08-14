@@ -1,1 +1,7 @@
-ace.define("ace/snippets/ada",["require","exports","module"],function(e,t,n){t.snippetText="",t.scope="ada"})
+define("ace/snippets/ada",["require","exports","module"], function(require, exports, module) {
+"use strict";
+
+exports.snippetText =undefined;
+exports.scope = "ada";
+
+});

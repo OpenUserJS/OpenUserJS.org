@@ -1,1 +1,7 @@
-ace.define("ace/snippets/smarty",["require","exports","module"],function(e,t,n){t.snippetText="",t.scope="smarty"})
+define("ace/snippets/smarty",["require","exports","module"], function(require, exports, module) {
+"use strict";
+
+exports.snippetText =undefined;
+exports.scope = "smarty";
+
+});
