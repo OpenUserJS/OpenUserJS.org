@@ -20,6 +20,7 @@ var group = require('./controllers/group');
 var discussion = require('./controllers/discussion');
 var issue = require('./controllers/issue');
 var scriptStorage = require('./controllers/scriptStorage');
+var document = require('./controllers/document');
 
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 var modifySessions = require('./libs/modifySessions');
@@ -219,6 +220,9 @@ app_route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').g
 app_route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(discussion.newTopic).post(discussion.createTopic);
 // dupe
 app_route('/post/:category(announcements|corner|garage|discuss)').get(discussion.newTopic).post(discussion.createTopic);
+
+// About document routes
+app_route(/^\/about\/(.*)$/).get(document.view);
 
 // Home route
 app_route('/').get(main.home);
