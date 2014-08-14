@@ -89,6 +89,8 @@ function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
       aContent.flagged = aContent.flags >= aThreshold;
       aContent.save(function (aErr, aContent) { aCallback(aContent.flagged); });
     });
+  } else {
+    aContent.flagged = false;
   }
 
   aContent.save(function (aErr, aContent) { aCallback(aContent.flagged); });

@@ -158,13 +158,21 @@ var parseScript = function (aScriptData) {
   script.isFork = script.fork && script.fork.length > 0;
 
   // Script Good/Bad bar.
-  // script.votes = count(upvotes) + count(downvotes)
-  // script.flags = flags - count(upvotes)
   var sumVotesAndFlags = script.votes + script.flags;
-  var votesRatio = sumVotesAndFlags > 0 ? script.votes / sumVotesAndFlags : 0;
+
+  var votesRatio = sumVotesAndFlags > 0 ? script.votes / sumVotesAndFlags : 1;
   var flagsRatio = sumVotesAndFlags > 0 ? script.flags / sumVotesAndFlags : 0;
-  script.votesPercent = votesRatio * 100;
-  script.flagsPercent = flagsRatio * 100;
+
+  var votesPercent = votesRatio * 100;
+  var flagsPercent = flagsRatio * 100;
+
+  if (flagsPercent <= 0) {
+    votesPercent = script.votes === 0 ? 0 : (sumVotesAndFlags === 0 ? 100 : Math.abs(flagsPercent) / votesPercent * 100);
+    flagsPercent = 0;
+  }
+
+  script.votesPercent = votesPercent;
+  script.flagsPercent = flagsPercent;
 
   // Urls: Slugs
   script.authorSlug = script.author.name;
