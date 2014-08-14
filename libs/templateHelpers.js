@@ -120,7 +120,7 @@ function pageMetadata(aOptions, aTitle, aDescription, aKeywords) {
   } else if (_.isArray(aTitle)) {
     titles = aTitle.concat(titles);
   }
-  aOptions.aTitle = titles.join(' | ');
+  aOptions.title = titles.join(' | ');
 
   aOptions.pageMetaDescription = 'Download userscripts to enhance your browser.';
   if (typeof (aDescription) !== "undefined" && aDescription !== null) {
