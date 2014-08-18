@@ -11,11 +11,21 @@
     <div class="row">
       <div class="container-fluid">
         <h2 class="page-heading">
-          {{pageHeading}}
+          {{#isAbout}}About /{{/isAbout}} {{^isAbout}}<a href="about">About</a> /{{/isAbout}} {{pageHeading}}
         </h2>
         <div class="panel panel-default">
           <div class="panel-body">
-            {{#pageData}}{{{pageData}}}{{/pageData}}
+            <div id="document-content" class="document-content">
+              {{#isAbout}}
+                <p><em>This is a list of &quot;about&quot; pages for your convenience.</em></p>
+                <ul class="list-group">
+                  {{#files}}<li class="list-group-item"><a href="{{{href}}}">{{textContent}}</a></li>{{/files}}</li>
+                </ul>
+              {{/isAbout}}
+              {{^isAbout}}
+                {{#pageData}}{{{pageData}}}{{/pageData}}
+              {{/isAbout}}
+            </div>
           </div>
         </div>
       </div>
