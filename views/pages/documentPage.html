@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+  <link rel="stylesheet" type="text/css" media="all" href="/css/documentPage.css">
+</head>
+<body id="body">
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="container-fluid">
+        <h2 class="page-heading">
+          {{#isAbout}}About /{{/isAbout}} {{^isAbout}}<a href="about">About</a> /{{/isAbout}} {{pageHeading}}
+        </h2>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div id="document-content" class="document-content">
+              {{#isAbout}}
+                <p><em>This is a list of &quot;about&quot; pages for your convenience.</em></p>
+                <ul class="list-group">
+                  {{#files}}<li class="list-group-item"><a href="{{{href}}}">{{textContent}}</a></li>{{/files}}</li>
+                </ul>
+              {{/isAbout}}
+              {{^isAbout}}
+                {{#pageData}}{{{pageData}}}{{/pageData}}
+              {{/isAbout}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+</body>
+</html>
