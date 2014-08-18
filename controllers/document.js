@@ -24,7 +24,7 @@ exports.view = function (aReq, aRes, aNext) {
 
   //---
   function preRender() {};
-  function render() { aRes.render('pages/docPage', options); }
+  function render() { aRes.render('pages/documentPage', options); }
   function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } };
 
   // Session
