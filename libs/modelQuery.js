@@ -89,7 +89,7 @@ var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
 exports.parseScriptSearchQuery = parseScriptSearchQuery;
 
 var parseGroupSearchQuery = function (aGroupListQuery, aQuery) {
-  parseModelListSearchQuery(aGroupListQuery, query, {
+  parseModelListSearchQuery(aGroupListQuery, aQuery, {
     partialWordMatchFields: ['name'],
     fullWordMatchFields: [],
   });
@@ -97,7 +97,7 @@ var parseGroupSearchQuery = function (aGroupListQuery, aQuery) {
 exports.parseGroupSearchQuery = parseGroupSearchQuery;
 
 var parseDiscussionSearchQuery = function (aDiscussionListQuery, aQuery) {
-  parseModelListSearchQuery(aDiscussionListQuery, query, {
+  parseModelListSearchQuery(aDiscussionListQuery, aQuery, {
     partialWordMatchFields: ['topic'],
     fullWordMatchFields: ['author'],
   });
