@@ -34,7 +34,10 @@ exports.view = function (aReq, aRes, aNext) {
         // Read file listing
         function (aCallback) {
           fs.readdir(documentPath, function (aErr, aFiles) {
-            if (aErr) { aCallback('Error retrieving page list'); return; }
+            if (aErr) {
+              aCallback({ statusCode: 500, statusMessage : 'Error retrieving page list' });
+              return;
+            }
 
             var file = null;
 
@@ -56,7 +59,10 @@ exports.view = function (aReq, aRes, aNext) {
         // Read md file contents
         function (aCallback) {
           fs.readFile(documentPath + '/' + document + '.md', 'UTF8', function (aErr, aData) {
-            if (aErr) { aCallback('Error retrieving page'); return; }
+            if (aErr) {
+              aCallback({ statusCode: 404, statusMessage: 'Error retrieving page' });
+              return;
+            }
 
             var lines = null;
             var matches = null;
@@ -101,7 +107,8 @@ exports.view = function (aReq, aRes, aNext) {
   async.parallel(tasks, function (aErr) {
     if (aErr) {
       return statusCodePage(aReq, aRes, aNext, {
-        statusMessage: aErr
+        statusCode: aErr.statusCode,
+        statusMessage: aErr.statusMessage
       })
     }
 
