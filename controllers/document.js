@@ -1,5 +1,7 @@
 'use strict';
 
+var pkg = require('../package.json');
+
 var fs = require('fs');
 var async = require('async');
 var renderMd = require('../libs/markdown').renderMd;
@@ -97,10 +99,24 @@ exports.view = function (aReq, aRes, aNext) {
     });
   }
   else {
+    var then = null;
+
     // Page metadata
     pageMetadata(options, ['About', 'About']);
 
     options.isAbout = true;
+
+    options.process = {};
+    if (options.isAdmin) {
+      options.process.version = process.version;
+    }
+
+    then = new Date(Date.now() - parseInt(process.uptime() * 1000, 10));
+    options.lastRestart = then.toLocaleString();
+
+    options.pkg = {};
+    options.pkg.name = pkg.name;
+    options.pkg.version = pkg.version;
   }
 
   //---
