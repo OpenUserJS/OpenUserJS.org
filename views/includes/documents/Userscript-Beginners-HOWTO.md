@@ -1,4 +1,4 @@
-## Userscript HOWTO
+## Userscript Beginners HOWTO
 
 These pages are a work in progress, but are intended to help users with no previous knowledge understand how to install and use userscripts on their computer.
 

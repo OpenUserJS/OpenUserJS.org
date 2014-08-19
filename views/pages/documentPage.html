@@ -9,26 +9,46 @@
   {{> includes/header.html }}
   <div class="container-fluid">
     <div class="row">
+      {{#isAbout}}
       <div class="container-fluid">
         <h2 class="page-heading">
-          {{#isAbout}}About /{{/isAbout}} {{^isAbout}}<a href="about">About</a> /{{/isAbout}} {{pageHeading}}
+          About
         </h2>
         <div class="panel panel-default">
           <div class="panel-body">
-            <div id="document-content" class="document-content">
-              {{#isAbout}}
-                <p><em>This is a list of &quot;about&quot; pages for your convenience.</em></p>
-                <ul class="list-group">
-                  {{#files}}<li class="list-group-item"><a href="{{{href}}}">{{textContent}}</a></li>{{/files}}</li>
-                </ul>
-              {{/isAbout}}
-              {{^isAbout}}
-                {{#pageData}}{{{pageData}}}{{/pageData}}
-              {{/isAbout}}
-            </div>
+            <h3>Welcome</h3>
+            <p>Welcome to OpenUserJS.org <em>(OUJS)</em>!</p>
+            <p>For getting started with Userscripts please check out the <a href="http://localhost:8080/about/Userscript-Beginners-HOWTO">Userscript Beginners HOWTO</a>.</p>
           </div>
         </div>
       </div>
+      {{/isAbout}}
+      {{^isAbout}}
+        <div class="col-sm-8">
+          <h2 class="page-heading">
+            <a href="/about">About</a> / {{pageHeading}}
+          </h2>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div id="document-content" class="document-content">
+                {{#pageData}}{{{pageData}}}{{/pageData}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="panel-title">Pages</div>
+            </div>
+            <div class="panel-body">
+              <ul class="list-group">
+                {{#files}}<li class="list-group-item"><a href="{{{href}}}">{{textContent}}</a></li>{{/files}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      {{/isAbout}}
     </div>
   </div>
   {{> includes/footer.html }}

@@ -222,7 +222,7 @@ app_route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(
 app_route('/post/:category(announcements|corner|garage|discuss)').get(discussion.newTopic).post(discussion.createTopic);
 
 // About document routes
-app_route(/^\/about\/(.*)$/).get(document.view);
+app_route('/about/:document?').get(document.view);
 
 // Home route
 app_route('/').get(main.home);
