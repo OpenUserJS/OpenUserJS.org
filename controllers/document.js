@@ -34,7 +34,7 @@ exports.view = function (aReq, aRes, aNext) {
         // Read file listing
         function (aCallback) {
           fs.readdir(documentPath, function (aErr, aFiles) {
-            if (aErr) { return aCallback('Error retrieving page list'); }
+            if (aErr) { aCallback('Error retrieving page list'); return; }
 
             var file = null;
 
@@ -56,7 +56,7 @@ exports.view = function (aReq, aRes, aNext) {
         // Read md file contents
         function (aCallback) {
           fs.readFile(documentPath + '/' + document + '.md', 'UTF8', function (aErr, aData) {
-            if (aErr) { return aCallback('Error retrieving page'); }
+            if (aErr) { aCallback('Error retrieving page'); return; }
 
             var lines = null;
             var matches = null;
