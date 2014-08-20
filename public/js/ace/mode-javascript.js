@@ -61,6 +61,7 @@ var JavaScriptHighlightRules = function() {
             "decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|eval|isFinite|" + // Non-constructor functions
             "isNaN|parseFloat|parseInt|"                                               +
             "JSON|Math|"                                                               + // Other
+            "GM_getValue|GM_listValues|GM_setClipboard|GM_setValue|GM_getResourceText|GM_getResourceURL|GM_addStyle|GM_xmlhttpRequest|GM_log|GM_openInTab|GM_registerMenuCommand|unsafeWindow|"  + // GM API
             "this|arguments|prototype|window|document"                                 , // Pseudo
         "keyword":
             "const|yield|import|get|set|" +
@@ -680,7 +681,7 @@ var CstyleBehaviour = function() {
 
 };
 
-    
+
 CstyleBehaviour.isSaneInsertion = function(editor, session) {
     var cursor = editor.getCursorPosition();
     var iterator = new TokenIterator(session, cursor.row, cursor.column);
@@ -784,16 +785,16 @@ oop.inherits(FoldMode, BaseFoldMode);
 
             if (match[1])
                 return this.openingBracketBlock(session, match[1], row, i);
-                
+
             var range = session.getCommentFoldRange(row, i + match[0].length, 1);
-            
+
             if (range && !range.isMultiLine()) {
                 if (forceMultiline) {
                     range = this.getSectionRange(session, row);
                 } else if (foldStyle != "all")
                     range = null;
             }
-            
+
             return range;
         }
 
@@ -810,7 +811,7 @@ oop.inherits(FoldMode, BaseFoldMode);
             return session.getCommentFoldRange(row, i, -1);
         }
     };
-    
+
     this.getSectionRange = function(session, row) {
         var line = session.getLine(row);
         var startIndent = line.search(/\S/);
@@ -827,7 +828,7 @@ oop.inherits(FoldMode, BaseFoldMode);
             if  (startIndent > indent)
                 break;
             var subRange = this.getFoldWidgetRange(session, "all", row);
-            
+
             if (subRange) {
                 if (subRange.start.row <= startRow) {
                     break;
@@ -839,7 +840,7 @@ oop.inherits(FoldMode, BaseFoldMode);
             }
             endRow = row;
         }
-        
+
         return new Range(startRow, startColumn, endRow, session.getLine(endRow).length);
     };
 
@@ -861,7 +862,7 @@ var CStyleFoldMode = require("./folding/cstyle").FoldMode;
 
 var Mode = function() {
     this.HighlightRules = JavaScriptHighlightRules;
-    
+
     this.$outdent = new MatchingBraceOutdent();
     this.$behaviour = new CstyleBehaviour();
     this.foldingRules = new CStyleFoldMode();
