@@ -9,7 +9,7 @@ window.console = function() {
     postMessage({type: "log", data: msgs});
 };
 window.console.error =
-window.console.warn = 
+window.console.warn =
 window.console.log =
 window.console.trace = window.console;
 
@@ -30,13 +30,13 @@ window.normalizeModule = function(parentId, moduleName) {
     if (moduleName.charAt(0) == ".") {
         var base = parentId.split("/").slice(0, -1).join("/");
         moduleName = (base ? base + "/" : "") + moduleName;
-        
+
         while(moduleName.indexOf(".") !== -1 && previous != moduleName) {
             var previous = moduleName;
             moduleName = moduleName.replace(/^\.\//, "").replace(/\/\.\//, "/").replace(/[^\/]+\/\.\.\//, "");
         }
     }
-    
+
     return moduleName;
 };
 
@@ -58,13 +58,13 @@ window.require = function(parentId, id) {
         }
         return module.exports;
     }
-    
+
     var chunks = id.split("/");
     if (!window.require.tlns)
         return console.log("unable to load " + id);
     chunks[0] = window.require.tlns[chunks[0]] || chunks[0];
     var path = chunks.join("/") + ".js";
-    
+
     window.require.id = id;
     importScripts(path);
     return window.require(parentId, id);
@@ -90,9 +90,9 @@ window.define = function(id, deps, factory) {
         // 'module' as dependencies, to provide CommonJS compatibility.
         deps = ['require', 'exports', 'module'];
 
-    if (id.indexOf("text!") === 0) 
+    if (id.indexOf("text!") === 0)
         return;
-    
+
     var req = function(childId) {
         return window.require(id, childId);
     };
@@ -129,13 +129,13 @@ window.initSender = function initSender() {
 
     var EventEmitter = window.require("ace/lib/event_emitter").EventEmitter;
     var oop = window.require("ace/lib/oop");
-    
+
     var Sender = function() {};
-    
+
     (function() {
-        
+
         oop.implement(this, EventEmitter);
-                
+
         this.callback = function(data, callbackId) {
             postMessage({
                 type: "call",
@@ -143,7 +143,7 @@ window.initSender = function initSender() {
                 data: data
             });
         };
-    
+
         this.emit = function(name, data) {
             postMessage({
                 type: "event",
@@ -151,9 +151,9 @@ window.initSender = function initSender() {
                 data: data
             });
         };
-        
+
     }).call(Sender.prototype);
-    
+
     return new Sender();
 };
 
@@ -168,13 +168,13 @@ window.onmessage = function(e) {
         else
             throw new Error("Unknown command:" + msg.command);
     }
-    else if (msg.init) {        
+    else if (msg.init) {
         initBaseUrls(msg.tlns);
         require("ace/lib/es5-shim");
         sender = window.sender = initSender();
         var clazz = require(msg.module)[msg.classname];
         main = window.main = new clazz(sender);
-    } 
+    }
     else if (msg.event && sender) {
         sender._signal(msg.event, msg.data);
     }
@@ -242,7 +242,7 @@ EventEmitter._dispatchEvent = function(eventName, e) {
         if (e.propagationStopped)
             break;
     }
-    
+
     if (defaultHandler && !e.defaultPrevented)
         return defaultHandler(e, this);
 };
@@ -270,7 +270,7 @@ EventEmitter.setDefaultHandler = function(eventName, callback) {
     var handlers = this._defaultHandlers
     if (!handlers)
         handlers = this._defaultHandlers = {_disabled_: {}};
-    
+
     if (handlers[eventName]) {
         var old = handlers[eventName];
         var disabled = handlers._disabled_[eventName];
@@ -278,7 +278,7 @@ EventEmitter.setDefaultHandler = function(eventName, callback) {
             handlers._disabled_[eventName] = disabled = [];
         disabled.push(old);
         var i = disabled.indexOf(callback);
-        if (i != -1) 
+        if (i != -1)
             disabled.splice(i, 1);
     }
     handlers[eventName] = callback;
@@ -288,7 +288,7 @@ EventEmitter.removeDefaultHandler = function(eventName, callback) {
     if (!handlers)
         return;
     var disabled = handlers._disabled_[eventName];
-    
+
     if (handlers[eventName] == callback) {
         var old = handlers[eventName];
         if (disabled)
@@ -583,7 +583,7 @@ var EventEmitter = require("./lib/event_emitter").EventEmitter;
 var Anchor = exports.Anchor = function(doc, row, column) {
     this.$onChange = this.onChange.bind(this);
     this.attach(doc);
-    
+
     if (typeof column == "undefined")
         this.setPosition(row.row, row.column);
     else
@@ -1129,7 +1129,7 @@ exports.copyArray = function(array){
     for (var i=0, l=array.length; i<l; i++) {
         if (array[i] && typeof array[i] == "object")
             copy[i] = this.copyObject( array[i] );
-        else 
+        else
             copy[i] = array[i];
     }
     return copy;
@@ -1141,7 +1141,7 @@ exports.deepCopy = function (obj) {
     var cons = obj.constructor;
     if (cons === RegExp)
         return obj;
-    
+
     var copy = cons();
     for (var key in obj) {
         if (typeof obj[key] === "object") {
@@ -1224,7 +1224,7 @@ exports.deferredCall = function(fcn) {
         timer = null;
         return deferred;
     };
-    
+
     deferred.isPending = function() {
         return timer;
     };
@@ -1274,13 +1274,13 @@ define("ace/worker/mirror",["require","exports","module","ace/document","ace/lib
 
 var Document = require("../document").Document;
 var lang = require("../lib/lang");
-    
+
 var Mirror = exports.Mirror = function(sender) {
     this.sender = sender;
     var doc = this.doc = new Document("");
-    
+
     var deferredUpdate = this.deferredUpdate = lang.delayedCall(this.onUpdate.bind(this));
-    
+
     var _self = this;
     sender.on("change", function(e) {
         doc.applyDeltas(e.data);
@@ -1291,29 +1291,29 @@ var Mirror = exports.Mirror = function(sender) {
 };
 
 (function() {
-    
+
     this.$timeout = 500;
-    
+
     this.setTimeout = function(timeout) {
         this.$timeout = timeout;
     };
-    
+
     this.setValue = function(value) {
         this.doc.setValue(value);
         this.deferredUpdate.schedule(this.$timeout);
     };
-    
+
     this.getValue = function(callbackId) {
         this.sender.callback(this.doc.getValue(), callbackId);
     };
-    
+
     this.onUpdate = function() {
     };
-    
+
     this.isPending = function() {
         return this.deferredUpdate.isPending();
     };
-    
+
 }).call(Mirror.prototype);
 
 });
@@ -4487,7 +4487,7 @@ var JSHINT = (function () {
     if (left) {
       if (left.type === "(identifier)") {
         if (left.value.match(/^[A-Z]([A-Z0-9_$]*[a-z][A-Za-z0-9_$]*)?$/)) {
-          if ("Number String Boolean Date Object Error".indexOf(left.value) === -1) {
+          if ("Number String Boolean Date Object Error GM_deleteValue GM_getValue GM_listValues GM_setClipboard GM_setValue GM_getResourceText GM_getResourceURL GM_addStyle GM_xmlhttpRequest GM_log GM_openInTab GM_registerMenuCommand".indexOf(left.value) === -1) {
             if (left.value === "Math") {
               warning("W063", left);
             } else if (state.option.newcap) {
@@ -7707,7 +7707,7 @@ Lexer.prototype = {
             quote: quote
           };
         }
-        
+
         if (this.peek() == quote)
           break outer;
       }
@@ -8742,6 +8742,17 @@ exports.browser = {
   focus                : false,
   frames               : false,
   getComputedStyle     : false,
+  GM_addStyle          : false,
+  GM_getResourceText   : false,
+  GM_getValue          : false,
+  GM_getResourceURL    : false,
+  GM_listValues        : false,
+  GM_log               : false,
+  GM_openInTab         : false,
+  GM_registerMenuCommand : false,
+  GM_setClipboard      : false,
+  GM_setValue          : false,
+  GM_xmlhttpRequest    : false,
   HTMLElement          : false,
   HTMLAnchorElement    : false,
   HTMLBaseElement      : false,
@@ -9787,7 +9798,7 @@ if ([1,2].splice(0).length != 2) {
             return a;
         }
         var array = [], lengthBefore;
-        
+
         array.splice.apply(array, makeArray(20));
         array.splice.apply(array, makeArray(26));
 
@@ -9828,7 +9839,7 @@ if ([1,2].splice(0).length != 2) {
 
             var removed = this.slice(pos, pos+removeCount);
             var insert = slice.call(arguments, 2);
-            var add = insert.length;            
+            var add = insert.length;
             if (pos === length) {
                 if (add) {
                     this.push.apply(this, insert);
