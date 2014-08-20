@@ -30,7 +30,7 @@ NB After installing a userscript, you won't normally notice any further changes 
 
 ### Managing Userscripts
 
-Clicking on the Violent Monkey icon at any time will pop up a menu that shows you what userscripts are running on the website you are looking at. You can enable or disable each one by clicking on its name (ticks mark enabled userscripts). The menu also lets you disable userscripts in general, or manage the scripts you have installed.
+Clicking on the Violent Monkey icon at any time will pop up a menu that shows you what userscripts are running on the website you are looking at. You can enable or disable each one by clicking on its name *(ticks mark enabled userscripts)*. The menu also lets you disable userscripts in general, or manage the scripts you have installed.
 
 ![Screenshot of Violent Monkey Dashboard][violentMonkeyOperaScreenshot3]
 

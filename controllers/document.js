@@ -19,6 +19,7 @@ exports.view = function (aReq, aRes, aNext) {
   var page = null;
   var documentPath = null;
   var document = aReq.route.params.document;
+  var then = null;
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -60,7 +61,7 @@ exports.view = function (aReq, aRes, aNext) {
 
         // Read md file contents
         function (aCallback) {
-          fs.readFile(documentPath + '/' + document + '.md', 'UTF8', function (aErr, aData) {
+          fs.readFile(documentPath + '/' + document + '.md', 'utf8', function (aErr, aData) {
             if (aErr) {
               aCallback({ statusCode: 404, statusMessage: 'Error retrieving page' });
               return;
@@ -72,19 +73,14 @@ exports.view = function (aReq, aRes, aNext) {
             var content = null;
 
             // Check if first line is h2 and use for title/heading if present
-            lines = aData.match(/.*/gm);
-            if (lines) {
-              matches = lines[0].match(/^##\s(.*)$/);
-              if (matches) {
-                heading = lines.shift().replace(/^##\s+/, "");
-              } else {
-                heading = page;
-              }
-              content = lines.join('\n');
+            lines = aData.split('\n');
+            matches = lines[0].match(/^##\s(.*)$/);
+            if (matches) {
+              heading = lines.shift().replace(/^##\s+/, "");
             } else {
               heading = page;
-              content = aData;
             }
+            content = lines.join('\n');
 
             // Page metadata
             pageMetadata(options, [heading, 'About']);
@@ -99,8 +95,6 @@ exports.view = function (aReq, aRes, aNext) {
     });
   }
   else {
-    var then = null;
-
     // Page metadata
     pageMetadata(options, ['About', 'About']);
 

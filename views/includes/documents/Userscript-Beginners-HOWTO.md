@@ -16,7 +16,7 @@ It requires the installation of an extension specific to your browser. These ext
 
 You should be aware of privacy issues when using userscripts, and should not install them from sources you do not trust.  Userscripts can carry out actions on your behalf and can potentially access any information on a website you have access to, or that you enter into a website. They are often permitted to carry out functions that scripts on normal websites cannot, such as storing information on your computer and sharing it between website.  Badly written userscripts could potentially also be exploited by malicious websites.
 
-To reduce security risks, most userscript managers let you control which websites a userscript can access and whether it can operate on secure (https) websites or local files on your computer. On OpenUserJS, the source code of every userscript is available to be examined, so that other programmers can see whether or not there is any malicious code or dangerous bugs.
+To reduce security risks, most userscript managers let you control which websites a userscript can access and whether it can operate on secure *(https)* websites or local files on your computer. On OpenUserJS, the source code of every userscript is available to be examined, so that other programmers can see whether or not there is any malicious code or dangerous bugs.
 
 ### How do I get going?
 
