@@ -61,7 +61,7 @@ var JavaScriptHighlightRules = function() {
             "decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|eval|isFinite|" + // Non-constructor functions
             "isNaN|parseFloat|parseInt|"                                               +
             "JSON|Math|"                                                               + // Other
-            "GM_getValue|GM_listValues|GM_setClipboard|GM_setValue|GM_getResourceText|GM_getResourceURL|GM_addStyle|GM_xmlhttpRequest|GM_log|GM_openInTab|GM_registerMenuCommand|"  + // GM_*
+            "GM_getValue|GM_listValues|GM_setClipboard|GM_setValue|GM_getResourceText|GM_getResourceURL|GM_addStyle|GM_xmlhttpRequest|GM_log|GM_openInTab|GM_registerMenuCommand|unsafeWindow|"  + // GM API
             "this|arguments|prototype|window|document"                                 , // Pseudo
         "keyword":
             "const|yield|import|get|set|" +

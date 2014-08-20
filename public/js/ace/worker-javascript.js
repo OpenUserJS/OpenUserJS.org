@@ -9007,6 +9007,7 @@ exports.browser = {
   SVGZoomAndPan        : false,
   TimeEvent            : false,
   top                  : false,
+  unsafeWindow         : false,
   URL                  : false,
   WebSocket            : false,
   window               : false,
