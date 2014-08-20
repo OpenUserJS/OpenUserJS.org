@@ -35,7 +35,7 @@ NB After installing a userscript, you won't normally notice any further changes 
 
 ### Managing Userscripts
 
-If you click the arrow to the right of Greasemonkey's monkey icon, there is an option to "Manage user scripts..." This will take you to a User Scripts page in Firefox's Add-ons Manager, which you can also find at [about:addons][aboutAddons]. Buttons here let you enable, disable or remove each installed script. Clicking the gear icon above the list will let you check for updates (by default, Greasemonkey also does weekly automatic checks).
+If you click the arrow to the right of Greasemonkey's monkey icon, there is an option to "Manage user scripts..." This will take you to a User Scripts page in Firefox's Add-ons Manager, which you can also find at [about:addons][aboutAddons]. Buttons here let you enable, disable or remove each installed script. Clicking the gear icon above the list will let you check for updates *(by default, Greasemonkey also does weekly automatic checks)*.
 
 ![Screenshot of Firefox Add-ons Manager User Scripts page][aomUserScriptsScreenshot]
 

@@ -38,11 +38,11 @@ NB After installing a userscript, you won't normally notice any further changes 
 
 #### Managing Userscripts
 
-Clicking on the Tampermonkey icon at any time will take you to a menu that shows you what userscripts are running on the website you are looking at. It also lets you check for updated scripts (it does daily automatic checks by default), and open the Tampermonkey Options screen.
+Clicking on the Tampermonkey icon at any time will take you to a menu that shows you what userscripts are running on the website you are looking at. It also lets you check for updated scripts *(it does daily automatic checks by default)*, and open the Tampermonkey Options screen.
 
 ![Screenshot of Tampermonkey Options screen][tampermonkeyAndroidScreenshot4]
 
-In the Options screen, the "Installed scripts" tab is the main place to manage your userscripts. The numbered circle to the left of each script shows you the order they run in, and whether they are enabled (green) or disabled (red) - click it to toggle the status. You can also uninstall userscripts (trash can icon), or check for new updates (click the "last updated" date).
+In the Options screen, the "Installed scripts" tab is the main place to manage your userscripts. The numbered circle to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(red)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, or check for new updates *(click the "last updated" date)*.
 
 #### Trouble shooting
 
