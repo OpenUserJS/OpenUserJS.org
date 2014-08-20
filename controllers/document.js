@@ -16,7 +16,6 @@ exports.view = function (aReq, aRes, aNext) {
   var options = {};
   var tasks = [];
 
-  var page = null;
   var documentPath = null;
   var document = aReq.route.params.document;
   var then = null;
@@ -78,7 +77,7 @@ exports.view = function (aReq, aRes, aNext) {
             if (matches) {
               heading = lines.shift().replace(/^##\s+/, "");
             } else {
-              heading = page;
+              heading = document;
             }
             content = lines.join('\n');
 
