@@ -14,6 +14,7 @@ var discussionLib = require('./discussion');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+var orderDir = require('../libs/templateHelpers').orderDir;
 
 // List script issues
 exports.list = function (aReq, aRes, aNext) {
@@ -64,6 +65,12 @@ exports.list = function (aReq, aRes, aNext) {
       [(open ? 'Issues' : 'Closed Issues'), script.name, (script.isLib ? 'Libraries' : 'Scripts')],
       category.description);
     options.isScriptIssuesPage = true;
+
+    // Order dir
+    orderDir(aReq, options, 'topic', 'asc');
+    orderDir(aReq, options, 'comments', 'desc');
+    orderDir(aReq, options, 'created', 'desc');
+    orderDir(aReq, options, 'updated', 'desc');
 
     // discussionListQuery
     var discussionListQuery = Discussion.find();
