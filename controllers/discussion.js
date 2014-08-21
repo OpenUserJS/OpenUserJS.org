@@ -12,6 +12,7 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+var orderDir = require('../libs/templateHelpers').orderDir;
 
 var categories = [
   {
@@ -52,6 +53,12 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
 
   // Page metadata
   pageMetadata(options, 'Discussions');
+
+  // Order dir
+  orderDir(aReq, options, 'topic', 'asc');
+  orderDir(aReq, options, 'comments', 'desc');
+  orderDir(aReq, options, 'created', 'desc');
+  orderDir(aReq, options, 'updated', 'desc');
 
   // categoryList
   options.categoryList = _.map(categories, modelParser.parseCategory);
@@ -135,6 +142,12 @@ exports.list = function (aReq, aRes, aNext) {
 
   // Page metadata
   pageMetadata(options, [category.name, 'Discussions'], category.description);
+
+  // Order dir
+  orderDir(aReq, options, 'topic', 'asc');
+  orderDir(aReq, options, 'comments', 'desc');
+  orderDir(aReq, options, 'created', 'desc');
+  orderDir(aReq, options, 'updated', 'desc');
 
   // discussionListQuery
   var discussionListQuery = Discussion.find();

@@ -16,6 +16,7 @@ var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var removeSession = require('../libs/modifySessions').remove;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+var orderDir = require('../libs/templateHelpers').orderDir;
 
 // The home page has scripts and groups in a sidebar
 exports.home = function (aReq, aRes) {
@@ -30,6 +31,12 @@ exports.home = function (aReq, aRes) {
 
   // Page metadata
   pageMetadata(options, options.librariesOnly ? 'Libraries' : '');
+
+  // Order dir
+  orderDir(aReq, options, 'name', 'asc');
+  orderDir(aReq, options, 'install', 'desc');
+  orderDir(aReq, options, 'rating', 'desc');
+  orderDir(aReq, options, 'updated', 'desc');
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);

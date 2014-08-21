@@ -12,6 +12,7 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+var orderDir = require('../libs/templateHelpers').orderDir;
 
 // clean the name of the group so it is url safe
 function cleanGroupName(aName) {
@@ -164,6 +165,10 @@ exports.list = function (aReq, aRes) {
   // Page metadata
   pageMetadata(options, 'Groups');
 
+  // Order dir
+  orderDir(aReq, options, 'name', 'asc');
+  orderDir(aReq, options, 'rating', 'desc');
+
   // groupListQuery
   var groupListQuery = Group.find();  // TODO: STYLEGUIDE.md conformance needed here
 
@@ -269,6 +274,12 @@ exports.view = function (aReq, aRes, aNext) {
     // Page metadata
     var group = options.group = modelParser.parseGroup(aGroupData);
     pageMetadata(options, [group.name, 'Groups']);
+
+    // Order dir
+    orderDir(aReq, options, 'name', 'asc');
+    orderDir(aReq, options, 'install', 'desc');
+    orderDir(aReq, options, 'rating', 'desc');
+    orderDir(aReq, options, 'updated', 'desc');
 
     // scriptListQuery
     var scriptListQuery = Script.find();

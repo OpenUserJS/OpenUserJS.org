@@ -10,6 +10,7 @@ var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+var orderDir = require('../libs/templateHelpers').orderDir;
 
 exports.removedItemPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
@@ -62,6 +63,11 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
 
   // Page metadata
   pageMetadata(options, 'Graveyard');
+
+  // Order dir
+  orderDir(aReq, options, 'model', 'asc');
+  orderDir(aReq, options, 'remover', 'asc');
+  orderDir(aReq, options, 'removed', 'desc');
 
   // removedItemListQuery
   var removedItemListQuery = Remove.find();

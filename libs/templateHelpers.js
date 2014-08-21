@@ -136,3 +136,12 @@ function pageMetadata(aOptions, aTitle, aDescription, aKeywords) {
   aOptions.pageMetaKeywords = pageMetaKeywords.join(', ');
 }
 exports.pageMetadata = pageMetadata;
+
+// Switch order direction.
+function orderDir(aReq, aOptions, aOrderBy, aOrderDirDefault) {
+  aOrderDirDefault = aOrderDirDefault || 'desc';
+  var aOrderDirReverse = (aOrderDirDefault === 'desc') ? 'asc' : 'desc';
+  if (typeof (aOptions.orderDir) === 'undefined') aOptions.orderDir = {};
+  aOptions.orderDir[aOrderBy] = aReq.query.orderDir === aOrderDirDefault ? aOrderDirReverse : aOrderDirDefault;
+}
+exports.orderDir = orderDir;

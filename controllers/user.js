@@ -30,6 +30,7 @@ var countTask = require('../libs/tasks').countTask;
 var settings = require('../models/settings.json');
 var github = require('./../libs/githubClient');
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+var orderDir = require('../libs/templateHelpers').orderDir;
 
 function caseInsensitive (aStr) {
   return new RegExp('^' + (aStr || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
@@ -163,6 +164,10 @@ exports.userListPage = function (aReq, aRes, aNext) {
 
   // Page metadata
   pageMetadata(options, 'Users');
+
+  // Order dir
+  orderDir(aReq, options, 'name', 'desc');
+  orderDir(aReq, options, 'role', 'asc');
 
   // userListQuery
   var userListQuery = User.find();
@@ -380,6 +385,12 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
     options.isUserScriptListPage = true;
+
+    // Order dir
+    orderDir(aReq, options, 'name', 'asc');
+    orderDir(aReq, options, 'install', 'desc');
+    orderDir(aReq, options, 'rating', 'desc');
+    orderDir(aReq, options, 'updated', 'desc');
 
     // scriptListQuery
     var scriptListQuery = Script.find();
