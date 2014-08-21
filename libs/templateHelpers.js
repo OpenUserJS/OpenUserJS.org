@@ -139,9 +139,13 @@ exports.pageMetadata = pageMetadata;
 
 // Switch order direction.
 function orderDir(aReq, aOptions, aOrderBy, aOrderDirDefault) {
+  var orderDirReverse = null;
+
   aOrderDirDefault = aOrderDirDefault || 'desc';
-  var aOrderDirReverse = (aOrderDirDefault === 'desc') ? 'asc' : 'desc';
-  if (typeof (aOptions.orderDir) === 'undefined') aOptions.orderDir = {};
-  aOptions.orderDir[aOrderBy] = aReq.query.orderDir === aOrderDirDefault ? aOrderDirReverse : aOrderDirDefault;
+  orderDirReverse = (aOrderDirDefault === 'desc') ? 'asc' : 'desc';
+  if (typeof (aOptions.orderDir) === 'undefined') {
+    aOptions.orderDir = {};
+  }
+  aOptions.orderDir[aOrderBy] = aReq.query.orderDir === aOrderDirDefault ? orderDirReverse : aOrderDirDefault;
 }
 exports.orderDir = orderDir;

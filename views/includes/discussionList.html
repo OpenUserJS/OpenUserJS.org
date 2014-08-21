@@ -2,15 +2,15 @@
   <table class="table table-hover table-condensed table-striped">
     <thead>
       <tr>
-        <th class="text-center"><a href="?orderBy=topic&orderDir={{{orderDir.topic}}}">Topic</a></th>
+        <th class="text-center"><a href="?orderBy=topic&orderDir={{orderDir.topic}}">Topic</a></th>
         {{#multipleCategories}}
         <th class="text-center td-fit">Category</th>
         {{/multipleCategories}}
         <th class="text-center td-fit">Users</th>
-        <th class="text-center td-fit"><a href="?orderBy=comments&orderDir={{{orderDir.comments}}}">Replies</a></th>
+        <th class="text-center td-fit"><a href="?orderBy=comments&orderDir={{orderDir.comments}}">Replies</a></th>
         <th class="text-center td-fit">Views</th>
-        <th class="text-center td-fit"><a href="?orderBy=created&orderDir={{{orderDir.created}}}">Created</a></th>
-        <th class="text-center td-fit"><a href="?orderBy=updated&orderDir={{{orderDir.updated}}}">Updated</a></th>
+        <th class="text-center td-fit"><a href="?orderBy=created&orderDir={{orderDir.created}}">Created</a></th>
+        <th class="text-center td-fit"><a href="?orderBy=updated&orderDir={{orderDir.updated}}">Updated</a></th>
       </tr>
     </thead>
     <tbody>
