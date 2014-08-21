@@ -66,7 +66,7 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
 
   // Order dir
   orderDir(aReq, options, 'model', 'asc');
-  orderDir(aReq, options, 'remover', 'asc');
+  orderDir(aReq, options, 'removerName', 'asc');
   orderDir(aReq, options, 'removed', 'desc');
 
   // removedItemListQuery
