@@ -31,10 +31,10 @@ Repository | Reference | Recent Version
 [expressNPMUrl]: https://www.npmjs.org/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
 
-[GHUrl]: https://github.com/felixge/node-formidable
-[DOCUrl]: https://github.com/felixge/node-formidable/blob/master/Readme.md
-[NPMUrl]: https://npmjs.org/package/formidable
-[NPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
+[formidableGHUrl]: https://github.com/felixge/node-formidable
+[formidableDOCUrl]: https://github.com/felixge/node-formidable/blob/master/Readme.md
+[formidableNPMUrl]: https://npmjs.org/package/formidable
+[formidableNPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
 
 [momentGHUrl]: https://github.com/moment/moment
 [momentDOCUrl]: http://momentjs.com/docs/
