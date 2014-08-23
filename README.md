@@ -52,7 +52,7 @@ Repository | Reference | Recent Version
 
 Repository | Reference | Recent Version | Installed
 --- | --- | ---| ---
-[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | ? | 2014 07 09 *(Bower 1.1.5)*
+[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 08 17 | 2014 07 09 *(Bower 1.1.5)*
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl] | 4.1.0
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 1.11.1 | 1.10.2
 [normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
@@ -63,7 +63,7 @@ Repository | Reference | Recent Version | Installed
 Repository | Reference | Recent Version | Installed
 --- | --- | --- | ---
 [Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
-[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]
+BootstrapMarkdown | ? | ? | [2.2.1][BootstrapMarkdownCDNUrl]
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | [0.3.2][markedCDNUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | [3.4.8][select2CDNUrl]
@@ -260,11 +260,7 @@ Repository | Reference | Recent Version | Installed
 [BootstrapDOCUrl]: http://getbootstrap.com/components/
 [BootstrapCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
 
-[bootstrap-markdownGHUrl]: https://github.com/toopay/bootstrap-markdown
-[bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
-[bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
-[bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
-[bootstrap-markdownCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js
+[BootstrapMarkdownCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js
 
 [jQueryUrl]: http://jquery.com/
 [jQueryDOCUrl]: http://api.jquery.com/
