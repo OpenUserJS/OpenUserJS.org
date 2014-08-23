@@ -11,7 +11,7 @@ An open source user scripts repo built using Node.js
 
 #### Using David
 
-![Using David](https://david-dm.org/OpenUserJS/OpenUserJS.org.png)
+![Using David][davidImage] [External report][davidReport]
 
 #### Manually Aggregated
 These also may use shields.io where applicable for more explicit and up to date results.
@@ -74,6 +74,9 @@ Repository | Reference | Recent Version | Referenced
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | [0.3.2][markedCDNUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | [3.4.8][select2CDNUrl]
+
+[davidImage]: https://david-dm.org/OpenUserJS/OpenUserJS.org.png
+[davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
 
 [asyncGHUrl]: https://github.com/caolan/async
 [asyncDOCUrl]: https://github.com/caolan/async/blob/master/README.md
