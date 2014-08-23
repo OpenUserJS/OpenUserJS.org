@@ -214,5 +214,5 @@ Repository | Reference | Recent Version
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
 
 
-[styleguide]: STYLEGUIDE
-[contributing]: CONTRIBUTING
+[styleguide]: STYLEGUIDE.md
+[contributing]: CONTRIBUTING.md
