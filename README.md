@@ -15,7 +15,8 @@ Repository | Reference | Recent Version
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
-[express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNpmUrl]
+[express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
+[fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
@@ -50,7 +51,7 @@ Repository | Reference | Recent Version
 #### Static
 Repository | Reference | Recent Version
 --- | --- | ---
-[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 1.1.5 *(Bower)* 2014 07 09
+[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | *(Bower 1.1.5)* 2014 07 09
 
 
 [asyncGHUrl]: https://github.com/caolan/async
@@ -72,6 +73,11 @@ Repository | Reference | Recent Version
 [expressDOCUrl]: http://expressjs.com/
 [expressNPMUrl]: https://www.npmjs.org/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
+
+[fakes3GHUrl]: https://github.com/jubos/fake-s3
+[fakes3DOCUrl]: https://github.com/jubos/fake-s3/wiki
+[fakes3GEMUrl]: http://rubygems.org/gems/fakes3
+[fakes3GEMVersionImage]: http://img.shields.io/gem/v/fakes3.svg?style=flat
 
 [formidableGHUrl]: https://github.com/felixge/node-formidable
 [formidableDOCUrl]: https://github.com/felixge/node-formidable/blob/master/Readme.md
