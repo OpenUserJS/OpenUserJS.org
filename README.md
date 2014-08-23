@@ -49,12 +49,12 @@ Repository | Reference | Recent Version
 
 
 [asyncGHUrl]: https://github.com/caolan/async
-[asyncDOCUrl]: http://localhost
+[asyncDOCUrl]: https://github.com/caolan/async/blob/master/README.md
 [asyncNPMUrl]: https://npmjs.org/package/async
 [asyncNPMVersionImage]: https://img.shields.io/npm/v/async.svg?style=flat
 
 [aws-sdkGHUrl]: https://github.com/aws/aws-sdk-js
-[aws-sdkDOCUrl]: http://localhost
+[aws-sdkDOCUrl]: https://github.com/aws/aws-sdk-js/blob/master/README.md
 [aws-sdkNPMUrl]: https://npmjs.org/package/aws-sdk
 [aws-sdkNPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
 
@@ -73,18 +73,18 @@ Repository | Reference | Recent Version
 [formidableNPMUrl]: https://npmjs.org/package/formidable
 [formidableNPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
 
-[githubGHUrl]: http://localhost
-[githubDOCUrl]:  http://localhost
+[githubGHUrl]: https://github.com/mikedeboer/node-github
+[githubDOCUrl]: https://github.com/mikedeboer/node-github/blob/master/README.md
 [githubNPMUrl]: https://npmjs.org/package/github
 [githubNPMVersionImage]: https://img.shields.io/npm/v/github.svg?style=flat
 
-[highlight.jsGHUrl]:  http://localhost
-[highlight.jsDOCUrl]:  http://localhost
+[highlight.jsGHUrl]: https://github.com/isagalaev/highlight.js
+[highlight.jsDOCUrl]: https://highlightjs.org/
 [highlight.jsNPMUrl]: https://npmjs.org/package/highlight.js
 [highlight.jsNPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
 
-[markedGHUrl]:  http://localhost
-[markedDOCUrl]:  http://localhost
+[markedGHUrl]: https://github.com/chjj/marked
+[markedDOCUrl]: https://github.com/chjj/marked/blob/master/README.md
 [markedNPMUrl]: https://npmjs.org/package/marked
 [markedNPMVersionImage]: https://img.shields.io/npm/v/marked.svg?style=flat
 
