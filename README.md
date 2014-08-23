@@ -9,6 +9,7 @@ An open source user scripts repo built using Node.js
 
 ### Dependencies
 
+#### Dynamic
 Repository | Reference | Recent Version
 --- | --- | ---
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
@@ -46,6 +47,10 @@ Repository | Reference | Recent Version
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 
 
+#### Static
+Repository | Reference | Recent Version
+--- | --- | ---
+[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 1.1.5 *(Bower)* 2014 07 09
 
 
 [asyncGHUrl]: https://github.com/caolan/async
@@ -212,6 +217,10 @@ Repository | Reference | Recent Version
 [underscoreDOCUrl]: http://underscorejs.org/
 [underscoreNPMUrl]: https://npmjs.org/package/underscore
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
+
+
+[ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
+[ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 
 
 [styleguide]: STYLEGUIDE.md
