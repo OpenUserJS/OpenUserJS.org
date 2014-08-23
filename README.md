@@ -52,6 +52,8 @@ Repository | Reference | Recent Version
 Repository | Reference | Recent Version
 --- | --- | ---
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | *(Bower 1.1.5)* 2014 07 09
+[Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0
+
 
 
 [asyncGHUrl]: https://github.com/caolan/async
@@ -228,6 +230,8 @@ Repository | Reference | Recent Version
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 
+[BootstrapREPOUrl]: http://getbootstrap.com/
+[BootstrapDOCUrl]: http://getbootstrap.com/components/
 
 [styleguide]: STYLEGUIDE.md
 [contributing]: CONTRIBUTING.md
