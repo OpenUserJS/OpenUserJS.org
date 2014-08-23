@@ -54,6 +54,7 @@ Repository | Reference | Recent Version
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | *(Bower 1.1.5)* 2014 07 09
 [Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
+[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 
 
 
@@ -238,6 +239,11 @@ Repository | Reference | Recent Version
 [font-awesomeDOCUrl]: http://fontawesome.io/
 [font-awesomeNPMUrl]: https://npmjs.org/package/font-awesome
 [font-awesomeNPMVersionImage]: https://img.shields.io/npm/v/font-awesome.svg?style=flat
+
+[select2GHUrl]: https://github.com/chrisjbaik/select2
+[select2DOCUrl]: http://ivaynberg.github.io/select2
+[select2NPMUrl]: https://www.npmjs.org/package/select2
+[select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
 
 
 [styleguide]: STYLEGUIDE.md
