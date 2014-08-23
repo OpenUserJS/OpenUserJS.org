@@ -11,7 +11,7 @@ An open source user scripts repo built using Node.js
 
 #### Using David
 
-![Using David][davidImage] [External report][davidReport]
+![Using David][davidImage]&emsp;[External report][davidReport]
 
 #### Manually Aggregated
 These also may use shields.io where applicable for more explicit and up to date results.
