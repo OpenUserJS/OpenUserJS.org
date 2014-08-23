@@ -103,113 +103,113 @@ Repository | Reference | Recent Version
 [mu2NPMUrl]: https://www.npmjs.org/package/mu2
 [mu2NPMVersionImage]: https://img.shields.io/npm/v/mu2.svg?style=flat
 
-[passportGHUrl]: http://localhost
-[passportDOCUrl]: http://localhost
+[passportGHUrl]: https://github.com/jaredhanson/passport
+[passportDOCUrl]: http://passportjs.org/
 [passportNPMUrl]: https://npmjs.org/package/passport
 [passportNPMVersionImage]: https://img.shields.io/npm/v/passport.svg?style=flat
 
-[passport-amazonGHUrl]: http://localhost
-[passport-amazonDOCUrl]: http://localhost
+[passport-amazonGHUrl]: https://github.com/jaredhanson/passport-amazon
+[passport-amazonDOCUrl]: https://github.com/jaredhanson/passport-amazon/blob/master/README.md
 [passport-amazonNPMUrl]: https://npmjs.org/package/passport-amazon
 [passport-amazonNPMVersionImage]: https://img.shields.io/npm/v/passport-amazon.svg?style=flat
 
-[passport-aolGHUrl]: http://localhost
-[passport-aolDOCUrl]: http://localhost
+[passport-aolGHUrl]: http://github.com/jaredhanson/passport-aol
+[passport-aolDOCUrl]: https://github.com/jaredhanson/passport-aol/blob/master/README.md
 [passport-aolNPMUrl]: https://npmjs.org/package/passport-aol
 [passport-aolNPMVersionImage]: https://img.shields.io/npm/v/passport-aol.svg?style=flat
 
-[passport-facebookGHUrl]: http://localhost
-[passport-facebookDOCUrl]: http://localhost
+[passport-facebookGHUrl]: https://github.com/jaredhanson/passport-facebook
+[passport-facebookDOCUrl]: https://github.com/jaredhanson/passport-facebook/blob/master/README.md
 [passport-facebookNPMUrl]: https://npmjs.org/package/passport-facebook
 [passport-facebookNPMVersionImage]: https://img.shields.io/npm/v/passport-facebook.svg?style=flat
 
-[passport-flickrGHUrl]: http://localhost
-[passport-flickrDOCUrl]: http://localhost
+[passport-flickrGHUrl]: https://github.com/johnnyhalife/passport-flickr
+[passport-flickrDOCUrl]: https://github.com/johnnyhalife/passport-flickr/blob/master/README.md
 [passport-flickrNPMUrl]: https://npmjs.org/package/passport-flickr
 [passport-flickrNPMVersionImage]: https://img.shields.io/npm/v/passport-flickr.svg?style=flat
 
-[passport-foursquareGHUrl]: http://localhost
-[passport-foursquareDOCUrl]: http://localhost
+[passport-foursquareGHUrl]: https://github.com/jaredhanson/passport-foursquare
+[passport-foursquareDOCUrl]: https://github.com/jaredhanson/passport-foursquare/blob/master/README.md
 [passport-foursquareNPMUrl]: https://npmjs.org/package/passport-foursquare
 [passport-foursquareNPMVersionImage]: https://img.shields.io/npm/v/passport-foursquare.svg?style=flat
 
-[passport-githubGHUrl]: http://localhost
-[passport-githubDOCUrl]: http://localhost
+[passport-githubGHUrl]: https://github.com/jaredhanson/passport-github
+[passport-githubDOCUrl]: https://github.com/jaredhanson/passport-github/blob/master/README.md
 [passport-githubNPMUrl]: https://npmjs.org/package/passport-github
 [passport-githubNPMVersionImage]: https://img.shields.io/npm/v/passport-github.svg?style=flat
 
-[passport-googleGHUrl]: http://localhost
-[passport-googleDOCUrl]: http://localhost
+[passport-googleGHUrl]: https://github.com/jaredhanson/passport-google
+[passport-googleDOCUrl]: https://github.com/jaredhanson/passport-google/blob/master/README.md
 [passport-googleNPMUrl]: https://npmjs.org/package/passport-google
 [passport-googleNPMVersionImage]: https://img.shields.io/npm/v/passport-google.svg?style=flat
 
-[passport-imgurGHUrl]: http://localhost
-[passport-imgurDOCUrl]: http://localhost
+[passport-imgurGHUrl]: https://github.com/mindfreakthemon/passport-imgur
+[passport-imgurDOCUrl]: https://github.com/mindfreakthemon/passport-imgur/blob/master/README.md
 [passport-imgurNPMUrl]: https://npmjs.org/package/passport-imgur
-[passport-imgurNPMVersionImage]: https://img.shields.io/npm/v/.svg?style=flat
+[passport-imgurNPMVersionImage]: https://img.shields.io/npm/v/passport-imgur.svg?style=flat
 
-[passport-instagramGHUrl]: http://localhost
-[passport-instagramDOCUrl]: http://localhost
+[passport-instagramGHUrl]: https://github.com/jaredhanson/passport-instagram
+[passport-instagramDOCUrl]: https://github.com/jaredhanson/passport-instagram/blob/master/README.md
 [passport-instagramNPMUrl]: https://npmjs.org/package/passport-instagram
 [passport-instagramNPMVersionImage]: https://img.shields.io/npm/v/passport-instagram.svg?style=flat
 
-[passport-linkedinGHUrl]: http://localhost
-[passport-linkedinDOCUrl]:  http://localhost
+[passport-linkedinGHUrl]: https://github.com/jaredhanson/passport-linkedin
+[passport-linkedinDOCUrl]:  https://github.com/jaredhanson/passport-linkedin/blob/master/README.md
 [passport-linkedinNPMUrl]: https://npmjs.org/package/passport-linkedin
 [passport-linkedinNPMVersionImage]: https://img.shields.io/npm/v/passport-linkedin.svg?style=flat
 
-[passport-personaGHUrl]: http://localhost
-[passport-personaDOCUrl]: http://localhost
+[passport-personaGHUrl]: https://github.com/jaredhanson/passport-persona
+[passport-personaDOCUrl]: https://github.com/jaredhanson/passport-persona/blob/master/README.md
 [passport-personaNPMUrl]: https://npmjs.org/package/passport-persona
 [passport-personaNPMVersionImage]: https://img.shields.io/npm/v/passport-persona.svg?style=flat
 
-[passport-redditGHUrl]: http://localhost
-[passport-redditDOCUrl]: http://localhost
+[passport-redditGHUrl]: https://github.com/Slotos/passport-reddit
+[passport-redditDOCUrl]: https://github.com/Slotos/passport-reddit/blob/master/README.md
 [passport-redditNPMUrl]: https://npmjs.org/package/passport-reddit
 [passport-redditNPMVersionImage]: https://img.shields.io/npm/v/passport-reddit.svg?style=flat
 
-[passport-steamGHUrl]: http://localhost
-[passport-steamDOCUrl]: http://localhost
+[passport-steamGHUrl]: https://github.com/liamcurry/passport-steam
+[passport-steamDOCUrl]: https://github.com/liamcurry/passport-steam/blob/master/README.md
 [passport-steamNPMUrl]: https://npmjs.org/package/passport-steam
 [passport-steamNPMVersionImage]: https://img.shields.io/npm/v/passport-steam.svg?style=flat
 
-[passport-tumblrGHUrl]: http://localhost
-[passport-tumblrDOCUrl]: http://localhost
+[passport-tumblrGHUrl]: https://github.com/jaredhanson/passport-tumblr
+[passport-tumblrDOCUrl]: https://github.com/jaredhanson/passport-tumblr/blob/master/README.md
 [passport-tumblrNPMUrl]: https://npmjs.org/package/passport-tumblr
 [passport-tumblrNPMVersionImage]: https://img.shields.io/npm/v/passport-tumblr.svg?style=flat
 
-[passport-twitterGHUrl]: http://localhost
-[passport-twitterDOCUrl]: http://localhost
+[passport-twitterGHUrl]: https://github.com/jaredhanson/passport-twitter
+[passport-twitterDOCUrl]: https://github.com/jaredhanson/passport-twitter/blob/master/README.md
 [passport-twitterNPMUrl]: https://npmjs.org/package/passport-twitter
 [passport-twitterNPMVersionImage]: https://img.shields.io/npm/v/passport-twitter.svg?style=flat
 
-[passport-windowsliveGHUrl]: http://localhost
-[passport-windowsliveDOCUrl]: http://localhost
+[passport-windowsliveGHUrl]: https://github.com/jaredhanson/passport-windowslive
+[passport-windowsliveDOCUrl]: https://github.com/jaredhanson/passport-windowslive/blob/master/README.md
 [passport-windowsliveNPMUrl]: https://npmjs.org/package/passport-windowslive
 [passport-windowsliveNPMVersionImage]: https://img.shields.io/npm/v/passport-windowslive.svg?style=flat
 
-[passport-yahooGHUrl]: http://localhost
-[passport-yahooDOCUrl]: http://localhost
+[passport-yahooGHUrl]: https://github.com/jaredhanson/passport-yahoo
+[passport-yahooDOCUrl]: https://github.com/jaredhanson/passport-yahoo/blob/master/README.md
 [passport-yahooNPMUrl]: https://npmjs.org/package/passport-yahoo
 [passport-yahooNPMVersionImage]: https://img.shields.io/npm/v/passport-yahoo.svg?style=flat
 
-[requestGHUrl]: http://localhost
-[requestDOCUrl]: http://localhost
+[requestGHUrl]: https://github.com/mikeal/request
+[requestDOCUrl]: https://github.com/mikeal/request/blob/master/README.md
 [requestNPMUrl]: https://npmjs.org/package/request
 [requestNPMVersionImage]: https://img.shields.io/npm/v/request.svg?style=flat
 
-[sanitize-htmlGHUrl]: http://localhost
-[sanitize-htmlDOCUrl]: http://localhost
+[sanitize-htmlGHUrl]: https://github.com/punkave/sanitize-html
+[sanitize-htmlDOCUrl]: https://github.com/punkave/sanitize-html/blob/master/README.md
 [sanitize-htmlNPMUrl]: https://npmjs.org/package/sanitize-html
 [sanitize-htmlNPMVersionImage]: https://img.shields.io/npm/v/sanitize-html.svg?style=flat
 
-[toobusy-jsGHUrl]: http://localhost
-[toobusy-jsDOCUrl]: http://localhost
+[toobusy-jsGHUrl]: https://github.com/STRML/node-toobusy
+[toobusy-jsDOCUrl]: https://github.com/STRML/node-toobusy/blob/master/README.md
 [toobusy-jsNPMUrl]: https://npmjs.org/package/toobusy-js
 [toobusy-jsNPMVersionImage]: https://img.shields.io/npm/v/toobusy-js.svg?style=flat
 
-[underscoreGHUrl]: http://localhost
-[underscoreDOCUrl]: http://localhost
+[underscoreGHUrl]: https://github.com/jashkenas/underscore
+[underscoreDOCUrl]: http://underscorejs.org/
 [underscoreNPMUrl]: https://npmjs.org/package/underscore
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
 
