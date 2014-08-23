@@ -11,7 +11,6 @@ An open source user scripts repo built using Node.js
 
 Repository | Reference | Recent Version
 --- | --- | ---
-
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
@@ -50,12 +49,12 @@ Repository | Reference | Recent Version
 
 
 [GHUrl]: https://github.com/caolan/async
-[DOCUrl]:
+[DOCUrl]: http://localhost
 [NPMUrl]: https://npmjs.org/package/async
 [NPMVersionImage]: https://img.shields.io/npm/v/async.svg?style=flat
 
 [GHUrl]: https://github.com/aws/aws-sdk-js
-[DOCUrl]:
+[DOCUrl]: http://localhost
 [NPMUrl]: https://npmjs.org/package/aws-sdk
 [NPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
 
