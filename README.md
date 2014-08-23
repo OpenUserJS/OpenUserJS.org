@@ -9,7 +9,7 @@ An open source user scripts repo built using Node.js
 
 ### Dependencies
 
-Package | Reference | Recent Version
+Repository | Reference | Recent Version
 --- | --- | ---
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNpmUrl]
 
