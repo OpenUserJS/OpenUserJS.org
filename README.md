@@ -9,7 +9,14 @@ An open source user scripts repo built using Node.js
 
 ### Dependencies
 
-#### Dynamic
+#### Using David
+
+![Using David](https://david-dm.org/OpenUserJS/OpenUserJS.org.png)
+
+#### Manually Aggregated
+These also may use shields.io where applicable for more explicit and up to date results.
+
+##### Dynamic
 Repository | Reference | Recent Version | Type
 --- | --- | --- | ---
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl] | auto
@@ -48,7 +55,7 @@ Repository | Reference | Recent Version | Type
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl] | auto
 
 
-#### Static
+##### Static
 
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
@@ -58,7 +65,7 @@ Repository | Reference | Recent Version | Stored
 [normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.4.6
 
-#### CDN
+##### CDN
 
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
