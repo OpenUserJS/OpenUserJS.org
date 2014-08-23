@@ -1,6 +1,7 @@
 'use strict';
 
 var async = require('async');
+var exec = require('child_process').exec;
 
 var Comment = require('../models/comment').Comment;
 var Discussion = require('../models/discussion').Discussion;
@@ -288,6 +289,28 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
     aRes.render('pages/adminApiKeysPage', options);
   });
 };
+
+// View everything about current modules for the server
+// This is mostly for debugging in production
+exports.adminNpmLsView = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
+
+  //
+  var options = {};
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin)
+    return aRes.send(403, { status: 403, message: 'Not an admin.' });
+
+  exec('npm ls --json', function(aErr, aStdout, aStderr) {
+    if (aErr) return aRes.send(501, { status: 501, message: 'Not implemented.' });
+    aRes.json(JSON.parse(aStdout));
+  });
+}
 
 // Manage oAuth strategies without having to restart the server
 // When new keys are added, we load the new strategy

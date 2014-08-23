@@ -184,6 +184,7 @@ app.get('/admin/authas', admin.authAsUser);
 app.get('/admin/json', admin.adminJsonView);
 app.get('/admin/user/:id', admin.adminUserView);
 app.get('/admin/api', admin.adminApiKeysPage);
+app.get('/admin/npmls', admin.adminNpmLsView);
 app.post('/admin/api/update', admin.apiAdminUpdate);
 
 // Moderation routes
