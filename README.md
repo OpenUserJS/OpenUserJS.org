@@ -49,14 +49,20 @@ Repository | Reference | Recent Version
 
 
 #### Static
-Repository | Reference | Recent Version
---- | --- | ---
-[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | *(Bower 1.1.5)* 2014 07 09
-[Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0
-[font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
-[normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.0
-[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 
+Repository | Reference | Recent Version | Installed
+--- | --- | ---| ---
+[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | ? | 2014 07 09 *(Bower 1.1.5)*
+[font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl] | 4.1.0
+[normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
+[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.4.6
+
+#### CDN
+
+Repository | Reference | Recent Version | Installed
+--- | --- | --- | ---
+[Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
+[jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
 
 
 [asyncGHUrl]: https://github.com/caolan/async
@@ -233,9 +239,6 @@ Repository | Reference | Recent Version
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 
-[BootstrapREPOUrl]: http://getbootstrap.com/
-[BootstrapDOCUrl]: http://getbootstrap.com/components/
-
 [font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
 [font-awesomeDOCUrl]: http://fontawesome.io/
 [font-awesomeNPMUrl]: https://npmjs.org/package/font-awesome
@@ -248,6 +251,15 @@ Repository | Reference | Recent Version
 [select2DOCUrl]: http://ivaynberg.github.io/select2
 [select2NPMUrl]: https://www.npmjs.org/package/select2
 [select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
+
+
+[BootstrapREPOUrl]: http://getbootstrap.com/
+[BootstrapDOCUrl]: http://getbootstrap.com/components/
+[BootstrapCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
+
+[jQueryUrl]: http://jquery.com/
+[jQueryDOCUrl]: http://api.jquery.com/
+[jQueryCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 
 
 [styleguide]: STYLEGUIDE.md
