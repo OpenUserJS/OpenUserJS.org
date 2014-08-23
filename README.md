@@ -48,15 +48,15 @@ Repository | Reference | Recent Version
 
 
 
-[GHUrl]: https://github.com/caolan/async
-[DOCUrl]: http://localhost
-[NPMUrl]: https://npmjs.org/package/async
-[NPMVersionImage]: https://img.shields.io/npm/v/async.svg?style=flat
+[asyncGHUrl]: https://github.com/caolan/async
+[asyncDOCUrl]: http://localhost
+[asyncNPMUrl]: https://npmjs.org/package/async
+[asyncNPMVersionImage]: https://img.shields.io/npm/v/async.svg?style=flat
 
-[GHUrl]: https://github.com/aws/aws-sdk-js
-[DOCUrl]: http://localhost
-[NPMUrl]: https://npmjs.org/package/aws-sdk
-[NPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
+[aws-sdkGHUrl]: https://github.com/aws/aws-sdk-js
+[aws-sdkDOCUrl]: http://localhost
+[aws-sdkNPMUrl]: https://npmjs.org/package/aws-sdk
+[aws-sdkNPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
 
 [connect-mongoGHUrl]: https://github.com/kcbanner/connect-mongo
 [connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/Readme.md
@@ -73,20 +73,20 @@ Repository | Reference | Recent Version
 [formidableNPMUrl]: https://npmjs.org/package/formidable
 [formidableNPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
 
-[GHUrl]: http://localhost
-[DOCUrl]:  http://localhost
-[NPMUrl]: https://npmjs.org/package/github
-[NPMVersionImage]: https://img.shields.io/npm/v/github.svg?style=flat
+[githubGHUrl]: http://localhost
+[githubDOCUrl]:  http://localhost
+[githubNPMUrl]: https://npmjs.org/package/github
+[githubNPMVersionImage]: https://img.shields.io/npm/v/github.svg?style=flat
 
-[GHUrl]:  http://localhost
-[DOCUrl]:  http://localhost
-[NPMUrl]: https://npmjs.org/package/highlight.js
-[NPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
+[highlight.jsGHUrl]:  http://localhost
+[highlight.jsDOCUrl]:  http://localhost
+[highlight.jsNPMUrl]: https://npmjs.org/package/highlight.js
+[highlight.jsNPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
 
-[GHUrl]:  http://localhost
-[DOCUrl]:  http://localhost
-[NPMUrl]: https://npmjs.org/package/marked
-[NPMVersionImage]: https://img.shields.io/npm/v/marked.svg?style=flat
+[markedGHUrl]:  http://localhost
+[markedDOCUrl]:  http://localhost
+[markedNPMUrl]: https://npmjs.org/package/marked
+[markedNPMVersionImage]: https://img.shields.io/npm/v/marked.svg?style=flat
 
 [momentGHUrl]: https://github.com/moment/moment
 [momentDOCUrl]: http://momentjs.com/docs/
