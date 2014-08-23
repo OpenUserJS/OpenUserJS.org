@@ -53,6 +53,7 @@ Repository | Reference | Recent Version
 --- | --- | ---
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | *(Bower 1.1.5)* 2014 07 09
 [Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0
+[font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
 
 
 
@@ -232,6 +233,12 @@ Repository | Reference | Recent Version
 
 [BootstrapREPOUrl]: http://getbootstrap.com/
 [BootstrapDOCUrl]: http://getbootstrap.com/components/
+
+[font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
+[font-awesomeDOCUrl]: http://fontawesome.io/
+[font-awesomeNPMUrl]: https://npmjs.org/package/font-awesome
+[font-awesomeNPMVersionImage]: https://img.shields.io/npm/v/font-awesome.svg?style=flat
+
 
 [styleguide]: STYLEGUIDE.md
 [contributing]: CONTRIBUTING.md
