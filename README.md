@@ -10,42 +10,42 @@ An open source user scripts repo built using Node.js
 ### Dependencies
 
 #### Dynamic
-Repository | Reference | Recent Version
---- | --- | ---
-[async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
-[aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
-[connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
-[express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
-[fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
-[formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
-[github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
-[highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
-[marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
-[moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
-[mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
-[mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
-[passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
-[passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl]
-[passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
-[passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl]
-[passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl]
-[passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl]
-[passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl]
-[passport-google][passport-googleGHUrl] | [Documentation][passport-googleDOCUrl] | [![NPM version][passport-googleNPMVersionImage]][passport-googleNPMUrl]
-[passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl]
-[passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl]
-[passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl]
-[passport-persona][passport-personaGHUrl] | [Documentation][passport-personaDOCUrl] | [![NPM version][passport-personaNPMVersionImage]][passport-personaNPMUrl]
-[passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl]
-[passport-steam][passport-steamGHUrl] | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl]
-[passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl]
-[passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl]
-[passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl]
-[passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl]
-[request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
-[sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
-[toobusy-js][toobusy-jsGHUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
-[underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
+Repository | Reference | Recent Version | Type
+--- | --- | --- | ---
+[async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl] | auto
+[aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl] | auto
+[connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl] | auto
+[express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl] | fixed at 3.5.1
+[fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl] | auto
+[formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl] | auto
+[github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl] | auto
+[highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl] | auto
+[marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | auto
+[moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl] | auto
+[mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl] | auto
+[mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl] | auto
+[passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl] | auto
+[passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl] | auto
+[passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl] | auto
+[passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] | auto
+[passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl] | auto
+[passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl] | auto
+[passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl] | auto
+[passport-google][passport-googleGHUrl] | [Documentation][passport-googleDOCUrl] | [![NPM version][passport-googleNPMVersionImage]][passport-googleNPMUrl] | auto
+[passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] | auto
+[passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl] | auto
+[passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl] | auto
+[passport-persona][passport-personaGHUrl] | [Documentation][passport-personaDOCUrl] | [![NPM version][passport-personaNPMVersionImage]][passport-personaNPMUrl] | auto
+[passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] | auto
+[passport-steam][passport-steamGHUrl] | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] | auto
+[passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl] | auto
+[passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] | auto
+[passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] | auto
+[passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] | auto
+[request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl] | auto
+[sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl] | auto
+[toobusy-js][toobusy-jsGHUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl] | auto
+[underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl] | auto
 
 
 #### Static
