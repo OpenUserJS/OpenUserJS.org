@@ -50,7 +50,7 @@ Repository | Reference | Recent Version | Type
 
 #### Static
 
-Repository | Reference | Recent Version | Installed
+Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 08 17 | 2014 07 09 *(Bower 1.1.5)*
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl] | 4.1.0
@@ -60,7 +60,7 @@ Repository | Reference | Recent Version | Installed
 
 #### CDN
 
-Repository | Reference | Recent Version | Installed
+Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
 [Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]
