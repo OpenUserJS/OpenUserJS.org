@@ -11,17 +11,17 @@ An open source user scripts repo built using Node.js
 
 Repository | Reference | Recent Version
 --- | --- | ---
+[connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNpmUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNpmUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNpmUrl]
-[mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
-[connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNpmUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNpmUrl]
+[mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
 
 
 [][GHUrl] | [Documentation][DOCUrl] | [![NPM version][NPMVersionImage]][NpmUrl]
 
 [connect-mongoGHUrl]: https://github.com/kcbanner/connect-mongo
-[connect-mongoDOCUrl]:
+[connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/Readme.md
 [connect-mongoNPMUrl]: https://npmjs.org/package/connect-mongo
 [connect-mongoNPMVersionImage]: https://img.shields.io/npm/v/connect-mongo.svg?style=flat
 
