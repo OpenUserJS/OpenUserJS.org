@@ -11,10 +11,11 @@ An open source user scripts repo built using Node.js
 
 Repository | Reference | Recent Version
 --- | --- | ---
-[connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNpmUrl]
+[connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNpmUrl]
-[moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNpmUrl]
-[mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNpmUrl]
+[formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
+[moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
+[mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
 
 
@@ -29,6 +30,11 @@ Repository | Reference | Recent Version
 [expressDOCUrl]: http://expressjs.com/
 [expressNPMUrl]: https://www.npmjs.org/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
+
+[GHUrl]: https://github.com/felixge/node-formidable
+[DOCUrl]: https://github.com/felixge/node-formidable/blob/master/Readme.md
+[NPMUrl]: https://npmjs.org/package/formidable
+[NPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
 
 [momentGHUrl]: https://github.com/moment/moment
 [momentDOCUrl]: http://momentjs.com/docs/
