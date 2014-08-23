@@ -9,7 +9,7 @@ An open source user scripts repo built using Node.js
 
 ### Dependencies
 
-* [moment][momentGHUrl] [![NPM version][momentNpmVersionImage]][momentNpmUrl]
+* [![NPM version][momentNpmVersionImage]][momentNpmUrl] [moment][momentGHUrl]
 
 
 [momentGHUrl]: https://github.com/moment/moment
@@ -17,4 +17,4 @@ An open source user scripts repo built using Node.js
 [momentNpmVersionImage]: http://img.shields.io/npm/v/moment.svg?style=flat
 
 [styleguide]: STYLEGUIDE
-[conributing]: CONTRIBUTING
+[contributing]: CONTRIBUTING
