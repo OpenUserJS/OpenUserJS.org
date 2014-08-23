@@ -62,8 +62,10 @@ Repository | Reference | Recent Version | Installed
 Repository | Reference | Recent Version | Installed
 --- | --- | --- | ---
 [Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
+BootstrapMarkdown | ? | ? | [2.2.1][BootstrapMarkdownCDNUrl]
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
-
+[marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | [0.3.2][markedCDNUrl]
+[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | [3.4.8][select2CDNUrl]
 
 [asyncGHUrl]: https://github.com/caolan/async
 [asyncDOCUrl]: https://github.com/caolan/async/blob/master/README.md
@@ -257,10 +259,15 @@ Repository | Reference | Recent Version | Installed
 [BootstrapDOCUrl]: http://getbootstrap.com/components/
 [BootstrapCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
 
+[BootstrapMarkdownCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js
+
 [jQueryUrl]: http://jquery.com/
 [jQueryDOCUrl]: http://api.jquery.com/
 [jQueryCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 
+[markedCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js
+
+[select2CDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.min.js
 
 [styleguide]: STYLEGUIDE.md
 [contributing]: CONTRIBUTING.md
