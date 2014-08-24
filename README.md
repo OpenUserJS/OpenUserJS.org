@@ -63,7 +63,7 @@ Repository | Reference | Recent Version | Stored
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl] | 4.1.0
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 1.11.1 | 1.10.2
 [normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
-[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.4.6
+[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.5.1
 
 ##### CDN
 
@@ -73,7 +73,6 @@ Repository | Reference | Recent Version | Referenced
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]\*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | [0.3.2][markedCDNUrl]
-[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | [3.4.8][select2CDNUrl]
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | ? | [?][select2-bootstrap-cssCDNUrl]
 
 
@@ -264,7 +263,7 @@ Repository | Reference | Recent Version | Referenced
 [normalizeGHUrl]: https://github.com/necolas/normalize.css
 [normalizeDOCUrl]: http://git.io/normalize
 
-[select2GHUrl]: https://github.com/chrisjbaik/select2
+[select2GHUrl]: https://github.com/ivaynberg/select2
 [select2DOCUrl]: http://ivaynberg.github.io/select2
 [select2NPMUrl]: https://www.npmjs.org/package/select2
 [select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
