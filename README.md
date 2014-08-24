@@ -64,6 +64,7 @@ Repository | Reference | Recent Version | Stored
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 1.11.1 | 1.10.2
 [normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.5.1
+[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][[select2-bootstrap-cssCDNUrl]] | 1.4.1 [fce5f9f][[select2-bootstrap-cssCDNUrl]]
 
 ##### CDN
 
@@ -73,7 +74,6 @@ Repository | Reference | Recent Version | Referenced
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]\*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | [0.3.2][markedCDNUrl]
-[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | ? | [?][select2-bootstrap-cssCDNUrl]
 
 
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
@@ -287,9 +287,9 @@ Repository | Reference | Recent Version | Referenced
 
 [select2CDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.min.js
 
-[select2-bootstrap-cssGHUrl]: https://github.com/fk/select2-bootstrap-css
-[select2-bootstrap-cssDOCUrl]: https://github.com/fk/select2-bootstrap-css/blob/master/README.md
-[select2-bootstrap-cssCDNUrl]: http://fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css
+[select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/tree/master/_jekyll
+[select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/master/README.md
+[select2-bootstrap-cssCDNUrl]: https://raw.githubusercontent.com/t0m/select2-bootstrap-css/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/_jekyll/css/select2-bootstrap.css
 
 
 [styleguide]: STYLEGUIDE.md
