@@ -70,10 +70,12 @@ Repository | Reference | Recent Version | Stored
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
 [Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
-[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]
+[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]\*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | [0.3.2][markedCDNUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | [3.4.8][select2CDNUrl]
+[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | ? | [?][select2-bootstrap-cssCDNUrl]
+
 
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
 [davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
@@ -285,6 +287,11 @@ Repository | Reference | Recent Version | Referenced
 [markedCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js
 
 [select2CDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.min.js
+
+[select2-bootstrap-cssGHUrl]: https://github.com/fk/select2-bootstrap-css
+[select2-bootstrap-cssDOCUrl]: https://github.com/fk/select2-bootstrap-css/blob/master/README.md
+[select2-bootstrap-cssCDNUrl]: http://fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css
+
 
 [styleguide]: STYLEGUIDE.md
 [contributing]: CONTRIBUTING.md
