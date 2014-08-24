@@ -22,7 +22,7 @@ Repository | Reference | Recent Version | Type
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl] | auto
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl] | auto
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl] | auto
-[express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl] | fixed at 3.5.1
+[express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl] | fixed at 3.*
 [fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl] | auto
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl] | auto
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl] | auto
