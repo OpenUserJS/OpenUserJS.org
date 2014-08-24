@@ -59,7 +59,7 @@ Repository | Reference | Recent Version
 
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
-[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 08 17 | 2014 07 09 *(Bower 1.1.5)*
+[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 08 17 | 2014 08 17
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl] | 4.1.0
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 1.11.1 | 1.10.2
 [normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
