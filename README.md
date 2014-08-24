@@ -9,50 +9,50 @@ An open source user scripts repo built using Node.js
 
 ### Dependencies
 
-#### Using David
+#### Aggregate
 
-![Using David][davidImage]&emsp;[External report][davidReport]
+[![Using David][davidImageViaShields]][davidReport]
 
-#### Manually Aggregated
-These also may use shields.io where applicable for more explicit and up to date results.
+#### Dispersed
+These also may use [shields.io][shieldsHomepage] where applicable for more explicit and up to date results.
 
 ##### Dynamic
-Repository | Reference | Recent Version | Type
---- | --- | --- | ---
-[async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl] | auto
-[aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl] | auto
-[connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl] | auto
-[express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl] | fixed at 3.*
-[fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl] | auto
-[formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl] | auto
-[github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl] | auto
-[highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl] | auto
-[marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | auto
-[moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl] | auto
-[mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl] | auto
-[mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl] | auto
-[passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl] | auto
-[passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl] | auto
-[passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl] | auto
-[passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] | auto
-[passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl] | auto
-[passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl] | auto
-[passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl] | auto
-[passport-google][passport-googleGHUrl] | [Documentation][passport-googleDOCUrl] | [![NPM version][passport-googleNPMVersionImage]][passport-googleNPMUrl] | auto
-[passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] | auto
-[passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl] | auto
-[passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl] | auto
-[passport-persona][passport-personaGHUrl] | [Documentation][passport-personaDOCUrl] | [![NPM version][passport-personaNPMVersionImage]][passport-personaNPMUrl] | auto
-[passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] | auto
-[passport-steam][passport-steamGHUrl] | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] | auto
-[passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl] | auto
-[passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] | auto
-[passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] | auto
-[passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] | auto
-[request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl] | auto
-[sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl] | auto
-[toobusy-js][toobusy-jsGHUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl] | auto
-[underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl] | auto
+Repository | Reference | Recent Version
+--- | --- | ---
+[async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
+[aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
+[connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
+[express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
+[fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
+[formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
+[github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
+[highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
+[marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
+[moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
+[mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
+[mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
+[passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
+[passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl]
+[passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
+[passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl]
+[passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl]
+[passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl]
+[passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl]
+[passport-google][passport-googleGHUrl] | [Documentation][passport-googleDOCUrl] | [![NPM version][passport-googleNPMVersionImage]][passport-googleNPMUrl]
+[passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl]
+[passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl]
+[passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl]
+[passport-persona][passport-personaGHUrl] | [Documentation][passport-personaDOCUrl] | [![NPM version][passport-personaNPMVersionImage]][passport-personaNPMUrl]
+[passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl]
+[passport-steam][passport-steamGHUrl] | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl]
+[passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl]
+[passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl]
+[passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl]
+[passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl]
+[request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
+[sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
+[toobusy-js][toobusy-jsGHUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
+[underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 
 
 ##### Static
@@ -70,13 +70,17 @@ Repository | Reference | Recent Version | Stored
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
 [Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
-[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]
+[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]\*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | [0.3.2][markedCDNUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | [3.4.8][select2CDNUrl]
+[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | ? | [?][select2-bootstrap-cssCDNUrl]
 
-[davidImage]: https://david-dm.org/OpenUserJS/OpenUserJS.org.png
+
+[davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
 [davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
+
+[shieldsHomepage]: http://shields.io/
 
 [asyncGHUrl]: https://github.com/caolan/async
 [asyncDOCUrl]: https://github.com/caolan/async/blob/master/README.md
@@ -283,6 +287,11 @@ Repository | Reference | Recent Version | Referenced
 [markedCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js
 
 [select2CDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.min.js
+
+[select2-bootstrap-cssGHUrl]: https://github.com/fk/select2-bootstrap-css
+[select2-bootstrap-cssDOCUrl]: https://github.com/fk/select2-bootstrap-css/blob/master/README.md
+[select2-bootstrap-cssCDNUrl]: http://fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css
+
 
 [styleguide]: STYLEGUIDE.md
 [contributing]: CONTRIBUTING.md
