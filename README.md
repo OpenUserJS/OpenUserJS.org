@@ -64,7 +64,7 @@ Repository | Reference | Recent Version | Stored
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 1.11.1 | 1.10.2
 [normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.5.1
-[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][[select2-bootstrap-cssCDNUrl]] | 1.4.1 [fce5f9f][[select2-bootstrap-cssCDNUrl]]
+[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssCDNUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssCDNUrl]
 
 ##### CDN
 
