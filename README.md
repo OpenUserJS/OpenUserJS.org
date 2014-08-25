@@ -72,7 +72,7 @@ Repository | Reference | Recent Version | Stored
 
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
-[Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
+[bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl] | 3.1.1
 
 
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
@@ -274,20 +274,16 @@ Repository | Reference | Recent Version | Referenced
 [select2NPMUrl]: https://www.npmjs.org/package/select2
 [select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
 
-
-[BootstrapREPOUrl]: http://getbootstrap.com/
-[BootstrapDOCUrl]: http://getbootstrap.com/components/
-[BootstrapCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
+[bootstrapUrl]: http://getbootstrap.com/
+[bootstrapGHUrl]: https://github.com/twbs/bootstrap
+[bootstrapDOCUrl]: http://getbootstrap.com/components/
+[bootstrapNPMUrl]: https://www.npmjs.org/package/bootstrap
+[bootstrapNPMVersionImage]: https://img.shields.io/npm/v/bootstrap.svg?style=flat
 
 [bootstrap-markdownGHUrl]: https://github.com/toopay/bootstrap-markdown
 [bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
 [bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
-[bootstrap-markdownCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js
-
-[markedCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js
-
-[select2CDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.min.js
 
 [select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/tree/master/_jekyll
 [select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/master/README.md
