@@ -60,10 +60,10 @@ Repository | Reference | Recent Version
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 08 17 | 2014 08 17
+[bootstrap.css][bootstrap.cssREPOUrl] | [Documentation][bootstrap.cssDOCUrl] | [3.2.0][bootstrap.cssBSUrl] | 3.1.1+1 *(includes [normalize][normalizeGHUrl] 3.0.0)*
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl] | 4.1.0
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | 0.3.2
-[normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.5.1
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssCDNUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssCDNUrl]
 
@@ -253,6 +253,10 @@ Repository | Reference | Recent Version | Referenced
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
+
+[bootstrap.cssREPOUrl]: http://bootswatch.com
+[bootstrap.cssDOCUrl]: http://bootswatch.com/default
+[bootstrap.cssBSUrl]: http://bootswatch.com/bower_components/bootstrap/dist/css/bootstrap.css
 
 [font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
 [font-awesomeDOCUrl]: http://fontawesome.io/
