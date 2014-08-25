@@ -59,22 +59,20 @@ Repository | Reference | Recent Version
 
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
-[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 08 17 | 2014 07 09 *(Bower 1.1.5)*
+[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 08 17 | 2014 08 17
+[bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl] | 3.1.1
+[bootstrap.css][bootstrap.cssREPOUrl] | [Documentation][bootstrap.cssDOCUrl] | [3.2.0][bootstrap.cssBSUrl] *(includes [normalize.css][normalizeGHUrl] 3.0.1)* | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0)*
+[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | 2.2.1
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl] | 4.1.0
-[jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 1.11.1 | 1.10.2
-[normalize][normalizeGHUrl] | [Documentation][normalizeDOCUrl] | v3.0.1 | v3.0.0
-[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.4.6
+[jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
+[marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | 0.3.2
+[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.5.1
+[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssGHHASHUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssGHHASHUrl]
 
 ##### CDN
 
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
-[Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
-[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]\*
-[jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | [2.1.1][jQueryCDNUrl]
-[marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | [0.3.2][markedCDNUrl]
-[select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | [3.4.8][select2CDNUrl]
-[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | ? | [?][select2-bootstrap-cssCDNUrl]
 
 
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
@@ -256,41 +254,40 @@ Repository | Reference | Recent Version | Referenced
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 
+[bootstrap.cssREPOUrl]: http://bootswatch.com
+[bootstrap.cssDOCUrl]: http://bootswatch.com/default
+[bootstrap.cssBSUrl]: http://bootswatch.com/bower_components/bootstrap/dist/css/bootstrap.css
+
 [font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
 [font-awesomeDOCUrl]: http://fontawesome.io/
 [font-awesomeNPMUrl]: https://npmjs.org/package/font-awesome
 [font-awesomeNPMVersionImage]: https://img.shields.io/npm/v/font-awesome.svg?style=flat
 
+[jQueryUrl]: http://jquery.com/
+[jQueryDOCUrl]: http://api.jquery.com/
+
 [normalizeGHUrl]: https://github.com/necolas/normalize.css
 [normalizeDOCUrl]: http://git.io/normalize
 
-[select2GHUrl]: https://github.com/chrisjbaik/select2
+[select2GHUrl]: https://github.com/ivaynberg/select2
 [select2DOCUrl]: http://ivaynberg.github.io/select2
 [select2NPMUrl]: https://www.npmjs.org/package/select2
 [select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
 
-
-[BootstrapREPOUrl]: http://getbootstrap.com/
-[BootstrapDOCUrl]: http://getbootstrap.com/components/
-[BootstrapCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js
+[bootstrapUrl]: http://getbootstrap.com/
+[bootstrapGHUrl]: https://github.com/twbs/bootstrap
+[bootstrapDOCUrl]: http://getbootstrap.com/components/
+[bootstrapNPMUrl]: https://www.npmjs.org/package/bootstrap
+[bootstrapNPMVersionImage]: https://img.shields.io/npm/v/bootstrap.svg?style=flat
 
 [bootstrap-markdownGHUrl]: https://github.com/toopay/bootstrap-markdown
 [bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
 [bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
-[bootstrap-markdownCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js
 
-[jQueryUrl]: http://jquery.com/
-[jQueryDOCUrl]: http://api.jquery.com/
-[jQueryCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
-
-[markedCDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js
-
-[select2CDNUrl]: http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.min.js
-
-[select2-bootstrap-cssGHUrl]: https://github.com/fk/select2-bootstrap-css
-[select2-bootstrap-cssDOCUrl]: https://github.com/fk/select2-bootstrap-css/blob/master/README.md
-[select2-bootstrap-cssCDNUrl]: http://fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css
+[select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3
+[select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/README.md
+[select2-bootstrap-cssGHHASHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/select2-bootstrap.css
 
 
 [styleguide]: STYLEGUIDE.md

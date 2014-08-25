@@ -2809,7 +2809,7 @@ var JSHINT = (function () {
 
   function doOption() {
     var nt = state.tokens.next;
-    var body = nt.body.match(/(-\s+)?[^\s,:]+(?:\s*:\s*(-\s+)?[^\s,]+)?/g);
+    var body = nt.body.match(/(-\s+)?[^\s,:]+(?:\s*:\s*(-\s+)?[^\s,]+)?/g) || [];
     var predef = {};
 
     if (nt.type === "globals") {
@@ -4487,7 +4487,7 @@ var JSHINT = (function () {
     if (left) {
       if (left.type === "(identifier)") {
         if (left.value.match(/^[A-Z]([A-Z0-9_$]*[a-z][A-Za-z0-9_$]*)?$/)) {
-          if ("Number String Boolean Date Object Error GM_deleteValue GM_getValue GM_listValues GM_setClipboard GM_setValue GM_getResourceText GM_getResourceURL GM_addStyle GM_xmlhttpRequest GM_log GM_openInTab GM_registerMenuCommand".indexOf(left.value) === -1) {
+          if ("Number String Boolean Date Object ErrorGM_deleteValue GM_getValue GM_listValues GM_setClipboard GM_setValue GM_getResourceText GM_getResourceURL GM_addStyle GM_xmlhttpRequest GM_log GM_openInTab GM_registerMenuCommand unsafeWindow".indexOf(left.value) === -1) {
             if (left.value === "Math") {
               warning("W063", left);
             } else if (state.option.newcap) {

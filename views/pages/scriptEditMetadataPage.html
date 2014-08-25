@@ -3,9 +3,9 @@
 <head>
   <title>{{title}}</title>
   {{> includes/head.html }}
-  <link rel="stylesheet" type="text/css" media="all" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/css/bootstrap-markdown.min.css">
-  <link rel="stylesheet" type="text/css" media="all" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.css">
-  <link rel="stylesheet" type="text/css" media="all" href="//fk.github.io/select2-bootstrap-css/css/select2-bootstrap.css"> <!-- Bootstrap 3 theme -->
+  <link rel="stylesheet" type="text/css" media="all" href="/css/bootstrap-markdown.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/css/select2.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/css/select2-bootstrap.css"> <!-- Bootstrap 3 theme -->
   <link rel="stylesheet" type="text/css" media="all" href="/css/scriptPage.css">
 </head>
 <body>
@@ -51,10 +51,10 @@
   </div>
   {{> includes/footer.html }}
   <!-- Markdown Editor -->
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.2.1/js/bootstrap-markdown.js"></script>
+  <script type="text/javascript" src="/js/marked.js"></script>
+  <script type="text/javascript" src="/js/bootstrap-markdown.js"></script>
   <!-- Group Selector -->
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.min.js"></script>
+  <script type="text/javascript" src="/js/select2.js"></script>
   <script type="text/javascript">
     var preload_groups = {{{groupNameListJSON}}};
     var preload_data = $.map(preload_groups, function (aGroup) {
