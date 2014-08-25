@@ -61,6 +61,7 @@ Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 08 17 | 2014 08 17
 [bootstrap.css][bootstrap.cssREPOUrl] | [Documentation][bootstrap.cssDOCUrl] | [3.2.0][bootstrap.cssBSUrl] *(includes [normalize.css][normalizeGHUrl] 3.0.1)* | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0)*
+[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]\*
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl] | 4.1.0
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | 0.3.2
@@ -72,7 +73,6 @@ Repository | Reference | Recent Version | Stored
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
 [Bootstrap][BootstrapREPOUrl] | [Documentation][BootstrapDOCUrl] | v3.2.0 | [3.1.1][BootstrapCDNUrl]
-[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl] **and** 2.6.0 | [2.2.1][bootstrap-markdownCDNUrl]\*
 
 
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
