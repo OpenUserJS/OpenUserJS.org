@@ -67,7 +67,7 @@ Repository | Reference | Recent Version | Stored
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl] | 0.3.2
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl] | 3.5.1
-[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssCDNUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssCDNUrl]
+[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssGHHASHUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssGHHASHUrl]
 
 ##### CDN
 
@@ -285,9 +285,9 @@ Repository | Reference | Recent Version | Referenced
 [bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
 
-[select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/tree/master/_jekyll
-[select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/master/README.md
-[select2-bootstrap-cssCDNUrl]: https://raw.githubusercontent.com/t0m/select2-bootstrap-css/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/_jekyll/css/select2-bootstrap.css
+[select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3
+[select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/README.md
+[select2-bootstrap-cssGHHASHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/select2-bootstrap.css
 
 
 [styleguide]: STYLEGUIDE.md
