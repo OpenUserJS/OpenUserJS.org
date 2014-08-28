@@ -278,3 +278,7 @@ th > a {
 a.panel-heading {
   display: block;
 }
+
+.navbar-static-top .navbar-collapse {
+  max-height: initial;
+}
