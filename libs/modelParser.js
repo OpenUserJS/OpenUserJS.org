@@ -271,7 +271,9 @@ var parseGroup = function (aGroupData) {
   // Intermediates
   var group = aGroupData;
 
-  group.size = group._scriptIds.length;
+  if (!group.size) {
+    group.size = group._scriptIds.length;
+  }
   group.multiple = group._scriptIds.length > 1;
 
   group.groupPageUrl = '/group/' + group.name.replace(/\s+/g, '_');
@@ -283,6 +285,7 @@ var parseGroup = function (aGroupData) {
       _id: { $in: group._scriptIds }
     }, function (aErr, aScripts) {
       if (!aErr && aScripts.length > 1) {
+        group.size = aScripts.length;
         group.rating = getRating(aScripts);
       }
 

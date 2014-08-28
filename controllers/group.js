@@ -114,12 +114,13 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
     async.parallel(tasks, function () {
       aScript.save(aCallback);
 
-      // Update the group ratings in the background
+      // Update the groups in the background
       aGroups.forEach(function (aGroup) {
         Script.find({ _id: { $in: aGroup._scriptIds } }, // TODO: STYLEGUIDE.md conformance needed here
           function (aErr, aScripts) {
             if (aErr || aScripts.length < 2) { return; }
 
+            aGroup.size = aScripts.length;
             aGroup.rating = getRating(aScripts);
             aGroup.updated = new Date();
             aGroup.save(function () { });
@@ -167,6 +168,7 @@ exports.list = function (aReq, aRes) {
 
   // Order dir
   orderDir(aReq, options, 'name', 'asc');
+  orderDir(aReq, options, 'size', 'desc');
   orderDir(aReq, options, 'rating', 'desc');
 
   // groupListQuery
@@ -181,7 +183,7 @@ exports.list = function (aReq, aRes) {
   // popularGroupListQuery
   var popularGroupListQuery = Group.find();
   popularGroupListQuery
-    .sort('-rating')
+    .sort('-size')
     .limit(25);
 
   //--- Tasks
@@ -299,7 +301,7 @@ exports.view = function (aReq, aRes, aNext) {
     // popularGroupListQuery
     var popularGroupListQuery = Group.find();
     popularGroupListQuery
-      .sort('-rating')
+      .sort('-size')
       .limit(25);
 
     // SideBar
