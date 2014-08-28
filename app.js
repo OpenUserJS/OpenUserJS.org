@@ -41,61 +41,59 @@ db.once('open', function () {
   app.listen(app.get('port'));
 });
 
-app.configure(function () {
-  var sessionStore = new MongoStore({ mongoose_connection: db });
+var sessionStore = new MongoStore({ mongoose_connection: db });
 
-  // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-  app.use(function (aReq, aRes, aNext) {
-    // check if we're toobusy
-    if (toobusy()) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 503,
-        statusMessage: 'We\'re busy right now. Try again later.',
-      });
-    } else {
-      aNext();
-    }
-  });
-
-  // Force HTTPS
-  if (app.get('port') === 443) {
-    app.use(function (aReq, aRes, aNext) {
-      aRes.setHeader('Strict-Transport-Security',
-        'max-age=8640000; includeSubDomains');
-
-      if (aReq.headers['x-forwarded-proto'] !== 'https') {
-        return aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
-      }
-
-      aNext();
+// See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
+app.use(function (aReq, aRes, aNext) {
+  // check if we're toobusy
+  if (toobusy()) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 503,
+      statusMessage: 'We\'re busy right now. Try again later.',
     });
+  } else {
+    aNext();
   }
-
-  if (process.env.NODE_ENV !== 'production') {
-    app.use(express.logger('dev'));
-  }
-
-  app.use(express.urlencoded());
-  app.use(express.json());
-  app.use(express.compress());
-  app.use(express.methodOverride());
-
-  // Order is very important here (i.e mess with at your own risk)
-  app.use(express.cookieParser());
-  app.use(express.session({
-    secret: sessionSecret,
-    store: sessionStore
-  }));
-  app.use(passport.initialize());
-  app.use(modifySessions.init(sessionStore));
-  app.use(app.router);
-  app.use(express.favicon('public/images/favicon.ico'));
-
-  // Set up the views
-  app.engine('html', require('./libs/muExpress').renderFile(app));
-  app.set('view engine', 'html');
-  app.set('views', __dirname + '/views');
 });
+
+// Force HTTPS
+if (app.get('port') === 443) {
+  app.use(function (aReq, aRes, aNext) {
+    aRes.setHeader('Strict-Transport-Security',
+      'max-age=8640000; includeSubDomains');
+
+    if (aReq.headers['x-forwarded-proto'] !== 'https') {
+      return aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
+    }
+
+    aNext();
+  });
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  app.use(express.logger('dev'));
+}
+
+app.use(express.urlencoded());
+app.use(express.json());
+app.use(express.compress());
+app.use(express.methodOverride());
+
+// Order is very important here (i.e mess with at your own risk)
+app.use(express.cookieParser());
+app.use(express.session({
+  secret: sessionSecret,
+  store: sessionStore
+}));
+app.use(passport.initialize());
+app.use(modifySessions.init(sessionStore));
+app.use(app.router);
+app.use(express.favicon('public/images/favicon.ico'));
+
+// Set up the views
+app.engine('html', require('./libs/muExpress').renderFile(app));
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
 
 // Emulate app.route('/').VERB(callback).VERB(callback); from ExpressJS 4.x
 var methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
