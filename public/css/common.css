@@ -274,3 +274,7 @@ th > a {
 .inline-block {
   display: inline-block;
 }
+
+a.panel-heading {
+  display: block;
+}
