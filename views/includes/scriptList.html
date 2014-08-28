@@ -16,7 +16,7 @@
           <img src="{{{icon16Url}}}" alt="{{! Leave me empty! }}" width="16" height="16" />
           {{/icon16Url}}
           {{^icon16Url}}
-          <i class="fa fa-fw fa-file-code-o"></i>
+          {{#isLib}}<i class="fa fa-fw fa-file-excel-o"></i>{{/isLib}}{{^isLib}}<i class="fa fa-fw fa-file-code-o"></i>{{/isLib}}
           {{/icon16Url}}
         </span>
         <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>

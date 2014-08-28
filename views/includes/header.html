@@ -6,19 +6,19 @@
     </div>
     <div class="navbar-collapse navbar-collapse-top collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/">Scripts</a></li>
-        <li><a href="/?library=true">Libs</a></li>
-        <li><a href="/groups">Groups</a></li>
-        <li><a href="/forum">Discuss</a></li>
-        <li><a href="/users">Users</a></li>
+        <li><a href="/"><span class="visible-xs"><i class="fa fa-file-code-o"></i> </span>Scripts</a></li>
+        <li><a href="/?library=true" title="Script Libraries"><span class="visible-xs"><i class="fa fa-file-excel-o"></i> </span>Libs</a></li>
+        <li><a href="/groups" title="Script Groups"><span class="visible-xs"><i class="fa fa-folder"></i> </span>Groups</a></li>
+        <li><a href="/forum" title="Discuss"><span class="visible-xs"><i class="fa fa-comment"></i> </span>Discuss</a></li>
+        <li><a href="/users"><span class="visible-xs"><i class="fa fa-user"></i> </span>Users</a></li>
         {{#authedUser}}
         {{#authedUser.isMod}}
-        <li><a href="/mod"><i class="fa fa-eye"></i><span class="visible-xs"> Moderation</span></a></li>
+        <li><a href="/mod" title="Moderation"><i class="fa fa-eye"></i><span class="visible-xs"> Moderation</span></a></li>
         {{/authedUser.isMod}}
         {{#authedUser.isAdmin}}
-        <li><a href="/admin"><i class="fa fa-coffee"></i><span class="visible-xs"> Admin</span></a></li>
+        <li><a href="/admin" title="Admin"><i class="fa fa-coffee"></i><span class="visible-xs"> Admin</span></a></li>
         {{/authedUser.isAdmin}}
-        <li><a href="#" class="disabled"><i class="fa fa-envelope-o"></i> 0<span class="visible-xs"> Unread Messages</span></a></li>
+        <!-- <li><a href="#" class="disabled"><i class="fa fa-envelope-o"></i> 0<span class="visible-xs"> Unread Messages</span></a></li> -->
         <li><a href="{{authedUser.userPageUrl}}">{{authedUser.name}}</a></li>
         <li><a href="/logout"><span class="visible-xs">Logout</span><i class="fa fa-sign-out"></i></a></li>
         {{/authedUser}}
