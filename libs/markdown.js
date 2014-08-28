@@ -55,6 +55,7 @@ renderer.heading = function (aText, aLevel) {
 };
 
 // Set the options to use for rendering markdown
+// Keep in sync with ./views/includes/scripts/markdownEditor.html
 marked.setOptions({
   highlight: function (aCode, aLang) {
     if (aLang && hljs.getLanguage(aLang)) {
