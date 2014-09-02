@@ -74,6 +74,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     // Update the install count
     ++aScript.installs;
+    ++aScript.installsSinceUpdate;
+
     aScript.save(function (aErr, aScript) { });
   });
 };
@@ -298,6 +300,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       if (aRemoved || (!aScript && (aUpdate || collaborators))) {
         return aCallback(null);
       } else if (!aScript) {
+        // New script
         aScript = new Script({
           name: isLibrary ? aMeta : aMeta.name,
           author: aUser.name,
@@ -315,6 +318,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           _authorId: aUser._id
         });
       } else {
+        // Script already exists.
         if (!aScript.isLib) {
           if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author != aMeta.oujs.author
               || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !=
@@ -325,6 +329,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           aScript.uses = libraries;
         }
         aScript.updated = new Date();
+        aScript.installsSinceUpdate = 0;
       }
 
       aScript.save(function (aErr, aScript) {

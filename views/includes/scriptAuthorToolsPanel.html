@@ -8,6 +8,12 @@
       <li><a href="{{{script.scriptEditMetadataPageUrl}}}"><i class="fa fa-edit"></i> Edit Script Info</a></li>
       <li><a href="{{{script.scriptEditSourcePageUrl}}}"><i class="fa fa-file-text"></i> Edit Script</a></li>
     </ul>
+
+    <hr>
+
+    <h4>Installs per Version <small>since <time>2 Sept 2014</time></small></h4>
+
+    <p><code>{{script.meta.version}}{{^script.meta.version}}Current{{/script.meta.version}}</code> <span class="label label-default">{{script.installsSinceUpdate}} installs</span></p>
   </div>
 </div>
 <div class="panel panel-danger">
