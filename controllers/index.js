@@ -64,7 +64,7 @@ exports.home = function (aReq, aRes) {
   // popularGroupListQuery
   var popularGroupListQuery = Group.find();
   popularGroupListQuery
-    .sort('-rating')
+    .sort('-size')
     .limit(25);
 
   // Announcements
