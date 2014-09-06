@@ -3,8 +3,8 @@
 <head>
   <title>{{title}}</title>
   {{> includes/head.html }}
-  <link rel="stylesheet" type="text/css" media="all" href="/css/bootstrap-markdown.css">
-  <link rel="stylesheet" type="text/css" media="all" href="/css/select2.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/bootstrap-markdown/css/bootstrap-markdown.min.css">
+  <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/select2/select2.css">
   <link rel="stylesheet" type="text/css" media="all" href="/css/select2-bootstrap.css"> <!-- Bootstrap 3 theme -->
   <link rel="stylesheet" type="text/css" media="all" href="/css/scriptPage.css">
 </head>
@@ -52,7 +52,7 @@
   {{> includes/footer.html }}
   {{> includes/scripts/markdownEditor.html }}
   <!-- Group Selector -->
-  <script type="text/javascript" src="/js/select2.js"></script>
+  <script type="text/javascript" src="/redist/npm/select2/select2.js"></script>
   <script type="text/javascript">
     var preload_groups = {{{groupNameListJSON}}};
     var preload_data = $.map(preload_groups, function (aGroup) {

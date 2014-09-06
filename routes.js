@@ -15,7 +15,7 @@ var document = require('./controllers/document');
 
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
-module.exports = function(aApp) {
+module.exports = function (aApp) {
   //--- Middleware
   // Emulate app.route('/').VERB(callback).VERB(callback); from ExpressJS 4.x
   var methods = ['get', 'post', 'put', 'head', 'delete', 'options'];
@@ -147,15 +147,4 @@ module.exports = function(aApp) {
 
   // Home route
   app_route('/').get(main.home);
-
-  // Static Files
-  aApp.use(express.static(__dirname + '/public'));
-
-  // Fallback routes
-  aApp.use(function (aReq, aRes, aNext) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 404,
-      statusMessage: 'This is not the page you\'re are looking for.',
-    });
-  });
 };

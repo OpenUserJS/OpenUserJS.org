@@ -2,6 +2,7 @@
 
 var toobusy = require('toobusy-js');
 var express = require('express');
+var minify = require('express-minify');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
 var passport = require('passport');
@@ -58,6 +59,8 @@ if (app.get('port') === 443) {
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(express.logger('dev'));
+} else {
+  app.use(minify());
 }
 
 app.use(express.urlencoded());
@@ -83,3 +86,14 @@ app.set('views', __dirname + '/views');
 
 // Routes
 require('./routes')(app);
+
+// Static Routes
+require('./routesStatic')(app);
+
+// Fallback routes
+app.use(function (aReq, aRes, aNext) {
+  statusCodePage(aReq, aRes, aNext, {
+    statusCode: 404,
+    statusMessage: 'This is not the page you\'re are looking for.',
+  });
+});
