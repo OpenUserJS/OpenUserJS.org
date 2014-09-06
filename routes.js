@@ -52,13 +52,13 @@ module.exports = function (aApp) {
   aApp.route('/account/preferences').get(user.userEditPreferencesPage);
 
   // Adding script/library routes
-  aApp.route('/user/add/scripts').get(user.newScriptPage);
-  aApp.route('/user/add/scripts/new').get(script.new(user.editScript)).post(script.new(user.submitSource));
-  aApp.route('/user/add/scripts/upload').post(user.uploadScript);
-  aApp.route('/user/add/lib').get(user.newLibraryPage);
-  aApp.route('/user/add/lib/new').get(script.new(script.lib(user.editScript))).post(script.new(script.lib(user.submitSource)));
-  aApp.route('/user/add/lib/upload').post(script.lib(user.uploadScript));
-  aApp.route('/user/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
+  aApp.route('/account/add/scripts').get(user.newScriptPage);
+  aApp.route('/account/add/scripts/new').get(script.new(user.editScript)).post(script.new(user.submitSource));
+  aApp.route('/account/add/scripts/upload').post(user.uploadScript);
+  aApp.route('/account/add/lib').get(user.newLibraryPage);
+  aApp.route('/account/add/lib/new').get(script.new(script.lib(user.editScript))).post(script.new(script.lib(user.submitSource)));
+  aApp.route('/account/add/lib/upload').post(script.lib(user.uploadScript));
+  aApp.route('/account/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
 
   // Script routes
   aApp.route('/scripts/:username/:namespace?/:scriptname').get(script.view);
