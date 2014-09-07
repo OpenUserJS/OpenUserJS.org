@@ -59,8 +59,6 @@ if (app.get('port') === 443) {
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(express.logger('dev'));
-} else {
-  app.use(minify());
 }
 
 app.use(express.urlencoded());
@@ -84,16 +82,12 @@ app.engine('html', require('./libs/muExpress').renderFile(app));
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 
+
+// Setup minification
+// Order is important here as Ace will fail with an invalid content encoding issue
+if (process.env.NODE_ENV === 'production') {
+  app.use(minify());
+}
+
 // Routes
 require('./routes')(app);
-
-// Static Routes
-require('./routesStatic')(app);
-
-// Fallback routes
-app.use(function (aReq, aRes, aNext) {
-  statusCodePage(aReq, aRes, aNext, {
-    statusCode: 404,
-    statusMessage: 'This is not the page you\'re are looking for.',
-  });
-});

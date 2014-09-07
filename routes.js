@@ -147,4 +147,15 @@ module.exports = function (aApp) {
 
   // Home route
   app_route('/').get(main.home);
+
+  // Static Routes
+  require('./routesStatic')(aApp);
+
+  // Fallback routes
+  aApp.use(function (aReq, aRes, aNext) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 404,
+      statusMessage: 'This is not the page you\'re are looking for.',
+    });
+  });
 };
