@@ -2,6 +2,7 @@
 
 var toobusy = require('toobusy-js');
 var express = require('express');
+var minify = require('express-minify');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
 var passport = require('passport');
@@ -80,6 +81,13 @@ app.use(express.favicon('public/images/favicon.ico'));
 app.engine('html', require('./libs/muExpress').renderFile(app));
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
+
+
+// Setup minification
+// Order is important here as Ace will fail with an invalid content encoding issue
+if (process.env.NODE_ENV === 'production') {
+  app.use(minify());
+}
 
 // Routes
 require('./routes')(app);
