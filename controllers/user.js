@@ -925,7 +925,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
       if (options.javascriptBlob.isUserJS) {
         //
-        var userscriptHeaderRegex = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m;
+        var userscriptHeaderRegex = /^(?:\uFEFF)?\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m;
         var m = userscriptHeaderRegex.exec(aBlobUtf8);
         if (m && m[1]) {
           var userscriptMeta = scriptStorage.parseMeta(m[1], true);

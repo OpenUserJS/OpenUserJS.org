@@ -227,11 +227,12 @@ exports.getMeta = function (aChunks, aCallback) {
   var str = '';
   var i = 0;
   var len = aChunks.length;
+  var header = null;
 
   for (; i < aChunks.length; ++i) {
-    var header = null;
+    header = null;
     str += aChunks[i];
-    header = /^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m.exec(str);
+    header = /^(?:\uFEFF)?\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m.exec(str);
 
     if (header && header[1]) { return aCallback(parseMeta(header[1], true)); }
   }
