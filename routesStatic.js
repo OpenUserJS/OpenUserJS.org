@@ -32,7 +32,7 @@ module.exports = function (aApp) {
     }
   }
 
-  aApp.use(express.static(path.join(__dirname, '/public'), { maxage: day * 1 }));
+  aApp.use(express.static(path.join(__dirname, 'public'), { maxage: day * 1 }));
 
   serveModule('/redist/npm', 'bootstrap', {
     'dist/js/bootstrap.js': { maxage: day * 1 }
