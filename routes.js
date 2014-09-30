@@ -150,6 +150,34 @@ module.exports = function (aApp) {
   // Home route
   app_route('/').get(main.home);
 
+  // Order is important here...
+  // Only referer check statics otherwise SEO will have issues
+  aApp.use(function (aReq, aRes, aNext) {
+    if (process.env.NODE_ENV === 'production'
+      && !/^https?:\/\/(?:.*\.)?(?:openuserjs|oujs)\.org/.test(aReq.headers.referer)) {
+
+      // Whitelist
+      switch (aReq.url) {
+        case '/images/favicon.ico':
+        case '/images/favicon16.ico':
+        case '/images/favicon64.png':
+        case '/xml/opensearch-groups.xml':
+        case '/xml/opensearch-libraries.xml':
+        case '/xml/opensearch-scripts.xml':
+        case '/xml/opensearch-users.xml':
+          aNext();
+          break;
+        default:
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 404,
+            statusMessage: 'This is not the page you\'re are looking for!'
+          });
+      }
+    } else {
+      aNext();
+    }
+  });
+
   // Static Routes
   require('./routesStatic')(aApp);
 
