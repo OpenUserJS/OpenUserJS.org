@@ -55,7 +55,6 @@ Repository | Reference | Recent Version
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
-[toobusy-js][toobusy-jsGHUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 
 
@@ -239,11 +238,6 @@ Repository | Reference | Recent Version | Referenced
 [sanitize-htmlDOCUrl]: https://github.com/punkave/sanitize-html/blob/master/README.md
 [sanitize-htmlNPMUrl]: https://npmjs.org/package/sanitize-html
 [sanitize-htmlNPMVersionImage]: https://img.shields.io/npm/v/sanitize-html.svg?style=flat
-
-[toobusy-jsGHUrl]: https://github.com/STRML/node-toobusy
-[toobusy-jsDOCUrl]: https://github.com/STRML/node-toobusy/blob/master/README.md
-[toobusy-jsNPMUrl]: https://npmjs.org/package/toobusy-js
-[toobusy-jsNPMVersionImage]: https://img.shields.io/npm/v/toobusy-js.svg?style=flat
 
 [underscoreGHUrl]: https://github.com/jashkenas/underscore
 [underscoreDOCUrl]: http://underscorejs.org/
