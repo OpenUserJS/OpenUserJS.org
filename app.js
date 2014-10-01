@@ -1,6 +1,5 @@
 'use strict';
 
-var toobusy = require('toobusy-js');
 var express = require('express');
 var minify = require('express-minify');
 var MongoStore = require('connect-mongo')(express);
@@ -29,20 +28,6 @@ db.once('open', function () {
 });
 
 var sessionStore = new MongoStore({ mongoose_connection: db });
-
-// See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-app.use(function (aReq, aRes, aNext) {
-  // check if we're toobusy
-  toobusy.maxLag(100);
-  if (toobusy()) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 503,
-      statusMessage: 'We\'re busy right now. Try again later.',
-    });
-  } else {
-    aNext();
-  }
-});
 
 // Force HTTPS
 if (app.get('port') === 443) {
