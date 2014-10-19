@@ -1,5 +1,5 @@
 {
   "secret" : "someSecretStringForSession",
   "connect" : "mongodb://nodejitsu_sizzlemctwizzle:b6vrl5hvkv2a3vvbaq1nor7fdl@ds045978.mongolab.com:45978/nodejitsu_sizzlemctwizzle_nodejitsudb8203815757",
-  "maximum_upload_script_size": 500000
+  "maximum_upload_script_size": 1048576
 }
