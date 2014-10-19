@@ -47,7 +47,25 @@
     "rt",
     "rp"
   ],
+  "allowedClasses": {
+    "th": [
+      "text-center",
+      "text-left",
+      "text-right"
+    ],
+    "td": [
+      "text-center",
+      "text-left",
+      "text-right"
+    ]
+  },
   "allowedAttributes": {
+    "th": [
+      "class"
+    ],
+    "td": [
+      "class"
+    ],
     "a": [
       "href"
     ],
