@@ -154,6 +154,7 @@ textarea {
 .md-editor .md-preview {
   height: calc(100% - 42px);
   min-height: 258px;
+  overflow: auto;
 }
 
 #reply-control .submit-panel {
