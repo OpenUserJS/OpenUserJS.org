@@ -30,7 +30,7 @@ var momentLangTinyDate = function (aDate) {
     return '[' + aDate.format("MMM 'YY") + ']';
   }
 };
-moment.lang('en-tiny', {
+moment.locale('en-tiny', {
   calendar : {
     sameDay : function () { return momentLangFromNow(this); },
     lastDay : function () { return momentLangFromNow(this); },
@@ -59,7 +59,7 @@ moment.lang('en-tiny', {
 var parseDateProperty = function (aObj, aKey) {
   var date = aObj[aKey];
   aObj[aKey + 'ISOFormat'] = date.toISOString();
-  aObj[aKey + 'Humanized'] = moment(date).lang('en-tiny').calendar();
+  aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
 };
 
 /**
