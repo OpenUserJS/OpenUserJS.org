@@ -262,6 +262,17 @@ h6:hover a.anchor {
   margin-top: 0;
 }
 
+.user-data code,
+.user-content code,
+.document-content code {
+  white-space: pre-wrap;
+}
+.user-data img,
+.user-content img,
+.document-content img {
+  max-width: 100%;
+}
+
 .table-responsive {
   overflow-x: auto;
 }
