@@ -27,6 +27,40 @@ htmlWhitelistPost.allowedTags.forEach(function (aTag) {
 });
 delete htmlWhitelistPost.allowedAttributes.all;
 
+// Transform exact Github Flavored Markdown generated style tags to bootstrap custom classes
+// to allow the sanitizer to whitelist on th and td tags for table alignment
+function gfmStyleToBootstrapClass(aTagName, aAttribs) {
+  if (aAttribs.style) {
+    switch (aAttribs.style) {
+      case 'text-align:center':
+        return {
+          tagName: aTagName,
+          attribs: { class: 'text-center' }
+        }
+      case 'text-align:left':
+        return {
+          tagName: aTagName,
+          attribs: { class: 'text-left' }
+        }
+      case 'text-align:right':
+        return {
+          tagName: aTagName,
+          attribs: { class: 'text-right' }
+        }
+    }
+  }
+
+  return {
+    tagName: aTagName,
+    attribs: aAttribs
+  }
+}
+
+htmlWhitelistPost.transformTags = {
+  'th' : gfmStyleToBootstrapClass,
+  'td' : gfmStyleToBootstrapClass
+};
+
 function sanitize(aHtml) {
   return sanitizeHtml(aHtml, htmlWhitelistPost);
 }
