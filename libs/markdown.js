@@ -36,24 +36,24 @@ function gfmStyleToBootstrapClass(aTagName, aAttribs) {
         return {
           tagName: aTagName,
           attribs: { class: 'text-center' }
-        }
+        };
       case 'text-align:left':
         return {
           tagName: aTagName,
           attribs: { class: 'text-left' }
-        }
+        };
       case 'text-align:right':
         return {
           tagName: aTagName,
           attribs: { class: 'text-right' }
-        }
+        };
     }
   }
 
   return {
     tagName: aTagName,
     attribs: aAttribs
-  }
+  };
 }
 
 htmlWhitelistPost.transformTags = {
