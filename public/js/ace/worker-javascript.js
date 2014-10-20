@@ -17,7 +17,13 @@ window.window = window;
 window.ace = window;
 
 window.onerror = function(message, file, line, col, err) {
-    console.error("Worker " + (err ? err.stack : message));
+    postMessage({type: "error", data: {
+        message: message,
+        file: file,
+        line: line,
+        col: col,
+        stack: err.stack
+    }});
 };
 
 window.normalizeModule = function(parentId, moduleName) {
@@ -85,13 +91,18 @@ window.define = function(id, deps, factory) {
         id = window.require.id;
     }
 
+    if (typeof factory != "function") {
+        window.require.modules[id] = {
+            exports: factory,
+            initialized: true
+        };
+        return;
+    }
+
     if (!deps.length)
         // If there is no dependencies, we inject 'require', 'exports' and
         // 'module' as dependencies, to provide CommonJS compatibility.
         deps = ['require', 'exports', 'module'];
-
-    if (id.indexOf("text!") === 0)
-        return;
 
     var req = function(childId) {
         return window.require(id, childId);
@@ -4487,7 +4498,7 @@ var JSHINT = (function () {
     if (left) {
       if (left.type === "(identifier)") {
         if (left.value.match(/^[A-Z]([A-Z0-9_$]*[a-z][A-Za-z0-9_$]*)?$/)) {
-          if ("Number String Boolean Date Object ErrorGM_deleteValue GM_getValue GM_listValues GM_setClipboard GM_setValue GM_getResourceText GM_getResourceURL GM_addStyle GM_xmlhttpRequest GM_log GM_openInTab GM_registerMenuCommand unsafeWindow".indexOf(left.value) === -1) {
+          if ("Number String Boolean Date Object Error GM_deleteValue GM_getValue GM_listValues GM_setClipboard GM_setValue GM_getResourceText GM_getResourceURL GM_addStyle GM_xmlhttpRequest GM_log GM_openInTab GM_registerMenuCommand unsafeWindow".indexOf(left.value) === -1) {
             if (left.value === "Math") {
               warning("W063", left);
             } else if (state.option.newcap) {
