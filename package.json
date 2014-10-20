@@ -9,7 +9,7 @@
     "bootstrap": "3.1.1",
     "bootstrap-markdown": "2.7.0",
     "connect-mongo": "0.4.1",
-    "express": "3.16.7",
+    "express": "3.18.0",
     "express-minify": "0.0.11",
     "formidable": "1.0.15",
     "font-awesome": "4.2.0",
