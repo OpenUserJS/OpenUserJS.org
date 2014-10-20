@@ -13,6 +13,8 @@ An open source user scripts repo built using Node.js
 
 [![Using David][davidImageViaShields]][davidReport]
 
+Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
+
 #### Dispersed
 These also may use [shields.io][shieldsHomepage] where applicable for more explicit and up to date results.
 
