@@ -62,7 +62,7 @@ Repository | Reference | Recent Version
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 10 09 | 2014 10 09
-[bootstrap.css][bootstrap.cssREPOUrl] | [Documentation][bootstrap.cssDOCUrl] | [3.2.0][bootstrap.cssBSUrl] *(includes [normalize.css][normalizeGHUrl] 3.0.1)* | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0)*
+[bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssGHHASHUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssGHHASHUrl]
 
@@ -247,9 +247,12 @@ Repository | Reference | Recent Version | Referenced
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 
-[bootstrap.cssREPOUrl]: http://bootswatch.com
-[bootstrap.cssDOCUrl]: http://bootswatch.com/default
-[bootstrap.cssBSUrl]: http://bootswatch.com/bower_components/bootstrap/dist/css/bootstrap.css
+[bootswatchGHUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/custom/bootstrap.css
+[bootswatchREPOUrl]: http://bootswatch.com
+[bootswatchNPMUrl]: https://www.npmjs.org/package/bootswatch
+[bootswatchNPMVersionImage]: https://img.shields.io/npm/v/bootswatch.svg?style=flat
+[bootswatchDOCUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/README.md
+[bootswatchBSUrl]: http://bootswatch.com/bower_components/bootstrap/dist/css/bootstrap.css
 
 [font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
 [font-awesomeDOCUrl]: http://fontawesome.io/
