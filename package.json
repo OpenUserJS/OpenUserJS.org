@@ -5,7 +5,7 @@
   "main": "app",
   "dependencies": {
     "async": "0.9.0",
-    "aws-sdk": "2.0.15",
+    "aws-sdk": "2.0.21",
     "bootstrap": "3.1.1",
     "bootstrap-markdown": "2.7.0",
     "connect-mongo": "0.4.1",
@@ -16,7 +16,7 @@
     "github": "0.2.2",
     "marked": "0.3.2",
     "moment": "2.8.3",
-    "mongoose": "3.8.15",
+    "mongoose": "3.8.17",
     "mu2": "0.5.20",
     "passport": "0.2.1",
     "passport-amazon": "0.1.0",
