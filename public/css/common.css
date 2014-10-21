@@ -137,10 +137,6 @@ h2.page-heading {
   position: fixed;
 }
 
-#reply-control .md-editor {
-  height: 300px;
-}
-
 .md-editor {
   min-height: 300px;
 }
