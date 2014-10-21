@@ -38,20 +38,17 @@
               {{/script.hasGroups}}
               {{#script.homepages}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.homepages}}
               {{#script.support}}<p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.support}}
-              {{#script.copyrights}}<p><i class="fa fa-fw fa-legal"></i> <b>Copyright:</b> {{name}}</p>{{/script.copyrights}}
+              {{#script.copyrights}}<p><i class="fa fa-fw fa-copyright"></i> <b>Copyright:</b> {{name}}</p>{{/script.copyrights}}
               {{#script.licenses}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{name}}</p>{{/script.licenses}}
               {{#hasCollab}}
               <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>
               {{/hasCollab}}
               {{#script.isFork}}
-                <p><b>Fork History:</b></p>
+                <p><i class="octicon octicon-fw octicon-repo-forked"></i> <b>Fork History:</b></p>
                 <ul>
                 {{#script.fork}}
                   <li>
-                    <span class="page-heading-icon hidden-xs">
-                      <i class="fa fa-fw fa-code-fork"></i>
-                    </span>
-                    <a href="/scripts/{{{url}}">{{url}}</a>
+                    <a href="/{{#script.isLib}}libs{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}/{{{url}}">{{url}}</a>
                   </li>
                 {{/script.fork}}
                 </ul>

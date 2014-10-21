@@ -19,10 +19,10 @@
           <h2><i class="fa fa-tags"></i> Script Metadata</h2>
           <div class="panel panel-default">
             <div class="panel-body">
-              <p>You can read about most userscript metadata blocks on the <a href="http://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge wiki</a>.</p>
+              <p>You can read about most UserScript metadata blocks on the <a href="http://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge wiki</a>.</p>
             </div>
           </div>
-          <h3>OpenUserJS.org Specific</h3>
+          <h3>OpenUserJS.org Supported</h3>
           <div class="list-group script-metadata-definitions">
             <div class="list-group-item active">
               <h4 class="list-group-item-heading"><code>@description This script even does the laundry!</code></h4>
@@ -71,8 +71,8 @@
           <h2><i class="fa fa-question"></i> Library Docs</h2>
           <div class="panel panel-default">
             <div class="panel-body">
-              <h3>OpenUserJS.org Specific</h3>
-              <p>Any UserScript on OpenUserJS.org that <code>//@require</code>'s libraries also on OpenUserJS.org will link to the library on the UserScript page.</p>
+              <h3>OpenUserJS.org Supported</h3>
+              <p>Any <a href="/about/Userscript-Beginners-HOWTO#what-is-a-userscript-">UserScript</a> on OpenUserJS.org that <code>//@require</code>'s libraries from OpenUserJS.org will link to the library on the UserScript page.</p>
             </div>
           </div>
           {{/newJSLibrary}}
@@ -80,14 +80,20 @@
         <div class="col-md-4">
           <h2><i class="fa fa-plus-square"></i> New Script</h2>
           <div class="list-group">
-            <a href="{{{newScriptEditorPageUrl}}}" class="list-group-item">
-              <h4 class="list-group-item-heading">Write Script Online</h4>
+            <a href="/about/Userscript-Beginners-HOWTO" class="list-group-item">
+              <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-eye"></i> UserScript Beginners HOWTO</h4>
               <p class="list-group-item-text">
-                Click here to write a script using the Ace editor (used by GitHub).
+                Are you new to {{#newJSLibrary}}library {{/newJSLibrary}}{{^newJSLibrary}}user {{/newJSLibrary}} scripting and thought you would just dive right in without reading anything? Well if you change your mind check out some of our documentation by clicking here. Special thanks go out to all of our collaborators for all their dedication and effort.
+              </p>
+            </a>
+            <a href="{{{newScriptEditorPageUrl}}}" class="list-group-item">
+              <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-pencil"></i> Write Script Online</h4>
+              <p class="list-group-item-text">
+                Click here to write a script using the Ace editor <em>(used by GitHub)</em>.
               </p>
             </a>
             <div class="list-group-item">
-              <h4 class="list-group-item-heading">Upload Script</h4>
+              <h4 class="list-group-item-heading"><i class="fa fa-fw fa-upload"></i> Upload Script</h4>
               <p class="list-group-item-text">
                 <form action="{{{uploadNewScriptPageUrl}}}" method="post" enctype="multipart/form-data" class="form-horizontal">
                   <input type="hidden" name="uploadScript" value="true">
@@ -108,15 +114,15 @@
               </p>
             </div>
             <div class="list-group-item">
-              <h4 class="list-group-item-heading">Fork An Existing Script</h4>
+              <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-repo-forked"></i> Fork An Existing Script</h4>
               <p class="list-group-item-text">
                 While logged in, click the fork button on any script's main page, or view a script's source and "Submit As Fork".
               </p>
             </div>
             <a href="{{{authedUser.userGitHubRepoListPageUrl}}}" class="list-group-item">
-              <h4 class="list-group-item-heading">Import Script from GitHub</h4>
+              <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-repo-clone"></i> Import Script from GitHub</h4>
               <p class="list-group-item-text">
-                Click here import a script(s) from a GitHub repository.
+                Click here to import a script<em>(s)</em> from a GitHub repository.
               </p>
             </a>
           </div>
@@ -125,7 +131,7 @@
           <h2><i class="fa fa-refresh"></i> Sync Script</h2>
           <div class="panel panel-default">
             <div class="panel-body">
-              <h3><i class="fa fa-github"></i> GitHub</h3>
+              <h3><i class="octicon octicon-mark-github"></i> GitHub</h3>
               <p>You can add a webhook to a GitHub repository to automatically keep it up to date on OpenUserJS.org.</p>
               <h4>Instructions</h4>
               <p>Firstly you must upload the script to the site. You can <a href="{{{authedUser.userGitHubRepoListPageUrl}}}">Import from Github</a> to speed things up.</p>
@@ -135,7 +141,7 @@
                 <li>Change the Content Type dropdown to <code>application/x-www-form-urlencoded</code></li>
                 <li>Click <code>Add Webhook</code>.</li>
               </ol>
-              <p>After adding the webhook, push a change to github to make sure it's working.</p>
+              <p>After adding the webhook, push a change to GitHub to make sure it's working.</p>
             </div>
           </div>
         </div>

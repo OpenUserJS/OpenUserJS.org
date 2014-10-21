@@ -289,3 +289,12 @@ a.panel-heading {
 .navbar-static-top .navbar-collapse {
   max-height: initial;
 }
+
+.octicon {
+  font-size: inherit;
+}
+
+.octicon-fw {
+  text-align: center;
+  width: 1.28571429em;
+}
