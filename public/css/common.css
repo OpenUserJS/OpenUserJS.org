@@ -295,5 +295,5 @@ a.panel-heading {
 }
 
 .octicon {
-  font-size: 14px;
+  font-size: inherit;
 }
