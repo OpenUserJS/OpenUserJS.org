@@ -293,3 +293,7 @@ a.panel-heading {
 .navbar-static-top .navbar-collapse {
   max-height: initial;
 }
+
+.octicon {
+  font-size: 14px;
+}
