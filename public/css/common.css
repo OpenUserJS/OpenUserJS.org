@@ -297,3 +297,8 @@ a.panel-heading {
 .octicon {
   font-size: inherit;
 }
+
+.octicon-fw {
+  text-align: center;
+  width: 1.28571429em;
+}
