@@ -44,13 +44,10 @@
               <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>
               {{/hasCollab}}
               {{#script.isFork}}
-                <p><b>Fork History:</b></p>
+                <p><i class="octicon octicon-fw octicon-repo-forked"></i> <b>Fork History:</b></p>
                 <ul>
                 {{#script.fork}}
                   <li>
-                    <span class="page-heading-icon hidden-xs">
-                      <i class="octicon octicon-fw octicon-repo-forked"></i>
-                    </span>
                     <a href="/scripts/{{{url}}">{{url}}</a>
                   </li>
                 {{/script.fork}}
