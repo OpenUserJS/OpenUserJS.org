@@ -262,6 +262,7 @@ h6:hover a.anchor {
 .user-content code,
 .document-content code {
   white-space: pre-wrap;
+  word-break: break-all;
 }
 .user-data img,
 .user-content img,
