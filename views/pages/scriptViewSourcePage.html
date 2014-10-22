@@ -32,7 +32,7 @@
               {{/newScript}}
             {{/isLib}}
           </div>
-          <input class="btn btn-success pull-right" type="button" id="submit_code" value="Submit Code{{^owner}} as Fork{{/owner}}" />
+          <button class="btn btn-success pull-right" type="submit" id="submit_code">{{#owner}}<i class="fa fa-fw fa-save"></i>{{/owner}}{{^owner}}<i class="fa fa-fw fa-code-fork"></i>{{/owner}} Submit Code{{^owner}} as Fork{{/owner}}</button>
         </form>
         {{/readOnly}}
       </div>
