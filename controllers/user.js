@@ -723,6 +723,7 @@ exports.newScriptPage = function (aReq, aRes, aNext) {
   options.newUserJS = true;
   options.newScriptEditorPageUrl = '/user/add/scripts/new';
   options.uploadNewScriptPageUrl = '/user/add/scripts/upload';
+  options.maximumUploadScriptSize = settings.maximum_upload_script_size;
 
   // Page metadata
   pageMetadata(options, 'New Script');
@@ -753,6 +754,7 @@ exports.newLibraryPage = function (aReq, aRes, aNext) {
   options.newJSLibrary = true;
   options.newScriptEditorPageUrl = '/user/add/lib/new';
   options.uploadNewScriptPageUrl = '/user/add/lib/upload';
+  options.maximumUploadScriptSize = settings.maximum_upload_script_size;
 
   // Page metadata
   pageMetadata(options, 'New Library');
