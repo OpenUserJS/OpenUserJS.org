@@ -1410,7 +1410,6 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
 exports.editScript = function (aReq, aRes, aNext) {
 
   // TODO: Missing script issue count routine that is in script.js at `getScriptPageTasks()`
-  // TODO: Alignment is slightly off on page heading breadcrumb
   // TODO: Some unused variables sent to render
 
   var authedUser = aReq.session.user;
