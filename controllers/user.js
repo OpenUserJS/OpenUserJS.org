@@ -11,6 +11,7 @@ var Flag = require('../models/flag').Flag;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
+var Discussion = require('../models/discussion').Discussion;
 
 var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
@@ -1408,35 +1409,66 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
 }
 
 exports.editScript = function (aReq, aRes, aNext) {
+
+  // TODO: Some unused variables sent to render
+
   var authedUser = aReq.session.user;
 
-  //
-  var options = {};
-  var tasks = [];
+  var installNameSlug = scriptStorage.getInstallName(aReq);
+  var scriptAuthor = aReq.route.params.username;
+  var scriptNameSlug = aReq.route.params.scriptname;
+  var isLib = aReq.route.params.isLib;
 
-  // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.role < 4;
+  Script.findOne({
+    installName: scriptStorage
+      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
+  }, function (aErr, aScriptData) {
+    //---
+    if (aErr || !aScriptData) { return aNext(); }
 
-  // Page metadata
-  pageMetadata(options);
+    //
+    var options = {};
+    var tasks = [];
 
-  //--- Tasks
+    // Session
+    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.role < 4;
+    options.isAdmin = authedUser && authedUser.role < 3;
 
-  // Get the info and source for an existing script for the editor
-  // Also works for writing a new script
-  tasks.push(function (aCallback) {
-    getExistingScript(aReq, options, authedUser, function (aOpts) {
-      options = aOpts;
-      aCallback(!aOpts);
+    // Script
+    var script = options.script = modelParser.parseScript(aScriptData);
+    options.isOwner = authedUser && authedUser._id == script._authorId;
+    modelParser.renderScript(script);
+    script.installNameSlug = installNameSlug;
+    script.scriptPermalinkInstallPageUrl = 'http://' + aReq.get('host') + script.scriptInstallPageUrl;
+
+    // Page metadata
+    pageMetadata(options);
+
+    options.isScriptViewSourcePage = true;
+
+    //--- Tasks
+
+    // Show the number of open issues
+    var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+        .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
+    tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
+
+    // Get the info and source for an existing script for the editor
+    // Also works for writing a new script
+    tasks.push(function (aCallback) {
+      getExistingScript(aReq, options, authedUser, function (aOpts) {
+        options = aOpts;
+        aCallback(!aOpts);
+      });
     });
-  });
 
-  //---
-  async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+    //---
+    async.parallel(tasks, function (aErr) {
+      if (aErr) return aNext();
 
-    aRes.render('pages/scriptViewSourcePage', options);
+      aRes.render('pages/scriptViewSourcePage', options);
+    });
   });
 };
 
