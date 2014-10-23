@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /css/
+Disallow: /dist/
+Disallow: /fonts/
+Disallow: /js/
+Disallow: /redist/
