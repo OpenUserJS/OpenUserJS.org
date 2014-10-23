@@ -11,6 +11,7 @@ var Flag = require('../models/flag').Flag;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
+var Discussion = require('../models/discussion').Discussion;
 
 var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
@@ -1409,7 +1410,6 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
 
 exports.editScript = function (aReq, aRes, aNext) {
 
-  // TODO: Missing script issue count routine that is in script.js at `getScriptPageTasks()`
   // TODO: Some unused variables sent to render
 
   var authedUser = aReq.session.user;
@@ -1448,6 +1448,11 @@ exports.editScript = function (aReq, aRes, aNext) {
     options.isScriptViewSourcePage = true;
 
     //--- Tasks
+
+    // Show the number of open issues
+    var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+        .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
+    tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
     // Get the info and source for an existing script for the editor
     // Also works for writing a new script
