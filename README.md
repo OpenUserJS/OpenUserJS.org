@@ -2,6 +2,11 @@
 
 An open source user scripts repo built using Node.js
 
+Repository | Reference | Recent Version
+:--- | :---: | :---
+[node][nodeGHUrl] | [Documentation][nodeDOCUrl] | [![node][nodeVersionImage]][nodeDLUrl] [CHANGELOG][nodeGHReleasesUrl]
+[npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
+
 ### Contributing
 
 * [CONTRIBUTING.md][contributing]
@@ -77,6 +82,19 @@ Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
 
 
+[nodeDLUrl]: http://nodejs.org/download/
+[nodeGHUrl]: https://github.com/joyent/node
+[nodeGHReleasesUrl]: https://github.com/joyent/node/releases
+[nodeDOCUrl]: http://nodejs.org/documentation/
+[nodeVersionImage]: http://img.shields.io/node/v/gh-badges.svg
+
+[npmNPMUrl]: https://www.npmjs.org/package/npm
+[npmNPMVersionImage]: http://img.shields.io/npm/v/npm.svg
+[npmGHReleasesUrl]: https://github.com/npm/npm/releases
+[npmGHUrl]: https://github.com/npm/npm/
+[npmDOCUrl]: https://github.com/npm/npm/blob/master/README.md
+
+
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
 [davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
 
@@ -103,7 +121,7 @@ Repository | Reference | Recent Version | Referenced
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
 
 [fakes3GHUrl]: https://github.com/jubos/fake-s3
-[fakes3DOCUrl]: https://github.com/jubos/fake-s3/wiki
+[fakes3DOCUrl]: http://www.rubydoc.info/gems/fakes3
 [fakes3GEMUrl]: http://rubygems.org/gems/fakes3
 [fakes3GEMVersionImage]: http://img.shields.io/gem/v/fakes3.svg?style=flat
 
