@@ -63,4 +63,9 @@ module.exports = function (aApp) {
     'select2x2.png': { maxage: day * 30 },
     'select2-spinner.gif': { maxage: day * 30 }
   });
+
+  serveModule('/redist/npm', 'select2-bootstrap-css', {
+    'select2-bootstrap.css': { maxage: day * 1 }
+  });
+
 }

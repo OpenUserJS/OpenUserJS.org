@@ -40,6 +40,7 @@
     "request": "2.45.0",
     "sanitize-html": "1.4.3",
     "select2": "3.5.1",
+    "select2-bootstrap-css": "git://github.com/t0m/select2-bootstrap-css#fce5f9f",
     "underscore": "1.7.0"
   },
   "repository": {
