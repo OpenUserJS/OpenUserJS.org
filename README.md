@@ -62,6 +62,7 @@ Repository | Reference | Recent Version
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
+[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [1.4.1 fce5f9f][select2-bootstrap-cssGHHASHUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 
 
@@ -73,7 +74,6 @@ Repository | Reference | Recent Version | Stored
 [bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
 [Octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.1.2][OcticonsUrl] | 2.1.2
-[select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssGHHASHUrl] | 1.4.1 [fce5f9f][select2-bootstrap-cssGHHASHUrl]
 
 
 ##### CDN
