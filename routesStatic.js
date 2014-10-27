@@ -53,7 +53,16 @@ module.exports = function (aApp) {
   });
 
   serveModule('/redist/npm', 'marked', {
-    'lib/marked.js': { maxage: day * 1 },
+    'lib/marked.js': { maxage: day * 1 }
+  });
+
+  serveModule('/redist/npm', 'octicons', {
+    'octicons/octicons.css': { maxage: day * 1 },
+    'octicons/octicons-local.ttf': { maxage: day * 7 },
+    'octicons/octicons.eot': { maxage: day * 7 },
+    'octicons/octicons.svg': { maxage: day * 7 },
+    'octicons/octicons.ttf': { maxage: day * 7 },
+    'octicons/octicons.woff': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm', 'select2', {
