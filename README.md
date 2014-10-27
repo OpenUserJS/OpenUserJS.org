@@ -41,6 +41,7 @@ Repository | Reference | Recent Version
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
+[Octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.1.2 835ee02][OcticonsGHHASHUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
 [passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl]
 [passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
@@ -73,7 +74,6 @@ Repository | Reference | Recent Version | Stored
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 10 09 | 2014 10 09
 [bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
-[Octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.1.2][OcticonsUrl] | 2.1.2
 
 
 ##### CDN
@@ -159,6 +159,11 @@ Repository | Reference | Recent Version | Referenced
 [mu2DOCUrl]: https://github.com/raycmorgan/Mu/blob/master/README.md
 [mu2NPMUrl]: https://www.npmjs.org/package/mu2
 [mu2NPMVersionImage]: https://img.shields.io/npm/v/mu2.svg?style=flat
+
+[OcticonsUrl]: https://octicons.github.com/
+[OcticonsGHUrl]: https://github.com/github/octicons
+[OcticonsDOCUrl]: https://octicons.github.com/usage/
+[OcticonsGHHASHUrl]: https://github.com/github/octicons/tree/835ee0274fbbd74204df20791564ef997aabcf72
 
 [passportGHUrl]: https://github.com/jaredhanson/passport
 [passportDOCUrl]: http://passportjs.org/
@@ -260,10 +265,16 @@ Repository | Reference | Recent Version | Referenced
 [sanitize-htmlNPMUrl]: https://npmjs.org/package/sanitize-html
 [sanitize-htmlNPMVersionImage]: https://img.shields.io/npm/v/sanitize-html.svg?style=flat
 
+[select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/select2-bootstrap.css
+[select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/README.md
+[select2-bootstrap-cssGHHASHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/select2-bootstrap.css
+
 [underscoreGHUrl]: https://github.com/jashkenas/underscore
 [underscoreDOCUrl]: http://underscorejs.org/
 [underscoreNPMUrl]: https://npmjs.org/package/underscore
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
+
+
 
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
@@ -284,10 +295,6 @@ Repository | Reference | Recent Version | Referenced
 [jQueryUrl]: http://jquery.com/
 [jQueryDOCUrl]: http://api.jquery.com/
 
-[OcticonsUrl]: https://octicons.github.com/
-[OcticonsGHUrl]: https://github.com/github/octicons
-[OcticonsDOCUrl]: https://octicons.github.com/usage/
-
 [normalizeGHUrl]: https://github.com/necolas/normalize.css
 [normalizeDOCUrl]: http://git.io/normalize
 
@@ -306,10 +313,6 @@ Repository | Reference | Recent Version | Referenced
 [bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
 [bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
-
-[select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/select2-bootstrap.css
-[select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/README.md
-[select2-bootstrap-cssGHHASHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/select2-bootstrap.css
 
 
 [styleguide]: STYLEGUIDE.md
