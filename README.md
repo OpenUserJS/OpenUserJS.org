@@ -255,8 +255,8 @@ Repository | Reference | Recent Version | Referenced
 [passport-yahooNPMUrl]: https://npmjs.org/package/passport-yahoo
 [passport-yahooNPMVersionImage]: https://img.shields.io/npm/v/passport-yahoo.svg?style=flat
 
-[requestGHUrl]: https://github.com/mikeal/request
-[requestDOCUrl]: https://github.com/mikeal/request/blob/master/README.md
+[requestGHUrl]: https://github.com/request/request
+[requestDOCUrl]: https://github.com/request/request/blob/master/README.md
 [requestNPMUrl]: https://npmjs.org/package/request
 [requestNPMVersionImage]: https://img.shields.io/npm/v/request.svg?style=flat
 
