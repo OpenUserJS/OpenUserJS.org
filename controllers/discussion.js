@@ -349,7 +349,7 @@ function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aCallback) {
 
   if (!urlTopic) { aCallback(null); }
 
-  Discussion.findOne({ path: path }, params, function (aErr, aDiscussion) {
+  Discussion.findOne({ path: path }, null, params, function (aErr, aDiscussion) {
     var newDiscussion = null;
     var props = {
       topic: aTopic,
