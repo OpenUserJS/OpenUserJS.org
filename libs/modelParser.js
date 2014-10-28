@@ -334,7 +334,7 @@ var parseDiscussion = function (aDiscussionData) {
   // Replies
   discussion.replies = (discussion.comments && discussion.comments > 0) ? discussion.comments - 1 : 0;
 
-  //discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
+  discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
   return discussion;
 };
