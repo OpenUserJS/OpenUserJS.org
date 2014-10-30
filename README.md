@@ -41,7 +41,7 @@ Repository | Reference | Recent Version
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
-[Octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.1.2 835ee02][OcticonsGHHASHUrl]
+[octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.1.2 835ee02][OcticonsGHHASHUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
 [passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl]
 [passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
@@ -71,7 +71,7 @@ Repository | Reference | Recent Version
 
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
-[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 2014 10 09 | 2014 10 09
+[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 1.1.7 *(2014 10 09) | 1.1.7 *(2014 10 09)
 [bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
 
