@@ -71,7 +71,7 @@ Repository | Reference | Recent Version
 
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
-[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 1.1.7 *(2014 10 09) | 1.1.7 *(2014 10 09)
+[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 1.1.7 *(2014 10 09)* | 1.1.7 *(2014 10 09)*
 [bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
 [jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
 
