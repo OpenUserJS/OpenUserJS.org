@@ -37,6 +37,7 @@ Repository | Reference | Recent Version
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
+[jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
@@ -73,7 +74,6 @@ Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
 [ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 1.1.7 *(2014 10 09)* | 1.1.7 *(2014 10 09)*
 [bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
-[jQuery][jQueryUrl] | [Documentation][jQueryDOCUrl] | 2.1.1 | 2.1.1
 
 
 ##### CDN
@@ -110,6 +110,17 @@ Repository | Reference | Recent Version | Referenced
 [aws-sdkNPMUrl]: https://npmjs.org/package/aws-sdk
 [aws-sdkNPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
 
+[bootstrapUrl]: http://getbootstrap.com/
+[bootstrapGHUrl]: https://github.com/twbs/bootstrap
+[bootstrapDOCUrl]: http://getbootstrap.com/components/
+[bootstrapNPMUrl]: https://www.npmjs.org/package/bootstrap
+[bootstrapNPMVersionImage]: https://img.shields.io/npm/v/bootstrap.svg?style=flat
+
+[bootstrap-markdownGHUrl]: https://github.com/toopay/bootstrap-markdown
+[bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
+[bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
+[bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
+
 [connect-mongoGHUrl]: https://github.com/kcbanner/connect-mongo
 [connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/Readme.md
 [connect-mongoNPMUrl]: https://npmjs.org/package/connect-mongo
@@ -125,6 +136,11 @@ Repository | Reference | Recent Version | Referenced
 [fakes3GEMUrl]: http://rubygems.org/gems/fakes3
 [fakes3GEMVersionImage]: http://img.shields.io/gem/v/fakes3.svg?style=flat
 
+[font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
+[font-awesomeDOCUrl]: http://fontawesome.io/
+[font-awesomeNPMUrl]: https://npmjs.org/package/font-awesome
+[font-awesomeNPMVersionImage]: https://img.shields.io/npm/v/font-awesome.svg?style=flat
+
 [formidableGHUrl]: https://github.com/felixge/node-formidable
 [formidableDOCUrl]: https://github.com/felixge/node-formidable/blob/master/Readme.md
 [formidableNPMUrl]: https://npmjs.org/package/formidable
@@ -139,6 +155,12 @@ Repository | Reference | Recent Version | Referenced
 [highlight.jsDOCUrl]: https://highlightjs.org/
 [highlight.jsNPMUrl]: https://npmjs.org/package/highlight.js
 [highlight.jsNPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
+
+[jQueryNPMUrl]: https://www.npmjs.org/package/jquery
+[jQueryNPMVersionImage]: https://img.shields.io/npm/v/jquery.svg?style=flat
+[jQueryGHUrl]: https://github.com/jquery/jquery
+[jQueryUrl]: http://jquery.com/
+[jQueryDOCUrl]: http://api.jquery.com/
 
 [markedGHUrl]: https://github.com/chjj/marked
 [markedDOCUrl]: https://github.com/chjj/marked/blob/master/README.md
@@ -265,6 +287,11 @@ Repository | Reference | Recent Version | Referenced
 [sanitize-htmlNPMUrl]: https://npmjs.org/package/sanitize-html
 [sanitize-htmlNPMVersionImage]: https://img.shields.io/npm/v/sanitize-html.svg?style=flat
 
+[select2GHUrl]: https://github.com/ivaynberg/select2
+[select2DOCUrl]: http://ivaynberg.github.io/select2
+[select2NPMUrl]: https://www.npmjs.org/package/select2
+[select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
+
 [select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/select2-bootstrap.css
 [select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/README.md
 [select2-bootstrap-cssGHHASHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/select2-bootstrap.css
@@ -287,32 +314,8 @@ Repository | Reference | Recent Version | Referenced
 [bootswatchDOCUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/README.md
 [bootswatchBSUrl]: http://bootswatch.com/bower_components/bootstrap/dist/css/bootstrap.css
 
-[font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
-[font-awesomeDOCUrl]: http://fontawesome.io/
-[font-awesomeNPMUrl]: https://npmjs.org/package/font-awesome
-[font-awesomeNPMVersionImage]: https://img.shields.io/npm/v/font-awesome.svg?style=flat
-
-[jQueryUrl]: http://jquery.com/
-[jQueryDOCUrl]: http://api.jquery.com/
-
 [normalizeGHUrl]: https://github.com/necolas/normalize.css
 [normalizeDOCUrl]: http://git.io/normalize
-
-[select2GHUrl]: https://github.com/ivaynberg/select2
-[select2DOCUrl]: http://ivaynberg.github.io/select2
-[select2NPMUrl]: https://www.npmjs.org/package/select2
-[select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
-
-[bootstrapUrl]: http://getbootstrap.com/
-[bootstrapGHUrl]: https://github.com/twbs/bootstrap
-[bootstrapDOCUrl]: http://getbootstrap.com/components/
-[bootstrapNPMUrl]: https://www.npmjs.org/package/bootstrap
-[bootstrapNPMVersionImage]: https://img.shields.io/npm/v/bootstrap.svg?style=flat
-
-[bootstrap-markdownGHUrl]: https://github.com/toopay/bootstrap-markdown
-[bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
-[bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
-[bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
 
 
 [styleguide]: STYLEGUIDE.md
