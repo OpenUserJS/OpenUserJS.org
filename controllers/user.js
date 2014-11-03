@@ -1356,7 +1356,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
 function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
   aOptions.isLib = aReq.route.params.isLib;
 
-  if (!aReq.route.params.scriptname) {
+  if (aReq.route.params.isNew) {
 
     // A user who isn't logged in can't write a new script
     if (!aAuthedUser) { return aCallback(null); }
@@ -1410,66 +1410,81 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
 
 exports.editScript = function (aReq, aRes, aNext) {
 
-  // TODO: Some unused variables sent to render
-
   var authedUser = aReq.session.user;
 
-  var installNameSlug = scriptStorage.getInstallName(aReq);
-  var scriptAuthor = aReq.route.params.username;
-  var scriptNameSlug = aReq.route.params.scriptname;
+  var isNew = aReq.route.params.isNew;
   var isLib = aReq.route.params.isLib;
 
-  Script.findOne({
-    installName: scriptStorage
-      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
-  }, function (aErr, aScriptData) {
-    //---
-    if (aErr || !aScriptData) { return aNext(); }
+  //
+  var options = {};
+  var tasks = [];
 
-    //
-    var options = {};
-    var tasks = [];
+  var installNameSlug = null;
+  var scriptAuthor = null;
+  var scriptNameSlug = null;
 
-    // Session
-    authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.role < 4;
-    options.isAdmin = authedUser && authedUser.role < 3;
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.role < 4;
+  options.isAdmin = authedUser && authedUser.role < 3;
 
-    // Script
-    var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
-    modelParser.renderScript(script);
-    script.installNameSlug = installNameSlug;
-    script.scriptPermalinkInstallPageUrl = 'http://' + aReq.get('host') + script.scriptInstallPageUrl;
+  //--- Tasks
 
-    // Page metadata
-    pageMetadata(options);
+  // Get the info and source for an existing script for the editor
+  // Also works for writing a new script
+  tasks.push(function (aCallback) {
+    getExistingScript(aReq, options, authedUser, function (aOpts) {
+      options = aOpts;
+      aCallback(!aOpts);
+    });
+  });
 
-    options.isScriptViewSourcePage = true;
+  if (!isNew) {
+    installNameSlug = scriptStorage.getInstallName(aReq);
+    scriptAuthor = aReq.route.params.username;
+    scriptNameSlug = aReq.route.params.scriptname;
 
-    //--- Tasks
+    Script.findOne({
+      installName: scriptStorage
+        .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
+    }, function (aErr, aScriptData) {
+      //---
+      if (aErr || !aScriptData) { return aNext(); }
 
-    // Show the number of open issues
-    var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
-        .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
-    tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
+      // Script
+      var script = options.script = modelParser.parseScript(aScriptData);
+      options.isOwner = authedUser && authedUser._id == script._authorId;
+      modelParser.renderScript(script);
+      script.installNameSlug = installNameSlug;
+      script.scriptPermalinkInstallPageUrl = 'http://' + aReq.get('host') + script.scriptInstallPageUrl;
 
-    // Get the info and source for an existing script for the editor
-    // Also works for writing a new script
-    tasks.push(function (aCallback) {
-      getExistingScript(aReq, options, authedUser, function (aOpts) {
-        options = aOpts;
-        aCallback(!aOpts);
+      // Page metadata
+      pageMetadata(options);
+
+      options.isScriptViewSourcePage = true;
+
+      //--- Tasks
+
+      // Show the number of open issues
+      var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+          .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
+      tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
+
+      //---
+      async.parallel(tasks, function (aErr) {
+        if (aErr) return aNext();
+
+        aRes.render('pages/scriptViewSourcePage', options);
       });
     });
-
+  } else {
     //---
     async.parallel(tasks, function (aErr) {
       if (aErr) return aNext();
 
       aRes.render('pages/scriptViewSourcePage', options);
     });
-  });
+  }
 };
 
 // route to flag a user
