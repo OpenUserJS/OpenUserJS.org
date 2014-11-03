@@ -21,7 +21,15 @@ var modelParser = require('../libs/modelParser');
 var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
-// Let script controllers know this is a lib route
+// Let controllers know this is a `new` route
+exports.new = function (aController) {
+  return (function (aReq, aRes, aNext) {
+    aReq.route.params.isNew = true;
+    aController(aReq, aRes, aNext);
+  });
+};
+
+// Let controllers know this is a `lib` route
 exports.lib = function (aController) {
   return (function (aReq, aRes, aNext) {
     aReq.route.params.isLib = true;

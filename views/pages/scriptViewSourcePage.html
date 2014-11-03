@@ -7,7 +7,7 @@
     #editor {
       position: relative;
       min-height: 200px;
-      height: calc(100vh - 303px);
+      height: calc(100vh - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}}px);
     }
    .path-divider {
       margin: 0 .25em;
@@ -20,7 +20,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        {{> includes/scriptPageHeader.html }}
+        {{^newScript}}{{> includes/scriptPageHeader.html }}{{/newScript}}
         <pre id="editor">{{source}}</pre>
         {{^readOnly}}
         <form action="{{#isLib}}/user/add/lib/new{{/isLib}}{{^isLib}}/user/add/scripts/new{{/isLib}}" id="code_form" method="post">
