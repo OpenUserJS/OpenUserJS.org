@@ -323,7 +323,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         if (!aScript.isLib) {
           if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author != aMeta.oujs.author
               || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !=
-             JSON.stringify(meta.oujs.collaborator)))) {
+             JSON.stringify(aMeta.oujs.collaborator)))) {
             return aCallback(null);
           }
           aScript.meta = aMeta;
