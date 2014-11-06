@@ -24,7 +24,7 @@ var momentLangFromNow = function (aDate) {
   return '[' + aDate.fromNow() + ']';
 };
 var momentLangTinyDate = function (aDate) {
-  if(aDate.year() === moment().year()) {
+  if (aDate.year() === moment().year()) {
     return '[' + aDate.format("D MMM") + ']';
   } else {
     return '[' + aDate.format("MMM 'YY") + ']';
@@ -102,7 +102,7 @@ var getScriptInstallPageUrl = function (aScript) {
 
 //
 var parseScript = function (aScriptData) {
-  if (!aScriptData) return;
+  if (!aScriptData) { return; }
   var script = aScriptData.toObject ? aScriptData.toObject() : aScriptData;
 
   // Temporaries
@@ -134,19 +134,19 @@ var parseScript = function (aScriptData) {
       htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         script.support = [{
-          url: script.meta.supportURL,
-          text: decodeURI(script.meta.supportURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL)
-        }];
+            url: script.meta.supportURL,
+            text: decodeURI(script.meta.supportURL),
+            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL)
+          }];
       }
     } else if (_.isArray(script.meta.supportURL) && !_.isEmpty(script.meta.supportURL)) {
       htmlStub = '<a href="' + script.meta.supportURL[script.meta.supportURL.length - 1] + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         script.support = [{
-          url:  script.meta.supportURL[script.meta.supportURL.length - 1],
-          text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]),
-          hasNoFollow:  !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL[script.meta.supportURL.length - 1])
-        }];
+            url: script.meta.supportURL[script.meta.supportURL.length - 1],
+            text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]),
+            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL[script.meta.supportURL.length - 1])
+          }];
       }
     }
   }
@@ -208,7 +208,7 @@ parseModelFnMap.Script = parseScript;
 exports.parseScript = parseScript;
 
 exports.renderScript = function (aScript) {
-  if (!aScript) return;
+  if (!aScript) { return; }
   aScript.aboutRendered = renderMd(aScript.about);
 };
 
@@ -218,7 +218,7 @@ exports.renderScript = function (aScript) {
 
 //
 var parseUser = function (aUserData) {
-  if (!aUserData) return;
+  if (!aUserData) { return; }
   // var user = aUserData.toObject ? aUserData.toObject() : aUserData;
 
   // Intermediates
@@ -265,7 +265,7 @@ exports.parseUser = parseUser;
 
 //
 var parseGroup = function (aGroupData) {
-  if (!aGroupData) return;
+  if (!aGroupData) { return; }
   // var group = aGroupData.toObject ? aGroupData.toObject() : aGroupData;
 
   // Intermediates
@@ -307,7 +307,7 @@ exports.parseGroup = parseGroup;
 
 //
 var parseDiscussion = function (aDiscussionData) {
-  if (!aDiscussionData) return;
+  if (!aDiscussionData) { return; }
   var discussion = aDiscussionData.toObject ? aDiscussionData.toObject() : aDiscussionData;
   // var discussion = aDiscussionData; // Can't override discussionData.category
 
@@ -320,10 +320,12 @@ var parseDiscussion = function (aDiscussionData) {
 
   // RecentCommentors
   var recentCommentors = [];
-  if (discussion.author)
+  if (discussion.author) {
     recentCommentors.push(discussion.author);
-  if (discussion.lastCommentor != discussion.author)
+  }
+  if (discussion.lastCommentor != discussion.author) {
     recentCommentors.push(discussion.lastCommentor);
+  }
   recentCommentors = _.map(recentCommentors, function (aUsername) {
     return {
       name: aUsername
@@ -342,14 +344,13 @@ parseModelFnMap.Discussion = parseDiscussion;
 exports.parseDiscussion = parseDiscussion;
 
 var parseIssue = function (aDiscussionData) {
-  if (!aDiscussionData) return;
+  if (!aDiscussionData) { return; }
   var discussion = aDiscussionData.toObject ? aDiscussionData.toObject() : aDiscussionData;
 
   discussion.issue = true;
   discussion.open = (discussion.open === undefined || discussion.open === null) ? true : discussion.open;
   discussion.issueCloseUrl = discussion.path + '/close';
   discussion.issueOpenUrl = discussion.path + '/reopen';
-
 
   return discussion;
 };
@@ -362,7 +363,7 @@ exports.parseIssue = parseIssue;
 
 //
 var parseComment = function (aCommentData) {
-  if (!aCommentData) return;
+  if (!aCommentData) { return; }
   var comment = aCommentData.toObject ? aCommentData.toObject() : aCommentData;
 
   // Dates
@@ -374,7 +375,7 @@ parseModelFnMap.Comment = parseComment;
 exports.parseComment = parseComment;
 
 exports.renderComment = function (aComment) {
-  if (!aComment) return;
+  if (!aComment) { return; }
   aComment.contentRendered = renderMd(aComment.content);
 };
 
@@ -384,11 +385,13 @@ exports.renderComment = function (aComment) {
 
 var canUserPostTopicToCategory = function (aUser, aCategory) {
   // Check if user is logged in.
-  if (_.isUndefined(aUser) || _.isNull(aUser))
+  if (_.isUndefined(aUser) || _.isNull(aUser)) {
     return false; // Not logged in.
+  }
 
   // Check if this category requires a minimum role to post topics.
-  console.log(aCategory.roleReqToPostTopic, _.isNumber(aCategory.roleReqToPostTopic), aUser.role, aUser.role <= aCategory.roleReqToPostTopic)
+  console.log(aCategory.roleReqToPostTopic, _.isNumber(aCategory.roleReqToPostTopic), aUser.role,
+    aUser.role <= aCategory.roleReqToPostTopic);
   if (_.isNumber(aCategory.roleReqToPostTopic)) {
     return aUser.role <= aCategory.roleReqToPostTopic;
   } else {
@@ -399,7 +402,7 @@ var canUserPostTopicToCategory = function (aUser, aCategory) {
 
 //
 var parseCategory = function (aCategoryData) {
-  if (!aCategoryData) return;
+  if (!aCategoryData) { return; }
   var category = aCategoryData.toObject ? aCategoryData.toObject() : aCategoryData;
 
   // Urls
@@ -421,8 +424,9 @@ exports.parseCategory = parseCategory;
  */
 
 var getRemovedItemDescription = function (aRemove) {
-  if (!aRemove.content)
+  if (!aRemove.content) {
     return 'No content';
+  }
 
   switch (aRemove.model) {
     case 'User':
@@ -440,7 +444,7 @@ var getRemovedItemDescription = function (aRemove) {
 
 //
 var parseRemovedItem = function (aRemovedItemData) {
-  if (!aRemovedItemData) return;
+  if (!aRemovedItemData) { return; }
   var removedItem = aRemovedItemData;
 
   // Dates
@@ -451,8 +455,9 @@ var parseRemovedItem = function (aRemovedItemData) {
 
   // Content
   var parseModelFn = parseModelFnMap[removedItem.model];
-  if (parseModelFn && removedItem.content)
+  if (parseModelFn && removedItem.content) {
     removedItem.content = parseModelFn(removedItem.content);
+  }
 
   // Item
   removedItem.itemDescription = getRemovedItemDescription(removedItem);

@@ -5,10 +5,12 @@ var passport = require('passport');
 var nil = require('../libs/helpers').nil;
 
 var AUTH_CALLBACK_BASE_URL = 'http://localhost:' + (process.env.PORT || 8080);
-if (process.env.NODE_ENV === 'production')
+if (process.env.NODE_ENV === 'production') {
   AUTH_CALLBACK_BASE_URL = 'https://openuserjs.org';
-if (process.env.AUTH_CALLBACK_BASE_URL)
+}
+if (process.env.AUTH_CALLBACK_BASE_URL) {
   AUTH_CALLBACK_BASE_URL = process.env.AUTH_CALLBACK_BASE_URL;
+}
 
 exports.strategyInstances = nil();
 
@@ -28,7 +30,8 @@ exports.loadPassport = function (aStrategy) {
         profile: false,
         stateless: true
       },
-      function () { } // we replace this callback later (_verify)
+      function ()
+      { } // we replace this callback later (_verify)
     );
   } else {
     instance = new PassportStrategy(
@@ -40,7 +43,8 @@ exports.loadPassport = function (aStrategy) {
         state: 'a bullshit string reddit requires',
         callbackURL: AUTH_CALLBACK_BASE_URL + '/auth/' + aStrategy.name + '/callback/'
       },
-      function () { } // we replace this callback later (_verify)
+      function ()
+      { } // we replace this callback later (_verify)
     );
   }
 

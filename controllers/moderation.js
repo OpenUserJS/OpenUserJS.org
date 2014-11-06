@@ -88,7 +88,7 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
 
   //---
   async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+    if (aErr) { return aNext(); }
 
     //--- PreRender
     // removedItemList

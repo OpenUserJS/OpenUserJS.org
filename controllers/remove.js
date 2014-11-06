@@ -25,15 +25,15 @@ exports.rm = function (aReq, aRes, aNext) {
     case 'users':
       User.findOne({ name: { $regex: new RegExp('^' + path + '$', "i") } },
         function (aErr, aUser) {
-          removeLib.remove(User, aUser, thisUser, '', function (aRemoved) {
-            if (!aRemoved) { return aNext(); }
+        removeLib.remove(User, aUser, thisUser, '', function (aRemoved) {
+          if (!aRemoved) { return aNext(); }
 
-            // Destory all the sessions belonging to the removed user
-            destroySessions(aReq, aUser, function () {
-              aRes.redirect('/');
-            });
+          // Destory all the sessions belonging to the removed user
+          destroySessions(aReq, aUser, function () {
+            aRes.redirect('/');
           });
         });
+      });
       break;
     default:
       aNext();

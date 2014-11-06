@@ -28,7 +28,7 @@ exports.example = function (aReq, aRes, aNext) {
   var tasks = [];
 
   //---
-  function preRender() { };
+  function preRender() { }
   function render() { aRes.render('pages/_templatePage', options); }
   function asyncComplete() { preRender(); render(); }
 
@@ -57,7 +57,7 @@ exports.example = function (aReq, aRes, aNext) {
   function preRender() {
     // Pagination
     options.paginationRendered = pagination.renderDefault(aReq);
-  };
+  }  ;
   function render() { aRes.render('pages/_templatePage', options); }
   function asyncComplete() { preRender(); render(); }
 
@@ -76,8 +76,9 @@ exports.example = function (aReq, aRes, aNext) {
   scriptListQuery.find({ isLib: false });
 
   // Scripts: Query: Search
-  if (aReq.query.q)
+  if (aReq.query.q) {
     modelQuery.parseScriptSearchQuery(scriptListQuery, aReq.query.q);
+  }
 
   // Scripts: Query: Sort
   modelQuery.parseModelListSort(scriptListQuery, aReq.query.orderBy, aReq.query.orderDir, function () {
@@ -108,4 +109,3 @@ exports.example = function (aReq, aRes, aNext) {
   //---
   async.parallel(tasks, asyncComplete);
 };
-

@@ -25,7 +25,6 @@ exports.view = function (aReq, aRes, aNext) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-
   if (document) {
     documentPath = 'views/includes/documents';
 
@@ -90,10 +89,9 @@ exports.view = function (aReq, aRes, aNext) {
             aCallback(null);
           });
         }
-      ], aCallback)
+      ], aCallback);
     });
-  }
-  else {
+  } else {
     // Page metadata
     pageMetadata(options, ['About', 'About']);
 
@@ -118,7 +116,7 @@ exports.view = function (aReq, aRes, aNext) {
       return statusCodePage(aReq, aRes, aNext, {
         statusCode: aErr.statusCode,
         statusMessage: aErr.statusMessage
-      })
+      });
     }
 
     aRes.render('pages/documentPage', options);

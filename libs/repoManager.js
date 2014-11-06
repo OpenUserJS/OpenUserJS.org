@@ -29,17 +29,18 @@ function fetchRaw(aHost, aPath, aCallback) {
     headers: { 'User-Agent': 'Node.js' }
   };
 
-  var req = https.request(options,
-    function (aRes) {
-      var bufs = [];
-      if (aRes.statusCode != 200) { console.log(aRes.statusCode); return aCallback([new Buffer('')]); }
-      else {
-        aRes.on('data', function (aD) { bufs.push(aD); }); // TODO: Non-descript function parm
-        aRes.on('end', function () {
-          aCallback(bufs);
-        });
-      }
-    });
+  var req = https.request(options, function (aRes) {
+    var bufs = [];
+    if (aRes.statusCode != 200) {
+      console.log(aRes.statusCode); return aCallback([new Buffer('')]);
+    } else {
+      aRes.on('data', function (aD)
+      { bufs.push(aD); }); // TODO: Non-descript function parm
+      aRes.on('end', function () {
+        aCallback(bufs);
+      });
+    }
+  });
   req.end();
 }
 
@@ -101,8 +102,7 @@ RepoManager.prototype.loadScripts = function (aCallback, aUpdate) {
   // TODO: remove usage of makeRepoArray since it causes redundant looping
   arrayOfRepos.forEach(function (aRepo) {
     async.each(aRepo.scripts, function (aScript, aCallback) {
-      var url = '/' + encodeURI(aRepo.user) + '/' + encodeURI(aRepo.repo)
-        + '/master' + aScript.path;
+      var url = '/' + encodeURI(aRepo.user) + '/' + encodeURI(aRepo.repo) + '/master' + aScript.path;
       fetchRaw('raw.githubusercontent.com', url, function (aBufs) {
         scriptStorage.getMeta(aBufs, function (aMeta) {
           if (aMeta) {
@@ -113,7 +113,7 @@ RepoManager.prototype.loadScripts = function (aCallback, aUpdate) {
       });
     }, aCallback);
   });
-}
+};
 
 // Create the Mustache object to display repos with their user scrips
 RepoManager.prototype.makeRepoArray = function () {
@@ -138,7 +138,7 @@ RepoManager.prototype.makeRepoArray = function () {
   }
 
   return retOptions;
-}
+};
 
 // Manages a single repo
 function Repo(aManager, aUsername, aReponame) {
@@ -163,8 +163,7 @@ Repo.prototype.parseTree = function (aTree, aPath, aDone) {
   aTree.forEach(function (object) {
     if (object.type === 'tree') {
       trees.push({
-        sha: object.sha, path: aPath + '/'
-          + encodeURI(object.path)
+        sha: object.sha, path: aPath + '/' + encodeURI(object.path)
       });
     } else if (object.path.substr(-8) === '.user.js') {
       if (!repos[that.repo]) { repos[that.repo] = nil(); }
@@ -182,11 +181,10 @@ Repo.prototype.parseTree = function (aTree, aPath, aDone) {
 // Gets information about a directory
 Repo.prototype.getTree = function (aSha, aPath, aCallback) {
   var that = this;
-  fetchJSON('/repos/' + encodeURI(this.user) + '/' + encodeURI(this.repo)
-    + '/git/trees/' + aSha,
+  fetchJSON('/repos/' + encodeURI(this.user) + '/' + encodeURI(this.repo) + '/git/trees/' + aSha,
     function (aJson) {
-      that.parseTree(aJson.tree, aPath, aCallback);
-    }
+    that.parseTree(aJson.tree, aPath, aCallback);
+  }
   );
 };
 

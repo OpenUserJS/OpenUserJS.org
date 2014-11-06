@@ -21,8 +21,9 @@ exports.findOrDefaultIfNull = findOrDefaultIfNull;
 var orderDirs = ['asc', 'desc'];
 var parseModelListSort = function (aModelListQuery, aOrderBy, aOrderDir, aDefaultSortFn) {
   if (aOrderBy) {
-    if (_.isUndefined(aOrderDir) || !_.contains(orderDirs, aOrderDir))
+    if (_.isUndefined(aOrderDir) || !_.contains(orderDirs, aOrderDir)) {
       aOrderDir = 'asc';
+    }
 
     if (_.has(aModelListQuery.model.schema.paths, aOrderBy)) {
       var sortBy = {};
@@ -35,7 +36,8 @@ var parseModelListSort = function (aModelListQuery, aOrderBy, aOrderDir, aDefaul
 };
 exports.parseModelListSort = parseModelListSort;
 
-var parseSearchConditions = function (aQ, aPrefixSearchFields, aFullSearchFields) { // NOTE: This code is duplicated elsewhere but this is primary
+var parseSearchConditions = function (aQ, aPrefixSearchFields, aFullSearchFields) {
+  // NOTE: This code is duplicated elsewhere but this is primary
   var conditions = [];
   var query = null;
   var prefixStr = '';
@@ -136,7 +138,7 @@ var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFla
       if (aFlaggedQuery == 'true') {
         aOptions.isFlagged = true;
         aModelListQuery.and({ flags: { $gt: 0 } });
-      } else if (aFlaggedQuery == false) {
+      } else if (aFlaggedQuery === false) {
         // aModelListQuery.and({$or: [
         //   {flags: {$exists: false}},
         //   {flags: {$lte: 0} },
@@ -157,16 +159,18 @@ var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDe
   if (aReq.query.q) {
     aOptions.searchBarValue = aReq.query.q;
 
-    if (aDefaultOptions.parseSearchQueryFn)
+    if (aDefaultOptions.parseSearchQueryFn) {
       aDefaultOptions.parseSearchQueryFn(aModelListQuery, aReq.query.q);
+    }
   }
   aOptions.searchBarFormAction = aDefaultOptions.searchBarFormAction || '';
   aOptions.searchBarPlaceholder = aDefaultOptions.searchBarPlaceholder || 'Search';
   aOptions.searchBarFormHiddenVariables = aDefaultOptions.searchBarFormHiddenVariables || [];
 
   // flagged
-  if (aDefaultOptions.filterFlaggedItems)
+  if (aDefaultOptions.filterFlaggedItems) {
     applyModelListQueryFlaggedFilter(aModelListQuery, aOptions, aReq.query.flagged);
+  }
 
   // Sort
   parseModelListSort(aModelListQuery, aReq.query.orderBy, aReq.query.orderDir, function () {

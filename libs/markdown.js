@@ -79,7 +79,7 @@ renderer.heading = function (aText, aLevel) {
 
   var name = escapedText;
   var html = '<h' + aLevel + '>';
-  html += '<a name="' + name + '"></a>'
+  html += '<a name="' + name + '"></a>';
   html += sanitize(aText);
   html += '<a href="#' + name + '" class="anchor">';
   html += '<i class="fa fa-link"></i>';

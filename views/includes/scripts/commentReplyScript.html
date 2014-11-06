@@ -1,6 +1,6 @@
 <script type="text/javascript">
 
-  $('.btn-comment-reply').click(function (aE) {
+  $('.btn-comment-reply').click(function(aE) {
     $('#reply-control').collapse('show');
 
     var $comment = $(aE.target).closest('.topic-post');
@@ -19,7 +19,7 @@
     $replyTextarea.text(text);
   });
 
-  function isElementInViewport (aEl) {
+  function isElementInViewport(aEl) {
     //special bonus for those using jQuery
     if (aEl instanceof jQuery) {
       aEl = aEl[0];
@@ -36,22 +36,22 @@
   }
 
   var hasShownReplyForm = false;
-  function callback (aEl) {
+  function callback(aEl) {
     if (!hasShownReplyForm) {
       $('#reply-control').collapse('show');
       hasShownReplyForm = true;
     }
   }
 
-  function fireIfElementVisible (aEl, aCallback) {
-    return function () {
-      if ( isElementInViewport(aEl) ) {
+  function fireIfElementVisible(aEl, aCallback) {
+    return function() {
+      if (isElementInViewport(aEl)) {
         aCallback(aEl);
       }
     }
   }
 
-  var handler = fireIfElementVisible ($('#show-reply-form-when-visible'), callback);
+  var handler = fireIfElementVisible($('#show-reply-form-when-visible'), callback);
 
   //jQuery
   $(window).on('DOMContentLoaded load resize scroll', handler);

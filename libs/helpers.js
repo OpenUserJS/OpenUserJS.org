@@ -34,9 +34,7 @@ exports.formatDate = function (aDate) {
   }
 
   if (difference > week) {
-    ret = aDate.getDate() + ' '
-      + months[aDate.getMonth()] + ' '
-      + aDate.getFullYear();
+    ret = aDate.getDate() + ' ' + months[aDate.getMonth()] + ' ' + aDate.getFullYear();
   } else if (difference > day) {
     days = Math.round(difference / day);
     if (days <= 1) {
@@ -53,13 +51,13 @@ exports.formatDate = function (aDate) {
   }
 
   return ret;
-}
+};
 
 // Create an object with no properties
 exports.nil = function (aObj) {
   var nilObj = Object.create(null);
 
-  if (!aObj) return nilObj;
+  if (!aObj) { return nilObj; }
 
   exports.forIn(aObj, function (aVal, aKey) {
     nilObj[aKey] = aVal;

@@ -83,7 +83,7 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
 
   //---
   async.parallel(tasks, function (aErr) {
-    if (aErr) aNext();
+    if (aErr) { aNext(); }
 
     //--- PreRender
     // discussionList
@@ -124,8 +124,9 @@ exports.list = function (aReq, aRes, aNext) {
   var categorySlug = aReq.route.params.category;
 
   var category = _.findWhere(categories, { slug: categorySlug });
-  if (!category)
+  if (!category) {
     return aNext();
+  }
 
   //
   var options = {};
@@ -171,7 +172,7 @@ exports.list = function (aReq, aRes, aNext) {
 
   //---
   async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+    if (aErr) { return aNext(); }
 
     //--- PreRender
     // discussionList
@@ -211,8 +212,9 @@ exports.show = function (aReq, aRes, aNext) {
   var topic = aReq.route.params.topic;
 
   var category = _.findWhere(categories, { slug: categorySlug });
-  if (!category)
+  if (!category) {
     return aNext();
+  }
 
   findDiscussion(category.slug, topic, function (aDiscussionData) {
     if (!aDiscussionData) { return aNext(); }
@@ -257,7 +259,7 @@ exports.show = function (aReq, aRes, aNext) {
 
     //---
     async.parallel(tasks, function (aErr) {
-      if (aErr) return aNext();
+      if (aErr) { return aNext(); }
 
       //--- PreRender
       // commentList
@@ -280,14 +282,16 @@ exports.show = function (aReq, aRes, aNext) {
 exports.newTopic = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser)
+  if (!authedUser) {
     return aRes.redirect('/login');
+  }
 
   var categorySlug = aReq.route.params.category;
 
   var category = _.findWhere(categories, { slug: categorySlug });
-  if (!category)
+  if (!category) {
     return aNext();
+  }
 
   //
   var options = {};
@@ -394,16 +398,18 @@ exports.postTopic = postTopic;
 exports.createTopic = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser)
+  if (!authedUser) {
     return aRes.redirect('/login');
+  }
 
   var categorySlug = aReq.route.params.category;
   var topic = aReq.body['discussion-topic'];
   var content = aReq.body['comment-content'];
 
   var category = _.findWhere(categories, { slug: categorySlug });
-  if (!category)
+  if (!category) {
     return aNext();
+  }
 
   //
   var options = {};
@@ -423,8 +429,8 @@ exports.createTopic = function (aReq, aRes, aNext) {
   postTopic(authedUser, category.slug, topic, content, false, function (aDiscussion) {
     if (!aDiscussion) { return exports.newTopic(aReq, aRes, aNext); }
 
-    aRes.redirect(encodeURI(aDiscussion.path
-      + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+    aRes.redirect(encodeURI(aDiscussion.path +
+      (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
   });
 };
 
@@ -442,8 +448,8 @@ exports.createComment = function (aReq, aRes, aNext) {
     if (!discussion) { return aNext(); }
 
     postComment(user, discussion, content, false, function (err, discussion) {
-      aRes.redirect(encodeURI(discussion.path
-        + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
+      aRes.redirect(encodeURI(discussion.path +
+        (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
     });
   });
 };

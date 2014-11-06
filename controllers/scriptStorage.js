@@ -27,14 +27,13 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-function getInstallName (aReq) {
+function getInstallName(aReq) {
   return aReq.route.params.username + '/' + aReq.route.params.scriptname;
 }
 exports.getInstallName = getInstallName;
 
-function caseInsensitive (aInstallName) {
-  return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
-    + '$', 'i');
+function caseInsensitive(aInstallName) {
+  return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '$', 'i');
 }
 exports.caseInsensitive = caseInsensitive;
 
@@ -45,10 +44,10 @@ exports.getSource = function (aReq, aCallback) {
   Script.findOne({ installName: caseInsensitive(installName) },
     function (aErr, aScript) {
 
-      if (!aScript) { return aCallback(null); }
+    if (!aScript) { return aCallback(null); }
 
-      // Get the script
-      aCallback(aScript, s3.getObject({ Bucket: bucketName, Key: installName })
+    // Get the script
+    aCallback(aScript, s3.getObject({ Bucket: bucketName, Key: installName })
         .createReadStream());
   });
 };
@@ -86,42 +85,41 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
   Script.findOne({ installName: caseInsensitive(installName) },
     function (aErr, aScript) {
-      var meta = null;
-      var data = null;
-      var prefix = null;
-      var key = null;
-      var whitespace = '\u0020\u0020\u0020\u0020';
+    var meta = null;
+    var data = null;
+    var prefix = null;
+    var key = null;
+    var whitespace = '\u0020\u0020\u0020\u0020';
 
-      if (!aScript) { return aNext(); }
+    if (!aScript) { return aNext(); }
 
-      aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-      meta = aScript.meta; // NOTE: Watchpoint
+    aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+    meta = aScript.meta; // NOTE: Watchpoint
 
-      aRes.write('// ==UserScript==\n');
-      Object.keys(meta).reverse().forEach(function (aName) {
-        if (meta[aName] instanceof Array) {
-          meta[aName].forEach(function (aValue) {
-            aRes.write('// @' + aName + (aValue ? whitespace + aValue : '') + '\n');
-          });
-        } else if (meta[aName] instanceof Object) {
-          prefix = aName;
-          for (key in meta[aName]) {
-            data = meta[prefix][key];
-            if (data instanceof Array) {
-              data.forEach(function (aValue) {
-                aRes.write('// @' + prefix + ':' + key + (aValue ? whitespace + aValue : '') + '\n');
-              });
-            }
-            else {
-              aRes.write('// @' + prefix + ':' + key + (data ? whitespace + data : '') + '\n');
-            }
+    aRes.write('// ==UserScript==\n');
+    Object.keys(meta).reverse().forEach(function (aName) {
+      if (meta[aName] instanceof Array) {
+        meta[aName].forEach(function (aValue) {
+          aRes.write('// @' + aName + (aValue ? whitespace + aValue : '') + '\n');
+        });
+      } else if (meta[aName] instanceof Object) {
+        prefix = aName;
+        for (key in meta[aName]) {
+          data = meta[prefix][key];
+          if (data instanceof Array) {
+            data.forEach(function (aValue) {
+              aRes.write('// @' + prefix + ':' + key + (aValue ? whitespace + aValue : '') + '\n');
+            });
+          } else {
+            aRes.write('// @' + prefix + ':' + key + (data ? whitespace + data : '') + '\n');
           }
-        } else {
-          data = meta[aName];
-          aRes.write('// @' + aName + (data ? whitespace + data : '') + '\n');
         }
-      });
-      aRes.end('// ==/UserScript==\n');
+      } else {
+        data = meta[aName];
+        aRes.write('// @' + aName + (data ? whitespace + data : '') + '\n');
+      }
+    });
+    aRes.end('// ==/UserScript==\n');
   });
 };
 
@@ -206,8 +204,8 @@ function parseMeta(aString, aNormalize) {
       }
       if (!header[key] || aNormalize && unique[key]) {
         header[key] = value || '';
-      } else if (!aNormalize || header[key] !== (value || '')
-          && !(header[key] instanceof Array && header[key].indexOf(value) > -1)) {
+      } else if (!aNormalize || header[key] !== (value || '') &&
+        !(header[key] instanceof Array && header[key].indexOf(value) > -1)) {
         if (!(header[key] instanceof Array)) {
           header[key] = [header[key]];
         }
@@ -261,13 +259,11 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     // Can't install a script without a @name (maybe replace with random value)
     if (!scriptName) { return aCallback(null); }
 
-    if (!isLibrary && aMeta.oujs && aMeta.oujs.author
-        && aMeta.oujs.author != aUser.name && aMeta.oujs.collaborator) {
+    if (!isLibrary && aMeta.oujs && aMeta.oujs.author &&
+      aMeta.oujs.author != aUser.name && aMeta.oujs.collaborator) {
       collaborators = aMeta.oujs.collaborator;
-      if ((typeof collaborators === 'string'
-          && collaborators === aUser.name)
-          || (collaborators instanceof Array
-          && collaborators.indexOf(aUser.name) > -1)) {
+      if ((typeof collaborators === 'string' && collaborators === aUser.name) ||
+        (collaborators instanceof Array && collaborators.indexOf(aUser.name) > -1)) {
         installName = aMeta.oujs.author + '/';
       } else {
         collaborators = null;
@@ -298,80 +294,80 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   // Prevent a removed script from being reuploaded
   findDeadorAlive(Script, { installName: caseInsensitive(installName) }, true,
     function (aAlive, aScript, aRemoved) {
-      if (aRemoved || (!aScript && (aUpdate || collaborators))) {
-        return aCallback(null);
-      } else if (!aScript) {
-        // New script
-        aScript = new Script({
-          name: isLibrary ? aMeta : aMeta.name,
-          author: aUser.name,
-          installs: 0,
-          rating: 0,
-          about: '',
-          updated: new Date(),
-          votes: 0,
-          flags: 0,
-          installName: installName,
-          fork: null,
-          meta: isLibrary ? { name: aMeta } : aMeta,
-          isLib: isLibrary,
-          uses: isLibrary ? null : libraries,
-          _authorId: aUser._id
-        });
-      } else {
-        // Script already exists.
-        if (!aScript.isLib) {
-          if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author != aMeta.oujs.author
-              || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !=
+    if (aRemoved || (!aScript && (aUpdate || collaborators))) {
+      return aCallback(null);
+    } else if (!aScript) {
+      // New script
+      aScript = new Script({
+        name: isLibrary ? aMeta : aMeta.name,
+        author: aUser.name,
+        installs: 0,
+        rating: 0,
+        about: '',
+        updated: new Date(),
+        votes: 0,
+        flags: 0,
+        installName: installName,
+        fork: null,
+        meta: isLibrary ? { name: aMeta } : aMeta,
+        isLib: isLibrary,
+        uses: isLibrary ? null : libraries,
+        _authorId: aUser._id
+      });
+    } else {
+      // Script already exists.
+      if (!aScript.isLib) {
+        if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author != aMeta.oujs.author ||
+          (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !=
              JSON.stringify(aMeta.oujs.collaborator)))) {
-            return aCallback(null);
-          }
-          aScript.meta = aMeta;
-          aScript.uses = libraries;
+          return aCallback(null);
         }
-        aScript.updated = new Date();
-        aScript.installsSinceUpdate = 0;
+        aScript.meta = aMeta;
+        aScript.uses = libraries;
       }
+      aScript.updated = new Date();
+      aScript.installsSinceUpdate = 0;
+    }
 
-      aScript.save(function (aErr, aScript) {
-        s3.putObject({ Bucket: bucketName, Key: installName, Body: aBuf },
+    aScript.save(function (aErr, aScript) {
+      s3.putObject({ Bucket: bucketName, Key: installName, Body: aBuf },
           function (aErr, aData) {
-            // Don't save a script if storing failed
-            if (aErr) {
-              console.error(aUser.name, '-', installName);
-              console.error(JSON.stringify(aErr));
-              console.error(JSON.stringify(aScript.toObject()));
-              return aCallback(null);
-            }
+        // Don't save a script if storing failed
+        if (aErr) {
+          console.error(aUser.name, '-', installName);
+          console.error(JSON.stringify(aErr));
+          console.error(JSON.stringify(aScript.toObject()));
+          return aCallback(null);
+        }
 
-            if (aUser.role === userRoles.length - 1) {
-              var userDoc = aUser;
-              if (!userDoc.save) {
-                // We're probably using req.session.user which may have gotten serialized.
-                userDoc = new User(userDoc);
-              }
-              --userDoc.role;
-              userDoc.save(function (aErr, aUser) { aCallback(aScript); });
-            } else {
-              aCallback(aScript);
-            }
-          });
+        if (aUser.role === userRoles.length - 1) {
+          var userDoc = aUser;
+          if (!userDoc.save) {
+            // We're probably using req.session.user which may have gotten serialized.
+            userDoc = new User(userDoc);
+          }
+          --userDoc.role;
+          userDoc.save(function (aErr, aUser) { aCallback(aScript); });
+        } else {
+          aCallback(aScript);
+        }
       });
     });
+  });
 };
 
 exports.deleteScript = function (aInstallName, aCallback) {
   Script.findOne({ installName: caseInsensitive(aInstallName) },
     function (aErr, aScript) {
-      var s3 = new AWS.S3();
-      s3.deleteObject({ Bucket : bucketName, Key : aScript.installName},
+    var s3 = new AWS.S3();
+    s3.deleteObject({ Bucket : bucketName, Key : aScript.installName },
         function (aErr) {
-          if (!aErr) {
-            aScript.remove(aCallback);
-          } else {
-            aCallback(null);
-          }
-      });
+      if (!aErr) {
+        aScript.remove(aCallback);
+      } else {
+        aCallback(null);
+      }
+    });
   });
 };
 

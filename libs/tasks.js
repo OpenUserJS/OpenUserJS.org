@@ -3,10 +3,11 @@
 var defaultOnErrFn = console.log;
 
 var onErr = function (aErr, aOnErrFn) {
-  if (aOnErrFn)
+  if (aOnErrFn) {
     aOnErrFn(aErr);
-  else
+  } else {
     defaultOnErrFn(aErr);
+  }
 };
 
 exports.countTask = function (aModelListQuery, aDict, aKey, aOnErrFn) {
@@ -30,7 +31,7 @@ exports.execQueryTask = function (aQuery, aDict, aKey, aOnErrFn) {
         onErr(aErr, aOnErrFn);
         aCallback();
       } else {
-        aDict[aKey] = result
+        aDict[aKey] = result;
         aCallback();
       }
     });

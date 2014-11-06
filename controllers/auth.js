@@ -72,30 +72,32 @@ exports.auth = function (aReq, aRes, aNext) {
 
   User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
     function (aErr, aUser) {
-      var strategies = null;
-      var strat = null;
+    var strategies = null;
+    var strat = null;
 
-      if (aUser) {
-        strategies = aUser.strategies;
-        strat = strategies.pop();
+    if (aUser) {
+      strategies = aUser.strategies;
+      strat = strategies.pop();
 
-        if (aReq.session.newstrategy) { // authenticate with a new strategy
-          delete aReq.session.newstrategy;
-        } else if (!strategy) { // use an existing strategy
-          strategy = strat;
-        } else if (strategies.indexOf(strategy) === -1) {
-          // add a new strategy but first authenticate with existing strategy
-          aReq.session.newstrategy = strategy;
-          strategy = strat;
-        } // else use the strategy that was given in the POST
-      }
+      if (aReq.session.newstrategy) {
+        // authenticate with a new strategy
+        delete aReq.session.newstrategy;
+      } else if (!strategy) {
+        // use an existing strategy
+        strategy = strat;
+      } else if (strategies.indexOf(strategy) === -1) {
+        // add a new strategy but first authenticate with existing strategy
+        aReq.session.newstrategy = strategy;
+        strategy = strat;
+      } // else use the strategy that was given in the POST
+    }
 
-      if (!strategy) {
-        return aRes.redirect('/register');
-      } else {
-        return auth();
-      }
-    });
+    if (!strategy) {
+      return aRes.redirect('/register');
+    } else {
+      return auth();
+    }
+  });
 };
 
 exports.callback = function (aReq, aRes, aNext) {
@@ -116,21 +118,20 @@ exports.callback = function (aReq, aRes, aNext) {
   if (openIdStrategies[strategy]) {
     strategyInstance._verify = function (aId, aDone) {
       verifyPassport(aId, strategy, username, aReq.session.user, aDone);
-    }
+    };
   } else {
     strategyInstance._verify =
       function (aToken, aRefreshOrSecretToken, aProfile, aDone) {
-        aReq.session.profile = aProfile;
-        verifyPassport(aProfile.id, strategy, username, aReq.session.user, aDone);
-      }
+      aReq.session.profile = aProfile;
+      verifyPassport(aProfile.id, strategy, username, aReq.session.user, aDone);
+    };
   }
 
   // This callback will happen after the verify routine
   var authenticate = passport.authenticate(strategy, function (aErr, aUser, aInfo) {
     if (aErr) { return aNext(aErr); }
     if (!aUser) {
-      return aRes.redirect(doneUrl + (doneUrl === '/' ? 'register' : '')
-        + '?authfail');
+      return aRes.redirect(doneUrl + (doneUrl === '/' ? 'register' : '') + '?authfail');
     }
 
     aReq.logIn(aUser, function (aErr) {
@@ -161,4 +162,4 @@ exports.callback = function (aReq, aRes, aNext) {
   });
 
   authenticate(aReq, aRes, aNext);
-}
+};

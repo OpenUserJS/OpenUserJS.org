@@ -33,9 +33,8 @@ var github = require('./../libs/githubClient');
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
 
-function caseInsensitive (aStr) {
-  return new RegExp('^' + (aStr || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
-    + '$', 'i');
+function caseInsensitive(aStr) {
+  return new RegExp('^' + (aStr || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '$', 'i');
 }
 
 var setupUserModerationUITask = function (aOptions) {
@@ -210,9 +209,9 @@ exports.userListPage = function (aReq, aRes, aNext) {
     if (options.isFlagged) {
       pageMetadata(options, ['Flagged Users', 'Moderation']);
     }
-  };
+  }
   function render() { aRes.render('pages/userListPage', options); }
-  function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } };
+  function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } }
   async.parallel(tasks, asyncComplete);
 };
 
@@ -269,7 +268,7 @@ exports.view = function (aReq, aRes, aNext) {
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
     //---
-    function preRender() { };
+    function preRender() { }
     function render() { aRes.render('pages/userPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -353,7 +352,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(aReq);
-    };
+    }
     function render() { aRes.render('pages/userCommentListPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -445,7 +444,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
       } else if (options.isUserScriptListPage) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
-    };
+    }
     function render() { aRes.render('pages/userScriptListPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -507,7 +506,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
     //---
-    function preRender() { };
+    function preRender() { }
     function render() { aRes.render('pages/userEditProfilePage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -621,7 +620,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     // UserSidePanel tasks
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
-    function preRender() { };
+    function preRender() { }
     function render() { aRes.render('pages/userEditPreferencesPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -699,17 +698,17 @@ exports.edit = function (aReq, aRes, aNext) {
     scriptsList.listScripts({ _authorId: user._id, isLib: null, flagged: null }, // TODO: Global detected... may need renaming
       { size: -1 }, '/user/edit',
       function (aScriptsList) {
-        aScriptsList.edit = true;
-        options.scriptsList = aScriptsList;
-        aRes.render('userEdit', options);
-      });
+      aScriptsList.edit = true;
+      options.scriptsList = aScriptsList;
+      aRes.render('userEdit', options);
+    });
   });
 };
 
 exports.newScriptPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
+  if (!authedUser) { return aRes.redirect('/login'); }
 
   //
   var options = {};
@@ -731,7 +730,7 @@ exports.newScriptPage = function (aReq, aRes, aNext) {
 
   //---
   async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+    if (aErr) { return aNext(); }
 
     aRes.render('pages/newScriptPage', options);
   });
@@ -740,7 +739,7 @@ exports.newScriptPage = function (aReq, aRes, aNext) {
 exports.newLibraryPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
+  if (!authedUser) { return aRes.redirect('/login'); }
 
   //
   var options = {};
@@ -762,7 +761,7 @@ exports.newLibraryPage = function (aReq, aRes, aNext) {
 
   //---
   async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+    if (aErr) { return aNext(); }
 
     aRes.render('pages/newScriptPage', options);
   });
@@ -771,7 +770,7 @@ exports.newLibraryPage = function (aReq, aRes, aNext) {
 exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
+  if (!authedUser) { return aRes.redirect('/login'); }
 
   //
   var options = {};
@@ -860,7 +859,7 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
 exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
+  if (!authedUser) { return aRes.redirect('/login'); }
 
   //
   var options = {};
@@ -897,8 +896,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
       javascriptBlob = parseJavascriptBlob(javascriptBlob);
 
-      if (!javascriptBlob.canUpload)
+      if (!javascriptBlob.canUpload) {
         return aCallback(javascriptBlob.errors);
+      }
 
       options.javascriptBlob = javascriptBlob;
       aCallback(null);
@@ -914,8 +914,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
     },
     function (aBlobUtf8, aCallback) {
       // Double check file size.
-      if (aBlobUtf8.length > settings.maximum_upload_script_size)
+      if (aBlobUtf8.length > settings.maximum_upload_script_size) {
         return aCallback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
+      }
 
       var onScriptStored = function (aScript) {
         if (aScript) {
@@ -962,7 +963,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
+  if (!authedUser) { return aRes.redirect('/login'); }
 
   //
   var options = {};
@@ -1009,7 +1010,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
         options.repo = aRepo;
         options.repoAsEncoded = {
           default_branch: encodeURI(options.repo.default_branch)
-        }
+        };
 
         github.gitdata.getJavascriptBlobs({
           user: encodeURIComponent(aRepo.owner.login),
@@ -1033,12 +1034,12 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
 
         aCallback(null);
       },
-    ], aCallback)
+    ], aCallback);
   });
 
   //---
   async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+    if (aErr) { return aNext(); }
 
     aRes.render('pages/userGitHubRepoPage', options);
   });
@@ -1077,8 +1078,9 @@ var parseJavascriptBlob = function (aJavascriptBlob) {
     });
   }
 
-  if (aJavascriptBlob.errors.length)
+  if (aJavascriptBlob.errors.length) {
     aJavascriptBlob.canUpload = !aJavascriptBlob.errors.length;
+  }
 
   return aJavascriptBlob;
 };
@@ -1087,7 +1089,7 @@ var parseJavascriptBlob = function (aJavascriptBlob) {
 exports.userManageGitHubPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
+  if (!authedUser) { return aRes.redirect('/login'); }
 
   //
   var options = {};
@@ -1168,7 +1170,8 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
                 loadable[aReponame][scriptname] = aRepo[scriptname];
               }
             }
-          } else if (typeof aRepo === 'object') { // load individual scripts
+          } else if (typeof aRepo === 'object') {
+            // load individual scripts
             for (scriptname in aRepo) {
               if (aRepos[aReponame][scriptname]) {
                 if (!loadable[aReponame]) { loadable[aReponame] = nil(); }
@@ -1195,13 +1198,12 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
     ], aCallback);
   });
 
-
   //---
   async.parallel(tasks, function (aErr) {
     if (aErr) {
       return statusCodePage(aReq, aRes, aNext, {
         statusMessage: aErr
-      })
+      });
     }
 
     console.log('render');
@@ -1243,20 +1245,20 @@ exports.uploadScript = function (aReq, aRes, aNext) {
         if (isLib) {
           scriptStorage.storeScript(aUser, scriptName, Buffer.concat(bufs),
             function (aScript) {
-              if (!aScript) { return aRes.redirect(failUrl); }
+            if (!aScript) { return aRes.redirect(failUrl); }
 
-              aRes.redirect('/libs/' + encodeURI(aScript.installName
+            aRes.redirect('/libs/' + encodeURI(aScript.installName
                 .replace(jsRegex, '')));
-            });
+          });
         } else {
           scriptStorage.getMeta(bufs, function (aMeta) {
             scriptStorage.storeScript(aUser, aMeta, Buffer.concat(bufs),
               function (aScript) {
-                if (!aScript) { return aRes.redirect(failUrl); }
+              if (!aScript) { return aRes.redirect(failUrl); }
 
-                aRes.redirect('/scripts/' + encodeURI(aScript.installName
+              aRes.redirect('/scripts/' + encodeURI(aScript.installName
                   .replace(userjsRegex, '')));
-              });
+            });
           });
         }
       });
@@ -1279,11 +1281,11 @@ exports.update = function (aReq, aRes, aNext) {
     User.findOneAndUpdate({ _id: user._id },
       { about: aReq.body.about },
       function (aErr, aUser) {
-        if (aErr) { aRes.redirect('/'); }
+      if (aErr) { aRes.redirect('/'); }
 
-        aReq.session.user.about = aUser.about; // TODO: Ambiguous
-        aRes.redirect('/users/' + aUser.name);
-      });
+      aReq.session.user.about = aUser.about; // TODO: Ambiguous
+      aRes.redirect('/users/' + aUser.name);
+    });
   } else {
     // Remove scripts (currently no UI)
     installRegex = new RegExp('^\/install\/(' + username + '\/.+)$');
@@ -1312,9 +1314,9 @@ exports.submitSource = function (aReq, aRes, aNext) {
 
     User.findOne({ _id: user._id }, function (aErr, aUser) {
       scriptStorage.storeScript(aUser, aMeta, aSource, function (aScript) {
-        var redirectUrl = encodeURI(aScript ? (aScript.isLib ? '/libs/'
-          + aScript.installName.replace(jsRegex, '') : '/scripts/'
-          + aScript.installName.replace(userjsRegex, '')) : aReq.body.url);
+        var redirectUrl = encodeURI(aScript ?
+          (aScript.isLib ? '/libs/' + aScript.installName.replace(jsRegex, '') :
+            '/scripts/' + aScript.installName.replace(userjsRegex, '')) : aReq.body.url);
 
         if (!aScript || !aReq.body.original) {
           return aRes.redirect(redirectUrl);
@@ -1322,20 +1324,20 @@ exports.submitSource = function (aReq, aRes, aNext) {
 
         Script.findOne({ installName: aReq.body.original },
           function (aErr, aOrigScript) {
-            var fork = null;
-            if (aErr || !aOrigScript) { return aRes.redirect(redirectUrl); }
+          var fork = null;
+          if (aErr || !aOrigScript) { return aRes.redirect(redirectUrl); }
 
-            fork = aOrigScript.fork || [];
-            fork.unshift({
-              author: aOrigScript.author, url: aOrigScript
+          fork = aOrigScript.fork || [];
+          fork.unshift({
+            author: aOrigScript.author, url: aOrigScript
                 .installName.replace(aOrigScript.isLib ? jsRegex : userjsRegex, '')
-            });
-            aScript.fork = fork;
-
-            aScript.save(function (aErr, aScript) {
-              aRes.redirect(redirectUrl);
-            });
           });
+          aScript.fork = fork;
+
+          aScript.save(function (aErr, aScript) {
+            aRes.redirect(redirectUrl);
+          });
+        });
       });
     });
   }
@@ -1395,8 +1397,8 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         aOptions.source = Buffer.concat(bufs).toString('utf8');
         aOptions.original = aScript.installName;
         aOptions.url = aReq.url;
-        aOptions.owner = aAuthedUser && (aScript._authorId == aAuthedUser._id
-          || collaborators.indexOf(aAuthedUser.name) > -1);
+        aOptions.owner = aAuthedUser && (aScript._authorId == aAuthedUser._id ||
+          collaborators.indexOf(aAuthedUser.name) > -1);
         aOptions.username = aAuthedUser ? aAuthedUser.name : null;
         aOptions.isLib = aScript.isLib;
         aOptions.scriptName = aScript.name;
@@ -1466,13 +1468,15 @@ exports.editScript = function (aReq, aRes, aNext) {
       //--- Tasks
 
       // Show the number of open issues
-      var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
-          .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
+      var scriptOpenIssueCountQuery = Discussion.find({
+        category: scriptStorage
+          .caseInsensitive(script.issuesCategorySlug), open: { $ne: false }
+      });
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
       //---
       async.parallel(tasks, function (aErr) {
-        if (aErr) return aNext();
+        if (aErr) { return aNext(); }
 
         aRes.render('pages/scriptViewSourcePage', options);
       });
@@ -1480,7 +1484,7 @@ exports.editScript = function (aReq, aRes, aNext) {
   } else {
     //---
     async.parallel(tasks, function (aErr) {
-      if (aErr) return aNext();
+      if (aErr) { return aNext(); }
 
       aRes.render('pages/scriptViewSourcePage', options);
     });
@@ -1496,7 +1500,8 @@ exports.flag = function (aReq, aRes, aNext) {
     var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
     if (aErr || !aUser) { return aNext(); }
 
-    fn(User, aUser, aReq.session.user, function (aFlagged) { // TODO: Non-descript function name
+    fn(User, aUser, aReq.session.user, function (aFlagged) {
+      // TODO: Non-descript function name
       aRes.redirect('/users/' + username);
     });
   });
