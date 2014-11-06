@@ -82,4 +82,4 @@ module.exports = function (aApp) {
     'select2-bootstrap.css': { maxage: day * 1 }
   });
 
-}
+};

@@ -126,7 +126,7 @@ exports.list = function (aReq, aRes, aNext) {
           options.discussionListIsEmptyMessage = 'No closed discussions.';
         }
       }
-    };
+    }
     function render() { aRes.render('pages/scriptIssueListPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -146,7 +146,7 @@ exports.view = function (aReq, aRes, aNext) {
 
   Script.findOne({
     installName: scriptStorage.caseInsensitive(
-      installNameSlug  + (type === 'libs' ? '.js' : '.user.js'))
+      installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     if (aErr || !aScriptData) { return aNext(); }
 
@@ -222,7 +222,7 @@ exports.view = function (aReq, aRes, aNext) {
 
         // Pagination
         options.paginationRendered = pagination.renderDefault(aReq);
-      };
+      }
       function render() { aRes.render('pages/scriptIssuePage', options); }
       function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
@@ -234,7 +234,7 @@ exports.view = function (aReq, aRes, aNext) {
 exports.open = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
+  if (!authedUser) { return aRes.redirect('/login'); }
 
   var topic = aReq.body['discussion-topic'];
   var content = aReq.body['comment-content'];
@@ -244,12 +244,12 @@ exports.open = function (aReq, aRes, aNext) {
 
   Script.findOne({
     installName: scriptStorage.caseInsensitive(
-      installNameSlug  + (type === 'libs' ? '.js' : '.user.js'))
+      installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     function preRender() {
       // Page metadata
       pageMetadata(options, ['New Issue', script.name]);
-    };
+    }
     function render() { aRes.render('pages/scriptNewIssuePage', options); }
     function asyncComplete() { preRender(); render(); }
 
@@ -283,11 +283,12 @@ exports.open = function (aReq, aRes, aNext) {
       // Issue Submission
       discussionLib.postTopic(authedUser, category.slug, topic, content, true,
         function (aDiscussion) {
-          if (!aDiscussion)
-            return aRes.redirect('/' + encodeURI(category) + '/open');
-
-          aRes.redirect(encodeURI(aDiscussion.path + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+        if (!aDiscussion) {
+          return aRes.redirect('/' + encodeURI(category) + '/open');
         }
+
+        aRes.redirect(encodeURI(aDiscussion.path + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+      }
       );
     } else {
       // New Issue Page
@@ -311,9 +312,10 @@ exports.comment = function (aReq, aRes, aNext) {
 
   if (!user) { return aRes.redirect('/login'); }
 
-  Script.findOne({ installName: scriptStorage.caseInsensitive(installName
-    + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
-      var content = aReq.body['comment-content'];
+  Script.findOne({
+    installName: scriptStorage.caseInsensitive(installName + (type === 'libs' ? '.js' : '.user.js'))
+  }, function (aErr, aScript) {
+    var content = aReq.body['comment-content'];
 
     if (aErr || !aScript) { return aNext(); }
 
@@ -322,9 +324,9 @@ exports.comment = function (aReq, aRes, aNext) {
 
       discussionLib.postComment(user, aIssue, content, false,
         function (aErr, aDiscussion) {
-          aRes.redirect(encodeURI(aDiscussion.path
-            + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
-        });
+        aRes.redirect(encodeURI(aDiscussion.path +
+          (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+      });
     });
   });
 };
@@ -341,8 +343,9 @@ exports.changeStatus = function (aReq, aRes, aNext) {
 
   if (!user) { return aRes.redirect('/login'); }
 
-  Script.findOne({ installName: scriptStorage.caseInsensitive(installName
-    + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
+  Script.findOne({
+    installName: scriptStorage.caseInsensitive(installName + (type === 'libs' ? '.js' : '.user.js'))
+  }, function (aErr, aScript) {
 
     if (aErr || !aScript) { return aNext(); }
 
@@ -351,20 +354,19 @@ exports.changeStatus = function (aReq, aRes, aNext) {
 
       // Both the script author and the issue creator can close the issue
       // Only the script author can reopen a closed issue
-      if (action === 'close' && aIssue.open
-      && (user.name === aIssue.author || user.name === aScript.author)) {
+      if (action === 'close' && aIssue.open &&
+        (user.name === aIssue.author || user.name === aScript.author)) {
         aIssue.open = false;
         changed = true;
-      } else if (action === 'reopen' && !aIssue.open
-        && user.name === aScript.author) {
+      } else if (action === 'reopen' && !aIssue.open && user.name === aScript.author) {
         aIssue.open = true;
         changed = true;
       }
 
       if (changed) {
         aIssue.save(function (aErr, aDiscussion) {
-          aRes.redirect(encodeURI(aDiscussion.path
-            + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+          aRes.redirect(encodeURI(aDiscussion.path +
+            (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
         });
       } else {
         aNext();

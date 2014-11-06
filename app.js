@@ -55,9 +55,9 @@ app.use(express.methodOverride());
 // Order is very important here (i.e mess with at your own risk)
 app.use(express.cookieParser());
 app.use(express.session({
-  secret: sessionSecret,
-  store: sessionStore
-}));
+    secret: sessionSecret,
+    store: sessionStore
+  }));
 app.use(passport.initialize());
 app.use(modifySessions.init(sessionStore));
 app.use(app.router);
@@ -67,7 +67,6 @@ app.use(express.favicon('public/images/favicon.ico'));
 app.engine('html', require('./libs/muExpress').renderFile(app));
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
-
 
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue

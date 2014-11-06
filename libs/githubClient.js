@@ -15,8 +15,9 @@ module.exports = github;
 // Authenticate Client
 var Strategy = require('../models/strategy').Strategy;
 Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
-  if (aErr)
+  if (aErr) {
     console.error(aErr);
+  }
 
   if (aStrat) {
     github.authenticate({
@@ -63,8 +64,9 @@ var githubUserContentGetBlobAsUtf8 = function (aMsg, aCallback) {
       request.get(url, aCallback);
     },
     function (aResponse, aBody, aCallback) {
-      if (aResponse.statusCode != 200)
+      if (aResponse.statusCode != 200) {
         return aCallback(util.format('Status Code %s', aResponse.statusCode));
+      }
 
       aCallback(null, aBody);
     },

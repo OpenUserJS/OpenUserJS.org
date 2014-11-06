@@ -17,7 +17,8 @@ function renderFile(aRes, aPath, aOptions) {
 exports.renderFile = function (aApp) {
   var render = aApp.response.__proto__.render;
 
-  aApp.response.__proto__.render = function (aView, aOptions, aFn) { // TODO: Non-descript function parm
+  // TODO: Non-descript function parm
+  aApp.response.__proto__.render = function (aView, aOptions, aFn) {
     var self = this;
 
     if (!aFn && aApp.get('view engine') === 'html') {

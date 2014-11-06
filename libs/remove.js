@@ -44,7 +44,7 @@ function removeable(aModel, aContent, aUser, aCallback) {
 exports.removeable = removeable;
 
 function remove(aModel, aContent, aUser, aReason, aCallback) {
-  var remove = new Remove({
+  var removeModel = new Remove({
     'model': aModel.modelName,
     'content': aContent.toObject(),
     'removed': new Date(),
@@ -54,7 +54,7 @@ function remove(aModel, aContent, aUser, aReason, aCallback) {
     '_removerId': aUser._id
   });
 
-  remove.save(function (aErr, aRemove) {
+  removeModel.save(function (aErr, aRemove) {
     aContent.remove(function (aErr) { aCallback(aRemove); });
   });
 }

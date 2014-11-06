@@ -68,13 +68,13 @@ exports.home = function (aReq, aRes) {
     .limit(25);
 
   // Announcements
-  options.announcementsCategory = _.findWhere(discussionLib.categories, {slug: 'announcements'});
+  options.announcementsCategory = _.findWhere(discussionLib.categories, { slug: 'announcements' });
   options.announcementsCategory = modelParser.parseCategory(options.announcementsCategory);
 
   // announcementsDiscussionListQuery
   var announcementsDiscussionListQuery = Discussion.find();
   announcementsDiscussionListQuery
-    .and({category: options.announcementsCategory.slug})
+    .and({ category: options.announcementsCategory.slug })
     .sort('-created')
     .limit(5);
 
@@ -139,7 +139,7 @@ exports.home = function (aReq, aRes) {
         pageMetadata(options, ['Flagged Scripts', 'Moderation']);
       }
     }
-  };
+  }
   function render() { aRes.render('pages/scriptListPage', options); }
   function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
@@ -150,8 +150,9 @@ exports.register = function (aReq, aRes) {
   var authedUser = aReq.session.user;
 
   // If already logged in, goto the front page.
-  if (authedUser)
+  if (authedUser) {
     return aRes.redirect('/');
+  }
 
   //
   var options = {};
@@ -209,9 +210,10 @@ exports.register = function (aReq, aRes) {
 
     // Prefer GitHub
     var githubStrategy = _.findWhere(options.strategies, { strat: 'github' });
-    if (githubStrategy)
+    if (githubStrategy) {
       githubStrategy.selected = true;
-  };
+    }
+  }
   function render() { aRes.render('pages/loginPage', options); }
   function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);

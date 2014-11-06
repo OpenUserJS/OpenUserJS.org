@@ -60,7 +60,8 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
     return aScript.save(aCallback);
   }
 
-  Group.find({ name: { $in: aGroupNames } }, function (aErr, aGroups) { // TODO: STYLEGUIDE.md conformance needed here
+  // TODO: STYLEGUIDE.md conformance needed here
+  Group.find({ name: { $in: aGroupNames } }, function (aErr, aGroups) {
     var existingGroups = null;
     var existingNames = null;
     var newGroup = null;
@@ -82,8 +83,8 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
 
     // Name of a group that doesn't exist
     newGroup = cleanGroupName(aGroupNames.filter(function (aName) {
-      return existingNames.indexOf(aName) === -1;
-    }).shift());
+        return existingNames.indexOf(aName) === -1;
+      }).shift());
 
     // Add script to exising groups
     tasks.push(function (aCallback) {
@@ -118,13 +119,13 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
       aGroups.forEach(function (aGroup) {
         Script.find({ _id: { $in: aGroup._scriptIds } }, // TODO: STYLEGUIDE.md conformance needed here
           function (aErr, aScripts) {
-            if (aErr || aScripts.length < 2) { return; }
+          if (aErr || aScripts.length < 2) { return; }
 
-            aGroup.size = aScripts.length;
-            aGroup.rating = getRating(aScripts);
-            aGroup.updated = new Date();
-            aGroup.save(function () { });
-          }
+          aGroup.size = aScripts.length;
+          aGroup.rating = getRating(aScripts);
+          aGroup.updated = new Date();
+          aGroup.save(function () { });
+        }
         );
       });
     });
@@ -154,7 +155,7 @@ exports.list = function (aReq, aRes) {
     if (options.groupList) {
       pageMetadata(options, 'Groups', null, _.pluck(options.groupList, 'name'));
     }
-  };
+  }
   function render() { aRes.render('pages/groupListPage', options); }
   function asyncComplete() { preRender(); render(); }
 
@@ -264,7 +265,7 @@ exports.view = function (aReq, aRes, aNext) {
       } else if (options.isUserScriptListPage) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
-    };
+    }
     function render() { aRes.render('pages/groupScriptListPage', options); }
     function asyncComplete() { preRender(); render(); }
 

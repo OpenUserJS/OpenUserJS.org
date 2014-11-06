@@ -57,7 +57,8 @@ exports.userAdmin = function (aReq, aRes, aNext) {
   if (!userIsAdmin(aReq)) { return aNext(); }
 
   // You can only see users with a role less than yours
-  User.find({ role: { $gt: thisUser.role } }, function (aErr, aUsers) { // TODO: STYLEGUIDE.md conformance needed here
+  // TODO: STYLEGUIDE.md conformance needed here
+  User.find({ role: { $gt: thisUser.role } }, function (aErr, aUsers) {
     var i = 0;
     options.users = [];
 
@@ -95,14 +96,14 @@ exports.adminUserView = function (aReq, aRes, aNext) {
   // Nothing fancy, just the stringified user object
   User.findOne({ '_id': id, role: { $gt: thisUser.role } },
     function (aErr, aUser) {
-      if (aErr || !aUser) { return aNext(); }
+    if (aErr || !aUser) { return aNext(); }
 
-      aRes.render('userAdmin', {
-        user: {
-          info: JSON.stringify(aUser.toObject(), null, ' ')
-        }
-      });
+    aRes.render('userAdmin', {
+      user: {
+        info: JSON.stringify(aUser.toObject(), null, ' ')
+      }
     });
+  });
 };
 
 var jsonModelMap = {
@@ -130,18 +131,21 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  if (!options.isAdmin)
+  if (!options.isAdmin) {
     return aRes.send(403, { status: 403, message: 'Not an admin.' });
+  }
 
   var model = jsonModelMap[modelname];
-  if (!model)
+  if (!model) {
     return aRes.send(400, { status: 400, message: 'Invalid model.' });
+  }
 
   model.findOne({
     _id: id
   }, function (aErr, aObj) {
-    if (aErr || !aObj)
+    if (aErr || !aObj) {
       return aRes.send(404, { status: 404, message: 'Id doesn\'t exist.' });
+    }
 
     aRes.json(aObj);
   });
@@ -232,7 +236,7 @@ exports.adminPage = function (aReq, aRes, aNext) {
 
   //---
   async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+    if (aErr) { return aNext(); }
     aRes.render('pages/adminPage', options);
   });
 };
@@ -285,7 +289,7 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
 
   //---
   async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+    if (aErr) { return aNext(); }
     aRes.render('pages/adminApiKeysPage', options);
   });
 };
@@ -303,14 +307,15 @@ exports.adminNpmLsView = function (aReq, aRes, aNext) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  if (!options.isAdmin)
+  if (!options.isAdmin) {
     return aRes.send(403, { status: 403, message: 'Not an admin.' });
+  }
 
-  exec('npm ls --json', function(aErr, aStdout, aStderr) {
-    if (aErr) return aRes.send(501, { status: 501, message: 'Not implemented.' });
+  exec('npm ls --json', function (aErr, aStdout, aStderr) {
+    if (aErr) { return aRes.send(501, { status: 501, message: 'Not implemented.' }); }
     aRes.json(JSON.parse(aStdout));
   });
-}
+};
 
 // Manage oAuth strategies without having to restart the server
 // When new keys are added, we load the new strategy
@@ -322,7 +327,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
 
   postStrats = Object.keys(aReq.body).map(function (aPostStrat) {
     var values = aReq.body[aPostStrat];
-    return { name: aPostStrat, id: values[0], key: values[1] }
+    return { name: aPostStrat, id: values[0], key: values[1] };
   });
 
   Strategy.find({}, function (aErr, aStrats) {

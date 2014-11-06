@@ -23,50 +23,49 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
 
   findDeadorAlive(User, { 'auths': digest }, true,
     function (aAlive, aUser, aRemoved) {
-      var pos = aUser ? aUser.auths.indexOf(digest) : -1;
-      if (aRemoved) { aDone(null, false, 'user was removed'); }
+    var pos = aUser ? aUser.auths.indexOf(digest) : -1;
+    if (aRemoved) { aDone(null, false, 'user was removed'); }
 
-      if (!aUser) {
-        User.findOne({ 'name': aUsername }, function (aErr, aUser) {
-          if (aUser && aLoggedIn) {
-            // Add the new strategy to same account
-            // This allows linking multiple external accounts to one of ours
-            aUser.auths.push(digest);
-            aUser.strategies.push(aStrategy);
-            aUser.save(function (aErr, aUser) {
-              return aDone(aErr, aUser);
-            });
-          } else if (aUser) {
-            // user was found matching name but not can't be authenticated
-            return aDone(null, false, 'username is taken');
-          } else {
-            // Create a new user
-            aUser = new User({
-              'name': aUsername,
-              'auths': [digest],
-              'strategies': [aStrategy],
-              'role': userRoles.length - 1,
-              'about': '',
-              'ghUsername': null
-            });
-            aUser.save(function (aErr, aUser) {
-              return aDone(aErr, aUser);
-            });
-          }
-        });
-      } else if (pos > -1 && pos < aUser.auths.length - 1) {
-        // Set the default strategy
-        aUser.strategies.splice(pos, 1);
-        aUser.auths.splice(pos, 1);
-        aUser.strategies.push(aStrategy);
-        aUser.auths.push(digest);
-        aUser.save(function (aErr, aUser) {
-          return aDone(aErr, aUser);
-        });
-      } else {
-        // The user was authenticated
-        return aDone(null, aUser);
-      }
+    if (!aUser) {
+      User.findOne({ 'name': aUsername }, function (aErr, aUser) {
+        if (aUser && aLoggedIn) {
+          // Add the new strategy to same account
+          // This allows linking multiple external accounts to one of ours
+          aUser.auths.push(digest);
+          aUser.strategies.push(aStrategy);
+          aUser.save(function (aErr, aUser) {
+            return aDone(aErr, aUser);
+          });
+        } else if (aUser) {
+          // user was found matching name but not can't be authenticated
+          return aDone(null, false, 'username is taken');
+        } else {
+          // Create a new user
+          aUser = new User({
+            'name': aUsername,
+            'auths': [digest],
+            'strategies': [aStrategy],
+            'role': userRoles.length - 1,
+            'about': '',
+            'ghUsername': null
+          });
+          aUser.save(function (aErr, aUser) {
+            return aDone(aErr, aUser);
+          });
+        }
+      });
+    } else if (pos > -1 && pos < aUser.auths.length - 1) {
+      // Set the default strategy
+      aUser.strategies.splice(pos, 1);
+      aUser.auths.splice(pos, 1);
+      aUser.strategies.push(aStrategy);
+      aUser.auths.push(digest);
+      aUser.save(function (aErr, aUser) {
+        return aDone(aErr, aUser);
+      });
+    } else {
+      // The user was authenticated
+      return aDone(null, aUser);
     }
-  );
-}
+  });
+};

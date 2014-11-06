@@ -13,7 +13,7 @@ var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 
 var scriptStorage = require('./scriptStorage');
-var addScriptToGroups = require('./group').addScriptToGroups
+var addScriptToGroups = require('./group').addScriptToGroups;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var modelQuery = require('../libs/modelQuery');
@@ -50,8 +50,10 @@ var getScriptPageTasks = function (aOptions) {
   //--- Tasks
 
   // Show the number of open issues
-  var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
-      .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
+  var scriptOpenIssueCountQuery = Discussion.find({
+    category: scriptStorage
+      .caseInsensitive(script.issuesCategorySlug), open: { $ne: false }
+  });
   tasks.push(countTask(scriptOpenIssueCountQuery, aOptions, 'issueCount'));
 
   // Show the groups the script belongs to
@@ -62,7 +64,7 @@ var getScriptPageTasks = function (aOptions) {
     Group.find({
       _scriptIds: script._id
     }, function (aErr, aScriptGroupList) {
-      if (aErr) return aCallback(aErr);
+      if (aErr) { return aCallback(aErr); }
 
       aScriptGroupList = _.map(aScriptGroupList, modelParser.parseGroup);
 
@@ -79,10 +81,10 @@ var getScriptPageTasks = function (aOptions) {
       htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         aOptions.script.homepages = [{
-          url: script.meta.homepageURL,
-          text: decodeURI(script.meta.homepageURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
-        }];
+            url: script.meta.homepageURL,
+            text: decodeURI(script.meta.homepageURL),
+            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
+          }];
       }
     } else {
       aOptions.script.homepages = [];
@@ -146,7 +148,7 @@ var getScriptPageTasks = function (aOptions) {
       Script.find({
         installName: { $in: script.uses }  // TODO: STYLEGUIDE.md conformance needed here
       }, function (aErr, aScriptLibraryList) {
-        if (aErr) return aCallback(aErr);
+        if (aErr) { return aCallback(aErr); }
 
         script.libs = aScriptLibraryList;
         script.libs = _.map(script.libs, modelParser.parseScript);
@@ -160,7 +162,7 @@ var getScriptPageTasks = function (aOptions) {
       Script.find({
         uses: script.installName
       }, function (aErr, aLibraryScriptList) {
-        if (aErr) return aCallback(aErr);
+        if (aErr) { return aCallback(aErr); }
 
         script.isUsed = aLibraryScriptList.length > 0;
         script.usedBy = aLibraryScriptList;
@@ -218,17 +220,17 @@ var getScriptPageTasks = function (aOptions) {
 
     flagLib.flaggable(Script, script, authedUser,
       function (aCanFlag, aAuthor, aFlag) {
-        if (aFlag) {
-          flagUrl += '/unflag';
-          aOptions.flagged = true;
-          aOptions.canFlag = true;
-        } else {
-          aOptions.canFlag = aCanFlag;
-        }
-        aOptions.flagUrl = flagUrl;
+      if (aFlag) {
+        flagUrl += '/unflag';
+        aOptions.flagged = true;
+        aOptions.canFlag = true;
+      } else {
+        aOptions.canFlag = aCanFlag;
+      }
+      aOptions.flagUrl = flagUrl;
 
-        aCallback();
-      });
+      aCallback();
+    });
   });
 
   // Set up the removal UI
@@ -241,18 +243,18 @@ var getScriptPageTasks = function (aOptions) {
 
     removeLib.removeable(Script, script, authedUser,
       function (aCanRemove, author) {
-        aOptions.canRemove = aCanRemove;
-        aOptions.flags = script.flags || 0;
-        aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
+      aOptions.canRemove = aCanRemove;
+      aOptions.flags = script.flags || 0;
+      aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
 
-        if (!aCanRemove) { return aCallback(); }
+      if (!aCanRemove) { return aCallback(); }
 
-        flagLib.getThreshold(Script, script, author,
+      flagLib.getThreshold(Script, script, author,
           function (aThreshold) {
-            aOptions.threshold = aThreshold;
-            aCallback();
-          });
+        aOptions.threshold = aThreshold;
+        aCallback();
       });
+    });
   });
 
   return tasks;
@@ -299,7 +301,7 @@ exports.view = function (aReq, aRes, aNext) {
         pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
           script.meta.description, _.pluck(script.groups, 'name'));
       }
-    };
+    }
     function render() { aRes.render('pages/scriptPage', options); }
     function asyncComplete() { preRender(); render(); }
 
@@ -365,7 +367,7 @@ exports.edit = function (aReq, aRes, aNext) {
       });
       options.groupNameListJSON = JSON.stringify(groupNameList);
 
-    };
+    }
     function render() { aRes.render('pages/scriptEditMetadataPage', options); }
     function asyncComplete() { preRender(); render(); }
 
@@ -431,8 +433,7 @@ exports.edit = function (aReq, aRes, aNext) {
 // Script voting
 exports.vote = function (aReq, aRes, aNext) {
   var isLib = aReq.route.params.isLib;
-  var installName = scriptStorage.getInstallName(aReq)
-    + (isLib ? '.js' : '.user.js');
+  var installName = scriptStorage.getInstallName(aReq) + (isLib ? '.js' : '.user.js');
   var vote = aReq.route.params.vote;
   var user = aReq.session.user;
   var url = aReq._parsedUrl.pathname.split('/');
@@ -456,59 +457,59 @@ exports.vote = function (aReq, aRes, aNext) {
 
   Script.findOne({ installName: scriptStorage.caseInsensitive(installName) },
     function (aErr, aScript) {
-      if (aErr || !aScript) { return aRes.redirect(url); }
+    if (aErr || !aScript) { return aRes.redirect(url); }
 
-      Vote.findOne({ _scriptId: aScript._id, _userId: user._id },
+    Vote.findOne({ _scriptId: aScript._id, _userId: user._id },
         function (aErr, aVoteModel) {
-          var oldVote = null;
-          var votes = aScript.votes || 0;
-          var flags = 0;
+      var oldVote = null;
+      var votes = aScript.votes || 0;
+      var flags = 0;
 
-          function saveScript() {
-            if (!flags) {
-              return aScript.save(function (aErr, aScript) { aRes.redirect(url); });
-            }
-
-            flagLib.getAuthor(aScript, function (aAuthor) {
-              flagLib.saveContent(Script, aScript, aAuthor, flags,
-                function (aFlagged) {
-                  aRes.redirect(url);
-                });
-            });
-          }
-
-          if (!aScript.rating) { aScript.rating = 0; }
-          if (!aScript.votes) { aScript.votes = 0; }
-
-          if (user._id == aScript._authorId || (!aVoteModel && unvote)) {
-            return aRes.redirect(url);
-          } else if (!aVoteModel) {
-            aVoteModel = new Vote({
-              vote: vote,
-              _scriptId: aScript._id,
-              _userId: user._id
-            });
-            aScript.rating += vote ? 1 : -1;
-            aScript.votes = votes + 1;
-            if (vote) { flags = -1; }
-          } else if (unvote) {
-            oldVote = aVoteModel.vote;
-            return aVoteModel.remove(function () {
-              aScript.rating += oldVote ? -1 : 1;
-              aScript.votes = votes <= 0 ? 0 : votes - 1;
-              if (oldVote) { flags = 1; }
-              saveScript();
-            });
-          } else if (aVoteModel.vote !== vote) {
-            aVoteModel.vote = vote;
-            aScript.rating += vote ? 2 : -2;
-            flags = vote ? -1 : 1;
-          }
-
-          aVoteModel.save(saveScript);
+      function saveScript() {
+        if (!flags) {
+          return aScript.save(function (aErr, aScript) { aRes.redirect(url); });
         }
-      );
+
+        flagLib.getAuthor(aScript, function (aAuthor) {
+          flagLib.saveContent(Script, aScript, aAuthor, flags,
+                function (aFlagged) {
+            aRes.redirect(url);
+          });
+        });
+      }
+
+      if (!aScript.rating) { aScript.rating = 0; }
+      if (!aScript.votes) { aScript.votes = 0; }
+
+      if (user._id == aScript._authorId || (!aVoteModel && unvote)) {
+        return aRes.redirect(url);
+      } else if (!aVoteModel) {
+        aVoteModel = new Vote({
+          vote: vote,
+          _scriptId: aScript._id,
+          _userId: user._id
+        });
+        aScript.rating += vote ? 1 : -1;
+        aScript.votes = votes + 1;
+        if (vote) { flags = -1; }
+      } else if (unvote) {
+        oldVote = aVoteModel.vote;
+        return aVoteModel.remove(function () {
+          aScript.rating += oldVote ? -1 : 1;
+          aScript.votes = votes <= 0 ? 0 : votes - 1;
+          if (oldVote) { flags = 1; }
+          saveScript();
+        });
+      } else if (aVoteModel.vote !== vote) {
+        aVoteModel.vote = vote;
+        aScript.rating += vote ? 2 : -2;
+        flags = vote ? -1 : 1;
+      }
+
+      aVoteModel.save(saveScript);
     }
+    );
+  }
   );
 };
 
@@ -518,15 +519,18 @@ exports.flag = function (aReq, aRes, aNext) {
   var installName = scriptStorage.getInstallName(aReq);
   var unflag = aReq.route.params.unflag;
 
-  Script.findOne({ installName:  scriptStorage
-      .caseInsensitive(installName + (isLib ? '.js' : '.user.js')) },
+  Script.findOne({
+    installName: scriptStorage
+      .caseInsensitive(installName + (isLib ? '.js' : '.user.js'))
+  },
     function (aErr, aScript) {
-      var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
-      if (aErr || !aScript) { return aNext(); }
+    var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
+    if (aErr || !aScript) { return aNext(); }
 
-      fn(Script, aScript, aReq.session.user, function (aFlagged) { // TODO: Non-descript function name
-        aRes.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
-      });
-    }
+    fn(Script, aScript, aReq.session.user, function (aFlagged) {
+      // TODO: Non-descript function name
+      aRes.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
+    });
+  }
   );
 };

@@ -13,7 +13,6 @@ function flaggable(aModel, aContent, aUser, aCallback) {
   // Not logged in.
   if (!aUser) { return aCallback(false); }
 
-
   // You can't flag yourself
   // Only someone less than an admin can be flagged
   // It is not the responsibility of the community
@@ -98,17 +97,17 @@ function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
 exports.saveContent = saveContent;
 
 function flag(aModel, aContent, aUser, aAuthor, aCallback) {
-  var flag = new Flag({
+  var flagModel = new Flag({
     'model': aModel.modelName,
     '_contentId': aContent._id,
     '_userId': aUser._id
   });
 
-  flag.save(function (aErr, aFlag) {
+  flagModel.save(function (aErr, aFlag) {
     if (!aContent.flags) { aContent.flags = 0; }
     if (!aContent.flagged) { aContent.flagged = false; }
 
-    saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? 2 : 1, aCallback)
+    saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? 2 : 1, aCallback);
   });
 }
 
