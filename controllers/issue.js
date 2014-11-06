@@ -111,6 +111,21 @@ exports.list = function (aReq, aRes, aNext) {
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(aReq);
+
+      // Empty list
+      if (options.searchBarValue) {
+        if (open) {
+          options.discussionListIsEmptyMessage = 'We couldn\'t find any open discussions with this search value.';
+        } else {
+          options.discussionListIsEmptyMessage = 'We couldn\'t find any closed discussions with this search value.';
+        }
+      } else {
+        if (open) {
+          options.discussionListIsEmptyMessage = 'No open discussions.';
+        } else {
+          options.discussionListIsEmptyMessage = 'No closed discussions.';
+        }
+      }
     };
     function render() { aRes.render('pages/scriptIssueListPage', options); }
     function asyncComplete() { preRender(); render(); }
