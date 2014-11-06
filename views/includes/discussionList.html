@@ -8,7 +8,6 @@
         {{/multipleCategories}}
         <th class="text-center td-fit">Users</th>
         <th class="text-center td-fit"><a href="?orderBy=comments&orderDir={{orderDir.comments}}">Replies</a></th>
-        <th class="text-center td-fit">Views</th>
         <th class="text-center td-fit"><a href="?orderBy=created&orderDir={{orderDir.created}}">Created</a></th>
         <th class="text-center td-fit"><a href="?orderBy=updated&orderDir={{orderDir.updated}}">Updated</a></th>
       </tr>
@@ -33,9 +32,6 @@
         </td>
         <td class="text-center td-fit">
           <p>{{replies}}</p>
-        </td>
-        <td class="text-center td-fit">
-          <p>?</p>
         </td>
         <td class="text-center td-fit">
           <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
