@@ -13,7 +13,7 @@ module.exports = function (aApp) {
 
     if (!aModuleOption || typeof aModuleOption === 'number') {
       aApp.use(
-        path.join(aRoot, aModuleName),
+        aRoot + '/' + aModuleName,
         express.static(
           path.join(moduleRoot, aModuleName),
           { maxage: aModuleOption }
@@ -22,7 +22,7 @@ module.exports = function (aApp) {
     } else {
       for (moduleFile in aModuleOption) {
         aApp.use(
-          path.join(aRoot, aModuleName, moduleFile),
+          aRoot + '/' + aModuleName + '/' + moduleFile,
           express.static(
             path.join(moduleRoot, aModuleName, moduleFile),
             { maxage: aModuleOption[moduleFile].maxage }
