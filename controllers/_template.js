@@ -57,7 +57,7 @@ exports.example = function (aReq, aRes, aNext) {
   function preRender() {
     // Pagination
     options.paginationRendered = pagination.renderDefault(aReq);
-  }  ;
+  }
   function render() { aRes.render('pages/_templatePage', options); }
   function asyncComplete() { preRender(); render(); }
 
