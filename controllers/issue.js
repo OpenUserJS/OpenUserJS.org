@@ -111,6 +111,21 @@ exports.list = function (aReq, aRes, aNext) {
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(aReq);
+
+      // Empty list
+      if (options.searchBarValue) {
+        if (open) {
+          options.discussionListIsEmptyMessage = 'We couldn\'t find any open discussions with this search value.';
+        } else {
+          options.discussionListIsEmptyMessage = 'We couldn\'t find any closed discussions with this search value.';
+        }
+      } else {
+        if (open) {
+          options.discussionListIsEmptyMessage = 'No open discussions.';
+        } else {
+          options.discussionListIsEmptyMessage = 'No closed discussions.';
+        }
+      }
     }
     function render() { aRes.render('pages/scriptIssueListPage', options); }
     function asyncComplete() { preRender(); render(); }
@@ -271,8 +286,10 @@ exports.open = function (aReq, aRes, aNext) {
         if (!aDiscussion) {
           return aRes.redirect('/' + encodeURI(category) + '/open');
         }
+
         aRes.redirect(encodeURI(aDiscussion.path + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
-      });
+      }
+      );
     } else {
       // New Issue Page
 
@@ -296,8 +313,7 @@ exports.comment = function (aReq, aRes, aNext) {
   if (!user) { return aRes.redirect('/login'); }
 
   Script.findOne({
-    installName: scriptStorage.caseInsensitive(installName +
-      (type === 'libs' ? '.js' : '.user.js'))
+    installName: scriptStorage.caseInsensitive(installName + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScript) {
     var content = aReq.body['comment-content'];
 
@@ -328,8 +344,7 @@ exports.changeStatus = function (aReq, aRes, aNext) {
   if (!user) { return aRes.redirect('/login'); }
 
   Script.findOne({
-    installName: scriptStorage.caseInsensitive(installName +
-      (type === 'libs' ? '.js' : '.user.js'))
+    installName: scriptStorage.caseInsensitive(installName + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScript) {
 
     if (aErr || !aScript) { return aNext(); }

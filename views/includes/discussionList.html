@@ -45,6 +45,13 @@
         </td>
       </tr>
       {{/discussionList}}
+      {{^discussionList}}
+      <tr class="tr-link">
+        <td colspan="{{#multipleCategories}}7{{/multipleCategories}}{{^multipleCategories}}6{{/multipleCategories}}">
+          <em>{{discussionListIsEmptyMessage}}</em>
+        </td>
+      </tr>
+      {{/discussionList}}
     </tbody>
   </table>
 </div>
