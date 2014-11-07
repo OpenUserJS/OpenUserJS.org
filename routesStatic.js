@@ -1,31 +1,33 @@
 'use strict';
 
-var express = require('express');
 var path = require('path');
+var url = require('url');
+
+var express = require('express');
 
 module.exports = function (aApp) {
   var day = 1000 * 60 * 60 * 24;
 
   // Static Files
-  function serveModule(aRoot, aModuleName, aModuleOption) {
-    var moduleRoot = path.join(__dirname, 'node_modules');
-    var moduleFile = null;
+  function serveModule(aModuleBase, aModuleBaseName, aModuleOption) {
+    var dirname = path.join(__dirname, 'node_modules');
+    var basename = null;
 
     if (!aModuleOption || typeof aModuleOption === 'number') {
       aApp.use(
-        path.join(aRoot, aModuleName),
+        url.resolve(aModuleBase, aModuleBaseName),
         express.static(
-          path.join(moduleRoot, aModuleName),
+          path.join(dirname, aModuleBaseName),
           { maxage: aModuleOption }
         )
       );
     } else {
-      for (moduleFile in aModuleOption) {
+      for (basename in aModuleOption) {
         aApp.use(
-          path.join(aRoot, aModuleName, moduleFile),
+          url.resolve(aModuleBase, url.resolve(aModuleBaseName, basename)),
           express.static(
-            path.join(moduleRoot, aModuleName, moduleFile),
-            { maxage: aModuleOption[moduleFile].maxage }
+            path.join(dirname, aModuleBaseName, basename),
+            { maxage: aModuleOption[basename].maxage }
           )
         );
       }
@@ -34,34 +36,34 @@ module.exports = function (aApp) {
 
   aApp.use(express.static(path.join(__dirname, 'public'), { maxage: day * 1 }));
 
-  serveModule('/redist/npm', 'bootstrap', {
+  serveModule('/redist/npm/', 'bootstrap/', {
     'dist/js/bootstrap.js': { maxage: day * 1 }
   });
 
-  serveModule('/redist/npm', 'bootstrap-markdown', {
+  serveModule('/redist/npm/', 'bootstrap-markdown/', {
     'js/bootstrap-markdown.js': { maxage: day * 1 },
     'css/bootstrap-markdown.min.css': { maxage: day * 1 }
   });
 
-  serveModule('/redist/npm', 'font-awesome', {
+  serveModule('/redist/npm/', 'font-awesome/', {
     'css/font-awesome.min.css': { maxage: day * 1 },
     'fonts/fontawesome-webfont.eot': { maxage: day * 7 },
     'fonts/fontawesome-webfont.svg': { maxage: day * 7 },
     'fonts/fontawesome-webfont.ttf': { maxage: day * 7 },
     'fonts/fontawesome-webfont.woff': { maxage: day * 7 },
-    'fonts/FontAwesome.otf': { maxage: day * 7 },
+    'fonts/FontAwesome.otf': { maxage: day * 7 }
   });
 
-  serveModule('/redist/npm', 'jquery', {
+  serveModule('/redist/npm/', 'jquery/', {
     'dist/jquery.js': { maxage: day * 7 },
     'dist/jquery.min.map': { maxage: day * 7 }
   });
 
-  serveModule('/redist/npm', 'marked', {
+  serveModule('/redist/npm/', 'marked/', {
     'lib/marked.js': { maxage: day * 1 }
   });
 
-  serveModule('/redist/npm', 'octicons', {
+  serveModule('/redist/npm/', 'octicons/', {
     'octicons/octicons.css': { maxage: day * 1 },
     'octicons/octicons-local.ttf': { maxage: day * 7 },
     'octicons/octicons.eot': { maxage: day * 7 },
@@ -70,7 +72,7 @@ module.exports = function (aApp) {
     'octicons/octicons.woff': { maxage: day * 7 }
   });
 
-  serveModule('/redist/npm', 'select2', {
+  serveModule('/redist/npm/', 'select2/', {
     'select2.js': { maxage: day * 1 },
     'select2.css': { maxage: day * 1 },
     'select2.png': { maxage: day * 30 },
@@ -78,8 +80,7 @@ module.exports = function (aApp) {
     'select2-spinner.gif': { maxage: day * 30 }
   });
 
-  serveModule('/redist/npm', 'select2-bootstrap-css', {
+  serveModule('/redist/npm/', 'select2-bootstrap-css/', {
     'select2-bootstrap.css': { maxage: day * 1 }
   });
-
 }
