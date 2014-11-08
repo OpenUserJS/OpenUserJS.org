@@ -26,6 +26,7 @@ These also may use [shields.io][shieldsHomepage] where applicable for more expli
 ##### Dynamic
 Repository | Reference | Recent Version
 --- | --- | ---
+[ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.1.8 7fafd12][ace-buildsGHHASHUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl]
@@ -72,7 +73,6 @@ Repository | Reference | Recent Version
 
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
-[ace-builds][ace-buildsGHUrl] | [Documentation][ace-buildsDOCUrl] | 1.1.7 *(2014 10 09)* | 1.1.7 *(2014 10 09)*
 [bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
 
 
@@ -99,6 +99,13 @@ Repository | Reference | Recent Version | Referenced
 [davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
 
 [shieldsHomepage]: http://shields.io/
+
+[ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
+[ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
+[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/7fafd126c2d26bdec899274eb5c2080c7a081d47
+[aceGHUrl]: https://github.com/ajaxorg/ace "ace"
+[aceDOCUrl]: http://ace.c9.io/#nav=api "ace"
+
 
 [asyncGHUrl]: https://github.com/caolan/async
 [asyncDOCUrl]: https://github.com/caolan/async/blob/master/README.md
@@ -302,10 +309,6 @@ Repository | Reference | Recent Version | Referenced
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
 
 
-
-
-[ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
-[ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 
 [bootswatchGHUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/custom/bootstrap.css
 [bootswatchREPOUrl]: http://bootswatch.com

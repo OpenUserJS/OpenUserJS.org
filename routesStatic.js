@@ -36,6 +36,8 @@ module.exports = function (aApp) {
 
   aApp.use(express.static(path.join(__dirname, 'public'), { maxage: day * 1 }));
 
+  serveModule('/redist/npm/', 'ace-builds/src/', 7);
+
   serveModule('/redist/npm/', 'bootstrap/', {
     'dist/js/bootstrap.js': { maxage: day * 1 }
   });
@@ -83,4 +85,4 @@ module.exports = function (aApp) {
   serveModule('/redist/npm/', 'select2-bootstrap-css/', {
     'select2-bootstrap.css': { maxage: day * 1 }
   });
-}
+};
