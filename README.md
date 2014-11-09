@@ -40,6 +40,7 @@ Repository | Reference | Recent Version
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
+[method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
@@ -173,6 +174,11 @@ Repository | Reference | Recent Version | Referenced
 [markedDOCUrl]: https://github.com/chjj/marked/blob/master/README.md
 [markedNPMUrl]: https://npmjs.org/package/marked
 [markedNPMVersionImage]: https://img.shields.io/npm/v/marked.svg?style=flat
+
+[method-overrideGHUrl]: https://github.com/expressjs/method-override
+[method-overrideDOCUrl]: https://github.com/expressjs/method-override/blob/master/README.md
+[method-overrideNPMUrl]: https://www.npmjs.org/package/method-override
+[method-overrideNPMVersionImage]: https://img.shields.io/npm/v/method-override.svg?style=flat
 
 [momentGHUrl]: https://github.com/moment/moment
 [momentDOCUrl]: http://momentjs.com/docs/
