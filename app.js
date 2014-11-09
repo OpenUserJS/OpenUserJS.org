@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var methodOverride = require('method-override');
 var minify = require('express-minify');
 var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
@@ -50,7 +51,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(express.urlencoded());
 app.use(express.json());
 app.use(express.compress());
-app.use(express.methodOverride());
+app.use(methodOverride('X-HTTP-Method-Override'));
 
 // Order is very important here (i.e mess with at your own risk)
 app.use(express.cookieParser());

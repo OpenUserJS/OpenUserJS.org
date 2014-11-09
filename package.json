@@ -18,6 +18,7 @@
     "highlight.js": "8.3.0",
     "jquery": "2.1.1",
     "marked": "0.3.2",
+    "method-override": "2.3.0",
     "moment": "2.8.3",
     "mongoose": "3.8.19",
     "mu2": "0.5.20",
