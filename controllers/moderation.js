@@ -15,7 +15,7 @@ var orderDir = require('../libs/templateHelpers').orderDir;
 exports.removedItemPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var removedItemId = aReq.route.params.id;
+  var removedItemId = aReq.params.id;
 
   //
   var options = {};

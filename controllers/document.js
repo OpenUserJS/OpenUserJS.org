@@ -17,7 +17,7 @@ exports.view = function (aReq, aRes, aNext) {
   var tasks = [];
 
   var documentPath = null;
-  var document = aReq.route.params.document;
+  var document = aReq.params.document;
   var then = null;
 
   // Session

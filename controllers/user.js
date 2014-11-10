@@ -220,7 +220,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
 exports.view = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var username = aReq.route.params.username;
+  var username = aReq.params.username;
 
   User.findOne({
     name: caseInsensitive(username)
@@ -279,7 +279,7 @@ exports.view = function (aReq, aRes, aNext) {
 exports.userCommentListPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var username = aReq.route.params.username;
+  var username = aReq.params.username;
 
   User.findOne({
     name: caseInsensitive(username)
@@ -363,7 +363,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 exports.userScriptListPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var username = aReq.route.params.username;
+  var username = aReq.params.username;
 
   User.findOne({
     name: caseInsensitive(username)
@@ -457,7 +457,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
 
   if (!authedUser) { return aRes.redirect('/login'); }
 
-  var username = aReq.route.params.username;
+  var username = aReq.params.username;
 
   User.findOne({
     _id: authedUser._id
@@ -646,7 +646,7 @@ exports.edit = function (aReq, aRes, aNext) {
   // Page metadata
   pageMetadata(options, ['Edit Yourself', 'Users']);
 
-  aReq.route.params.push('author');
+  aReq.params.push('author');
 
   Strategy.find({}, function (aErr, aStrats) {
     var defaultStrategy = userStrats[userStrats.length - 1];
@@ -1211,7 +1211,7 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
 
 exports.uploadScript = function (aReq, aRes, aNext) {
   var user = aReq.session.user;
-  var isLib = aReq.route.params.isLib;
+  var isLib = aReq.params.isLib;
   var userjsRegex = /\.user\.js$/;
   var jsRegex = /\.js$/;
   var form = null;
@@ -1300,7 +1300,7 @@ exports.update = function (aReq, aRes, aNext) {
 // Submit a script through the web editor
 exports.submitSource = function (aReq, aRes, aNext) {
   var user = aReq.session.user;
-  var isLib = aReq.route.params.isLib;
+  var isLib = aReq.params.isLib;
   var source = null;
   var url = null;
 
@@ -1354,9 +1354,9 @@ exports.submitSource = function (aReq, aRes, aNext) {
 };
 
 function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
-  aOptions.isLib = aReq.route.params.isLib;
+  aOptions.isLib = aReq.params.isLib;
 
-  if (aReq.route.params.isNew) {
+  if (aReq.params.isNew) {
 
     // A user who isn't logged in can't write a new script
     if (!aAuthedUser) { return aCallback(null); }
@@ -1372,7 +1372,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
 
     aCallback(aOptions);
   } else {
-    aReq.route.params.scriptname += aOptions.isLib ? '.js' : '.user.js';
+    aReq.params.scriptname += aOptions.isLib ? '.js' : '.user.js';
     scriptStorage.getSource(aReq, function (aScript, aStream) {
       var bufs = [];
       var collaborators = [];
@@ -1412,8 +1412,8 @@ exports.editScript = function (aReq, aRes, aNext) {
 
   var authedUser = aReq.session.user;
 
-  var isNew = aReq.route.params.isNew;
-  var isLib = aReq.route.params.isLib;
+  var isNew = aReq.params.isNew;
+  var isLib = aReq.params.isLib;
 
   //
   var options = {};
@@ -1441,8 +1441,8 @@ exports.editScript = function (aReq, aRes, aNext) {
 
   if (!isNew) {
     installNameSlug = scriptStorage.getInstallName(aReq);
-    scriptAuthor = aReq.route.params.username;
-    scriptNameSlug = aReq.route.params.scriptname;
+    scriptAuthor = aReq.params.username;
+    scriptNameSlug = aReq.params.scriptname;
 
     Script.findOne({
       installName: scriptStorage
@@ -1489,8 +1489,8 @@ exports.editScript = function (aReq, aRes, aNext) {
 
 // route to flag a user
 exports.flag = function (aReq, aRes, aNext) {
-  var username = aReq.route.params.username;
-  var unflag = aReq.route.params.unflag;
+  var username = aReq.params.username;
+  var unflag = aReq.params.unflag;
 
   User.findOne({ name: username }, function (aErr, aUser) {
     var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];

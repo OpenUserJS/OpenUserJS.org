@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 function getInstallName (aReq) {
-  return aReq.route.params.username + '/' + aReq.route.params.scriptname;
+  return aReq.params.username + '/' + aReq.params.scriptname;
 }
 exports.getInstallName = getInstallName;
 
@@ -70,7 +70,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     aStream.pipe(aRes);
 
     // Don't count installs on raw source route
-    if (aScript.isLib || aReq.route.params.type) { return; }
+    if (aScript.isLib || aReq.params.type) { return; }
 
     // Update the install count
     ++aScript.installs;

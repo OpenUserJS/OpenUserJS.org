@@ -24,8 +24,8 @@ function cleanGroupName(aName) {
 exports.search = function (aReq, aRes) {
   var queryStr = '';
   var queryRegex = null;
-  var addTerm = aReq.route.params.addTerm;
-  var term = cleanGroupName(aReq.route.params.term);
+  var addTerm = aReq.params.addTerm;
+  var term = cleanGroupName(aReq.params.term);
   var terms = term.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/);
   var results = null;
 
@@ -221,7 +221,7 @@ var setupGroupSidePanel = function (aOptions) {
 exports.view = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var groupNameSlug = aReq.route.params.groupname;
+  var groupNameSlug = aReq.params.groupname;
   var groupName = groupNameSlug.replace(/_+/g, ' ');
 
   Group.findOne({

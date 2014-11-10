@@ -24,7 +24,7 @@ var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 // Let controllers know this is a `new` route
 exports.new = function (aController) {
   return (function (aReq, aRes, aNext) {
-    aReq.route.params.isNew = true;
+    aReq.params.isNew = true;
     aController(aReq, aRes, aNext);
   });
 };
@@ -32,7 +32,7 @@ exports.new = function (aController) {
 // Let controllers know this is a `lib` route
 exports.lib = function (aController) {
   return (function (aReq, aRes, aNext) {
-    aReq.route.params.isLib = true;
+    aReq.params.isLib = true;
     aController(aReq, aRes, aNext);
   });
 };
@@ -286,9 +286,9 @@ exports.view = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var installNameSlug = scriptStorage.getInstallName(aReq);
-  var scriptAuthor = aReq.route.params.username;
-  var scriptNameSlug = aReq.route.params.scriptname;
-  var isLib = aReq.route.params.isLib;
+  var scriptAuthor = aReq.params.username;
+  var scriptNameSlug = aReq.params.scriptname;
+  var isLib = aReq.params.isLib;
 
   Script.findOne({
     installName: scriptStorage
@@ -348,12 +348,12 @@ exports.edit = function (aReq, aRes, aNext) {
   if (!authedUser) { return aRes.redirect('/login'); }
 
   // Support routes lacking the :username. TODO: Remove this functionality.
-  aReq.route.params.username = authedUser.name.toLowerCase();
+  aReq.params.username = authedUser.name.toLowerCase();
 
   var installNameSlug = scriptStorage.getInstallName(aReq);
-  var scriptAuthor = aReq.route.params.username;
-  var scriptNameSlug = aReq.route.params.scriptname;
-  var isLib = aReq.route.params.isLib;
+  var scriptAuthor = aReq.params.username;
+  var scriptNameSlug = aReq.params.scriptname;
+  var isLib = aReq.params.isLib;
 
   Script.findOne({
     installName: scriptStorage
@@ -430,10 +430,10 @@ exports.edit = function (aReq, aRes, aNext) {
 
 // Script voting
 exports.vote = function (aReq, aRes, aNext) {
-  var isLib = aReq.route.params.isLib;
+  var isLib = aReq.params.isLib;
   var installName = scriptStorage.getInstallName(aReq)
     + (isLib ? '.js' : '.user.js');
-  var vote = aReq.route.params.vote;
+  var vote = aReq.params.vote;
   var user = aReq.session.user;
   var url = aReq._parsedUrl.pathname.split('/');
   var unvote = false;
@@ -514,9 +514,9 @@ exports.vote = function (aReq, aRes, aNext) {
 
 // Script flagging
 exports.flag = function (aReq, aRes, aNext) {
-  var isLib = aReq.route.params.isLib;
+  var isLib = aReq.params.isLib;
   var installName = scriptStorage.getInstallName(aReq);
-  var unflag = aReq.route.params.unflag;
+  var unflag = aReq.params.unflag;
 
   Script.findOne({ installName:  scriptStorage
       .caseInsensitive(installName + (isLib ? '.js' : '.user.js')) },

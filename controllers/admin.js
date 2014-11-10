@@ -87,7 +87,7 @@ exports.userAdmin = function (aReq, aRes, aNext) {
 // View everything about a particular user
 // This is mostly for debugging in production
 exports.adminUserView = function (aReq, aRes, aNext) {
-  var id = aReq.route.params.id;
+  var id = aReq.params.id;
   var thisUser = aReq.session.user;
 
   if (!userIsAdmin(aReq)) { return aNext(); }
@@ -151,7 +151,7 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
 exports.adminUserUpdate = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var username = aReq.route.params.username;
+  var username = aReq.params.username;
 
   User.findOne({
     name: username
