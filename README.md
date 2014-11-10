@@ -29,10 +29,14 @@ Repository | Reference | Recent Version
 [ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.1.8 7fafd12][ace-buildsGHHASHUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
+[body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
 [bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl]
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl]
+[compression][compressionGHUrl] | [Documentation][compressionDOCUrl] | [![NPM version][compressionNPMVersionImage]][compressionNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
+[cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
+[express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
 [fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
@@ -42,6 +46,7 @@ Repository | Reference | Recent Version
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
+[morgan][morganGHUrl] | [Documentation][morganDOCUrl] | [![NPM version][morganNPMVersionImage]][morganNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
 [octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.1.2 835ee02][OcticonsGHHASHUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
@@ -66,6 +71,7 @@ Repository | Reference | Recent Version
 [sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [1.4.1 fce5f9f][select2-bootstrap-cssGHHASHUrl]
+[serve-favicon][serve-faviconGHUrl] | [Documentation][serve-faviconDOCUrl] | [![NPM version][serve-faviconNPMVersionImage]][serve-faviconNPMUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 
 
@@ -117,6 +123,11 @@ Repository | Reference | Recent Version | Referenced
 [aws-sdkNPMUrl]: https://npmjs.org/package/aws-sdk
 [aws-sdkNPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
 
+[body-parserGHUrl]: https://github.com/expressjs/body-parser
+[body-parserDOCUrl]: https://github.com/expressjs/body-parser/blob/master/README.md
+[body-parserNPMUrl]: https://npmjs.org/package/body-parser
+[body-parserNPMVersionImage]: https://img.shields.io/npm/v/body-parser.svg?style=flat
+
 [bootstrapUrl]: http://getbootstrap.com/
 [bootstrapGHUrl]: https://github.com/twbs/bootstrap
 [bootstrapDOCUrl]: http://getbootstrap.com/components/
@@ -128,15 +139,30 @@ Repository | Reference | Recent Version | Referenced
 [bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
 
+[compressionGHUrl]: https://github.com/expressjs/compression
+[compressionDOCUrl]: https://github.com/expressjs/compression/blob/master/README.md
+[compressionNPMUrl]: https://npmjs.org/package/compression
+[compressionNPMVersionImage]: https://img.shields.io/npm/v/compression.svg?style=flat
+
 [connect-mongoGHUrl]: https://github.com/kcbanner/connect-mongo
 [connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/Readme.md
 [connect-mongoNPMUrl]: https://npmjs.org/package/connect-mongo
 [connect-mongoNPMVersionImage]: https://img.shields.io/npm/v/connect-mongo.svg?style=flat
 
+[cookie-parserGHUrl]: https://github.com/expressjs/cookie-parser
+[cookie-parserDOCUrl]: https://github.com/expressjs/cookie-parser/blob/master/README.md
+[cookie-parserNPMUrl]: https://npmjs.org/package/cookie-parser
+[cookie-parserNPMVersionImage]: https://img.shields.io/npm/v/cookie-parser.svg?style=flat
+
 [expressGHUrl]: https://github.com/strongloop/express
 [expressDOCUrl]: http://expressjs.com/
 [expressNPMUrl]: https://www.npmjs.org/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
+
+[express-sessionGHUrl]: https://github.com/expressjs/session
+[express-sessionDOCUrl]: https://github.com/expressjs/session/blob/master/README.md
+[express-sessionNPMUrl]: https://npmjs.org/package/express-session
+[express-sessionNPMVersionImage]: https://img.shields.io/npm/v/express-session.svg?style=flat
 
 [fakes3GHUrl]: https://github.com/jubos/fake-s3
 [fakes3DOCUrl]: http://www.rubydoc.info/gems/fakes3
@@ -183,6 +209,11 @@ Repository | Reference | Recent Version | Referenced
 [mongooseDOCUrl]: http://mongoosejs.com
 [mongooseNPMUrl]: https://npmjs.org/package/mongoose
 [mongooseNPMVersionImage]: https://img.shields.io/npm/v/mongoose.svg?style=flat
+
+[morganGHUrl]: https://github.com/expressjs/morgan
+[morganDOCUrl]: https://github.com/expressjs/morgan/blob/master/README.md
+[morganNPMUrl]: https://npmjs.org/package/morgan
+[morganNPMVersionImage]: https://img.shields.io/npm/v/morgan.svg?style=flat
 
 [mu2GHUrl]: https://github.com/raycmorgan/Mu
 [mu2DOCUrl]: https://github.com/raycmorgan/Mu/blob/master/README.md
@@ -303,11 +334,15 @@ Repository | Reference | Recent Version | Referenced
 [select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/README.md
 [select2-bootstrap-cssGHHASHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/select2-bootstrap.css
 
+[serve-faviconGHUrl]: https://github.com/expressjs/serve-favicon
+[serve-faviconDOCUrl]: https://github.com/expressjs/serve-favicon/blob/master/README.md
+[serve-faviconNPMUrl]: https://npmjs.org/package/serve-favicon
+[serve-faviconNPMVersionImage]: https://img.shields.io/npm/v/serve-favicon.svg?style=flat
+
 [underscoreGHUrl]: https://github.com/jashkenas/underscore
 [underscoreDOCUrl]: http://underscorejs.org/
 [underscoreNPMUrl]: https://npmjs.org/package/underscore
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
-
 
 
 [bootswatchGHUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/custom/bootstrap.css

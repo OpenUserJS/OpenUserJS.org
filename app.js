@@ -2,8 +2,15 @@
 
 var express = require('express');
 var methodOverride = require('method-override');
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+var compression = require('compression');
+var cookieParser = require('cookie-parser');
+var favicon = require('serve-favicon');
+
 var minify = require('express-minify');
-var MongoStore = require('connect-mongo')(express);
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
 var passport = require('passport');
 
@@ -45,24 +52,34 @@ if (app.get('port') === 443) {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  app.use(express.logger('dev'));
+  app.use(morgan('dev'));
 }
 
-app.use(express.urlencoded());
-app.use(express.json());
-app.use(express.compress());
+app.use(bodyParser.urlencoded({
+  extended: false,
+  limit: parseInt(settings.maximum_upload_script_size / 1024, 10) + 'kb'
+}));
+
+app.use(bodyParser.json({
+  extended: false,
+  limit: parseInt(settings.maximum_upload_script_size / 1024, 10) + 'kb'
+}));
+
+app.use(compression());
 app.use(methodOverride('X-HTTP-Method-Override'));
 
 // Order is very important here (i.e mess with at your own risk)
-app.use(express.cookieParser());
-app.use(express.session({
+app.use(cookieParser());
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
   secret: sessionSecret,
   store: sessionStore
 }));
 app.use(passport.initialize());
 app.use(modifySessions.init(sessionStore));
 app.use(app.router);
-app.use(express.favicon('public/images/favicon.ico'));
+app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
 // Set up the views
 app.engine('html', require('./libs/muExpress').renderFile(app));
