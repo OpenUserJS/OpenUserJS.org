@@ -2,11 +2,16 @@
 
 These pages are a work in progress, but are intended to help users with no previous knowledge understand how to install and use userscripts on their computer.
 
-### What is a Userscript?
+### What is a User Script?
 
-Userscripts are add-ons for web browsers that change web pages as they are loaded.  They give users the power to make websites do what they want them to, rather than what was originally intended.
+Userscripts *(a.k.a User Scripts, User scripts, or `user.js`)* are open-source licensed add-ons for web browsers that change web pages as they are loaded.  They give users the power to make websites do what they want them to, rather than what was originally intended. This kind of script is usually file named on your computer as `site it affects - what it is call it.user.js` and always **does** end in `.user.js`.
 
 Useful tasks like improving layout, fixing bugs, automating common tasks and adding new functions can all be done by userscripts. More complicated userscripts can create mash-ups by combining information from different websites or embedding new data into a web page, e.g. to add reviews or price comparisons to a shopping website.
+
+
+### What is a Library Script?
+
+Library scripts *(a.k.a libs or `.js` libraries)* are reusable open-source licensed pieces of code that are shared for common uses in other Userscripts. This kind of script is usually file named `what useful name you want to call it.js` and always **does not** end in `.user.js`.
 
 ### How do I use a userscript?
 
