@@ -6,6 +6,7 @@ Repository | Reference | Recent Version
 :--- | :---: | :---
 [node][nodeGHUrl] | [Documentation][nodeDOCUrl] | [![node][nodeVersionImage]][nodeDLUrl] [CHANGELOG][nodeGHReleasesUrl]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
+[jitsu][jitsuGHUrl] | [Documentation][jitsuDOCUrl] | [![npm][jitsuNPMVersionImage]][jitsuNPMUrl] [CHANGELOG][jitsuGHReleasesUrl]
 
 ### Contributing
 
@@ -100,6 +101,12 @@ Repository | Reference | Recent Version | Referenced
 [npmGHReleasesUrl]: https://github.com/npm/npm/releases
 [npmGHUrl]: https://github.com/npm/npm/
 [npmDOCUrl]: https://github.com/npm/npm/blob/master/README.md
+
+[jitsuNPMUrl]: https://www.npmjs.org/package/jitsu
+[jitsuNPMVersionImage]: http://img.shields.io/npm/v/jitsu.svg
+[jitsuGHReleasesUrl]: https://github.com/nodejitsu/jitsu/releases
+[jitsuGHUrl]: https://github.com/nodejitsu/jitsu
+[jitsuDOCUrl]: https://github.com/nodejitsu/jitsu/blob/master/README.md
 
 
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
