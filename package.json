@@ -4,7 +4,7 @@
   "version": "0.1.3",
   "main": "app",
   "dependencies": {
-    "ace-builds": "git://github.com/Martii/ace-builds#0e0dc39",
+    "ace-builds": "git://github.com/ajaxorg/ace-builds#7fafd12",
     "async": "0.9.0",
     "aws-sdk": "2.0.21",
     "body-parser": "1.9.2",
