@@ -2,13 +2,11 @@
 
 var express = require('express');
 var methodOverride = require('method-override');
-var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 var cookieParser = require('cookie-parser');
 var favicon = require('serve-favicon');
 
-var minify = require('express-minify');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
@@ -52,7 +50,10 @@ if (app.get('port') === 443) {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'));
+  try {
+    var morgan = require('morgan');
+    app.use(morgan('dev'));
+  } catch (e) {}
 }
 
 app.use(bodyParser.urlencoded({
@@ -90,7 +91,10 @@ app.set('views', __dirname + '/views');
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue
 if (process.env.NODE_ENV === 'production') {
-  app.use(minify());
+  try {
+    var minify = require('express-minify');
+    app.use(minify());
+  } catch (e) {}
 }
 
 // Routes
