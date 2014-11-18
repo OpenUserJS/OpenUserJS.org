@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var async = require('async');
 var _ = require('underscore');
 
@@ -126,7 +132,7 @@ exports.list = function (aReq, aRes, aNext) {
           options.discussionListIsEmptyMessage = 'No closed discussions.';
         }
       }
-    };
+    }
     function render() { aRes.render('pages/scriptIssueListPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -146,7 +152,7 @@ exports.view = function (aReq, aRes, aNext) {
 
   Script.findOne({
     installName: scriptStorage.caseInsensitive(
-      installNameSlug  + (type === 'libs' ? '.js' : '.user.js'))
+      installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     if (aErr || !aScriptData) { return aNext(); }
 
@@ -222,7 +228,7 @@ exports.view = function (aReq, aRes, aNext) {
 
         // Pagination
         options.paginationRendered = pagination.renderDefault(aReq);
-      };
+      }
       function render() { aRes.render('pages/scriptIssuePage', options); }
       function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
@@ -244,7 +250,7 @@ exports.open = function (aReq, aRes, aNext) {
 
   Script.findOne({
     installName: scriptStorage.caseInsensitive(
-      installNameSlug  + (type === 'libs' ? '.js' : '.user.js'))
+      installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     function preRender() {
       // Page metadata

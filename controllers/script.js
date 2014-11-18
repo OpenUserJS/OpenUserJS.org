@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
@@ -13,7 +19,7 @@ var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 
 var scriptStorage = require('./scriptStorage');
-var addScriptToGroups = require('./group').addScriptToGroups
+var addScriptToGroups = require('./group').addScriptToGroups;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var modelQuery = require('../libs/modelQuery');
@@ -299,7 +305,7 @@ exports.view = function (aReq, aRes, aNext) {
         pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
           script.meta.description, _.pluck(script.groups, 'name'));
       }
-    };
+    }
     function render() { aRes.render('pages/scriptPage', options); }
     function asyncComplete() { preRender(); render(); }
 
@@ -365,7 +371,7 @@ exports.edit = function (aReq, aRes, aNext) {
       });
       options.groupNameListJSON = JSON.stringify(groupNameList);
 
-    };
+    }
     function render() { aRes.render('pages/scriptEditMetadataPage', options); }
     function asyncComplete() { preRender(); render(); }
 

@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var fs = require('fs');
 var formidable = require('formidable');
 var async = require('async');
@@ -210,7 +216,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
     if (options.isFlagged) {
       pageMetadata(options, ['Flagged Users', 'Moderation']);
     }
-  };
+  }
   function render() { aRes.render('pages/userListPage', options); }
   function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } };
   async.parallel(tasks, asyncComplete);
@@ -269,7 +275,7 @@ exports.view = function (aReq, aRes, aNext) {
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
     //---
-    function preRender() { };
+    function preRender() { }
     function render() { aRes.render('pages/userPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -353,7 +359,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 
       // Pagination
       options.paginationRendered = pagination.renderDefault(aReq);
-    };
+    }
     function render() { aRes.render('pages/userCommentListPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -445,7 +451,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
       } else if (options.isUserScriptListPage) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
-    };
+    }
     function render() { aRes.render('pages/userScriptListPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -507,7 +513,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
     //---
-    function preRender() { };
+    function preRender() { }
     function render() { aRes.render('pages/userEditProfilePage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -588,7 +594,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
         });
 
         // Get OpenId strategies
-        if (process.env.NODE_ENV === 'production') {
+        if (isPro) {
           for (name in strategies) {
             strategy = strategies[name];
 
@@ -621,7 +627,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     // UserSidePanel tasks
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
-    function preRender() { };
+    function preRender() { }
     function render() { aRes.render('pages/userEditPreferencesPage', options); }
     function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
@@ -673,7 +679,7 @@ exports.edit = function (aReq, aRes, aNext) {
     });
 
     // Get OpenId strategies
-    if (process.env.NODE_ENV === 'production') {
+    if (isPro) {
       for (name in strategies) {
         strategy = strategies[name];
 
@@ -1201,7 +1207,7 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
     if (aErr) {
       return statusCodePage(aReq, aRes, aNext, {
         statusMessage: aErr
-      })
+      });
     }
 
     console.log('render');

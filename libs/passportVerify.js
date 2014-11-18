@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var crypto = require('crypto');
 var User = require('../models/user').User;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;

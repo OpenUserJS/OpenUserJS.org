@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');
@@ -24,7 +30,7 @@ var momentLangFromNow = function (aDate) {
   return '[' + aDate.fromNow() + ']';
 };
 var momentLangTinyDate = function (aDate) {
-  if(aDate.year() === moment().year()) {
+  if (aDate.year() === moment().year()) {
     return '[' + aDate.format("D MMM") + ']';
   } else {
     return '[' + aDate.format("MMM 'YY") + ']';

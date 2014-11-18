@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var AWS = require('aws-sdk');
 
 var Script = require('../models/script').Script;
@@ -11,7 +17,7 @@ var userRoles = require('../models/userRoles.json');
 
 var bucketName = 'OpenUserJS.org';
 
-if (process.env.NODE_ENV === 'production') {
+if (isPro) {
   AWS.config.update({ region: 'us-east-1' });
 } else {
   // You need to install (and ruby too): https://github.com/jubos/fake-s3
@@ -249,7 +255,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var requires = null;
   var collaborators = null;
   var libraryRegex = new RegExp('^https?:\/\/' +
-    (process.env.NODE_ENV === 'production' ?
+    (isPro ?
       'openuserjs\.org' : 'localhost:8080') +
     '\/(?:libs\/src|src\/libs)\/(.+?\/.+?\.js)$', '');
 

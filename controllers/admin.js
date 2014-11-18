@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var async = require('async');
 var exec = require('child_process').exec;
 
@@ -306,11 +312,11 @@ exports.adminNpmLsView = function (aReq, aRes, aNext) {
   if (!options.isAdmin)
     return aRes.send(403, { status: 403, message: 'Not an admin.' });
 
-  exec('npm ls --json', function(aErr, aStdout, aStderr) {
+  exec('npm ls --json', function (aErr, aStdout, aStderr) {
     if (aErr) return aRes.send(501, { status: 501, message: 'Not implemented.' });
     aRes.json(JSON.parse(aStdout));
   });
-}
+};
 
 // Manage oAuth strategies without having to restart the server
 // When new keys are added, we load the new strategy
@@ -322,7 +328,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
 
   postStrats = Object.keys(aReq.body).map(function (aPostStrat) {
     var values = aReq.body[aPostStrat];
-    return { name: aPostStrat, id: values[0], key: values[1] }
+    return { name: aPostStrat, id: values[0], key: values[1] };
   });
 
   Strategy.find({}, function (aErr, aStrats) {
