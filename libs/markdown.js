@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var marked = require('marked');
 var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');
@@ -79,7 +85,7 @@ renderer.heading = function (aText, aLevel) {
 
   var name = escapedText;
   var html = '<h' + aLevel + '>';
-  html += '<a name="' + name + '"></a>'
+  html += '<a name="' + name + '"></a>';
   html += sanitize(aText);
   html += '<a href="#' + name + '" class="anchor">';
   html += '<i class="fa fa-link"></i>';

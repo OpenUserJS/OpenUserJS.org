@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var async = require('async');
 var _ = require('underscore');
 
@@ -154,7 +160,7 @@ exports.list = function (aReq, aRes) {
     if (options.groupList) {
       pageMetadata(options, 'Groups', null, _.pluck(options.groupList, 'name'));
     }
-  };
+  }
   function render() { aRes.render('pages/groupListPage', options); }
   function asyncComplete() { preRender(); render(); }
 
@@ -264,7 +270,7 @@ exports.view = function (aReq, aRes, aNext) {
       } else if (options.isUserScriptListPage) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
-    };
+    }
     function render() { aRes.render('pages/groupScriptListPage', options); }
     function asyncComplete() { preRender(); render(); }
 

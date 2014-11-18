@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var url = require("url");
 var _ = require('underscore');
 
@@ -53,7 +59,7 @@ exports.formatDate = function (aDate) {
   }
 
   return ret;
-}
+};
 
 // Create an object with no properties
 exports.nil = function (aObj) {

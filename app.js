@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('./libs/debug').isPro;
+var isDev = require('./libs/debug').isDev;
+var isDbg = require('./libs/debug').isDbg;
+
+//
 var express = require('express');
 var methodOverride = require('method-override');
 var morgan = require('morgan');
@@ -51,7 +57,7 @@ if (app.get('port') === 443) {
   });
 }
 
-if (process.env.NODE_ENV !== 'production') {
+if (isDev || isDbg) {
   app.use(morgan('dev'));
 }
 
@@ -89,7 +95,7 @@ app.set('views', __dirname + '/views');
 
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue
-if (process.env.NODE_ENV === 'production') {
+if (isPro || isDev) {
   app.use(minify());
 }
 

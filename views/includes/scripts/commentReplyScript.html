@@ -19,7 +19,7 @@
     $replyTextarea.text(text);
   });
 
-  function isElementInViewport (aEl) {
+  function isElementInViewport(aEl) {
     //special bonus for those using jQuery
     if (aEl instanceof jQuery) {
       aEl = aEl[0];
@@ -36,14 +36,14 @@
   }
 
   var hasShownReplyForm = false;
-  function callback (aEl) {
+  function callback(aEl) {
     if (!hasShownReplyForm) {
       $('#reply-control').collapse('show');
       hasShownReplyForm = true;
     }
   }
 
-  function fireIfElementVisible (aEl, aCallback) {
+  function fireIfElementVisible(aEl, aCallback) {
     return function () {
       if ( isElementInViewport(aEl) ) {
         aCallback(aEl);

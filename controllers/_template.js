@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var async = require('async');
 var _ = require('underscore');
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
@@ -28,7 +34,7 @@ exports.example = function (aReq, aRes, aNext) {
   var tasks = [];
 
   //---
-  function preRender() { };
+  function preRender() { }
   function render() { aRes.render('pages/_templatePage', options); }
   function asyncComplete() { preRender(); render(); }
 
@@ -57,7 +63,7 @@ exports.example = function (aReq, aRes, aNext) {
   function preRender() {
     // Pagination
     options.paginationRendered = pagination.renderDefault(aReq);
-  };
+  }
   function render() { aRes.render('pages/_templatePage', options); }
   function asyncComplete() { preRender(); render(); }
 

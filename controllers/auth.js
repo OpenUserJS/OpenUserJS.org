@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var passport = require('passport');
 var allStrategies = require('./strategies.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
@@ -122,7 +128,7 @@ exports.callback = function (aReq, aRes, aNext) {
       function (aToken, aRefreshOrSecretToken, aProfile, aDone) {
         aReq.session.profile = aProfile;
         verifyPassport(aProfile.id, strategy, username, aReq.session.user, aDone);
-      }
+      };
   }
 
   // This callback will happen after the verify routine
@@ -161,4 +167,4 @@ exports.callback = function (aReq, aRes, aNext) {
   });
 
   authenticate(aReq, aRes, aNext);
-}
+};

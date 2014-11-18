@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var defaultOnErrFn = console.log;
 
 var onErr = function (aErr, aOnErrFn) {
@@ -30,7 +36,7 @@ exports.execQueryTask = function (aQuery, aDict, aKey, aOnErrFn) {
         onErr(aErr, aOnErrFn);
         aCallback();
       } else {
-        aDict[aKey] = result
+        aDict[aKey] = result;
         aCallback();
       }
     });

@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var countTask = require('../libs/tasks').countTask;
 var helpers = require('../libs/helpers');
 var modelParser = require('../libs/modelParser');
