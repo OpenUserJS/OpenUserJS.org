@@ -39,7 +39,7 @@ Within moderation we understand the occasional necessity to conserve device stor
 #### Default Code Licensing
 
 * User Scripts have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) if the `@license` *(including the alternate spelling of `@licence`)* metadata block key is absent.
-* Libraries need to include one reference to their [acceptable license(s)](#acceptable-licensing) either via a cross-site compatible metadata block with at least one `@license` or `@licence` key, License Header, or full License text *(full text is not recommended for storage constraints on portable devices)*
+* Library Scripts need to include one reference to their [acceptable license(s)](#acceptable-licensing) either via a License Header *([sample MPL header](https://www.mozilla.org/MPL/headers/) if that license is chosen)*, a cross-site compatible metadata block with at least one `@license` or `@licence` key **and** one `@exclude *`, or full License text *(full text is not recommended for storage constraints on portable devices)*. Libraries also have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) in the absence of any licensing. It may also be useful to indicate in the source that it is a library and not a userscript. If the type of script is unclear the library may be subject to removal.
 
 #### Acceptable Licensing
 * Licensing must be [Open Source Initiative *(OSI)* approved](http://opensource.org/licenses/category) and declared with the name of the License in the Source Code for all published works. e.g. `@license` or `@licence` keys, License Header or full License text *(full text is not recommended for storage constraints on portable devices)*
