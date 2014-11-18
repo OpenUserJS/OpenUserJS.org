@@ -127,7 +127,7 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
 exports.list = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var categorySlug = aReq.route.params.category;
+  var categorySlug = aReq.params.category;
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
@@ -213,8 +213,8 @@ exports.findDiscussion = findDiscussion;
 exports.show = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var categorySlug = aReq.route.params.category;
-  var topic = aReq.route.params.topic;
+  var categorySlug = aReq.params.category;
+  var topic = aReq.params.topic;
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
@@ -289,7 +289,7 @@ exports.newTopic = function (aReq, aRes, aNext) {
   if (!authedUser)
     return aRes.redirect('/login');
 
-  var categorySlug = aReq.route.params.category;
+  var categorySlug = aReq.params.category;
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
@@ -403,7 +403,7 @@ exports.createTopic = function (aReq, aRes, aNext) {
   if (!authedUser)
     return aRes.redirect('/login');
 
-  var categorySlug = aReq.route.params.category;
+  var categorySlug = aReq.params.category;
   var topic = aReq.body['discussion-topic'];
   var content = aReq.body['comment-content'];
 
@@ -436,8 +436,8 @@ exports.createTopic = function (aReq, aRes, aNext) {
 
 // post route to create a new comment on an existing discussion
 exports.createComment = function (aReq, aRes, aNext) {
-  var category = aReq.route.params.category;
-  var topic = aReq.route.params.topic;
+  var category = aReq.params.category;
+  var topic = aReq.params.topic;
   var user = aReq.session.user;
   var content = aReq.body['comment-content'];
   var commentId = aReq.body['comment-id']; // for editing

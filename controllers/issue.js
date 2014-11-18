@@ -26,10 +26,10 @@ var orderDir = require('../libs/templateHelpers').orderDir;
 exports.list = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var type = aReq.route.params.type;
-  var username = aReq.route.params.username;
-  var scriptname = aReq.route.params.scriptname;
-  var open = aReq.route.params.open !== 'closed';
+  var type = aReq.params.type;
+  var username = aReq.params.username;
+  var scriptname = aReq.params.scriptname;
+  var open = aReq.params.open !== 'closed';
 
   var installNameSlug = username + '/' + scriptname;
 
@@ -143,10 +143,10 @@ exports.list = function (aReq, aRes, aNext) {
 exports.view = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  var type = aReq.route.params.type;
-  var username = aReq.route.params.username;
-  var scriptname = aReq.route.params.scriptname;
-  var topic = aReq.route.params.topic;
+  var type = aReq.params.type;
+  var username = aReq.params.username;
+  var scriptname = aReq.params.scriptname;
+  var topic = aReq.params.topic;
 
   var installNameSlug = username + '/' + scriptname;
 
@@ -245,7 +245,7 @@ exports.open = function (aReq, aRes, aNext) {
   var topic = aReq.body['discussion-topic'];
   var content = aReq.body['comment-content'];
 
-  var type = aReq.route.params.type;
+  var type = aReq.params.type;
   var installNameSlug = scriptStorage.getInstallName(aReq);
 
   Script.findOne({
@@ -309,8 +309,8 @@ exports.open = function (aReq, aRes, aNext) {
 
 // post route to add a new comment to a discussion on an issue
 exports.comment = function (aReq, aRes, aNext) {
-  var type = aReq.route.params.type;
-  var topic = aReq.route.params.topic;
+  var type = aReq.params.type;
+  var topic = aReq.params.topic;
   var installName = scriptStorage.getInstallName(aReq);
   var category = type + '/' + installName + '/issues';
   var user = aReq.session.user;
@@ -337,11 +337,11 @@ exports.comment = function (aReq, aRes, aNext) {
 
 // Open or close and issue you are allowed
 exports.changeStatus = function (aReq, aRes, aNext) {
-  var type = aReq.route.params.type;
-  var topic = aReq.route.params.topic;
+  var type = aReq.params.type;
+  var topic = aReq.params.topic;
   var installName = scriptStorage.getInstallName(aReq);
   var category = type + '/' + installName + '/issues';
-  var action = aReq.route.params.action;
+  var action = aReq.params.action;
   var user = aReq.session.user;
   var changed = false;
 

@@ -34,11 +34,11 @@ if (isPro) {
 }
 
 function getInstallName(aReq) {
-  return aReq.route.params.username + '/' + aReq.route.params.scriptname;
+  return aReq.params.username + '/' + aReq.params.scriptname;
 }
 exports.getInstallName = getInstallName;
 
-function caseInsensitive (aInstallName) {
+function caseInsensitive(aInstallName) {
   return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
     + '$', 'i');
 }
@@ -73,10 +73,11 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     // Send the script
     aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+    aRes._no_minify = true;
     aStream.pipe(aRes);
 
     // Don't count installs on raw source route
-    if (aScript.isLib || aReq.route.params.type) { return; }
+    if (aScript.isLib || aReq.params.type) { return; }
 
     // Update the install count
     ++aScript.installs;
@@ -101,6 +102,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       if (!aScript) { return aNext(); }
 
       aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+      aRes._no_minify = true;
       meta = aScript.meta; // NOTE: Watchpoint
 
       aRes.write('// ==UserScript==\n');

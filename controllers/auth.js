@@ -42,7 +42,7 @@ Strategy.find({}, function (aErr, aStrategies) {
 
 exports.auth = function (aReq, aRes, aNext) {
   var user = aReq.session.user;
-  var strategy = aReq.body.auth || aReq.route.params.strategy;
+  var strategy = aReq.body.auth || aReq.params.strategy;
   var username = aReq.body.username || aReq.session.username;
 
   function auth() {
@@ -105,7 +105,7 @@ exports.auth = function (aReq, aRes, aNext) {
 };
 
 exports.callback = function (aReq, aRes, aNext) {
-  var strategy = aReq.route.params.strategy;
+  var strategy = aReq.params.strategy;
   var username = aReq.session.username;
   var newstrategy = aReq.session.newstrategy;
   var strategyInstance = null;

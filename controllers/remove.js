@@ -13,8 +13,8 @@ var destroySessions = require('../libs/modifySessions').destroy;
 
 // Simple controller to remove content and save it in the graveyard
 exports.rm = function (aReq, aRes, aNext) {
-  var type = aReq.route.params[0];
-  var path = aReq.route.params[1];
+  var type = aReq.params[0];
+  var path = aReq.params[1];
   var thisUser = aReq.session.user;
 
   switch (type) {

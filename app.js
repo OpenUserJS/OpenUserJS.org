@@ -84,7 +84,6 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(modifySessions.init(sessionStore));
-app.use(app.router);
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
 // Set up the views
