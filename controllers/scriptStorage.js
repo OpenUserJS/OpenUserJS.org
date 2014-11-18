@@ -73,6 +73,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     // Send the script
     aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+    aRes._no_minify = true;
     aStream.pipe(aRes);
 
     // Don't count installs on raw source route
@@ -101,6 +102,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       if (!aScript) { return aNext(); }
 
       aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+      aRes._no_minify = true;
       meta = aScript.meta; // NOTE: Watchpoint
 
       aRes.write('// ==UserScript==\n');

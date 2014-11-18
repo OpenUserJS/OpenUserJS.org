@@ -37,6 +37,7 @@ Repository | Reference | Recent Version
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
+[express-minify][express-minifyGHUrl] | [Documentation][express-minifyDOCUrl] | [![NPM version][express-minifyNPMVersionImage]][express-minifyNPMUrl]
 [express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
 [fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
@@ -166,6 +167,11 @@ Repository | Reference | Recent Version | Referenced
 [expressDOCUrl]: http://expressjs.com/
 [expressNPMUrl]: https://www.npmjs.org/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
+
+[express-minifyGHUrl]: https://github.com/breeswish/express-minify
+[express-minifyDOCUrl]: https://github.com/breeswish/express-minify/blob/master/README.md
+[express-minifyNPMUrl]: https://www.npmjs.org/package/express-minify
+[express-minifyNPMVersionImage]: https://img.shields.io/npm/v/express-minify.svg?style=flat
 
 [express-sessionGHUrl]: https://github.com/expressjs/session
 [express-sessionDOCUrl]: https://github.com/expressjs/session/blob/master/README.md
