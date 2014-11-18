@@ -1,7 +1,7 @@
 {
   "name": "OpenUserJS.org",
   "description": "An open source user scripts repo built using Node.js",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "app",
   "dependencies": {
     "ace-builds": "git://github.com/ajaxorg/ace-builds#7fafd12",
