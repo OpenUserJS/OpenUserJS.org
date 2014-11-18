@@ -33,12 +33,12 @@ if (isPro) {
   });
 }
 
-function getInstallName (aReq) {
+function getInstallName(aReq) {
   return aReq.params.username + '/' + aReq.params.scriptname;
 }
 exports.getInstallName = getInstallName;
 
-function caseInsensitive (aInstallName) {
+function caseInsensitive(aInstallName) {
   return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
     + '$', 'i');
 }
