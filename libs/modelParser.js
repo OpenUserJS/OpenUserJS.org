@@ -126,6 +126,15 @@ var parseScript = function (aScriptData) {
   if (script.meta.icon64) {
     script.icon45Url = script.meta.icon64;
   }
+  // Icons: Validation
+  // Must be a data:image uri or start with https://
+  var iconUrlRegex = /((^data:image\/(gif|png);base64,)|(^https:\/\/))/;
+  if (script.icon16Url && !iconUrlRegex.test(script.icon16Url)) {
+    delete script.icon16Url;
+  }
+  if (script.icon45Url && !iconUrlRegex.test(script.icon45Url)) {
+    delete script.icon45Url;
+  }
 
   // Support Url
   if (script.meta.supportURL) {
