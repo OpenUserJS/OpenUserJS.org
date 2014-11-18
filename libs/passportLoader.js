@@ -1,11 +1,17 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var passport = require('passport');
 
 var nil = require('../libs/helpers').nil;
 
 var AUTH_CALLBACK_BASE_URL = 'http://localhost:' + (process.env.PORT || 8080);
-if (process.env.NODE_ENV === 'production')
+if (isPro)
   AUTH_CALLBACK_BASE_URL = 'https://openuserjs.org';
 if (process.env.AUTH_CALLBACK_BASE_URL)
   AUTH_CALLBACK_BASE_URL = process.env.AUTH_CALLBACK_BASE_URL;

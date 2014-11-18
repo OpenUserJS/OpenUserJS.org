@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var https = require('https');
 var async = require('async');
 var util = require('util');
@@ -113,7 +119,7 @@ RepoManager.prototype.loadScripts = function (aCallback, aUpdate) {
       });
     }, aCallback);
   });
-}
+};
 
 // Create the Mustache object to display repos with their user scrips
 RepoManager.prototype.makeRepoArray = function () {
@@ -138,7 +144,7 @@ RepoManager.prototype.makeRepoArray = function () {
   }
 
   return retOptions;
-}
+};
 
 // Manages a single repo
 function Repo(aManager, aUsername, aReponame) {

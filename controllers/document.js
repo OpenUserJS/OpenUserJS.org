@@ -1,5 +1,11 @@
 'use strict';
 
+// Define some pseudo module globals
+var isPro = require('../libs/debug').isPro;
+var isDev = require('../libs/debug').isDev;
+var isDbg = require('../libs/debug').isDbg;
+
+//
 var pkg = require('../package.json');
 
 var fs = require('fs');
@@ -90,7 +96,7 @@ exports.view = function (aReq, aRes, aNext) {
             aCallback(null);
           });
         }
-      ], aCallback)
+      ], aCallback);
     });
   }
   else {
@@ -118,7 +124,7 @@ exports.view = function (aReq, aRes, aNext) {
       return statusCodePage(aReq, aRes, aNext, {
         statusCode: aErr.statusCode,
         statusMessage: aErr.statusMessage
-      })
+      });
     }
 
     aRes.render('pages/documentPage', options);
