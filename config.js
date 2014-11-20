@@ -12,5 +12,6 @@ config.express.sessionSecret = process.env.SESSION_SECRET || 'someSecretStringFo
 // OpenUserJS
 config.maximumScriptSize = 1048576; // 1 Mb
 config.maximumScriptDescriptionSize = 1048576; // 1 Mb
+config.maximumRequestBodySize = Math.max(config.maximumScriptSize, config.maximumScriptDescriptionSize);
 
 module.exports = config;

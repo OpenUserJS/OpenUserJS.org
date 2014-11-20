@@ -65,12 +65,12 @@ if (isDev || isDbg) {
 
 app.use(bodyParser.urlencoded({
   extended: false,
-  limit: parseInt(config.maximumScriptSize / 1024, 10) + 'kb'
+  limit: parseInt(config.maximumRequestBodySize / 1024, 10) + 'kb'
 }));
 
 app.use(bodyParser.json({
   extended: false,
-  limit: parseInt(config.maximumScriptSize / 1024, 10) + 'kb'
+  limit: parseInt(config.maximumRequestBodySize / 1024, 10) + 'kb'
 }));
 
 app.use(compression());
