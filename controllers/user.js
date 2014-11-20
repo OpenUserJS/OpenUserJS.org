@@ -34,7 +34,7 @@ var getDefaultPagination = require('../libs/templateHelpers').getDefaultPaginati
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
-var settings = require('../models/settings.json');
+var config = require('../config');
 var github = require('./../libs/githubClient');
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
@@ -730,7 +730,7 @@ exports.newScriptPage = function (aReq, aRes, aNext) {
   options.newUserJS = true;
   options.newScriptEditorPageUrl = '/user/add/scripts/new';
   options.uploadNewScriptPageUrl = '/user/add/scripts/upload';
-  options.maximumUploadScriptSize = settings.maximum_upload_script_size;
+  options.maximumUploadScriptSize = config.maximumScriptSize;
 
   // Page metadata
   pageMetadata(options, 'New Script');
@@ -761,7 +761,7 @@ exports.newLibraryPage = function (aReq, aRes, aNext) {
   options.newJSLibrary = true;
   options.newScriptEditorPageUrl = '/user/add/lib/new';
   options.uploadNewScriptPageUrl = '/user/add/lib/upload';
-  options.maximumUploadScriptSize = settings.maximum_upload_script_size;
+  options.maximumUploadScriptSize = config.maximumScriptSize;
 
   // Page metadata
   pageMetadata(options, 'New Library');
@@ -920,8 +920,8 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
     },
     function (aBlobUtf8, aCallback) {
       // Double check file size.
-      if (aBlobUtf8.length > settings.maximum_upload_script_size)
-        return aCallback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
+      if (aBlobUtf8.length > config.maximumScriptSize)
+        return aCallback(util.format('File size is larger than maximum (%s bytes).', config.maximumScriptSize));
 
       var onScriptStored = function (aScript) {
         if (aScript) {
@@ -1077,9 +1077,9 @@ var parseJavascriptBlob = function (aJavascriptBlob) {
   aJavascriptBlob.canUpload = true;
   aJavascriptBlob.errors = [];
 
-  if (aJavascriptBlob.size > settings.maximum_upload_script_size) {
+  if (aJavascriptBlob.size > config.maximumScriptSize) {
     aJavascriptBlob.errors.push({
-      msg: util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size)
+      msg: util.format('File size is larger than maximum (%s bytes).', config.maximumScriptSize)
     });
   }
 
@@ -1236,7 +1236,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
     // Reject non-js and huge files
     if (script.type !== 'application/javascript' ||
-      script.size > settings.maximum_upload_script_size) {
+      script.size > config.maximumScriptSize) {
       return aRes.redirect(failUrl);
     }
 
