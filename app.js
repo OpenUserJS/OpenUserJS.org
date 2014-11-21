@@ -14,6 +14,11 @@ var compression = require('compression');
 var cookieParser = require('cookie-parser');
 var favicon = require('serve-favicon');
 
+var minify = null;
+try {
+  minify = require('express-minify');
+} catch (e) {}
+
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
@@ -93,12 +98,8 @@ app.set('views', __dirname + '/views');
 
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue
-if (isPro) {
-  app.use(require('express-minify')());
-} else if (isDev) {
-  try {
-    app.use(require('express-minify')());
-  } catch (e) {}
+if (minify && isPro || isDev) {
+  app.use(minify());
 }
 
 // Routes
