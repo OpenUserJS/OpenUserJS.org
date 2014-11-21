@@ -98,7 +98,7 @@ app.set('views', __dirname + '/views');
 
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue
-if (minify && isPro || isDev) {
+if (minify && (isPro || isDev)) {
   app.use(minify());
 }
 
