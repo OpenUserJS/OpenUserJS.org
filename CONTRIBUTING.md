@@ -72,6 +72,7 @@ To contribute code to OpenUserJS.org the following process should generally be u
 7. Click the "Edit" button and ensure the "base fork" branch is `master` (or desired target branch upstream) and the "head fork" branch is `issue-NUM`.
 8. Click the "Create pull request" button and enter a descriptive title and comment, referencing the original issue number.
 9. Click the "Create pull request" button to submit your pull request.
+10. When one person submits a pull request, someone else with privileges should merge it when a consensus has been reached. Please allow appropriate time for evaluation from others. The only exception is the active maintainer *(because some stuff just needs to get done without waiting for input)*
 
 #### Usage of Labels
 
