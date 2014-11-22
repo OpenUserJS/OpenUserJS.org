@@ -2,7 +2,8 @@
   <thead>
     <tr>
       <th class="text-center"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Name</a></th>
-      <th class="text-center td-fit"><a href="?orderBy=installs&orderDir={{orderDir.install}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Installs</a></th>
+      <!-- BUG: Incorrect inversion required -->
+      {{#isLib}}<th class="text-center td-fit"><a href="?orderBy=installs&orderDir={{orderDir.install}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Installs</a></th>{{/isLib}}
       <th class="text-center td-fit"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Rating</a></th>
       <th class="text-center td-fit"><a href="?orderBy=updated&orderDir={{orderDir.updated}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Last Updated</a></th>
     </tr>
@@ -26,9 +27,11 @@
         <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</a></span>
         <p>{{meta.description}}</p>
       </td>
+      {{^isLib}}
       <td class="text-center td-fit">
         <p>{{installs}}</p>
       </td>
+      {{/isLib}}
       <td class="rating text-center td-fit">
         <p>{{rating}}</p>
         <div class="progress">
