@@ -17,7 +17,17 @@ var scriptSchema = new Schema({
   installsSinceUpdate: { type: Number, default: 0 },
   rating: Number,
   about: String,
-  updated: Date,
+  updated: { type: Date, default: Date.now },
+
+  // Sync
+  githubSyncAbout: { type: Boolean, default: false },
+  githubSyncScript: { type: Boolean, default: true },
+
+  // Sync: Github
+  githubSyncUserId: { type: String },
+  githubSyncRepoName: { type: String },
+  githubSyncAboutPath: { type: String },
+  githubSyncSourcePath: { type: String },
 
   // Moderation
   votes: Number, // upvotes negate flags

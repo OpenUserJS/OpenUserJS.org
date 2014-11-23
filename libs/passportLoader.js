@@ -10,11 +10,7 @@ var passport = require('passport');
 
 var nil = require('../libs/helpers').nil;
 
-var AUTH_CALLBACK_BASE_URL = 'http://localhost:' + (process.env.PORT || 8080);
-if (isPro)
-  AUTH_CALLBACK_BASE_URL = 'https://openuserjs.org';
-if (process.env.AUTH_CALLBACK_BASE_URL)
-  AUTH_CALLBACK_BASE_URL = process.env.AUTH_CALLBACK_BASE_URL;
+var config = require('../config');
 
 exports.strategyInstances = nil();
 
@@ -28,9 +24,9 @@ exports.loadPassport = function (aStrategy) {
   if (aStrategy.openid) {
     instance = new PassportStrategy(
       {
-        returnURL: AUTH_CALLBACK_BASE_URL + '/auth/' + aStrategy.name + '/callback/',
-        realm: AUTH_CALLBACK_BASE_URL + '/',
-        audience: AUTH_CALLBACK_BASE_URL,
+        returnURL: config.authCallbackBaseUrl + '/auth/' + aStrategy.name + '/callback/',
+        realm: config.authCallbackBaseUrl + '/',
+        audience: config.authCallbackBaseUrl,
         profile: false,
         stateless: true
       },
@@ -44,7 +40,7 @@ exports.loadPassport = function (aStrategy) {
         clientID: aStrategy.id,
         clientSecret: aStrategy.key,
         state: 'a bullshit string reddit requires',
-        callbackURL: AUTH_CALLBACK_BASE_URL + '/auth/' + aStrategy.name + '/callback/'
+        callbackURL: config.authCallbackBaseUrl + '/auth/' + aStrategy.name + '/callback/'
       },
       function () { } // we replace this callback later (_verify)
     );

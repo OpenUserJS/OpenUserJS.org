@@ -40,23 +40,25 @@ module.exports = function (aApp) {
   aApp.route('/users/:username').get(user.view);
   aApp.route('/users/:username/comments').get(user.userCommentListPage);
   aApp.route('/users/:username/scripts').get(user.userScriptListPage);
-  aApp.route('/users/:username/github').get(user.userManageGitHubPage).post(user.userManageGitHubPage);
-  aApp.route('/users/:username/github/repos').get(user.userGitHubRepoListPage);
-  aApp.route('/users/:username/github/repo').get(user.userGitHubRepoPage);
-  aApp.route('/users/:username/github/import').post(user.userGitHubImportScriptPage);
-  aApp.route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
   aApp.route('/users/:username/update').post(admin.adminUserUpdate);
-  aApp.route('/user/preferences').get(user.userEditPreferencesPage);
   aApp.route('/user').get(function (aReq, aRes) { aRes.redirect('/users'); });
 
+  // Account routes
+  aApp.route('/account/github').get(user.userManageGitHubPage).post(user.userManageGitHubPage);
+  aApp.route('/account/github/repos').get(user.userGitHubRepoListPage);
+  aApp.route('/account/github/repo').get(user.userGitHubRepoPage);
+  aApp.route('/account/github/import').post(require('./controllers/githubImport'));
+  aApp.route('/account/profile/edit').get(user.userEditProfilePage).post(user.update);
+  aApp.route('/account/preferences').get(user.userEditPreferencesPage);
+
   // Adding script/library routes
-  aApp.route('/user/add/scripts').get(user.newScriptPage);
-  aApp.route('/user/add/scripts/new').get(script.new(user.editScript)).post(script.new(user.submitSource));
-  aApp.route('/user/add/scripts/upload').post(user.uploadScript);
-  aApp.route('/user/add/lib').get(user.newLibraryPage);
-  aApp.route('/user/add/lib/new').get(script.new(script.lib(user.editScript))).post(script.new(script.lib(user.submitSource)));
-  aApp.route('/user/add/lib/upload').post(script.lib(user.uploadScript));
-  aApp.route('/user/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
+  aApp.route('/account/add/scripts').get(user.newScriptPage);
+  aApp.route('/account/add/scripts/new').get(script.new(user.editScript)).post(script.new(user.submitSource));
+  aApp.route('/account/add/scripts/upload').post(user.uploadScript);
+  aApp.route('/account/add/lib').get(user.newLibraryPage);
+  aApp.route('/account/add/lib/new').get(script.new(script.lib(user.editScript))).post(script.new(script.lib(user.submitSource)));
+  aApp.route('/account/add/lib/upload').post(script.lib(user.uploadScript));
+  aApp.route('/account/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
 
   // Script routes
   aApp.route('/scripts/:username/:namespace?/:scriptname').get(script.view);
@@ -70,7 +72,7 @@ module.exports = function (aApp) {
   aApp.route('/meta/:username/:namespace?/:scriptname').get(scriptStorage.sendMeta);
 
   // Github hook routes
-  aApp.route('/github/hook').post(scriptStorage.webhook);
+  aApp.route('/github/hook').post(require('./controllers/githubHook'));
   aApp.route('/github/service').post(function (aReq, aRes, aNext) { aNext(); });
   aApp.route('/github').get(function (aReq, aRes) { aRes.redirect('/'); });
 

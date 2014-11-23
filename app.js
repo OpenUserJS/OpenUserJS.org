@@ -29,17 +29,15 @@ var app = express();
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 var modifySessions = require('./libs/modifySessions');
 
-var settings = require('./models/settings.json');
+var config = require('./config');
 
-var connectStr = process.env.CONNECT_STRING || settings.connect;
-var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
 var dbOptions = { server: { socketOptions: { keepAlive: 1 } } };
 
-app.set('port', process.env.PORT || 8080);
+app.set('port', config.port);
 
 // Connect to the database
-mongoose.connect(connectStr, dbOptions);
+mongoose.connect(config.mongoose.uri, dbOptions);
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
   app.listen(app.get('port'));
@@ -48,7 +46,7 @@ db.once('open', function () {
 var sessionStore = new MongoStore({ mongoose_connection: db });
 
 // Force HTTPS
-if (app.get('port') === 443) {
+if (config.isHTTPS) {
   app.use(function (aReq, aRes, aNext) {
     aRes.setHeader('Strict-Transport-Security',
       'max-age=8640000; includeSubDomains');
@@ -67,12 +65,12 @@ if (isDev || isDbg) {
 
 app.use(bodyParser.urlencoded({
   extended: false,
-  limit: parseInt(settings.maximum_upload_script_size / 1024, 10) + 'kb'
+  limit: parseInt(config.maximumRequestBodySize / 1024, 10) + 'kb'
 }));
 
 app.use(bodyParser.json({
   extended: false,
-  limit: parseInt(settings.maximum_upload_script_size / 1024, 10) + 'kb'
+  limit: parseInt(config.maximumRequestBodySize / 1024, 10) + 'kb'
 }));
 
 app.use(compression());
@@ -83,7 +81,7 @@ app.use(cookieParser());
 app.use(session({
   resave: true,
   saveUninitialized: true,
-  secret: sessionSecret,
+  secret: config.express.sessionSecret,
   store: sessionStore
 }));
 app.use(passport.initialize());
@@ -98,7 +96,7 @@ app.set('views', __dirname + '/views');
 
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue
-if (minify && (isPro || isDev)) {
+if (minify && !isDbg) {
   app.use(minify());
 }
 

@@ -43,7 +43,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
   * `use oujs_dev`
   * `db.createCollection("strategies")`
   * `db.strategies.insert({id: "your_GitHub_client_ID", key: "your_GitHub_secret", name: "github", display: "GitHub"})`
-3. Edit `models/settings.json`, setting your desired session secret, [MongoDB connection string](http://docs.mongodb.org/manual/reference/connection-string/) (if using your own MongoDB instance), etc.
+3. Edit `config.js`, setting your desired session secret, [MongoDB connection string](http://docs.mongodb.org/manual/reference/connection-string/) (if using your own MongoDB instance), etc.
 
 #### Running the Application
 

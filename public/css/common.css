@@ -152,6 +152,10 @@ textarea {
   min-height: 258px;
 }
 
+.md-editor .md-header.btn-toolbar {
+  margin-left: 0;
+}
+
 #reply-control .submit-panel {
   padding: 6px 4px;
 }

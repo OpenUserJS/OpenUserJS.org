@@ -242,13 +242,16 @@ var parseUser = function (aUserData) {
   user.userPageUrl = '/users/' + user.name;
   user.userCommentListPageUrl = user.userPageUrl + '/comments';
   user.userScriptListPageUrl = user.userPageUrl + '/scripts';
-  user.userManageGitHubPageUrl = user.userPageUrl + '/github';
-  user.userGitHubRepoListPageUrl = user.userPageUrl + '/github/repos';
-  user.userGitHubRepoPageUrl = user.userPageUrl + '/github/repo';
-  user.userGitHubImportPageUrl = user.userPageUrl + '/github/import';
-  user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
   user.userUpdatePageUrl = user.userPageUrl + '/update';
   user.userRemovePageUrl = '/remove/users/' + user.name;
+
+  // Urls: Account (Act on AuthedUser only)
+  // TODO: Move somewhere else.
+  user.userManageGitHubPageUrl = '/account/github';
+  user.userGitHubRepoListPageUrl = '/account/github/repos';
+  user.userGitHubRepoPageUrl = '/account/github/repo';
+  user.userGitHubImportPageUrl = '/account/github/import';
+  user.userEditProfilePageUrl = '/account/profile/edit';
 
   // Funcs
   user.githubUserId = function () {
