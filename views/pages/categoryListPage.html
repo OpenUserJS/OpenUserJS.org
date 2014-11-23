@@ -12,7 +12,7 @@
         <h2 class="page-heading">
           Discuss
         </h2>
-        <div class="list-group">
+        <div class="list-group col-sm-12 col-md-2 col-lg-3">
           {{#categoryList}}
           <a href="{{{categoryPageUrl}}}" class="list-group-item">
             <h4 class="list-group-item-heading">{{name}}</h4>
@@ -20,7 +20,7 @@
           </a>
           {{/categoryList}}
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default col-sm-12 col-md-10 col-lg-9">
           {{> includes/discussionList.html }}
         </div>
         <div class="text-center">
