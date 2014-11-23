@@ -10,7 +10,7 @@ var githubImporter = require('../libs/githubImporter');
 // This controller makes sure we have the latest version of a script
 module.exports = function (aReq, aRes, aNext) {
   if (!aReq.body.payload)
-    return aRes.send(400, 'Payload required.');
+    return aRes.status(400).send('Payload required.');
 
   if (process.env.NODE_ENV === 'production') {
     // Test for know GH webhook ips: https://api.github.com/meta
@@ -34,7 +34,7 @@ module.exports = function (aReq, aRes, aNext) {
     ghUsername: githubUserName
   }, function (aErr, aUser) {
     if (!aUser)
-      return aRes.send(400, 'No account linked to GitHub username ' + username);
+      return aRes.status(400).send('No account linked to GitHub username ' + username);
 
     // Gather the modified user scripts
     var jsFilenames = {}; // Set (key == value)
@@ -104,7 +104,7 @@ module.exports = function (aReq, aRes, aNext) {
     ], function(aError, aResults) {
       if (aError) {
         console.error(aError);
-        return aRes.send(500, 'Error while updating.');
+        return aRes.status(500).send('Error while updating.');
       }
 
       aRes.status(200).send(aResults);
