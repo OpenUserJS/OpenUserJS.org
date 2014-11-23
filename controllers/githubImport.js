@@ -34,7 +34,7 @@ module.exports = function (aReq, aRes, aNext) {
     githubRepoName: githubRepoName,
     githubBlobPath: githubBlobPath,
     updateOnly: false
-  }, function (aErr) {
+  }, function (aErr, aData) {
     if (aErr) {
       console.error(aErr);
       console.error(githubUserId, githubRepoName, githubBlobPath);
@@ -44,7 +44,7 @@ module.exports = function (aReq, aRes, aNext) {
       });
     }
 
-    var script = modelParser.parseScript(options.script);
+    var script = modelParser.parseScript(aData.script);
     aRes.redirect(script.scriptPageUrl);
   });
 };
