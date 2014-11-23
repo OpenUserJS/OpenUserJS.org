@@ -26,6 +26,8 @@ var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
 var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+var githubImporter = require('../libs/githubImporter');
 
 // Let controllers know this is a `new` route
 exports.new = function (aController) {
@@ -409,10 +411,49 @@ exports.edit = function (aReq, aRes, aNext) {
       });
     } else if (typeof aReq.body.about !== 'undefined') {
       // POST
+
       aScriptData.about = aReq.body.about;
+
+      var wasSyncingAbout = aScriptData.githubSyncAbout;
+
+      aScriptData.githubSyncUserId = aReq.body.githubSyncUserId;
+      aScriptData.githubSyncRepoName = aReq.body.githubSyncRepoName;
+      aScriptData.githubSyncAboutPath = aReq.body.githubSyncAboutPath;
+
+      aScriptData.githubSyncAbout = aReq.body.githubSyncAbout;
+
+      // Validate that all fields are filled out.
+      if (!(aScriptData.githubSyncUserId && aScriptData.githubSyncRepoName && aScriptData.githubSyncAboutPath))
+        aScriptData.githubSyncAbout = false;
+
       var scriptGroups = (aReq.body.groups || "");
       scriptGroups = scriptGroups.split(/,/);
-      addScriptToGroups(aScriptData, scriptGroups, function () {
+
+      // The following function will save the Script even if scriptGroups is empty.
+      async.series([
+        function(aCallback) {
+          addScriptToGroups(aScriptData, scriptGroups, aCallback);
+        },
+        function(aCallback) {
+          // If we just entered the sync information, pull it now.
+          if (!wasSyncingAbout && aScriptData.githubSyncAbout) {
+            githubImporter.importMarkdownBlob({
+              user: authedUser,
+              githubUserId: aScriptData.githubSyncUserId,
+              githubRepoName: aScriptData.githubSyncRepoName,
+              githubBlobPath: aScriptData.githubSyncAboutPath
+            }, aCallback);
+          } else {
+            aCallback();
+          }
+        },
+      ], function(aErr) {
+        if (aErr) {
+          return statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500,
+            statusMessage: 'Error while updating script metadata.'
+          });
+        }
         aRes.redirect(script.scriptPageUrl);
       });
     } else {

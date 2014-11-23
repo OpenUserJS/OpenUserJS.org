@@ -79,12 +79,7 @@ var githubUserContentGetBlobAsUtf8 = function (aMsg, aCallback) {
 
 github.usercontent.getBlobAsUtf8 = githubUserContentGetBlobAsUtf8;
 
-var githubGitDataIsJavascriptBlob = function (aBlob) {
-  return aBlob.path.match(/\.js$/);
-};
-github.gitdata.isJavascriptBlob = githubGitDataIsJavascriptBlob;
-
-var githubGitDataGetJavascriptBlobs = function (aMsg, aCallback) {
+var githubGitDataGetBlobs = function (aMsg, aCallback) {
   async.waterfall([
     function (aCallback) {
       aMsg.sha = 'HEAD';
@@ -94,9 +89,8 @@ var githubGitDataGetJavascriptBlobs = function (aMsg, aCallback) {
     function (aRepoTree, aCallback) {
       var entries = aRepoTree.tree;
       var blobs = _.where(entries, { type: 'blob' });
-      var javascriptBlobs = _.filter(blobs, githubGitDataIsJavascriptBlob);
-      aCallback(null, javascriptBlobs);
+      aCallback(null, blobs);
     },
   ], aCallback);
 };
-github.gitdata.getJavascriptBlobs = githubGitDataGetJavascriptBlobs;
+github.gitdata.getBlobs = githubGitDataGetBlobs;

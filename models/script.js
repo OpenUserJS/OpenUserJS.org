@@ -20,9 +20,14 @@ var scriptSchema = new Schema({
   updated: { type: Date, default: Date.now },
 
   // Sync
-  syncAboutSourceUrl: { type: String },
-  syncAbout: { type: Boolean, default: false },
-  // syncScript: { type: Boolean, default: true },
+  githubSyncAbout: { type: Boolean, default: false },
+  githubSyncScript: { type: Boolean, default: true },
+
+  // Sync: Github
+  githubSyncUserId: { type: String },
+  githubSyncRepoName: { type: String },
+  githubSyncAboutPath: { type: String },
+  githubSyncSourcePath: { type: String },
 
   // Moderation
   votes: Number, // upvotes negate flags

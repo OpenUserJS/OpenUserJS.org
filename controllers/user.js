@@ -916,10 +916,17 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
           default_branch: encodeURI(options.repo.default_branch)
         }
 
-        github.gitdata.getJavascriptBlobs({
+        github.gitdata.getBlobs({
           user: encodeURIComponent(aRepo.owner.login),
           repo: encodeURIComponent(aRepo.name)
         }, aCallback);
+      },
+      function (aBlobs, aCallback) {
+        var javascriptBlobs = _.filter(aBlobs, function (aBlob) {
+          return aBlob.path.match(/\.js$/);
+        })
+
+        aCallback(null, javascriptBlobs);
       },
       function (aJavascriptBlobs, aCallback) {
         options.javascriptBlobs = aJavascriptBlobs;

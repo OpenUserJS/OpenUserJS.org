@@ -120,3 +120,8 @@ exports.updateUrlQueryString = function (aBaseUrl, aDict) {
   });
   return url;
 };
+
+// http://stackoverflow.com/a/6969486/947742
+exports.escapeRegExp = function (aStr) {
+  return aStr.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+};

@@ -7,6 +7,12 @@
   <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/select2/select2.css">
   <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/select2-bootstrap-css/select2-bootstrap.css"> <!-- Bootstrap 3 theme -->
   <link rel="stylesheet" type="text/css" media="all" href="/css/scriptPage.css">
+  <style>
+    .github-path-input > .path-divider { display: inline-block; width: 4px; margin: 0 4px; }
+    .github-path-input > input:nth-of-type(1) { width: 15%; }
+    .github-path-input > input:nth-of-type(2) { width: 15%; }
+    .github-path-input > input:nth-of-type(3) { width: calc(100% - 30% - 24px); }
+  </style>
 </head>
 <body>
   {{> includes/header.html }}
@@ -31,18 +37,17 @@
                 <div class="panel-body">
                   <div class="checkbox">
                     <label>
-                      <input id="sync-about-checkbox" type="checkbox" {{#script.syncAbout}}checked="checked"{{/script.syncAbout}}> Sync during GitHub push.
+                      <input name="githubSyncAbout" id="sync-about-checkbox" type="checkbox" {{#script.githubSyncAbout}}checked="checked"{{/script.githubSyncAbout}}> Sync during GitHub push.
                     </label>
                   </div>
-                  <div id="sync-about-info" class="alert alert-info" style="display:none;">
-                    <p>Will sync with <code>ScriptFileName.md</code> or <code>ReadMe.md</code> if it doesn't exist. Setup GitHub sync <a href="/account/add/scripts">here</a>.</p>
-                    <p><code>/scripts/123453.user.js</code> <i class="fa fa-arrow-right"></i> <code>/scripts/123453.md</code> or <code>/ReadMe.md</code></p>
+                  <div id="sync-about-info" class="alert alert-info github-path-input" {{^script.githubSyncAbout}}style="display:none;"{{/script.githubSyncAbout}}>
+                    {{^script.githubSyncUserId}}
+                    <p>First you must setup a GitHub webhook (<a href="/account/add/scripts#sync">read more here</a>), then enter the path to the file you wish to sync below.</p>
+                    {{/script.githubSyncUserId}}
+                    <input name="githubSyncUserId" type="text" value="{{script.githubSyncUserId}}" placeholder="User"><span class="path-divider">/</span><input name="githubSyncRepoName"  type="text" value="{{script.githubSyncRepoName}}" placeholder="Repo"><span class="path-divider">/</span><input name="githubSyncAboutPath"  type="text" value="{{script.githubSyncAboutPath}}" placeholder="ReadMe.md">
                   </div>
                   <div class="user-content form-group">
                     <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="20" class="col-xs-12">{{script.about}}</textarea>
-                  </div>
-                  <div class="form-group">
-                    <button type="submit" class="btn btn-success"><i class="fa fa-fw fa-save"></i> Save</button>
                   </div>
                 </div>
               </div>

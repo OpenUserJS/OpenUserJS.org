@@ -28,7 +28,7 @@ module.exports = function (aReq, aRes, aNext) {
     });
   }
 
-  githubImporter.importJavasciptBlob({
+  githubImporter.importJavascriptBlob({
     user: authedUser,
     githubUserId: githubUserId,
     githubRepoName: githubRepoName,

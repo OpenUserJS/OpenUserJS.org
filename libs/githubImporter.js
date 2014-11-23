@@ -1,11 +1,16 @@
 var async = require('async');
 var _ = require('underscore');
+var util = require('util');
+
+var Script = require('../models/script').Script;
 
 var github = require('./githubClient');
 var scriptParser = require('../libs/scriptParser');
 var scriptStorage = require('../controllers/scriptStorage');
-var settings = require('../models/settings.json');
+var config = require('../config');
+var escapeRegExp = require('./helpers').escapeRegExp;
 
+var blobPathRegex = /^(.*\/)?(.+?)((\.user)?\.js)$/i;
 
 var parseJavascriptBlob = function (aJavascriptBlob) {
   // Parsing Script Name & Type from path
@@ -34,9 +39,9 @@ var parseJavascriptBlob = function (aJavascriptBlob) {
   aJavascriptBlob.canUpload = true;
   aJavascriptBlob.errors = [];
 
-  if (aJavascriptBlob.size > settings.maximumScriptSize) {
+  if (aJavascriptBlob.size > config.maximumScriptSize) {
     aJavascriptBlob.errors.push({
-      msg: util.format('File size is larger than maximum (%s bytes).', settings.maximumScriptSize)
+      msg: util.format('File size is larger than maximum (%s bytes).', config.maximumScriptSize)
     });
   }
 
@@ -47,29 +52,32 @@ var parseJavascriptBlob = function (aJavascriptBlob) {
 };
 exports.parseJavascriptBlob = parseJavascriptBlob;
 
-
-var importJavasciptBlob = function (aOptions, aCallback) {
+var importJavascriptBlob = function (aOptions, aCallback) {
   var user = aOptions.user;
   var githubUserId = aOptions.githubUserId;
   var githubRepoName = aOptions.githubRepoName;
   var githubBlobPath = aOptions.githubBlobPath;
   var updateOnly = aOptions.updateOnly || false;
-  console.log('importJavasciptBlob', aOptions);
+  var blobs = aOptions.blobs;
 
   if (!(user && githubUserId && githubRepoName && githubBlobPath))
     return aCallback('Missing required parameter.');
 
   var data = {};
   async.waterfall([
-    // Validate blob
     function (aCallback) {
-      github.gitdata.getJavascriptBlobs({
-        user: encodeURIComponent(githubUserId),
-        repo: encodeURIComponent(githubRepoName)
-      }, aCallback);
+      if (blobs) {
+        aCallback(null, blobs);
+      } else {
+        github.gitdata.getBlobs({
+          user: encodeURIComponent(githubUserId),
+          repo: encodeURIComponent(githubRepoName)
+        }, aCallback);
+      }
     },
-    function (aJavascriptBlobs, aCallback) {
-      var javascriptBlob = _.findWhere(aJavascriptBlobs, { path: githubBlobPath });
+    // Validate blob
+    function (aBlobs, aCallback) {
+      var javascriptBlob = _.findWhere(aBlobs, { path: githubBlobPath });
 
       javascriptBlob = parseJavascriptBlob(javascriptBlob);
 
@@ -90,8 +98,8 @@ var importJavasciptBlob = function (aOptions, aCallback) {
     },
     function (aBlobUtf8, aCallback) {
       // Double check file size.
-      if (aBlobUtf8.length > settings.maximum_upload_script_size)
-        return aCallback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
+      if (aBlobUtf8.length > config.maximumScriptSize)
+        return aCallback(util.format('File size is larger than maximum (%s bytes).', config.maximumScriptSize));
 
       var onScriptStored = function (aScript) {
         if (aScript) {
@@ -121,6 +129,93 @@ var importJavasciptBlob = function (aOptions, aCallback) {
     },
   ], aCallback);
 };
-exports.importJavasciptBlob = importJavasciptBlob;
+exports.importJavascriptBlob = importJavascriptBlob;
 
+var parseMarkdownBlob = function (aMarkdownBlob) {
+  // Errors
+  aMarkdownBlob.canUpload = true;
+  aMarkdownBlob.errors = [];
 
+  if (aMarkdownBlob.size > config.maximumScriptDescriptionSizeSize) {
+    aMarkdownBlob.errors.push({
+      msg: util.format('File size is larger than maximum (%s bytes).', config.maximumScriptDescriptionSizeSize)
+    });
+  }
+
+  if (aMarkdownBlob.errors.length)
+    aMarkdownBlob.canUpload = !aMarkdownBlob.errors.length;
+
+  return aMarkdownBlob;
+};
+exports.parseMarkdownBlob = parseMarkdownBlob;
+
+var importMarkdownBlob = function (aOptions, aCallback) {
+  var user = aOptions.user;
+  var githubUserId = aOptions.githubUserId;
+  var githubRepoName = aOptions.githubRepoName;
+  var githubBlobPath = aOptions.githubBlobPath;
+  var blobs = aOptions.blobs;
+
+  if (!(user && githubUserId && githubRepoName && githubBlobPath))
+    return aCallback('Missing required parameter.');
+
+  var data = {};
+  async.waterfall([
+    // Fetch all blobs in the target repo if not supplied as a parameter.
+    function (aCallback) {
+      if (blobs) {
+        aCallback(null, blobs);
+      } else {
+        github.gitdata.getBlobs({
+          user: encodeURIComponent(githubUserId),
+          repo: encodeURIComponent(githubRepoName)
+        }, aCallback);
+      }
+    },
+
+    // Validate blob
+    function (aBlobs, aCallback) {
+      var markdownBlob = _.findWhere(aBlobs, { path: githubBlobPath });
+
+      markdownBlob = parseMarkdownBlob(markdownBlob);
+
+      if (!markdownBlob.canUpload)
+        return aCallback(markdownBlob.errors);
+
+      data.markdownBlob = markdownBlob;
+      aCallback(null);
+    },
+
+    //
+    function (aCallback) {
+      github.usercontent.getBlobAsUtf8({
+        user: encodeURIComponent(githubUserId),
+        repo: encodeURIComponent(githubRepoName),
+        path: encodeURIComponent(githubBlobPath)
+      }, aCallback);
+    },
+    function (aBlobUtf8, aCallback) {
+      // Double check file size.
+      if (aBlobUtf8.length > config.maximumScriptDescriptionSize)
+        return aCallback(util.format('File size is larger than maximum (%s bytes).', config.maximumScriptDescriptionSize));
+
+      // script.about =
+      Script.update({
+        githubSyncAbout: true,
+        githubSyncUserId: githubUserId,
+        githubSyncRepoName: githubRepoName,
+        githubSyncAboutPath: githubBlobPath
+      }, {
+        about: aBlobUtf8
+      }, {
+        multi: true
+      }, aCallback);
+    },
+    function(aNumberAffected, aRawResponse, aCallback) {
+      data.numScriptsAffected = aNumberAffected;
+      console.log(util.format('importMarkdownBlob(%s, %s, %s) updated %s Scripts.', githubUserId, githubRepoName, githubBlobPath, aNumberAffected));
+      aCallback(null, data);
+    }
+  ], aCallback);
+};
+exports.importMarkdownBlob = importMarkdownBlob;
