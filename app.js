@@ -34,7 +34,7 @@ var config = require('./config');
 var db = mongoose.connection;
 var dbOptions = { server: { socketOptions: { keepAlive: 1 } } };
 
-app.set('port', process.env.PORT || 8080);
+app.set('port', config.port);
 
 // Connect to the database
 mongoose.connect(config.mongoose.uri, dbOptions);
@@ -46,7 +46,7 @@ db.once('open', function () {
 var sessionStore = new MongoStore({ mongoose_connection: db });
 
 // Force HTTPS
-if (app.get('port') === 443) {
+if (config.isHTTPS) {
   app.use(function (aReq, aRes, aNext) {
     aRes.setHeader('Strict-Transport-Security',
       'max-age=8640000; includeSubDomains');

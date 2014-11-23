@@ -9,7 +9,17 @@ config.mongoose.uri = process.env.CONNECT_STRING || devDbMongooseUri;
 config.express = {};
 config.express.sessionSecret = process.env.SESSION_SECRET || 'someSecretStringForSession';
 
-// OpenUserJS
+// OpenUserJS: Urls
+config.port = process.env.PORT || 8080;
+config.host = process.env.HOST || (process.env.NODE_ENV === 'production' ? 'openuserjs.org' : 'localhost');
+config.isHTTPS = config.port === 443;
+config.rootUrl = (config.isHTTPS ? 'https' : 'http') + config.host;
+if ((config.isHTTPS && config.port !== 443) || (!config.isHTTPS && config.port !== 80)) {
+    config.rootUrl += ':' + config.port;
+}
+config.authCallbackBaseUrl = process.env.AUTH_CALLBACK_BASE_URL || config.rootUrl;
+
+// OpenUserJS: Limits
 config.maximumScriptSize = 1048576; // 1 Mb
 config.maximumScriptDescriptionSize = 1048576; // 1 Mb
 config.maximumRequestBodySize = Math.max(config.maximumScriptSize, config.maximumScriptDescriptionSize);
