@@ -28,7 +28,7 @@
       </td>
       {{^librariesOnly}}
       <td class="text-center td-fit">
-        <p>{{installs}}</p>
+        <p>{{#isLib}}&ndash;{{/isLib}}{{^isLib}}{{installs}}{{/isLib}}</p>
       </td>
       {{/librariesOnly}}
       <td class="rating text-center td-fit">
