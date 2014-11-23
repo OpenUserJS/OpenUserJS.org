@@ -71,6 +71,6 @@
     "start": "node app.js"
   },
   "engines": {
-    "node": ">=0.10.7"
+    "node": ">=0.10.33"
   }
 }

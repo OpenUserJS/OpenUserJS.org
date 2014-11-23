@@ -137,17 +137,17 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isAdmin)
-    return aRes.send(403, { status: 403, message: 'Not an admin.' });
+    return aRes.status(403).send({ status: 403, message: 'Not an admin.' });
 
   var model = jsonModelMap[modelname];
   if (!model)
-    return aRes.send(400, { status: 400, message: 'Invalid model.' });
+    return aRes.status(400).send({ status: 400, message: 'Invalid model.' });
 
   model.findOne({
     _id: id
   }, function (aErr, aObj) {
     if (aErr || !aObj)
-      return aRes.send(404, { status: 404, message: 'Id doesn\'t exist.' });
+      return aRes.status(404).send({ status: 404, message: 'Id doesn\'t exist.' });
 
     aRes.json(aObj);
   });
@@ -298,7 +298,7 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
 
 // View everything about current modules for the server
 // This is mostly for debugging in production
-exports.adminNpmLsView = function (aReq, aRes, aNext) {
+exports.adminNpmListView = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   //
@@ -310,11 +310,36 @@ exports.adminNpmLsView = function (aReq, aRes, aNext) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isAdmin)
-    return aRes.send(403, { status: 403, message: 'Not an admin.' });
+    return aRes.status(403).send({ status: 403, message: 'Not an admin.' });
 
   exec('npm ls --json', function (aErr, aStdout, aStderr) {
-    if (aErr) return aRes.send(501, { status: 501, message: 'Not implemented.' });
+    if (aErr) return aRes.status(501).send({ status: 501, message: 'Not implemented.' });
     aRes.json(JSON.parse(aStdout));
+  });
+};
+
+// View current version of npm
+// This is mostly for debugging in production
+exports.adminNpmVersionView = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
+
+  //
+  var options = {};
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin)
+    return aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+
+  exec('npm --version', function (aErr, aStdout, aStderr) {
+    if (aErr) return aRes.status(501).send({ status: 501, message: 'Not implemented.' });
+
+    aRes.set('Content-Type', 'text/plain; charset=UTF-8');
+    aRes.write(aStdout + '\n');
+    aRes.end();
   });
 };
 
