@@ -42,6 +42,11 @@ var categories = [
     name: 'General Discussion',
     description: 'Off-topic discussion about anything related to user scripts or OpenUserJS.org'
   },
+  {
+    slug: 'issues',
+    name: 'Issues',
+    description: 'Discussions on scripts'
+  }
 ];
 exports.categories = categories;
 
@@ -128,6 +133,7 @@ exports.list = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var categorySlug = aReq.params.category;
+  var categoryIssues = categorySlug === 'issues';
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
@@ -144,7 +150,8 @@ exports.list = function (aReq, aRes, aNext) {
 
   // Category
   category = options.category = modelParser.parseCategory(category);
-  options.canPostTopicToCategory = category.canUserPostTopic(authedUser);
+  options.canPostTopicToCategory = category.canUserPostTopic(authedUser) && !categoryIssues;
+  options.multipleCategories = categoryIssues;
 
   // Page metadata
   pageMetadata(options, [category.name, 'Discussions'], category.description);
@@ -159,7 +166,7 @@ exports.list = function (aReq, aRes, aNext) {
   var discussionListQuery = Discussion.find();
 
   // discussionListQuery: category
-  discussionListQuery.find({ category: category.slug });
+  modelQuery.applyDiscussionCategoryFilter(discussionListQuery, options, category.slug);
 
   // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
@@ -182,6 +189,28 @@ exports.list = function (aReq, aRes, aNext) {
     //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
+    if (categoryIssues) {
+      _.map(options.discussionList, function (aDiscussion) {
+        var category = _.findWhere(categories, { slug: aDiscussion.category });
+        if (!category) {
+          category = {
+            name: aDiscussion.category,
+            slug: aDiscussion.category,
+          };
+
+          var regex = /^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/;
+          var match = regex.exec(category.slug);
+          var isScriptIssue = match;
+          if (isScriptIssue) {
+            var scriptAuthorNameSlug = match[2];
+            var scriptNameSlug = match[4];
+            var scriptName = scriptNameSlug.replace(/\_/g, ' ');
+            category.name = scriptAuthorNameSlug + '/' + scriptName;
+          }
+        }
+        aDiscussion.category = modelParser.parseCategory(category);
+      });
+    }
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(aReq);
