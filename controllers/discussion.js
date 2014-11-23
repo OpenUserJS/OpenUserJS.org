@@ -78,6 +78,9 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
   // discussionListQuery
   var discussionListQuery = Discussion.find();
 
+  // discussionListQuery: non-issue
+  discussionListQuery.and({ issue: { $ne: true } });
+
   // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
 
