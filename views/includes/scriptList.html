@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <th class="text-center"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Name</a></th>
-      {{^librariesOnly}}<th class="text-center td-fit"><a href="?orderBy=installs&orderDir={{orderDir.install}}&library=true{{#isFlagged}}&flagged=true{{/isFlagged}}">Installs</a></th>{{/librariesOnly}}
+      {{^librariesOnly}}<th class="text-center td-fit"><a href="?orderBy=installs&orderDir={{orderDir.install}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Installs</a></th>{{/librariesOnly}}
       <th class="text-center td-fit"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Rating</a></th>
       <th class="text-center td-fit"><a href="?orderBy=updated&orderDir={{orderDir.updated}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Last Updated</a></th>
     </tr>
