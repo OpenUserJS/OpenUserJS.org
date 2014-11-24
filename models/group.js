@@ -12,7 +12,7 @@ var ObjectId = Schema.Types.ObjectId;
 
 var groupSchema = new Schema({
   name: { type: String },
-  rating: { tpye: Number, default: 0 },
+  rating: { type: Number, default: 0 },
   updated: { type: Date, default: Date.now },
   _scriptIds: [{ type: ObjectId, ref: 'Script' }],
   size: { type: Number, default: 0 }
