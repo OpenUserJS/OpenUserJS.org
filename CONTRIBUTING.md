@@ -170,7 +170,7 @@ This can be a little tricky and needs some improvement for the docs.
 
 * Find the `.../OpenUserJS.org/.git/config` and edit it. It should look a little something like this:
 
-```
+``` apacheconf
 [core]
   repositoryformatversion = 0
   filemode = true
@@ -189,7 +189,7 @@ This can be a little tricky and needs some improvement for the docs.
 
 * and change it to add the following line of `fetch = +refs/pull/*/head:refs/remotes/upstream/pr/*` so it ends up looking a little like this:
 
-```
+``` apacheconf
 [core]
   repositoryformatversion = 0
   filemode = true
