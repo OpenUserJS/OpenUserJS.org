@@ -8,7 +8,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 #### Prerequisites
 
 * [Git](http://git-scm.com/)
-* [node.js 0.10.x](http://nodejs.org/)
+* [node.js 0.10.33 or other newer stable release](http://nodejs.org/)
 * [MongoDB](http://www.mongodb.org/) (Optional.  The project is preconfigured to use a dev DB on [MongoLab](https://mongolab.com/).)
 * [Ruby](https://www.ruby-lang.org/) (required to run [FakeS3](https://github.com/jubos/fake-s3/))
 * [FakeS3](https://github.com/jubos/fake-s3) (required to store libraries/scripts without [AWS S3](http://aws.amazon.com/s3/))
@@ -221,8 +221,41 @@ $ git prune upstream
 ```
 
 
-**NOTE** Sometimes `$ git-gui` will not properly craft the necessary url to checkout a specific pull request so it will be necessary to use the terminal in this case.
+**NOTE**: Sometimes `$ git-gui` will not properly craft the necessary url to checkout a specific pull request so it will be necessary to use the terminal in this case.
 
+### Compiling
+
+#### node.js
+There are multiple ways to retrieve this however this appears to work best for most cases. Please ensure that you have the proper dependencies installed first depending on the version selected and your distribution:
+
+``` sh-session
+$ git clone git://github.com/joyent/node.git
+$ cd node
+$ git checkout origin/v0.10.33-release
+$ ./configure --prefix=/usr
+$ make
+$ sudo make install
+```
+
+Think you may have messed up with installation or compiling then use these commands to clean up:
+
+``` sh-session
+$ sudo make uninstall
+$ make clean
+```
+... **NOTE**: You can always rerun the above `./configure` command when necessary too.
+
+Checking your installation is a snap by by:
+
+``` sh-session
+$ node -v
+$ npm -v
+```
+It is highly recommended to update to the latest npm by using npm itself to update itself with:
+
+``` sh-session
+$ sudo npm install npm
+```
 
 See Also
 --------
