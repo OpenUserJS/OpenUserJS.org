@@ -254,7 +254,7 @@ $ npm -v
 It is highly recommended to update to the latest npm by using npm itself to update itself with:
 
 ``` sh-session
-$ sudo npm install npm
+$ sudo npm install npm -g
 ```
 
 See Also
