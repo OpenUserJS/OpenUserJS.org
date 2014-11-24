@@ -262,4 +262,4 @@ See Also
 
 * [STYLEGUIDE.md](STYLEGUIDE.md)
 * [Privacy-Policy.md](views/includes/documents/Privacy-Policy.md)
-* [Terms-of-Service](views/includes/documents/Terms-of-Service.md)
+* [Terms-of-Service.md](views/includes/documents/Terms-of-Service.md)
