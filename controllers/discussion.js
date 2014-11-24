@@ -112,20 +112,7 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
     _.map(options.discussionList, function (aDiscussion) {
       var category = _.findWhere(categories, { slug: aDiscussion.category });
       if (!category) {
-        category = {
-          name: aDiscussion.category,
-          slug: aDiscussion.category,
-        };
-
-        var regex = /^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/;
-        var match = regex.exec(category.slug);
-        var isScriptIssue = match;
-        if (isScriptIssue) {
-          var scriptAuthorNameSlug = match[2];
-          var scriptNameSlug = match[4];
-          var scriptName = scriptNameSlug.replace(/\_/g, ' ');
-          category.name = scriptAuthorNameSlug + '/' + scriptName;
-        }
+        category = modelParser.parseCategoryUnknown(aDiscussion.category);
       }
       aDiscussion.category = modelParser.parseCategory(category);
     });
@@ -202,20 +189,7 @@ exports.list = function (aReq, aRes, aNext) {
       _.map(options.discussionList, function (aDiscussion) {
         var category = _.findWhere(categories, { slug: aDiscussion.category });
         if (!category) {
-          category = {
-            name: aDiscussion.category,
-            slug: aDiscussion.category,
-          };
-
-          var regex = /^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/;
-          var match = regex.exec(category.slug);
-          var isScriptIssue = match;
-          if (isScriptIssue) {
-            var scriptAuthorNameSlug = match[2];
-            var scriptNameSlug = match[4];
-            var scriptName = scriptNameSlug.replace(/\_/g, ' ');
-            category.name = scriptAuthorNameSlug + '/' + scriptName;
-          }
+          category = modelParser.parseCategoryUnknown(aDiscussion.category);
         }
         aDiscussion.category = modelParser.parseCategory(category);
       });
