@@ -45,7 +45,14 @@ var categories = [
   {
     slug: 'issues',
     name: 'Issues',
-    description: 'Discussions on scripts'
+    description: 'Discussions on scripts',
+    virtual: true
+  },
+  {
+    slug: 'all',
+    name: 'All Discussions',
+    description: 'Overview of all discussions',
+    virtual: true
   }
 ];
 exports.categories = categories;
@@ -78,7 +85,7 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
   // discussionListQuery
   var discussionListQuery = Discussion.find();
 
-  // discussionListQuery: non-issue
+  // discussionListQuery: remove issues
   discussionListQuery.and({ issue: { $ne: true } });
 
   // discussionListQuery: Defaults
@@ -136,7 +143,6 @@ exports.list = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var categorySlug = aReq.params.category;
-  var categoryIssues = categorySlug === 'issues';
 
   var category = _.findWhere(categories, { slug: categorySlug });
   if (!category)
@@ -153,8 +159,8 @@ exports.list = function (aReq, aRes, aNext) {
 
   // Category
   category = options.category = modelParser.parseCategory(category);
-  options.canPostTopicToCategory = category.canUserPostTopic(authedUser) && !categoryIssues;
-  options.multipleCategories = categoryIssues;
+  options.canPostTopicToCategory = !category.virtual && category.canUserPostTopic(authedUser);
+  options.multipleCategories = category.virtual;
 
   // Page metadata
   pageMetadata(options, [category.name, 'Discussions'], category.description);
@@ -192,7 +198,7 @@ exports.list = function (aReq, aRes, aNext) {
     //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
-    if (categoryIssues) {
+    if (category.virtual) {
       _.map(options.discussionList, function (aDiscussion) {
         var category = _.findWhere(categories, { slug: aDiscussion.category });
         if (!category) {

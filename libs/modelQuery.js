@@ -135,6 +135,7 @@ var parseRemovedItemSearchQuery = function (aRemovedItemListQuery, aQuery) {
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
 exports.applyDiscussionCategoryFilter = function (aDiscussionListQuery, aOptions, aCatergorySlug) {
+  if (aCatergorySlug === 'all') { return; }
   if (aCatergorySlug === 'issues') {
     aDiscussionListQuery.find({ issue: true });
   } else {
