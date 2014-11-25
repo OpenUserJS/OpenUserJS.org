@@ -134,6 +134,15 @@ var parseRemovedItemSearchQuery = function (aRemovedItemListQuery, aQuery) {
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
+exports.applyDiscussionCategoryFilter = function (aDiscussionListQuery, aOptions, aCatergorySlug) {
+  if (aCatergorySlug === 'all') { return; }
+  if (aCatergorySlug === 'issues') {
+    aDiscussionListQuery.find({ issue: true });
+  } else {
+    aDiscussionListQuery.find({ category: aCatergorySlug });
+  }
+};
+
 var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFlaggedQuery) {
   // Only list flagged items if authedUser >= moderator or if authedUser owns the item.
   if (aOptions.isYou || aOptions.isMod) {

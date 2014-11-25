@@ -42,6 +42,18 @@ var categories = [
     name: 'General Discussion',
     description: 'Off-topic discussion about anything related to user scripts or OpenUserJS.org'
   },
+  {
+    slug: 'issues',
+    name: 'Issues',
+    description: 'Discussions on scripts',
+    virtual: true
+  },
+  {
+    slug: 'all',
+    name: 'All Discussions',
+    description: 'Overview of all discussions',
+    virtual: true
+  }
 ];
 exports.categories = categories;
 
@@ -73,6 +85,9 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
   // discussionListQuery
   var discussionListQuery = Discussion.find();
 
+  // discussionListQuery: remove issues
+  discussionListQuery.and({ issue: { $ne: true } });
+
   // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
 
@@ -97,20 +112,7 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
     _.map(options.discussionList, function (aDiscussion) {
       var category = _.findWhere(categories, { slug: aDiscussion.category });
       if (!category) {
-        category = {
-          name: aDiscussion.category,
-          slug: aDiscussion.category,
-        };
-
-        var regex = /^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/;
-        var match = regex.exec(category.slug);
-        var isScriptIssue = match;
-        if (isScriptIssue) {
-          var scriptAuthorNameSlug = match[2];
-          var scriptNameSlug = match[4];
-          var scriptName = scriptNameSlug.replace(/\_/g, ' ');
-          category.name = scriptAuthorNameSlug + '/' + scriptName;
-        }
+        category = modelParser.parseCategoryUnknown(aDiscussion.category);
       }
       aDiscussion.category = modelParser.parseCategory(category);
     });
@@ -144,7 +146,8 @@ exports.list = function (aReq, aRes, aNext) {
 
   // Category
   category = options.category = modelParser.parseCategory(category);
-  options.canPostTopicToCategory = category.canUserPostTopic(authedUser);
+  options.canPostTopicToCategory = !category.virtual && category.canUserPostTopic(authedUser);
+  options.multipleCategories = category.virtual;
 
   // Page metadata
   pageMetadata(options, [category.name, 'Discussions'], category.description);
@@ -159,7 +162,7 @@ exports.list = function (aReq, aRes, aNext) {
   var discussionListQuery = Discussion.find();
 
   // discussionListQuery: category
-  discussionListQuery.find({ category: category.slug });
+  modelQuery.applyDiscussionCategoryFilter(discussionListQuery, options, category.slug);
 
   // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
@@ -182,6 +185,15 @@ exports.list = function (aReq, aRes, aNext) {
     //--- PreRender
     // discussionList
     options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
+    if (category.virtual) {
+      _.map(options.discussionList, function (aDiscussion) {
+        var category = _.findWhere(categories, { slug: aDiscussion.category });
+        if (!category) {
+          category = modelParser.parseCategoryUnknown(aDiscussion.category);
+        }
+        aDiscussion.category = modelParser.parseCategory(category);
+      });
+    }
 
     // Pagination
     options.paginationRendered = pagination.renderDefault(aReq);

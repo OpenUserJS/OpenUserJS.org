@@ -130,7 +130,7 @@ module.exports = function (aApp) {
   // Discussion routes
   // TODO: Update templates for new discussion routes
   aApp.route('/forum').get(discussion.categoryListPage);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)').get(discussion.list);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(discussion.list);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(discussion.createComment);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(discussion.newTopic).post(discussion.createTopic);
   // dupe

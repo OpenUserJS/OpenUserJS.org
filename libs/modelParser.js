@@ -422,6 +422,24 @@ var parseCategory = function (aCategoryData) {
 parseModelFnMap.Category = parseCategory;
 exports.parseCategory = parseCategory;
 
+var parseCategoryUnknown = function (aCategoryUnknownSlug) {
+  var category = {
+    name: aCategoryUnknownSlug,
+    slug: aCategoryUnknownSlug
+  };
+
+  var isScriptIssueRegex = /^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/;
+  var isScriptIssue = isScriptIssueRegex.exec(category.slug);
+  if (isScriptIssue) {
+    var scriptAuthorNameSlug = isScriptIssue[2];
+    var scriptNameSlug = isScriptIssue[4];
+    var scriptName = scriptNameSlug.replace(/\_/g, ' ');
+    category.name = scriptAuthorNameSlug + '/' + scriptName;
+  }
+  return category;
+};
+exports.parseCategoryUnknown = parseCategoryUnknown;
+
 /**
  * Remove
  */
