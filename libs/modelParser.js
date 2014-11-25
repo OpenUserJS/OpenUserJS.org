@@ -342,6 +342,8 @@ var parseDiscussion = function (aDiscussionData) {
 
   discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
+  discussion.open = typeof (discussion.open) === 'undefined' ? true : discussion.open;
+
   return discussion;
 };
 parseModelFnMap.Discussion = parseDiscussion;

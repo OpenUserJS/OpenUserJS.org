@@ -18,6 +18,9 @@
         <td>
           <b>
             <a href="{{{discussionPageUrl}}}" class="tr-link-a">{{topic}}</a>
+            {{^open}}
+            <span class="label label-danger">Closed</span>
+            {{/open}}
           </b>
         </td>
         {{#multipleCategories}}
