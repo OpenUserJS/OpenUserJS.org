@@ -6,6 +6,8 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+var pkg = require('../package.json');
+
 var async = require('async');
 var exec = require('child_process').exec;
 
@@ -294,6 +296,25 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
     if (aErr) return aNext();
     aRes.render('pages/adminApiKeysPage', options);
   });
+};
+
+// View everything about current deployed `./package.json`
+// This is mostly for debugging in production
+exports.adminNpmPackageView = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
+
+  //
+  var options = {};
+
+  // Session
+  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin)
+    return aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+
+  aRes.json(pkg);
 };
 
 // View everything about current modules for the server
