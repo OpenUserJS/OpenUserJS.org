@@ -1,0 +1,18 @@
+﻿<script type="text/javascript">
+  $(function () {
+    $('[data-icon-src]').each(function () {
+      var container = $(this);
+      var size = container.data('icon-size');
+      var img = new Image();
+      if (size) {
+        img.width = size;
+        img.height = size;
+      }
+      $(img).load(function () {
+        var that = $(this).hide();
+        container.empty().append(that);
+        that.fadeIn();
+      }).attr('src', container.data('icon-src'));
+    });
+  });
+</script>
