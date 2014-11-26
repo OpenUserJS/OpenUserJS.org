@@ -106,6 +106,9 @@ After an Assignee takes an Issue with announcement there may need to be further 
 ##### needs testing
 Anyone can add this but it is primarily there for the Assignee indicating that Testers are wanted and needed.
 
+##### needs mitigation
+Bascially this means following up with a preferable related enhancement issue and/or pull request. Removal of this can only occur by the hierarchy of Establishing Owner &rarr; Owner &rarr; Active Maintainer and then remaining Collaboratorion teams. In the event of a conflict of two same team categories the label is to stay on until a member of the higher up team can mediate. This can be used when someone in development feels something is or is not related and should be readdressed to reduce the perceived friction during voting/discussion process.
+
 ##### feature
 Something we don't already have implemented to the best of your knowledge but would like to see.
 
