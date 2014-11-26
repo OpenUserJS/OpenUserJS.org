@@ -11,13 +11,8 @@
     {{#scriptList}}
     <tr class="tr-link">
       <td>
-        <span class="script-icon hidden-xs">
-          {{#icon16Url}}
-          <img src="{{{icon16Url}}}" alt="{{! Leave me empty! }}" width="16" height="16" />
-          {{/icon16Url}}
-          {{^icon16Url}}
+        <span class="script-icon hidden-xs" {{#icon16Url}}data-icon-src="{{{icon16Url}}}" data-icon-size="16"{{/icon16Url}}>
           {{#isLib}}<i class="fa fa-fw fa-file-excel-o"></i>{{/isLib}}{{^isLib}}<i class="fa fa-fw fa-file-code-o"></i>{{/isLib}}
-          {{/icon16Url}}
         </span>
         <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>
         {{#meta.version}}
