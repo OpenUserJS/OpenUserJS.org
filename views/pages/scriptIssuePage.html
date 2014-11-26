@@ -52,9 +52,19 @@
 
   <div id="show-reply-form-when-visible"></div>
   {{> includes/commentForm.html }}
-
   {{> includes/footer.html }}
+  {{#authedUser}}
   {{> includes/scripts/markdownEditor.html }}
   {{> includes/scripts/commentReplyScript.html }}
+  {{/authedUser}}
+  {{^authedUser}}
+  <script>
+      $(function () {
+        $('.btn-comment-reply').parent().tooltip().click(function(){
+          $(this).tooltip('show');
+        });
+      });
+  </script>
+  {{/authedUser}}
 </body>
 </html>

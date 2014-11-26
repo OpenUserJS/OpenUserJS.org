@@ -25,10 +25,12 @@
           </div>
           <section class="post-menu-area">
             <nav class="post-controls text-right">
-              <button class="btn btn-sm btn-info btn-comment-reply" title="begin composing a reply to this post">
-                <i class="fa fa-fw fa-reply"></i> Reply
-              </button>
-            </nav>
+              <div class="pull-right" {{^authedUser}} data-toggle="tooltip" data-placement="left" title="You need to be logged in to post!" {{/authedUser}}>
+                <button class="btn btn-sm btn-info btn-comment-reply {{^authedUser}}disabled{{/authedUser}}" title="Begin composing a reply to this post.">
+                  <i class="fa fa-fw fa-reply"></i> Reply
+                </button>
+              </div>
+             </nav>
           </section>
         </div>
       </div>
