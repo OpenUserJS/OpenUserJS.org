@@ -444,16 +444,16 @@ exports.createTopic = function (aReq, aRes, aNext) {
 exports.createComment = function (aReq, aRes, aNext) {
   var category = aReq.params.category;
   var topic = aReq.params.topic;
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var content = aReq.body['comment-content'];
   var commentId = aReq.body['comment-id']; // for editing
 
-  if (!user) { return aNext(); }
+  if (!authedUser) { return aNext(); }
 
   findDiscussion(category, topic, function (discussion) {
     if (!discussion) { return aNext(); }
 
-    postComment(user, discussion, content, false, function (err, discussion) {
+    postComment(authedUser, discussion, content, false, function (err, discussion) {
       aRes.redirect(encodeURI(discussion.path
         + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
     });

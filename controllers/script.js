@@ -438,7 +438,7 @@ exports.vote = function (aReq, aRes, aNext) {
   var installName = scriptStorage.getInstallName(aReq)
     + (isLib ? '.js' : '.user.js');
   var vote = aReq.params.vote;
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var url = aReq._parsedUrl.pathname.split('/');
   var unvote = false;
 
@@ -461,7 +461,7 @@ exports.vote = function (aReq, aRes, aNext) {
     function (aErr, aScript) {
       if (aErr || !aScript) { return aRes.redirect(url); }
 
-      Vote.findOne({ _scriptId: aScript._id, _userId: user._id },
+      Vote.findOne({ _scriptId: aScript._id, _userId: authedUser._id },
         function (aErr, aVoteModel) {
           var oldVote = null;
           var votes = aScript.votes || 0;
@@ -483,13 +483,13 @@ exports.vote = function (aReq, aRes, aNext) {
           if (!aScript.rating) { aScript.rating = 0; }
           if (!aScript.votes) { aScript.votes = 0; }
 
-          if (user._id == aScript._authorId || (!aVoteModel && unvote)) {
+          if (authedUser._id == aScript._authorId || (!aVoteModel && unvote)) {
             return aRes.redirect(url);
           } else if (!aVoteModel) {
             aVoteModel = new Vote({
               vote: vote,
               _scriptId: aScript._id,
-              _userId: user._id
+              _userId: authedUser._id
             });
             aScript.rating += vote ? 1 : -1;
             aScript.votes = votes + 1;

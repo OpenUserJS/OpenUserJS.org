@@ -632,17 +632,17 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
 
 // Let a user edit their account
 exports.edit = function (aReq, aRes, aNext) {
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var userStrats = null;
   var options = null;
 
-  if (!user) { return aRes.redirect('/login'); }
+  if (!authedUser) { return aRes.redirect('/login'); }
 
-  userStrats = aReq.session.user.strategies.slice(0);
+  userStrats = authedUser.strategies.slice(0);
   options = {
-    name: user.name,
-    about: user.about,
-    username: user.name
+    name: authedUser.name,
+    about: authedUser.about,
+    username: authedUser.name
   };
 
   // Page metadata
@@ -698,7 +698,7 @@ exports.edit = function (aReq, aRes, aNext) {
     options.defaultStrategy = strategies[defaultStrategy].name;
     options.haveOtherStrategies = options.usedStrategies.length > 0;
 
-    scriptsList.listScripts({ _authorId: user._id, isLib: null, flagged: null }, // TODO: Global detected... may need renaming
+    scriptsList.listScripts({ _authorId: authedUser._id, isLib: null, flagged: null }, // TODO: Global detected... may need renaming
       { size: -1 }, '/user/edit',
       function (aScriptsList) {
         aScriptsList.edit = true;
@@ -1200,7 +1200,7 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
 };
 
 exports.uploadScript = function (aReq, aRes, aNext) {
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var isLib = aReq.params.isLib;
   var userjsRegex = /\.user\.js$/;
   var jsRegex = /\.js$/;
@@ -1227,7 +1227,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     stream.on('data', function (aD) { bufs.push(aD); }); // TODO: Non-descript function parm
 
     stream.on('end', function () {
-      User.findOne({ _id: user._id }, function (aErr, aUser) {
+      User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
         var scriptName = aFields.script_name;
         if (isLib) {
           scriptStorage.storeScript(aUser, scriptName, Buffer.concat(bufs),
@@ -1255,20 +1255,20 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
 // post route to update a user's account
 exports.update = function (aReq, aRes, aNext) {
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var scriptUrls = aReq.body.urls ? Object.keys(aReq.body.urls) : '';
   var installRegex = null;
   var installNames = [];
-  var username = user.name.toLowerCase();
+  var username = authedUser.name.toLowerCase();
 
   if (typeof aReq.body.about !== 'undefined') {
     // Update the about section of a user's profile
-    User.findOneAndUpdate({ _id: user._id },
+    User.findOneAndUpdate({ _id: authedUser._id },
       { about: aReq.body.about },
       function (aErr, aUser) {
         if (aErr) { aRes.redirect('/'); }
 
-        aReq.session.user.about = aUser.about; // TODO: Ambiguous
+        authedUser.about = aUser.about; // TODO: Ambiguous
         aRes.redirect('/users/' + aUser.name);
       });
   } else {
@@ -1279,14 +1279,14 @@ exports.update = function (aReq, aRes, aNext) {
       if (matches && matches[1]) { installNames.push(matches[1]); }
     });
     async.each(installNames, scriptStorage.deleteScript, function () {
-      aRes.redirect('/users/' + user.name);
+      aRes.redirect('/users/' + authedUser.name);
     });
   }
 };
 
 // Submit a script through the web editor
 exports.submitSource = function (aReq, aRes, aNext) {
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var isLib = aReq.params.isLib;
   var source = null;
   var url = null;
@@ -1295,7 +1295,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
     var userjsRegex = /\.user\.js$/;
     var jsRegex = /\.js$/;
 
-    User.findOne({ _id: user._id }, function (aErr, aUser) {
+    User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
       scriptStorage.storeScript(aUser, aMeta, aSource, function (aScript) {
         var redirectUrl = encodeURI(aScript ? (aScript.isLib ? '/libs/'
           + aScript.installName.replace(jsRegex, '') : '/scripts/'

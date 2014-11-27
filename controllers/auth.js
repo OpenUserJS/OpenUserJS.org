@@ -41,7 +41,7 @@ Strategy.find({}, function (aErr, aStrategies) {
 });
 
 exports.auth = function (aReq, aRes, aNext) {
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var strategy = aReq.body.auth || aReq.params.strategy;
   var username = aReq.body.username || aReq.session.username;
 
@@ -55,10 +55,10 @@ exports.auth = function (aReq, aRes, aNext) {
   }
 
   // Allow a logged in user to add a new strategy
-  if (strategy && user) {
-    aReq.session.username = user.name;
+  if (strategy && authedUser) {
+    aReq.session.username = authedUser.name;
     return auth();
-  } else if (user) {
+  } else if (authedUser) {
     return aNext();
   }
 
