@@ -109,7 +109,7 @@ exports.callback = function (aReq, aRes, aNext) {
   var username = aReq.session.username;
   var newstrategy = aReq.session.newstrategy;
   var strategyInstance = null;
-  var doneUrl = aReq.session.user ? '/user/edit' : '/';
+  var doneUrl = aReq.session.user ? '/user/preferences' : '/';
 
   // The callback was called improperly
   if (!strategy || !username) { return aNext(); }
