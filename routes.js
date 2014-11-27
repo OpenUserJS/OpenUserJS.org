@@ -97,6 +97,7 @@ module.exports = function (aApp) {
   aApp.route('/admin/json').get(admin.adminJsonView);
   aApp.route('/admin/user/:id').get(admin.adminUserView);
   aApp.route('/admin/api').get(admin.adminApiKeysPage);
+  aApp.route('/admin/npm/package').get(admin.adminNpmPackageView);
   aApp.route('/admin/npm/list').get(admin.adminNpmListView);
   aApp.route('/admin/npm/version').get(admin.adminNpmVersionView);
   aApp.route('/admin/api/update').post(admin.apiAdminUpdate);
