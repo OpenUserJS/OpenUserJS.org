@@ -240,8 +240,6 @@ exports.view = function (aReq, aRes, aNext) {
 exports.open = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
-
   var topic = aReq.body['discussion-topic'];
   var content = aReq.body['comment-content'];
 
@@ -315,8 +313,6 @@ exports.comment = function (aReq, aRes, aNext) {
   var category = type + '/' + installName + '/issues';
   var user = aReq.session.user;
 
-  if (!user) { return aRes.redirect('/login'); }
-
   Script.findOne({ installName: scriptStorage.caseInsensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
       var content = aReq.body['comment-content'];
@@ -344,8 +340,6 @@ exports.changeStatus = function (aReq, aRes, aNext) {
   var action = aReq.params.action;
   var user = aReq.session.user;
   var changed = false;
-
-  if (!user) { return aRes.redirect('/login'); }
 
   Script.findOne({ installName: scriptStorage.caseInsensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {

@@ -351,8 +351,6 @@ exports.view = function (aReq, aRes, aNext) {
 exports.edit = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) { return aRes.redirect('/login'); }
-
   // Support routes lacking the :username. TODO: Remove this functionality.
   aReq.params.username = authedUser.name.toLowerCase();
 
@@ -444,7 +442,6 @@ exports.vote = function (aReq, aRes, aNext) {
   var url = aReq._parsedUrl.pathname.split('/');
   var unvote = false;
 
-  if (!user) { return aRes.redirect('/login'); }
   if (url.length > 5) { url.pop(); }
   url.shift();
   url.shift();

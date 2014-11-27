@@ -461,8 +461,6 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 exports.userEditProfilePage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) { return aRes.redirect('/login'); }
-
   var username = aReq.params.username;
 
   User.findOne({
@@ -522,8 +520,6 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
 
 exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
-  if (!authedUser) { return aRes.redirect('/login'); }
 
   User.findOne({
     _id: authedUser._id
@@ -715,8 +711,6 @@ exports.edit = function (aReq, aRes, aNext) {
 exports.newScriptPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
-
   //
   var options = {};
   var tasks = [];
@@ -746,8 +740,6 @@ exports.newScriptPage = function (aReq, aRes, aNext) {
 exports.newLibraryPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
-
   //
   var options = {};
   var tasks = [];
@@ -776,8 +768,6 @@ exports.newLibraryPage = function (aReq, aRes, aNext) {
 
 exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
-  if (!authedUser) return aRes.redirect('/login');
 
   //
   var options = {};
@@ -865,8 +855,6 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
 
 exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
-  if (!authedUser) return aRes.redirect('/login');
 
   //
   var options = {};
@@ -967,8 +955,6 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
 exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
-  if (!authedUser) return aRes.redirect('/login');
 
   //
   var options = {};
@@ -1092,8 +1078,6 @@ var parseJavascriptBlob = function (aJavascriptBlob) {
 // Sloppy code to let a user add scripts to their acount
 exports.userManageGitHubPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
-  if (!authedUser) return aRes.redirect('/login');
 
   //
   var options = {};
@@ -1222,7 +1206,6 @@ exports.uploadScript = function (aReq, aRes, aNext) {
   var jsRegex = /\.js$/;
   var form = null;
 
-  if (!user) { return aRes.redirect('/login'); }
   if (!/multipart\/form-data/.test(aReq.headers['content-type'])) {
     return aNext();
   }
@@ -1278,8 +1261,6 @@ exports.update = function (aReq, aRes, aNext) {
   var installNames = [];
   var username = user.name.toLowerCase();
 
-  if (!user) { return aRes.redirect('/login'); }
-
   if (typeof aReq.body.about !== 'undefined') {
     // Update the about section of a user's profile
     User.findOneAndUpdate({ _id: user._id },
@@ -1309,8 +1290,6 @@ exports.submitSource = function (aReq, aRes, aNext) {
   var isLib = aReq.params.isLib;
   var source = null;
   var url = null;
-
-  if (!user) { return aRes.redirect('/login'); }
 
   function storeScript(aMeta, aSource) {
     var userjsRegex = /\.user\.js$/;

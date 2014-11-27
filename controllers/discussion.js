@@ -298,9 +298,6 @@ exports.show = function (aReq, aRes, aNext) {
 exports.newTopic = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser)
-    return aRes.redirect('/login');
-
   var categorySlug = aReq.params.category;
 
   var category = _.findWhere(categories, { slug: categorySlug });
@@ -411,9 +408,6 @@ exports.postTopic = postTopic;
 // post route to create a new topic
 exports.createTopic = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
-  if (!authedUser)
-    return aRes.redirect('/login');
 
   var categorySlug = aReq.params.category;
   var topic = aReq.body['discussion-topic'];
