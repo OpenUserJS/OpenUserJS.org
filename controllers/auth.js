@@ -160,6 +160,8 @@ exports.callback = function (aReq, aRes, aNext) {
         } else {
           // Delete the username that was temporarily stored
           delete aReq.session.username;
+          doneUrl = aReq.session.redirectTo || doneUrl;
+          delete aReq.session.redirectTo;
           return aRes.redirect(doneUrl);
         }
       });
@@ -167,4 +169,12 @@ exports.callback = function (aReq, aRes, aNext) {
   });
 
   authenticate(aReq, aRes, aNext);
+};
+
+exports.validateUser = function validateUser(aReq, aRes, aNext) {
+  if (!aReq.session.user) {
+    aReq.session.redirectTo = aReq.path;
+    return aRes.redirect('/login');
+  }
+  return aNext();
 };
