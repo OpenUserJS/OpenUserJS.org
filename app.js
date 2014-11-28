@@ -26,7 +26,6 @@ var passport = require('passport');
 
 var app = express();
 
-var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 var modifySessions = require('./libs/modifySessions');
 
 var settings = require('./models/settings.json');

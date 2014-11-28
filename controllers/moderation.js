@@ -25,7 +25,6 @@ exports.removedItemPage = function (aReq, aRes, aNext) {
 
   //
   var options = {};
-  var tasks = [];
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);

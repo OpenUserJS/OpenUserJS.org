@@ -145,7 +145,7 @@ exports.home = function (aReq, aRes) {
         pageMetadata(options, ['Flagged Scripts', 'Moderation']);
       }
     }
-  };
+  }
   function render() { aRes.render('pages/scriptListPage', options); }
   function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);
@@ -217,7 +217,7 @@ exports.register = function (aReq, aRes) {
     var githubStrategy = _.findWhere(options.strategies, { strat: 'github' });
     if (githubStrategy)
       githubStrategy.selected = true;
-  };
+  }
   function render() { aRes.render('pages/loginPage', options); }
   function asyncComplete() { preRender(); render(); }
   async.parallel(tasks, asyncComplete);

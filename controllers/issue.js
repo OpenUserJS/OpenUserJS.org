@@ -53,7 +53,7 @@ exports.list = function (aReq, aRes, aNext) {
 
     // Script
     var script = options.script = modelParser.parseScript(scriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
+    options.isOwner = authedUser && authedUser._id === script._authorId;
 
     // Category
     var category = {};
@@ -167,7 +167,7 @@ exports.view = function (aReq, aRes, aNext) {
 
     // Script
     var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
+    options.isOwner = authedUser && authedUser._id === script._authorId;
 
     // Category
     var category = {};
@@ -185,8 +185,8 @@ exports.view = function (aReq, aRes, aNext) {
       // Discussion
       var discussion = options.discussion = modelParser.parseDiscussion(aDiscussionData);
       modelParser.parseIssue(discussion);
-      options.canClose = authedUser && (authedUser._id == script._authorId || authedUser._id == discussion._authorId);
-      options.canOpen = authedUser && authedUser._id == script._authorId;
+      options.canClose = authedUser && (authedUser._id === script._authorId || authedUser._id === discussion._authorId);
+      options.canOpen = authedUser && authedUser._id === script._authorId;
 
       // commentListQuery
       var commentListQuery = Comment.find();
@@ -255,7 +255,7 @@ exports.open = function (aReq, aRes, aNext) {
     function preRender() {
       // Page metadata
       pageMetadata(options, ['New Issue', script.name]);
-    };
+    }
     function render() { aRes.render('pages/scriptNewIssuePage', options); }
     function asyncComplete() { preRender(); render(); }
 
@@ -273,7 +273,7 @@ exports.open = function (aReq, aRes, aNext) {
 
     // Script
     var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
+    options.isOwner = authedUser && authedUser._id === script._authorId;
 
     // Category
     var category = {};

@@ -24,7 +24,6 @@ var userRoles = require('../models/userRoles.json');
 var strategies = require('./strategies.json');
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
-var scriptStorage = require('./scriptStorage');
 var modelParser = require('../libs/modelParser');
 var helpers = require('../libs/helpers');
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
@@ -66,7 +65,6 @@ exports.userAdmin = function (aReq, aRes, aNext) {
 
   // You can only see users with a role less than yours
   User.find({ role: { $gt: thisUser.role } }, function (aErr, aUsers) { // TODO: STYLEGUIDE.md conformance needed here
-    var i = 0;
     options.users = [];
 
     aUsers.forEach(function (aUser) {
@@ -168,7 +166,6 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
 
     //
     var options = {};
-    var tasks = [];
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -184,7 +181,7 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isYou = authedUser && user && authedUser._id === user._id;
 
     //---
 
@@ -428,7 +425,6 @@ exports.authAsUser = function (aReq, aRes, aNext) {
 
   //
   var options = {};
-  var tasks = [];
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);

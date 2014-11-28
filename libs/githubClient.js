@@ -47,7 +47,7 @@ var githubGitDataGetBlobAsUtf8 = function (aMsg, aCallback) {
     },
     function (aBlob, aCallback) {
       var content = aBlob.content;
-      if (aBlob.encoding == 'base64') {
+      if (aBlob.encoding === 'base64') {
         var buf = new Buffer(content, 'base64');
         content = buf.toString('utf8');
       }
@@ -69,7 +69,7 @@ var githubUserContentGetBlobAsUtf8 = function (aMsg, aCallback) {
       request.get(url, aCallback);
     },
     function (aResponse, aBody, aCallback) {
-      if (aResponse.statusCode != 200)
+      if (aResponse.statusCode !== 200)
         return aCallback(util.format('Status Code %s', aResponse.statusCode));
 
       aCallback(null, aBody);

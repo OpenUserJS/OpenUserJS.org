@@ -46,7 +46,6 @@ exports.getRating = getRating;
 // expiring cache (either memory or DB based) to
 // speed up voting and flagging
 exports.getKarma = function (aUser, aMaxKarma, aCallback) {
-  var ratings = [];
   var karma = 0;
   Script.find({ _authorId: aUser._id }, 'rating', function (aErr, aScripts) {
     if (aErr) { return aCallback(karma); }

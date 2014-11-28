@@ -13,7 +13,6 @@ var _ = require('underscore');
 var util = require('util');
 
 var Comment = require('../models/comment').Comment;
-var Flag = require('../models/flag').Flag;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
@@ -97,7 +96,6 @@ var getUserPageTasks = function (aOptions) {
 
   // Shortcuts
   var user = aOptions.user;
-  var authedUser = aOptions.authedUser;
 
   //--- Tasks
 
@@ -218,7 +216,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
     }
   }
   function render() { aRes.render('pages/userListPage', options); }
-  function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } };
+  function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } }
   async.parallel(tasks, asyncComplete);
 };
 
@@ -245,7 +243,7 @@ exports.view = function (aReq, aRes, aNext) {
     // User
     var user = options.user = modelParser.parseUser(aUserData);
     user.aboutRendered = renderMd(user.about);
-    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isYou = authedUser && user && authedUser._id === user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -262,9 +260,6 @@ exports.view = function (aReq, aRes, aNext) {
 
     // scriptListQuery: Defaults
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
-
-    // scriptListQuery: Pagination
-    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     //--- Tasks
 
@@ -303,7 +298,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isYou = authedUser && user && authedUser._id === user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -387,7 +382,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isYou = authedUser && user && authedUser._id === user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -463,8 +458,6 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
 
   if (!authedUser) { return aRes.redirect('/login'); }
 
-  var username = aReq.params.username;
-
   User.findOne({
     _id: authedUser._id
   }, function (aErr, aUserData) {
@@ -481,7 +474,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isYou = authedUser && user && authedUser._id === user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -541,7 +534,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id == user._id;
+    options.isYou = authedUser && user && authedUser._id === user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -870,7 +863,6 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
   //
   var options = {};
-  var tasks = [];
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -1015,7 +1007,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
         options.repo = aRepo;
         options.repoAsEncoded = {
           default_branch: encodeURI(options.repo.default_branch)
-        }
+        };
 
         github.gitdata.getJavascriptBlobs({
           user: encodeURIComponent(aRepo.owner.login),
@@ -1039,7 +1031,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
 
         aCallback(null);
       },
-    ], aCallback)
+    ], aCallback);
   });
 
   //---
@@ -1108,7 +1100,6 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
   pageMetadata(options, ['Manage', 'GitHub']);
 
   //
-  var TOO_MANY_SCRIPTS = 'GitHub user has too many scripts to batch import.';
   tasks.push(function (aCallback) {
     var githubUserName = aReq.query.user || authedUser.ghUsername;
 
@@ -1127,7 +1118,7 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
             },
             function (aGithubUser, aCallback) {
               options.githubUser = aGithubUser;
-              console.log(githubUser);
+              console.log(aGithubUser);
               User.findOne({
                 _id: authedUser._id
               }, aCallback);
@@ -1164,7 +1155,7 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
         console.log(aReq.body);
         _.each(aReq.body, function (aRepo, aReponame) {
           // Load all scripts in the repo
-          if (typeof aRepo === 'string' && reponame.substr(-4) === '_all') {
+          if (typeof aRepo === 'string' && aReponame.substr(-4) === '_all') {
             aReponame = aRepo;
             aRepo = aRepos[aReponame];
 
@@ -1401,7 +1392,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         aOptions.source = Buffer.concat(bufs).toString('utf8');
         aOptions.original = aScript.installName;
         aOptions.url = aReq.url;
-        aOptions.owner = aAuthedUser && (aScript._authorId == aAuthedUser._id
+        aOptions.owner = aAuthedUser && (aScript._authorId === aAuthedUser._id
           || collaborators.indexOf(aAuthedUser.name) > -1);
         aOptions.username = aAuthedUser ? aAuthedUser.name : null;
         aOptions.isLib = aScript.isLib;
@@ -1459,7 +1450,7 @@ exports.editScript = function (aReq, aRes, aNext) {
 
       // Script
       var script = options.script = modelParser.parseScript(aScriptData);
-      options.isOwner = authedUser && authedUser._id == script._authorId;
+      options.isOwner = authedUser && authedUser._id === script._authorId;
       modelParser.renderScript(script);
       script.installNameSlug = installNameSlug;
       script.scriptPermalinkInstallPageUrl = 'http://' + aReq.get('host') + script.scriptInstallPageUrl;

@@ -12,7 +12,6 @@ var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
-var userRoles = require('../models/userRoles.json');
 var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var addSession = require('../libs/modifySessions').add;
@@ -122,7 +121,7 @@ exports.callback = function (aReq, aRes, aNext) {
   if (openIdStrategies[strategy]) {
     strategyInstance._verify = function (aId, aDone) {
       verifyPassport(aId, strategy, username, aReq.session.user, aDone);
-    }
+    };
   } else {
     strategyInstance._verify =
       function (aToken, aRefreshOrSecretToken, aProfile, aDone) {

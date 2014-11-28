@@ -31,7 +31,7 @@ function removeable(aModel, aContent, aUser, aCallback) {
   // You can't remove yourself
   // You can only remove a remove a user with a lesser role than yourself
   if (aModel.modelName === 'User') {
-    return aCallback(aContent._id != aUser._id && aContent.role > aUser.role,
+    return aCallback(aContent._id !== aUser._id && aContent.role > aUser.role,
       aContent);
   }
 
@@ -41,7 +41,7 @@ function removeable(aModel, aContent, aUser, aCallback) {
 
     // You can't remove your own content this way
     // When you remove your own content it's removed for good
-    if (aAuthor._id == aUser._id) { return aCallback(false, aAuthor); }
+    if (aAuthor._id === aUser._id) { return aCallback(false, aAuthor); }
 
     // You can only remove content by an author with a lesser user role
     aCallback(aAuthor.role > aUser.role, aAuthor);
@@ -50,7 +50,7 @@ function removeable(aModel, aContent, aUser, aCallback) {
 exports.removeable = removeable;
 
 function remove(aModel, aContent, aUser, aReason, aCallback) {
-  var remove = new Remove({
+  var removeModel = new Remove({
     'model': aModel.modelName,
     'content': aContent.toObject(),
     'removed': new Date(),
@@ -60,7 +60,7 @@ function remove(aModel, aContent, aUser, aReason, aCallback) {
     '_removerId': aUser._id
   });
 
-  remove.save(function (aErr, aRemove) {
+  removeModel.save(function (aErr, aRemove) {
     aContent.remove(function (aErr) { aCallback(aRemove); });
   });
 }
@@ -112,7 +112,7 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
     var rmQuery = { model: modelName };
 
     if (!aErr && aContent) { return aCallback(true, aContent, null); }
-    if (modelName != 'User' && -1 === modelNames.indexOf(modelName)) {
+    if (modelName !== 'User' && -1 === modelNames.indexOf(modelName)) {
       return aCallback(null, null, null);
     }
 
@@ -126,7 +126,7 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
         return aCallback(false, null, aRemoved);
       }
 
-      aCallback(false, new model(aRemoved.content), aRemoved); // TODO: Ambiguous
+      aCallback(false, new aModel(aRemoved.content), aRemoved); // TODO: Ambiguous
     });
   });
 };

@@ -26,7 +26,7 @@ function flaggable(aModel, aContent, aUser, aCallback) {
   // to police the site administration
   if (aModel.modelName === 'User') {
     return getFlag(aModel, aContent, aUser, function (aFlag) {
-      aCallback(aContent._id != aUser._id && aContent.role > 2, aContent, aFlag);
+      aCallback(aContent._id !== aUser._id && aContent.role > 2, aContent, aFlag);
     });
   }
 
@@ -35,7 +35,7 @@ function flaggable(aModel, aContent, aUser, aCallback) {
     if (!aAuthor) { return aCallback(false); }
 
     // You can't flag your own content
-    if (aAuthor._id == aUser._id) { return aCallback(false); }
+    if (aAuthor._id === aUser._id) { return aCallback(false); }
 
     // Content belonging to an admin or above cannot be flagged
     if (aAuthor.role < 3) { return aCallback(aAuthor.role > 2, aAuthor); }

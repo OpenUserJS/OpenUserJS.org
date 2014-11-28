@@ -6,8 +6,6 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
-var fs = require('fs');
-var formidable = require('formidable');
 var async = require('async');
 var _ = require('underscore');
 var sanitizeHtml = require('sanitize-html');
@@ -266,7 +264,6 @@ var getScriptPageTasks = function (aOptions) {
 
 var setupScriptSidePanel = function (aOptions) {
   // Shortcuts
-  var script = aOptions.script;
   var authedUser = aOptions.authedUser;
 
   // User
@@ -292,8 +289,6 @@ exports.view = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var installNameSlug = scriptStorage.getInstallName(aReq);
-  var scriptAuthor = aReq.params.username;
-  var scriptNameSlug = aReq.params.scriptname;
   var isLib = aReq.params.isLib;
 
   Script.findOne({
@@ -322,7 +317,7 @@ exports.view = function (aReq, aRes, aNext) {
 
     // Script
     var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
+    options.isOwner = authedUser && authedUser._id === script._authorId;
     modelParser.renderScript(script);
     script.installNameSlug = installNameSlug;
     script.scriptPermalinkInstallPageUrl = 'http://' + aReq.get('host') + script.scriptInstallPageUrl;
@@ -357,8 +352,6 @@ exports.edit = function (aReq, aRes, aNext) {
   aReq.params.username = authedUser.name.toLowerCase();
 
   var installNameSlug = scriptStorage.getInstallName(aReq);
-  var scriptAuthor = aReq.params.username;
-  var scriptNameSlug = aReq.params.scriptname;
   var isLib = aReq.params.isLib;
 
   Script.findOne({
@@ -389,7 +382,7 @@ exports.edit = function (aReq, aRes, aNext) {
 
     // Page metadata
     var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
+    options.isOwner = authedUser && authedUser._id === script._authorId;
     pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
       script.name);
 
@@ -399,8 +392,6 @@ exports.edit = function (aReq, aRes, aNext) {
     // SearchBar
     options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
     options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
-
-    var baseUrl = script && script.isLib ? '/libs/' : '/scripts/';
 
     if (aReq.body.remove) {
       // POST
@@ -486,7 +477,7 @@ exports.vote = function (aReq, aRes, aNext) {
           if (!aScript.rating) { aScript.rating = 0; }
           if (!aScript.votes) { aScript.votes = 0; }
 
-          if (user._id == aScript._authorId || (!aVoteModel && unvote)) {
+          if (user._id === aScript._authorId || (!aVoteModel && unvote)) {
             return aRes.redirect(url);
           } else if (!aVoteModel) {
             aVoteModel = new Vote({

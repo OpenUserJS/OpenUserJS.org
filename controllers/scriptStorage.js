@@ -61,7 +61,6 @@ exports.getSource = function (aReq, aCallback) {
 
 exports.sendScript = function (aReq, aRes, aNext) {
   var accept = aReq.headers.accept;
-  var installName = null;
 
   if (0 !== aReq.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
     return exports.sendMeta(aReq, aRes, aNext);
@@ -234,7 +233,6 @@ exports.getMeta = function (aChunks, aCallback) {
   // get the user script header.
   var str = '';
   var i = 0;
-  var len = aChunks.length;
   var header = null;
 
   for (; i < aChunks.length; ++i) {
@@ -270,7 +268,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     if (!scriptName) { return aCallback(null); }
 
     if (!isLibrary && aMeta.oujs && aMeta.oujs.author
-        && aMeta.oujs.author != aUser.name && aMeta.oujs.collaborator) {
+        && aMeta.oujs.author !== aUser.name && aMeta.oujs.collaborator) {
       collaborators = aMeta.oujs.collaborator;
       if ((typeof collaborators === 'string'
           && collaborators === aUser.name)
@@ -329,8 +327,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       } else {
         // Script already exists.
         if (!aScript.isLib) {
-          if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author != aMeta.oujs.author
-              || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !=
+          if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author !== aMeta.oujs.author
+              || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !==
              JSON.stringify(aMeta.oujs.collaborator)))) {
             return aCallback(null);
           }
