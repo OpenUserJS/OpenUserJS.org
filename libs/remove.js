@@ -126,7 +126,7 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
         return aCallback(false, null, aRemoved);
       }
 
-      aCallback(false, new aModel(aRemoved.content), aRemoved); // TODO: Ambiguous
+      aCallback(false, new aModel(aRemoved.content), aRemoved);
     });
   });
 };
