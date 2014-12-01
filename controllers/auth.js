@@ -40,7 +40,7 @@ Strategy.find({}, function (aErr, aStrategies) {
 });
 
 exports.auth = function (aReq, aRes, aNext) {
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var strategy = aReq.body.auth || aReq.params.strategy;
   var username = aReq.body.username || aReq.session.username;
 
@@ -54,10 +54,10 @@ exports.auth = function (aReq, aRes, aNext) {
   }
 
   // Allow a logged in user to add a new strategy
-  if (strategy && user) {
-    aReq.session.username = user.name;
+  if (strategy && authedUser) {
+    aReq.session.username = authedUser.name;
     return auth();
-  } else if (user) {
+  } else if (authedUser) {
     return aNext();
   }
 
@@ -159,6 +159,8 @@ exports.callback = function (aReq, aRes, aNext) {
         } else {
           // Delete the username that was temporarily stored
           delete aReq.session.username;
+          doneUrl = aReq.session.redirectTo || doneUrl;
+          delete aReq.session.redirectTo;
           return aRes.redirect(doneUrl);
         }
       });
@@ -166,4 +168,12 @@ exports.callback = function (aReq, aRes, aNext) {
   });
 
   authenticate(aReq, aRes, aNext);
+};
+
+exports.validateUser = function validateUser(aReq, aRes, aNext) {
+  if (!aReq.session.user) {
+    aReq.session.redirectTo = aReq.path;
+    return aRes.redirect('/login');
+  }
+  return aNext();
 };

@@ -38,28 +38,28 @@ module.exports = function (aApp) {
   aApp.route('/users/:username').get(user.view);
   aApp.route('/users/:username/comments').get(user.userCommentListPage);
   aApp.route('/users/:username/scripts').get(user.userScriptListPage);
-  aApp.route('/users/:username/github').get(user.userManageGitHubPage).post(user.userManageGitHubPage);
-  aApp.route('/users/:username/github/repos').get(user.userGitHubRepoListPage);
-  aApp.route('/users/:username/github/repo').get(user.userGitHubRepoPage);
-  aApp.route('/users/:username/github/import').post(user.userGitHubImportScriptPage);
-  aApp.route('/users/:username/profile/edit').get(user.userEditProfilePage).post(user.update);
+  aApp.route('/users/:username/github').get(authentication.validateUser, user.userManageGitHubPage).post(authentication.validateUser, user.userManageGitHubPage);
+  aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);
+  aApp.route('/users/:username/github/repo').get(authentication.validateUser, user.userGitHubRepoPage);
+  aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
+  aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
   aApp.route('/users/:username/update').post(admin.adminUserUpdate);
-  aApp.route('/user/preferences').get(user.userEditPreferencesPage);
+  aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
   aApp.route('/user').get(function (aReq, aRes) { aRes.redirect('/users'); });
 
   // Adding script/library routes
-  aApp.route('/user/add/scripts').get(user.newScriptPage);
-  aApp.route('/user/add/scripts/new').get(script.new(user.editScript)).post(script.new(user.submitSource));
-  aApp.route('/user/add/scripts/upload').post(user.uploadScript);
-  aApp.route('/user/add/lib').get(user.newLibraryPage);
-  aApp.route('/user/add/lib/new').get(script.new(script.lib(user.editScript))).post(script.new(script.lib(user.submitSource)));
-  aApp.route('/user/add/lib/upload').post(script.lib(user.uploadScript));
+  aApp.route('/user/add/scripts').get(authentication.validateUser, user.newScriptPage);
+  aApp.route('/user/add/scripts/new').get(script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
+  aApp.route('/user/add/scripts/upload').post(authentication.validateUser, user.uploadScript);
+  aApp.route('/user/add/lib').get(authentication.validateUser, user.newLibraryPage);
+  aApp.route('/user/add/lib/new').get(script.new(script.lib(user.editScript))).post(authentication.validateUser, script.new(script.lib(user.submitSource)));
+  aApp.route('/user/add/lib/upload').post(authentication.validateUser, script.lib(user.uploadScript));
   aApp.route('/user/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
 
   // Script routes
   aApp.route('/scripts/:username/:namespace?/:scriptname').get(script.view);
-  aApp.route('/script/:username/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
-  aApp.route('/script/:namespace?/:scriptname/edit').get(script.edit).post(script.edit);
+  aApp.route('/script/:username/:namespace?/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
+  aApp.route('/script/:namespace?/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
   aApp.route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript);
   aApp.route('/scripts/:username').get(function (aReq, aRes) {
     aRes.redirect('/users/' + aReq.params.username + '/scripts');
@@ -74,8 +74,8 @@ module.exports = function (aApp) {
 
   // Library routes
   aApp.route('/libs/:username/:scriptname').get(script.lib(script.view));
-  aApp.route('/lib/:scriptname/edit').get(script.lib(script.edit));
-  aApp.route('/lib/:scriptname/edit').post(script.lib(script.edit));
+  aApp.route('/lib/:scriptname/edit').get(authentication.validateUser, script.lib(script.edit));
+  aApp.route('/lib/:scriptname/edit').post(authentication.validateUser, script.lib(script.edit));
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
   aApp.route('/libs/src/:username/:scriptname').get(scriptStorage.sendScript);
 
@@ -85,9 +85,9 @@ module.exports = function (aApp) {
 
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(issue.open).post(issue.open);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view).post(issue.comment);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)').get(issue.changeStatus);
+  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
+  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view).post(authentication.validateUser, issue.comment);
+  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
 
   // Admin routes
   aApp.route('/admin').get(admin.adminPage);
@@ -107,8 +107,8 @@ module.exports = function (aApp) {
 
   // Vote routes
   // TODO: Single vote route + POST
-  aApp.route('/vote/scripts/:username/:namespace?/:scriptname/:vote').get(script.vote);
-  aApp.route('/vote/libs/:username/:scriptname/:vote').get(script.lib(script.vote));
+  aApp.route('/vote/scripts/:username/:namespace?/:scriptname/:vote').get(authentication.validateUser, script.vote);
+  aApp.route('/vote/libs/:username/:scriptname/:vote').get(authentication.validateUser, script.lib(script.vote));
 
   // Flag routes
   // TODO: Single flag route + POST
@@ -131,9 +131,9 @@ module.exports = function (aApp) {
   aApp.route('/forum').get(discussion.categoryListPage);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(discussion.list);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(discussion.createComment);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(discussion.newTopic).post(discussion.createTopic);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
   // dupe
-  aApp.route('/post/:category(announcements|corner|garage|discuss)').get(discussion.newTopic).post(discussion.createTopic);
+  aApp.route('/post/:category(announcements|corner|garage|discuss)').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
 
   // About document routes
   aApp.route('/about/:document?').get(document.view);
