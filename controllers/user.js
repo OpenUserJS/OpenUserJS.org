@@ -1268,7 +1268,7 @@ exports.update = function (aReq, aRes, aNext) {
       function (aErr, aUser) {
         if (aErr) { aRes.redirect('/'); }
 
-        authedUser.about = aUser.about; // TODO: Ambiguous
+        authedUser.about = aUser.about;
         aRes.redirect('/users/' + aUser.name);
       });
   } else {
