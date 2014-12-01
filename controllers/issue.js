@@ -240,8 +240,6 @@ exports.view = function (aReq, aRes, aNext) {
 exports.open = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) return aRes.redirect('/login');
-
   var topic = aReq.body['discussion-topic'];
   var content = aReq.body['comment-content'];
 
@@ -313,9 +311,7 @@ exports.comment = function (aReq, aRes, aNext) {
   var topic = aReq.params.topic;
   var installName = scriptStorage.getInstallName(aReq);
   var category = type + '/' + installName + '/issues';
-  var user = aReq.session.user;
-
-  if (!user) { return aRes.redirect('/login'); }
+  var authedUser = aReq.session.user;
 
   Script.findOne({ installName: scriptStorage.caseInsensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
@@ -326,7 +322,7 @@ exports.comment = function (aReq, aRes, aNext) {
     discussionLib.findDiscussion(category, topic, function (aIssue) {
       if (!aIssue) { return aNext(); }
 
-      discussionLib.postComment(user, aIssue, content, false,
+      discussionLib.postComment(authedUser, aIssue, content, false,
         function (aErr, aDiscussion) {
           aRes.redirect(encodeURI(aDiscussion.path
             + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
@@ -342,10 +338,8 @@ exports.changeStatus = function (aReq, aRes, aNext) {
   var installName = scriptStorage.getInstallName(aReq);
   var category = type + '/' + installName + '/issues';
   var action = aReq.params.action;
-  var user = aReq.session.user;
+  var authedUser = aReq.session.user;
   var changed = false;
-
-  if (!user) { return aRes.redirect('/login'); }
 
   Script.findOne({ installName: scriptStorage.caseInsensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
@@ -358,11 +352,11 @@ exports.changeStatus = function (aReq, aRes, aNext) {
       // Both the script author and the issue creator can close the issue
       // Only the script author can reopen a closed issue
       if (action === 'close' && aIssue.open
-      && (user.name === aIssue.author || user.name === aScript.author)) {
+      && (authedUser.name === aIssue.author || authedUser.name === aScript.author)) {
         aIssue.open = false;
         changed = true;
       } else if (action === 'reopen' && !aIssue.open
-        && user.name === aScript.author) {
+        && authedUser.name === aScript.author) {
         aIssue.open = true;
         changed = true;
       }

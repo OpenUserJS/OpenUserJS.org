@@ -60,12 +60,12 @@ function getOAuthStrategies(aStored) {
 // Allow admins to set user roles and delete users
 exports.userAdmin = function (aReq, aRes, aNext) {
   var options = nil();
-  var thisUser = aReq.session.user;
+  var authedUser = aReq.session.user;
 
   if (!userIsAdmin(aReq)) { return aNext(); }
 
   // You can only see users with a role less than yours
-  User.find({ role: { $gt: thisUser.role } }, function (aErr, aUsers) { // TODO: STYLEGUIDE.md conformance needed here
+  User.find({ role: { $gt: authedUser.role } }, function (aErr, aUsers) {
     var i = 0;
     options.users = [];
 
@@ -78,7 +78,7 @@ exports.userAdmin = function (aReq, aRes, aNext) {
           'selected': aIndex === aUser.role
         });
       });
-      roles = roles.splice(thisUser.role + 1);
+      roles = roles.splice(authedUser.role + 1);
       roles.reverse();
 
       options.users.push({
@@ -96,12 +96,12 @@ exports.userAdmin = function (aReq, aRes, aNext) {
 // This is mostly for debugging in production
 exports.adminUserView = function (aReq, aRes, aNext) {
   var id = aReq.params.id;
-  var thisUser = aReq.session.user;
+  var authedUser = aReq.session.user;
 
   if (!userIsAdmin(aReq)) { return aNext(); }
 
   // Nothing fancy, just the stringified user object
-  User.findOne({ '_id': id, role: { $gt: thisUser.role } },
+  User.findOne({ '_id': id, role: { $gt: authedUser.role } },
     function (aErr, aUser) {
       if (aErr || !aUser) { return aNext(); }
 

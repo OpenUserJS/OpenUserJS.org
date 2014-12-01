@@ -15,14 +15,14 @@ var destroySessions = require('../libs/modifySessions').destroy;
 exports.rm = function (aReq, aRes, aNext) {
   var type = aReq.params[0];
   var path = aReq.params[1];
-  var thisUser = aReq.session.user;
+  var authedUser = aReq.session.user;
 
   switch (type) {
     case 'scripts':
     case 'libs':
       path += type === 'libs' ? '.js' : '.user.js';
       Script.findOne({ installName: path }, function (aErr, aScript) {
-        removeLib.remove(Script, aScript, thisUser, '', function (aRemoved) {
+        removeLib.remove(Script, aScript, authedUser, '', function (aRemoved) {
           if (!aRemoved) { return aNext(); }
           aRes.redirect('/');
         });
@@ -31,7 +31,7 @@ exports.rm = function (aReq, aRes, aNext) {
     case 'users':
       User.findOne({ name: { $regex: new RegExp('^' + path + '$', "i") } },
         function (aErr, aUser) {
-          removeLib.remove(User, aUser, thisUser, '', function (aRemoved) {
+          removeLib.remove(User, aUser, authedUser, '', function (aRemoved) {
             if (!aRemoved) { return aNext(); }
 
             // Destory all the sessions belonging to the removed user
