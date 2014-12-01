@@ -317,7 +317,7 @@ exports.view = function (aReq, aRes, aNext) {
 
     // Script
     var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id === script._authorId;
+    options.isOwner = authedUser && authedUser._id == script._authorId;
     modelParser.renderScript(script);
     script.installNameSlug = installNameSlug;
     script.scriptPermalinkInstallPageUrl = 'http://' + aReq.get('host') + script.scriptInstallPageUrl;
@@ -382,7 +382,7 @@ exports.edit = function (aReq, aRes, aNext) {
 
     // Page metadata
     var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id === script._authorId;
+    options.isOwner = authedUser && authedUser._id == script._authorId;
     pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
       script.name);
 
@@ -477,7 +477,7 @@ exports.vote = function (aReq, aRes, aNext) {
           if (!aScript.rating) { aScript.rating = 0; }
           if (!aScript.votes) { aScript.votes = 0; }
 
-          if (user._id === aScript._authorId || (!aVoteModel && unvote)) {
+          if (user._id == aScript._authorId || (!aVoteModel && unvote)) {
             return aRes.redirect(url);
           } else if (!aVoteModel) {
             aVoteModel = new Vote({

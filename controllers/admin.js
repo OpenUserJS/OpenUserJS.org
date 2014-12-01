@@ -181,7 +181,7 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id === user._id;
+    options.isYou = authedUser && user && authedUser._id == user._id;
 
     //---
 

@@ -243,7 +243,7 @@ exports.view = function (aReq, aRes, aNext) {
     // User
     var user = options.user = modelParser.parseUser(aUserData);
     user.aboutRendered = renderMd(user.about);
-    options.isYou = authedUser && user && authedUser._id === user._id;
+    options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -298,7 +298,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id === user._id;
+    options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -382,7 +382,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id === user._id;
+    options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -474,7 +474,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id === user._id;
+    options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -534,7 +534,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
 
     // User
     var user = options.user = modelParser.parseUser(aUserData);
-    options.isYou = authedUser && user && authedUser._id === user._id;
+    options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -1450,7 +1450,7 @@ exports.editScript = function (aReq, aRes, aNext) {
 
       // Script
       var script = options.script = modelParser.parseScript(aScriptData);
-      options.isOwner = authedUser && authedUser._id === script._authorId;
+      options.isOwner = authedUser && authedUser._id == script._authorId;
       modelParser.renderScript(script);
       script.installNameSlug = installNameSlug;
       script.scriptPermalinkInstallPageUrl = 'http://' + aReq.get('host') + script.scriptInstallPageUrl;

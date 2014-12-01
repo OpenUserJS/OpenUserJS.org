@@ -35,7 +35,7 @@ function flaggable(aModel, aContent, aUser, aCallback) {
     if (!aAuthor) { return aCallback(false); }
 
     // You can't flag your own content
-    if (aAuthor._id === aUser._id) { return aCallback(false); }
+    if (aAuthor._id == aUser._id) { return aCallback(false); }
 
     // Content belonging to an admin or above cannot be flagged
     if (aAuthor.role < 3) { return aCallback(aAuthor.role > 2, aAuthor); }

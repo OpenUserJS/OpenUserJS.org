@@ -41,7 +41,7 @@ function removeable(aModel, aContent, aUser, aCallback) {
 
     // You can't remove your own content this way
     // When you remove your own content it's removed for good
-    if (aAuthor._id === aUser._id) { return aCallback(false, aAuthor); }
+    if (aAuthor._id == aUser._id) { return aCallback(false, aAuthor); }
 
     // You can only remove content by an author with a lesser user role
     aCallback(aAuthor.role > aUser.role, aAuthor);
