@@ -13,7 +13,6 @@ var _ = require('underscore');
 var util = require('util');
 
 var Comment = require('../models/comment').Comment;
-var Flag = require('../models/flag').Flag;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
@@ -97,7 +96,6 @@ var getUserPageTasks = function (aOptions) {
 
   // Shortcuts
   var user = aOptions.user;
-  var authedUser = aOptions.authedUser;
 
   //--- Tasks
 
@@ -218,7 +216,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
     }
   }
   function render() { aRes.render('pages/userListPage', options); }
-  function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } };
+  function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } }
   async.parallel(tasks, asyncComplete);
 };
 
@@ -262,9 +260,6 @@ exports.view = function (aReq, aRes, aNext) {
 
     // scriptListQuery: Defaults
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
-
-    // scriptListQuery: Pagination
-    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     //--- Tasks
 
@@ -460,8 +455,6 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 
 exports.userEditProfilePage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
-  var username = aReq.params.username;
 
   User.findOne({
     _id: authedUser._id
@@ -858,7 +851,6 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
   //
   var options = {};
-  var tasks = [];
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -1001,7 +993,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
         options.repo = aRepo;
         options.repoAsEncoded = {
           default_branch: encodeURI(options.repo.default_branch)
-        }
+        };
 
         github.gitdata.getJavascriptBlobs({
           user: encodeURIComponent(aRepo.owner.login),
@@ -1025,7 +1017,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
 
         aCallback(null);
       },
-    ], aCallback)
+    ], aCallback);
   });
 
   //---
@@ -1092,7 +1084,6 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
   pageMetadata(options, ['Manage', 'GitHub']);
 
   //
-  var TOO_MANY_SCRIPTS = 'GitHub user has too many scripts to batch import.';
   tasks.push(function (aCallback) {
     var githubUserName = aReq.query.user || authedUser.ghUsername;
 
@@ -1111,7 +1102,7 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
             },
             function (aGithubUser, aCallback) {
               options.githubUser = aGithubUser;
-              console.log(githubUser);
+              console.log(aGithubUser);
               User.findOne({
                 _id: authedUser._id
               }, aCallback);
@@ -1148,7 +1139,7 @@ exports.userManageGitHubPage = function (aReq, aRes, aNext) {
         console.log(aReq.body);
         _.each(aReq.body, function (aRepo, aReponame) {
           // Load all scripts in the repo
-          if (typeof aRepo === 'string' && reponame.substr(-4) === '_all') {
+          if (typeof aRepo === 'string' && aReponame.substr(-4) === '_all') {
             aReponame = aRepo;
             aRepo = aRepos[aReponame];
 

@@ -209,7 +209,6 @@ exports.list = function (aReq, aRes) {
 
 var setupGroupSidePanel = function (aOptions) {
   // Shortcuts
-  var group = aOptions.group;
   var authedUser = aOptions.authedUser;
 
   // Mod

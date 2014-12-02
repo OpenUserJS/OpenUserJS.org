@@ -6,8 +6,6 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
-var fs = require('fs');
-var formidable = require('formidable');
 var async = require('async');
 var _ = require('underscore');
 var sanitizeHtml = require('sanitize-html');
@@ -266,7 +264,6 @@ var getScriptPageTasks = function (aOptions) {
 
 var setupScriptSidePanel = function (aOptions) {
   // Shortcuts
-  var script = aOptions.script;
   var authedUser = aOptions.authedUser;
 
   // User
@@ -292,8 +289,6 @@ exports.view = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var installNameSlug = scriptStorage.getInstallName(aReq);
-  var scriptAuthor = aReq.params.username;
-  var scriptNameSlug = aReq.params.scriptname;
   var isLib = aReq.params.isLib;
 
   Script.findOne({
@@ -355,8 +350,6 @@ exports.edit = function (aReq, aRes, aNext) {
   aReq.params.username = authedUser.name.toLowerCase();
 
   var installNameSlug = scriptStorage.getInstallName(aReq);
-  var scriptAuthor = aReq.params.username;
-  var scriptNameSlug = aReq.params.scriptname;
   var isLib = aReq.params.isLib;
 
   Script.findOne({
@@ -397,8 +390,6 @@ exports.edit = function (aReq, aRes, aNext) {
     // SearchBar
     options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
     options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
-
-    var baseUrl = script && script.isLib ? '/libs/' : '/scripts/';
 
     if (aReq.body.remove) {
       // POST

@@ -50,7 +50,7 @@ function removeable(aModel, aContent, aUser, aCallback) {
 exports.removeable = removeable;
 
 function remove(aModel, aContent, aUser, aReason, aCallback) {
-  var remove = new Remove({
+  var removeModel = new Remove({
     'model': aModel.modelName,
     'content': aContent.toObject(),
     'removed': new Date(),
@@ -60,7 +60,7 @@ function remove(aModel, aContent, aUser, aReason, aCallback) {
     '_removerId': aUser._id
   });
 
-  remove.save(function (aErr, aRemove) {
+  removeModel.save(function (aErr, aRemove) {
     aContent.remove(function (aErr) { aCallback(aRemove); });
   });
 }
@@ -112,7 +112,7 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
     var rmQuery = { model: modelName };
 
     if (!aErr && aContent) { return aCallback(true, aContent, null); }
-    if (modelName != 'User' && -1 === modelNames.indexOf(modelName)) {
+    if (modelName !== 'User' && -1 === modelNames.indexOf(modelName)) {
       return aCallback(null, null, null);
     }
 
@@ -126,7 +126,7 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
         return aCallback(false, null, aRemoved);
       }
 
-      aCallback(false, new model(aRemoved.content), aRemoved); // TODO: Ambiguous
+      aCallback(false, new aModel(aRemoved.content), aRemoved);
     });
   });
 };

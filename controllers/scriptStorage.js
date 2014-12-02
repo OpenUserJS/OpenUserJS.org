@@ -61,7 +61,6 @@ exports.getSource = function (aReq, aCallback) {
 
 exports.sendScript = function (aReq, aRes, aNext) {
   var accept = aReq.headers.accept;
-  var installName = null;
 
   if (0 !== aReq.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
     return exports.sendMeta(aReq, aRes, aNext);
@@ -234,7 +233,6 @@ exports.getMeta = function (aChunks, aCallback) {
   // get the user script header.
   var str = '';
   var i = 0;
-  var len = aChunks.length;
   var header = null;
 
   for (; i < aChunks.length; ++i) {

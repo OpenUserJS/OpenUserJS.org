@@ -446,7 +446,6 @@ exports.createComment = function (aReq, aRes, aNext) {
   var topic = aReq.params.topic;
   var authedUser = aReq.session.user;
   var content = aReq.body['comment-content'];
-  var commentId = aReq.body['comment-id']; // for editing
 
   if (!authedUser) { return aNext(); }
 

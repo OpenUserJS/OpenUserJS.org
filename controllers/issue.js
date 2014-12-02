@@ -253,7 +253,7 @@ exports.open = function (aReq, aRes, aNext) {
     function preRender() {
       // Page metadata
       pageMetadata(options, ['New Issue', script.name]);
-    };
+    }
     function render() { aRes.render('pages/scriptNewIssuePage', options); }
     function asyncComplete() { preRender(); render(); }
 

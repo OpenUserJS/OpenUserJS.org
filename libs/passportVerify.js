@@ -75,4 +75,4 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
       }
     }
   );
-}
+};

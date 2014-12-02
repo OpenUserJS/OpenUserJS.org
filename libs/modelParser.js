@@ -16,7 +16,6 @@ var Script = require('../models/script').Script;
 
 var userRoles = require('../models/userRoles.json');
 var renderMd = require('../libs/markdown').renderMd;
-var helpers = require('../libs/helpers');
 var getRating = require('../libs/collectiveRating').getRating;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 
@@ -396,7 +395,7 @@ var canUserPostTopicToCategory = function (aUser, aCategory) {
     return false; // Not logged in.
 
   // Check if this category requires a minimum role to post topics.
-  console.log(aCategory.roleReqToPostTopic, _.isNumber(aCategory.roleReqToPostTopic), aUser.role, aUser.role <= aCategory.roleReqToPostTopic)
+  console.log(aCategory.roleReqToPostTopic, _.isNumber(aCategory.roleReqToPostTopic), aUser.role, aUser.role <= aCategory.roleReqToPostTopic);
   if (_.isNumber(aCategory.roleReqToPostTopic)) {
     return aUser.role <= aCategory.roleReqToPostTopic;
   } else {

@@ -6,8 +6,6 @@ var isDev = require('./libs/debug').isDev;
 var isDbg = require('./libs/debug').isDbg;
 
 //
-var express = require('express');
-
 var main = require('./controllers/index');
 var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
