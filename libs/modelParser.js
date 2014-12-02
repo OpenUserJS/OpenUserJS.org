@@ -327,7 +327,7 @@ var parseDiscussion = function (aDiscussionData) {
   var recentCommentors = [];
   if (discussion.author)
     recentCommentors.push(discussion.author);
-  if (discussion.lastCommentor !== discussion.author)
+  if (discussion.lastCommentor != discussion.author)
     recentCommentors.push(discussion.lastCommentor);
   recentCommentors = _.map(recentCommentors, function (aUsername) {
     return {

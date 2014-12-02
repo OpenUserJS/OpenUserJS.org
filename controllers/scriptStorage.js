@@ -268,7 +268,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     if (!scriptName) { return aCallback(null); }
 
     if (!isLibrary && aMeta.oujs && aMeta.oujs.author
-        && aMeta.oujs.author !== aUser.name && aMeta.oujs.collaborator) {
+        && aMeta.oujs.author != aUser.name && aMeta.oujs.collaborator) {
       collaborators = aMeta.oujs.collaborator;
       if ((typeof collaborators === 'string'
           && collaborators === aUser.name)
@@ -327,8 +327,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       } else {
         // Script already exists.
         if (!aScript.isLib) {
-          if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author !== aMeta.oujs.author
-              || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !==
+          if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author != aMeta.oujs.author
+              || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !=
              JSON.stringify(aMeta.oujs.collaborator)))) {
             return aCallback(null);
           }

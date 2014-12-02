@@ -26,7 +26,7 @@ function flaggable(aModel, aContent, aUser, aCallback) {
   // to police the site administration
   if (aModel.modelName === 'User') {
     return getFlag(aModel, aContent, aUser, function (aFlag) {
-      aCallback(aContent._id !== aUser._id && aContent.role > 2, aContent, aFlag);
+      aCallback(aContent._id != aUser._id && aContent.role > 2, aContent, aFlag);
     });
   }
 

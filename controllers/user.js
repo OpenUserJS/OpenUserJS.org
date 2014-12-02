@@ -1371,7 +1371,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         aOptions.source = Buffer.concat(bufs).toString('utf8');
         aOptions.original = aScript.installName;
         aOptions.url = aReq.url;
-        aOptions.owner = aAuthedUser && (aScript._authorId === aAuthedUser._id
+        aOptions.owner = aAuthedUser && (aScript._authorId == aAuthedUser._id
           || collaborators.indexOf(aAuthedUser.name) > -1);
         aOptions.username = aAuthedUser ? aAuthedUser.name : null;
         aOptions.isLib = aScript.isLib;

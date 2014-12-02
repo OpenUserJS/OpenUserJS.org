@@ -31,7 +31,7 @@ function removeable(aModel, aContent, aUser, aCallback) {
   // You can't remove yourself
   // You can only remove a remove a user with a lesser role than yourself
   if (aModel.modelName === 'User') {
-    return aCallback(aContent._id !== aUser._id && aContent.role > aUser.role,
+    return aCallback(aContent._id != aUser._id && aContent.role > aUser.role,
       aContent);
   }
 
