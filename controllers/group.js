@@ -66,7 +66,7 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
     return aScript.save(aCallback);
   }
 
-  Group.find({ name: { $in: aGroupNames } }, function (aErr, aGroups) { // TODO: STYLEGUIDE.md conformance needed here
+  Group.find({ name: { $in: aGroupNames } }, function (aErr, aGroups) {
     var existingGroups = null;
     var existingNames = null;
     var newGroup = null;
@@ -122,7 +122,7 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
 
       // Update the groups in the background
       aGroups.forEach(function (aGroup) {
-        Script.find({ _id: { $in: aGroup._scriptIds } }, // TODO: STYLEGUIDE.md conformance needed here
+        Script.find({ _id: { $in: aGroup._scriptIds } },
           function (aErr, aScripts) {
             if (aErr || aScripts.length < 2) { return; }
 

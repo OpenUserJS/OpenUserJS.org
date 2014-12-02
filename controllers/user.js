@@ -1222,7 +1222,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     }
 
     stream = fs.createReadStream(script.path);
-    stream.on('data', function (aD) { bufs.push(aD); }); // TODO: Non-descript function parm
+    stream.on('data', function (aData) { bufs.push(aData); });
 
     stream.on('end', function () {
       User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
@@ -1370,7 +1370,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         }
       }
 
-      aStream.on('data', function (aD) { bufs.push(aD); }); // TODO: Non-descript function parm
+      aStream.on('data', function (aData) { bufs.push(aData); });
       aStream.on('end', function () {
         // Page metadata
         pageMetadata(aOptions, 'Edit ' + aScript.name);
@@ -1479,7 +1479,7 @@ exports.flag = function (aReq, aRes, aNext) {
     var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
     if (aErr || !aUser) { return aNext(); }
 
-    fn(User, aUser, aReq.session.user, function (aFlagged) { // TODO: Non-descript function name
+    fn(User, aUser, aReq.session.user, function (aFlagged) { // NOTE: Inline function here
       aRes.redirect('/users/' + username);
     });
   });
