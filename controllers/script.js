@@ -148,7 +148,7 @@ var getScriptPageTasks = function (aOptions) {
     script.libs = [];
     tasks.push(function (aCallback) {
       Script.find({
-        installName: { $in: script.uses }  // TODO: STYLEGUIDE.md conformance needed here
+        installName: { $in: script.uses }
       }, function (aErr, aScriptLibraryList) {
         if (aErr) return aCallback(aErr);
 
@@ -518,7 +518,7 @@ exports.flag = function (aReq, aRes, aNext) {
       var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
       if (aErr || !aScript) { return aNext(); }
 
-      fn(Script, aScript, aReq.session.user, function (aFlagged) { // TODO: Non-descript function name
+      fn(Script, aScript, aReq.session.user, function (aFlagged) { // NOTE: Inline function here
         aRes.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
       });
     }
