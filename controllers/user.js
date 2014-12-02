@@ -25,6 +25,7 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
+var stats = require('../libs/stats');
 var strategies = require('./strategies.json');
 var renderMd = require('../libs/markdown').renderMd;
 var helpers = require('../libs/helpers');
@@ -269,6 +270,9 @@ exports.view = function (aReq, aRes, aNext) {
     // UserSidePanel tasks
     tasks = tasks.concat(getUserSidePanelTasks(options));
 
+    // Stats tasks
+    tasks = tasks.concat(stats.getSummaryTasks(options));
+
     //---
     function preRender() { }
     function render() { aRes.render('pages/userPage', options); }
@@ -420,6 +424,9 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 
     // UserPage tasks
     tasks = tasks.concat(getUserPageTasks(options));
+
+    // Stats tasks
+    tasks = tasks.concat(stats.getSummaryTasks(options));
 
     //---
     function preRender() {
