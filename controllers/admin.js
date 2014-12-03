@@ -459,7 +459,9 @@ exports.authAsUser = function (aReq, aRes, aNext) {
     if (authedUser.role >= user.role) {
       return statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
-        statusMessage: 'Cannot auth as a user with a higher rank.',
+        statusMessage: authedUser.role == user.role
+          ? 'Cannot auth as a user with the same rank.'
+          : 'Cannot auth as a user with a higher rank.',
       });
     }
 
