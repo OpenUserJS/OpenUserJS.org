@@ -357,7 +357,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
       // comment.content render
       _.map(options.commentList, modelParser.renderComment);
 
-      // comment.discussion && comment.category
+      // comment.discussion & comment.category & comment.script
       _.map(options.commentList, function (aComment) {
         aComment.discussion = modelParser.parseDiscussion(aComment._discussionId);
 
