@@ -18,6 +18,8 @@ var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
 var Discussion = require('../models/discussion').Discussion;
 
+var categories = require('../controllers/discussion').categories;
+
 var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
 var RepoManager = require('../libs/repoManager');
@@ -346,14 +348,37 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
     function preRender() {
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
+
+      // comment.author
       _.map(options.commentList, function (aComment) {
         aComment.author = modelParser.parseUser(aComment._authorId);
       });
+
+      // comment.content render
       _.map(options.commentList, modelParser.renderComment);
 
-      // comment.discussion
+      // comment.discussion && comment.category
       _.map(options.commentList, function (aComment) {
         aComment.discussion = modelParser.parseDiscussion(aComment._discussionId);
+
+        var category = _.findWhere(categories, { slug: aComment.discussion.category });
+        if (!category) {
+          category = modelParser.parseCategoryUnknown(aComment.discussion.category);
+        }
+        aComment.category = modelParser.parseCategory(category);
+
+        if (aComment.discussion.issue) {
+          aComment.script = {
+            scriptPageUrl: aComment.category.categoryPageUrl.replace('/issues', ''),
+            name: category.name
+          };
+          category.name = 'Issues';
+        } else {
+          aComment.script = {
+            scriptPageUrl: '/forum',
+            name: 'Forum'
+          };
+        }
       });
 
       // Pagination
