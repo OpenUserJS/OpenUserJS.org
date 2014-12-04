@@ -88,10 +88,6 @@ a.disabled, a[disabled] {
   color: #666;
 }*/
 
-body > .container-fluid > .row > .container-fluid.col-sm-8 {
-  margin-bottom: 100px;
-}
-
 h2.page-heading {
   margin-top: 0;
 }
