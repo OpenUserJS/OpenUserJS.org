@@ -50,8 +50,16 @@ exports.getSource = function (aReq, aCallback) {
 
   Script.findOne({ installName: caseInsensitive(installName) },
     function (aErr, aScript) {
+      if (aErr) {
+        console.error(aUser.name, '-', installName);
+        console.error(JSON.stringify(aErr));
+        console.error(JSON.stringify(aScript.toObject()));
+        return aCallback(null);
+      }
 
-      if (!aScript) { return aCallback(null); }
+      if (!aScript) {
+        return aCallback(null);
+      }
 
       // Get the script
       aCallback(aScript, s3.getObject({ Bucket: bucketName, Key: installName })
