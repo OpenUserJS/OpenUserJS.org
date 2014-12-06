@@ -50,14 +50,24 @@ exports.getSource = function (aReq, aCallback) {
 
   Script.findOne({ installName: caseInsensitive(installName) },
     function (aErr, aScript) {
+      var s3Object = null;
+
       if (!aScript) {
         return aCallback(null);
       }
 
+      s3Object = s3.getObject({ Bucket: bucketName, Key: installName }).createReadStream().
+        on('error', function () {
+          if (isPro) {
+            console.error('S3 Key Not Found ' + installName);
+          }
+
+          return aCallback(null);
+        });
+
       // Get the script
-      aCallback(aScript, s3.getObject({ Bucket: bucketName, Key: installName })
-        .createReadStream());
-  });
+      aCallback(aScript, s3Object);
+    });
 };
 
 exports.sendScript = function (aReq, aRes, aNext) {
