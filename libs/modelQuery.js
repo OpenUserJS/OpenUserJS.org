@@ -150,6 +150,7 @@ var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFla
     if (aFlaggedQuery) {
       if (aFlaggedQuery == 'true') {
         aOptions.isFlagged = true;
+        aOptions.searchBarFormHiddenVariables.push({ name: 'flagged', value: 'true' });
         aModelListQuery.and({ flags: { $gt: 0 } });
       } else if (aFlaggedQuery == false) {
         // aModelListQuery.and({$or: [
