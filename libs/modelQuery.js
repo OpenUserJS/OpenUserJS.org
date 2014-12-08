@@ -155,6 +155,7 @@ var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFla
         if (!_.findWhere(aOptions.searchBarFormHiddenVariables, { name: 'flagged' })) {
           aOptions.isFlagged = true;
           aOptions.searchBarFormHiddenVariables.push({ name: 'flagged', value: 'true' });
+          aOptions.searchBarPlaceholder = aOptions.searchBarPlaceholder.replace(/^Search /, 'Search Flagged ');
         }
         aModelListQuery.and({ flags: { $gt: 0 } });
       }
