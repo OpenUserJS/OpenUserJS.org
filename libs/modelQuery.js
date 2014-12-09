@@ -27,8 +27,9 @@ exports.findOrDefaultIfNull = findOrDefaultIfNull;
 var orderDirs = ['asc', 'desc'];
 var parseModelListSort = function (aModelListQuery, aOrderBy, aOrderDir, aDefaultSortFn) {
   if (aOrderBy) {
-    if (_.isUndefined(aOrderDir) || !_.contains(orderDirs, aOrderDir))
+    if (_.isUndefined(aOrderDir) || !_.contains(orderDirs, aOrderDir)) {
       aOrderDir = 'asc';
+    }
 
     if (_.has(aModelListQuery.model.schema.paths, aOrderBy)) {
       var sortBy = {};
@@ -135,7 +136,9 @@ var parseRemovedItemSearchQuery = function (aRemovedItemListQuery, aQuery) {
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
 exports.applyDiscussionCategoryFilter = function (aDiscussionListQuery, aOptions, aCatergorySlug) {
-  if (aCatergorySlug === 'all') { return; }
+  if (aCatergorySlug === 'all') {
+    return;
+  }
   if (aCatergorySlug === 'issues') {
     aDiscussionListQuery.find({ issue: true });
   } else {
@@ -148,15 +151,20 @@ var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFla
   if (aOptions.isYou || aOptions.isMod) {
     // Mod
     if (aFlaggedQuery) {
-      if (aFlaggedQuery == 'true') {
-        aOptions.isFlagged = true;
+      if (aFlaggedQuery === 'true') {
+        if (!_.findWhere(aOptions.searchBarFormHiddenVariables, { name: 'flagged' })) {
+          aOptions.isFlagged = true;
+          aOptions.searchBarFormHiddenVariables.push({ name: 'flagged', value: 'true' });
+          aOptions.searchBarPlaceholder = aOptions.searchBarPlaceholder.replace(/^Search /, 'Search Flagged ');
+        }
         aModelListQuery.and({ flags: { $gt: 0 } });
-      } else if (aFlaggedQuery == false) {
-        // aModelListQuery.and({$or: [
-        //   {flags: {$exists: false}},
-        //   {flags: {$lte: 0} },
-        // ]});
       }
+    } else {
+      // Remove `flagged` form variable if present
+      aOptions.searchBarFormHiddenVariables = _.without(
+        aOptions.searchBarFormHiddenVariables,
+        _.findWhere(aOptions.searchBarFormHiddenVariables, { name: 'flagged', value: 'true' })
+      );
     }
   } else {
     // Hide
@@ -172,16 +180,18 @@ var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDe
   if (aReq.query.q) {
     aOptions.searchBarValue = aReq.query.q;
 
-    if (aDefaultOptions.parseSearchQueryFn)
+    if (aDefaultOptions.parseSearchQueryFn) {
       aDefaultOptions.parseSearchQueryFn(aModelListQuery, aReq.query.q);
+    }
   }
   aOptions.searchBarFormAction = aDefaultOptions.searchBarFormAction || '';
   aOptions.searchBarPlaceholder = aDefaultOptions.searchBarPlaceholder || 'Search';
   aOptions.searchBarFormHiddenVariables = aDefaultOptions.searchBarFormHiddenVariables || [];
 
   // flagged
-  if (aDefaultOptions.filterFlaggedItems)
+  if (aDefaultOptions.filterFlaggedItems) {
     applyModelListQueryFlaggedFilter(aModelListQuery, aOptions, aReq.query.flagged);
+  }
 
   // Sort
   parseModelListSort(aModelListQuery, aReq.query.orderBy, aReq.query.orderDir, function () {
@@ -246,7 +256,7 @@ var libraryListQueryDefaults = {
   searchBarPlaceholder: 'Search Libraries',
   searchBarFormAction: '/',
   searchBarFormHiddenVariables: [
-    { name: 'library', value: 'true' },
+    { name: 'library', value: 'true' }
   ],
   filterFlaggedItems: true
 };
