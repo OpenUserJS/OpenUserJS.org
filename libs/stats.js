@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 // Define some pseudo module globals
 var isPro = require('../libs/debug').isPro;
