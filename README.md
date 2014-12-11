@@ -95,7 +95,7 @@ Repository | Reference | Recent Version | Referenced
 [nodeGHUrl]: https://github.com/joyent/node
 [nodeGHReleasesUrl]: https://github.com/joyent/node/releases
 [nodeDOCUrl]: http://nodejs.org/documentation/
-[nodeVersionImage]: http://img.shields.io/node/v/gh-badges.svg
+[nodeVersionImage]: http://img.shields.io/node/latest-version.svg
 
 [npmNPMUrl]: https://www.npmjs.org/package/npm
 [npmNPMVersionImage]: http://img.shields.io/npm/v/npm.svg
