@@ -221,6 +221,32 @@ function findDiscussion(aCategory, aTopicUrl, aCallback) {
 }
 exports.findDiscussion = findDiscussion;
 
+
+function findDiscussion2(aCategory, aTopicUrl, aCallback) {
+  // To prevent collisions we add an incrementing id to the topic url
+  var topic = /(.+?)(?:_(\d+))?$/.exec(aTopicUrl);
+  var query = { path: '/' + aCategory };
+  query = { path: "/scripts/TimidScript/[TS]_Pixiv++/issues/not_work_in_profile_page" };
+
+  // We only need to look for the proper duplicate if there is one
+//   if (topic[2]) {
+//     query.duplicateId = Number(topic[2]);
+//   }
+
+  Discussion.findOne(query, function (aErr, aDiscussion) {
+    if (aErr || !aDiscussion) { return aCallback(null); }
+    aCallback(aDiscussion);
+  });
+
+  // /scripts\/TimidScript\/\[TS\]_Pixiv\+\+\/issues/
+
+}
+exports.findDiscussion2 = findDiscussion2;
+
+
+
+
+
 // List comments in a discussion
 exports.show = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;

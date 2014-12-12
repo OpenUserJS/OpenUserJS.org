@@ -334,12 +334,59 @@ exports.comment = function (aReq, aRes, aNext) {
 // Open or close and issue you are allowed
 exports.changeStatus = function (aReq, aRes, aNext) {
   var type = aReq.params.type;
+  console.log(type);
   var topic = aReq.params.topic;
+  console.log(topic);
   var installName = scriptStorage.getInstallName(aReq);
+  console.log(installName);
   var category = type + '/' + installName + '/issues';
   var action = aReq.params.action;
+  console.log(action);
   var authedUser = aReq.session.user;
   var changed = false;
+
+  Script.findOne(
+    {
+      installName: scriptStorage.caseInsensitive('TimidScript/[TS]_Pixiv++' + (type === 'libs' ? '.js' : '.user.js'))
+    },
+    function (aErr, aScript) {
+      if (aErr || !aScript) {
+        console.log('no script found');
+        return;
+      }
+
+      discussionLib.findDiscussion2(
+        'scripts/TimidScript/[TS]_Pixiv++/issues',
+        '',
+        function (aIssue) {
+          if (!aIssue) {
+            console.log('no issue found');
+            return;
+          }
+
+          console.log('found an issue');
+          console.log(aIssue);
+
+
+//           aIssue.path = "/scripts/TimidScript/[TS]_Pixiv++/issues/not_work_in_profile_page";
+//           aIssue.duplicateId = 1;
+//
+//           aIssue.save(function (aErr, aDiscussion) {
+//             if (aErr) {
+//               console.log('there was an error');
+//               return;
+//             }
+//
+//             console.log('hopefully success');
+//
+//           });
+
+        }
+      );
+    }
+  );
+
+
 
   Script.findOne({ installName: scriptStorage.caseInsensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
