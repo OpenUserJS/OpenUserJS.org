@@ -21,7 +21,7 @@
           <h2><i class="fa fa-tags"></i> Script Metadata</h2>
           <div class="panel panel-default">
             <div class="panel-body">
-              <p>You can read about most UserScript metadata blocks on the <a href="http://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge wiki</a>.</p>
+              <p>You may read about most UserScript metadata blocks on the <a href="http://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge wiki</a>.</p>
             </div>
           </div>
           <h3>OpenUserJS.org Supported</h3>
@@ -57,7 +57,7 @@
             </div>
             <div class="list-group-item inactive">
               <h4 class="list-group-item-heading"><code>@oujs:collaborator username</code></h4>
-              <p class="list-group-item-text">Can be defined multiple times. Required for <a href="#collaboration">Collaboration</a>. All values shown in reverse order. This key may be subject to change.</p>
+              <p class="list-group-item-text">May be defined multiple times. Required for <a href="#collaboration">Collaboration</a>. All values shown in reverse order. This key may be subject to change.</p>
             </div>
           </div>
 
@@ -65,7 +65,7 @@
           <h3>Collaboration</h3>
           <div class="panel panel-default">
             <div class="panel-body">
-              <p>To allow other users to upload modified versions of your script to your account, add <code>@oujs:author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code> to the metadata of your script, along with <code>@oujs:collaborator username</code> for every user you wish to give write access. Only the real author of the script can modify these metadata keys. Collaborators cannot use GitHub integration to update the script. Add them as collaborators to the GitHub repo instead.</p>
+              <p>To allow other users to upload modified versions of your script to your account, add <code>@oujs:author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code> to the metadata of your script, along with <code>@oujs:collaborator username</code> for every user you wish to give write access. Only the real author of the script may modify these metadata keys. Collaborators may not use GitHub integration to update the script. Add them as collaborators to the GitHub repo instead.</p>
             </div>
           </div>
           {{/newUserJS}}
@@ -124,7 +124,7 @@
             <a href="{{{authedUser.userGitHubRepoListPageUrl}}}" class="list-group-item">
               <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-repo-clone"></i> Import Script from GitHub</h4>
               <p class="list-group-item-text">
-                Click here to import a script<em>(s)</em> from a GitHub repository.
+                Click here to import a script<em>(s)</em> from a GitHub repository. If Sync Script has already been set up for the selected repository then it should automatically be linked for any scripts imported.
               </p>
             </a>
             <div role="alert" class="alert alert-info">
@@ -137,11 +137,11 @@
           <div class="panel panel-default">
             <div class="panel-body">
               <h3><i class="octicon octicon-mark-github"></i> GitHub</h3>
-              <p>You can add a webhook to a GitHub repository to automatically keep it up to date on OpenUserJS.org.</p>
+              <p>You may add a webhook to one or more of your GitHub repositories to automatically keep it up to date on OpenUserJS.org.</p>
               <h4>Instructions</h4>
-              <p>Firstly you must upload the script to the site. You can <a href="{{{authedUser.userGitHubRepoListPageUrl}}}">Import from Github</a> to speed things up.</p>
+              <p>Optionally you may upload the script to the site first. You may also use <a href="{{{authedUser.userGitHubRepoListPageUrl}}}">Import from Github</a> to speed things up as a shortcut.</p>
               <ol>
-                <li>On your target GitHub repo, click Settings > Webhooks &amp; Services > Add Webhook.</li>
+                <li>On your target GitHub repo, click Settings &gt; Webhooks &amp; Services &gt; Add Webhook.</li>
                 <li>In the Payload URL input, paste<br /><code>https://openuserjs.org/github/hook</code></li>
                 <li>Change the Content Type dropdown to<br /><code>application/x-www-form-urlencoded</code></li>
                 <li>Click <code>Add Webhook</code>.</li>
