@@ -45,7 +45,11 @@ module.exports = function (aApp) {
   serveModule('/redist/npm/', 'ace-builds/src/', 7);
 
   serveModule('/redist/npm/', 'bootstrap/', {
-    'dist/js/bootstrap.js': { maxage: day * 1 }
+    'dist/js/bootstrap.js': { maxage: day * 1 },
+    'dist/fonts/glyphicons-halflings-regular.eot': { maxage: day * 7 },
+    'dist/fonts/glyphicons-halflings-regular.svg': { maxage: day * 7 },
+    'dist/fonts/glyphicons-halflings-regular.ttf': { maxage: day * 7 },
+    'dist/fonts/glyphicons-halflings-regular.woff': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'bootstrap-markdown/', {
