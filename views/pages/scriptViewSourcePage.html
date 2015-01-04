@@ -84,7 +84,6 @@
 
       // Older browser JavaScript work-around for #136
       if (!hasAnyCalc()) {
-        $("#footer > nav").addClass("navbar-fixed-bottom");
         $("#editor").height(calcHeight());
         $(document).on("resize", function () {
           $("#editor").height(calcHeight);
