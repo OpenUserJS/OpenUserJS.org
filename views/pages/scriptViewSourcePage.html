@@ -7,6 +7,10 @@
     #editor {
       position: relative;
       min-height: 200px;
+      height: -moz-calc(100vh - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}}px);
+      height: -ms-calc(100vh - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}}px);
+      height: -o-calc(100vh - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}}px);
+      height: -webkit-calc(100vh - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}}px);
       height: calc(100vh - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}}px);
     }
    .path-divider {
@@ -50,6 +54,22 @@
   <script type="text/javascript">
     $(document).ready(function () {
       var editor = ace.edit("editor");
+
+      function hasCalc(aPrefix) {
+        aPrefix = aPrefix || "";
+        var el = document.createElement("div");
+        el.style.setProperty(aPrefix + "width", "calc(1px)", "");
+        return !!el.style.length;
+      }
+
+      function hasAnyCalc() {
+        return hasCalc("-moz-") || hasCalc("-ms-") || hasCalc("-o-") || hasCalc("-webkit-") || hasCalc();
+      }
+
+      function calcHeight() {
+       return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}};
+      }
+
       editor.setTheme("ace/theme/dawn");
       editor.getSession().setMode("ace/mode/javascript");
 
@@ -61,6 +81,15 @@
         $('#code_form').submit();
       });
       {{/readOnly}}
+
+      // Older browser JavaScript work-around for #136
+      if (!hasAnyCalc()) {
+        $("#footer > nav").addClass("navbar-fixed-bottom");
+        $("#editor").height(calcHeight());
+        $(document).on("resize", function () {
+          $("#editor").height(calcHeight);
+        });
+      }
     });
   </script>
 </body>
