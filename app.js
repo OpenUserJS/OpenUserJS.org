@@ -44,7 +44,7 @@ db.once('open', function () {
   app.listen(app.get('port'));
 });
 
-var sessionStore = new MongoStore({ mongoose_connection: db });
+var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // Force HTTPS
 if (app.get('port') === 443) {
