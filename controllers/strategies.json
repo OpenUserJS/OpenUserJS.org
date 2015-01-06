@@ -1,19 +1,70 @@
 {
-  "github" : { "name" : "GitHub", "oauth" : true },
-  "facebook" : { "name" : "Facebook", "oauth" : true },
-  "google" : { "name" : "Google", "oauth" : false },
-  "persona" : { "name" : "Mozilla Persona", "oauth" : false },
-  "yahoo" : { "name" : "Yahoo!", "oauth" : false },
-  "aol" : { "name" : "AOL", "oauth" : false },
-  "twitter" : { "name" : "Twitter", "oauth" : true },
-  "flickr" : { "name" : "Flickr", "oauth" : true },
-  "linkedin" : { "name" : "LinkedIn", "oauth" : true },
-  "reddit" : { "name" : "Reddit", "oauth" : true },
-  "imgur" : { "name" : "Imgur", "oauth" : true },
-  "amazon" : { "name" : "Amazon", "oauth" : true },
-  "windowslive" : { "name" : "Windows Live", "oauth" : true },
-  "tumblr" : { "name" : "Tumblr", "oauth" : true },
-  "foursquare" : { "name" : "Foursquare", "oauth" : true },
-  "instagram" : { "name" : "Instagram", "oauth" : true },
-  "steam" : { "name" : "Steam", "oauth" : false }
+  "amazon": {
+    "name": "Amazon",
+    "oauth": true
+  },
+  "aol": {
+    "name": "AOL",
+    "oauth": false
+  },
+  "facebook": {
+    "name": "Facebook",
+    "oauth": true
+  },
+  "flickr": {
+    "name": "Flickr",
+    "oauth": true
+  },
+  "foursquare": {
+    "name": "Foursquare",
+    "oauth": true
+  },
+  "github": {
+    "name": "GitHub",
+    "oauth": true
+  },
+  "google": {
+    "name": "Google",
+    "oauth": false
+  },
+  "imgur": {
+    "name": "Imgur",
+    "oauth": true
+  },
+  "instagram": {
+    "name": "Instagram",
+    "oauth": true
+  },
+  "linkedin": {
+    "name": "LinkedIn",
+    "oauth": true
+  },
+  "persona": {
+    "name": "Mozilla Persona",
+    "oauth": false
+  },
+  "reddit": {
+    "name": "Reddit",
+    "oauth": true
+  },
+  "steam": {
+    "name": "Steam",
+    "oauth": false
+  },
+  "tumblr": {
+    "name": "Tumblr",
+    "oauth": true
+  },
+  "twitter": {
+    "name": "Twitter",
+    "oauth": true
+  },
+  "yahoo": {
+    "name": "Yahoo!",
+    "oauth": false
+  },
+  "windowslive": {
+    "name": "Windows Live",
+    "oauth": true
+  }
 }
