@@ -117,8 +117,7 @@ module.exports = function (aApp) {
   aApp.route('/flag/libs/:username/:scriptname/:unflag?').get(script.lib(script.flag));
 
   // Remove route
-  // TODO: Make POST route
-  aApp.route(/^\/remove\/(.+?)\/(.+)$/).get(remove.rm);
+  aApp.route(/^\/remove\/(.+?)\/(.+)$/).post(remove.rm);
 
   // Group routes
   aApp.route('/groups').get(group.list);

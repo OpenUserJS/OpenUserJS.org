@@ -3,7 +3,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">Delete {{script.fullName}}</h4>
       </div>
       <div class="modal-body">
@@ -20,3 +20,25 @@
   </div>
 </div>
 {{/authorTools}}
+{{#modTools}}
+<div class="modal fade" id="removeScriptModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Remove {{script.fullName}}</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to remove this script? You cannot undo this.</p>
+      </div>
+      <div class="modal-footer">
+        <form action="{{{script.scriptRemovePageUrl}}}" method="post">
+          <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
+          <input type="hidden" name="remove" value="true">
+          <button type="submit" class="btn btn-danger"><i class="fa fa-fw fa-ban"></i> Remove</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{/modTools}}
