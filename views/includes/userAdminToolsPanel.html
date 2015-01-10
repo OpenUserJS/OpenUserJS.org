@@ -20,8 +20,8 @@
         <input type="submit" class="col-sm-2 btn btn-default" value="Save">
       </div>
     </form>
-    <a href="/admin/json?model=User&id={{{user._id}}}" class="btn btn-link col-xs-12"><i class="fa fa-database"></i> Raw JSON Data</a>
-    {{#adminTools.authAsUserUrl}}<a href="{{{adminTools.authAsUserUrl}}}" class="btn btn-link col-xs-12"><i class="fa fa-sign-in"></i> Auth As This User</a>{{/adminTools.authAsUserUrl}}
+    <a rel="nofollow" href="/admin/json?model=User&id={{{user._id}}}" class="btn btn-link col-xs-12"><i class="fa fa-database"></i> Raw JSON Data</a>
+    {{#adminTools.authAsUserUrl}}<a rel="nofollow" href="{{{adminTools.authAsUserUrl}}}" class="btn btn-link col-xs-12"><i class="fa fa-sign-in"></i> Auth As This User</a>{{/adminTools.authAsUserUrl}}
   </div>
 </div>
 {{/adminTools}}
