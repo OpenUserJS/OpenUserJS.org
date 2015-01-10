@@ -32,7 +32,9 @@
         <p>Are you sure you want to remove this script? You cannot undo this.</p>
       </div>
       <div class="modal-footer">
-        <form action="{{{script.scriptRemovePageUrl}}}" method="post">
+        <form action="{{{script.scriptRemovePageUrl}}}" method="post" enctype="multipart/form-data">
+          <input type="text" class="form-control" name="reason" placeholder="Reason for removal.">
+          <br />
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
           <input type="hidden" name="remove" value="true">
           <button type="submit" class="btn btn-danger"><i class="fa fa-fw fa-ban"></i> Remove</button>
