@@ -11,18 +11,40 @@ var Script = require('../models/script').Script;
 var User = require('../models/user').User;
 var destroySessions = require('../libs/modifySessions').destroy;
 
+var formidable = require('formidable');
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+
 // Simple controller to remove content and save it in the graveyard
 exports.rm = function (aReq, aRes, aNext) {
   var type = aReq.params[0];
   var path = aReq.params[1];
   var authedUser = aReq.session.user;
 
+  var form = null;
+  var reason = null;
+
+  if (!/multipart\/form-data/.test(aReq.headers['content-type'])) {
+    return aNext();
+  }
+
+  form = new formidable.IncomingForm();
+  form.parse(aReq, function (aErr, aFields) {
+    reason = aFields.reason.trim();
+  });
+
+  if (!reason || reason === '' || /^User removed$/i.test(reason)) {
+    return statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'Invalid reason for removal.'
+    });
+  }
+
   switch (type) {
     case 'scripts':
     case 'libs':
       path += type === 'libs' ? '.js' : '.user.js';
       Script.findOne({ installName: path }, function (aErr, aScript) {
-        removeLib.remove(Script, aScript, authedUser, '', function (aRemoved) {
+        removeLib.remove(Script, aScript, authedUser, reason, function (aRemoved) {
           if (!aRemoved) { return aNext(); }
           aRes.redirect('/');
         });
@@ -31,7 +53,7 @@ exports.rm = function (aReq, aRes, aNext) {
     case 'users':
       User.findOne({ name: { $regex: new RegExp('^' + path + '$', "i") } },
         function (aErr, aUser) {
-          removeLib.remove(User, aUser, authedUser, '', function (aRemoved) {
+          removeLib.remove(User, aUser, authedUser, reason, function (aRemoved) {
             if (!aRemoved) { return aNext(); }
 
             // Destory all the sessions belonging to the removed user

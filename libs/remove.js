@@ -78,7 +78,7 @@ exports.remove = function (aModel, aContent, aUser, aReason, aCallback) {
         model.find({ _authorId: aContent._id },
           function (aErr, aContentArr) {
             async.each(aContentArr, function (aContent, innerCb) {
-              remove(model, aContent, aUser, null, innerCb);
+              remove(model, aContent, aUser, 'User removed', innerCb);
             }, aCallback);
           });
       }, function () {
