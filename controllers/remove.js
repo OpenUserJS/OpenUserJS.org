@@ -21,49 +21,68 @@ exports.rm = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var form = null;
-  var reason = null;
 
+  // Check to make sure multipart form data submission header is present
   if (!/multipart\/form-data/.test(aReq.headers['content-type'])) {
-    return aNext();
+      return statusCodePage(aReq, aRes, aNext, {
+        statusCode: 400,
+        statusMessage: 'Missing required header.'
+      });
   }
 
   form = new formidable.IncomingForm();
   form.parse(aReq, function (aErr, aFields) {
-    reason = aFields.reason.trim();
-  });
+    var reason = aFields.reason;
 
-  if (!reason || reason === '' || /^User removed$/i.test(reason)) {
-    return statusCodePage(aReq, aRes, aNext, {
-      statusCode: 403,
-      statusMessage: 'Invalid reason for removal.'
-    });
-  }
-
-  switch (type) {
-    case 'scripts':
-    case 'libs':
-      path += type === 'libs' ? '.js' : '.user.js';
-      Script.findOne({ installName: path }, function (aErr, aScript) {
-        removeLib.remove(Script, aScript, authedUser, reason, function (aRemoved) {
-          if (!aRemoved) { return aNext(); }
-          aRes.redirect('/');
-        });
+    // Check to make sure form submission has this name available.
+    // This occurs either when no reason is supplied,
+    // or a rare edge case if the view is missing the input name.
+    if (!reason) {
+      return statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403,
+        statusMessage: 'Missing reason for removal.'
       });
-      break;
-    case 'users':
-      User.findOne({ name: { $regex: new RegExp('^' + path + '$', "i") } },
-        function (aErr, aUser) {
-          removeLib.remove(User, aUser, authedUser, reason, function (aRemoved) {
-            if (!aRemoved) { return aNext(); }
+    }
 
-            // Destory all the sessions belonging to the removed user
-            destroySessions(aReq, aUser, function () {
-              aRes.redirect('/');
-            });
+    // Simple error check for string null and reserved phrase
+    reason = reason.trim();
+    if (reason === '' || /^User removed$/i.test(reason)) {
+      return statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403,
+        statusMessage: 'Invalid reason for removal.'
+      });
+    }
+
+    switch (type) {
+      case 'scripts':
+      case 'libs':
+        path += type === 'libs' ? '.js' : '.user.js';
+        Script.findOne({ installName: path }, function (aErr, aScript) {
+          removeLib.remove(Script, aScript, authedUser, reason, function (aRemoved) {
+            if (!aRemoved) {
+              return aNext();
+            }
+            aRes.redirect('/');
           });
         });
-      break;
-    default:
-      aNext();
-  }
+        break;
+      case 'users':
+        User.findOne({ name: { $regex: new RegExp('^' + path + '$', "i") } },
+          function (aErr, aUser) {
+            removeLib.remove(User, aUser, authedUser, reason, function (aRemoved) {
+              if (!aRemoved) {
+                return aNext();
+              }
+
+              // Destory all the sessions belonging to the removed user
+              destroySessions(aReq, aUser, function () {
+                aRes.redirect('/');
+              });
+            });
+          });
+        break;
+      default:
+        aNext();
+    }
+  });
 };
