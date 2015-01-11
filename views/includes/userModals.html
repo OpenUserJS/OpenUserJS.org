@@ -11,7 +11,23 @@
       </div>
       <div class="modal-footer">
         <form action="{{{user.userRemovePageUrl}}}" method="post" enctype="multipart/form-data">
-          <input type="text" class="form-control" name="reason" placeholder="Reason for removal.">
+          <input type="text" class="form-control" name="reason" placeholder="Reason for removal." list="reasons">
+          <datalist id="reasons">
+            <option value="Bad external script hosts ">
+            <option value="Cookie stealings ">
+            <option value="Incomplete metadata blocks ">
+            <option value="Licensing conflicts ">
+            <option value="Malwares ">
+            <option value="Obfuscated scripts ">
+            <option value="Obfuscated external scripts ">
+            <option value="Privacy stealings ">
+            <option value="Spammings ">
+            <option value="Unattributed script derivatives ">
+            <option value="Undocumented auto-likes ">
+            <option value="Vague descriptions ">
+            <option value="Vague scripts ">
+            <option value="XSS attacks ">
+          </datalist>
           <br />
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
           <input type="hidden" name="remove" value="true">

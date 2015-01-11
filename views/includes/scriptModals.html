@@ -33,7 +33,23 @@
       </div>
       <div class="modal-footer">
         <form action="{{{script.scriptRemovePageUrl}}}" method="post" enctype="multipart/form-data">
-          <input type="text" class="form-control" name="reason" placeholder="Reason for removal.">
+          <input type="text" class="form-control" name="reason" placeholder="Reason for removal." list="reasons">
+          <datalist id="reasons">
+            <option value="Bad external script host ">
+            <option value="Cookie stealing ">
+            <option value="Incomplete metadata block ">
+            <option value="Licensing conflict ">
+            <option value="Malware ">
+            <option value="Obfuscated script ">
+            <option value="Obfuscated external script ">
+            <option value="Privacy stealing ">
+            <option value="Spamming ">
+            <option value="Unattributed script derivative ">
+            <option value="Undocumented auto-like ">
+            <option value="Vague description ">
+            <option value="Vague script ">
+            <option value="XSS attack ">
+          </datalist>
           <br />
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
           <input type="hidden" name="remove" value="true">
