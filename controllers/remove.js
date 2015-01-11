@@ -74,7 +74,7 @@ exports.rm = function (aReq, aRes, aNext) {
                 return aNext();
               }
 
-              // Destory all the sessions belonging to the removed user
+              // Destroy all the sessions belonging to the removed user
               destroySessions(aReq, aUser, function () {
                 aRes.redirect('/');
               });
