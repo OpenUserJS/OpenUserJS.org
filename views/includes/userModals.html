@@ -14,7 +14,7 @@
           <input type="text" class="form-control" name="reason" placeholder="Reason for removal."{{#modTools.removeReasons}} list="reasons"{{/modTools.removeReasons}}>
           {{#modTools.hasRemoveReasons}}
           <datalist id="reasons">
-            {{#modTools.removeReasons}}<option value="{{{name}}}">{{/modTools.removeReasons}}</option>
+            {{#modTools.removeReasons}}<option value="{{{name}}}"></option>{{/modTools.removeReasons}}
           </datalist>
           {{/modTools.hasRemoveReasons}}
           <br />
