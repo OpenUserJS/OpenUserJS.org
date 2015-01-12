@@ -11,7 +11,12 @@
       </div>
       <div class="modal-footer">
         <form action="{{{user.userRemovePageUrl}}}" method="post" enctype="multipart/form-data">
-          <input type="text" class="form-control" name="reason" placeholder="Reason for removal.">
+          <input type="text" class="form-control" name="reason" placeholder="Reason for removal."{{#modTools.removeReasons}} list="reasons"{{/modTools.removeReasons}}>
+          {{#modTools.hasRemoveReasons}}
+          <datalist id="reasons">
+            {{#modTools.removeReasons}}<option value="{{{name}}}"></option>{{/modTools.removeReasons}}
+          </datalist>
+          {{/modTools.hasRemoveReasons}}
           <br />
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
           <input type="hidden" name="remove" value="true">

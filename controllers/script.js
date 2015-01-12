@@ -24,6 +24,7 @@ var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
 var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+var removeReasons = require('../views/includes/scriptModals.json').removeReasons;
 
 // Let controllers know this is a `new` route
 exports.new = function (aController) {
@@ -275,6 +276,14 @@ var setupScriptSidePanel = function (aOptions) {
   if (authedUser && authedUser.isMod) {
     //aOptions.authorTools = {}; // TODO: Support moderator edits on scripts?
     aOptions.modTools = {};
+
+    if (removeReasons) {
+      aOptions.modTools.hasRemoveReasons = true;
+      aOptions.modTools.removeReasons = [];
+      removeReasons.forEach(function (aReason) {
+        aOptions.modTools.removeReasons.push({ 'name' : aReason });
+      });
+    }
   }
 
   // Admin

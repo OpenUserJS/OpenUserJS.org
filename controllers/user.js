@@ -40,6 +40,7 @@ var settings = require('../models/settings.json');
 var github = require('./../libs/githubClient');
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
+var removeReasons = require('../views/includes/userModals.json').removeReasons;
 
 function caseInsensitive (aStr) {
   return new RegExp('^' + (aStr || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
@@ -127,6 +128,14 @@ var setupUserSidePanel = function (aOptions) {
   if (authedUser && authedUser.isMod && (authedUser.role < user.role || aOptions.isYou)) {
     //aOptions.userTools = {}; // TODO: Support moderator edits of user profiles?
     aOptions.modTools = {};
+
+    if (removeReasons) {
+      aOptions.modTools.hasRemoveReasons = true;
+      aOptions.modTools.removeReasons = [];
+      removeReasons.forEach(function (aReason) {
+        aOptions.modTools.removeReasons.push({ 'name' : aReason });
+      });
+    }
   }
 
   // Admin
