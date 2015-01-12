@@ -115,7 +115,7 @@ h2.page-heading {
   white-space: nowrap;
 }
 
-.td-fit span.label {
+.td-fit span.label, .td-fit p {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 32em;
