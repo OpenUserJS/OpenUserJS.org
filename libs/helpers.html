@@ -1,60 +1,101 @@
-<!DOCTYPE html><html lang="en"><head><title>libs/helpers</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/helpers"><meta name="groc-project-path" content="libs/helpers.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/helpers.js">libs/helpers.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">months</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="s1">&#39;Jan&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Feb&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Mar&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Apr&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;May&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Jun&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Jul&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Aug&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Sep&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Oct&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Nov&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Dec&#39;</span>
-<span class="p">];</span>
-<span class="kd">var</span> <span class="nx">second</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">minute</span> <span class="o">=</span> <span class="nx">second</span> <span class="o">*</span> <span class="mi">60</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">hour</span> <span class="o">=</span> <span class="nx">minute</span> <span class="o">*</span> <span class="mi">60</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">day</span> <span class="o">=</span> <span class="nx">hour</span> <span class="o">*</span> <span class="mi">24</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get a formatted date that can be used everywhere a date is displayed</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">formatDate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">date</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">difference</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getTime</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+<!DOCTYPE html><html lang="en"><head><title>libs/helpers</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/helpers"><meta name="groc-project-path" content="libs/helpers.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/helpers.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="kd">function</span> <span class="nx">pluralize</span> <span class="p">(</span><span class="nx">number</span><span class="p">,</span> <span class="nx">unit</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">number</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">unit</span> <span class="o">+</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">?</span> <span class="s1">&#39;s&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; ago&#39;</span><span class="p">;</span>
-  <span class="p">}</span>
+<span class="hljs-keyword">var</span> url = <span class="hljs-built_in">require</span>(<span class="hljs-string">"url"</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">difference</span> <span class="o">&gt;</span> <span class="nx">day</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getDate</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
-      <span class="o">+</span> <span class="nx">months</span><span class="p">[</span><span class="nx">date</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
-      <span class="o">+</span> <span class="nx">date</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">();</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">difference</span> <span class="o">&gt;</span> <span class="nx">hour</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">pluralize</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">difference</span> <span class="o">/</span> <span class="nx">hour</span><span class="p">),</span> <span class="s1">&#39;hour&#39;</span><span class="p">);</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">difference</span> <span class="o">&gt;</span> <span class="nx">minute</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">pluralize</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nx">difference</span> <span class="o">/</span> <span class="nx">minute</span><span class="p">),</span> <span class="s1">&#39;minute&#39;</span><span class="p">);</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">pluralize</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nx">difference</span> <span class="o">/</span> <span class="nx">second</span><span class="p">),</span> <span class="s1">&#39;second&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
+<span class="hljs-keyword">var</span> months = [
+  <span class="hljs-string">'Jan'</span>,
+  <span class="hljs-string">'Feb'</span>,
+  <span class="hljs-string">'Mar'</span>,
+  <span class="hljs-string">'Apr'</span>,
+  <span class="hljs-string">'May'</span>,
+  <span class="hljs-string">'Jun'</span>,
+  <span class="hljs-string">'Jul'</span>,
+  <span class="hljs-string">'Aug'</span>,
+  <span class="hljs-string">'Sep'</span>,
+  <span class="hljs-string">'Oct'</span>,
+  <span class="hljs-string">'Nov'</span>,
+  <span class="hljs-string">'Dec'</span>
+];
+<span class="hljs-keyword">var</span> second = <span class="hljs-number">1000</span>;
+<span class="hljs-keyword">var</span> minute = second * <span class="hljs-number">60</span>;
+<span class="hljs-keyword">var</span> hour = minute * <span class="hljs-number">60</span>;
+<span class="hljs-keyword">var</span> day = hour * <span class="hljs-number">24</span>;
+<span class="hljs-keyword">var</span> week = day * <span class="hljs-number">7</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get a formatted date that can be used everywhere a date is displayed</p></div></div><div class="code"><div class="wrapper">exports.formatDate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDate)</span> </span>{
+  <span class="hljs-keyword">var</span> difference = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime() - aDate.getTime();
+  <span class="hljs-keyword">var</span> ret = <span class="hljs-string">''</span>;
+  <span class="hljs-keyword">var</span> days = <span class="hljs-number">0</span>;
 
-  <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create an object with no properties</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">nil</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">nilObj</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pluralize</span><span class="hljs-params">(aNumber, aUnit)</span> </span>{
+    <span class="hljs-keyword">return</span> aNumber + <span class="hljs-string">' '</span> + aUnit + (aNumber &gt; <span class="hljs-number">1</span> ? <span class="hljs-string">'s'</span> : <span class="hljs-string">''</span>) + <span class="hljs-string">' ago'</span>;
+  }
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">obj</span><span class="p">)</span> <span class="k">return</span> <span class="nx">nilObj</span><span class="p">;</span>
+  <span class="hljs-keyword">if</span> (difference &gt; week) {
+    ret = aDate.getDate() + <span class="hljs-string">' '</span>
+      + months[aDate.getMonth()] + <span class="hljs-string">' '</span>
+      + aDate.getFullYear();
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (difference &gt; day) {
+    days = <span class="hljs-built_in">Math</span>.round(difference / day);
+    <span class="hljs-keyword">if</span> (days &lt;= <span class="hljs-number">1</span>) {
+      ret = <span class="hljs-string">'Yesterday'</span>;
+    } <span class="hljs-keyword">else</span> {
+      ret = days + <span class="hljs-string">' days ago'</span>;
+    }
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (difference &gt; hour) {
+    ret = pluralize(<span class="hljs-built_in">Math</span>.round(difference / hour), <span class="hljs-string">'hour'</span>);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (difference &gt; minute) {
+    ret = pluralize(<span class="hljs-built_in">Math</span>.round(difference / minute), <span class="hljs-string">'minute'</span>);
+  } <span class="hljs-keyword">else</span> {
+    ret = pluralize(<span class="hljs-built_in">Math</span>.ceil(difference / second), <span class="hljs-string">'second'</span>);
+  }
 
-  <span class="nx">exports</span><span class="p">.</span><span class="nx">forIn</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">nilObj</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
-  <span class="p">});</span>
-  
-  <span class="k">return</span> <span class="nx">nilObj</span><span class="p">;</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Safely iterate on an object not create using nil()</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">forIn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">forProp</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="hljs-keyword">return</span> ret;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create an object with no properties</p></div></div><div class="code"><div class="wrapper">exports.nil = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aObj)</span> </span>{
+  <span class="hljs-keyword">var</span> nilObj = <span class="hljs-built_in">Object</span>.create(<span class="hljs-literal">null</span>);
 
-  <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">))</span> <span class="p">{</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
-    <span class="nx">forProp</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">obj</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clean filenames but leave them readable
-Based on Greasemonkey modules/remoteScript.js</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">cleanFilename</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">defaultName</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Blacklist problem characters (slashes, colons, etc.).</p></div></div><div class="code"><div class="wrapper">  <span class="kd">var</span> <span class="nx">cleanName</span> <span class="o">=</span> <span class="p">(</span><span class="nx">filename</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[\\\/:*?\&#39;\&quot;&lt;&gt;|#;@=&amp;]/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Make whitespace readable.</p></div></div><div class="code"><div class="wrapper">  <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(\s|%20)+/g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">);</span>
+  <span class="hljs-keyword">if</span> (!aObj) <span class="hljs-keyword">return</span> nilObj;
 
-  <span class="k">return</span> <span class="nx">cleanName</span> <span class="o">||</span> <span class="nx">defaultName</span><span class="p">;</span>
-<span class="p">};</span></div></div></div></div></body></html>
+  exports.forIn(aObj, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aVal, aKey)</span> </span>{
+    nilObj[aKey] = aVal;
+  });
+
+  <span class="hljs-keyword">return</span> nilObj;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Safely iterate on an object not create using nil()</p></div></div><div class="code"><div class="wrapper">exports.forIn = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aObj, aForProp)</span> </span>{
+  <span class="hljs-keyword">var</span> key = <span class="hljs-literal">null</span>;
+
+  <span class="hljs-keyword">for</span> (key <span class="hljs-keyword">in</span> aObj) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">Object</span>.prototype.hasOwnProperty.call(aObj, key)) { <span class="hljs-keyword">continue</span>; }
+    aForProp(aObj[key], key, aObj);
+  }
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Clean filenames but leave them readable
+Based on Greasemonkey modules/remoteScript.js</p></div></div><div class="code"><div class="wrapper">exports.cleanFilename = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aFilename, aDefaultName)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Blacklist problem characters (slashes, colons, etc.).</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> cleanName = (aFilename || <span class="hljs-string">''</span>).replace(<span class="hljs-regexp">/[\\\/:*?\'\"&lt;&gt;|#;@=&amp;]/g</span>, <span class="hljs-string">''</span>)</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Make whitespace readable.</p></div></div><div class="code"><div class="wrapper">  .replace(<span class="hljs-regexp">/(\s|%20)+/g</span>, <span class="hljs-string">'_'</span>);
+
+  <span class="hljs-keyword">return</span> cleanName || aDefaultName;
+};
+
+exports.limitRange = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aMin, aX, aMax)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(<span class="hljs-built_in">Math</span>.min(aX, aMax), aMin);
+};
+
+exports.limitMin = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aMin, aX)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(aX, aMin);
+};
+
+<span class="hljs-keyword">var</span> setUrlQueryValue = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aBaseUrl, aQueryVarKey, aQueryVarValue)</span> </span>{
+  <span class="hljs-keyword">var</span> parseQueryString = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">var</span> u = url.parse(aBaseUrl, parseQueryString);
+  u.query[aQueryVarKey] = aQueryVarValue;
+  <span class="hljs-keyword">delete</span> u.search; <span class="hljs-comment">// http://stackoverflow.com/a/7517673/947742</span>
+  <span class="hljs-keyword">return</span> url.format(u);
+};
+exports.setUrlQueryValue = setUrlQueryValue;
+
+exports.updateUrlQueryString = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aBaseUrl, aDict)</span> </span>{
+  <span class="hljs-keyword">var</span> url = aBaseUrl;
+  _.each(aDict, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aValue, aKey)</span> </span>{
+    url = setUrlQueryValue(url, aKey, aValue);
+  });
+  <span class="hljs-keyword">return</span> url;
+};</div></div></div></div></body></html>

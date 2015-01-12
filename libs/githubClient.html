@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/githubClient</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/githubClient"><meta name="groc-project-path" content="libs/githubClient.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/githubClient.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> GitHubApi = <span class="hljs-built_in">require</span>(<span class="hljs-string">"github"</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"underscore"</span>);
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);
+<span class="hljs-keyword">var</span> request = <span class="hljs-built_in">require</span>(<span class="hljs-string">'request'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Client</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> github = <span class="hljs-keyword">new</span> GitHubApi({
+  version: <span class="hljs-string">"3.0.0"</span>
+});
+<span class="hljs-built_in">module</span>.exports = github;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Authenticate Client</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> Strategy = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/strategy'</span>).Strategy;
+Strategy.findOne({ name: <span class="hljs-string">'github'</span> }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStrat)</span> </span>{
+  <span class="hljs-keyword">if</span> (aErr)
+    <span class="hljs-built_in">console</span>.error(aErr);
+
+  <span class="hljs-keyword">if</span> (aStrat) {
+    github.authenticate({
+      type: <span class="hljs-string">'oauth'</span>,
+      key: aStrat.id,
+      secret: aStrat.key,
+    });
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'GitHub client authenticated'</span>);
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-built_in">console</span>.warn(<span class="hljs-string">'GitHub client NOT authenticated. Will have a lower Rate Limit.'</span>);
+  }
+
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Util functions for the client.</p></div></div><div class="code"><div class="wrapper">github.usercontent = github.usercontent || {};
+
+<span class="hljs-keyword">var</span> githubGitDataGetBlobAsUtf8 = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aMsg, aCallback)</span> </span>{
+  async.waterfall([
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      github.gitdata.getBlob(aMsg, aCallback);
+    },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aBlob, aCallback)</span> </span>{
+      <span class="hljs-keyword">var</span> content = aBlob.content;
+      <span class="hljs-keyword">if</span> (aBlob.encoding === <span class="hljs-string">'base64'</span>) {
+        <span class="hljs-keyword">var</span> buf = <span class="hljs-keyword">new</span> Buffer(content, <span class="hljs-string">'base64'</span>);
+        content = buf.toString(<span class="hljs-string">'utf8'</span>);
+      }
+      aCallback(<span class="hljs-literal">null</span>, content);
+    },
+  ], aCallback);
+};
+github.gitdata.getBlobAsUtf8 = githubGitDataGetBlobAsUtf8;
+
+<span class="hljs-keyword">var</span> githubUserContentBuildUrl = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUser, aRepo, aPath)</span> </span>{
+  <span class="hljs-keyword">return</span> util.format(<span class="hljs-string">'https://raw.githubusercontent.com/%s/%s/HEAD/%s'</span>, aUser, aRepo, aPath);
+};
+github.usercontent.buildUrl = githubUserContentBuildUrl;
+
+<span class="hljs-keyword">var</span> githubUserContentGetBlobAsUtf8 = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aMsg, aCallback)</span> </span>{
+  async.waterfall([
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      <span class="hljs-keyword">var</span> url = githubUserContentBuildUrl(aMsg.user, aMsg.repo, aMsg.path);
+      request.get(url, aCallback);
+    },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aResponse, aBody, aCallback)</span> </span>{
+      <span class="hljs-keyword">if</span> (aResponse.statusCode !== <span class="hljs-number">200</span>)
+        <span class="hljs-keyword">return</span> aCallback(util.format(<span class="hljs-string">'Status Code %s'</span>, aResponse.statusCode));
+
+      aCallback(<span class="hljs-literal">null</span>, aBody);
+    },
+  ], aCallback);
+};
+
+github.usercontent.getBlobAsUtf8 = githubUserContentGetBlobAsUtf8;
+
+<span class="hljs-keyword">var</span> githubGitDataIsJavascriptBlob = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aBlob)</span> </span>{
+  <span class="hljs-keyword">return</span> aBlob.path.match(<span class="hljs-regexp">/\.js$/</span>);
+};
+github.gitdata.isJavascriptBlob = githubGitDataIsJavascriptBlob;
+
+<span class="hljs-keyword">var</span> githubGitDataGetJavascriptBlobs = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aMsg, aCallback)</span> </span>{
+  async.waterfall([
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      aMsg.sha = <span class="hljs-string">'HEAD'</span>;
+      aMsg.recursive = <span class="hljs-literal">true</span>;
+      github.gitdata.getTree(aMsg, aCallback);
+    },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRepoTree, aCallback)</span> </span>{
+      <span class="hljs-keyword">var</span> entries = aRepoTree.tree;
+      <span class="hljs-keyword">var</span> blobs = _.where(entries, { type: <span class="hljs-string">'blob'</span> });
+      <span class="hljs-keyword">var</span> javascriptBlobs = _.filter(blobs, githubGitDataIsJavascriptBlob);
+      aCallback(<span class="hljs-literal">null</span>, javascriptBlobs);
+    },
+  ], aCallback);
+};
+github.gitdata.getJavascriptBlobs = githubGitDataGetJavascriptBlobs;</div></div></div></div></body></html>

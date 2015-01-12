@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="en"><head><title>controllers/document</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/document"><meta name="groc-project-path" content="controllers/document.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/document.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> pkg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../package.json'</span>);
+
+<span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> renderMd = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/markdown'</span>).renderMd;
+<span class="hljs-keyword">var</span> statusCodePage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).statusCodePage;
+<span class="hljs-keyword">var</span> pageMetadata = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).pageMetadata;
+
+<span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);
+
+exports.view = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];
+
+  <span class="hljs-keyword">var</span> documentPath = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> <span class="hljs-built_in">document</span> = aReq.params.document;
+  <span class="hljs-keyword">var</span> then = <span class="hljs-literal">null</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">document</span>) {
+    documentPath = <span class="hljs-string">'views/includes/documents'</span>;
+
+    <span class="hljs-comment">//--- Tasks</span>
+    tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      async.waterfall([</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Read file listing</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+          fs.readdir(documentPath, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aFiles)</span> </span>{
+            <span class="hljs-keyword">if</span> (aErr) {
+              aCallback({ statusCode: <span class="hljs-number">500</span>, statusMessage : <span class="hljs-string">'Error retrieving page list'</span> });
+              <span class="hljs-keyword">return</span>;
+            }
+
+            <span class="hljs-keyword">var</span> file = <span class="hljs-literal">null</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Dynamically create a file listing of the pages</p></div></div><div class="code"><div class="wrapper">            options.files = [];
+            <span class="hljs-keyword">for</span> (file <span class="hljs-keyword">in</span> aFiles) {
+              <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/\.md$/</span>.test(aFiles[file])) {
+                options.files.push({
+                  href: aFiles[file].replace(<span class="hljs-regexp">/\.md$/</span>, <span class="hljs-string">''</span>),
+                  textContent: aFiles[file].replace(<span class="hljs-regexp">/\.md$/</span>, <span class="hljs-string">''</span>).replace(<span class="hljs-regexp">/-/g</span>, <span class="hljs-string">' '</span>)
+                });
+              }
+            }
+
+            aCallback(<span class="hljs-literal">null</span>);
+          });
+        },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Read md file contents</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+          fs.readFile(documentPath + <span class="hljs-string">'/'</span> + <span class="hljs-built_in">document</span> + <span class="hljs-string">'.md'</span>, <span class="hljs-string">'utf8'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aData)</span> </span>{
+            <span class="hljs-keyword">if</span> (aErr) {
+              aCallback({ statusCode: <span class="hljs-number">404</span>, statusMessage: <span class="hljs-string">'Error retrieving page'</span> });
+              <span class="hljs-keyword">return</span>;
+            }
+
+            <span class="hljs-keyword">var</span> lines = <span class="hljs-literal">null</span>;
+            <span class="hljs-keyword">var</span> matches = <span class="hljs-literal">null</span>;
+            <span class="hljs-keyword">var</span> heading = <span class="hljs-literal">null</span>;
+            <span class="hljs-keyword">var</span> content = <span class="hljs-literal">null</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if first line is h2 and use for title/heading if present</p></div></div><div class="code"><div class="wrapper">            lines = aData.split(<span class="hljs-string">'\n'</span>);
+            matches = lines[<span class="hljs-number">0</span>].match(<span class="hljs-regexp">/^##\s(.*)$/</span>);
+            <span class="hljs-keyword">if</span> (matches) {
+              heading = lines.shift().replace(<span class="hljs-regexp">/^##\s+/</span>, <span class="hljs-string">""</span>);
+            } <span class="hljs-keyword">else</span> {
+              heading = <span class="hljs-built_in">document</span>;
+            }
+            content = lines.join(<span class="hljs-string">'\n'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">            pageMetadata(options, [heading, <span class="hljs-string">'About'</span>]);
+
+            options.pageHeading = heading;
+            options.pageData = renderMd(content);
+
+            aCallback(<span class="hljs-literal">null</span>);
+          });
+        }
+      ], aCallback);
+    });
+  }
+  <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(options, [<span class="hljs-string">'About'</span>, <span class="hljs-string">'About'</span>]);
+
+    options.isAbout = <span class="hljs-literal">true</span>;
+
+    options.process = {};
+    <span class="hljs-keyword">if</span> (options.isAdmin) {
+      options.process.version = process.version;
+    }
+
+    then = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-built_in">Date</span>.now() - <span class="hljs-built_in">parseInt</span>(process.uptime() * <span class="hljs-number">1000</span>, <span class="hljs-number">10</span>));
+    options.lastRestart = then.toLocaleString();
+
+    options.pkg = {};
+    options.pkg.name = pkg.name;
+    options.pkg.version = pkg.version;
+  }
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) {
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusCode: aErr.statusCode,
+        statusMessage: aErr.statusMessage
+      });
+    }
+
+    aRes.render(<span class="hljs-string">'pages/documentPage'</span>, options);
+  });
+};</div></div></div></div></body></html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><title>routes</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="routes"><meta name="groc-project-path" content="routes.js"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">routes.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> main = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/index'</span>);
+<span class="hljs-keyword">var</span> authentication = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/auth'</span>);
+<span class="hljs-keyword">var</span> admin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/admin'</span>);
+<span class="hljs-keyword">var</span> user = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/user'</span>);
+<span class="hljs-keyword">var</span> script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/script'</span>);
+<span class="hljs-keyword">var</span> remove = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/remove'</span>);
+<span class="hljs-keyword">var</span> moderation = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/moderation'</span>);
+<span class="hljs-keyword">var</span> group = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/group'</span>);
+<span class="hljs-keyword">var</span> discussion = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/discussion'</span>);
+<span class="hljs-keyword">var</span> issue = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/issue'</span>);
+<span class="hljs-keyword">var</span> scriptStorage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/scriptStorage'</span>);
+<span class="hljs-keyword">var</span> <span class="hljs-built_in">document</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./controllers/document'</span>);
+
+<span class="hljs-keyword">var</span> statusCodePage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/templateHelpers'</span>).statusCodePage;
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aApp)</span> </span>{
+  <span class="hljs-comment">//--- Middleware</span>
+
+  <span class="hljs-comment">//--- Routes</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Authentication routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/auth/'</span>).post(authentication.auth);
+  aApp.route(<span class="hljs-string">'/auth/:strategy'</span>).get(authentication.auth);
+  aApp.route(<span class="hljs-string">'/auth/:strategy/callback/'</span>).get(authentication.callback);
+  aApp.route(<span class="hljs-string">'/login'</span>).get(main.register);
+  aApp.route(<span class="hljs-string">'/register'</span>).get(main.register);
+  aApp.route(<span class="hljs-string">'/logout'</span>).get(main.logout);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/users'</span>).get(user.userListPage);
+  aApp.route(<span class="hljs-string">'/users/:username'</span>).get(user.view);
+  aApp.route(<span class="hljs-string">'/users/:username/comments'</span>).get(user.userCommentListPage);
+  aApp.route(<span class="hljs-string">'/users/:username/scripts'</span>).get(user.userScriptListPage);
+  aApp.route(<span class="hljs-string">'/users/:username/github'</span>).get(authentication.validateUser, user.userManageGitHubPage).post(authentication.validateUser, user.userManageGitHubPage);
+  aApp.route(<span class="hljs-string">'/users/:username/github/repos'</span>).get(authentication.validateUser, user.userGitHubRepoListPage);
+  aApp.route(<span class="hljs-string">'/users/:username/github/repo'</span>).get(authentication.validateUser, user.userGitHubRepoPage);
+  aApp.route(<span class="hljs-string">'/users/:username/github/import'</span>).post(authentication.validateUser, user.userGitHubImportScriptPage);
+  aApp.route(<span class="hljs-string">'/users/:username/profile/edit'</span>).get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
+  aApp.route(<span class="hljs-string">'/users/:username/update'</span>).post(admin.adminUserUpdate);
+  aApp.route(<span class="hljs-string">'/user/preferences'</span>).get(authentication.validateUser, user.userEditPreferencesPage);
+  aApp.route(<span class="hljs-string">'/user'</span>).get(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{ aRes.redirect(<span class="hljs-string">'/users'</span>); });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Adding script/library routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/user/add/scripts'</span>).get(authentication.validateUser, user.newScriptPage);
+  aApp.route(<span class="hljs-string">'/user/add/scripts/new'</span>).get(script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
+  aApp.route(<span class="hljs-string">'/user/add/scripts/upload'</span>).post(authentication.validateUser, user.uploadScript);
+  aApp.route(<span class="hljs-string">'/user/add/lib'</span>).get(authentication.validateUser, user.newLibraryPage);
+  aApp.route(<span class="hljs-string">'/user/add/lib/new'</span>).get(script.new(script.lib(user.editScript))).post(authentication.validateUser, script.new(script.lib(user.submitSource)));
+  aApp.route(<span class="hljs-string">'/user/add/lib/upload'</span>).post(authentication.validateUser, script.lib(user.uploadScript));
+  aApp.route(<span class="hljs-string">'/user/add'</span>).get(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{ aRes.redirect(<span class="hljs-string">'/user/add/scripts'</span>); });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/scripts/:username/:namespace?/:scriptname'</span>).get(script.view);
+  aApp.route(<span class="hljs-string">'/script/:username/:namespace?/:scriptname/edit'</span>).get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
+  aApp.route(<span class="hljs-string">'/script/:namespace?/:scriptname/edit'</span>).get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
+  aApp.route(<span class="hljs-string">'/scripts/:username/:namespace?/:scriptname/source'</span>).get(user.editScript);
+  aApp.route(<span class="hljs-string">'/scripts/:username'</span>).get(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{
+    aRes.redirect(<span class="hljs-string">'/users/'</span> + aReq.params.username + <span class="hljs-string">'/scripts'</span>);
+  });
+  aApp.route(<span class="hljs-string">'/install/:username/:namespace?/:scriptname'</span>).get(scriptStorage.sendScript);
+  aApp.route(<span class="hljs-string">'/meta/:username/:namespace?/:scriptname'</span>).get(scriptStorage.sendMeta);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Github hook routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/github/hook'</span>).post(scriptStorage.webhook);
+  aApp.route(<span class="hljs-string">'/github/service'</span>).post(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{ aNext(); });
+  aApp.route(<span class="hljs-string">'/github'</span>).get(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{ aRes.redirect(<span class="hljs-string">'/'</span>); });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Library routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/libs/:username/:scriptname'</span>).get(script.lib(script.view));
+  aApp.route(<span class="hljs-string">'/lib/:scriptname/edit'</span>).get(authentication.validateUser, script.lib(script.edit));
+  aApp.route(<span class="hljs-string">'/lib/:scriptname/edit'</span>).post(authentication.validateUser, script.lib(script.edit));
+  aApp.route(<span class="hljs-string">'/libs/:username/:scriptname/source'</span>).get(script.lib(user.editScript));
+  aApp.route(<span class="hljs-string">'/libs/src/:username/:scriptname'</span>).get(scriptStorage.sendScript);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Raw source</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/src/:type(scripts|libs)/:username/:scriptname'</span>).get(scriptStorage.sendScript);
+  aApp.route(<span class="hljs-string">'/libs/src/:username/:scriptname'</span>).get(scriptStorage.sendScript); <span class="hljs-comment">// Legacy</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Issues routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?'</span>).get(issue.list);
+  aApp.route(<span class="hljs-string">'/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new'</span>).get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
+  aApp.route(<span class="hljs-string">'/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic'</span>).get(issue.view).post(authentication.validateUser, issue.comment);
+  aApp.route(<span class="hljs-string">'/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)'</span>).get(authentication.validateUser, issue.changeStatus);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Admin routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/admin'</span>).get(admin.adminPage);
+  aApp.route(<span class="hljs-string">'/admin/authas'</span>).get(admin.authAsUser);
+  aApp.route(<span class="hljs-string">'/admin/json'</span>).get(admin.adminJsonView);
+  aApp.route(<span class="hljs-string">'/admin/user/:id'</span>).get(admin.adminUserView);
+  aApp.route(<span class="hljs-string">'/admin/api'</span>).get(admin.adminApiKeysPage);
+  aApp.route(<span class="hljs-string">'/admin/npm/package'</span>).get(admin.adminNpmPackageView);
+  aApp.route(<span class="hljs-string">'/admin/npm/list'</span>).get(admin.adminNpmListView);
+  aApp.route(<span class="hljs-string">'/admin/npm/version'</span>).get(admin.adminNpmVersionView);
+  aApp.route(<span class="hljs-string">'/admin/api/update'</span>).post(admin.apiAdminUpdate);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Moderation routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/mod'</span>).get(moderation.modPage);
+  aApp.route(<span class="hljs-string">'/mod/removed'</span>).get(moderation.removedItemListPage);
+  aApp.route(<span class="hljs-string">'/mod/removed/:id'</span>).get(moderation.removedItemPage);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Vote routes
+TODO: Single vote route + POST</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/vote/scripts/:username/:namespace?/:scriptname/:vote'</span>).get(authentication.validateUser, script.vote);
+  aApp.route(<span class="hljs-string">'/vote/libs/:username/:scriptname/:vote'</span>).get(authentication.validateUser, script.lib(script.vote));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Flag routes
+TODO: Single flag route + POST</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/flag/users/:username/:unflag?'</span>).get(user.flag);
+  aApp.route(<span class="hljs-string">'/flag/scripts/:username/:scriptname/:unflag?'</span>).get(script.flag);
+  aApp.route(<span class="hljs-string">'/flag/libs/:username/:scriptname/:unflag?'</span>).get(script.lib(script.flag));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove route</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-regexp">/^\/remove\/(.+?)\/(.+)$/</span>).post(remove.rm);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Group routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/groups'</span>).get(group.list);
+  aApp.route(<span class="hljs-string">'/group/:groupname'</span>).get(group.view);
+  aApp.route(<span class="hljs-string">'/group'</span>).get(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{ aRes.redirect(<span class="hljs-string">'/groups'</span>); });
+  aApp.route(<span class="hljs-string">'/api/group/search/:term/:addTerm?'</span>).get(group.search);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Discussion routes
+TODO: Update templates for new discussion routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/forum'</span>).get(discussion.categoryListPage);
+  aApp.route(<span class="hljs-string">'/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)'</span>).get(discussion.list);
+  aApp.route(<span class="hljs-string">'/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic'</span>).get(discussion.show).post(discussion.createComment);
+  aApp.route(<span class="hljs-string">'/:p(forum)?/:category(announcements|corner|garage|discuss)/new'</span>).get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>dupe</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/post/:category(announcements|corner|garage|discuss)'</span>).get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>About document routes</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/about/:document?'</span>).get(<span class="hljs-built_in">document</span>.view);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Home route</p></div></div><div class="code"><div class="wrapper">  aApp.route(<span class="hljs-string">'/'</span>).get(main.home);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Static Routes</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-built_in">require</span>(<span class="hljs-string">'./routesStatic'</span>)(aApp);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Fallback routes</p></div></div><div class="code"><div class="wrapper">  aApp.use(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">404</span>,
+      statusMessage: <span class="hljs-string">'This is not the page you\'re are looking for.'</span>,
+    });
+  });
+};</div></div></div></div></body></html>

@@ -1,369 +1,1090 @@
-<!DOCTYPE html><html lang="en"><head><title>controllers/user</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/user"><meta name="groc-project-path" content="controllers/user.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/user.js">controllers/user.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">formidable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;formidable&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">scriptStorage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./scriptStorage&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Strategy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/strategy.js&#39;</span><span class="p">).</span><span class="nx">Strategy</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">RepoManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/repoManager&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">scriptsList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/modelsList&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">Flag</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/flag&#39;</span><span class="p">).</span><span class="nx">Flag</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">flagLib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/flag&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">removeLib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/remove&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">strategies</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./strategies.json&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">renderMd</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/markdown&#39;</span><span class="p">).</span><span class="nx">renderMd</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">nil</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/helpers&#39;</span><span class="p">).</span><span class="nx">nil</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View information and scripts of a user</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">thisUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+<!DOCTYPE html><html lang="en"><head><title>controllers/user</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/user"><meta name="groc-project-path" content="controllers/user.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/user.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">username</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">isYou</span><span class="o">:</span> <span class="nx">thisUser</span> <span class="o">&amp;&amp;</span> <span class="nx">user</span> <span class="o">&amp;&amp;</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="p">};</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+<span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+<span class="hljs-keyword">var</span> formidable = <span class="hljs-built_in">require</span>(<span class="hljs-string">'formidable'</span>);
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);
 
-    <span class="kd">function</span> <span class="nx">render</span> <span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">_authorId</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="nx">isLib</span><span class="o">:</span> <span class="kc">null</span> <span class="p">};</span>
-      <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Only list flagged scripts for author and user >= moderator</p></div></div><div class="code"><div class="wrapper">      <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">isYou</span> <span class="o">||</span> <span class="p">(</span><span class="nx">thisUser</span> <span class="o">&amp;&amp;</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">query</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-      <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>list the user's scripts</p></div></div><div class="code"><div class="wrapper">      <span class="nx">scriptsList</span><span class="p">.</span><span class="nx">listScripts</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="s1">&#39;/users/&#39;</span> <span class="o">+</span> <span class="nx">username</span><span class="p">,</span>
-        <span class="kd">function</span> <span class="p">(</span><span class="nx">scriptsList</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">about</span> <span class="o">=</span> <span class="nx">renderMd</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">about</span><span class="p">);</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">scriptsList</span> <span class="o">=</span> <span class="nx">scriptsList</span><span class="p">;</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">username</span> <span class="o">=</span> <span class="nx">thisUser</span> <span class="o">?</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-          <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-      <span class="p">});</span>
-    <span class="p">}</span>
+<span class="hljs-keyword">var</span> Comment = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/comment'</span>).Comment;
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
+<span class="hljs-keyword">var</span> Strategy = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/strategy'</span>).Strategy;
+<span class="hljs-keyword">var</span> User = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/user'</span>).User;
+<span class="hljs-keyword">var</span> Discussion = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/discussion'</span>).Discussion;
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">thisUser</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">isYou</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">render</span><span class="p">();</span>
-    <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Display the flag user UI</p></div></div><div class="code"><div class="wrapper">    <span class="nx">flagLib</span><span class="p">.</span><span class="nx">flaggable</span><span class="p">(</span><span class="nx">User</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">thisUser</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">canFlag</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">flagUrl</span> <span class="o">=</span> <span class="s1">&#39;/flag/users/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> categories = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../controllers/discussion'</span>).categories;
 
-      <span class="k">if</span> <span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">flagUrl</span> <span class="o">+=</span> <span class="s1">&#39;/unflag&#39;</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">flaggable</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">flaggable</span> <span class="o">=</span> <span class="nx">canFlag</span><span class="p">;</span>
-      <span class="p">}</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">flagUrl</span> <span class="o">=</span> <span class="nx">flagUrl</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> userRoles = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/userRoles.json'</span>);
+<span class="hljs-keyword">var</span> scriptStorage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./scriptStorage'</span>);
+<span class="hljs-keyword">var</span> RepoManager = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/repoManager'</span>);
+<span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);
+<span class="hljs-keyword">var</span> modelQuery = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelQuery'</span>);
+<span class="hljs-keyword">var</span> flagLib = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/flag'</span>);
+<span class="hljs-keyword">var</span> removeLib = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/remove'</span>);
+<span class="hljs-keyword">var</span> stats = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/stats'</span>);
+<span class="hljs-keyword">var</span> strategies = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./strategies.json'</span>);
+<span class="hljs-keyword">var</span> renderMd = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/markdown'</span>).renderMd;
+<span class="hljs-keyword">var</span> helpers = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/helpers'</span>);
+<span class="hljs-keyword">var</span> nil = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/helpers'</span>).nil;
+<span class="hljs-keyword">var</span> getDefaultPagination = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).getDefaultPagination;
+<span class="hljs-keyword">var</span> statusCodePage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).statusCodePage;
+<span class="hljs-keyword">var</span> execQueryTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).execQueryTask;
+<span class="hljs-keyword">var</span> countTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).countTask;
+<span class="hljs-keyword">var</span> settings = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/settings.json'</span>);
+<span class="hljs-keyword">var</span> github = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./../libs/githubClient'</span>);
+<span class="hljs-keyword">var</span> pageMetadata = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).pageMetadata;
+<span class="hljs-keyword">var</span> orderDir = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).orderDir;
+<span class="hljs-keyword">var</span> removeReasons = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../views/includes/userModals.json'</span>).removeReasons;
 
-      <span class="nx">removeLib</span><span class="p">.</span><span class="nx">removeable</span><span class="p">(</span><span class="nx">User</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">thisUser</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">canRemove</span><span class="p">,</span> <span class="nx">author</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">moderation</span> <span class="o">=</span> <span class="nx">canRemove</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">flags</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">removeUrl</span> <span class="o">=</span> <span class="s1">&#39;/remove/users/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">caseInsensitive</span> <span class="hljs-params">(aStr)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">'^'</span> + (aStr || <span class="hljs-string">''</span>).replace(<span class="hljs-regexp">/([.?*+^$[\]\\(){}|-])/g</span>, <span class="hljs-string">"\\$1"</span>)
+    + <span class="hljs-string">'$'</span>, <span class="hljs-string">'i'</span>);
+}
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">canRemove</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">render</span><span class="p">();</span> <span class="p">}</span>
+<span class="hljs-keyword">var</span> setupUserModerationUITask = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aOptions)</span> </span>{
+  <span class="hljs-keyword">var</span> user = aOptions.user;
+  <span class="hljs-keyword">var</span> authedUser = aOptions.authedUser;
 
-        <span class="nx">flagLib</span><span class="p">.</span><span class="nx">getThreshold</span><span class="p">(</span><span class="nx">User</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">threshold</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">threshold</span> <span class="o">=</span> <span class="nx">threshold</span><span class="p">;</span>
-          <span class="nx">render</span><span class="p">();</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let a user edit their account</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">edit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">userStrats</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">strategies</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Edit Yourself&#39;</span><span class="p">,</span>
-    <span class="nx">name</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-    <span class="nx">about</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">about</span><span class="p">,</span>
-    <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span>
-  <span class="p">};</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    <span class="hljs-keyword">var</span> flagUrl = <span class="hljs-string">'/flag/users/'</span> + user.name;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Can&#39;t flag when not logged in or when is authedUser.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!authedUser || aOptions.isYou) {
+      aCallback();
+      <span class="hljs-keyword">return</span>;
+    }
+    flagLib.flaggable(User, user, authedUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCanFlag, aAuthor, aFlag)</span> </span>{
+      <span class="hljs-keyword">if</span> (aFlag) {
+        flagUrl += <span class="hljs-string">'/unflag'</span>;
+        aOptions.flagged = <span class="hljs-literal">true</span>;
+        aOptions.canFlag = <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> {
+        aOptions.canFlag = aCanFlag;
+      }
+      aOptions.flagUrl = flagUrl;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span> <span class="p">}</span>
+      removeLib.removeable(User, user, authedUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCanRemove, aAuthor)</span> </span>{
+        aOptions.canRemove = aCanRemove;
+        aOptions.flags = user.flags || <span class="hljs-number">0</span>;
 
-  <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;author&#39;</span><span class="p">);</span>
+        <span class="hljs-keyword">if</span> (!aCanRemove) { <span class="hljs-keyword">return</span> aCallback(); }
 
-  <span class="nx">Strategy</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strats</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">defaultStrategy</span> <span class="o">=</span> <span class="nx">userStrats</span><span class="p">[</span><span class="nx">userStrats</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
-    <span class="kd">var</span> <span class="nx">strategy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">openStrategies</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">usedStrategies</span> <span class="o">=</span> <span class="p">[];</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the strategies we have OAuth keys for</p></div></div><div class="code"><div class="wrapper">    <span class="nx">strats</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">strat</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">strat</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">defaultStrategy</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span>
+        flagLib.getThreshold(User, user, aAuthor, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aThreshold)</span> </span>{
+          aOptions.threshold = aThreshold;
+          aCallback();
+        });
+      });
+    });
+  };
+};
 
-      <span class="k">if</span> <span class="p">(</span><span class="nx">userStrats</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">usedStrategies</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-          <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">display</span> <span class="p">});</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">openStrategies</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-          <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">display</span> <span class="p">});</span>
-      <span class="p">}</span>
-    <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get OpenId strategies</p></div></div><div class="code"><div class="wrapper">    <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s1">&#39;production&#39;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">strategies</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">strategy</span> <span class="o">=</span> <span class="nx">strategies</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+<span class="hljs-keyword">var</span> getUserSidePanelTasks = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aOptions)</span> </span>{
+  <span class="hljs-keyword">var</span> tasks = [];
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">strategy</span><span class="p">.</span><span class="nx">oauth</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="o">!==</span> <span class="nx">defaultStrategy</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">userStrats</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">usedStrategies</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-              <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">name</span> <span class="p">});</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">openStrategies</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-              <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">name</span> <span class="p">});</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Setup the flag user UI</p></div></div><div class="code"><div class="wrapper">  tasks.push(setupUserModerationUITask(aOptions));
 
-    <span class="nx">options</span><span class="p">.</span><span class="nx">defaultStrategy</span> <span class="o">=</span> <span class="nx">strategies</span><span class="p">[</span><span class="nx">defaultStrategy</span><span class="p">].</span><span class="nx">name</span><span class="p">;</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">haveOtherStrategies</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">usedStrategies</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="hljs-keyword">return</span> tasks;
+};
 
-    <span class="nx">scriptsList</span><span class="p">.</span><span class="nx">listScripts</span><span class="p">({</span> <span class="nx">_authorId</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="nx">isLib</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">flagged</span><span class="o">:</span> <span class="kc">null</span> <span class="p">},</span>
-      <span class="p">{</span> <span class="nx">size</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span> <span class="p">},</span> <span class="s1">&#39;/user/edit&#39;</span><span class="p">,</span>
-      <span class="kd">function</span> <span class="p">(</span><span class="nx">scriptsList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">scriptsList</span><span class="p">.</span><span class="nx">edit</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">scriptsList</span> <span class="o">=</span> <span class="nx">scriptsList</span><span class="p">;</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;userEdit&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Sloppy code to let a user add scripts to their acount</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">scripts</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">isLib</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">isLib</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">indexOfGH</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">ghUserId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">repoManager</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">loadingRepos</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">reponame</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">repo</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">repos</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">scriptname</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">loadable</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">userjsRegex</span> <span class="o">=</span> <span class="sr">/\.user\.js$/</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">jsRegex</span> <span class="o">=</span> <span class="sr">/\.js$/</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> getUserPageTasks = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aOptions)</span> </span>{
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Shortcuts</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> user = aOptions.user;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TODO: Organize this code</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="sr">/multipart\/form-data/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">]))</span> <span class="p">{</span>
-    <span class="nx">form</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">formidable</span><span class="p">.</span><span class="nx">IncomingForm</span><span class="p">();</span>
-    <span class="nx">form</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">fields</span><span class="p">,</span> <span class="nx">files</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">script</span> <span class="o">=</span> <span class="nx">files</span><span class="p">.</span><span class="nx">script</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">stream</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">bufs</span> <span class="o">=</span> <span class="p">[];</span>
-      <span class="kd">var</span> <span class="nx">failUrl</span> <span class="o">=</span> <span class="s1">&#39;/user/add/&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;lib&#39;</span> <span class="o">:</span> <span class="s1">&#39;scripts&#39;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reject non-js and huge files</p></div></div><div class="code"><div class="wrapper">      <span class="k">if</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">type</span> <span class="o">!==</span> <span class="s1">&#39;application/javascript&#39;</span> <span class="o">&amp;&amp;</span> 
-          <span class="nx">script</span><span class="p">.</span><span class="nx">size</span> <span class="o">&gt;</span> <span class="mi">500000</span><span class="p">)</span> <span class="p">{</span> 
-        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">failUrl</span><span class="p">);</span> 
-      <span class="p">}</span>
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>userScriptListCountQuery</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> userScriptListCountQuery = Script.find({ _authorId: user._id, flagged: { $ne: <span class="hljs-literal">true</span> } });
+  tasks.push(countTask(userScriptListCountQuery, aOptions, <span class="hljs-string">'scriptListCount'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>userCommentListCountQuery</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> userCommentListCountQuery = Comment.find({ _authorId: user._id, flagged: { $ne: <span class="hljs-literal">true</span> } });
+  tasks.push(countTask(userCommentListCountQuery, aOptions, <span class="hljs-string">'commentListCount'</span>));
 
-      <span class="nx">stream</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">createReadStream</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">path</span><span class="p">);</span>
-      <span class="nx">stream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="nx">bufs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span> <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pardon the depth</p></div></div><div class="code"><div class="wrapper">      <span class="nx">stream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">_id</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-          <span class="kd">var</span> <span class="nx">scriptName</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">script_name</span><span class="p">;</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">isLib</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">storeScript</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">scriptName</span><span class="p">,</span> <span class="nx">Buffer</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">bufs</span><span class="p">),</span>
-              <span class="kd">function</span><span class="p">(</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">failUrl</span><span class="p">);</span> <span class="p">}</span>
-                <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/libs/&#39;</span> <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span>
-                  <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">jsRegex</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">));</span>
-            <span class="p">});</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getMeta</span><span class="p">(</span><span class="nx">bufs</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">meta</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">storeScript</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">meta</span><span class="p">,</span> <span class="nx">Buffer</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">bufs</span><span class="p">),</span>
-                <span class="kd">function</span><span class="p">(</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">failUrl</span><span class="p">);</span> <span class="p">}</span>
-                  <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/scripts/&#39;</span> <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span>
-                    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">userjsRegex</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">));</span>
-              <span class="p">});</span>
-            <span class="p">});</span>
-          <span class="p">}</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-    <span class="p">});</span>
-    <span class="k">return</span><span class="p">;</span>
-  <span class="p">}</span>
+  <span class="hljs-keyword">return</span> tasks;
+};
 
-  <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Edit Scripts&#39;</span><span class="p">,</span> <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">isLib</span><span class="o">:</span> <span class="nx">isLib</span> <span class="p">};</span>
+<span class="hljs-keyword">var</span> setupUserSidePanel = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aOptions)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Shortcuts</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> user = aOptions.user;
+  <span class="hljs-keyword">var</span> authedUser = aOptions.authedUser;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aOptions.isYou) {
+    aOptions.userTools = {};
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Mod</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (authedUser &amp;&amp; authedUser.isMod &amp;&amp; (authedUser.role &lt; user.role || aOptions.isYou)) {
+    <span class="hljs-comment">//aOptions.userTools = {}; // TODO: Support moderator edits of user profiles?</span>
+    aOptions.modTools = {};
 
-  <span class="nx">indexOfGH</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">strategies</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;github&#39;</span><span class="p">);</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">indexOfGH</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">hasGH</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="hljs-keyword">if</span> (removeReasons) {
+      aOptions.modTools.hasRemoveReasons = <span class="hljs-literal">true</span>;
+      aOptions.modTools.removeReasons = [];
+      removeReasons.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReason)</span> </span>{
+        aOptions.modTools.removeReasons.push({ <span class="hljs-string">'name'</span> : aReason });
+      });
+    }
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Admin</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (authedUser &amp;&amp; authedUser.isAdmin &amp;&amp; (authedUser.role &lt; user.role || aOptions.isYou)) {
+    aOptions.adminTools = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Auth As This User</p></div></div><div class="code"><div class="wrapper">    aOptions.adminTools.authAsUserUrl = <span class="hljs-string">'/admin/authas?username='</span> + <span class="hljs-built_in">encodeURIComponent</span>(user.name);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>user.role
+Allow authedUser to raise target user role to the level below him.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> roles = _.map(userRoles, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRoleName, aIndex)</span> </span>{
+      <span class="hljs-keyword">return</span> {
+        id: aIndex,
+        name: aRoleName,
+        selected: aIndex === user.role
+      };
+    });
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">importScripts</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">loadingRepos</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">showRepos</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="nx">ghUserId</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">auths</span><span class="p">[</span><span class="nx">indexOfGH</span><span class="p">];</span>
+    <span class="hljs-keyword">if</span> (aOptions.isYou) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Only have your current role selectable.</p></div></div><div class="code"><div class="wrapper">      roles = [roles[authedUser.role]];
+    } <span class="hljs-keyword">else</span> {
+      roles = roles.splice(authedUser.role + <span class="hljs-number">1</span>);
+      roles.reverse();
+    }
 
-      <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">_id</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">repoManager</span> <span class="o">=</span> <span class="nx">RepoManager</span><span class="p">.</span><span class="nx">getManager</span><span class="p">(</span><span class="nx">ghUserId</span><span class="p">,</span> <span class="nx">user</span><span class="p">);</span>
+    aOptions.adminTools.availableRoles = roles;
+  }
+};
 
-        <span class="nx">repoManager</span><span class="p">.</span><span class="nx">fetchRepos</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>store the vaild repos in the session to prevent hijaking</p></div></div><div class="code"><div class="wrapper">          <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">repos</span> <span class="o">=</span> <span class="nx">repoManager</span><span class="p">.</span><span class="nx">repos</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>convert the repos object to something mustache can use</p></div></div><div class="code"><div class="wrapper">          <span class="nx">options</span><span class="p">.</span><span class="nx">repos</span> <span class="o">=</span> <span class="nx">repoManager</span><span class="p">.</span><span class="nx">makeRepoArray</span><span class="p">();</span>
-          <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;addScripts&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">loadScripts</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">repos</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">loadingRepos</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="nx">repos</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">repos</span><span class="p">;</span>
-      <span class="nx">loadable</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span>
+exports.userListPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-      <span class="k">for</span> <span class="p">(</span><span class="nx">reponame</span> <span class="k">in</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">repo</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">[</span><span class="nx">reponame</span><span class="p">];</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Load all scripts in the repo</p></div></div><div class="code"><div class="wrapper">        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">repo</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">reponame</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;_all&#39;</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">reponame</span> <span class="o">=</span> <span class="nx">repo</span><span class="p">;</span>
-          <span class="nx">repo</span> <span class="o">=</span> <span class="nx">repos</span><span class="p">[</span><span class="nx">reponame</span><span class="p">];</span>
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, <span class="hljs-string">'Users'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Order dir</p></div></div><div class="code"><div class="wrapper">  orderDir(aReq, options, <span class="hljs-string">'name'</span>, <span class="hljs-string">'desc'</span>);
+  orderDir(aReq, options, <span class="hljs-string">'role'</span>, <span class="hljs-string">'asc'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>userListQuery</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> userListQuery = User.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>userListQuery: Defaults</p></div></div><div class="code"><div class="wrapper">  modelQuery.applyUserListQueryDefaults(userListQuery, options, aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>userListQuery: Pagination</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> pagination = options.pagination; <span class="hljs-comment">// is set in modelQuery.apply___ListQueryDefaults</span>
 
-          <span class="k">if</span> <span class="p">(</span><span class="nx">repo</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">scriptname</span> <span class="k">in</span> <span class="nx">repo</span><span class="p">)</span> <span class="p">{</span>
-              <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loadable</span><span class="p">[</span><span class="nx">reponame</span><span class="p">])</span> <span class="p">{</span> <span class="nx">loadable</span><span class="p">[</span><span class="nx">reponame</span><span class="p">]</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span> <span class="p">}</span>
-              <span class="nx">loadable</span><span class="p">[</span><span class="nx">reponame</span><span class="p">][</span><span class="nx">scriptname</span><span class="p">]</span> <span class="o">=</span> <span class="nx">repo</span><span class="p">[</span><span class="nx">scriptname</span><span class="p">];</span>
-            <span class="p">}</span>
-          <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">repo</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// load individual scripts</span>
-          <span class="k">for</span> <span class="p">(</span><span class="nx">scriptname</span> <span class="k">in</span> <span class="nx">repo</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">repos</span><span class="p">[</span><span class="nx">reponame</span><span class="p">][</span><span class="nx">scriptname</span><span class="p">])</span> <span class="p">{</span>
-              <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loadable</span><span class="p">[</span><span class="nx">reponame</span><span class="p">])</span> <span class="p">{</span> <span class="nx">loadable</span><span class="p">[</span><span class="nx">reponame</span><span class="p">]</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span> <span class="p">}</span>
-              <span class="nx">loadable</span><span class="p">[</span><span class="nx">reponame</span><span class="p">][</span><span class="nx">scriptname</span><span class="p">]</span> <span class="o">=</span> <span class="nx">repos</span><span class="p">[</span><span class="nx">reponame</span><span class="p">][</span><span class="nx">scriptname</span><span class="p">];</span>
-            <span class="p">}</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">  tasks.push(pagination.getCountTask(userListQuery));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>userListQuery</p></div></div><div class="code"><div class="wrapper">  tasks.push(execQueryTask(userListQuery, options, <span class="hljs-string">'userList'</span>));
 
-      <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">_id</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Load the scripts onto the site</p></div></div><div class="code"><div class="wrapper">        <span class="nx">RepoManager</span><span class="p">.</span><span class="nx">getManager</span><span class="p">(</span><span class="nx">ghUserId</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">loadable</span><span class="p">).</span><span class="nx">loadScripts</span><span class="p">(</span>
-          <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">delete</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">repos</span><span class="p">;</span>
-            <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/users/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
+  <span class="hljs-comment">//---</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>userList</p></div></div><div class="code"><div class="wrapper">    options.userList = _.map(options.userList, modelParser.parseUser);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">    options.paginationRendered = pagination.renderDefault(aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Empty list</p></div></div><div class="code"><div class="wrapper">    options.userListIsEmptyMessage = <span class="hljs-string">'No users.'</span>;
+    <span class="hljs-keyword">if</span> (options.isFlagged) {
+      options.userListIsEmptyMessage = <span class="hljs-string">'No flagged users.'</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.searchBarValue) {
+      options.userListIsEmptyMessage = <span class="hljs-string">'We couldn\'t find any users by this name.'</span>;
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Heading</p></div></div><div class="code"><div class="wrapper">    options.pageHeading = options.isFlagged ? <span class="hljs-string">'Flagged Users'</span> : <span class="hljs-string">'Users'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (options.isFlagged) {
+      pageMetadata(options, [<span class="hljs-string">'Flagged Users'</span>, <span class="hljs-string">'Moderation'</span>]);
+    }
+  }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/userListPage'</span>, options); }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">(err)</span> </span>{ <span class="hljs-keyword">if</span> (err) { <span class="hljs-keyword">return</span> aNext(); } <span class="hljs-keyword">else</span> { preRender(); render(); } }
+  async.parallel(tasks, asyncComplete);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View information and scripts of a user</p></div></div><div class="code"><div class="wrapper">exports.view = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loadingRepos</span><span class="p">)</span> <span class="p">{</span> <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;addScripts&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span> <span class="p">}</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>post route to update a user's account</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">scriptUrls</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">urls</span> <span class="o">?</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">urls</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installRegex</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installNames</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span> <span class="p">}</span>
+  <span class="hljs-keyword">var</span> username = aReq.params.username;
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">about</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update the about section of a user's profile</p></div></div><div class="code"><div class="wrapper">    <span class="nx">User</span><span class="p">.</span><span class="nx">findOneAndUpdate</span><span class="p">({</span> <span class="nx">_id</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> 
-      <span class="p">{</span> <span class="nx">about</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">about</span>  <span class="p">},</span>
-      <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span> <span class="p">}</span>
+  User.findOne({
+    name: caseInsensitive(username)
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUserData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aUserData) { <span class="hljs-keyword">return</span> aNext(); }
 
-        <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">about</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">about</span><span class="p">;</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/users/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove scripts (currently no UI)</p></div></div><div class="code"><div class="wrapper">    <span class="nx">installRegex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^\/install\/(&#39;</span> <span class="o">+</span> <span class="nx">username</span> <span class="o">+</span> <span class="s1">&#39;\/.+)$&#39;</span><span class="p">);</span>
-    <span class="nx">scriptUrls</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">matches</span> <span class="o">=</span> <span class="nx">installRegex</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">matches</span> <span class="o">&amp;&amp;</span> <span class="nx">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span> <span class="nx">installNames</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="p">}</span>
-    <span class="p">});</span>
-    <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">installNames</span><span class="p">,</span> <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">deleteScript</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-      <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/users/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Submit a script through the web editor</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">newScript</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">isLib</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">isLib</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">source</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> user = options.user = modelParser.parseUser(aUserData);
+    user.aboutRendered = renderMd(user.about);
+    options.isYou = authedUser &amp;&amp; user &amp;&amp; authedUser._id == user._id;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(options, [user.name, <span class="hljs-string">'Users'</span>]);
+    options.isUserPage = <span class="hljs-literal">true</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserSidePanel</p></div></div><div class="code"><div class="wrapper">    setupUserSidePanel(options);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> scriptListQuery = Script.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery: author=user</p></div></div><div class="code"><div class="wrapper">    scriptListQuery.find({ _authorId: user._id });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery: Defaults</p></div></div><div class="code"><div class="wrapper">    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span> <span class="p">}</span>
+    <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserPage tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(getUserPageTasks(options));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserSidePanel tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(getUserSidePanelTasks(options));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Stats tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(stats.getSummaryTasks(options));
 
-  <span class="kd">function</span> <span class="nx">storeScript</span><span class="p">(</span><span class="nx">meta</span><span class="p">,</span> <span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">userjsRegex</span> <span class="o">=</span> <span class="sr">/\.user\.js$/</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">jsRegex</span> <span class="o">=</span> <span class="sr">/\.js$/</span><span class="p">;</span>
+    <span class="hljs-comment">//---</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{ }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/userPage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};
 
-    <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">_id</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">storeScript</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">meta</span><span class="p">,</span> <span class="nx">source</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">redirectUrl</span> <span class="o">=</span> <span class="nx">script</span> <span class="o">?</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/&#39;</span>
-          <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">jsRegex</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;/scripts/&#39;</span>
-          <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">userjsRegex</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+exports.userCommentListPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span> <span class="o">||</span> <span class="o">!</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">original</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">redirectUrl</span><span class="p">);</span>
-        <span class="p">}</span>
+  <span class="hljs-keyword">var</span> username = aReq.params.username;
 
-        <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">original</span> <span class="p">},</span> 
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">origScript</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">fork</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">origScript</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">redirectUrl</span><span class="p">);</span> <span class="p">}</span>
+  User.findOne({
+    name: caseInsensitive(username)
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUserData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aUserData) { <span class="hljs-keyword">return</span> aNext(); }
 
-            <span class="nx">fork</span> <span class="o">=</span> <span class="nx">origScript</span><span class="p">.</span><span class="nx">fork</span> <span class="o">||</span> <span class="p">[];</span>
-            <span class="nx">fork</span><span class="p">.</span><span class="nx">unshift</span><span class="p">({</span> <span class="nx">author</span><span class="o">:</span> <span class="nx">origScript</span><span class="p">.</span><span class="nx">author</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="nx">origScript</span>
-              <span class="p">.</span><span class="nx">installName</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">origScript</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="nx">jsRegex</span> <span class="o">:</span> <span class="nx">userjsRegex</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-            <span class="p">});</span>
-            <span class="nx">script</span><span class="p">.</span><span class="nx">fork</span> <span class="o">=</span> <span class="nx">fork</span><span class="p">;</span>
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> user = options.user = modelParser.parseUser(aUserData);
+    options.isYou = authedUser &amp;&amp; user &amp;&amp; authedUser._id == user._id;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(options, [user.name, <span class="hljs-string">'Users'</span>]);
+    options.isUserCommentListPage = <span class="hljs-literal">true</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> commentListQuery = Comment.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery: author=user</p></div></div><div class="code"><div class="wrapper">    commentListQuery.find({ _authorId: user._id });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery: Defaults</p></div></div><div class="code"><div class="wrapper">    modelQuery.applyCommentListQueryDefaults(commentListQuery, options, aReq);
+    commentListQuery.sort(<span class="hljs-string">'-created'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery: Pagination</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> pagination = options.pagination; <span class="hljs-comment">// is set in modelQuery.apply___ListQueryDefaults</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery: Populate: discussion</p></div></div><div class="code"><div class="wrapper">    commentListQuery.populate({
+      path: <span class="hljs-string">'_discussionId'</span>,
+      model: <span class="hljs-string">'Discussion'</span>
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>SearchBar</p></div></div><div class="code"><div class="wrapper">    options.searchBarPlaceholder = <span class="hljs-string">'Search Comments from '</span> + user.name;
+    options.searchBarFormAction = <span class="hljs-string">''</span>;
 
-            <span class="nx">script</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">redirectUrl</span><span class="p">);</span>
-            <span class="p">});</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
+    <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">    tasks.push(pagination.getCountTask(commentListQuery));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery</p></div></div><div class="code"><div class="wrapper">    tasks.push(execQueryTask(commentListQuery, options, <span class="hljs-string">'commentList'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserPage tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(getUserPageTasks(options));
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">source</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">source</span><span class="p">);</span>
-    <span class="nx">url</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+    <span class="hljs-comment">//--</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentList</p></div></div><div class="code"><div class="wrapper">      options.commentList = _.map(options.commentList, modelParser.parseComment);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>comment.author</p></div></div><div class="code"><div class="wrapper">      _.map(options.commentList, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aComment)</span> </span>{
+        aComment.author = modelParser.parseUser(aComment._authorId);
+      });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>comment.content render</p></div></div><div class="code"><div class="wrapper">      _.map(options.commentList, modelParser.renderComment);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>comment.discussion &amp; comment.category &amp; comment.script</p></div></div><div class="code"><div class="wrapper">      _.map(options.commentList, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aComment)</span> </span>{
+        aComment.discussion = modelParser.parseDiscussion(aComment._discussionId);
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">isLib</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">storeScript</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">script_name</span><span class="p">,</span> <span class="nx">source</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getMeta</span><span class="p">([</span><span class="nx">source</span><span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">meta</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">meta</span> <span class="o">||</span> <span class="o">!</span><span class="nx">meta</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span> <span class="p">}</span>
-        <span class="nx">storeScript</span><span class="p">(</span><span class="nx">meta</span><span class="p">,</span> <span class="nx">source</span><span class="p">);</span>
-      <span class="p">});</span>
-    <span class="p">}</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;scriptEditor&#39;</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Write a new &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;library &#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;script&#39;</span><span class="p">,</span>
-      <span class="nx">source</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-      <span class="nx">url</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span>
-      <span class="nx">owner</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-      <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-      <span class="nx">isLib</span><span class="o">:</span> <span class="nx">isLib</span><span class="p">,</span>
-      <span class="nx">newScript</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-      <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show a script in the web editor</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">editScript</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">isLib</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">isLib</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="hljs-keyword">var</span> category = _.findWhere(categories, { slug: aComment.discussion.category });
+        <span class="hljs-keyword">if</span> (!category) {
+          category = modelParser.parseCategoryUnknown(aComment.discussion.category);
+        }
+        aComment.category = modelParser.parseCategory(category);
 
-  <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">scriptname</span> <span class="o">+=</span> <span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">;</span>
-  <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getSource</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">stream</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">bufs</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="kd">var</span> <span class="nx">collaborators</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="hljs-keyword">if</span> (aComment.discussion.issue) {
+          aComment.script = {
+            scriptPageUrl: aComment.category.categoryPageUrl.replace(<span class="hljs-string">'/issues'</span>, <span class="hljs-string">''</span>),
+            name: category.name
+          };
+          category.name = <span class="hljs-string">'Issues'</span>;
+        } <span class="hljs-keyword">else</span> {
+          aComment.script = {
+            scriptPageUrl: <span class="hljs-string">'/forum'</span>,
+            name: <span class="hljs-string">'Forum'</span>
+          };
+        }
+      });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">      options.paginationRendered = pagination.renderDefault(aReq);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/userCommentListPage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+exports.userScriptListPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">collaborators</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">);</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">collaborators</span> <span class="o">=</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
+  <span class="hljs-keyword">var</span> username = aReq.params.username;
 
-    <span class="nx">stream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="nx">bufs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span> <span class="p">});</span>
-    <span class="nx">stream</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-      <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;scriptEditor&#39;</span><span class="p">,</span> <span class="p">{</span>
-        <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Edit &#39;</span> <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-        <span class="nx">source</span><span class="o">:</span> <span class="nx">Buffer</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">bufs</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">),</span>
-        <span class="nx">original</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">,</span>
-        <span class="nx">url</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span>
-        <span class="nx">owner</span><span class="o">:</span> <span class="nx">user</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">_authorId</span> <span class="o">==</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> 
-          <span class="o">||</span> <span class="nx">collaborators</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-        <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-        <span class="nx">isLib</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span><span class="p">,</span>
-        <span class="nx">scriptName</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-        <span class="nx">readOnly</span><span class="o">:</span> <span class="o">!</span><span class="nx">user</span>
-      <span class="p">});</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>route to flag a user</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">flag</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">unflag</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">unflag</span><span class="p">;</span>
+  User.findOne({
+    name: caseInsensitive(username)
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUserData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aUserData) { <span class="hljs-keyword">return</span> aNext(); }
 
-  <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">username</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">flagLib</span><span class="p">[</span><span class="nx">unflag</span> <span class="o">&amp;&amp;</span> <span class="nx">unflag</span> <span class="o">===</span> <span class="s1">&#39;unflag&#39;</span> <span class="o">?</span> <span class="s1">&#39;unflag&#39;</span> <span class="o">:</span> <span class="s1">&#39;flag&#39;</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> user = options.user = modelParser.parseUser(aUserData);
+    options.isYou = authedUser &amp;&amp; user &amp;&amp; authedUser._id == user._id;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(options, [user.name, <span class="hljs-string">'Users'</span>]);
+    options.isUserScriptListPage = <span class="hljs-literal">true</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Order dir</p></div></div><div class="code"><div class="wrapper">    orderDir(aReq, options, <span class="hljs-string">'name'</span>, <span class="hljs-string">'asc'</span>);
+    orderDir(aReq, options, <span class="hljs-string">'install'</span>, <span class="hljs-string">'desc'</span>);
+    orderDir(aReq, options, <span class="hljs-string">'rating'</span>, <span class="hljs-string">'desc'</span>);
+    orderDir(aReq, options, <span class="hljs-string">'updated'</span>, <span class="hljs-string">'desc'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> scriptListQuery = Script.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery: author=user</p></div></div><div class="code"><div class="wrapper">    scriptListQuery.find({ _authorId: user._id });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery: Defaults</p></div></div><div class="code"><div class="wrapper">    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery: Pagination</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> pagination = options.pagination; <span class="hljs-comment">// is set in modelQuery.apply___ListQueryDefaults</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>SearchBar</p></div></div><div class="code"><div class="wrapper">    options.searchBarPlaceholder = <span class="hljs-string">'Search Scripts from '</span> + user.name;
+    options.searchBarFormAction = <span class="hljs-string">''</span>;
 
-    <span class="nx">fn</span><span class="p">(</span><span class="nx">User</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">flagged</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/users/&#39;</span> <span class="o">+</span> <span class="nx">username</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div></div></body></html>
+    <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">    tasks.push(pagination.getCountTask(scriptListQuery));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery</p></div></div><div class="code"><div class="wrapper">    tasks.push(execQueryTask(scriptListQuery, options, <span class="hljs-string">'scriptList'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserPage tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(getUserPageTasks(options));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Stats tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(stats.getSummaryTasks(options));
+
+    <span class="hljs-comment">//---</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptList</p></div></div><div class="code"><div class="wrapper">      options.scriptList = _.map(options.scriptList, modelParser.parseScript);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">      options.paginationRendered = pagination.renderDefault(aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Empty list</p></div></div><div class="code"><div class="wrapper">      options.scriptListIsEmptyMessage = <span class="hljs-string">'No scripts.'</span>;
+      <span class="hljs-keyword">if</span> (options.isFlagged) {
+        <span class="hljs-keyword">if</span> (options.librariesOnly) {
+          options.scriptListIsEmptyMessage = <span class="hljs-string">'No flagged libraries.'</span>;
+        } <span class="hljs-keyword">else</span> {
+          options.scriptListIsEmptyMessage = <span class="hljs-string">'No flagged scripts.'</span>;
+        }
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.searchBarValue) {
+        <span class="hljs-keyword">if</span> (options.librariesOnly) {
+          options.scriptListIsEmptyMessage = <span class="hljs-string">'We couldn\'t find any libraries with this search value.'</span>;
+        } <span class="hljs-keyword">else</span> {
+          options.scriptListIsEmptyMessage = <span class="hljs-string">'We couldn\'t find any scripts with this search value.'</span>;
+        }
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.isUserScriptListPage) {
+        options.scriptListIsEmptyMessage = <span class="hljs-string">'This user hasn\'t added any scripts yet.'</span>;
+      }
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/userScriptListPage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};
+
+exports.userEditProfilePage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  User.findOne({
+    _id: authedUser._id
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUserData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aUserData) { <span class="hljs-keyword">return</span> aNext(); }
+
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> user = options.user = modelParser.parseUser(aUserData);
+    options.isYou = authedUser &amp;&amp; user &amp;&amp; authedUser._id == user._id;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(options, [user.name, <span class="hljs-string">'Users'</span>]);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserSidePanel</p></div></div><div class="code"><div class="wrapper">    setupUserSidePanel(options);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> scriptListQuery = Script.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query: author=user</p></div></div><div class="code"><div class="wrapper">    scriptListQuery.find({ _authorId: user._id });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query: flagged
+Only list flagged scripts for author and user &gt;= moderator</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (options.isYou || options.isMod) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show</p></div></div><div class="code"><div class="wrapper">    } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script.flagged is undefined by default.</p></div></div><div class="code"><div class="wrapper">      scriptListQuery.find({ flagged: { $ne: <span class="hljs-literal">true</span> } });
+    }
+
+    <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserPage tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(getUserPageTasks(options));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserSidePanel tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(getUserSidePanelTasks(options));
+
+    <span class="hljs-comment">//---</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{ }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/userEditProfilePage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};
+
+exports.userEditPreferencesPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  User.findOne({
+    _id: authedUser._id
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUserData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aUserData) { <span class="hljs-keyword">return</span> aNext(); }
+
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> user = options.user = modelParser.parseUser(aUserData);
+    options.isYou = authedUser &amp;&amp; user &amp;&amp; authedUser._id == user._id;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(options, [user.name, <span class="hljs-string">'Users'</span>]);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserSidePanel</p></div></div><div class="code"><div class="wrapper">    setupUserSidePanel(options);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> scriptListQuery = Script.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query: author=user</p></div></div><div class="code"><div class="wrapper">    scriptListQuery.find({ _authorId: user._id });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query: flagged
+Only list flagged scripts for author and user &gt;= moderator</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (options.isYou || options.isMod) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show</p></div></div><div class="code"><div class="wrapper">    } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script.flagged is undefined by default.</p></div></div><div class="code"><div class="wrapper">      scriptListQuery.find({ flagged: { $ne: <span class="hljs-literal">true</span> } });
+    }
+
+    <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User edit auth strategies</p></div></div><div class="code"><div class="wrapper">    tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      <span class="hljs-keyword">var</span> userStrats = user.strategies.slice(<span class="hljs-number">0</span>);
+      Strategy.find({}, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStrats)</span> </span>{
+        <span class="hljs-keyword">var</span> defaultStrategy = userStrats[userStrats.length - <span class="hljs-number">1</span>];
+        <span class="hljs-keyword">var</span> strategy = <span class="hljs-literal">null</span>;
+        <span class="hljs-keyword">var</span> name = <span class="hljs-literal">null</span>;
+        options.openStrategies = [];
+        options.usedStrategies = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the strategies we have OAuth keys for</p></div></div><div class="code"><div class="wrapper">        aStrats.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStrat)</span> </span>{
+          <span class="hljs-keyword">if</span> (aStrat.name === defaultStrategy) { <span class="hljs-keyword">return</span>; }
+
+          <span class="hljs-keyword">if</span> (userStrats.indexOf(aStrat.name) &gt; -<span class="hljs-number">1</span>) {
+            options.usedStrategies.push({
+              <span class="hljs-string">'strat'</span>: aStrat.name,
+              <span class="hljs-string">'display'</span>: aStrat.display
+            });
+          } <span class="hljs-keyword">else</span> {
+            options.openStrategies.push({
+              <span class="hljs-string">'strat'</span>: aStrat.name,
+              <span class="hljs-string">'display'</span>: aStrat.display
+            });
+          }
+        });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get OpenId strategies</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">if</span> (isPro) {
+          <span class="hljs-keyword">for</span> (name <span class="hljs-keyword">in</span> strategies) {
+            strategy = strategies[name];
+
+            <span class="hljs-keyword">if</span> (!strategy.oauth &amp;&amp; name !== defaultStrategy) {
+              <span class="hljs-keyword">if</span> (userStrats.indexOf(name) &gt; -<span class="hljs-number">1</span>) {
+                options.usedStrategies.push({
+                  <span class="hljs-string">'strat'</span>: name,
+                  <span class="hljs-string">'display'</span>: strategy.name
+                });
+              } <span class="hljs-keyword">else</span> {
+                options.openStrategies.push({
+                  <span class="hljs-string">'strat'</span>: name,
+                  <span class="hljs-string">'display'</span>: strategy.name
+                });
+              }
+            }
+          }
+        }
+
+        options.defaultStrategy = strategies[defaultStrategy].name;
+        options.haveOtherStrategies = options.usedStrategies.length &gt; <span class="hljs-number">0</span>;
+
+        aCallback();
+      });
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserPage tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(getUserPageTasks(options));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UserSidePanel tasks</p></div></div><div class="code"><div class="wrapper">    tasks = tasks.concat(getUserSidePanelTasks(options));
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{ }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/userEditPreferencesPage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let a user edit their account</p></div></div><div class="code"><div class="wrapper">exports.edit = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+  <span class="hljs-keyword">var</span> userStrats = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> options = <span class="hljs-literal">null</span>;
+
+  <span class="hljs-keyword">if</span> (!authedUser) { <span class="hljs-keyword">return</span> aRes.redirect(<span class="hljs-string">'/login'</span>); }
+
+  userStrats = authedUser.strategies.slice(<span class="hljs-number">0</span>);
+  options = {
+    name: authedUser.name,
+    about: authedUser.about,
+    username: authedUser.name
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, [<span class="hljs-string">'Edit Yourself'</span>, <span class="hljs-string">'Users'</span>]);
+
+  aReq.params.push(<span class="hljs-string">'author'</span>);
+
+  Strategy.find({}, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStrats)</span> </span>{
+    <span class="hljs-keyword">var</span> defaultStrategy = userStrats[userStrats.length - <span class="hljs-number">1</span>];
+    <span class="hljs-keyword">var</span> strategy = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">var</span> name = <span class="hljs-literal">null</span>;
+    options.openStrategies = [];
+    options.usedStrategies = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the strategies we have OAuth keys for</p></div></div><div class="code"><div class="wrapper">    aStrats.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStrat)</span> </span>{
+      <span class="hljs-keyword">if</span> (aStrat.name === defaultStrategy) { <span class="hljs-keyword">return</span>; }
+
+      <span class="hljs-keyword">if</span> (userStrats.indexOf(aStrat.name) &gt; -<span class="hljs-number">1</span>) {
+        options.usedStrategies.push({
+          <span class="hljs-string">'strat'</span>: aStrat.name,
+          <span class="hljs-string">'display'</span>: aStrat.display
+        });
+      } <span class="hljs-keyword">else</span> {
+        options.openStrategies.push({
+          <span class="hljs-string">'strat'</span>: aStrat.name,
+          <span class="hljs-string">'display'</span>: aStrat.display
+        });
+      }
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get OpenId strategies</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (isPro) {
+      <span class="hljs-keyword">for</span> (name <span class="hljs-keyword">in</span> strategies) {
+        strategy = strategies[name];
+
+        <span class="hljs-keyword">if</span> (!strategy.oauth &amp;&amp; name !== defaultStrategy) {
+          <span class="hljs-keyword">if</span> (userStrats.indexOf(name) &gt; -<span class="hljs-number">1</span>) {
+            options.usedStrategies.push({
+              <span class="hljs-string">'strat'</span>: name,
+              <span class="hljs-string">'display'</span>: strategy.name
+            });
+          } <span class="hljs-keyword">else</span> {
+            options.openStrategies.push({
+              <span class="hljs-string">'strat'</span>: name,
+              <span class="hljs-string">'display'</span>: strategy.name
+            });
+          }
+        }
+      }
+    }
+
+    options.defaultStrategy = strategies[defaultStrategy].name;
+    options.haveOtherStrategies = options.usedStrategies.length &gt; <span class="hljs-number">0</span>;
+
+    scriptsList.listScripts({ _authorId: authedUser._id, isLib: <span class="hljs-literal">null</span>, flagged: <span class="hljs-literal">null</span> }, <span class="hljs-comment">// TODO: Global detected... may need renaming</span>
+      { size: -<span class="hljs-number">1</span> }, <span class="hljs-string">'/user/edit'</span>,
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScriptsList)</span> </span>{
+        aScriptsList.edit = <span class="hljs-literal">true</span>;
+        options.scriptsList = aScriptsList;
+        aRes.render(<span class="hljs-string">'userEdit'</span>, options);
+      });
+  });
+};
+
+exports.newScriptPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  options.newUserJS = <span class="hljs-literal">true</span>;
+  options.newScriptEditorPageUrl = <span class="hljs-string">'/user/add/scripts/new'</span>;
+  options.uploadNewScriptPageUrl = <span class="hljs-string">'/user/add/scripts/upload'</span>;
+  options.maximumUploadScriptSize = settings.maximum_upload_script_size;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, <span class="hljs-string">'New Script'</span>);
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aNext();
+
+    aRes.render(<span class="hljs-string">'pages/newScriptPage'</span>, options);
+  });
+};
+
+exports.newLibraryPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  options.newJSLibrary = <span class="hljs-literal">true</span>;
+  options.newScriptEditorPageUrl = <span class="hljs-string">'/user/add/lib/new'</span>;
+  options.uploadNewScriptPageUrl = <span class="hljs-string">'/user/add/lib/upload'</span>;
+  options.maximumUploadScriptSize = settings.maximum_upload_script_size;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, <span class="hljs-string">'New Library'</span>);
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aNext();
+
+    aRes.render(<span class="hljs-string">'pages/newScriptPage'</span>, options);
+  });
+};
+
+exports.userGitHubRepoListPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>GitHub</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> githubUserId = options.githubUserId = aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, [<span class="hljs-string">'Repositories'</span>, <span class="hljs-string">'GitHub'</span>]);
+
+  <span class="hljs-keyword">var</span> pagination = getDefaultPagination(aReq);
+  pagination.itemsPerPage = <span class="hljs-number">30</span>; <span class="hljs-comment">// GitHub Default</span>
+
+  <span class="hljs-comment">//--- Tasks</span>
+  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    async.waterfall([</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>githubUser</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+        github.user.getFrom({
+          user: <span class="hljs-built_in">encodeURIComponent</span>(githubUserId),
+        }, aCallback);
+      },
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGithubUser, aCallback)</span> </span>{
+        options.githubUser = aGithubUser;
+        options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
+          user: aGithubUser.login
+        });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">        pagination.numItems = aGithubUser.public_repos;
+
+        aCallback(<span class="hljs-literal">null</span>);
+      },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>gihubRepos</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+        github.repos.getFromUser({
+          user: <span class="hljs-built_in">encodeURIComponent</span>(githubUserId),
+          page: pagination.currentPage,
+          per_page: pagination.itemsPerPage
+        }, aCallback);
+      },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>function (aGithubRepoList, aCallback) {
+  githubRepoList = _.where(aGithubRepoList, {language: &#39;JavaScript&#39;});
+  aCallback(null, githubRepoList);</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-comment">// ,</span>
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGithubRepoList, aCallback)</span> </span>{
+        _.each(aGithubRepoList, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGithubRepo)</span> </span>{
+          <span class="hljs-keyword">var</span> url = authedUser.userGitHubRepoPageUrl;
+          url = helpers.updateUrlQueryString(url, {
+            user: options.githubUser.login,
+            repo: aGithubRepo.name
+          });
+          aGithubRepo.userGitHubRepoPageUrl = url;
+        });
+        options.githubRepoList = aGithubRepoList;
+
+        aCallback(<span class="hljs-literal">null</span>);
+      },
+    ], aCallback);
+  });
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) {
+      <span class="hljs-built_in">console</span>.error(aErr);
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusCode: <span class="hljs-number">500</span>,
+        statusMessage: <span class="hljs-string">'Server Error'</span>
+      });
+    }
+
+    options.paginationRendered = pagination.renderDefault(aReq);
+
+    aRes.render(<span class="hljs-string">'pages/userGitHubRepoListPage'</span>, options);
+  });
+};
+
+exports.userGitHubImportScriptPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>GitHub</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> githubUserId = options.githubUserId = aReq.body.user || aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
+  <span class="hljs-keyword">var</span> githubRepoName = options.githubRepoName = aReq.body.repo || aReq.query.repo;
+  <span class="hljs-keyword">var</span> githubBlobPath = options.githubBlobPath = aReq.body.path || aReq.query.path;
+
+  <span class="hljs-keyword">if</span> (!(githubUserId &amp;&amp; githubRepoName &amp;&amp; githubBlobPath)) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">400</span>,
+      statusMessage: <span class="hljs-string">'Bad Request. Require &lt;code&gt;user&lt;/code&gt;, &lt;code&gt;repo&lt;/code&gt;, and &lt;code&gt;path&lt;/code&gt; to be set.'</span>
+    });
+  }
+
+  async.waterfall([</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Validate blob</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      github.gitdata.getJavascriptBlobs({
+        user: <span class="hljs-built_in">encodeURIComponent</span>(githubUserId),
+        repo: <span class="hljs-built_in">encodeURIComponent</span>(githubRepoName)
+      }, aCallback);
+    },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aJavascriptBlobs, aCallback)</span> </span>{
+      <span class="hljs-keyword">var</span> javascriptBlob = _.findWhere(aJavascriptBlobs, { path: githubBlobPath });
+
+      javascriptBlob = parseJavascriptBlob(javascriptBlob);
+
+      <span class="hljs-keyword">if</span> (!javascriptBlob.canUpload)
+        <span class="hljs-keyword">return</span> aCallback(javascriptBlob.errors);
+
+      options.javascriptBlob = javascriptBlob;
+      aCallback(<span class="hljs-literal">null</span>);
+    },
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      github.usercontent.getBlobAsUtf8({
+        user: <span class="hljs-built_in">encodeURIComponent</span>(githubUserId),
+        repo: <span class="hljs-built_in">encodeURIComponent</span>(githubRepoName),
+        path: <span class="hljs-built_in">encodeURIComponent</span>(githubBlobPath)
+      }, aCallback);
+    },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aBlobUtf8, aCallback)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Double check file size.</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (aBlobUtf8.length &gt; settings.maximum_upload_script_size)
+        <span class="hljs-keyword">return</span> aCallback(util.format(<span class="hljs-string">'File size is larger than maximum (%s bytes).'</span>, settings.maximum_upload_script_size));
+
+      <span class="hljs-keyword">var</span> onScriptStored = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+        <span class="hljs-keyword">if</span> (aScript) {
+          options.script = aScript;
+          aCallback(<span class="hljs-literal">null</span>);
+        } <span class="hljs-keyword">else</span> {
+          aCallback(<span class="hljs-string">'Error while uploading script.'</span>);
+        }
+      };
+
+      <span class="hljs-keyword">if</span> (options.javascriptBlob.isUserJS) {
+        <span class="hljs-keyword">var</span> userscriptHeaderRegex = <span class="hljs-regexp">/^(?:\uFEFF)?\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m</span>;
+        <span class="hljs-keyword">var</span> m = userscriptHeaderRegex.exec(aBlobUtf8);
+        <span class="hljs-keyword">if</span> (m &amp;&amp; m[<span class="hljs-number">1</span>]) {
+          <span class="hljs-keyword">var</span> userscriptMeta = scriptStorage.parseMeta(m[<span class="hljs-number">1</span>], <span class="hljs-literal">true</span>);
+          scriptStorage.storeScript(authedUser, userscriptMeta, aBlobUtf8, onScriptStored);
+        } <span class="hljs-keyword">else</span> {
+          aCallback(<span class="hljs-string">'Specified file does not contain a userscript header.'</span>);
+        }
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.javascriptBlob.isJSLibrary) {
+        <span class="hljs-keyword">var</span> scriptName = options.javascriptBlob.path.name;
+        <span class="hljs-keyword">var</span> jsLibraryMeta = scriptName;
+        scriptStorage.storeScript(authedUser, jsLibraryMeta, aBlobUtf8, onScriptStored);
+      } <span class="hljs-keyword">else</span> {
+        aCallback(<span class="hljs-string">'Invalid filetype.'</span>);
+      }
+    },
+  ], <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) {
+      <span class="hljs-built_in">console</span>.error(aErr);
+      <span class="hljs-built_in">console</span>.error(githubUserId, githubRepoName, githubBlobPath);
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusCode: <span class="hljs-number">400</span>,
+        statusMessage: aErr
+      });
+    }
+
+    <span class="hljs-keyword">var</span> script = modelParser.parseScript(options.script);
+    <span class="hljs-keyword">return</span> aRes.redirect(script.scriptPageUrl);
+  });
+};
+
+exports.userGitHubRepoPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>GitHub</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> githubUserId = options.githubUserId = aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
+  <span class="hljs-keyword">var</span> githubRepoName = options.githubRepoName = aReq.query.repo;
+
+  <span class="hljs-keyword">if</span> (!(githubUserId &amp;&amp; githubRepoName)) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">400</span>,
+      statusMessage: <span class="hljs-string">'Bad Request. Require &lt;code&gt;?user=githubUserName&amp;repo=githubRepoName&lt;/code&gt;'</span>
+    });
+  }
+
+  options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
+    user: githubUserId,
+  });
+  options.userGitHubRepoPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoPageUrl, {
+    user: githubUserId,
+    repo: githubRepoName
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, [<span class="hljs-string">'Import'</span>, <span class="hljs-string">'GitHub'</span>]);
+
+  <span class="hljs-comment">//--- Tasks</span>
+
+  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    async.waterfall([
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+        github.repos.get({
+          user: <span class="hljs-built_in">encodeURIComponent</span>(githubUserId),
+          repo: <span class="hljs-built_in">encodeURIComponent</span>(githubRepoName)
+        }, aCallback);
+      },
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRepo, aCallback)</span> </span>{
+        options.repo = aRepo;
+        options.repoAsEncoded = {
+          default_branch: <span class="hljs-built_in">encodeURI</span>(options.repo.default_branch)
+        };
+
+        github.gitdata.getJavascriptBlobs({
+          user: <span class="hljs-built_in">encodeURIComponent</span>(aRepo.owner.login),
+          repo: <span class="hljs-built_in">encodeURIComponent</span>(aRepo.name)
+        }, aCallback);
+      },
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aJavascriptBlobs, aCallback)</span> </span>{
+        options.javascriptBlobs = aJavascriptBlobs;
+        _.each(aJavascriptBlobs, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(javascriptBlob)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls</p></div></div><div class="code"><div class="wrapper">          javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
+            user: githubUserId,
+            repo: githubRepoName,
+            path: javascriptBlob.path
+          });
+        });
+        _.each(aJavascriptBlobs, parseJavascriptBlob);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If the repo has &gt;1 script, keep the the current page open.</p></div></div><div class="code"><div class="wrapper">        options.openImportInNewTab = aJavascriptBlobs.length &gt; <span class="hljs-number">1</span>;
+
+        aCallback(<span class="hljs-literal">null</span>);
+      },
+    ], aCallback);
+  });
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aNext();
+
+    aRes.render(<span class="hljs-string">'pages/userGitHubRepoPage'</span>, options);
+  });
+};
+
+<span class="hljs-keyword">var</span> parseJavascriptBlob = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aJavascriptBlob)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Parsing Script Name &amp; Type from path</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> blobPathRegex = <span class="hljs-regexp">/^(.*\/)?(.+?)((\.user)?\.js)$/</span>;
+  <span class="hljs-keyword">var</span> m = blobPathRegex.exec(aJavascriptBlob.path);
+  aJavascriptBlob.isUserJS = !!m[<span class="hljs-number">4</span>]; <span class="hljs-comment">// .user exists</span>
+  aJavascriptBlob.isJSLibrary = !m[<span class="hljs-number">4</span>]; <span class="hljs-comment">// .user doesn't exist</span>
+
+  aJavascriptBlob.path = {
+    full: aJavascriptBlob.path,
+    dir: m[<span class="hljs-number">1</span>],
+    name: m[<span class="hljs-number">2</span>],
+    ext: m[<span class="hljs-number">3</span>],
+    filename: m[<span class="hljs-number">2</span>] + m[<span class="hljs-number">3</span>]
+  };
+
+  aJavascriptBlob.pathAsEncoded = {
+    full: <span class="hljs-built_in">encodeURI</span>(aJavascriptBlob.path.full),
+    dir: <span class="hljs-built_in">encodeURI</span>(aJavascriptBlob.path.dir),
+    name: <span class="hljs-built_in">encodeURI</span>(aJavascriptBlob.path.name),
+    ext: <span class="hljs-built_in">encodeURI</span>(aJavascriptBlob.path.ext),
+    filename: <span class="hljs-built_in">encodeURI</span>(aJavascriptBlob.path.filename)
+  };</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Errors</p></div></div><div class="code"><div class="wrapper">  aJavascriptBlob.canUpload = <span class="hljs-literal">true</span>;
+  aJavascriptBlob.errors = [];
+
+  <span class="hljs-keyword">if</span> (aJavascriptBlob.size &gt; settings.maximum_upload_script_size) {
+    aJavascriptBlob.errors.push({
+      msg: util.format(<span class="hljs-string">'File size is larger than maximum (%s bytes).'</span>, settings.maximum_upload_script_size)
+    });
+  }
+
+  <span class="hljs-keyword">if</span> (aJavascriptBlob.errors.length)
+    aJavascriptBlob.canUpload = !aJavascriptBlob.errors.length;
+
+  <span class="hljs-keyword">return</span> aJavascriptBlob;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Sloppy code to let a user add scripts to their acount</p></div></div><div class="code"><div class="wrapper">exports.userManageGitHubPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, [<span class="hljs-string">'Manage'</span>, <span class="hljs-string">'GitHub'</span>]);
+
+  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    <span class="hljs-keyword">var</span> githubUserName = aReq.query.user || authedUser.ghUsername;
+
+    async.waterfall([</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>authedUser.ghUsername</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+        <span class="hljs-keyword">if</span> (githubUserName || authedUser.ghUsername) {
+          aCallback(<span class="hljs-literal">null</span>);
+        } <span class="hljs-keyword">else</span> {
+          async.waterfall([
+            <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+              <span class="hljs-keyword">var</span> githubUserId = authedUser.githubUserId();
+              github.user.getFrom({
+                user: <span class="hljs-built_in">encodeURIComponent</span>(githubUserId)
+              }, aCallback);
+            },
+            <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGithubUser, aCallback)</span> </span>{
+              options.githubUser = aGithubUser;
+              <span class="hljs-built_in">console</span>.log(aGithubUser);
+              User.findOne({
+                _id: authedUser._id
+              }, aCallback);
+            },
+            <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUserData, aCallback)</span> </span>{
+              <span class="hljs-built_in">console</span>.log(aUserData);
+              aUserData.ghUsername = options.githubUser.login;
+              aUserData.save(aCallback);
+            },
+            <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+              <span class="hljs-built_in">console</span>.log(util.format(<span class="hljs-string">'Updated User(%s).ghUsername'</span>, aUserData.name));
+              aCallback(<span class="hljs-literal">null</span>);
+            },
+          ], aCallback);
+        }
+      },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Fetch repos and format for template.</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+        <span class="hljs-built_in">console</span>.log(githubUserName);
+        <span class="hljs-keyword">var</span> repoManager = RepoManager.getManager(githubUserName, authedUser);
+        repoManager.fetchRecentRepos(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>convert the repos object to something mustache can use</p></div></div><div class="code"><div class="wrapper">          options.repos = repoManager.makeRepoArray();
+
+          <span class="hljs-keyword">var</span> repos = repoManager.repos;
+          aCallback(<span class="hljs-literal">null</span>, repos);
+        });
+      },</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Import repos.</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRepos, aCallback)</span> </span>{
+        <span class="hljs-keyword">var</span> loadable = {};
+        <span class="hljs-keyword">var</span> scriptname = <span class="hljs-literal">null</span>;
+
+        <span class="hljs-built_in">console</span>.log(aReq.body);
+        _.each(aReq.body, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRepo, aReponame)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Load all scripts in the repo</p></div></div><div class="code"><div class="wrapper">          <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> aRepo === <span class="hljs-string">'string'</span> &amp;&amp; aReponame.substr(-<span class="hljs-number">4</span>) === <span class="hljs-string">'_all'</span>) {
+            aReponame = aRepo;
+            aRepo = aRepos[aReponame];
+
+            <span class="hljs-keyword">if</span> (aRepo) {
+              <span class="hljs-keyword">for</span> (scriptname <span class="hljs-keyword">in</span> aRepo) {
+                <span class="hljs-keyword">if</span> (!loadable[aReponame]) { loadable[aReponame] = nil(); }
+                loadable[aReponame][scriptname] = aRepo[scriptname];
+              }
+            }
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> aRepo === <span class="hljs-string">'object'</span>) { <span class="hljs-comment">// load individual scripts</span>
+            <span class="hljs-keyword">for</span> (scriptname <span class="hljs-keyword">in</span> aRepo) {
+              <span class="hljs-keyword">if</span> (aRepos[aReponame][scriptname]) {
+                <span class="hljs-keyword">if</span> (!loadable[aReponame]) { loadable[aReponame] = nil(); }
+                loadable[aReponame][scriptname] = aRepos[aReponame][scriptname];
+              }
+            }
+          }
+        });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Load the scripts onto the site</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">if</span> (_.size(loadable) &gt; <span class="hljs-number">0</span>) {
+          <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'loadScripts'</span>);
+          <span class="hljs-keyword">var</span> githubUserName = authedUser.ghUsername;
+          RepoManager.getManager(githubUserName, authedUser, loadable).loadScripts(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'preredirect'</span>);
+            aRes.redirect(authedUser.userScriptListPageUrl);
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'redirect'</span>);
+            aCallback(<span class="hljs-literal">null</span>);
+          });
+        } <span class="hljs-keyword">else</span> {
+          aCallback(<span class="hljs-literal">null</span>);
+        }
+      },
+    ], aCallback);
+  });
+
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) {
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusMessage: aErr
+      });
+    }
+
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'render'</span>);
+    aRes.render(<span class="hljs-string">'pages/userManageGitHub'</span>, options);
+  });
+};
+
+exports.uploadScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+  <span class="hljs-keyword">var</span> isLib = aReq.params.isLib;
+  <span class="hljs-keyword">var</span> userjsRegex = <span class="hljs-regexp">/\.user\.js$/</span>;
+  <span class="hljs-keyword">var</span> jsRegex = <span class="hljs-regexp">/\.js$/</span>;
+  <span class="hljs-keyword">var</span> form = <span class="hljs-literal">null</span>;
+
+  <span class="hljs-keyword">if</span> (!<span class="hljs-regexp">/multipart\/form-data/</span>.test(aReq.headers[<span class="hljs-string">'content-type'</span>])) {
+    <span class="hljs-keyword">return</span> aNext();
+  }
+
+  form = <span class="hljs-keyword">new</span> formidable.IncomingForm();
+  form.parse(aReq, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aFields, aFiles)</span> </span>{
+    <span class="hljs-keyword">var</span> script = aFiles.script;
+    <span class="hljs-keyword">var</span> stream = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">var</span> bufs = [];
+    <span class="hljs-keyword">var</span> failUrl = <span class="hljs-string">'/user/add/'</span> + (isLib ? <span class="hljs-string">'lib'</span> : <span class="hljs-string">'scripts'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Reject non-js and huge files</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (script.type !== <span class="hljs-string">'application/javascript'</span> ||
+      script.size &gt; settings.maximum_upload_script_size) {
+      <span class="hljs-keyword">return</span> aRes.redirect(failUrl);
+    }
+
+    stream = fs.createReadStream(script.path);
+    stream.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aData)</span> </span>{ bufs.push(aData); });
+
+    stream.on(<span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      User.findOne({ _id: authedUser._id }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+        <span class="hljs-keyword">var</span> scriptName = aFields.script_name;
+        <span class="hljs-keyword">if</span> (isLib) {
+          scriptStorage.storeScript(aUser, scriptName, Buffer.concat(bufs),
+            <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+              <span class="hljs-keyword">if</span> (!aScript) { <span class="hljs-keyword">return</span> aRes.redirect(failUrl); }
+
+              aRes.redirect(<span class="hljs-string">'/libs/'</span> + <span class="hljs-built_in">encodeURI</span>(aScript.installName
+                .replace(jsRegex, <span class="hljs-string">''</span>)));
+            });
+        } <span class="hljs-keyword">else</span> {
+          scriptStorage.getMeta(bufs, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aMeta)</span> </span>{
+            scriptStorage.storeScript(aUser, aMeta, Buffer.concat(bufs),
+              <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+                <span class="hljs-keyword">if</span> (!aScript) { <span class="hljs-keyword">return</span> aRes.redirect(failUrl); }
+
+                aRes.redirect(<span class="hljs-string">'/scripts/'</span> + <span class="hljs-built_in">encodeURI</span>(aScript.installName
+                  .replace(userjsRegex, <span class="hljs-string">''</span>)));
+              });
+          });
+        }
+      });
+    });
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>post route to update a user&#39;s account</p></div></div><div class="code"><div class="wrapper">exports.update = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+  <span class="hljs-keyword">var</span> scriptUrls = aReq.body.urls ? <span class="hljs-built_in">Object</span>.keys(aReq.body.urls) : <span class="hljs-string">''</span>;
+  <span class="hljs-keyword">var</span> installRegex = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> installNames = [];
+  <span class="hljs-keyword">var</span> username = authedUser.name.toLowerCase();
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> aReq.body.about !== <span class="hljs-string">'undefined'</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update the about section of a user&#39;s profile</p></div></div><div class="code"><div class="wrapper">    User.findOneAndUpdate({ _id: authedUser._id },
+      { about: aReq.body.about },
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+        <span class="hljs-keyword">if</span> (aErr) { aRes.redirect(<span class="hljs-string">'/'</span>); }
+
+        authedUser.about = aUser.about;
+        aRes.redirect(<span class="hljs-string">'/users/'</span> + aUser.name);
+      });
+  } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove scripts (currently no UI)</p></div></div><div class="code"><div class="wrapper">    installRegex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">'^\/install\/('</span> + username + <span class="hljs-string">'\/.+)$'</span>);
+    scriptUrls.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUrl)</span> </span>{
+      <span class="hljs-keyword">var</span> matches = installRegex.exec(aUrl);
+      <span class="hljs-keyword">if</span> (matches &amp;&amp; matches[<span class="hljs-number">1</span>]) { installNames.push(matches[<span class="hljs-number">1</span>]); }
+    });
+    async.each(installNames, scriptStorage.deleteScript, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      aRes.redirect(<span class="hljs-string">'/users/'</span> + authedUser.name);
+    });
+  }
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Submit a script through the web editor</p></div></div><div class="code"><div class="wrapper">exports.submitSource = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+  <span class="hljs-keyword">var</span> isLib = aReq.params.isLib;
+  <span class="hljs-keyword">var</span> source = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> url = <span class="hljs-literal">null</span>;
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">storeScript</span><span class="hljs-params">(aMeta, aSource)</span> </span>{
+    <span class="hljs-keyword">var</span> userjsRegex = <span class="hljs-regexp">/\.user\.js$/</span>;
+    <span class="hljs-keyword">var</span> jsRegex = <span class="hljs-regexp">/\.js$/</span>;
+
+    User.findOne({ _id: authedUser._id }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+      scriptStorage.storeScript(aUser, aMeta, aSource, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+        <span class="hljs-keyword">var</span> redirectUrl = <span class="hljs-built_in">encodeURI</span>(aScript ? (aScript.isLib ? <span class="hljs-string">'/libs/'</span>
+          + aScript.installName.replace(jsRegex, <span class="hljs-string">''</span>) : <span class="hljs-string">'/scripts/'</span>
+          + aScript.installName.replace(userjsRegex, <span class="hljs-string">''</span>)) : aReq.body.url);
+
+        <span class="hljs-keyword">if</span> (!aScript || !aReq.body.original) {
+          <span class="hljs-keyword">return</span> aRes.redirect(redirectUrl);
+        }
+
+        Script.findOne({ installName: aReq.body.original },
+          <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aOrigScript)</span> </span>{
+            <span class="hljs-keyword">var</span> fork = <span class="hljs-literal">null</span>;
+            <span class="hljs-keyword">if</span> (aErr || !aOrigScript) { <span class="hljs-keyword">return</span> aRes.redirect(redirectUrl); }
+
+            fork = aOrigScript.fork || [];
+            fork.unshift({
+              author: aOrigScript.author, url: aOrigScript
+                .installName.replace(aOrigScript.isLib ? jsRegex : userjsRegex, <span class="hljs-string">''</span>)
+            });
+            aScript.fork = fork;
+
+            aScript.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+              aRes.redirect(redirectUrl);
+            });
+          });
+      });
+    });
+  }
+
+  source = <span class="hljs-keyword">new</span> Buffer(aReq.body.source);
+  url = aReq.body.url;
+
+  <span class="hljs-keyword">if</span> (isLib) {
+    storeScript(aReq.body.script_name, source);
+  } <span class="hljs-keyword">else</span> {
+    scriptStorage.getMeta([source], <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aMeta)</span> </span>{
+      <span class="hljs-keyword">if</span> (!aMeta || !aMeta.name) { <span class="hljs-keyword">return</span> aRes.redirect(url); }
+      storeScript(aMeta, source);
+    });
+  }
+};
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getExistingScript</span><span class="hljs-params">(aReq, aOptions, aAuthedUser, aCallback)</span> </span>{
+  aOptions.isLib = aReq.params.isLib;
+
+  <span class="hljs-keyword">if</span> (aReq.params.isNew) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>A user who isn&#39;t logged in can&#39;t write a new script</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!aAuthedUser) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(aOptions, <span class="hljs-string">'New '</span> + (aOptions.isLib ? <span class="hljs-string">'Library '</span> : <span class="hljs-string">'Script'</span>));
+
+    aOptions.source = <span class="hljs-string">''</span>;
+    aOptions.url = aReq.url;
+    aOptions.owner = <span class="hljs-literal">true</span>;
+    aOptions.readOnly = <span class="hljs-literal">false</span>;
+    aOptions.newScript = <span class="hljs-literal">true</span>;
+
+    aCallback(aOptions);
+  } <span class="hljs-keyword">else</span> {
+    aReq.params.scriptname += aOptions.isLib ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>;
+    scriptStorage.getSource(aReq, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript, aStream)</span> </span>{
+      <span class="hljs-keyword">var</span> bufs = [];
+      <span class="hljs-keyword">var</span> collaborators = [];
+
+      <span class="hljs-keyword">if</span> (!aScript) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }
+
+      <span class="hljs-keyword">if</span> (aScript.meta.oujs &amp;&amp; aScript.meta.oujs.collaborator) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> aScript.meta.oujs.collaborator === <span class="hljs-string">'string'</span>) {
+          collaborators.push(aScript.meta.oujs.collaborator);
+        } <span class="hljs-keyword">else</span> {
+          collaborators = aScript.meta.oujs.collaborator;
+        }
+      }
+
+      aStream.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aData)</span> </span>{ bufs.push(aData); });
+      aStream.on(<span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">        pageMetadata(aOptions, <span class="hljs-string">'Edit '</span> + aScript.name);
+
+        aOptions.source = Buffer.concat(bufs).toString(<span class="hljs-string">'utf8'</span>);
+        aOptions.original = aScript.installName;
+        aOptions.url = aReq.url;
+        aOptions.owner = aAuthedUser &amp;&amp; (aScript._authorId == aAuthedUser._id
+          || collaborators.indexOf(aAuthedUser.name) &gt; -<span class="hljs-number">1</span>);
+        aOptions.username = aAuthedUser ? aAuthedUser.name : <span class="hljs-literal">null</span>;
+        aOptions.isLib = aScript.isLib;
+        aOptions.scriptName = aScript.name;
+        aOptions.readOnly = !aAuthedUser;
+
+        aCallback(aOptions);
+      });
+    });
+  }
+}
+
+exports.editScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> isNew = aReq.params.isNew;
+  <span class="hljs-keyword">var</span> isLib = aReq.params.isLib;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];
+
+  <span class="hljs-keyword">var</span> installNameSlug = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> scriptAuthor = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> scriptNameSlug = <span class="hljs-literal">null</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.role &lt; <span class="hljs-number">4</span>;
+  options.isAdmin = authedUser &amp;&amp; authedUser.role &lt; <span class="hljs-number">3</span>;
+
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the info and source for an existing script for the editor
+Also works for writing a new script</p></div></div><div class="code"><div class="wrapper">  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    getExistingScript(aReq, options, authedUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aOpts)</span> </span>{
+      options = aOpts;
+      aCallback(!aOpts);
+    });
+  });
+
+  <span class="hljs-keyword">if</span> (!isNew) {
+    installNameSlug = scriptStorage.getInstallName(aReq);
+    scriptAuthor = aReq.params.username;
+    scriptNameSlug = aReq.params.scriptname;
+
+    Script.findOne({
+      installName: scriptStorage
+        .caseInsensitive(installNameSlug + (isLib ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>))
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScriptData)</span> </span>{
+      <span class="hljs-comment">//---</span>
+      <span class="hljs-keyword">if</span> (aErr || !aScriptData) { <span class="hljs-keyword">return</span> aNext(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> script = options.script = modelParser.parseScript(aScriptData);
+      options.isOwner = authedUser &amp;&amp; authedUser._id == script._authorId;
+      modelParser.renderScript(script);
+      script.installNameSlug = installNameSlug;
+      script.scriptPermalinkInstallPageUrl = <span class="hljs-string">'http://'</span> + aReq.get(<span class="hljs-string">'host'</span>) + script.scriptInstallPageUrl;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">      pageMetadata(options);
+
+      options.isScriptViewSourcePage = <span class="hljs-literal">true</span>;
+
+      <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the number of open issues</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+          .caseInsensitive(script.issuesCategorySlug), open: {$ne: <span class="hljs-literal">false</span>} });
+      tasks.push(countTask(scriptOpenIssueCountQuery, options, <span class="hljs-string">'issueCount'</span>));
+
+      <span class="hljs-comment">//---</span>
+      async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+        <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aNext();
+
+        aRes.render(<span class="hljs-string">'pages/scriptViewSourcePage'</span>, options);
+      });
+    });
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-comment">//---</span>
+    async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aNext();
+
+      aRes.render(<span class="hljs-string">'pages/scriptViewSourcePage'</span>, options);
+    });
+  }
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>route to flag a user</p></div></div><div class="code"><div class="wrapper">exports.flag = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> username = aReq.params.username;
+  <span class="hljs-keyword">var</span> unflag = aReq.params.unflag;
+
+  User.findOne({ name: username }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+    <span class="hljs-keyword">var</span> fn = flagLib[unflag &amp;&amp; unflag === <span class="hljs-string">'unflag'</span> ? <span class="hljs-string">'unflag'</span> : <span class="hljs-string">'flag'</span>];
+    <span class="hljs-keyword">if</span> (aErr || !aUser) { <span class="hljs-keyword">return</span> aNext(); }
+
+    fn(User, aUser, aReq.session.user, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aFlagged)</span> </span>{ <span class="hljs-comment">// NOTE: Inline function here</span>
+      aRes.redirect(<span class="hljs-string">'/users/'</span> + username);
+    });
+  });
+};</div></div></div></div></body></html>

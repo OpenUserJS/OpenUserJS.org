@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><title>routesStatic</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="routesStatic"><meta name="groc-project-path" content="routesStatic.js"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">routesStatic.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">'path'</span>);
+<span class="hljs-keyword">var</span> url = <span class="hljs-built_in">require</span>(<span class="hljs-string">'url'</span>);
+
+<span class="hljs-keyword">var</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">'express'</span>);
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aApp)</span> </span>{
+  <span class="hljs-keyword">var</span> day = <span class="hljs-number">1000</span> * <span class="hljs-number">60</span> * <span class="hljs-number">60</span> * <span class="hljs-number">24</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Static Files</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">serveModule</span><span class="hljs-params">(aModuleBase, aModuleBaseName, aModuleOption)</span> </span>{
+    <span class="hljs-keyword">var</span> dirname = path.join(__dirname, <span class="hljs-string">'node_modules'</span>);
+    <span class="hljs-keyword">var</span> basename = <span class="hljs-literal">null</span>;
+
+    <span class="hljs-keyword">if</span> (!aModuleOption || <span class="hljs-keyword">typeof</span> aModuleOption === <span class="hljs-string">'number'</span>) {
+      aApp.use(
+        url.resolve(aModuleBase, aModuleBaseName),
+        express.static(
+          path.join(dirname, aModuleBaseName),
+          { maxage: aModuleOption }
+        )
+      );
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">for</span> (basename <span class="hljs-keyword">in</span> aModuleOption) {
+        aApp.use(
+          url.resolve(aModuleBase, url.resolve(aModuleBaseName, basename)),
+          express.static(
+            path.join(dirname, aModuleBaseName, basename),
+            { maxage: aModuleOption[basename].maxage }
+          )
+        );
+      }
+    }
+  }
+
+  aApp.use(express.static(path.join(__dirname, <span class="hljs-string">'public'</span>), { maxage: day * <span class="hljs-number">1</span> }));
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'ace-builds/src/'</span>, <span class="hljs-number">7</span>);
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'bootstrap/'</span>, {
+    <span class="hljs-string">'dist/js/bootstrap.js'</span>: { maxage: day * <span class="hljs-number">1</span> },
+    <span class="hljs-string">'dist/fonts/glyphicons-halflings-regular.eot'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'dist/fonts/glyphicons-halflings-regular.svg'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'dist/fonts/glyphicons-halflings-regular.ttf'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'dist/fonts/glyphicons-halflings-regular.woff'</span>: { maxage: day * <span class="hljs-number">7</span> }
+  });
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'bootstrap-markdown/'</span>, {
+    <span class="hljs-string">'js/bootstrap-markdown.js'</span>: { maxage: day * <span class="hljs-number">1</span> },
+    <span class="hljs-string">'css/bootstrap-markdown.min.css'</span>: { maxage: day * <span class="hljs-number">1</span> }
+  });
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'font-awesome/'</span>, {
+    <span class="hljs-string">'css/font-awesome.min.css'</span>: { maxage: day * <span class="hljs-number">1</span> },
+    <span class="hljs-string">'fonts/fontawesome-webfont.eot'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'fonts/fontawesome-webfont.svg'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'fonts/fontawesome-webfont.ttf'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'fonts/fontawesome-webfont.woff'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'fonts/FontAwesome.otf'</span>: { maxage: day * <span class="hljs-number">7</span> }
+  });
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'jquery/'</span>, {
+    <span class="hljs-string">'dist/jquery.js'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'dist/jquery.min.map'</span>: { maxage: day * <span class="hljs-number">7</span> }
+  });
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'marked/'</span>, {
+    <span class="hljs-string">'lib/marked.js'</span>: { maxage: day * <span class="hljs-number">1</span> }
+  });
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'octicons/'</span>, {
+    <span class="hljs-string">'octicons/octicons.css'</span>: { maxage: day * <span class="hljs-number">1</span> },
+    <span class="hljs-string">'octicons/octicons-local.ttf'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'octicons/octicons.eot'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'octicons/octicons.svg'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'octicons/octicons.ttf'</span>: { maxage: day * <span class="hljs-number">7</span> },
+    <span class="hljs-string">'octicons/octicons.woff'</span>: { maxage: day * <span class="hljs-number">7</span> }
+  });
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'select2/'</span>, {
+    <span class="hljs-string">'select2.js'</span>: { maxage: day * <span class="hljs-number">1</span> },
+    <span class="hljs-string">'select2.css'</span>: { maxage: day * <span class="hljs-number">1</span> },
+    <span class="hljs-string">'select2.png'</span>: { maxage: day * <span class="hljs-number">30</span> },
+    <span class="hljs-string">'select2x2.png'</span>: { maxage: day * <span class="hljs-number">30</span> },
+    <span class="hljs-string">'select2-spinner.gif'</span>: { maxage: day * <span class="hljs-number">30</span> }
+  });
+
+  serveModule(<span class="hljs-string">'/redist/npm/'</span>, <span class="hljs-string">'select2-bootstrap-css/'</span>, {
+    <span class="hljs-string">'select2-bootstrap.css'</span>: { maxage: day * <span class="hljs-number">1</span> }
+  });
+};</div></div></div></div></body></html>

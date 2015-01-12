@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/templateHelpers</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/templateHelpers"><meta name="groc-project-path" content="libs/templateHelpers.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/templateHelpers.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> countTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).countTask;
+<span class="hljs-keyword">var</span> helpers = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/helpers'</span>);
+<span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+
+<span class="hljs-keyword">var</span> paginateTemplate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aOpts)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Required</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> currentPage = aOpts.currentPage;
+  <span class="hljs-keyword">var</span> lastPage = aOpts.lastPage;
+  <span class="hljs-keyword">var</span> urlFn = aOpts.urlFn;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Optional</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> distVisible = aOpts.distVisible || <span class="hljs-number">4</span>;
+  <span class="hljs-keyword">var</span> firstVisible = aOpts.firstVisible || <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">var</span> lastVisible = aOpts.firstVisible || <span class="hljs-literal">true</span>;
+
+  <span class="hljs-keyword">var</span> linkedPages = [];
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">1</span>, currentPage - distVisible); i &lt;= <span class="hljs-built_in">Math</span>.min(currentPage + distVisible, lastPage); i++)
+    linkedPages.push(i);
+
+  <span class="hljs-keyword">if</span> (firstVisible &amp;&amp; linkedPages.length &gt; <span class="hljs-number">0</span> &amp;&amp; linkedPages[<span class="hljs-number">0</span>] !== <span class="hljs-number">1</span>)
+    linkedPages.splice(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>); <span class="hljs-comment">// insert the value 1 at index 0</span>
+
+  <span class="hljs-keyword">if</span> (lastVisible &amp;&amp; linkedPages.length &gt; <span class="hljs-number">0</span> &amp;&amp; linkedPages[linkedPages.length - <span class="hljs-number">1</span>] !== lastPage)
+    linkedPages.push(lastPage);
+
+  <span class="hljs-keyword">var</span> html = <span class="hljs-string">''</span>;
+  html += <span class="hljs-string">'&lt;ul class="pagination"&gt;'</span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; linkedPages.length; i++) {
+    <span class="hljs-keyword">var</span> linkedPage = linkedPages[i];
+    html += <span class="hljs-string">'&lt;li'</span>;
+    <span class="hljs-keyword">if</span> (linkedPage === currentPage)
+      html += <span class="hljs-string">' class="active"'</span>;
+    html += <span class="hljs-string">'&gt;'</span>;
+    html += <span class="hljs-string">'&lt;a href="'</span>;
+    html += urlFn(linkedPage);
+    html += <span class="hljs-string">'"&gt;'</span>;
+    html += linkedPage;
+    html += <span class="hljs-string">'&lt;/a&gt;'</span>;
+    html += <span class="hljs-string">'&lt;/li&gt;'</span>;
+  }
+  html += <span class="hljs-string">'&lt;/ul&gt;'</span>;
+  <span class="hljs-keyword">return</span> html;
+};
+exports.paginateTemplate = paginateTemplate;
+
+<span class="hljs-keyword">var</span> newPagination = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCurrentPage, aItemsPerPage)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Options</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> maxItemsPerPage = <span class="hljs-number">100</span>;
+  <span class="hljs-keyword">var</span> defaultItemsPerPage = <span class="hljs-number">25</span>;
+
+  <span class="hljs-keyword">var</span> pagination = {
+    currentPage: <span class="hljs-literal">null</span>,
+    itemsPerPage: <span class="hljs-literal">null</span>,
+    startIndex: <span class="hljs-literal">null</span>,
+    numItems: <span class="hljs-literal">null</span>
+  };
+  pagination.applyToQuery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aModelListQuery)</span> </span>{
+    pagination.startIndex = (pagination.currentPage * pagination.itemsPerPage) - pagination.itemsPerPage;
+    aModelListQuery
+      .skip(pagination.startIndex)
+      .limit(pagination.itemsPerPage);
+  };
+  pagination.getCountTask = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aModelListQuery)</span> </span>{
+    <span class="hljs-keyword">return</span> countTask(aModelListQuery, pagination, <span class="hljs-string">'numItems'</span>);
+  };
+  pagination.render = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> paginateTemplate(pagination);
+  };
+
+  pagination.currentPage = aCurrentPage ? helpers.limitMin(<span class="hljs-number">1</span>, aCurrentPage) : <span class="hljs-number">1</span>;
+  pagination.itemsPerPage = aItemsPerPage ? helpers.limitRange(<span class="hljs-number">1</span>, aItemsPerPage, maxItemsPerPage) : defaultItemsPerPage;
+
+  <span class="hljs-keyword">return</span> pagination;
+};
+exports.newPagination = newPagination;
+
+<span class="hljs-keyword">var</span> getDefaultPagination = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq)</span> </span>{
+  <span class="hljs-keyword">var</span> pagination = newPagination(aReq.query.p, aReq.query.limit);
+  pagination.renderDefault = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq)</span> </span>{
+    pagination.lastPage = <span class="hljs-built_in">Math</span>.ceil(pagination.numItems / pagination.itemsPerPage) || <span class="hljs-number">1</span>;
+    pagination.urlFn = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aPage)</span> </span>{
+      <span class="hljs-keyword">return</span> helpers.setUrlQueryValue(aReq.url, <span class="hljs-string">'p'</span>, aPage);
+    };
+    <span class="hljs-keyword">return</span> pagination.render();
+  };
+  <span class="hljs-keyword">return</span> pagination;
+};
+exports.getDefaultPagination = getDefaultPagination;
+
+exports.statusCodePage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext, aOptions)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session ? aReq.session.user : <span class="hljs-literal">null</span>;
+
+  aOptions.statusCode = aOptions.statusCode || <span class="hljs-number">500</span>;
+  aOptions.statusMessage = aOptions.statusMessage || <span class="hljs-string">'Error'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = aOptions.authedUser = modelParser.parseUser(authedUser);
+  aOptions.isMod = authedUser &amp;&amp; authedUser.isMod;
+  aOptions.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(aOptions, [aOptions.statusCode, aOptions.statusMessage], aOptions.statusMessage);
+
+  <span class="hljs-comment">//---</span>
+  aRes.status(aOptions.statusCode).render(<span class="hljs-string">'pages/statusCodePage'</span>, aOptions);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add page metadata, containing title, description and keywords.</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pageMetadata</span><span class="hljs-params">(aOptions, aTitle, aDescription, aKeywords)</span> </span>{
+  <span class="hljs-keyword">var</span> titles = [<span class="hljs-string">'OpenUserJS'</span>];
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (aTitle) === <span class="hljs-string">"string"</span> &amp;&amp; aTitle !== <span class="hljs-string">""</span>) {
+    titles.unshift(aTitle);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isArray(aTitle)) {
+    titles = aTitle.concat(titles);
+  }
+  aOptions.title = titles.join(<span class="hljs-string">' | '</span>);
+
+  aOptions.pageMetaDescription = <span class="hljs-string">'Download userscripts to enhance your browser.'</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (aDescription) !== <span class="hljs-string">"undefined"</span> &amp;&amp; aDescription !== <span class="hljs-literal">null</span>) {
+    aOptions.pageMetaDescription = aDescription;
+  }
+
+  <span class="hljs-keyword">var</span> pageMetaKeywords = [<span class="hljs-string">'userscript'</span>, <span class="hljs-string">'userscripts'</span>, <span class="hljs-string">'javascript'</span>, <span class="hljs-string">'Greasemonkey'</span>, <span class="hljs-string">'Scriptish'</span>,
+    <span class="hljs-string">'Tampermonkey'</span>, <span class="hljs-string">'extension'</span>, <span class="hljs-string">'browser'</span>];
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (aKeywords) !== <span class="hljs-string">"undefined"</span> &amp;&amp; aKeywords !== <span class="hljs-literal">null</span> &amp;&amp; _.isArray(aKeywords)) {
+    pageMetaKeywords = _.union(pageMetaKeywords, aKeywords);
+  }
+
+  aOptions.pageMetaKeywords = pageMetaKeywords.join(<span class="hljs-string">', '</span>);
+}
+exports.pageMetadata = pageMetadata;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Switch order direction.</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">orderDir</span><span class="hljs-params">(aReq, aOptions, aOrderBy, aOrderDirDefault)</span> </span>{
+  <span class="hljs-keyword">var</span> orderDirReverse = <span class="hljs-literal">null</span>;
+
+  aOrderDirDefault = aOrderDirDefault || <span class="hljs-string">'desc'</span>;
+  orderDirReverse = (aOrderDirDefault === <span class="hljs-string">'desc'</span>) ? <span class="hljs-string">'asc'</span> : <span class="hljs-string">'desc'</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (aOptions.orderDir) === <span class="hljs-string">'undefined'</span>) {
+    aOptions.orderDir = {};
+  }
+  aOptions.orderDir[aOrderBy] = aReq.query.orderDir === aOrderDirDefault ? orderDirReverse : aOrderDirDefault;
+}
+exports.orderDir = orderDir;</div></div></div></div></body></html>

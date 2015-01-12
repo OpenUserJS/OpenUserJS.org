@@ -1,123 +1,135 @@
-<!DOCTYPE html><html lang="en"><head><title>controllers/index</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/index"><meta name="groc-project-path" content="controllers/index.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/index.js">controllers/index.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">Strategy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/strategy.js&#39;</span><span class="p">).</span><span class="nx">Strategy</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">strategies</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./strategies.json&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">modelsList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/modelsList&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">userRoles</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/userRoles.json&#39;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>The home page has scripts and groups in a sidebar</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">home</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Home Page&#39;</span><span class="p">,</span> <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span> <span class="p">};</span>
+<!DOCTYPE html><html lang="en"><head><title>controllers/index</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/index"><meta name="groc-project-path" content="controllers/index.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/index.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="nx">async</span><span class="p">.</span><span class="nx">parallel</span><span class="p">([</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listScripts</span><span class="p">({},</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-        <span class="kd">function</span> <span class="p">(</span><span class="nx">scriptsList</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">scriptsList</span> <span class="o">=</span> <span class="nx">scriptsList</span><span class="p">;</span>
-          <span class="nx">callback</span><span class="p">();</span>
-      <span class="p">});</span>
-    <span class="p">},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">[</span><span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">];</span>
-      <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listGroups</span><span class="p">({},</span> <span class="nx">params</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-        <span class="kd">function</span> <span class="p">(</span><span class="nx">groupsList</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">groupsList</span> <span class="o">=</span> <span class="nx">groupsList</span><span class="p">;</span>
-          <span class="nx">callback</span><span class="p">();</span>
-      <span class="p">});</span>
-    <span class="p">}</span>
-  <span class="p">],</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Preform a script search</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">getSearchResults</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">prefixSearch</span><span class="p">,</span> <span class="nx">fullSearch</span><span class="p">,</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">baseUrl</span> <span class="o">=</span> <span class="s1">&#39;/search/&#39;</span> <span class="o">+</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">search</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">conditions</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">prefixStr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">fullStr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">prefixRegex</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">fullRegex</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">terms</span> <span class="o">=</span> <span class="nx">search</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/([.*+?^=!:${}()|\[\]\/\\])/g</span><span class="p">,</span> <span class="s1">&#39;\\$1&#39;</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\s+/</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Match all the terms but in any order</p></div></div><div class="code"><div class="wrapper">  <span class="nx">terms</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">term</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">prefixStr</span> <span class="o">+=</span> <span class="s1">&#39;(?=.*?\\b&#39;</span> <span class="o">+</span> <span class="nx">term</span>  <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
-    <span class="nx">fullStr</span> <span class="o">+=</span> <span class="s1">&#39;(?=.*?&#39;</span> <span class="o">+</span> <span class="nx">term</span>  <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
-  <span class="p">});</span>
-  <span class="nx">prefixRegex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">prefixStr</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">);</span>
-  <span class="nx">fullRegex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="nx">fullStr</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>One of the searchable fields must match the conditions</p></div></div><div class="code"><div class="wrapper">  <span class="nx">prefixSearch</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">condition</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="nx">condition</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">prefixRegex</span><span class="p">;</span>
-    <span class="nx">conditions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">condition</span><span class="p">);</span>
-  <span class="p">});</span>
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
 
-  <span class="nx">fullSearch</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">condition</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="nx">condition</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">fullRegex</span><span class="p">;</span>
-    <span class="nx">conditions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">condition</span><span class="p">);</span>
-  <span class="p">});</span>
-  <span class="nx">opts</span><span class="p">[</span><span class="s1">&#39;$or&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">conditions</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> Discussion = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/discussion'</span>).Discussion;
+<span class="hljs-keyword">var</span> Group = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/group'</span>).Group;
+<span class="hljs-keyword">var</span> User = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/user'</span>).User;
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
+<span class="hljs-keyword">var</span> Strategy = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/strategy'</span>).Strategy;
 
-  <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listScripts</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">scriptsList</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">callback</span><span class="p">({</span>
-        <span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="s1">&#39;Searching for &quot;&#39;</span> <span class="o">+</span> <span class="nx">search</span>  <span class="o">+</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;username&#39;</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-        <span class="s1">&#39;search&#39;</span><span class="o">:</span> <span class="nx">search</span><span class="p">,</span>
-        <span class="s1">&#39;scriptsList&#39;</span><span class="o">:</span> <span class="nx">scriptsList</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script search results</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">search</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">getSearchResults</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> 
-    <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;about&#39;</span><span class="p">,</span> <span class="s1">&#39;meta.description&#39;</span><span class="p">],</span> 
-    <span class="p">[</span><span class="s1">&#39;meta.include&#39;</span><span class="p">,</span> <span class="s1">&#39;meta.match&#39;</span><span class="p">],</span> <span class="p">{},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show library scripts</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">toolbox</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> strategies = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./strategies.json'</span>);
+<span class="hljs-keyword">var</span> discussionLib = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./discussion'</span>);
+<span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);
+<span class="hljs-keyword">var</span> modelQuery = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelQuery'</span>);
+<span class="hljs-keyword">var</span> execQueryTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).execQueryTask;
+<span class="hljs-keyword">var</span> removeSession = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modifySessions'</span>).remove;
+<span class="hljs-keyword">var</span> pageMetadata = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).pageMetadata;
+<span class="hljs-keyword">var</span> orderDir = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).orderDir;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>The home page has scripts and groups in a sidebar</p></div></div><div class="code"><div class="wrapper">exports.home = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-  <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listScripts</span><span class="p">({</span> <span class="nx">isLib</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="s1">&#39;/toolbox&#39;</span><span class="p">,</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">scriptsList</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="p">{</span>
-        <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;The Toolbox&#39;</span><span class="p">,</span>
-        <span class="nx">toolbox</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-        <span class="nx">scriptsList</span><span class="o">:</span> <span class="nx">scriptsList</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Search library scripts</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">toolSearch</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">getSearchResults</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">,</span> <span class="s1">&#39;about&#39;</span><span class="p">],</span> <span class="p">[],</span> <span class="p">{</span> <span class="nx">isLib</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">toolbox</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UI for user registration</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="s1">&#39;Register&#39;</span><span class="p">,</span> <span class="s1">&#39;wantname&#39;</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">username</span> <span class="p">};</span>
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span> <span class="p">}</span>
+  options.librariesOnly = aReq.query.library !== <span class="hljs-literal">undefined</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, options.librariesOnly ? <span class="hljs-string">'Libraries'</span> : <span class="hljs-string">''</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Order dir</p></div></div><div class="code"><div class="wrapper">  orderDir(aReq, options, <span class="hljs-string">'name'</span>, <span class="hljs-string">'asc'</span>);
+  orderDir(aReq, options, <span class="hljs-string">'install'</span>, <span class="hljs-string">'desc'</span>);
+  orderDir(aReq, options, <span class="hljs-string">'rating'</span>, <span class="hljs-string">'desc'</span>);
+  orderDir(aReq, options, <span class="hljs-string">'updated'</span>, <span class="hljs-string">'desc'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> scriptListQuery = Script.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery: isLib</p></div></div><div class="code"><div class="wrapper">  modelQuery.findOrDefaultIfNull(scriptListQuery, <span class="hljs-string">'isLib'</span>, options.librariesOnly, <span class="hljs-literal">false</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery: Defaults</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (options.librariesOnly) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Libraries</p></div></div><div class="code"><div class="wrapper">    modelQuery.applyLibraryListQueryDefaults(scriptListQuery, options, aReq);
+  } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts</p></div></div><div class="code"><div class="wrapper">    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery: Pagination</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> pagination = options.pagination; <span class="hljs-comment">// is set in modelQuery.apply___ListQueryDefaults</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>popularGroupListQuery</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> popularGroupListQuery = Group.find();
+  popularGroupListQuery
+    .sort(<span class="hljs-string">'-size'</span>)
+    .limit(<span class="hljs-number">25</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Announcements</p></div></div><div class="code"><div class="wrapper">  options.announcementsCategory = _.findWhere(discussionLib.categories, {slug: <span class="hljs-string">'announcements'</span>});
+  options.announcementsCategory = modelParser.parseCategory(options.announcementsCategory);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>announcementsDiscussionListQuery</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> announcementsDiscussionListQuery = Discussion.find();
+  announcementsDiscussionListQuery
+    .and({category: options.announcementsCategory.slug})
+    .sort(<span class="hljs-string">'-created'</span>)
+    .limit(<span class="hljs-number">5</span>);
 
-  <span class="k">delete</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">username</span><span class="p">;</span>
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">  tasks.push(pagination.getCountTask(scriptListQuery));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptListQuery</p></div></div><div class="code"><div class="wrapper">  tasks.push(execQueryTask(scriptListQuery, options, <span class="hljs-string">'scriptList'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>popularGroupListQuery</p></div></div><div class="code"><div class="wrapper">  tasks.push(execQueryTask(popularGroupListQuery, options, <span class="hljs-string">'popularGroupList'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>announcementsDiscussionListQuery</p></div></div><div class="code"><div class="wrapper">  tasks.push(execQueryTask(announcementsDiscussionListQuery, options, <span class="hljs-string">'announcementsDiscussionList'</span>));
 
-  <span class="nx">Strategy</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strats</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">strategy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">strategies</span> <span class="o">=</span> <span class="p">[];</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the strategies we have OAuth keys for</p></div></div><div class="code"><div class="wrapper">    <span class="nx">strats</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">strat</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">strategies</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-        <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">display</span> <span class="p">});</span>
-    <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get OpenId strategies</p></div></div><div class="code"><div class="wrapper">    <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s1">&#39;production&#39;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">strategies</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">strategy</span> <span class="o">=</span> <span class="nx">strategies</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">strategy</span><span class="p">.</span><span class="nx">oauth</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">strategies</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-            <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">name</span> <span class="p">});</span>
-        <span class="p">}</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
+  <span class="hljs-comment">//---</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>scriptList</p></div></div><div class="code"><div class="wrapper">    options.scriptList = _.map(options.scriptList, modelParser.parseScript);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>popularGroupList</p></div></div><div class="code"><div class="wrapper">    options.popularGroupList = _.map(options.popularGroupList, modelParser.parseGroup);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>announcementsDiscussionList</p></div></div><div class="code"><div class="wrapper">    options.announcementsDiscussionList = _.map(options.announcementsDiscussionList, modelParser.parseDiscussion);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">    options.paginationRendered = pagination.renderDefault(aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Empty list</p></div></div><div class="code"><div class="wrapper">    options.scriptListIsEmptyMessage = <span class="hljs-string">'No scripts.'</span>;
+    <span class="hljs-keyword">if</span> (options.isFlagged) {
+      <span class="hljs-keyword">if</span> (options.librariesOnly) {
+        options.scriptListIsEmptyMessage = <span class="hljs-string">'No flagged libraries.'</span>;
+      } <span class="hljs-keyword">else</span> {
+        options.scriptListIsEmptyMessage = <span class="hljs-string">'No flagged scripts.'</span>;
+      }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.searchBarValue) {
+      <span class="hljs-keyword">if</span> (options.librariesOnly) {
+        options.scriptListIsEmptyMessage = <span class="hljs-string">'We couldn\'t find any libraries with this search value.'</span>;
+      } <span class="hljs-keyword">else</span> {
+        options.scriptListIsEmptyMessage = <span class="hljs-string">'We couldn\'t find any scripts with this search value.'</span>;
+      }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.isUserScriptListPage) {
+      options.scriptListIsEmptyMessage = <span class="hljs-string">'This user hasn\'t added any scripts yet.'</span>;
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Heading</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (options.librariesOnly) {
+      options.pageHeading = options.isFlagged ? <span class="hljs-string">'Flagged Libraries'</span> : <span class="hljs-string">'Libraries'</span>;
+    } <span class="hljs-keyword">else</span> {
+      options.pageHeading = options.isFlagged ? <span class="hljs-string">'Flagged Scripts'</span> : <span class="hljs-string">'Scripts'</span>;
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (options.isFlagged) {
+      <span class="hljs-keyword">if</span> (options.librariesOnly) {
+        pageMetadata(options, [<span class="hljs-string">'Flagged Libraries'</span>, <span class="hljs-string">'Moderation'</span>]);
+      } <span class="hljs-keyword">else</span> {
+        pageMetadata(options, [<span class="hljs-string">'Flagged Scripts'</span>, <span class="hljs-string">'Moderation'</span>]);
+      }
+    }
+  }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/scriptListPage'</span>, options); }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>UI for user registration</p></div></div><div class="code"><div class="wrapper">exports.register = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If already logged in, goto the front page.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (authedUser)
+    <span class="hljs-keyword">return</span> aRes.redirect(<span class="hljs-string">'/'</span>);
 
-    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;register&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span>
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, <span class="hljs-string">'Login / Register'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">logout</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">delete</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
-<span class="p">};</span></div></div></div></div></body></html>
+  options.wantname = aReq.session.username;
+  <span class="hljs-keyword">delete</span> aReq.session.username;
+
+  options.strategies = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get OpenId strategies</p></div></div><div class="code"><div class="wrapper">  _.each(strategies, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStrategy, aStrategyKey)</span> </span>{
+    <span class="hljs-keyword">if</span> (!aStrategy.oauth) {
+      options.strategies.push({
+        <span class="hljs-string">'strat'</span>: aStrategyKey,
+        <span class="hljs-string">'display'</span>: aStrategy.name
+      });
+    }
+  });
+
+  <span class="hljs-comment">//--- Tasks</span>
+
+  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    Strategy.find({}, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aAvailableStrategies)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr) {
+        aCallback();
+      } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the strategies we have OAuth keys for</p></div></div><div class="code"><div class="wrapper">        aAvailableStrategies.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStrategy)</span> </span>{
+          options.strategies.push({
+            <span class="hljs-string">'strat'</span>: aStrategy.name,
+            <span class="hljs-string">'display'</span>: aStrategy.display
+          });
+        });
+        aCallback();
+      }
+    });
+  });
+
+  <span class="hljs-comment">//---</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Sort the strategies</p></div></div><div class="code"><div class="wrapper">    options.strategies = _.sortBy(options.strategies, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStrategy)</span> </span>{ <span class="hljs-keyword">return</span> aStrategy.display; });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Prefer GitHub</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> githubStrategy = _.findWhere(options.strategies, { strat: <span class="hljs-string">'github'</span> });
+    <span class="hljs-keyword">if</span> (githubStrategy)
+      githubStrategy.selected = <span class="hljs-literal">true</span>;
+  }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/loginPage'</span>, options); }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+  async.parallel(tasks, asyncComplete);
+};
+
+exports.logout = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">if</span> (!authedUser) { <span class="hljs-keyword">return</span> aRes.redirect(<span class="hljs-string">'/'</span>); }
+
+  User.findOne({ _id: authedUser._id }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+    removeSession(aReq, aUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+      aRes.redirect(<span class="hljs-string">'/'</span>);
+    });
+  });
+};</div></div></div></div></body></html>

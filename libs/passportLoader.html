@@ -1,38 +1,48 @@
-<!DOCTYPE html><html lang="en"><head><title>libs/passportLoader</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/passportLoader"><meta name="groc-project-path" content="libs/passportLoader.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/passportLoader.js">libs/passportLoader.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">passport</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;passport&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">nil</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/helpers&#39;</span><span class="p">).</span><span class="nx">nil</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">URL</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s1">&#39;production&#39;</span> <span class="o">?</span> 
-  <span class="s1">&#39;https://openuserjs.org&#39;</span> <span class="o">:</span> <span class="s1">&#39;http://localhost:&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PORT</span> <span class="o">||</span> <span class="mi">8080</span><span class="p">);</span>
+<!DOCTYPE html><html lang="en"><head><title>libs/passportLoader</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/passportLoader"><meta name="groc-project-path" content="libs/passportLoader.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/passportLoader.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">strategyInstances</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This will load a single passport
-Notice it is general so it can load any passport strategy</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">loadPassport</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">strategy</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">requireStr</span> <span class="o">=</span> <span class="s1">&#39;passport-&#39;</span> <span class="o">+</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">PassportStrategy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="nx">requireStr</span><span class="p">).</span><span class="nx">Strategy</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> passport = <span class="hljs-built_in">require</span>(<span class="hljs-string">'passport'</span>);
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">strategy</span><span class="p">.</span><span class="nx">openid</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PassportStrategy</span><span class="p">(</span>
-      <span class="p">{</span>
-        <span class="nx">returnURL</span><span class="o">:</span> <span class="nx">URL</span>  <span class="o">+</span> <span class="s1">&#39;/auth/&#39;</span> <span class="o">+</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;/callback/&#39;</span><span class="p">,</span>
-        <span class="nx">realm</span><span class="o">:</span> <span class="nx">URL</span>  <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
-        <span class="nx">profile</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-        <span class="nx">stateless</span><span class="o">:</span> <span class="kc">true</span>
-      <span class="p">},</span>
-      <span class="kd">function</span> <span class="p">()</span> <span class="p">{}</span> <span class="c1">// we replace this callback later (_verify)</span>
-    <span class="p">);</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PassportStrategy</span><span class="p">(</span>
-      <span class="p">{</span>
-        <span class="nx">consumerKey</span><span class="o">:</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-        <span class="nx">consumerSecret</span><span class="o">:</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">key</span><span class="p">,</span>
-        <span class="nx">clientID</span><span class="o">:</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
-        <span class="nx">clientSecret</span><span class="o">:</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">key</span><span class="p">,</span>
-        <span class="nx">state</span><span class="o">:</span> <span class="s1">&#39;a bullshit string reddit requires&#39;</span><span class="p">,</span>
-        <span class="nx">callbackURL</span><span class="o">:</span> <span class="nx">URL</span>  <span class="o">+</span> <span class="s1">&#39;/auth/&#39;</span> <span class="o">+</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;/callback/&#39;</span>
-      <span class="p">},</span>
-      <span class="kd">function</span> <span class="p">()</span> <span class="p">{}</span> <span class="c1">// we replace this callback later (_verify)</span>
-    <span class="p">);</span>
-  <span class="p">}</span>
+<span class="hljs-keyword">var</span> nil = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/helpers'</span>).nil;
 
-  <span class="nx">exports</span><span class="p">.</span><span class="nx">strategyInstances</span><span class="p">[</span><span class="nx">strategy</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">;</span>
-  <span class="nx">passport</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">instance</span><span class="p">);</span>
-<span class="p">};</span></div></div></div></div></body></html>
+<span class="hljs-keyword">var</span> AUTH_CALLBACK_BASE_URL = <span class="hljs-string">'http://localhost:'</span> + (process.env.PORT || <span class="hljs-number">8080</span>);
+<span class="hljs-keyword">if</span> (isPro)
+  AUTH_CALLBACK_BASE_URL = <span class="hljs-string">'https://openuserjs.org'</span>;
+<span class="hljs-keyword">if</span> (process.env.AUTH_CALLBACK_BASE_URL)
+  AUTH_CALLBACK_BASE_URL = process.env.AUTH_CALLBACK_BASE_URL;
+
+exports.strategyInstances = nil();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This will load a single passport
+Notice it is general so it can load any passport strategy</p></div></div><div class="code"><div class="wrapper">exports.loadPassport = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStrategy)</span> </span>{
+  <span class="hljs-keyword">var</span> requireStr = <span class="hljs-string">'passport-'</span> + aStrategy.name;
+  <span class="hljs-keyword">var</span> PassportStrategy = <span class="hljs-built_in">require</span>(requireStr).Strategy;
+  <span class="hljs-keyword">var</span> instance = <span class="hljs-literal">null</span>;
+
+  <span class="hljs-keyword">if</span> (aStrategy.openid) {
+    instance = <span class="hljs-keyword">new</span> PassportStrategy(
+      {
+        returnURL: AUTH_CALLBACK_BASE_URL + <span class="hljs-string">'/auth/'</span> + aStrategy.name + <span class="hljs-string">'/callback/'</span>,
+        realm: AUTH_CALLBACK_BASE_URL + <span class="hljs-string">'/'</span>,
+        audience: AUTH_CALLBACK_BASE_URL,
+        profile: <span class="hljs-literal">false</span>,
+        stateless: <span class="hljs-literal">true</span>
+      },
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ } <span class="hljs-comment">// we replace this callback later (_verify)</span>
+    );
+  } <span class="hljs-keyword">else</span> {
+    instance = <span class="hljs-keyword">new</span> PassportStrategy(
+      {
+        consumerKey: aStrategy.id,
+        consumerSecret: aStrategy.key,
+        clientID: aStrategy.id,
+        clientSecret: aStrategy.key,
+        state: <span class="hljs-string">'a bullshit string reddit requires'</span>,
+        callbackURL: AUTH_CALLBACK_BASE_URL + <span class="hljs-string">'/auth/'</span> + aStrategy.name + <span class="hljs-string">'/callback/'</span>
+      },
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ } <span class="hljs-comment">// we replace this callback later (_verify)</span>
+    );
+  }
+
+  exports.strategyInstances[aStrategy.name] = instance;
+  passport.use(instance);
+};</div></div></div></div></body></html>
