@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="en"><head><title>controllers/_template</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/_template"><meta name="groc-project-path" content="controllers/_template.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/_template.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+<span class="hljs-keyword">var</span> pageMetadata = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).pageMetadata;
+
+<span class="hljs-comment">//--- Models</span>
+<span class="hljs-keyword">var</span> Group = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/group'</span>).Group;
+
+<span class="hljs-comment">//--- Local</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Parse a mongoose model and add generated fields (eg: urls, formatted dates)
+Seperate functions for rendering</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Tools for parsing req.query.q and applying it to a mongoose query.</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> modelQuery = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelQuery'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Generate a bootstrap3 pagination widget.</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> getDefaultPagination = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).getDefaultPagination;
+
+<span class="hljs-comment">//--- Views</span>
+exports.example = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];
+
+  <span class="hljs-comment">//---</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{ }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/_templatePage'</span>, options); }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options);
+
+  <span class="hljs-comment">//--- Tasks</span>
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, asyncComplete);
+};
+
+exports.example = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];
+
+  <span class="hljs-comment">//---</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">    options.paginationRendered = pagination.renderDefault(aReq);
+  }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/_templatePage'</span>, options); }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> scriptListQuery = Script.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query: isLib=false</p></div></div><div class="code"><div class="wrapper">  scriptListQuery.find({ isLib: <span class="hljs-literal">false</span> });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query: Search</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aReq.query.q)
+    modelQuery.parseScriptSearchQuery(scriptListQuery, aReq.query.q);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts: Query: Sort</p></div></div><div class="code"><div class="wrapper">  modelQuery.parseModelListSort(scriptListQuery, aReq.query.orderBy, aReq.query.orderDir, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    scriptListQuery.sort(<span class="hljs-string">'-rating -installs -updated'</span>);
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> pagination = getDefaultPagination(aReq);
+  pagination.applyToQuery(scriptListQuery);
+
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">  tasks.push(pagination.getCountTask(scriptListQuery));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Scripts</p></div></div><div class="code"><div class="wrapper">  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    scriptListQuery.exec(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScriptDataList)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr) {
+        aCallback();
+      } <span class="hljs-keyword">else</span> {
+        options.scriptList = _.map(aScriptDataList, modelParser.parseScript);
+        aCallback();
+      }
+    });
+  });
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, asyncComplete);
+};</div></div></div></div></body></html>

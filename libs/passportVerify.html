@@ -1,51 +1,56 @@
-<!DOCTYPE html><html lang="en"><head><title>libs/passportVerify</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/passportVerify"><meta name="groc-project-path" content="libs/passportVerify.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/passportVerify.js">libs/passportVerify.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">crypto</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;crypto&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">findDeadorAlive</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/remove&#39;</span><span class="p">).</span><span class="nx">findDeadorAlive</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">userRoles</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/userRoles.json&#39;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This is a custom verification function used for Passports because
-we needed something more powerful than what they provided</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">verify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">strategy</span><span class="p">,</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">loggedIn</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">shasum</span> <span class="o">=</span> <span class="nx">crypto</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="s1">&#39;sha256&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">digest</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We only keep plaintext ids for GH since that's all we need</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="nx">strategy</span> <span class="o">===</span> <span class="s1">&#39;github&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">digest</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Having these ids would allow us to do things with the user's
-account and that is something we DO NOT want to do</p></div></div><div class="code"><div class="wrapper">    <span class="nx">shasum</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">id</span><span class="p">));</span>
-    <span class="nx">digest</span> <span class="o">=</span> <span class="nx">shasum</span><span class="p">.</span><span class="nx">digest</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
+<!DOCTYPE html><html lang="en"><head><title>libs/passportVerify</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/passportVerify"><meta name="groc-project-path" content="libs/passportVerify.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/passportVerify.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="nx">findDeadorAlive</span><span class="p">(</span><span class="nx">User</span><span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;auths&#39;</span> <span class="o">:</span> <span class="nx">digest</span> <span class="p">},</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">alive</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">removed</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">pos</span> <span class="o">=</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">auths</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">digest</span><span class="p">)</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">removed</span><span class="p">)</span> <span class="p">{</span> <span class="nx">done</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s1">&#39;user was removed&#39;</span><span class="p">);</span> <span class="p">}</span>
+<span class="hljs-keyword">var</span> crypto = <span class="hljs-built_in">require</span>(<span class="hljs-string">'crypto'</span>);
+<span class="hljs-keyword">var</span> User = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/user'</span>).User;
+<span class="hljs-keyword">var</span> findDeadorAlive = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/remove'</span>).findDeadorAlive;
+<span class="hljs-keyword">var</span> userRoles = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/userRoles.json'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This is a custom verification function used for Passports because
+we needed something more powerful than what they provided</p></div></div><div class="code"><div class="wrapper">exports.verify = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aId, aStrategy, aUsername, aLoggedIn, aDone)</span> </span>{
+  <span class="hljs-keyword">var</span> shasum = crypto.createHash(<span class="hljs-string">'sha256'</span>);
+  <span class="hljs-keyword">var</span> digest = <span class="hljs-literal">null</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We only keep plaintext ids for GH since that&#39;s all we need</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aStrategy === <span class="hljs-string">'github'</span>) {
+    digest = aId;
+  } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Having these ids would allow us to do things with the user&#39;s
+account and that is something we DO NOT want to do</p></div></div><div class="code"><div class="wrapper">    shasum.update(<span class="hljs-built_in">String</span>(aId));
+    digest = shasum.digest(<span class="hljs-string">'hex'</span>);
+  }
 
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="s1">&#39;name&#39;</span> <span class="o">:</span> <span class="nx">username</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">user</span> <span class="o">&amp;&amp;</span> <span class="nx">loggedIn</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add the new strategy to same account
-This allows linking multiple external accounts to one of ours</p></div></div><div class="code"><div class="wrapper">            <span class="nx">user</span><span class="p">.</span><span class="nx">auths</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">digest</span><span class="p">);</span>
-            <span class="nx">user</span><span class="p">.</span><span class="nx">strategies</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">strategy</span><span class="p">);</span>
-            <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-              <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">);</span>
-            <span class="p">});</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>user was found matching name but not can't be authenticated</p></div></div><div class="code"><div class="wrapper">            <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s1">&#39;username is taken&#39;</span><span class="p">);</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create a new user</p></div></div><div class="code"><div class="wrapper">            <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">({</span>
-              <span class="s1">&#39;name&#39;</span> <span class="o">:</span> <span class="nx">username</span><span class="p">,</span>
-              <span class="s1">&#39;auths&#39;</span> <span class="o">:</span> <span class="p">[</span><span class="nx">digest</span><span class="p">],</span>
-              <span class="s1">&#39;strategies&#39;</span> <span class="o">:</span> <span class="p">[</span><span class="nx">strategy</span><span class="p">],</span>
-              <span class="s1">&#39;role&#39;</span> <span class="o">:</span> <span class="nx">userRoles</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-              <span class="s1">&#39;about&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-              <span class="s1">&#39;ghUsername&#39;</span><span class="o">:</span> <span class="kc">null</span>
-            <span class="p">});</span>
-            <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-              <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">);</span>
-            <span class="p">});</span>
-          <span class="p">}</span>
-        <span class="p">});</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">pos</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">pos</span> <span class="o">&lt;</span> <span class="nx">user</span><span class="p">.</span><span class="nx">auths</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the default strategy</p></div></div><div class="code"><div class="wrapper">        <span class="nx">user</span><span class="p">.</span><span class="nx">strategies</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-        <span class="nx">user</span><span class="p">.</span><span class="nx">auths</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">pos</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-        <span class="nx">user</span><span class="p">.</span><span class="nx">strategies</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">strategy</span><span class="p">);</span>
-        <span class="nx">user</span><span class="p">.</span><span class="nx">auths</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">digest</span><span class="p">);</span>
-        <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">);</span>
-        <span class="p">});</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>The user was authenticated</p></div></div><div class="code"><div class="wrapper">        <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">user</span><span class="p">);</span>
-      <span class="p">}</span>
-  <span class="p">});</span>
-<span class="p">}</span></div></div></div></div></body></html>
+  findDeadorAlive(User, { <span class="hljs-string">'auths'</span>: digest }, <span class="hljs-literal">true</span>,
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aAlive, aUser, aRemoved)</span> </span>{
+      <span class="hljs-keyword">var</span> pos = aUser ? aUser.auths.indexOf(digest) : -<span class="hljs-number">1</span>;
+      <span class="hljs-keyword">if</span> (aRemoved) { aDone(<span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-string">'user was removed'</span>); }
+
+      <span class="hljs-keyword">if</span> (!aUser) {
+        User.findOne({ <span class="hljs-string">'name'</span>: aUsername }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+          <span class="hljs-keyword">if</span> (aUser &amp;&amp; aLoggedIn) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add the new strategy to same account
+This allows linking multiple external accounts to one of ours</p></div></div><div class="code"><div class="wrapper">            aUser.auths.push(digest);
+            aUser.strategies.push(aStrategy);
+            aUser.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+              <span class="hljs-keyword">return</span> aDone(aErr, aUser);
+            });
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (aUser) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>user was found matching name but not can&#39;t be authenticated</p></div></div><div class="code"><div class="wrapper">            <span class="hljs-keyword">return</span> aDone(<span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-string">'username is taken'</span>);
+          } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create a new user</p></div></div><div class="code"><div class="wrapper">            aUser = <span class="hljs-keyword">new</span> User({
+              <span class="hljs-string">'name'</span>: aUsername,
+              <span class="hljs-string">'auths'</span>: [digest],
+              <span class="hljs-string">'strategies'</span>: [aStrategy],
+              <span class="hljs-string">'role'</span>: userRoles.length - <span class="hljs-number">1</span>,
+              <span class="hljs-string">'about'</span>: <span class="hljs-string">''</span>,
+              <span class="hljs-string">'ghUsername'</span>: <span class="hljs-literal">null</span>
+            });
+            aUser.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+              <span class="hljs-keyword">return</span> aDone(aErr, aUser);
+            });
+          }
+        });
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pos &gt; -<span class="hljs-number">1</span> &amp;&amp; pos &lt; aUser.auths.length - <span class="hljs-number">1</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the default strategy</p></div></div><div class="code"><div class="wrapper">        aUser.strategies.splice(pos, <span class="hljs-number">1</span>);
+        aUser.auths.splice(pos, <span class="hljs-number">1</span>);
+        aUser.strategies.push(aStrategy);
+        aUser.auths.push(digest);
+        aUser.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+          <span class="hljs-keyword">return</span> aDone(aErr, aUser);
+        });
+      } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>The user was authenticated</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">return</span> aDone(<span class="hljs-literal">null</span>, aUser);
+      }
+    }
+  );
+};</div></div></div></div></body></html>

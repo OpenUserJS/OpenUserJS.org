@@ -1,108 +1,114 @@
-<!DOCTYPE html><html lang="en"><head><title>libs/flag</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/flag"><meta name="groc-project-path" content="libs/flag.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/flag.js">libs/flag.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Flag</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/flag&#39;</span><span class="p">).</span><span class="nx">Flag</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">getKarma</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./collectiveRating&#39;</span><span class="p">).</span><span class="nx">getKarma</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">thresholds</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;Script&#39;</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;Discussion&#39;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Comment&#39;</span><span class="o">:</span> <span class="mi">2</span> <span class="p">};</span>
-<span class="kd">var</span> <span class="nx">maxKarma</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Determine whether content can be flagged by a user.
+<!DOCTYPE html><html lang="en"><head><title>libs/flag</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/flag"><meta name="groc-project-path" content="libs/flag.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/flag.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> Flag = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/flag'</span>).Flag;
+<span class="hljs-keyword">var</span> User = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/user'</span>).User;
+<span class="hljs-keyword">var</span> getKarma = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./collectiveRating'</span>).getKarma;
+<span class="hljs-keyword">var</span> thresholds = { <span class="hljs-string">'Script'</span>: <span class="hljs-number">1</span>, <span class="hljs-string">'User'</span>: <span class="hljs-number">1</span>, <span class="hljs-string">'Discussion'</span>: <span class="hljs-number">1</span>, <span class="hljs-string">'Comment'</span>: <span class="hljs-number">1</span> };
+<span class="hljs-keyword">var</span> maxKarma = <span class="hljs-number">10</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Determine whether content can be flagged by a user.
 This is heavily commented so that my logic and
-reasoning is documented for myself and others.</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">flaggable</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Not logged in or role is above moderator
-No one above a moderator is part of the moderation system
-since they can just remove content directly</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span> <span class="o">||</span> <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can't flag yourself
+reasoning is documented for myself and others.</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">flaggable</span><span class="hljs-params">(aModel, aContent, aUser, aCallback)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Not logged in.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (!aUser) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">false</span>); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can&#39;t flag yourself
 Only someone less than an admin can be flagged
 It is not the responsibility of the community
-to police the site administration</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">modelName</span> <span class="o">===</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">getFlag</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">callback</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_id</span> <span class="o">!=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="o">&amp;&amp;</span> <span class="nx">content</span><span class="p">.</span><span class="nx">role</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">flag</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
+to police the site administration</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aModel.modelName === <span class="hljs-string">'User'</span>) {
+    <span class="hljs-keyword">return</span> getFlag(aModel, aContent, aUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aFlag)</span> </span>{
+      aCallback(aContent._id != aUser._id &amp;&amp; aContent.role &gt; <span class="hljs-number">2</span>, aContent, aFlag);
+    });
+  }
 
-  <span class="nx">getAuthor</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">author</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Content without an author shouldn't exist</p></div></div><div class="code"><div class="wrapper">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">author</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can't flag your own content</p></div></div><div class="code"><div class="wrapper">    <span class="k">if</span> <span class="p">(</span><span class="nx">author</span><span class="p">.</span><span class="nx">_id</span> <span class="o">==</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Content belonging to an admin or above cannot be flagged</p></div></div><div class="code"><div class="wrapper">    <span class="k">if</span> <span class="p">(</span><span class="nx">author</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">author</span><span class="p">.</span><span class="nx">role</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">author</span><span class="p">);</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can't flag something twice</p></div></div><div class="code"><div class="wrapper">    <span class="nx">getFlag</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="o">!</span><span class="nx">flag</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">flag</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">}</span>
-<span class="nx">exports</span><span class="p">.</span><span class="nx">flaggable</span> <span class="o">=</span> <span class="nx">flaggable</span><span class="p">;</span>
+  getAuthor(aContent, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aAuthor)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Content without an author shouldn&#39;t exist</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!aAuthor) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">false</span>); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can&#39;t flag your own content</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (aAuthor._id == aUser._id) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">false</span>); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Content belonging to an admin or above cannot be flagged</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (aAuthor.role &lt; <span class="hljs-number">3</span>) { <span class="hljs-keyword">return</span> aCallback(aAuthor.role &gt; <span class="hljs-number">2</span>, aAuthor); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can&#39;t flag something twice</p></div></div><div class="code"><div class="wrapper">    getFlag(aModel, aContent, aUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aFlag)</span> </span>{
+      <span class="hljs-keyword">return</span> aCallback(!aFlag, aAuthor, aFlag);
+    });
+  });
+}
+exports.flaggable = flaggable;
 
-<span class="kd">function</span> <span class="nx">getFlag</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">Flag</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span>
-    <span class="s1">&#39;model&#39;</span><span class="o">:</span> <span class="nx">model</span><span class="p">.</span><span class="nx">modelName</span><span class="p">,</span>
-    <span class="s1">&#39;_contentId&#39;</span><span class="o">:</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span>
-    <span class="s1">&#39;_userId&#39;</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span>
-  <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">callback</span><span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">flag</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="nx">flag</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">}</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getFlag</span><span class="hljs-params">(aModel, aContent, aUser, aCallback)</span> </span>{
+  Flag.findOne({
+    <span class="hljs-string">'model'</span>: aModel.modelName,
+    <span class="hljs-string">'_contentId'</span>: aContent._id,
+    <span class="hljs-string">'_userId'</span>: aUser._id
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aFlag)</span> </span>{
+    aCallback(aErr || !aFlag ? <span class="hljs-literal">null</span> : aFlag);
+  });
+}
 
-<span class="kd">function</span> <span class="nx">getAuthor</span> <span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">_id</span><span class="o">:</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_authorId</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">author</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Content without an author shouldn't exist</p></div></div><div class="code"><div class="wrapper">    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">author</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getAuthor</span><span class="hljs-params">(aContent, aCallback)</span> </span>{
+  User.findOne({ _id: aContent._authorId }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aAuthor)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Content without an author shouldn&#39;t exist</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (aErr || !aAuthor) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }
 
-    <span class="nx">callback</span><span class="p">(</span><span class="nx">author</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">}</span>
-<span class="nx">exports</span><span class="p">.</span><span class="nx">getAuthor</span> <span class="o">=</span> <span class="nx">getAuthor</span><span class="p">;</span>
+    aCallback(aAuthor);
+  });
+}
+exports.getAuthor = getAuthor;
 
-<span class="kd">function</span> <span class="nx">getThreshold</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Admins can't be flagged so they have no threshold</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="nx">author</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Moderators have a doubled threshold</p></div></div><div class="code"><div class="wrapper">  <span class="kd">var</span> <span class="nx">threshold</span> <span class="o">=</span> <span class="nx">thresholds</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">modelName</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nx">author</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">1</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Calculate karma and add it to the threshold</p></div></div><div class="code"><div class="wrapper">  <span class="nx">getKarma</span><span class="p">(</span><span class="nx">author</span><span class="p">,</span> <span class="nx">maxKarma</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">karma</span><span class="p">)</span> <span class="p">{</span> 
-    <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">threshold</span> <span class="o">+</span> <span class="nx">karma</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">}</span>
-<span class="nx">exports</span><span class="p">.</span><span class="nx">getThreshold</span> <span class="o">=</span> <span class="nx">getThreshold</span><span class="p">;</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getThreshold</span><span class="hljs-params">(aModel, aContent, aAuthor, aCallback)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Admins can&#39;t be flagged so they have no threshold</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aAuthor.role &lt; <span class="hljs-number">3</span>) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Hardcode the threshold at 1.
+modelQuery.applyModelListQueryFlaggedFilter supports this hardcoded number.
+return aCallback(1);</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Moderators have a doubled threshold</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> threshold = thresholds[aModel.modelName] * (aAuthor.role &lt; <span class="hljs-number">4</span> ? <span class="hljs-number">2</span> : <span class="hljs-number">1</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Calculate karma and add it to the threshold</p></div></div><div class="code"><div class="wrapper">  getKarma(aAuthor, maxKarma, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aKarma)</span> </span>{
+    <span class="hljs-keyword">return</span> aCallback(threshold + aKarma);
+  });
+}
+exports.getThreshold = getThreshold;
 
-<span class="kd">function</span> <span class="nx">saveContent</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">flags</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">content</span><span class="p">.</span><span class="nx">flags</span><span class="p">)</span> <span class="p">{</span> <span class="nx">content</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
-  <span class="nx">content</span><span class="p">.</span><span class="nx">flags</span> <span class="o">+=</span> <span class="nx">flags</span><span class="p">;</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">saveContent</span><span class="hljs-params">(aModel, aContent, aAuthor, aFlags, aCallback)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aContent.flags) { aContent.flags = <span class="hljs-number">0</span>; }
+  aContent.flags += aFlags;
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">flags</span> <span class="o">&gt;=</span> <span class="nx">thresholds</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">modelName</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nx">author</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">getThreshold</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">threshold</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">content</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">flags</span> <span class="o">&gt;=</span> <span class="nx">threshold</span><span class="p">;</span>
-      <span class="nx">content</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">flagged</span><span class="p">);</span> <span class="p">});</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
+  <span class="hljs-keyword">if</span> (aContent.flags &gt;= thresholds[aModel.modelName] * (aAuthor.role &lt; <span class="hljs-number">4</span> ? <span class="hljs-number">2</span> : <span class="hljs-number">1</span>)) {
+    <span class="hljs-keyword">return</span> getThreshold(aModel, aContent, aAuthor, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aThreshold)</span> </span>{
+      aContent.flagged = aContent.flags &gt;= aThreshold;
+      aContent.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aContent)</span> </span>{ aCallback(aContent.flagged); });
+    });
+  } <span class="hljs-keyword">else</span> {
+    aContent.flagged = <span class="hljs-literal">false</span>;
+  }
 
-  <span class="nx">content</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">flagged</span><span class="p">);</span> <span class="p">});</span>
-<span class="p">}</span>
-<span class="nx">exports</span><span class="p">.</span><span class="nx">saveContent</span> <span class="o">=</span> <span class="nx">saveContent</span><span class="p">;</span>
+  aContent.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aContent)</span> </span>{ aCallback(aContent.flagged); });
+}
+exports.saveContent = saveContent;
 
-<span class="kd">function</span> <span class="nx">flag</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">flag</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Flag</span><span class="p">({</span>
-    <span class="s1">&#39;model&#39;</span><span class="o">:</span> <span class="nx">model</span><span class="p">.</span><span class="nx">modelName</span><span class="p">,</span>
-    <span class="s1">&#39;_contentId&#39;</span><span class="o">:</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span>
-    <span class="s1">&#39;_userId&#39;</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span>
-  <span class="p">});</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">flag</span><span class="hljs-params">(aModel, aContent, aUser, aAuthor, aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> flag = <span class="hljs-keyword">new</span> Flag({
+    <span class="hljs-string">'model'</span>: aModel.modelName,
+    <span class="hljs-string">'_contentId'</span>: aContent._id,
+    <span class="hljs-string">'_userId'</span>: aUser._id
+  });
 
-  <span class="nx">flag</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">content</span><span class="p">.</span><span class="nx">flags</span><span class="p">)</span> <span class="p">{</span> <span class="nx">content</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">content</span><span class="p">.</span><span class="nx">flagged</span><span class="p">)</span> <span class="p">{</span> <span class="nx">content</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> <span class="p">}</span>
+  flag.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aFlag)</span> </span>{
+    <span class="hljs-keyword">if</span> (!aContent.flags) { aContent.flags = <span class="hljs-number">0</span>; }
+    <span class="hljs-keyword">if</span> (!aContent.flagged) { aContent.flagged = <span class="hljs-literal">false</span>; }
 
-    <span class="nx">saveContent</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span>
-  <span class="p">});</span>
-<span class="p">}</span>
+    saveContent(aModel, aContent, aAuthor, aUser.role &lt; <span class="hljs-number">4</span> ? <span class="hljs-number">2</span> : <span class="hljs-number">1</span>, aCallback);
+  });
+}
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">flag</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">flaggable</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">canFlag</span><span class="p">,</span> <span class="nx">author</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">canFlag</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span> <span class="p">}</span>
+exports.flag = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aModel, aContent, aUser, aCallback)</span> </span>{
+  flaggable(aModel, aContent, aUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCanFlag, aAuthor)</span> </span>{
+    <span class="hljs-keyword">if</span> (!aCanFlag) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">false</span>); }
 
-    <span class="nx">flag</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span>
+    flag(aModel, aContent, aUser, aAuthor, aCallback);
+  });
+};
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">unflag</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span>
+exports.unflag = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aModel, aContent, aUser, aCallback)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aUser) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }
 
-  <span class="nx">getFlag</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span>
+  getFlag(aModel, aContent, aUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aFlag)</span> </span>{
+    <span class="hljs-keyword">if</span> (!aFlag) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">content</span><span class="p">.</span><span class="nx">flags</span><span class="p">)</span> <span class="p">{</span> <span class="nx">content</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">content</span><span class="p">.</span><span class="nx">flagged</span><span class="p">)</span> <span class="p">{</span> <span class="nx">content</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> <span class="p">}</span>
+    <span class="hljs-keyword">if</span> (!aContent.flags) { aContent.flags = <span class="hljs-number">0</span>; }
+    <span class="hljs-keyword">if</span> (!aContent.flagged) { aContent.flagged = <span class="hljs-literal">false</span>; }
 
-    <span class="kd">function</span> <span class="nx">removeFlag</span> <span class="p">(</span><span class="nx">author</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">flag</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">saveContent</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="o">?</span> <span class="o">-</span><span class="mi">2</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-      <span class="p">});</span>
-    <span class="p">}</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">removeFlag</span><span class="hljs-params">(aAuthor)</span> </span>{
+      aFlag.remove(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+        saveContent(aModel, aContent, aAuthor, aUser.role &lt; <span class="hljs-number">4</span> ? -<span class="hljs-number">2</span> : -<span class="hljs-number">1</span>, aCallback);
+      });
+    }
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">modelName</span> <span class="o">===</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">removeFlag</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">getAuthor</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">removeFlag</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div></div></body></html>
+    <span class="hljs-keyword">if</span> (aModel.modelName === <span class="hljs-string">'User'</span>) {
+      removeFlag(aContent);
+    } <span class="hljs-keyword">else</span> {
+      getAuthor(aContent, removeFlag);
+    }
+  });
+};</div></div></div></div></body></html>

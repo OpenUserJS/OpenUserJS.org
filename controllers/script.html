@@ -1,341 +1,414 @@
-<!DOCTYPE html><html lang="en"><head><title>controllers/script</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/script"><meta name="groc-project-path" content="controllers/script.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/script.js">controllers/script.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">formidable</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;formidable&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">scriptStorage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./scriptStorage&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Vote</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/vote&#39;</span><span class="p">).</span><span class="nx">Vote</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Flag</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/flag&#39;</span><span class="p">).</span><span class="nx">Flag</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Group</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/group&#39;</span><span class="p">).</span><span class="nx">Group</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Discussion</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/discussion&#39;</span><span class="p">).</span><span class="nx">Discussion</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">addScriptToGroups</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./group&#39;</span><span class="p">).</span><span class="nx">addScriptToGroups</span>
-<span class="kd">var</span> <span class="nx">flagLib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/flag&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">removeLib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/remove&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">modelsList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/modelsList&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">renderMd</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/markdown&#39;</span><span class="p">).</span><span class="nx">renderMd</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">formatDate</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/helpers&#39;</span><span class="p">).</span><span class="nx">formatDate</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let script controllers know this is a lib route</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">lib</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">controller</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="nx">controller</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Display which scripts use a library hosted on the site</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">useLib</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> 
-    <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">};</span>
+<!DOCTYPE html><html lang="en"><head><title>controllers/script</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/script"><meta name="groc-project-path" content="controllers/script.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/script.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">lib</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">lib</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+<span class="hljs-keyword">var</span> sanitizeHtml = <span class="hljs-built_in">require</span>(<span class="hljs-string">'sanitize-html'</span>);
+<span class="hljs-keyword">var</span> htmlWhitelistLink = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/htmlWhitelistLink.json'</span>);
 
-    <span class="nx">options</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="s1">&#39;Scripts that use &lt;a href=&quot;/libs/&#39;</span> <span class="o">+</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> 
-      <span class="o">+</span> <span class="nx">lib</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;&lt;/a&gt;&#39;</span><span class="p">;</span>
-    <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listScripts</span><span class="p">({</span> <span class="nx">uses</span><span class="o">:</span> <span class="nx">lib</span><span class="p">.</span><span class="nx">installName</span> <span class="p">},</span>
-      <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="s1">&#39;/use/lib/&#39;</span> <span class="o">+</span> <span class="nx">installName</span><span class="p">,</span>
-      <span class="kd">function</span> <span class="p">(</span><span class="nx">scriptsList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">scriptsList</span> <span class="o">=</span> <span class="nx">scriptsList</span><span class="p">;</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View a detailed description of a script
-This is the most intensive page to render on the site</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">isLib</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">isLib</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> Discussion = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/discussion'</span>).Discussion;
+<span class="hljs-keyword">var</span> Group = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/group'</span>).Group;
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
+<span class="hljs-keyword">var</span> Vote = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/vote'</span>).Vote;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="o">+</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
-      <span class="kd">var</span> <span class="nx">editUrl</span> <span class="o">=</span> <span class="nx">installName</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
-      <span class="kd">var</span> <span class="nx">fork</span> <span class="o">=</span> <span class="nx">script</span><span class="p">.</span><span class="nx">fork</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">tasks</span> <span class="o">=</span> <span class="p">[];</span>
-      <span class="nx">editUrl</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the forks to be label properly</p></div></div><div class="code"><div class="wrapper">      <span class="k">if</span> <span class="p">(</span><span class="nx">fork</span> <span class="k">instanceof</span> <span class="nb">Array</span> <span class="o">&amp;&amp;</span> <span class="nx">fork</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">fork</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">first</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="nx">fork</span><span class="p">[</span><span class="nx">fork</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="nx">original</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">fork</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-      <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set up all the general options</p></div></div><div class="code"><div class="wrapper">      <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="nx">title</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-        <span class="nx">name</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-        <span class="nx">version</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
-        <span class="nx">install</span><span class="o">:</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/src/&#39;</span>  <span class="o">:</span> <span class="s1">&#39;/install/&#39;</span><span class="p">)</span>
-          <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">,</span>
-        <span class="nx">source</span><span class="o">:</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/scripts/&#39;</span><span class="p">)</span> 
-          <span class="o">+</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;/source&#39;</span><span class="p">,</span>
-        <span class="nx">edit</span><span class="o">:</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/lib/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/script/&#39;</span><span class="p">)</span>
-          <span class="o">+</span> <span class="nx">editUrl</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/edit&#39;</span><span class="p">,</span>
-        <span class="nx">author</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">author</span><span class="p">,</span>
-        <span class="nx">updated</span><span class="o">:</span> <span class="nx">formatDate</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">updated</span><span class="p">),</span>
-        <span class="nx">rating</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">rating</span><span class="p">,</span>
-        <span class="nx">installs</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installs</span><span class="p">,</span>
-        <span class="nx">fork</span><span class="o">:</span> <span class="nx">fork</span><span class="p">,</span>
-        <span class="nx">description</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">description</span><span class="p">,</span>
-        <span class="nx">about</span><span class="o">:</span> <span class="nx">renderMd</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">about</span><span class="p">),</span>
-        <span class="nx">hasCollab</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-        <span class="nx">collaborators</span><span class="o">:</span> <span class="p">[],</span>
-        <span class="nx">isYou</span><span class="o">:</span> <span class="nx">user</span> <span class="o">&amp;&amp;</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="o">==</span> <span class="nx">script</span><span class="p">.</span><span class="nx">_authorId</span><span class="p">,</span>
-        <span class="nx">isLib</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span><span class="p">,</span>
-        <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-        <span class="nx">isFork</span><span class="o">:</span> <span class="o">!!</span><span class="nx">fork</span>
-      <span class="p">};</span>
+<span class="hljs-keyword">var</span> scriptStorage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./scriptStorage'</span>);
+<span class="hljs-keyword">var</span> addScriptToGroups = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./group'</span>).addScriptToGroups;
+<span class="hljs-keyword">var</span> flagLib = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/flag'</span>);
+<span class="hljs-keyword">var</span> removeLib = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/remove'</span>);
+<span class="hljs-keyword">var</span> modelQuery = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelQuery'</span>);
+<span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);
+<span class="hljs-keyword">var</span> countTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).countTask;
+<span class="hljs-keyword">var</span> pageMetadata = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).pageMetadata;
+<span class="hljs-keyword">var</span> removeReasons = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../views/includes/scriptModals.json'</span>).removeReasons;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let controllers know this is a <code>new</code> route</p></div></div><div class="code"><div class="wrapper">exports.new = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aController)</span> </span>{
+  <span class="hljs-keyword">return</span> (<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+    aReq.params.isNew = <span class="hljs-literal">true</span>;
+    aController(aReq, aRes, aNext);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Let controllers know this is a <code>lib</code> route</p></div></div><div class="code"><div class="wrapper">exports.lib = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aController)</span> </span>{
+  <span class="hljs-keyword">return</span> (<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+    aReq.params.isLib = <span class="hljs-literal">true</span>;
+    aController(aReq, aRes, aNext);
+  });
+};
 
-      <span class="kd">function</span> <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show collaborators of the script</p></div></div><div class="code"><div class="wrapper">      <span class="k">if</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">author</span> <span class="o">&amp;&amp;</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">hasCollab</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">collaborators</span> <span class="o">=</span> <span class="p">[{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span> <span class="p">}];</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">collaborator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">collaborators</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">collaborator</span> <span class="p">});</span>
-          <span class="p">});</span>
-        <span class="p">}</span>
-      <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the number of open issues</p></div></div><div class="code"><div class="wrapper">      <span class="nx">tasks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">category</span> <span class="o">=</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;libs&#39;</span> <span class="o">:</span> <span class="s1">&#39;scripts&#39;</span><span class="p">)</span>
-          <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">installName</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">issuesUrl</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;/issues&#39;</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">openIssueUrl</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;/issue/new&#39;</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> getScriptPageTasks = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aOptions)</span> </span>{
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Shortcuts</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> script = aOptions.script;
+  <span class="hljs-keyword">var</span> authedUser = aOptions.authedUser;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Temporaries</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> htmlStub = <span class="hljs-literal">null</span>;
 
-        <span class="nx">Discussion</span><span class="p">.</span><span class="nx">count</span><span class="p">({</span> <span class="nx">category</span><span class="o">:</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;/issues&#39;</span><span class="p">,</span> <span class="nx">open</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">count</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">issuesCount</span> <span class="o">=</span> <span class="nx">count</span><span class="p">;</span>
-            <span class="nx">callback</span><span class="p">();</span>
-        <span class="p">});</span>
-      <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the groups the script belongs to</p></div></div><div class="code"><div class="wrapper">      <span class="nx">tasks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">();</span> <span class="p">}</span>
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the number of open issues</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+      .caseInsensitive(script.issuesCategorySlug), open: {$ne: <span class="hljs-literal">false</span>} });
+  tasks.push(countTask(scriptOpenIssueCountQuery, aOptions, <span class="hljs-string">'issueCount'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the groups the script belongs to</p></div></div><div class="code"><div class="wrapper">  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    script.hasGroups = <span class="hljs-literal">false</span>;
+    script.groups = [];
 
-        <span class="nx">Group</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">_scriptIds</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">groups</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">hasGroups</span> <span class="o">=</span> <span class="o">!</span><span class="nx">err</span> <span class="o">&amp;&amp;</span> <span class="nx">groups</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">groups</span> <span class="o">=</span> <span class="p">(</span><span class="nx">groups</span> <span class="o">||</span> <span class="p">[]).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">group</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">group</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="nx">group</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s+/g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="p">};</span>
-          <span class="p">});</span>
-          <span class="nx">callback</span><span class="p">();</span>
-        <span class="p">});</span>
-      <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show which libraries hosted on the site a script uses</p></div></div><div class="code"><div class="wrapper">      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">&amp;&amp;</span> <span class="nx">script</span><span class="p">.</span><span class="nx">uses</span> <span class="o">&amp;&amp;</span> <span class="nx">script</span><span class="p">.</span><span class="nx">uses</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">usesLibs</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">libs</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="nx">tasks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">Script</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="p">{</span> <span class="nx">$in</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">uses</span> <span class="p">}</span> <span class="p">},</span>
-            <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">libs</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">libs</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">lib</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">options</span><span class="p">.</span><span class="nx">libs</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> 
-                  <span class="nx">name</span><span class="o">:</span> <span class="nx">lib</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="nx">lib</span><span class="p">.</span><span class="nx">installName</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\.js$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> 
-                <span class="p">});</span>
-              <span class="p">});</span>
-              <span class="nx">callback</span><span class="p">();</span>
-          <span class="p">});</span>
-        <span class="p">});</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show how many scripts use this library</p></div></div><div class="code"><div class="wrapper">        <span class="nx">tasks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">Script</span><span class="p">.</span><span class="nx">count</span><span class="p">({</span> <span class="nx">uses</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">count</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">();</span> <span class="p">}</span>
+    Group.find({
+      _scriptIds: script._id
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScriptGroupList)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aCallback(aErr);
 
-            <span class="nx">options</span><span class="p">.</span><span class="nx">usedBy</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">count</span><span class="o">:</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/use/lib/&#39;</span> <span class="o">+</span> <span class="nx">installName</span> <span class="p">};</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="nx">options</span><span class="p">.</span><span class="nx">usedBy</span><span class="p">.</span><span class="nx">multiple</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="p">}</span>
+      aScriptGroupList = _.map(aScriptGroupList, modelParser.parseGroup);
 
-            <span class="nx">callback</span><span class="p">();</span>
-          <span class="p">});</span>
-        <span class="p">});</span>
-      <span class="p">}</span>
+      script.hasGroups = aScriptGroupList.length &gt; <span class="hljs-number">0</span>;
+      script.groups = aScriptGroupList;
 
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span> <span class="o">||</span> <span class="nx">options</span><span class="p">.</span><span class="nx">isYou</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">async</span><span class="p">.</span><span class="nx">parallel</span><span class="p">(</span><span class="nx">tasks</span><span class="p">,</span> <span class="nx">render</span><span class="p">);</span>
-      <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Setup the voting UI</p></div></div><div class="code"><div class="wrapper">      <span class="nx">tasks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Vote</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">_scriptId</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="nx">_userId</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span>
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">voteModel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">voteUrl</span> <span class="o">=</span> <span class="s1">&#39;/vote&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/scripts/&#39;</span><span class="p">)</span>
-              <span class="o">+</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+      aCallback();
+    });
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show homepages of the script</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (script.meta.homepageURL) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> script.meta.homepageURL === <span class="hljs-string">'string'</span>) {
+      htmlStub = <span class="hljs-string">'&lt;a href="'</span> + script.meta.homepageURL + <span class="hljs-string">'"&gt;&lt;/a&gt;'</span>;
+      <span class="hljs-keyword">if</span> (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        aOptions.script.homepages = [{
+          url: script.meta.homepageURL,
+          text: <span class="hljs-built_in">decodeURI</span>(script.meta.homepageURL),
+          hasNoFollow: !<span class="hljs-regexp">/^(?:https?:\/\/)?openuserjs\.org\//i</span>.test(script.meta.homepageURL)
+        }];
+      }
+    } <span class="hljs-keyword">else</span> {
+      aOptions.script.homepages = [];
+      script.meta.homepageURL.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aHomepage)</span> </span>{
+        htmlStub = <span class="hljs-string">'&lt;a href="'</span> + aHomepage + <span class="hljs-string">'"&gt;&lt;/a&gt;'</span>;
+        <span class="hljs-keyword">if</span> (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+          aOptions.script.homepages.unshift({
+            url: aHomepage,
+            text: <span class="hljs-built_in">decodeURI</span>(aHomepage),
+            hasNoFollow: !<span class="hljs-regexp">/^(?:https?:\/\/)?openuserjs\.org/i</span>.test(aHomepage)
+          });
+        }
+      });
+    }
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show copyrights of the script</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (script.meta.copyright) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> script.meta.copyright === <span class="hljs-string">'string'</span>) {
+      aOptions.script.copyrights = [{ name: script.meta.copyright }];
+    } <span class="hljs-keyword">else</span> {
+      aOptions.script.copyrights = [];
+      script.meta.copyright.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCopyright)</span> </span>{
+        aOptions.script.copyrights.unshift({ name: aCopyright });
+      });
+    }
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show licensings of the script</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (script.meta.license) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> script.meta.license === <span class="hljs-string">'string'</span>) {
+      aOptions.script.licenses = [{ name: script.meta.license }];
+    } <span class="hljs-keyword">else</span> {
+      aOptions.script.licenses = [];
+      script.meta.license.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aLicense)</span> </span>{
+        aOptions.script.licenses.unshift({ name: aLicense });
+      });
+    }
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!script.isLib) {
+    aOptions.script.licenses = [{ name: <span class="hljs-string">'MIT License (Expat)'</span> }];
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show collaborators of the script</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (script.meta.oujs &amp;&amp; script.meta.oujs.author &amp;&amp; script.meta.oujs.collaborator) {
+    aOptions.hasCollab = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> script.meta.oujs.collaborator === <span class="hljs-string">'string'</span>) {
+      aOptions.script.collaborators = [{ url: <span class="hljs-built_in">encodeURIComponent</span>(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];
+    } <span class="hljs-keyword">else</span> {
+      aOptions.script.collaborators = [];
+      script.meta.oujs.collaborator.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCollaborator)</span> </span>{
+        aOptions.script.collaborators.unshift({ url: <span class="hljs-built_in">encodeURIComponent</span>(aCollaborator), text: aCollaborator });
+      });
+    }
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show which libraries hosted on the site a script uses</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (!script.isLib &amp;&amp; script.uses &amp;&amp; script.uses.length &gt; <span class="hljs-number">0</span>) {
+    script.usesLibs = <span class="hljs-literal">true</span>;
+    script.libs = [];
+    tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      Script.find({
+        installName: { $<span class="hljs-keyword">in</span>: script.uses }
+      }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScriptLibraryList)</span> </span>{
+        <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aCallback(aErr);
 
-            <span class="nx">options</span><span class="p">.</span><span class="nx">voteable</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">upUrl</span> <span class="o">=</span> <span class="nx">voteUrl</span> <span class="o">+</span> <span class="s1">&#39;up&#39;</span><span class="p">;</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">downUrl</span> <span class="o">=</span> <span class="nx">voteUrl</span> <span class="o">+</span> <span class="s1">&#39;down&#39;</span><span class="p">;</span>
+        script.libs = aScriptLibraryList;
+        script.libs = _.map(script.libs, modelParser.parseScript);
+        aCallback();
+      });
+    });
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (script.isLib) {
+    script.isUsed = <span class="hljs-literal">false</span>;
+    script.usedBy = [];
+    tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      Script.find({
+        uses: script.installName
+      }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aLibraryScriptList)</span> </span>{
+        <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aCallback(aErr);
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">voteModel</span><span class="p">)</span> <span class="p">{</span>
-              <span class="k">if</span> <span class="p">(</span><span class="nx">voteModel</span><span class="p">.</span><span class="nx">vote</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">options</span><span class="p">.</span><span class="nx">up</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="nx">options</span><span class="p">.</span><span class="nx">upUrl</span> <span class="o">=</span> <span class="nx">voteUrl</span> <span class="o">+</span> <span class="s1">&#39;unvote&#39;</span><span class="p">;</span>
-              <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">options</span><span class="p">.</span><span class="nx">down</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="nx">options</span><span class="p">.</span><span class="nx">downUrl</span> <span class="o">=</span> <span class="nx">voteUrl</span> <span class="o">+</span> <span class="s1">&#39;unvote&#39;</span><span class="p">;</span>
-              <span class="p">}</span>
-            <span class="p">}</span>
+        script.isUsed = aLibraryScriptList.length &gt; <span class="hljs-number">0</span>;
+        script.usedBy = aLibraryScriptList;
+        script.usedBy = _.map(script.usedBy, modelParser.parseScript);
+        aCallback();
+      });
+    });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Setup the voting UI</p></div></div><div class="code"><div class="wrapper">  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    <span class="hljs-keyword">var</span> voteUrl = <span class="hljs-string">'/vote'</span> + script.scriptPageUrl;
+    aOptions.voteUpUrl = voteUrl + <span class="hljs-string">'/up'</span>;
+    aOptions.voteDownUrl = voteUrl + <span class="hljs-string">'/down'</span>;
+    aOptions.unvoteUrl = voteUrl + <span class="hljs-string">'/unvote'</span>;
 
-            <span class="nx">callback</span><span class="p">();</span>
-          <span class="p">});</span>
-      <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Setup the flagging UI</p></div></div><div class="code"><div class="wrapper">      <span class="nx">tasks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">flagLib</span><span class="p">.</span><span class="nx">flaggable</span><span class="p">(</span><span class="nx">Script</span><span class="p">,</span> <span class="nx">script</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span>
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">canFlag</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">flagUrl</span> <span class="o">=</span> <span class="s1">&#39;/flag&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/scripts/&#39;</span><span class="p">)</span>
-              <span class="o">+</span> <span class="nx">installName</span><span class="p">;</span>
+    aOptions.voteable = <span class="hljs-literal">false</span>;
+    aOptions.votedUp = <span class="hljs-literal">false</span>;
+    aOptions.votedDown = <span class="hljs-literal">false</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Can&#39;t vote when not logged in or when user owns the script.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!authedUser || aOptions.isOwner) {
+      aCallback();
+      <span class="hljs-keyword">return</span>;
+    }
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">flagUrl</span> <span class="o">+=</span> <span class="s1">&#39;/unflag&#39;</span><span class="p">;</span>
-              <span class="nx">options</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-              <span class="nx">options</span><span class="p">.</span><span class="nx">flaggable</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-              <span class="nx">options</span><span class="p">.</span><span class="nx">flaggable</span> <span class="o">=</span> <span class="nx">canFlag</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">flagUrl</span> <span class="o">=</span> <span class="nx">flagUrl</span><span class="p">;</span>
+    Vote.findOne({
+      _scriptId: script._id,
+      _userId: authedUser._id
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aVoteModel)</span> </span>{
+      aOptions.voteable = !script.isOwner;
 
-            <span class="nx">callback</span><span class="p">();</span>
-        <span class="p">});</span>
-      <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set up the removal UI</p></div></div><div class="code"><div class="wrapper">      <span class="nx">tasks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">removeLib</span><span class="p">.</span><span class="nx">removeable</span><span class="p">(</span><span class="nx">Script</span><span class="p">,</span> <span class="nx">script</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span>
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">canRemove</span><span class="p">,</span> <span class="nx">author</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">moderation</span> <span class="o">=</span> <span class="nx">canRemove</span><span class="p">;</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">flags</span> <span class="o">=</span> <span class="nx">script</span><span class="p">.</span><span class="nx">flags</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">removeUrl</span> <span class="o">=</span> <span class="s1">&#39;/remove&#39;</span> 
-              <span class="o">+</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/scripts/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">installName</span><span class="p">;</span>
+      <span class="hljs-keyword">if</span> (aVoteModel) {
+        <span class="hljs-keyword">if</span> (aVoteModel.vote) {
+          aOptions.votedUp = <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+          aOptions.votedDown = <span class="hljs-literal">true</span>;
+        }
+      }
 
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">canRemove</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">();</span> <span class="p">}</span>
+      aCallback();
+    });
 
-            <span class="nx">flagLib</span><span class="p">.</span><span class="nx">getThreshold</span><span class="p">(</span><span class="nx">Script</span><span class="p">,</span> <span class="nx">script</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span>
-              <span class="kd">function</span> <span class="p">(</span><span class="nx">threshold</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">options</span><span class="p">.</span><span class="nx">threshold</span> <span class="o">=</span> <span class="nx">threshold</span><span class="p">;</span>
-                <span class="nx">callback</span><span class="p">();</span>
-            <span class="p">});</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Setup the flagging UI</p></div></div><div class="code"><div class="wrapper">  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    <span class="hljs-keyword">var</span> flagUrl = <span class="hljs-string">'/flag'</span> + (script.isLib ? <span class="hljs-string">'/libs/'</span> : <span class="hljs-string">'/scripts/'</span>) + script.installNameSlug;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Can&#39;t flag when not logged in or when user owns the script.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!authedUser || aOptions.isOwner) {
+      aCallback();
+      <span class="hljs-keyword">return</span>;
+    }
 
-      <span class="nx">async</span><span class="p">.</span><span class="nx">parallel</span><span class="p">(</span><span class="nx">tasks</span><span class="p">,</span> <span class="nx">render</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>route to edit a script</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">edit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">isLib</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">isLib</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+    flagLib.flaggable(Script, script, authedUser,
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCanFlag, aAuthor, aFlag)</span> </span>{
+        <span class="hljs-keyword">if</span> (aFlag) {
+          flagUrl += <span class="hljs-string">'/unflag'</span>;
+          aOptions.flagged = <span class="hljs-literal">true</span>;
+          aOptions.canFlag = <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+          aOptions.canFlag = aCanFlag;
+        }
+        aOptions.flagUrl = flagUrl;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span> <span class="p">}</span>
+        aCallback();
+      });
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set up the removal UI</p></div></div><div class="code"><div class="wrapper">  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Can&#39;t remove when not logged in or when user owns the script.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!authedUser || aOptions.isOwner) {
+      aCallback();
+      <span class="hljs-keyword">return</span>;
+    }
 
-  <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
-  <span class="nx">installName</span> <span class="o">=</span> <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
+    removeLib.removeable(Script, script, authedUser,
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCanRemove, author)</span> </span>{
+        aOptions.canRemove = aCanRemove;
+        aOptions.flags = script.flags || <span class="hljs-number">0</span>;
+        aOptions.removeUrl = <span class="hljs-string">'/remove'</span> + (script.isLib ? <span class="hljs-string">'/libs/'</span> : <span class="hljs-string">'/scripts/'</span>) + script.installNameSlug;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="o">+</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">baseUrl</span> <span class="o">=</span> <span class="nx">script</span> <span class="o">&amp;&amp;</span> <span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/scripts/&#39;</span><span class="p">;</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span> <span class="o">||</span> <span class="nx">script</span><span class="p">.</span><span class="nx">_authorId</span> <span class="o">!=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+        <span class="hljs-keyword">if</span> (!aCanRemove) { <span class="hljs-keyword">return</span> aCallback(); }
 
-      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">about</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">remove</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">deleteScript</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/users/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
-          <span class="p">});</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">script</span><span class="p">.</span><span class="nx">about</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">about</span><span class="p">;</span>
-          <span class="nx">addScriptToGroups</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/,/</span><span class="p">),</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">baseUrl</span> <span class="o">+</span> <span class="nx">installName</span><span class="p">);</span>
-          <span class="p">});</span>
-        <span class="p">}</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">Group</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">_scriptIds</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">groups</span><span class="p">)</span> <span class="p">{</span>
-          <span class="kd">var</span> <span class="nx">groupsArr</span> <span class="o">=</span> <span class="p">(</span><span class="nx">groups</span> <span class="o">||</span> <span class="p">[]).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">group</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">group</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-          <span class="p">});</span>
+        flagLib.getThreshold(Script, script, author,
+          <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aThreshold)</span> </span>{
+            aOptions.threshold = aThreshold;
+            aCallback();
+          });
+      });
+  });
 
-          <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;scriptEdit&#39;</span><span class="p">,</span> <span class="p">{</span>
-            <span class="nx">title</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-            <span class="nx">name</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-            <span class="nx">install</span><span class="o">:</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/src/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/install/&#39;</span><span class="p">)</span>
-              <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">,</span>
-            <span class="nx">source</span><span class="o">:</span> <span class="nx">baseUrl</span> <span class="o">+</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;/source&#39;</span><span class="p">,</span>
-            <span class="nx">about</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">about</span><span class="p">,</span>
-            <span class="nx">groups</span><span class="o">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">groupsArr</span><span class="p">),</span>
-            <span class="nx">canCreateGroup</span><span class="o">:</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">.</span><span class="nx">_groupId</span><span class="p">).</span><span class="nx">toString</span><span class="p">(),</span>
-            <span class="nx">isLib</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span><span class="p">,</span>
-            <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">null</span>
-          <span class="p">});</span>
-        <span class="p">});</span>
-      <span class="p">}</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script voting</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">vote</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">isLib</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">isLib</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span>
-    <span class="o">+</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">vote</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">vote</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">_parsedUrl</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">unvote</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="hljs-keyword">return</span> tasks;
+};
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span> <span class="p">}</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">url</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span> <span class="nx">url</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span> <span class="p">}</span>
-  <span class="nx">url</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="nx">url</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+<span class="hljs-keyword">var</span> setupScriptSidePanel = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aOptions)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Shortcuts</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> authedUser = aOptions.authedUser;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aOptions.isOwner) {
+    aOptions.authorTools = {};
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Mod</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (authedUser &amp;&amp; authedUser.isMod) {
+    <span class="hljs-comment">//aOptions.authorTools = {}; // TODO: Support moderator edits on scripts?</span>
+    aOptions.modTools = {};
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">vote</span> <span class="o">===</span> <span class="s1">&#39;up&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">vote</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">vote</span> <span class="o">===</span> <span class="s1">&#39;down&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">vote</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">vote</span> <span class="o">===</span> <span class="s1">&#39;unvote&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">unvote</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-  <span class="p">}</span>
+    <span class="hljs-keyword">if</span> (removeReasons) {
+      aOptions.modTools.hasRemoveReasons = <span class="hljs-literal">true</span>;
+      aOptions.modTools.removeReasons = [];
+      removeReasons.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReason)</span> </span>{
+        aOptions.modTools.removeReasons.push({ <span class="hljs-string">'name'</span> : aReason });
+      });
+    }
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Admin</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (authedUser &amp;&amp; authedUser.isAdmin) {
+    aOptions.adminTools = {};
+  }
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View a detailed description of a script
+This is the most intensive page to render on the site</p></div></div><div class="code"><div class="wrapper">exports.view = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="p">},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span> <span class="p">}</span>
+  <span class="hljs-keyword">var</span> installNameSlug = scriptStorage.getInstallName(aReq);
+  <span class="hljs-keyword">var</span> isLib = aReq.params.isLib;
 
-      <span class="nx">Vote</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">_scriptId</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="nx">_userId</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span>
-        <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">voteModel</span><span class="p">)</span> <span class="p">{</span>
-          <span class="kd">var</span> <span class="nx">oldVote</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-          <span class="kd">var</span> <span class="nx">votes</span> <span class="o">=</span> <span class="nx">script</span><span class="p">.</span><span class="nx">votes</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
-          <span class="kd">var</span> <span class="nx">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  Script.findOne({
+    installName: scriptStorage
+      .caseInsensitive(installNameSlug + (isLib ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>))
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScriptData)</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">if</span> (script.groups) {
+        pageMetadata(options, [<span class="hljs-string">'About'</span>, script.name, (script.isLib ? <span class="hljs-string">'Libraries'</span> : <span class="hljs-string">'Scripts'</span>)],
+          script.meta.description, _.pluck(script.groups, <span class="hljs-string">'name'</span>));
+      }
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/scriptPage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
 
-          <span class="kd">function</span> <span class="nx">saveScript</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">flags</span><span class="p">)</span> <span class="p">{</span>
-              <span class="k">return</span> <span class="nx">script</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span> <span class="p">});</span>
-            <span class="p">}</span>
+    <span class="hljs-comment">//---</span>
+    <span class="hljs-keyword">if</span> (aErr || !aScriptData) { <span class="hljs-keyword">return</span> aNext(); }
 
-            <span class="nx">flagLib</span><span class="p">.</span><span class="nx">getAuthor</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">author</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">flagLib</span><span class="p">.</span><span class="nx">saveContent</span><span class="p">(</span><span class="nx">Script</span><span class="p">,</span> <span class="nx">script</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">flags</span><span class="p">,</span>
-                <span class="kd">function</span> <span class="p">(</span><span class="nx">flagged</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-              <span class="p">});</span>
-            <span class="p">});</span>
-          <span class="p">}</span>
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> script = options.script = modelParser.parseScript(aScriptData);
+    options.isOwner = authedUser &amp;&amp; authedUser._id == script._authorId;
+    modelParser.renderScript(script);
+    script.installNameSlug = installNameSlug;
+    script.scriptPermalinkInstallPageUrl = <span class="hljs-string">'http://'</span> + aReq.get(<span class="hljs-string">'host'</span>) + script.scriptInstallPageUrl;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(options, [<span class="hljs-string">'About'</span>, script.name, (script.isLib ? <span class="hljs-string">'Libraries'</span> : <span class="hljs-string">'Scripts'</span>)],
+      script.meta.description);
+    options.isScriptPage = <span class="hljs-literal">true</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>SearchBar</p></div></div><div class="code"><div class="wrapper">    options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
+    options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>SideBar</p></div></div><div class="code"><div class="wrapper">    setupScriptSidePanel(options);
 
-          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">.</span><span class="nx">rating</span><span class="p">)</span> <span class="p">{</span> <span class="nx">script</span><span class="p">.</span><span class="nx">rating</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
-          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">.</span><span class="nx">votes</span><span class="p">)</span> <span class="p">{</span> <span class="nx">script</span><span class="p">.</span><span class="nx">votes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
+    <span class="hljs-comment">//--- Tasks</span>
+    tasks = tasks.concat(getScriptPageTasks(options));
 
-          <span class="k">if</span> <span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">_id</span> <span class="o">==</span> <span class="nx">script</span><span class="p">.</span><span class="nx">_authorId</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">voteModel</span> <span class="o">&amp;&amp;</span> <span class="nx">unvote</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">voteModel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">voteModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vote</span><span class="p">({</span> 
-              <span class="nx">vote</span><span class="o">:</span> <span class="nx">vote</span><span class="p">,</span>
-              <span class="nx">_scriptId</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span>
-              <span class="nx">_userId</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span>
-            <span class="p">});</span>
-            <span class="nx">script</span><span class="p">.</span><span class="nx">rating</span> <span class="o">+=</span> <span class="nx">vote</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-            <span class="nx">script</span><span class="p">.</span><span class="nx">votes</span> <span class="o">=</span> <span class="nx">votes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">vote</span><span class="p">)</span> <span class="p">{</span> <span class="nx">flags</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">unvote</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">oldVote</span> <span class="o">=</span> <span class="nx">voteModel</span><span class="p">.</span><span class="nx">vote</span><span class="p">;</span>
-            <span class="k">return</span> <span class="nx">voteModel</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-              <span class="nx">script</span><span class="p">.</span><span class="nx">rating</span> <span class="o">+=</span> <span class="nx">oldVote</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
-              <span class="nx">script</span><span class="p">.</span><span class="nx">votes</span> <span class="o">=</span> <span class="nx">votes</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">votes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-              <span class="k">if</span> <span class="p">(</span><span class="nx">oldVote</span><span class="p">)</span> <span class="p">{</span> <span class="nx">flags</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
-              <span class="nx">saveScript</span><span class="p">();</span>
-            <span class="p">});</span>
-          <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">voteModel</span><span class="p">.</span><span class="nx">vote</span> <span class="o">!==</span> <span class="nx">vote</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">voteModel</span><span class="p">.</span><span class="nx">vote</span> <span class="o">=</span> <span class="nx">vote</span><span class="p">;</span>
-            <span class="nx">script</span><span class="p">.</span><span class="nx">rating</span> <span class="o">+=</span> <span class="nx">vote</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span>
-            <span class="nx">flags</span> <span class="o">=</span> <span class="nx">vote</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
-          <span class="p">}</span>
+    <span class="hljs-comment">//---</span>
+    async.parallel(tasks, asyncComplete);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>route to edit a script</p></div></div><div class="code"><div class="wrapper">exports.edit = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Support routes lacking the :username. TODO: Remove this functionality.</p></div></div><div class="code"><div class="wrapper">  aReq.params.username = authedUser.name.toLowerCase();
 
-          <span class="nx">voteModel</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">saveScript</span><span class="p">);</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script flagging</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">flag</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">isLib</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">isLib</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">unflag</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">unflag</span><span class="p">;</span>
+  <span class="hljs-keyword">var</span> installNameSlug = scriptStorage.getInstallName(aReq);
+  <span class="hljs-keyword">var</span> isLib = aReq.params.isLib;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="o">+</span> <span class="p">(</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">flagLib</span><span class="p">[</span><span class="nx">unflag</span> <span class="o">&amp;&amp;</span> <span class="nx">unflag</span> <span class="o">===</span> <span class="s1">&#39;unflag&#39;</span> <span class="o">?</span> <span class="s1">&#39;unflag&#39;</span> <span class="o">:</span> <span class="s1">&#39;flag&#39;</span><span class="p">];</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+  Script.findOne({
+    installName: scriptStorage
+      .caseInsensitive(installNameSlug + (isLib ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>))
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScriptData)</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">var</span> groupNameList = (options.script.groups || []).map(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGroup)</span> </span>{
+        <span class="hljs-keyword">return</span> aGroup.name;
+      });
+      options.groupNameListJSON = <span class="hljs-built_in">JSON</span>.stringify(groupNameList);
 
-      <span class="nx">fn</span><span class="p">(</span><span class="nx">Script</span><span class="p">,</span> <span class="nx">script</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">flagged</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">((</span><span class="nx">isLib</span> <span class="o">?</span> <span class="s1">&#39;/libs/&#39;</span> <span class="o">:</span> <span class="s1">&#39;/scripts/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">installName</span><span class="p">);</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div></div></body></html>
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/scriptEditMetadataPage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><hr></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (aErr || !aScriptData) { <span class="hljs-keyword">return</span> aNext(); }
+
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> script = options.script = modelParser.parseScript(aScriptData);
+    options.isOwner = authedUser &amp;&amp; authedUser._id == script._authorId;
+    pageMetadata(options, [<span class="hljs-string">'Edit'</span>, script.name, (script.isLib ? <span class="hljs-string">'Libraries'</span> : <span class="hljs-string">'Scripts'</span>)],
+      script.name);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>If authed user is not the script author.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!options.isOwner) { <span class="hljs-keyword">return</span> aNext(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>SearchBar</p></div></div><div class="code"><div class="wrapper">    options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
+    options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
+
+    <span class="hljs-keyword">if</span> (aReq.body.remove) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>POST</p></div></div><div class="code"><div class="wrapper">      scriptStorage.deleteScript(aScriptData.installName, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        aRes.redirect(authedUser.userScriptListPageUrl);
+      });
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> aReq.body.about !== <span class="hljs-string">'undefined'</span>) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>POST</p></div></div><div class="code"><div class="wrapper">      aScriptData.about = aReq.body.about;
+      <span class="hljs-keyword">var</span> scriptGroups = (aReq.body.groups || <span class="hljs-string">""</span>);
+      scriptGroups = scriptGroups.split(<span class="hljs-regexp">/,/</span>);
+      addScriptToGroups(aScriptData, scriptGroups, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        aRes.redirect(script.scriptPageUrl);
+      });
+    } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>GET</p></div></div><div class="code"><div class="wrapper">      options.script = script;
+
+      tasks = tasks.concat(getScriptPageTasks(options));
+
+      tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+        aCallback();
+      });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Groups</p></div></div><div class="code"><div class="wrapper">      options.canCreateGroup = (!script._groupId).toString();
+
+      async.parallel(tasks, asyncComplete);
+    }
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script voting</p></div></div><div class="code"><div class="wrapper">exports.vote = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> isLib = aReq.params.isLib;
+  <span class="hljs-keyword">var</span> installName = scriptStorage.getInstallName(aReq)
+    + (isLib ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>);
+  <span class="hljs-keyword">var</span> vote = aReq.params.vote;
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+  <span class="hljs-keyword">var</span> url = aReq._parsedUrl.pathname.split(<span class="hljs-string">'/'</span>);
+  <span class="hljs-keyword">var</span> unvote = <span class="hljs-literal">false</span>;
+
+  <span class="hljs-keyword">if</span> (url.length &gt; <span class="hljs-number">5</span>) { url.pop(); }
+  url.shift();
+  url.shift();
+  url = <span class="hljs-string">'/'</span> + url.join(<span class="hljs-string">'/'</span>);
+
+  <span class="hljs-keyword">if</span> (vote === <span class="hljs-string">'up'</span>) {
+    vote = <span class="hljs-literal">true</span>;
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (vote === <span class="hljs-string">'down'</span>) {
+    vote = <span class="hljs-literal">false</span>;
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (vote === <span class="hljs-string">'unvote'</span>) {
+    unvote = <span class="hljs-literal">true</span>;
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> aRes.redirect(url);
+  }
+
+  Script.findOne({ installName: scriptStorage.caseInsensitive(installName) },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr || !aScript) { <span class="hljs-keyword">return</span> aRes.redirect(url); }
+
+      Vote.findOne({ _scriptId: aScript._id, _userId: authedUser._id },
+        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aVoteModel)</span> </span>{
+          <span class="hljs-keyword">var</span> oldVote = <span class="hljs-literal">null</span>;
+          <span class="hljs-keyword">var</span> votes = aScript.votes || <span class="hljs-number">0</span>;
+          <span class="hljs-keyword">var</span> flags = <span class="hljs-number">0</span>;
+
+          <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">saveScript</span><span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">if</span> (!flags) {
+              <span class="hljs-keyword">return</span> aScript.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{ aRes.redirect(url); });
+            }
+
+            flagLib.getAuthor(aScript, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aAuthor)</span> </span>{
+              flagLib.saveContent(Script, aScript, aAuthor, flags,
+                <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aFlagged)</span> </span>{
+                  aRes.redirect(url);
+                });
+            });
+          }
+
+          <span class="hljs-keyword">if</span> (!aScript.rating) { aScript.rating = <span class="hljs-number">0</span>; }
+          <span class="hljs-keyword">if</span> (!aScript.votes) { aScript.votes = <span class="hljs-number">0</span>; }
+
+          <span class="hljs-keyword">if</span> (authedUser._id == aScript._authorId || (!aVoteModel &amp;&amp; unvote)) {
+            <span class="hljs-keyword">return</span> aRes.redirect(url);
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!aVoteModel) {
+            aVoteModel = <span class="hljs-keyword">new</span> Vote({
+              vote: vote,
+              _scriptId: aScript._id,
+              _userId: authedUser._id
+            });
+            aScript.rating += vote ? <span class="hljs-number">1</span> : -<span class="hljs-number">1</span>;
+            aScript.votes = votes + <span class="hljs-number">1</span>;
+            <span class="hljs-keyword">if</span> (vote) { flags = -<span class="hljs-number">1</span>; }
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (unvote) {
+            oldVote = aVoteModel.vote;
+            <span class="hljs-keyword">return</span> aVoteModel.remove(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+              aScript.rating += oldVote ? -<span class="hljs-number">1</span> : <span class="hljs-number">1</span>;
+              aScript.votes = votes &lt;= <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : votes - <span class="hljs-number">1</span>;
+              <span class="hljs-keyword">if</span> (oldVote) { flags = <span class="hljs-number">1</span>; }
+              saveScript();
+            });
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (aVoteModel.vote !== vote) {
+            aVoteModel.vote = vote;
+            aScript.rating += vote ? <span class="hljs-number">2</span> : -<span class="hljs-number">2</span>;
+            flags = vote ? -<span class="hljs-number">1</span> : <span class="hljs-number">1</span>;
+          }
+
+          aVoteModel.save(saveScript);
+        }
+      );
+    }
+  );
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script flagging</p></div></div><div class="code"><div class="wrapper">exports.flag = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> isLib = aReq.params.isLib;
+  <span class="hljs-keyword">var</span> installName = scriptStorage.getInstallName(aReq);
+  <span class="hljs-keyword">var</span> unflag = aReq.params.unflag;
+
+  Script.findOne({ installName:  scriptStorage
+      .caseInsensitive(installName + (isLib ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>)) },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+      <span class="hljs-keyword">var</span> fn = flagLib[unflag &amp;&amp; unflag === <span class="hljs-string">'unflag'</span> ? <span class="hljs-string">'unflag'</span> : <span class="hljs-string">'flag'</span>];
+      <span class="hljs-keyword">if</span> (aErr || !aScript) { <span class="hljs-keyword">return</span> aNext(); }
+
+      fn(Script, aScript, aReq.session.user, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aFlagged)</span> </span>{ <span class="hljs-comment">// NOTE: Inline function here</span>
+        aRes.redirect((isLib ? <span class="hljs-string">'/libs/'</span> : <span class="hljs-string">'/scripts/'</span>) + <span class="hljs-built_in">encodeURI</span>(installName));
+      });
+    }
+  );
+};</div></div></div></div></body></html>

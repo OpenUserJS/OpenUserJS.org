@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/modifySessions</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/modifySessions"><meta name="groc-project-path" content="libs/modifySessions.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/modifySessions.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This library allows for the modifications of user sessions</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+
+exports.init = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStore)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p><a href="http://www.senchalabs.org/connect/session.html">http://www.senchalabs.org/connect/session.html</a>
+Keep a reference to the session store on the request
+so we can access and modify its data later</p></div></div><div class="code"><div class="wrapper">    aReq.sessionStore = aStore;
+    aNext();
+  };
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Serialize a user model to something that can be stored in the session data</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">serializeUser</span><span class="hljs-params">(aUser)</span> </span>{
+  <span class="hljs-keyword">var</span> userObj = aUser.toObject();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Some things don&#39;t need to be kept in the session store
+More could be removed (auths, strategies, flags, flagged?)</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">delete</span> userObj.about; <span class="hljs-comment">// can be huge</span>
+  <span class="hljs-keyword">delete</span> userObj.sessionIds; <span class="hljs-comment">// not kept in sync</span>
+
+  <span class="hljs-keyword">return</span> userObj;
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Add a new session id to the user model</p></div></div><div class="code"><div class="wrapper">exports.add = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aUser, aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> store = aReq.sessionStore;
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">finish</span><span class="hljs-params">(aErr, aUser)</span> </span>{
+    aReq.session.user = serializeUser(aUser);
+    aCallback();
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove invalid session ids from user model</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aUser.sessionIds &amp;&amp; aUser.sessionIds.length &gt; <span class="hljs-number">0</span>) {
+    async.filter(aUser.sessionIds, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aId, aCb)</span> </span>{
+      store.get(aId, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aSess)</span> </span>{ aCb(!aErr &amp;&amp; aSess); });
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aSessionIds)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>No duplicates</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (aSessionIds.indexOf(aReq.sessionID) === -<span class="hljs-number">1</span>) {
+        aSessionIds.push(aReq.sessionID);
+      }
+
+      aUser.sessionIds = aSessionIds;
+      aUser.save(finish);
+    });
+  } <span class="hljs-keyword">else</span> {
+    aUser.sessionIds = [aReq.sessionID];
+    aUser.save(finish);
+  }
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove a session id from the user model</p></div></div><div class="code"><div class="wrapper">exports.remove = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aUser, aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> pos = aUser &amp;&amp; aUser.sessionIds ?
+    aUser.sessionIds.indexOf(aReq.sessionID) : -<span class="hljs-number">1</span>;
+
+  <span class="hljs-keyword">delete</span> aReq.session.user;
+
+  <span class="hljs-keyword">if</span> (pos &gt; -<span class="hljs-number">1</span>) {
+    aUser.sessionIds.splice(pos, <span class="hljs-number">1</span>);
+    aUser.save(aCallback);
+  } <span class="hljs-keyword">else</span> {
+    aCallback();
+  }
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update all sessions for a user</p></div></div><div class="code"><div class="wrapper">exports.update = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aUser, aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> store = aReq.sessionStore;
+  <span class="hljs-keyword">var</span> userObj = aUser ? serializeUser(aUser) : <span class="hljs-literal">null</span>;
+
+  <span class="hljs-keyword">if</span> (!aUser || !aUser.sessionIds) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-string">'No sessions'</span>, <span class="hljs-literal">null</span>); }
+
+  async.each(aUser.sessionIds, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aId, aCb)</span> </span>{
+    store.get(aId, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aSess)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Invalid session, will be removed on login</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (aErr || !aSess) { <span class="hljs-keyword">return</span> aCb(<span class="hljs-literal">null</span>); }
+
+      aSess.user = userObj;
+      store.set(aId, aSess, aCb);
+    });
+  }, aCallback);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Destory all sessions for a user</p></div></div><div class="code"><div class="wrapper">exports.destroy = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aUser, aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> store = aReq.sessionStore;
+  <span class="hljs-keyword">var</span> emptySess = {
+    cookie: {
+      path: <span class="hljs-string">'/'</span>,
+      _expires: <span class="hljs-literal">null</span>,
+      originalMaxAge: <span class="hljs-literal">null</span>,
+      httpOnly: <span class="hljs-literal">true</span>
+    }
+  };
+
+  <span class="hljs-keyword">if</span> (!aUser || !aUser.sessionIds) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-string">'No sessions'</span>, <span class="hljs-literal">null</span>); }
+
+  async.each(aUser.sessionIds, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aId, aCb)</span> </span>{
+    store.set(aId, emptySess, aCb);
+  }, aCallback);
+};</div></div></div></div></body></html>

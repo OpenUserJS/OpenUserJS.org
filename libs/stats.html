@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/stats</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/stats"><meta name="groc-project-path" content="libs/stats.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/stats.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> countTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).countTask;
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
+
+exports.getSummaryTasks = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">summary</span><span class="hljs-params">(aOptions)</span> </span>{
+  <span class="hljs-keyword">var</span> tasks = [];
+  aOptions.stats = {};
+
+  <span class="hljs-keyword">var</span> userScriptListCountQuery = Script.find({
+    _authorId: aOptions.user._id,
+    flagged: { $ne: <span class="hljs-literal">true</span> },
+    isLib: { $ne: <span class="hljs-literal">true</span> }
+  });
+  tasks.push(countTask(userScriptListCountQuery, aOptions.stats, <span class="hljs-string">'totalScripts'</span>));
+
+  <span class="hljs-keyword">var</span> userLibListCountQuery = Script.find({
+    _authorId: aOptions.user._id,
+    flagged: { $ne: <span class="hljs-literal">true</span> },
+    isLib: { $eq: <span class="hljs-literal">true</span> }
+  });
+  tasks.push(countTask(userLibListCountQuery, aOptions.stats, <span class="hljs-string">'totalLibs'</span>));
+
+  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    Script.find({
+      _authorId: aOptions.user._id,
+      flagged: { $ne: <span class="hljs-literal">true</span> },
+      isLib: { $ne: <span class="hljs-literal">true</span> }  <span class="hljs-comment">// libs don't have installs;</span>
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScripts)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr) {
+        <span class="hljs-built_in">console</span>.error(aErr);
+        <span class="hljs-keyword">return</span> aCallback();
+      }
+      aOptions.stats.totalInstalls = <span class="hljs-number">0</span>;
+      aScripts.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+        aOptions.stats.totalInstalls += aScript.installs;
+      });
+      aOptions.stats.avgInstalls = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">if</span> (aScripts.length &gt; <span class="hljs-number">0</span> &amp;&amp; aOptions.stats.totalInstalls &gt; <span class="hljs-number">0</span>) {
+        aOptions.stats.avgInstalls = <span class="hljs-built_in">Math</span>.round((aOptions.stats.totalInstalls / aScripts.length) * <span class="hljs-number">10</span>) / <span class="hljs-number">10</span>;
+      }
+      aCallback();
+    });
+  });
+
+  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    Script.find({
+      _authorId: aOptions.user._id,
+      flagged: { $ne: <span class="hljs-literal">true</span> }
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScripts)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr) {
+        <span class="hljs-built_in">console</span>.error(aErr);
+        <span class="hljs-keyword">return</span> aCallback();
+      }
+      <span class="hljs-keyword">var</span> totalRating = <span class="hljs-number">0</span>;
+      aScripts.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+        totalRating += aScript.rating;
+      });
+      aOptions.stats.avgRating = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">if</span> (aScripts.length &gt; <span class="hljs-number">0</span> &amp;&amp; totalRating &gt; <span class="hljs-number">0</span>) {
+        aOptions.stats.avgRating = <span class="hljs-built_in">Math</span>.round((totalRating / aScripts.length) * <span class="hljs-number">10</span>) / <span class="hljs-number">10</span>;
+      }
+      aCallback();
+    });
+  });
+
+  <span class="hljs-keyword">return</span> tasks;
+};</div></div></div></div></body></html>

@@ -1,167 +1,231 @@
-<!DOCTYPE html><html lang="en"><head><title>controllers/issue</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/issue"><meta name="groc-project-path" content="controllers/issue.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/issue.js">controllers/issue.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">modelsList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/modelsList&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">scriptStorage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./scriptStorage&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">discussion</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./discussion&#39;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>List script issues</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">list</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">namespace</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">scriptname</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">open</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span> <span class="o">!==</span> <span class="s1">&#39;closed&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">username</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">namespace</span> <span class="o">?</span> <span class="nx">namespace</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="o">+</span> <span class="nx">scriptname</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">};</span>
-  <span class="kd">var</span> <span class="nx">category</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;/issues&#39;</span><span class="p">;</span>
+<!DOCTYPE html><html lang="en"><head><title>controllers/issue</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/issue"><meta name="groc-project-path" content="controllers/issue.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/issue.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> 
-    <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;libs&#39;</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
 
-      <span class="nx">options</span><span class="p">.</span><span class="nx">issue</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; Issues&#39;</span><span class="p">;</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">open</span> <span class="o">=</span> <span class="nx">open</span><span class="p">;</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">category</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">installName</span><span class="p">;</span>
-      <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listDiscussions</span><span class="p">({</span> <span class="nx">category</span><span class="o">:</span> <span class="nx">category</span><span class="p">,</span> <span class="nx">open</span><span class="o">:</span> <span class="nx">open</span> <span class="p">},</span>
-        <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">category</span><span class="p">,</span>
-        <span class="kd">function</span> <span class="p">(</span><span class="nx">discussionsList</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">options</span><span class="p">.</span><span class="nx">discussionsList</span> <span class="o">=</span> <span class="nx">discussionsList</span><span class="p">;</span>
-          <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;discussions&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the discussion on an issue</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">namespace</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">scriptname</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">topic</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">username</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">namespace</span> <span class="o">?</span> <span class="nx">namespace</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="o">+</span> <span class="nx">scriptname</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">};</span>
-  <span class="kd">var</span> <span class="nx">category</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;/issues&#39;</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> Comment = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/comment'</span>).Comment;
+<span class="hljs-keyword">var</span> Discussion = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/discussion'</span>).Discussion;
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> 
-    <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;libs&#39;</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+<span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);
+<span class="hljs-keyword">var</span> modelQuery = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelQuery'</span>);
+<span class="hljs-keyword">var</span> scriptStorage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./scriptStorage'</span>);
+<span class="hljs-keyword">var</span> discussionLib = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./discussion'</span>);
+<span class="hljs-keyword">var</span> execQueryTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).execQueryTask;
+<span class="hljs-keyword">var</span> countTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).countTask;
+<span class="hljs-keyword">var</span> pageMetadata = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).pageMetadata;
+<span class="hljs-keyword">var</span> orderDir = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).orderDir;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>List script issues</p></div></div><div class="code"><div class="wrapper">exports.list = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-      <span class="nx">discussion</span><span class="p">.</span><span class="nx">findDiscussion</span><span class="p">(</span><span class="nx">category</span><span class="p">,</span> <span class="nx">topic</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">discussion</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">discussion</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+  <span class="hljs-keyword">var</span> type = aReq.params.type;
+  <span class="hljs-keyword">var</span> username = aReq.params.username;
+  <span class="hljs-keyword">var</span> scriptname = aReq.params.scriptname;
+  <span class="hljs-keyword">var</span> open = aReq.params.open !== <span class="hljs-string">'closed'</span>;
 
-        <span class="nx">options</span><span class="p">.</span><span class="nx">category</span> <span class="o">=</span> <span class="nx">category</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">topic</span> <span class="o">=</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">topic</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">topic</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">issue</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">open</span> <span class="o">=</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">open</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">canClose</span> <span class="o">=</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">author</span> <span class="o">===</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span>
-          <span class="o">||</span> <span class="nx">script</span><span class="p">.</span><span class="nx">author</span> <span class="o">===</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">canOpen</span> <span class="o">=</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">script</span><span class="p">.</span><span class="nx">author</span> <span class="o">===</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">path</span>
-          <span class="o">+</span> <span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">?</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">closeUrl</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">path</span> <span class="o">+</span> <span class="s1">&#39;/close&#39;</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">openUrl</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">path</span> <span class="o">+</span> <span class="s1">&#39;/reopen&#39;</span><span class="p">;</span>
+  <span class="hljs-keyword">var</span> installNameSlug = username + <span class="hljs-string">'/'</span> + scriptname;
 
-        <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listComments</span><span class="p">({</span> <span class="nx">_discussionId</span><span class="o">:</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">_id</span> <span class="p">},</span> 
-          <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span>
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">commentsList</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">options</span><span class="p">.</span><span class="nx">commentsList</span> <span class="o">=</span> <span class="nx">commentsList</span><span class="p">;</span>
-            <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;discussion&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Open a new issue</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">open</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">category</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">installName</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  Script.findOne({
+    installName: scriptStorage.caseInsensitive(
+      installNameSlug + (type === <span class="hljs-string">'libs'</span> ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>))
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, scriptData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !scriptData) { <span class="hljs-keyword">return</span> aNext(); }
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> 
-    <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;libs&#39;</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">topic</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">[</span><span class="s1">&#39;discussion-topic&#39;</span><span class="p">];</span>
-      <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">[</span><span class="s1">&#39;comment-content&#39;</span><span class="p">];</span>
+    options.openIssuesOnly = open;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> script = options.script = modelParser.parseScript(scriptData);
+    options.isOwner = authedUser &amp;&amp; authedUser._id == script._authorId;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Category</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> category = {};
+    category.slug = type + <span class="hljs-string">'/'</span> + installNameSlug + <span class="hljs-string">'/issues'</span>;
+    category.name = <span class="hljs-string">'Issues'</span>;
+    category.description = <span class="hljs-string">''</span>;
+    category = options.category = modelParser.parseCategory(category);
+    category.categoryPageUrl = script.scriptIssuesPageUrl;
+    category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
+    options.category = category;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">    pageMetadata(
+      options,
+      [(open ? <span class="hljs-string">'Issues'</span> : <span class="hljs-string">'Closed Issues'</span>), script.name, (script.isLib ? <span class="hljs-string">'Libraries'</span> : <span class="hljs-string">'Scripts'</span>)],
+      category.description);
+    options.isScriptIssuesPage = <span class="hljs-literal">true</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Order dir</p></div></div><div class="code"><div class="wrapper">    orderDir(aReq, options, <span class="hljs-string">'topic'</span>, <span class="hljs-string">'asc'</span>);
+    orderDir(aReq, options, <span class="hljs-string">'comments'</span>, <span class="hljs-string">'desc'</span>);
+    orderDir(aReq, options, <span class="hljs-string">'created'</span>, <span class="hljs-string">'desc'</span>);
+    orderDir(aReq, options, <span class="hljs-string">'updated'</span>, <span class="hljs-string">'desc'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>discussionListQuery</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> discussionListQuery = Discussion.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>discussionListQuery: category</p></div></div><div class="code"><div class="wrapper">    discussionListQuery.find({ category: category.slug });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>discussionListQuery: open</p></div></div><div class="code"><div class="wrapper">    modelQuery.findOrDefaultIfNull(discussionListQuery, <span class="hljs-string">'open'</span>, options.openIssuesOnly, <span class="hljs-literal">true</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>discussionListQuery: Defaults</p></div></div><div class="code"><div class="wrapper">    modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>discussionListQuery: Pagination</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> pagination = options.pagination; <span class="hljs-comment">// is set in modelQuery.apply___ListQueryDefaults</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>SearchBar</p></div></div><div class="code"><div class="wrapper">    options.searchBarPlaceholder = <span class="hljs-string">'Search Issues'</span>;
 
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+    <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the number of open issues</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: { $ne: <span class="hljs-literal">false</span> } });
+    tasks.push(countTask(scriptOpenIssueCountQuery, options, <span class="hljs-string">'issueCount'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">    tasks.push(pagination.getCountTask(discussionListQuery, options, <span class="hljs-string">'issueCount'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>discussionListQuery</p></div></div><div class="code"><div class="wrapper">    tasks.push(execQueryTask(discussionListQuery, options, <span class="hljs-string">'discussionList'</span>));
 
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">topic</span><span class="p">)</span> <span class="p">{</span> 
-        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;discussionCreate&#39;</span><span class="p">,</span> <span class="p">{</span>
-          <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;New Issue for &#39;</span> <span class="o">+</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-          <span class="nx">name</span><span class="o">:</span> <span class="nx">script</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-          <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-          <span class="nx">category</span><span class="o">:</span> <span class="nx">category</span><span class="p">,</span>
-          <span class="nx">issue</span><span class="o">:</span> <span class="kc">true</span>
-        <span class="p">});</span>
-      <span class="p">}</span>
+    <span class="hljs-comment">//---</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{
+      options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script</p></div></div><div class="code"><div class="wrapper">      options.issuesCount = pagination.numItems;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">      options.paginationRendered = pagination.renderDefault(aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Empty list</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (options.searchBarValue) {
+        <span class="hljs-keyword">if</span> (open) {
+          options.discussionListIsEmptyMessage = <span class="hljs-string">'We couldn\'t find any open discussions with this search value.'</span>;
+        } <span class="hljs-keyword">else</span> {
+          options.discussionListIsEmptyMessage = <span class="hljs-string">'We couldn\'t find any closed discussions with this search value.'</span>;
+        }
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">if</span> (open) {
+          options.discussionListIsEmptyMessage = <span class="hljs-string">'No open discussions.'</span>;
+        } <span class="hljs-keyword">else</span> {
+          options.discussionListIsEmptyMessage = <span class="hljs-string">'No closed discussions.'</span>;
+        }
+      }
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/scriptIssueListPage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+    async.parallel(tasks, asyncComplete);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the discussion on an issue</p></div></div><div class="code"><div class="wrapper">exports.view = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-      <span class="nx">discussion</span><span class="p">.</span><span class="nx">postTopic</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;/issues&#39;</span><span class="p">,</span> <span class="nx">topic</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="kd">function</span> <span class="p">(</span><span class="nx">discussion</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">discussion</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;/open&#39;</span><span class="p">);</span> <span class="p">}</span>
+  <span class="hljs-keyword">var</span> type = aReq.params.type;
+  <span class="hljs-keyword">var</span> username = aReq.params.username;
+  <span class="hljs-keyword">var</span> scriptname = aReq.params.scriptname;
+  <span class="hljs-keyword">var</span> topic = aReq.params.topic;
 
-          <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">path</span>
-            <span class="o">+</span> <span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">?</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">));</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>post route to add a new comment to a discussion on an issue</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">comment</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">topic</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">topic</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">category</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;/issues&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="hljs-keyword">var</span> installNameSlug = username + <span class="hljs-string">'/'</span> + scriptname;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+  Script.findOne({
+    installName: scriptStorage.caseInsensitive(
+      installNameSlug + (type === <span class="hljs-string">'libs'</span> ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>))
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScriptData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aScriptData) { <span class="hljs-keyword">return</span> aNext(); }
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> 
-    <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;libs&#39;</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">[</span><span class="s1">&#39;comment-content&#39;</span><span class="p">];</span>
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> script = options.script = modelParser.parseScript(aScriptData);
+    options.isOwner = authedUser &amp;&amp; authedUser._id == script._authorId;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Category</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> category = {};
+    category.slug = type + <span class="hljs-string">'/'</span> + installNameSlug + <span class="hljs-string">'/issues'</span>;
+    category.name = <span class="hljs-string">'Issues'</span>;
+    category.description = <span class="hljs-string">''</span>;
+    category = options.category = modelParser.parseCategory(category);
+    category.categoryPageUrl = script.scriptIssuesPageUrl;
+    category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
+    options.category = category;
 
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+    discussionLib.findDiscussion(category.slug, topic, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDiscussionData)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr || !aDiscussionData) { <span class="hljs-keyword">return</span> aNext(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Discussion</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> discussion = options.discussion = modelParser.parseDiscussion(aDiscussionData);
+      modelParser.parseIssue(discussion);
+      options.canClose = authedUser &amp;&amp; (authedUser._id == script._authorId || authedUser._id == discussion._authorId);
+      options.canOpen = authedUser &amp;&amp; authedUser._id == script._authorId;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> commentListQuery = Comment.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery: discussion</p></div></div><div class="code"><div class="wrapper">      commentListQuery.find({ _discussionId: discussion._id });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery: Defaults</p></div></div><div class="code"><div class="wrapper">      modelQuery.applyCommentListQueryDefaults(commentListQuery, options, aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery: Pagination</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> pagination = options.pagination; <span class="hljs-comment">// is set in modelQuery.apply___ListQueryDefaults</span>
 
-      <span class="nx">discussion</span><span class="p">.</span><span class="nx">findDiscussion</span><span class="p">(</span><span class="nx">category</span><span class="p">,</span> <span class="nx">topic</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">issue</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">issue</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+      <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Show the number of open issues</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">var</span> scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: { $ne: <span class="hljs-literal">false</span> } }); <span class="hljs-comment">// TODO: STYLEGUIDE.md conformance needed here</span>
+      tasks.push(countTask(scriptOpenIssueCountQuery, options, <span class="hljs-string">'issueCount'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">      tasks.push(pagination.getCountTask(commentListQuery));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentListQuery</p></div></div><div class="code"><div class="wrapper">      tasks.push(execQueryTask(commentListQuery, options, <span class="hljs-string">'commentList'</span>));
 
-        <span class="nx">discussion</span><span class="p">.</span><span class="nx">postComment</span><span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">issue</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span>
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">discussion</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">path</span>
-              <span class="o">+</span> <span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">?</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">));</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Open or close and issue you are allowed</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">changeStatus</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">topic</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">topic</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">category</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">installName</span> <span class="o">+</span> <span class="s1">&#39;/issues&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">action</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">changed</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">        pageMetadata(options, [discussion.topic, <span class="hljs-string">'Discussions'</span>], discussion.topic);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>commentList</p></div></div><div class="code"><div class="wrapper">        options.commentList = _.map(options.commentList, modelParser.parseComment);
+        _.map(options.commentList, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aComment)</span> </span>{
+          aComment.author = modelParser.parseUser(aComment._authorId);
+        });
+        _.map(options.commentList, modelParser.renderComment);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script</p></div></div><div class="code"><div class="wrapper">        options.issuesCount = pagination.numItems;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">        options.paginationRendered = pagination.renderDefault(aReq);
+      }
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/scriptIssuePage'</span>, options); }
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }
+      async.parallel(tasks, asyncComplete);
+    });
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Open a new issue</p></div></div><div class="code"><div class="wrapper">exports.open = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+  <span class="hljs-keyword">var</span> topic = aReq.body[<span class="hljs-string">'discussion-topic'</span>];
+  <span class="hljs-keyword">var</span> content = aReq.body[<span class="hljs-string">'comment-content'</span>];
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> 
-    <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;libs&#39;</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
+  <span class="hljs-keyword">var</span> type = aReq.params.type;
+  <span class="hljs-keyword">var</span> installNameSlug = scriptStorage.getInstallName(aReq);
 
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+  Script.findOne({
+    installName: scriptStorage.caseInsensitive(
+      installNameSlug + (type === <span class="hljs-string">'libs'</span> ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>))
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScriptData)</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">preRender</span><span class="hljs-params">()</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">      pageMetadata(options, [<span class="hljs-string">'New Issue'</span>, script.name]);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render</span><span class="hljs-params">()</span> </span>{ aRes.render(<span class="hljs-string">'pages/scriptNewIssuePage'</span>, options); }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">asyncComplete</span><span class="hljs-params">()</span> </span>{ preRender(); render(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><hr></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (aErr || !aScriptData) { <span class="hljs-keyword">return</span> aNext(); }
 
-      <span class="nx">discussion</span><span class="p">.</span><span class="nx">findDiscussion</span><span class="p">(</span><span class="nx">category</span><span class="p">,</span> <span class="nx">topic</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">issue</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">issue</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Both the script author and the issue creator can close the issue
-Only the script author can reopen a closed issue</p></div></div><div class="code"><div class="wrapper">        <span class="k">if</span> <span class="p">(</span><span class="nx">action</span> <span class="o">===</span> <span class="s1">&#39;close&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">issue</span><span class="p">.</span><span class="nx">open</span> 
-          <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">issue</span><span class="p">.</span><span class="nx">author</span> <span class="o">||</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">script</span><span class="p">.</span><span class="nx">author</span><span class="p">))</span> <span class="p">{</span>
-          <span class="nx">issue</span><span class="p">.</span><span class="nx">open</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-          <span class="nx">changed</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">action</span> <span class="o">===</span> <span class="s1">&#39;reopen&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">issue</span><span class="p">.</span><span class="nx">open</span> 
-          <span class="o">&amp;&amp;</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">script</span><span class="p">.</span><span class="nx">author</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">issue</span><span class="p">.</span><span class="nx">open</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-          <span class="nx">changed</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-        <span class="p">}</span>
+    <span class="hljs-keyword">var</span> options = {};
+    <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> script = options.script = modelParser.parseScript(aScriptData);
+    options.isOwner = authedUser &amp;&amp; authedUser._id == script._authorId;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Category</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> category = {};
+    category.slug = type + <span class="hljs-string">'/'</span> + installNameSlug + <span class="hljs-string">'/issues'</span>;
+    category.name = <span class="hljs-string">'Issues'</span>;
+    category.description = <span class="hljs-string">''</span>;
+    category = options.category = modelParser.parseCategory(category);
+    category.categoryPageUrl = script.scriptIssuesPageUrl;
+    category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
+    options.category = category;
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">changed</span><span class="p">)</span> <span class="p">{</span> 
-          <span class="nx">issue</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">discussion</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">path</span>
-              <span class="o">+</span> <span class="p">(</span><span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">?</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">discussion</span><span class="p">.</span><span class="nx">duplicateId</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">));</span>
-          <span class="p">});</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">next</span><span class="p">();</span>
-        <span class="p">}</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div></div></body></html>
+    <span class="hljs-keyword">if</span> (topic &amp;&amp; content) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Issue Submission</p></div></div><div class="code"><div class="wrapper">      discussionLib.postTopic(authedUser, category.slug, topic, content, <span class="hljs-literal">true</span>,
+        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDiscussion)</span> </span>{
+          <span class="hljs-keyword">if</span> (!aDiscussion)
+            <span class="hljs-keyword">return</span> aRes.redirect(<span class="hljs-string">'/'</span> + <span class="hljs-built_in">encodeURI</span>(category) + <span class="hljs-string">'/open'</span>);
+
+          aRes.redirect(<span class="hljs-built_in">encodeURI</span>(aDiscussion.path + (aDiscussion.duplicateId ? <span class="hljs-string">'_'</span> + aDiscussion.duplicateId : <span class="hljs-string">''</span>)));
+        }
+      );
+    } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>New Issue Page</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>...</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-comment">//---</span>
+      async.parallel(tasks, asyncComplete);
+    }
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>post route to add a new comment to a discussion on an issue</p></div></div><div class="code"><div class="wrapper">exports.comment = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> type = aReq.params.type;
+  <span class="hljs-keyword">var</span> topic = aReq.params.topic;
+  <span class="hljs-keyword">var</span> installName = scriptStorage.getInstallName(aReq);
+  <span class="hljs-keyword">var</span> category = type + <span class="hljs-string">'/'</span> + installName + <span class="hljs-string">'/issues'</span>;
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  Script.findOne({ installName: scriptStorage.caseInsensitive(installName
+    + (type === <span class="hljs-string">'libs'</span> ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>)) }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+      <span class="hljs-keyword">var</span> content = aReq.body[<span class="hljs-string">'comment-content'</span>];
+
+    <span class="hljs-keyword">if</span> (aErr || !aScript) { <span class="hljs-keyword">return</span> aNext(); }
+
+    discussionLib.findDiscussion(category, topic, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aIssue)</span> </span>{
+      <span class="hljs-keyword">if</span> (!aIssue) { <span class="hljs-keyword">return</span> aNext(); }
+
+      discussionLib.postComment(authedUser, aIssue, content, <span class="hljs-literal">false</span>,
+        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aDiscussion)</span> </span>{
+          aRes.redirect(<span class="hljs-built_in">encodeURI</span>(aDiscussion.path
+            + (aDiscussion.duplicateId ? <span class="hljs-string">'_'</span> + aDiscussion.duplicateId : <span class="hljs-string">''</span>)));
+        });
+    });
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Open or close and issue you are allowed</p></div></div><div class="code"><div class="wrapper">exports.changeStatus = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> type = aReq.params.type;
+  <span class="hljs-keyword">var</span> topic = aReq.params.topic;
+  <span class="hljs-keyword">var</span> installName = scriptStorage.getInstallName(aReq);
+  <span class="hljs-keyword">var</span> category = type + <span class="hljs-string">'/'</span> + installName + <span class="hljs-string">'/issues'</span>;
+  <span class="hljs-keyword">var</span> action = aReq.params.action;
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+  <span class="hljs-keyword">var</span> changed = <span class="hljs-literal">false</span>;
+
+  Script.findOne({ installName: scriptStorage.caseInsensitive(installName
+    + (type === <span class="hljs-string">'libs'</span> ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>)) }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+
+    <span class="hljs-keyword">if</span> (aErr || !aScript) { <span class="hljs-keyword">return</span> aNext(); }
+
+    discussionLib.findDiscussion(category, topic, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aIssue)</span> </span>{
+      <span class="hljs-keyword">if</span> (!aIssue) { <span class="hljs-keyword">return</span> aNext(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Both the script author and the issue creator can close the issue
+Only the script author can reopen a closed issue</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">if</span> (action === <span class="hljs-string">'close'</span> &amp;&amp; aIssue.open
+      &amp;&amp; (authedUser.name === aIssue.author || authedUser.name === aScript.author)) {
+        aIssue.open = <span class="hljs-literal">false</span>;
+        changed = <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (action === <span class="hljs-string">'reopen'</span> &amp;&amp; !aIssue.open
+        &amp;&amp; authedUser.name === aScript.author) {
+        aIssue.open = <span class="hljs-literal">true</span>;
+        changed = <span class="hljs-literal">true</span>;
+      }
+
+      <span class="hljs-keyword">if</span> (changed) {
+        aIssue.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aDiscussion)</span> </span>{
+          aRes.redirect(<span class="hljs-built_in">encodeURI</span>(aDiscussion.path
+            + (aDiscussion.duplicateId ? <span class="hljs-string">'_'</span> + aDiscussion.duplicateId : <span class="hljs-string">''</span>)));
+        });
+      } <span class="hljs-keyword">else</span> {
+        aNext();
+      }
+    });
+  });
+};</div></div></div></div></body></html>

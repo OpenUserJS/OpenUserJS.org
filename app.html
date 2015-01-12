@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><title>app</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="app"><meta name="groc-project-path" content="app.js"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">app.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">'express'</span>);
+<span class="hljs-keyword">var</span> methodOverride = <span class="hljs-built_in">require</span>(<span class="hljs-string">'method-override'</span>);
+<span class="hljs-keyword">var</span> morgan = <span class="hljs-built_in">require</span>(<span class="hljs-string">'morgan'</span>);
+<span class="hljs-keyword">var</span> bodyParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'body-parser'</span>);
+<span class="hljs-keyword">var</span> compression = <span class="hljs-built_in">require</span>(<span class="hljs-string">'compression'</span>);
+<span class="hljs-keyword">var</span> cookieParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'cookie-parser'</span>);
+<span class="hljs-keyword">var</span> favicon = <span class="hljs-built_in">require</span>(<span class="hljs-string">'serve-favicon'</span>);
+
+<span class="hljs-keyword">var</span> minify = <span class="hljs-literal">null</span>;
+<span class="hljs-keyword">try</span> {
+  minify = <span class="hljs-built_in">require</span>(<span class="hljs-string">'express-minify'</span>);
+} <span class="hljs-keyword">catch</span> (e) {}
+
+<span class="hljs-keyword">var</span> session = <span class="hljs-built_in">require</span>(<span class="hljs-string">'express-session'</span>);
+<span class="hljs-keyword">var</span> MongoStore = <span class="hljs-built_in">require</span>(<span class="hljs-string">'connect-mongo'</span>)(session);
+<span class="hljs-keyword">var</span> mongoose = <span class="hljs-built_in">require</span>(<span class="hljs-string">'mongoose'</span>);
+<span class="hljs-keyword">var</span> passport = <span class="hljs-built_in">require</span>(<span class="hljs-string">'passport'</span>);
+
+<span class="hljs-keyword">var</span> app = express();
+
+<span class="hljs-keyword">var</span> modifySessions = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/modifySessions'</span>);
+
+<span class="hljs-keyword">var</span> settings = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./models/settings.json'</span>);
+
+<span class="hljs-keyword">var</span> connectStr = process.env.CONNECT_STRING || settings.connect;
+<span class="hljs-keyword">var</span> sessionSecret = process.env.SESSION_SECRET || settings.secret;
+<span class="hljs-keyword">var</span> db = mongoose.connection;
+<span class="hljs-keyword">var</span> dbOptions = { server: { socketOptions: { keepAlive: <span class="hljs-number">1</span> } } };
+
+app.set(<span class="hljs-string">'port'</span>, process.env.PORT || <span class="hljs-number">8080</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Connect to the database</p></div></div><div class="code"><div class="wrapper">mongoose.connect(connectStr, dbOptions);
+db.on(<span class="hljs-string">'error'</span>, <span class="hljs-built_in">console</span>.error.bind(<span class="hljs-built_in">console</span>, <span class="hljs-string">'connection error:'</span>));
+db.once(<span class="hljs-string">'open'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  app.listen(app.get(<span class="hljs-string">'port'</span>));
+});
+
+<span class="hljs-keyword">var</span> sessionStore = <span class="hljs-keyword">new</span> MongoStore({ mongooseConnection: db });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Force HTTPS</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">if</span> (app.get(<span class="hljs-string">'port'</span>) === <span class="hljs-number">443</span>) {
+  app.use(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+    aRes.setHeader(<span class="hljs-string">'Strict-Transport-Security'</span>,
+      <span class="hljs-string">'max-age=8640000; includeSubDomains'</span>);
+
+    <span class="hljs-keyword">if</span> (aReq.headers[<span class="hljs-string">'x-forwarded-proto'</span>] !== <span class="hljs-string">'https'</span>) {
+      <span class="hljs-keyword">return</span> aRes.redirect(<span class="hljs-number">301</span>, <span class="hljs-string">'https://'</span> + aReq.headers.host + <span class="hljs-built_in">encodeURI</span>(aReq.url));
+    }
+
+    aNext();
+  });
+}
+
+<span class="hljs-keyword">if</span> (isDev || isDbg) {
+  app.use(morgan(<span class="hljs-string">'dev'</span>));
+}
+
+app.use(bodyParser.urlencoded({
+  extended: <span class="hljs-literal">false</span>,
+  limit: <span class="hljs-built_in">parseInt</span>(settings.maximum_upload_script_size / <span class="hljs-number">1024</span>, <span class="hljs-number">10</span>) + <span class="hljs-string">'kb'</span>
+}));
+
+app.use(bodyParser.json({
+  extended: <span class="hljs-literal">false</span>,
+  limit: <span class="hljs-built_in">parseInt</span>(settings.maximum_upload_script_size / <span class="hljs-number">1024</span>, <span class="hljs-number">10</span>) + <span class="hljs-string">'kb'</span>
+}));
+
+app.use(compression());
+app.use(methodOverride(<span class="hljs-string">'X-HTTP-Method-Override'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Order is very important here (i.e mess with at your own risk)</p></div></div><div class="code"><div class="wrapper">app.use(cookieParser());
+app.use(session({
+  resave: <span class="hljs-literal">true</span>,
+  saveUninitialized: <span class="hljs-literal">true</span>,
+  secret: sessionSecret,
+  store: sessionStore
+}));
+app.use(passport.initialize());
+app.use(modifySessions.init(sessionStore));
+app.use(favicon(__dirname + <span class="hljs-string">'/public/images/favicon.ico'</span>));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set up the views</p></div></div><div class="code"><div class="wrapper">app.engine(<span class="hljs-string">'html'</span>, <span class="hljs-built_in">require</span>(<span class="hljs-string">'./libs/muExpress'</span>).renderFile(app));
+app.set(<span class="hljs-string">'view engine'</span>, <span class="hljs-string">'html'</span>);
+app.set(<span class="hljs-string">'views'</span>, __dirname + <span class="hljs-string">'/views'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Setup minification
+Order is important here as Ace will fail with an invalid content encoding issue</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">if</span> (minify &amp;&amp; !isDbg) {
+  app.use(minify());
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Routes</p></div></div><div class="code"><div class="wrapper"><span class="hljs-built_in">require</span>(<span class="hljs-string">'./routes'</span>)(app);</div></div></div></div></body></html>

@@ -1,144 +1,157 @@
-<!DOCTYPE html><html lang="en"><head><title>libs/repoManager</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/repoManager"><meta name="groc-project-path" content="libs/repoManager.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/repoManager.js">libs/repoManager.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;https&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">Strategy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/strategy&#39;</span><span class="p">).</span><span class="nx">Strategy</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">nil</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./helpers&#39;</span><span class="p">).</span><span class="nx">nil</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">clientId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">clientKey</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<!DOCTYPE html><html lang="en"><head><title>libs/repoManager</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/repoManager"><meta name="groc-project-path" content="libs/repoManager.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/repoManager.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-<span class="nx">Strategy</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;github&#39;</span> <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strat</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">clientId</span> <span class="o">=</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-  <span class="nx">clientKey</span> <span class="o">=</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
-<span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Requests a GitHub url and returns the chunks as buffers</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">fetchRaw</span> <span class="p">(</span><span class="nx">subdomain</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">hostname</span><span class="o">:</span> <span class="nx">subdomain</span> <span class="o">+</span> <span class="s1">&#39;.github.com&#39;</span><span class="p">,</span>
-    <span class="nx">port</span><span class="o">:</span> <span class="mi">443</span><span class="p">,</span>
-    <span class="nx">path</span><span class="o">:</span> <span class="nx">path</span><span class="p">,</span>
-    <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="p">,</span>
-    <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;User-Agent&#39;</span><span class="o">:</span> <span class="s1">&#39;Node.js&#39;</span> <span class="p">}</span>
-  <span class="p">};</span>
+<span class="hljs-keyword">var</span> https = <span class="hljs-built_in">require</span>(<span class="hljs-string">'https'</span>);
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">subdomain</span> <span class="o">===</span> <span class="s1">&#39;api&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">path</span> <span class="o">+=</span> <span class="s1">&#39;?client_id=&#39;</span> <span class="o">+</span> <span class="nx">clientId</span> <span class="o">+</span> <span class="s1">&#39;&amp;client_secret=&#39;</span> <span class="o">+</span> <span class="nx">clientKey</span><span class="p">;</span>
-  <span class="p">}</span>
+<span class="hljs-keyword">var</span> Strategy = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/strategy'</span>).Strategy;
 
-  <span class="kd">var</span> <span class="nx">req</span> <span class="o">=</span> <span class="nx">https</span><span class="p">.</span><span class="nx">request</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span>
-    <span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">bufs</span> <span class="o">=</span> <span class="p">[];</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">([</span><span class="k">new</span> <span class="nx">Buffer</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)]);</span> <span class="p">}</span>
-      <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="nx">bufs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span> <span class="p">});</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-          <span class="nx">callback</span><span class="p">(</span><span class="nx">bufs</span><span class="p">);</span> 
-        <span class="p">});</span>
-      <span class="p">}</span> 
-  <span class="p">});</span>
-  <span class="nx">req</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Use for call the GitHub JSON api
-Returns the JSON parsed object</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">fetchJSON</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">fetchRaw</span><span class="p">(</span><span class="s1">&#39;api&#39;</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">bufs</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">callback</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">Buffer</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">bufs</span><span class="p">).</span><span class="nx">toString</span><span class="p">()));</span>
-  <span class="p">});</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This manages actions on the repos of a user</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">RepoManager</span><span class="p">(</span><span class="nx">userId</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">repos</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">userId</span> <span class="o">=</span> <span class="nx">userId</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">user</span> <span class="o">=</span> <span class="nx">user</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">repos</span> <span class="o">=</span> <span class="nx">repos</span> <span class="o">||</span> <span class="nx">nil</span><span class="p">();</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Fetches the information about repos that contain user scripts</p></div></div><div class="code"><div class="wrapper"><span class="nx">RepoManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetchRepos</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">repos</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> nil = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./helpers'</span>).nil;
+<span class="hljs-keyword">var</span> github = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/githubClient'</span>);
 
-  <span class="nx">fetchJSON</span><span class="p">(</span><span class="s1">&#39;/user/&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">userId</span> <span class="o">+</span> <span class="s1">&#39;/repos&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">json</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">repo</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">ghUsername</span> <span class="o">!==</span> <span class="nx">repo</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">login</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">ghUsername</span> <span class="o">=</span> <span class="nx">repo</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">login</span><span class="p">;</span> 
-        <span class="nx">that</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{});</span>
-     <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Don't search through forks</p></div></div><div class="code"><div class="wrapper">      <span class="k">if</span> <span class="p">(</span><span class="nx">repo</span><span class="p">.</span><span class="nx">fork</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span>
-      <span class="nx">repos</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">Repo</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">repo</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">login</span><span class="p">,</span> <span class="nx">repo</span><span class="p">.</span><span class="nx">name</span><span class="p">));</span>
-    <span class="p">});</span>
+<span class="hljs-keyword">var</span> clientId = <span class="hljs-literal">null</span>;
+<span class="hljs-keyword">var</span> clientKey = <span class="hljs-literal">null</span>;
 
-    <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">repos</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">repo</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">repo</span><span class="p">.</span><span class="nx">fetchUserScripts</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">cb</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
-      <span class="p">});</span>
-    <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Import scripts on GitHub</p></div></div><div class="code"><div class="wrapper"><span class="nx">RepoManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">loadScripts</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">scriptStorage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controllers/scriptStorage&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">arrayOfRepos</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">makeRepoArray</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">scripts</span> <span class="o">=</span> <span class="p">[];</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TODO: remove usage of makeRepoArray since it causes
-redundant looping and make array of scripts directly
-from this.repos</p></div></div><div class="code"><div class="wrapper">  <span class="nx">arrayOfRepos</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">repo</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">scripts</span> <span class="o">=</span> <span class="nx">scripts</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">repo</span><span class="p">.</span><span class="nx">scripts</span><span class="p">);</span>
-  <span class="p">});</span>
+Strategy.findOne({ name: <span class="hljs-string">'github'</span> }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStrat)</span> </span>{
+  clientId = aStrat.id;
+  clientKey = aStrat.key;
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Requests a GitHub url and returns the chunks as buffers</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fetchRaw</span><span class="hljs-params">(aHost, aPath, aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> options = {
+    hostname: aHost,
+    port: <span class="hljs-number">443</span>,
+    path: aPath,
+    method: <span class="hljs-string">'GET'</span>,
+    headers: { <span class="hljs-string">'User-Agent'</span>: <span class="hljs-string">'Node.js'</span> }
+  };
 
-  <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">scripts</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">fetchRaw</span><span class="p">(</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="nx">script</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">bufs</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">getMeta</span><span class="p">(</span><span class="nx">bufs</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">meta</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">meta</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">storeScript</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">user</span><span class="p">,</span> <span class="nx">meta</span><span class="p">,</span> <span class="nx">Buffer</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">bufs</span><span class="p">),</span> 
-            <span class="nx">cb</span><span class="p">,</span> <span class="nx">update</span><span class="p">);</span>
-        <span class="p">}</span>
-      <span class="p">});</span>
-    <span class="p">});</span>
-  <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create the Mustache object to display repos with their user scrips</p></div></div><div class="code"><div class="wrapper"><span class="nx">RepoManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">makeRepoArray</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">retOptions</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="kd">var</span> <span class="nx">repos</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">repos</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">ghUsername</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">reponame</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">scripts</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">scriptname</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">option</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="hljs-keyword">var</span> req = https.request(options,
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRes)</span> </span>{
+      <span class="hljs-keyword">var</span> bufs = [];
+      <span class="hljs-keyword">if</span> (aRes.statusCode !== <span class="hljs-number">200</span>) { <span class="hljs-built_in">console</span>.log(aRes.statusCode); <span class="hljs-keyword">return</span> aCallback([<span class="hljs-keyword">new</span> Buffer(<span class="hljs-string">''</span>)]); }
+      <span class="hljs-keyword">else</span> {
+        aRes.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aData)</span> </span>{ bufs.push(aData); });
+        aRes.on(<span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          aCallback(bufs);
+        });
+      }
+    });
+  req.end();
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Use for call the GitHub JSON api
+Returns the JSON parsed object</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fetchJSON</span><span class="hljs-params">(aPath, aCallback)</span> </span>{
+  aPath += <span class="hljs-string">'?client_id='</span> + clientId + <span class="hljs-string">'&amp;client_secret='</span> + clientKey;
+  fetchRaw(<span class="hljs-string">'api.github.com'</span>, aPath, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aBufs)</span> </span>{
+    aCallback(<span class="hljs-built_in">JSON</span>.parse(Buffer.concat(aBufs).toString()));
+  });
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This manages actions on the repos of a user</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">RepoManager</span><span class="hljs-params">(aUserId, aUser, aRepos)</span> </span>{
+  <span class="hljs-keyword">this</span>.userId = aUserId;
+  <span class="hljs-keyword">this</span>.user = aUser;
+  <span class="hljs-keyword">this</span>.repos = aRepos || nil();
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Fetches the information about repos that contain user scripts</p></div></div><div class="code"><div class="wrapper">RepoManager.prototype.fetchRecentRepos = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> repoList = [];
+  <span class="hljs-keyword">var</span> that = <span class="hljs-keyword">this</span>;
 
-  <span class="k">for</span> <span class="p">(</span><span class="nx">reponame</span> <span class="k">in</span> <span class="nx">repos</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">option</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">repo</span><span class="o">:</span> <span class="nx">reponame</span><span class="p">,</span> <span class="nx">user</span><span class="o">:</span> <span class="nx">username</span> <span class="p">};</span>
-    <span class="nx">option</span><span class="p">.</span><span class="nx">scripts</span> <span class="o">=</span> <span class="p">[];</span>
+  async.waterfall([
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+      github.repos.getFromUser({
+        user: <span class="hljs-built_in">encodeURIComponent</span>(that.userId),
+        sort: <span class="hljs-string">'updated'</span>,
+        order: <span class="hljs-string">'desc'</span>,
+        per_page: <span class="hljs-number">3</span>,
+      }, aCallback);
+    },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGithubRepoList, aCallback)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Don&#39;t search through forks
+to speedup this request.
+aGithubRepoList = _.where(aGithubRepoList, {fork: false});</p></div></div><div class="code"><div class="wrapper">      _.map(aGithubRepoList, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGithubRepo)</span> </span>{
+        repoList.push(<span class="hljs-keyword">new</span> Repo(that, aGithubRepo.owner.login, aGithubRepo.name));
+      });
 
-    <span class="nx">scripts</span> <span class="o">=</span> <span class="nx">repos</span><span class="p">[</span><span class="nx">reponame</span><span class="p">];</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">scriptname</span> <span class="k">in</span> <span class="nx">scripts</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">option</span><span class="p">.</span><span class="nx">scripts</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">scriptname</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">username</span> <span class="o">+</span> 
-        <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">reponame</span> <span class="o">+</span> <span class="s1">&#39;/master&#39;</span> <span class="o">+</span> <span class="nx">scripts</span><span class="p">[</span><span class="nx">scriptname</span><span class="p">]</span> <span class="p">});</span>
-    <span class="p">}</span>
+      async.each(repoList, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRepo, aCallback)</span> </span>{
+        aRepo.fetchUserScripts(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          aCallback(<span class="hljs-literal">null</span>);
+        });
+      }, aCallback);
+    },
+  ], aCallback);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Import scripts on GitHub</p></div></div><div class="code"><div class="wrapper">RepoManager.prototype.loadScripts = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback, aUpdate)</span> </span>{
+  <span class="hljs-keyword">var</span> scriptStorage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../controllers/scriptStorage'</span>);
+  <span class="hljs-keyword">var</span> arrayOfRepos = <span class="hljs-keyword">this</span>.makeRepoArray();
+  <span class="hljs-keyword">var</span> that = <span class="hljs-keyword">this</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>TODO: remove usage of makeRepoArray since it causes redundant looping</p></div></div><div class="code"><div class="wrapper">  arrayOfRepos.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRepo)</span> </span>{
+    async.each(aRepo.scripts, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript, aCallback)</span> </span>{
+      <span class="hljs-keyword">var</span> url = <span class="hljs-string">'/'</span> + <span class="hljs-built_in">encodeURI</span>(aRepo.user) + <span class="hljs-string">'/'</span> + <span class="hljs-built_in">encodeURI</span>(aRepo.repo)
+        + <span class="hljs-string">'/master'</span> + aScript.path;
+      fetchRaw(<span class="hljs-string">'raw.githubusercontent.com'</span>, url, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aBufs)</span> </span>{
+        scriptStorage.getMeta(aBufs, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aMeta)</span> </span>{
+          <span class="hljs-keyword">if</span> (aMeta) {
+            scriptStorage.storeScript(that.user, aMeta, Buffer.concat(aBufs),
+              aCallback, aUpdate);
+          }
+        });
+      });
+    }, aCallback);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Create the Mustache object to display repos with their user scrips</p></div></div><div class="code"><div class="wrapper">RepoManager.prototype.makeRepoArray = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">var</span> retOptions = [];
+  <span class="hljs-keyword">var</span> repos = <span class="hljs-keyword">this</span>.repos;
+  <span class="hljs-keyword">var</span> username = <span class="hljs-keyword">this</span>.user.ghUsername;
+  <span class="hljs-keyword">var</span> reponame = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> scripts = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> scriptname = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> option = <span class="hljs-literal">null</span>;
 
-    <span class="nx">retOptions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">option</span><span class="p">);</span>
-  <span class="p">}</span>
+  <span class="hljs-keyword">for</span> (reponame <span class="hljs-keyword">in</span> repos) {
+    option = { repo: reponame, user: username };
+    option.scripts = [];
 
-  <span class="k">return</span> <span class="nx">retOptions</span><span class="p">;</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Manages a single repo</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">Repo</span><span class="p">(</span><span class="nx">manager</span><span class="p">,</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">reponame</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">manager</span> <span class="o">=</span> <span class="nx">manager</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">user</span> <span class="o">=</span> <span class="nx">username</span><span class="p">;</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">repo</span> <span class="o">=</span> <span class="nx">reponame</span><span class="p">;</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Use recursive requests to locate all user scripts in a repo</p></div></div><div class="code"><div class="wrapper"><span class="nx">Repo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fetchUserScripts</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">getTree</span><span class="p">(</span><span class="s1">&#39;HEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Looks for user script in the current directory
-and initiates searches on subdirectories</p></div></div><div class="code"><div class="wrapper"><span class="nx">Repo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">parseTree</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">object</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">trees</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">repos</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">manager</span><span class="p">.</span><span class="nx">repos</span><span class="p">;</span>
+    scripts = repos[reponame];
+    <span class="hljs-keyword">for</span> (scriptname <span class="hljs-keyword">in</span> scripts) {
+      option.scripts.push({ name: scriptname, path: scripts[scriptname] });
+    }
 
-  <span class="nx">tree</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">object</span><span class="p">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;tree&#39;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">trees</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">sha</span><span class="o">:</span> <span class="nx">object</span><span class="p">.</span><span class="nx">sha</span><span class="p">,</span> <span class="nx">path</span><span class="o">:</span> <span class="nx">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">object</span><span class="p">.</span><span class="nx">path</span> <span class="p">});</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">object</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">repos</span><span class="p">[</span><span class="nx">that</span><span class="p">.</span><span class="nx">repo</span><span class="p">])</span> <span class="p">{</span> <span class="nx">repos</span><span class="p">[</span><span class="nx">that</span><span class="p">.</span><span class="nx">repo</span><span class="p">]</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span> <span class="p">}</span>
-      <span class="nx">repos</span><span class="p">[</span><span class="nx">that</span><span class="p">.</span><span class="nx">repo</span><span class="p">][</span><span class="nx">object</span><span class="p">.</span><span class="nx">path</span><span class="p">]</span> <span class="o">=</span> <span class="nx">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">object</span><span class="p">.</span><span class="nx">path</span><span class="p">;</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
+    retOptions.push(option);
+  }
 
-  <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">trees</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">that</span><span class="p">.</span><span class="nx">getTree</span><span class="p">(</span><span class="nx">tree</span><span class="p">.</span><span class="nx">sha</span><span class="p">,</span> <span class="nx">tree</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
-  <span class="p">},</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="nx">done</span><span class="p">();</span> 
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Gets information about a directory</p></div></div><div class="code"><div class="wrapper"><span class="nx">Repo</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getTree</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sha</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-  <span class="nx">fetchJSON</span><span class="p">(</span><span class="s1">&#39;/repos/&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">user</span>  <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">repo</span> <span class="o">+</span> <span class="s1">&#39;/git/trees/&#39;</span> <span class="o">+</span> <span class="nx">sha</span><span class="p">,</span> 
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">json</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">that</span><span class="p">.</span><span class="nx">parseTree</span><span class="p">(</span><span class="nx">json</span><span class="p">.</span><span class="nx">tree</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">cb</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span>
+  <span class="hljs-keyword">return</span> retOptions;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Manages a single repo</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Repo</span><span class="hljs-params">(aManager, aUsername, aReponame)</span> </span>{
+  <span class="hljs-keyword">this</span>.manager = aManager;
+  <span class="hljs-keyword">this</span>.user = aUsername;
+  <span class="hljs-keyword">this</span>.repo = aReponame;
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Use recursive requests to locate all user scripts in a repo</p></div></div><div class="code"><div class="wrapper">Repo.prototype.fetchUserScripts = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+  <span class="hljs-keyword">this</span>.getTree(<span class="hljs-string">'HEAD'</span>, <span class="hljs-string">''</span>, aCallback);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Looks for user script in the current directory
+and initiates searches on subdirectories</p></div></div><div class="code"><div class="wrapper">Repo.prototype.parseTree = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aTree, aPath, aDone)</span> </span>{
+  <span class="hljs-keyword">var</span> trees = [];
+  <span class="hljs-keyword">var</span> that = <span class="hljs-keyword">this</span>;
+  <span class="hljs-keyword">var</span> repos = <span class="hljs-keyword">this</span>.manager.repos;
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">getManager</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">userId</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">repos</span><span class="p">)</span> <span class="p">{</span> 
-  <span class="k">return</span> <span class="k">new</span> <span class="nx">RepoManager</span><span class="p">(</span><span class="nx">userId</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">repos</span><span class="p">);</span> 
-<span class="p">};</span></div></div></div></div></body></html>
+  aTree.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(object)</span> </span>{
+    <span class="hljs-keyword">if</span> (object.type === <span class="hljs-string">'tree'</span>) {
+      trees.push({
+        sha: object.sha, path: aPath + <span class="hljs-string">'/'</span>
+          + <span class="hljs-built_in">encodeURI</span>(object.path)
+      });
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (object.path.substr(-<span class="hljs-number">8</span>) === <span class="hljs-string">'.user.js'</span>) {
+      <span class="hljs-keyword">if</span> (!repos[that.repo]) { repos[that.repo] = nil(); }
+      repos[that.repo][object.path] = aPath + <span class="hljs-string">'/'</span> + <span class="hljs-built_in">encodeURI</span>(object.path);
+    }
+  });
+
+  async.each(trees, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aTree, aCallback)</span> </span>{
+    that.getTree(aTree.sha, aTree.path, aCallback);
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    aDone();
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Gets information about a directory</p></div></div><div class="code"><div class="wrapper">Repo.prototype.getTree = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aSha, aPath, aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> that = <span class="hljs-keyword">this</span>;
+  fetchJSON(<span class="hljs-string">'/repos/'</span> + <span class="hljs-built_in">encodeURI</span>(<span class="hljs-keyword">this</span>.user) + <span class="hljs-string">'/'</span> + <span class="hljs-built_in">encodeURI</span>(<span class="hljs-keyword">this</span>.repo)
+    + <span class="hljs-string">'/git/trees/'</span> + aSha,
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aJson)</span> </span>{
+      that.parseTree(aJson.tree, aPath, aCallback);
+    }
+  );
+};
+
+exports.getManager = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUserId, aUser, aRepos)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> RepoManager(aUserId, aUser, aRepos);
+};</div></div></div></div></body></html>

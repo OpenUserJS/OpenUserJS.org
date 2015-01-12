@@ -1,267 +1,379 @@
-<!DOCTYPE html><html lang="en"><head><title>controllers/scriptStorage</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/scriptStorage"><meta name="groc-project-path" content="controllers/scriptStorage.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/scriptStorage.js">controllers/scriptStorage.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">AWS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;aws-sdk&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">cleanFilename</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/helpers&#39;</span><span class="p">).</span><span class="nx">cleanFilename</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">findDeadorAlive</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/remove&#39;</span><span class="p">).</span><span class="nx">findDeadorAlive</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">userRoles</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/userRoles.json&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">bucketName</span> <span class="o">=</span> <span class="s1">&#39;OpenUserJS.org&#39;</span><span class="p">;</span>
+<!DOCTYPE html><html lang="en"><head><title>controllers/scriptStorage</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/scriptStorage"><meta name="groc-project-path" content="controllers/scriptStorage.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/scriptStorage.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-<span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s1">&#39;production&#39;</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">AWS</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span> <span class="nx">region</span><span class="o">:</span> <span class="s1">&#39;us-east-1&#39;</span> <span class="p">});</span>
-<span class="p">}</span> <span class="k">else</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You need to install (and ruby too): https://github.com/jubos/fake-s3
-Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001</p></div></div><div class="code"><div class="wrapper">  <span class="nx">AWS</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span> <span class="nx">accessKeyId</span><span class="o">:</span> <span class="s1">&#39;fakeId&#39;</span><span class="p">,</span> <span class="nx">secretAccessKey</span><span class="o">:</span> <span class="s1">&#39;fakeKey&#39;</span><span class="p">,</span>
-    <span class="nx">httpOptions</span><span class="o">:</span> <span class="p">{</span> 
-    <span class="nx">proxy</span><span class="o">:</span> <span class="s1">&#39;localhost:10001&#39;</span><span class="p">,</span> <span class="nx">agent</span><span class="o">:</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">).</span><span class="nx">globalAgent</span> 
-  <span class="p">}});</span>
-<span class="p">}</span>
+<span class="hljs-keyword">var</span> AWS = <span class="hljs-built_in">require</span>(<span class="hljs-string">'aws-sdk'</span>);
 
-<span class="kd">function</span> <span class="nx">getInstallName</span> <span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">namespace</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">namespace</span><span class="p">;</span>
-  <span class="k">return</span> <span class="nx">username</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">namespace</span> <span class="o">?</span> <span class="nx">namespace</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> 
-    <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">scriptname</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="nx">exports</span><span class="p">.</span><span class="nx">getInstallName</span> <span class="o">=</span> <span class="nx">getInstallName</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
+<span class="hljs-keyword">var</span> User = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/user'</span>).User;
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">getSource</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">s3</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWS</span><span class="p">.</span><span class="nx">S3</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">);</span>
+<span class="hljs-keyword">var</span> cleanFilename = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/helpers'</span>).cleanFilename;
+<span class="hljs-keyword">var</span> findDeadorAlive = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/remove'</span>).findDeadorAlive;
+<span class="hljs-keyword">var</span> userRoles = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/userRoles.json'</span>);
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the script</p></div></div><div class="code"><div class="wrapper">    <span class="nx">callback</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">s3</span><span class="p">.</span><span class="nx">getObject</span><span class="p">({</span> <span class="nx">Bucket</span><span class="o">:</span> <span class="nx">bucketName</span><span class="p">,</span> <span class="nx">Key</span><span class="o">:</span> <span class="nx">installName</span> <span class="p">})</span>
-      <span class="p">.</span><span class="nx">createReadStream</span><span class="p">());</span>
-  <span class="p">});</span>
-<span class="p">};</span>
+<span class="hljs-keyword">var</span> bucketName = <span class="hljs-string">'OpenUserJS.org'</span>;
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">sendScript</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">accept</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;Accept&#39;</span><span class="p">];</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="hljs-keyword">if</span> (isPro) {
+  AWS.config.update({ region: <span class="hljs-string">'us-east-1'</span> });
+} <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You need to install (and ruby too): <a href="https://github.com/jubos/fake-s3">https://github.com/jubos/fake-s3</a>
+Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> DEV_AWS_URL = process.env.DEV_AWS_URL || <span class="hljs-string">'localhost:10001'</span>;
+  AWS.config.update({
+    accessKeyId: <span class="hljs-string">'fakeId'</span>,
+    secretAccessKey: <span class="hljs-string">'fakeKey'</span>,
+    httpOptions: {
+      proxy: DEV_AWS_URL,
+      agent: <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>).globalAgent
+    }
+  });
+}
 
-  <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">!==</span> <span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;/libs/&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">accept</span> <span class="o">===</span> <span class="s1">&#39;text/x-userscript-meta&#39;</span><span class="p">)</span> <span class="p">{</span> 
-    <span class="k">return</span> <span class="nx">exports</span><span class="p">.</span><span class="nx">sendMeta</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">);</span> 
-  <span class="p">}</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getInstallName</span><span class="hljs-params">(aReq)</span> </span>{
+  <span class="hljs-keyword">return</span> aReq.params.username + <span class="hljs-string">'/'</span> + aReq.params.scriptname;
+}
+exports.getInstallName = getInstallName;
 
-  <span class="nx">exports</span><span class="p">.</span><span class="nx">getSource</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">stream</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Send the script</p></div></div><div class="code"><div class="wrapper">    <span class="nx">res</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;text/javascript; charset=utf-8&#39;</span><span class="p">);</span>
-    <span class="nx">stream</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Don't count installs on libraries</p></div></div><div class="code"><div class="wrapper">    <span class="k">if</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update the install count</p></div></div><div class="code"><div class="wrapper">    <span class="o">++</span><span class="nx">script</span><span class="p">.</span><span class="nx">installs</span><span class="p">;</span>
-    <span class="nx">script</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Send user script metadata block</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">sendMeta</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">getInstallName</span><span class="p">(</span><span class="nx">req</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\.meta\.js$/</span><span class="p">,</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">);</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">caseInsensitive</span><span class="hljs-params">(aInstallName)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">'^'</span> + aInstallName.replace(<span class="hljs-regexp">/([.?*+^$[\]\\(){}|-])/g</span>, <span class="hljs-string">"\\$1"</span>)
+    + <span class="hljs-string">'$'</span>, <span class="hljs-string">'i'</span>);
+}
+exports.caseInsensitive = caseInsensitive;
 
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">meta</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+exports.getSource = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aCallback)</span> </span>{
+  <span class="hljs-keyword">var</span> s3 = <span class="hljs-keyword">new</span> AWS.S3();
+  <span class="hljs-keyword">var</span> installName = getInstallName(aReq);
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+  Script.findOne({ installName: caseInsensitive(installName) },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+      <span class="hljs-keyword">var</span> s3Object = <span class="hljs-literal">null</span>;
 
-    <span class="nx">res</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;text/javascript; charset=utf-8&#39;</span><span class="p">);</span>
-    <span class="nx">meta</span> <span class="o">=</span> <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">;</span>
+      <span class="hljs-keyword">if</span> (!aScript) {
+        <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>);
+      }
 
-    <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s1">&#39;// ==UserScript==\n&#39;</span><span class="p">);</span>
-    <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">meta</span><span class="p">).</span><span class="nx">reverse</span><span class="p">().</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">meta</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">meta</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s1">&#39;// @&#39;</span> <span class="o">+</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;    &#39;</span> <span class="o">+</span> <span class="nx">value</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span><span class="p">);</span>
-        <span class="p">});</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s1">&#39;// @&#39;</span> <span class="o">+</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;    &#39;</span> <span class="o">+</span> <span class="nx">meta</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;\n&#39;</span><span class="p">);</span>
-      <span class="p">}</span>
-    <span class="p">});</span>
-    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s1">&#39;// ==/UserScript==\n&#39;</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Modified from Count Issues (http://userscripts.org/scripts/show/69307)
-By Marti Martz (http://userscripts.org/users/37004)</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">parseMeta</span><span class="p">(</span><span class="nx">aString</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="sr">/\/\/ @(\S+)(?:\s+(.*))?/</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">lineMatches</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">lines</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="kd">var</span> <span class="nx">unique</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="s1">&#39;namespace&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="s1">&#39;description&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="s1">&#39;version&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="s1">&#39;author&#39;</span><span class="o">:</span> <span class="kc">true</span>
-  <span class="p">};</span>
+      s3Object = s3.getObject({ Bucket: bucketName, Key: installName }).createReadStream().
+        on(<span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">if</span> (isPro) {
+            <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'S3 Key Not Found '</span> + installName);
+          }
 
-  <span class="nx">lines</span> <span class="o">=</span> <span class="nx">aString</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/[\r\n]+/</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">re</span><span class="p">));</span>
-  <span class="p">});</span>
+          <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>);
+        });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Get the script</p></div></div><div class="code"><div class="wrapper">      aCallback(aScript, s3Object);
+    });
+};
 
-  <span class="k">for</span> <span class="p">(</span><span class="nx">line</span> <span class="k">in</span> <span class="nx">lines</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">lineMatches</span> <span class="o">=</span> <span class="nx">lines</span><span class="p">[</span><span class="nx">line</span><span class="p">].</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s+$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">match</span><span class="p">(</span><span class="nx">re</span><span class="p">);</span>
-    <span class="nx">name</span> <span class="o">=</span> <span class="nx">lineMatches</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-    <span class="nx">value</span> <span class="o">=</span> <span class="nx">lineMatches</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">headers</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">||</span> <span class="nx">unique</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
-      <span class="nx">headers</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">headers</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">headers</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">headers</span><span class="p">[</span><span class="nx">name</span><span class="p">]];</span>
-      <span class="p">}</span>
-      <span class="nx">headers</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
+exports.sendScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> accept = aReq.headers.accept;
 
-  <span class="k">return</span> <span class="nx">headers</span><span class="p">;</span>
-<span class="p">}</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-number">0</span> !== aReq.url.indexOf(<span class="hljs-string">'/libs/'</span>) &amp;&amp; accept === <span class="hljs-string">'text/x-userscript-meta'</span>) {
+    <span class="hljs-keyword">return</span> exports.sendMeta(aReq, aRes, aNext);
+  }
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">getMeta</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">chunks</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We need to convert the array of buffers to a string to
+  exports.getSource(aReq, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript, aStream)</span> </span>{
+
+    <span class="hljs-keyword">if</span> (!aScript) { <span class="hljs-keyword">return</span> aNext(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Send the script</p></div></div><div class="code"><div class="wrapper">    aRes.set(<span class="hljs-string">'Content-Type'</span>, <span class="hljs-string">'text/javascript; charset=UTF-8'</span>);
+    aRes._no_minify = <span class="hljs-literal">true</span>;
+    aStream.pipe(aRes);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Don&#39;t count installs on raw source route</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (aScript.isLib || aReq.params.type) { <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update the install count</p></div></div><div class="code"><div class="wrapper">    ++aScript.installs;
+    ++aScript.installsSinceUpdate;
+
+    aScript.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{ });
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Send user script metadata block</p></div></div><div class="code"><div class="wrapper">exports.sendMeta = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> installName = getInstallName(aReq).replace(<span class="hljs-regexp">/\.meta\.js$/</span>, <span class="hljs-string">'.user.js'</span>);
+
+  Script.findOne({ installName: caseInsensitive(installName) },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+      <span class="hljs-keyword">var</span> meta = <span class="hljs-literal">null</span>;
+      <span class="hljs-keyword">var</span> data = <span class="hljs-literal">null</span>;
+      <span class="hljs-keyword">var</span> prefix = <span class="hljs-literal">null</span>;
+      <span class="hljs-keyword">var</span> key = <span class="hljs-literal">null</span>;
+      <span class="hljs-keyword">var</span> whitespace = <span class="hljs-string">'\u0020\u0020\u0020\u0020'</span>;
+
+      <span class="hljs-keyword">if</span> (!aScript) { <span class="hljs-keyword">return</span> aNext(); }
+
+      aRes.set(<span class="hljs-string">'Content-Type'</span>, <span class="hljs-string">'text/javascript; charset=UTF-8'</span>);
+      aRes._no_minify = <span class="hljs-literal">true</span>;
+      meta = aScript.meta; <span class="hljs-comment">// NOTE: Watchpoint</span>
+
+      aRes.write(<span class="hljs-string">'// ==UserScript==\n'</span>);
+      <span class="hljs-built_in">Object</span>.keys(meta).reverse().forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aName)</span> </span>{
+        <span class="hljs-keyword">if</span> (meta[aName] <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>) {
+          meta[aName].forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aValue)</span> </span>{
+            aRes.write(<span class="hljs-string">'// @'</span> + aName + (aValue ? whitespace + aValue : <span class="hljs-string">''</span>) + <span class="hljs-string">'\n'</span>);
+          });
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (meta[aName] <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Object</span>) {
+          prefix = aName;
+          <span class="hljs-keyword">for</span> (key <span class="hljs-keyword">in</span> meta[aName]) {
+            data = meta[prefix][key];
+            <span class="hljs-keyword">if</span> (data <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>) {
+              data.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aValue)</span> </span>{
+                aRes.write(<span class="hljs-string">'// @'</span> + prefix + <span class="hljs-string">':'</span> + key + (aValue ? whitespace + aValue : <span class="hljs-string">''</span>) + <span class="hljs-string">'\n'</span>);
+              });
+            }
+            <span class="hljs-keyword">else</span> {
+              aRes.write(<span class="hljs-string">'// @'</span> + prefix + <span class="hljs-string">':'</span> + key + (data ? whitespace + data : <span class="hljs-string">''</span>) + <span class="hljs-string">'\n'</span>);
+            }
+          }
+        } <span class="hljs-keyword">else</span> {
+          data = meta[aName];
+          aRes.write(<span class="hljs-string">'// @'</span> + aName + (data ? whitespace + data : <span class="hljs-string">''</span>) + <span class="hljs-string">'\n'</span>);
+        }
+      });
+      aRes.end(<span class="hljs-string">'// ==/UserScript==\n'</span>);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Modified from Count Issues (<a href="http://userscripts.org/scripts/show/69307">http://userscripts.org/scripts/show/69307</a>)
+By Marti Martz (<a href="http://userscripts.org/users/37004">http://userscripts.org/users/37004</a>)</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseMeta</span><span class="hljs-params">(aString, aNormalize)</span> </span>{
+  <span class="hljs-keyword">var</span> rLine = <span class="hljs-regexp">/\/\/ @(\S+)(?:\s+(.*))?/</span>;
+  <span class="hljs-keyword">var</span> headers = {};
+  <span class="hljs-keyword">var</span> name = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> prefix = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> key = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> value = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> line = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> lineMatches = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> lines = {};
+  <span class="hljs-keyword">var</span> uniques = {
+    <span class="hljs-string">'description'</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-string">'icon'</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-string">'name'</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-string">'namespace'</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-string">'version'</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-string">'oujs:author'</span>: <span class="hljs-literal">true</span>
+  };
+  <span class="hljs-keyword">var</span> unique = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> one = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> matches = <span class="hljs-literal">null</span>;
+
+  lines = aString.split(<span class="hljs-regexp">/[\r\n]+/</span>).filter(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aElement, aIndex, aArray)</span> </span>{
+    <span class="hljs-keyword">return</span> (aElement.match(rLine));
+  });
+
+  <span class="hljs-keyword">for</span> (line <span class="hljs-keyword">in</span> lines) {
+    <span class="hljs-keyword">var</span> header = <span class="hljs-literal">null</span>;
+
+    lineMatches = lines[line].replace(<span class="hljs-regexp">/\s+$/</span>, <span class="hljs-string">''</span>).match(rLine);
+    name = lineMatches[<span class="hljs-number">1</span>];
+    value = lineMatches[<span class="hljs-number">2</span>];
+    <span class="hljs-keyword">if</span> (aNormalize) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Upmix from...</p></div></div><div class="code"><div class="wrapper">      <span class="hljs-keyword">switch</span> (name) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'homepage'</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'source'</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'website'</span>:
+          name = <span class="hljs-string">'homepageURL'</span>;
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'defaulticon'</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'iconURL'</span>:
+          name = <span class="hljs-string">'icon'</span>;
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'licence'</span>:
+          name = <span class="hljs-string">'license'</span>;
+          <span class="hljs-keyword">break</span>;
+      }
+    }
+    name = name.split(<span class="hljs-regexp">/:/</span>).reverse();
+    key = name[<span class="hljs-number">0</span>];
+    prefix = name[<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">if</span> (key) {
+      unique = {};
+      <span class="hljs-keyword">if</span> (prefix) {
+        <span class="hljs-keyword">if</span> (!headers[prefix]) {
+          headers[prefix] = {};
+        }
+        header = headers[prefix];
+        <span class="hljs-keyword">if</span> (aNormalize) {
+          <span class="hljs-keyword">for</span> (one <span class="hljs-keyword">in</span> uniques) {
+            matches = one.match(<span class="hljs-regexp">/(.*):(.*)$/</span>);
+            <span class="hljs-keyword">if</span> (uniques[one] &amp;&amp; matches &amp;&amp; matches[<span class="hljs-number">1</span>] === prefix) {
+              unique[matches[<span class="hljs-number">2</span>]] = <span class="hljs-literal">true</span>;
+            }
+          }
+        }
+      } <span class="hljs-keyword">else</span> {
+        header = headers;
+        <span class="hljs-keyword">if</span> (aNormalize) {
+          <span class="hljs-keyword">for</span> (one <span class="hljs-keyword">in</span> uniques) {
+            <span class="hljs-keyword">if</span> (uniques[one] &amp;&amp; !<span class="hljs-regexp">/:/</span>.test(one)) {
+              unique[one] = <span class="hljs-literal">true</span>;
+            }
+          }
+        }
+      }
+      <span class="hljs-keyword">if</span> (!header[key] || aNormalize &amp;&amp; unique[key]) {
+        header[key] = value || <span class="hljs-string">''</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!aNormalize || header[key] !== (value || <span class="hljs-string">''</span>)
+          &amp;&amp; !(header[key] <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span> &amp;&amp; header[key].indexOf(value) &gt; -<span class="hljs-number">1</span>)) {
+        <span class="hljs-keyword">if</span> (!(header[key] <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>)) {
+          header[key] = [header[key]];
+        }
+        header[key].push(value || <span class="hljs-string">''</span>);
+      }
+    }
+  }
+  <span class="hljs-keyword">return</span> headers;
+}
+exports.parseMeta = parseMeta;
+
+exports.getMeta = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aChunks, aCallback)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We need to convert the array of buffers to a string to
 parse the header. But strings are memory inefficient compared
 to buffers so we only convert the least number of chunks to
-get the user script header.</p></div></div><div class="code"><div class="wrapper">  <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">chunks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+get the user script header.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> str = <span class="hljs-string">''</span>;
+  <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">var</span> header = <span class="hljs-literal">null</span>;
 
-  <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">chunks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">header</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="nx">str</span> <span class="o">+=</span> <span class="nx">chunks</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-    <span class="nx">header</span> <span class="o">=</span> <span class="sr">/^\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>
+  <span class="hljs-keyword">for</span> (; i &lt; aChunks.length; ++i) {
+    header = <span class="hljs-literal">null</span>;
+    str += aChunks[i];
+    header = <span class="hljs-regexp">/^(?:\uFEFF)?\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m</span>.exec(str);
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">header</span> <span class="o">&amp;&amp;</span> <span class="nx">header</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">parseMeta</span><span class="p">(</span><span class="nx">header</span><span class="p">[</span><span class="mi">1</span><span class="p">]));</span> <span class="p">}</span>
-  <span class="p">}</span>
+    <span class="hljs-keyword">if</span> (header &amp;&amp; header[<span class="hljs-number">1</span>]) { <span class="hljs-keyword">return</span> aCallback(parseMeta(header[<span class="hljs-number">1</span>], <span class="hljs-literal">true</span>)); }
+  }
 
-  <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
-<span class="p">};</span>
+  aCallback(<span class="hljs-literal">null</span>);
+};
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">storeScript</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">meta</span><span class="p">,</span> <span class="nx">buf</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">s3</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWS</span><span class="p">.</span><span class="nx">S3</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">namespace</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">scriptName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">installName</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">isLibrary</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">meta</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">libraries</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="kd">var</span> <span class="nx">requires</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">collaborators</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">libraryRegex</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^https?:\/\/&#39;</span> <span class="o">+</span> 
-    <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s1">&#39;production&#39;</span> <span class="o">?</span>
-      <span class="s1">&#39;openuserjs\.org&#39;</span> <span class="o">:</span> <span class="s1">&#39;localhost:8080&#39;</span><span class="p">)</span> <span class="o">+</span>
-    <span class="s1">&#39;\/libs\/src\/(.+?\/.+?\.js)$&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+exports.storeScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUser, aMeta, aBuf, aCallback, aUpdate)</span> </span>{
+  <span class="hljs-keyword">var</span> s3 = <span class="hljs-keyword">new</span> AWS.S3();
+  <span class="hljs-keyword">var</span> scriptName = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> installName = aUser.name + <span class="hljs-string">'/'</span>;
+  <span class="hljs-keyword">var</span> isLibrary = <span class="hljs-keyword">typeof</span> aMeta === <span class="hljs-string">'string'</span>;
+  <span class="hljs-keyword">var</span> libraries = [];
+  <span class="hljs-keyword">var</span> requires = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> collaborators = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> libraryRegex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">'^https?:\/\/'</span> +
+    (isPro ?
+      <span class="hljs-string">'openuserjs\.org'</span> : <span class="hljs-string">'localhost:8080'</span>) +
+    <span class="hljs-string">'\/(?:libs\/src|src\/libs)\/(.+?\/.+?\.js)$'</span>, <span class="hljs-string">''</span>);
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">meta</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span>
+  <span class="hljs-keyword">if</span> (!aMeta) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isLibrary</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">namespace</span> <span class="o">=</span> <span class="nx">cleanFilename</span><span class="p">(</span><span class="nx">meta</span><span class="p">.</span><span class="nx">namespace</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-    <span class="nx">scriptName</span> <span class="o">=</span> <span class="nx">cleanFilename</span><span class="p">(</span><span class="nx">meta</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Can't install a script without a @name (maybe replace with random value)</p></div></div><div class="code"><div class="wrapper">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">scriptName</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span>
+  <span class="hljs-keyword">if</span> (!isLibrary) {
+    scriptName = cleanFilename(aMeta.name, <span class="hljs-string">''</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Can&#39;t install a script without a @name (maybe replace with random value)</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!scriptName) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isLibrary</span> <span class="o">&amp;&amp;</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">author</span>
-        <span class="o">&amp;&amp;</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">author</span> <span class="o">!=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">&amp;&amp;</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">collaborators</span> <span class="o">=</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">;</span>
-      <span class="k">if</span> <span class="p">((</span><span class="k">typeof</span> <span class="nx">collaborators</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> 
-          <span class="o">&amp;&amp;</span> <span class="nx">collaborators</span> <span class="o">===</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
-          <span class="o">||</span> <span class="p">(</span><span class="nx">collaborators</span> <span class="k">instanceof</span> <span class="nb">Array</span> 
-          <span class="o">&amp;&amp;</span> <span class="nx">collaborators</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">installName</span> <span class="o">=</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">author</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">collaborators</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="hljs-keyword">if</span> (!isLibrary &amp;&amp; aMeta.oujs &amp;&amp; aMeta.oujs.author
+        &amp;&amp; aMeta.oujs.author != aUser.name &amp;&amp; aMeta.oujs.collaborator) {
+      collaborators = aMeta.oujs.collaborator;
+      <span class="hljs-keyword">if</span> ((<span class="hljs-keyword">typeof</span> collaborators === <span class="hljs-string">'string'</span>
+          &amp;&amp; collaborators === aUser.name)
+          || (collaborators <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>
+          &amp;&amp; collaborators.indexOf(aUser.name) &gt; -<span class="hljs-number">1</span>)) {
+        installName = aMeta.oujs.author + <span class="hljs-string">'/'</span>;
+      } <span class="hljs-keyword">else</span> {
+        collaborators = <span class="hljs-literal">null</span>;
+      }
+    }
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">namespace</span> <span class="o">||</span> <span class="nx">namespace</span> <span class="o">===</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">installName</span> <span class="o">+=</span> <span class="nx">scriptName</span> <span class="o">+</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="nx">installName</span> <span class="o">+=</span> <span class="nx">namespace</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">scriptName</span> <span class="o">+</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">;</span>
-    <span class="p">}</span>
+    installName += scriptName + <span class="hljs-string">'.user.js'</span>;
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">meta</span><span class="p">.</span><span class="nx">require</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">require</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">requires</span> <span class="o">=</span> <span class="p">[</span><span class="nx">meta</span><span class="p">.</span><span class="nx">require</span><span class="p">];</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">requires</span> <span class="o">=</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">require</span><span class="p">;</span>
-      <span class="p">}</span>
+    <span class="hljs-keyword">if</span> (aMeta.require) {
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> aMeta.require === <span class="hljs-string">'string'</span>) {
+        requires = [aMeta.require];
+      } <span class="hljs-keyword">else</span> {
+        requires = aMeta.require;
+      }
 
-      <span class="nx">requires</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">require</span><span class="p">)</span> <span class="p">{</span>
-          <span class="kd">var</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">libraryRegex</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">require</span><span class="p">);</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span> <span class="nx">libraries</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="p">}</span>
-      <span class="p">});</span>
-    <span class="p">}</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">scriptName</span> <span class="o">=</span> <span class="nx">cleanFilename</span><span class="p">(</span><span class="nx">meta</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\s+|\s+$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">scriptName</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span> <span class="p">}</span>
+      requires.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRequire)</span> </span>{
+        <span class="hljs-keyword">var</span> match = libraryRegex.exec(aRequire);
+        <span class="hljs-keyword">if</span> (match &amp;&amp; match[<span class="hljs-number">1</span>]) { libraries.push(match[<span class="hljs-number">1</span>]); }
+      });
+    }
+  } <span class="hljs-keyword">else</span> {
+    scriptName = cleanFilename(aMeta.replace(<span class="hljs-regexp">/^\s+|\s+$/g</span>, <span class="hljs-string">''</span>), <span class="hljs-string">''</span>);
+    <span class="hljs-keyword">if</span> (!scriptName) { <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>); }
 
-    <span class="nx">installName</span> <span class="o">+=</span> <span class="nx">scriptName</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">;</span>
-  <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Prevent a removed script from being reuploaded</p></div></div><div class="code"><div class="wrapper">  <span class="nx">findDeadorAlive</span><span class="p">(</span><span class="nx">Script</span><span class="p">,</span> <span class="p">{</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="p">},</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">alive</span><span class="p">,</span> <span class="nx">script</span><span class="p">,</span> <span class="nx">removed</span><span class="p">)</span> <span class="p">{</span>
+    installName += scriptName + <span class="hljs-string">'.js'</span>;
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Prevent a removed script from being reuploaded</p></div></div><div class="code"><div class="wrapper">  findDeadorAlive(Script, { installName: caseInsensitive(installName) }, <span class="hljs-literal">true</span>,
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aAlive, aScript, aRemoved)</span> </span>{
+      <span class="hljs-keyword">if</span> (aRemoved || (!aScript &amp;&amp; (aUpdate || collaborators))) {
+        <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!aScript) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>New script</p></div></div><div class="code"><div class="wrapper">        aScript = <span class="hljs-keyword">new</span> Script({
+          name: isLibrary ? aMeta : aMeta.name,
+          author: aUser.name,
+          installs: <span class="hljs-number">0</span>,
+          rating: <span class="hljs-number">0</span>,
+          about: <span class="hljs-string">''</span>,
+          updated: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(),
+          votes: <span class="hljs-number">0</span>,
+          flags: <span class="hljs-number">0</span>,
+          installName: installName,
+          fork: <span class="hljs-literal">null</span>,
+          meta: isLibrary ? { name: aMeta } : aMeta,
+          isLib: isLibrary,
+          uses: isLibrary ? <span class="hljs-literal">null</span> : libraries,
+          _authorId: aUser._id
+        });
+      } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script already exists.</p></div></div><div class="code"><div class="wrapper">        <span class="hljs-keyword">if</span> (!aScript.isLib) {
+          <span class="hljs-keyword">if</span> (collaborators &amp;&amp; (aScript.meta.oujs &amp;&amp; aScript.meta.oujs.author != aMeta.oujs.author
+              || (aScript.meta.oujs &amp;&amp; <span class="hljs-built_in">JSON</span>.stringify(aScript.meta.oujs.collaborator) !=
+             <span class="hljs-built_in">JSON</span>.stringify(aMeta.oujs.collaborator)))) {
+            <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>);
+          }
+          aScript.meta = aMeta;
+          aScript.uses = libraries;
+        }
+        aScript.updated = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
+        aScript.installsSinceUpdate = <span class="hljs-number">0</span>;
+      }
 
-      <span class="k">if</span> <span class="p">(</span><span class="nx">removed</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">update</span> <span class="o">||</span> <span class="nx">collaborators</span><span class="p">)))</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">script</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Script</span><span class="p">({</span>
-          <span class="nx">name</span><span class="o">:</span> <span class="nx">isLibrary</span> <span class="o">?</span> <span class="nx">meta</span> <span class="o">:</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-          <span class="nx">author</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-          <span class="nx">installs</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-          <span class="nx">rating</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-          <span class="nx">about</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-          <span class="nx">updated</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
-          <span class="nx">votes</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-          <span class="nx">flags</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-          <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span><span class="p">,</span>
-          <span class="nx">fork</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-          <span class="nx">meta</span><span class="o">:</span> <span class="nx">isLibrary</span> <span class="o">?</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">meta</span> <span class="p">}</span> <span class="o">:</span> <span class="nx">meta</span><span class="p">,</span>
-          <span class="nx">isLib</span><span class="o">:</span> <span class="nx">isLibrary</span><span class="p">,</span>
-          <span class="nx">uses</span><span class="o">:</span> <span class="nx">isLibrary</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="nx">libraries</span><span class="p">,</span>
-          <span class="nx">_authorId</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span>
-        <span class="p">});</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">script</span><span class="p">.</span><span class="nx">isLib</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">collaborators</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">author</span> <span class="o">!=</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">author</span>
-              <span class="o">||</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">)</span> <span class="o">!=</span> 
-             <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">meta</span><span class="p">.</span><span class="nx">collaborator</span><span class="p">)))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">callback</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
-          <span class="p">}</span>
-          <span class="nx">script</span><span class="p">.</span><span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span><span class="p">;</span>
-          <span class="nx">script</span><span class="p">.</span><span class="nx">uses</span> <span class="o">=</span> <span class="nx">libraries</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nx">script</span><span class="p">.</span><span class="nx">updated</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
-      <span class="p">}</span>
+      aScript.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+        s3.putObject({ Bucket: bucketName, Key: installName, Body: aBuf },
+          <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aData)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Don&#39;t save a script if storing failed</p></div></div><div class="code"><div class="wrapper">            <span class="hljs-keyword">if</span> (aErr) {
+              <span class="hljs-built_in">console</span>.error(aUser.name, <span class="hljs-string">'-'</span>, installName);
+              <span class="hljs-built_in">console</span>.error(<span class="hljs-built_in">JSON</span>.stringify(aErr));
+              <span class="hljs-built_in">console</span>.error(<span class="hljs-built_in">JSON</span>.stringify(aScript.toObject()));
+              <span class="hljs-keyword">return</span> aCallback(<span class="hljs-literal">null</span>);
+            }
 
-      <span class="nx">script</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">s3</span><span class="p">.</span><span class="nx">putObject</span><span class="p">({</span> <span class="nx">Bucket</span> <span class="o">:</span> <span class="nx">bucketName</span><span class="p">,</span> <span class="nx">Key</span> <span class="o">:</span> <span class="nx">installName</span><span class="p">,</span> <span class="nx">Body</span> <span class="o">:</span> <span class="nx">buf</span> <span class="p">},</span>
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">===</span> <span class="nx">userRoles</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-              <span class="o">--</span><span class="nx">user</span><span class="p">.</span><span class="nx">role</span><span class="p">;</span>
-              <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">script</span><span class="p">);</span> <span class="p">});</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-              <span class="nx">callback</span><span class="p">(</span><span class="nx">script</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">});</span>
-      <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span>
+            <span class="hljs-keyword">if</span> (aUser.role === userRoles.length - <span class="hljs-number">1</span>) {
+              <span class="hljs-keyword">var</span> userDoc = aUser;
+              <span class="hljs-keyword">if</span> (!userDoc.save) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>We&#39;re probably using req.session.user which may have gotten serialized.</p></div></div><div class="code"><div class="wrapper">                userDoc = <span class="hljs-keyword">new</span> User(userDoc);
+              }
+              --userDoc.role;
+              userDoc.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{ aCallback(aScript); });
+            } <span class="hljs-keyword">else</span> {
+              aCallback(aScript);
+            }
+          });
+      });
+    });
+};
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">deleteScript</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">installName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nx">Script</span><span class="p">.</span><span class="nx">findOneAndRemove</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">installName</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">s3</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWS</span><span class="p">.</span><span class="nx">S3</span><span class="p">();</span>
-    <span class="nx">s3</span><span class="p">.</span><span class="nx">deleteObject</span><span class="p">({</span> <span class="nx">Bucket</span> <span class="o">:</span> <span class="nx">bucketName</span><span class="p">,</span> <span class="nx">Key</span> <span class="o">:</span> <span class="nx">installName</span><span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>GitHub calls this on a push if a webhook is setup
-This controller makes sure we have the latest version of a script</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">webhook</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">RepoManager</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/repoManager&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">payload</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">reponame</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">repos</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="kd">var</span> <span class="nx">repo</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+exports.deleteScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aInstallName, aCallback)</span> </span>{
+  Script.findOne({ installName: caseInsensitive(aInstallName) },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+      <span class="hljs-keyword">var</span> s3 = <span class="hljs-keyword">new</span> AWS.S3();
+      s3.deleteObject({ Bucket : bucketName, Key : aScript.installName},
+        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+          <span class="hljs-keyword">if</span> (!aErr) {
+            aScript.remove(aCallback);
+          } <span class="hljs-keyword">else</span> {
+            aCallback(<span class="hljs-literal">null</span>);
+          }
+      });
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>GitHub calls this on a push if a webhook is setup
+This controller makes sure we have the latest version of a script</p></div></div><div class="code"><div class="wrapper">exports.webhook = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes)</span> </span>{
+  <span class="hljs-keyword">var</span> RepoManager = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/repoManager'</span>);
+  <span class="hljs-keyword">var</span> payload = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> username = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> reponame = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> repos = {};
+  <span class="hljs-keyword">var</span> repo = <span class="hljs-literal">null</span>;
 
-  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span> <span class="c1">// close connection</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Test for know GH webhook ips: https://api.github.com/meta</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">payload</span> <span class="o">||</span>
-    <span class="o">!</span><span class="sr">/192\.30\.252\.(2[0-5][0-5]|1[0-9]{2}|[1-9]?\d)/</span>
-    <span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;x-forwarded-for&#39;</span><span class="p">]</span> <span class="o">||</span> <span class="nx">req</span><span class="p">.</span><span class="nx">connection</span><span class="p">.</span><span class="nx">remoteAddress</span><span class="p">))</span> <span class="p">{</span>
-    <span class="k">return</span><span class="p">;</span> 
-  <span class="p">}</span>
+  aRes.end(); <span class="hljs-comment">// Close connection</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Test for know GH webhook ips: <a href="https://api.github.com/meta">https://api.github.com/meta</a></p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (!aReq.body.payload ||
+    !<span class="hljs-regexp">/192\.30\.25[2-5]\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/</span>
+    .test(aReq.headers[<span class="hljs-string">'x-forwarded-for'</span>] || aReq.connection.remoteAddress)) {
+    <span class="hljs-keyword">return</span>;
+  }
 
-  <span class="nx">payload</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">payload</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Only accept commits to the master branch</p></div></div><div class="code"><div class="wrapper">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">payload</span> <span class="o">||</span> <span class="nx">payload</span><span class="p">.</span><span class="nx">ref</span> <span class="o">!==</span> <span class="s1">&#39;refs/heads/master&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Gather all the info for the RepoManager</p></div></div><div class="code"><div class="wrapper">  <span class="nx">username</span> <span class="o">=</span> <span class="nx">payload</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">owner</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-  <span class="nx">reponame</span> <span class="o">=</span> <span class="nx">payload</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+  payload = <span class="hljs-built_in">JSON</span>.parse(aReq.body.payload);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Only accept commits to the master branch</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (!payload || payload.ref !== <span class="hljs-string">'refs/heads/master'</span>) { <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Gather all the info for the RepoManager</p></div></div><div class="code"><div class="wrapper">  username = payload.repository.owner.name;
+  reponame = payload.repository.name;
 
-  <span class="nx">repo</span> <span class="o">=</span> <span class="nx">repos</span><span class="p">[</span><span class="nx">reponame</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Find the user that corresponds the repo owner</p></div></div><div class="code"><div class="wrapper">  <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">ghUsername</span><span class="o">:</span> <span class="nx">username</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Gather the modified user scripts</p></div></div><div class="code"><div class="wrapper">    <span class="nx">payload</span><span class="p">.</span><span class="nx">commits</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">commit</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">commit</span><span class="p">.</span><span class="nx">modified</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">filename</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">filename</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">repo</span><span class="p">[</span><span class="nx">filename</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">filename</span><span class="p">;</span>
-        <span class="p">}</span>
-      <span class="p">});</span>
-    <span class="p">});</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update modified scripts</p></div></div><div class="code"><div class="wrapper">    <span class="kd">var</span> <span class="nx">repoManager</span> <span class="o">=</span> <span class="nx">RepoManager</span><span class="p">.</span><span class="nx">getManager</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">repos</span><span class="p">);</span>
-    <span class="nx">repoManager</span><span class="p">.</span><span class="nx">loadScripts</span><span class="p">(</span><span class="kd">function</span> <span class="p">(){},</span> <span class="kc">true</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div></div></body></html>
+  repo = repos[reponame] = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Find the user that corresponds the repo owner</p></div></div><div class="code"><div class="wrapper">  User.findOne({ ghUsername: username }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+    <span class="hljs-keyword">if</span> (!aUser) { <span class="hljs-keyword">return</span>; }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Gather the modified user scripts</p></div></div><div class="code"><div class="wrapper">    payload.commits.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCommit)</span> </span>{
+      aCommit.modified.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aFilename)</span> </span>{
+        <span class="hljs-keyword">if</span> (aFilename.substr(-<span class="hljs-number">8</span>) === <span class="hljs-string">'.user.js'</span>) {
+          repo[aFilename] = <span class="hljs-string">'/'</span> + <span class="hljs-built_in">encodeURI</span>(aFilename);
+        }
+      });
+    });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Update modified scripts</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> repoManager = RepoManager.getManager(<span class="hljs-literal">null</span>, aUser, repos);
+    repoManager.loadScripts(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ }, <span class="hljs-literal">true</span>);
+  });
+};</div></div></div></div></body></html>

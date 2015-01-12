@@ -1,33 +1,100 @@
-<!DOCTYPE html><html lang="en"><head><title>libs/markdown</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/markdown"><meta name="groc-project-path" content="libs/markdown.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/libs/markdown.js">libs/markdown.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">marked</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;marked&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">hljs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;highlight.js&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">renderer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">marked</span><span class="p">.</span><span class="nx">Renderer</span><span class="p">();</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Automatically generate an anchor for each header</p></div></div><div class="code"><div class="wrapper"><span class="nx">renderer</span><span class="p">.</span><span class="nx">heading</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">escapedText</span> <span class="o">=</span> <span class="nx">text</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&lt;\/?[^&gt;]+?&gt;/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[^\w]+/g</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">);</span>
+<!DOCTYPE html><html lang="en"><head><title>libs/markdown</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/markdown"><meta name="groc-project-path" content="libs/markdown.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/markdown.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="k">return</span> <span class="s1">&#39;&lt;h&#39;</span> <span class="o">+</span> <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;&gt;&lt;a name=&quot;anchor-&#39;</span> <span class="o">+</span>
-    <span class="nx">escapedText</span> <span class="o">+</span>
-    <span class="s1">&#39;&quot; class=&quot;anchor&quot; href=&quot;#anchor-&#39;</span> <span class="o">+</span>
-    <span class="nx">escapedText</span> <span class="o">+</span>
-    <span class="s1">&#39;&quot;&gt;&lt;span class=&quot;header-link&quot;&gt;&lt;/span&gt;&lt;/a&gt;&#39;</span> <span class="o">+</span>
-    <span class="nx">text</span> <span class="o">+</span> <span class="s1">&#39;&lt;/h&#39;</span> <span class="o">+</span> <span class="nx">level</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">;</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the options to use for rendering markdown</p></div></div><div class="code"><div class="wrapper"><span class="nx">marked</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">({</span>
-  <span class="nx">highlight</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">code</span><span class="p">,</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">hljs</span><span class="p">.</span><span class="nx">highlight</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">code</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">hljs</span><span class="p">.</span><span class="nx">highlightAuto</span><span class="p">(</span><span class="nx">code</span><span class="p">).</span><span class="nx">value</span><span class="p">;</span>
-    <span class="p">}</span>
-  <span class="p">},</span>
-  <span class="nx">renderer</span><span class="o">:</span> <span class="nx">renderer</span><span class="p">,</span>
-  <span class="nx">gfm</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">tables</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">breaks</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">pedantic</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nx">sanitize</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">smartLists</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-  <span class="nx">smartypants</span><span class="o">:</span> <span class="kc">false</span>
-<span class="p">});</span>
+<span class="hljs-keyword">var</span> marked = <span class="hljs-built_in">require</span>(<span class="hljs-string">'marked'</span>);
+<span class="hljs-keyword">var</span> hljs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js'</span>);
+<span class="hljs-keyword">var</span> sanitizeHtml = <span class="hljs-built_in">require</span>(<span class="hljs-string">'sanitize-html'</span>);
+<span class="hljs-keyword">var</span> htmlWhitelistPost = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./htmlWhitelistPost.json'</span>);
+<span class="hljs-keyword">var</span> renderer = <span class="hljs-keyword">new</span> marked.Renderer();
+<span class="hljs-keyword">var</span> blockRenderers = [
+  <span class="hljs-string">'blockquote'</span>,
+  <span class="hljs-string">'html'</span>,
+  <span class="hljs-string">'list'</span>,
+  <span class="hljs-string">'paragraph'</span>,
+  <span class="hljs-string">'table'</span>
+];
+<span class="hljs-keyword">var</span> allWhitelistAttrs = htmlWhitelistPost.allowedAttributes.all;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Whitelist a bunch of attributes for all tags
+Doing this until we have an upstream fix</p></div></div><div class="code"><div class="wrapper">htmlWhitelistPost.allowedTags.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aTag)</span> </span>{
+  <span class="hljs-keyword">var</span> otherAttrs = htmlWhitelistPost.allowedAttributes[aTag];
 
-<span class="nx">exports</span><span class="p">.</span><span class="nx">renderMd</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">marked</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
-<span class="p">};</span></div></div></div></div></body></html>
+  htmlWhitelistPost.allowedAttributes[aTag] = allWhitelistAttrs;
+  <span class="hljs-keyword">if</span> (otherAttrs) {
+    htmlWhitelistPost.allowedAttributes[aTag] = htmlWhitelistPost
+      .allowedAttributes[aTag].concat(otherAttrs);
+  }
+});
+<span class="hljs-keyword">delete</span> htmlWhitelistPost.allowedAttributes.all;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Transform exact Github Flavored Markdown generated style tags to bootstrap custom classes
+to allow the sanitizer to whitelist on th and td tags for table alignment</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">gfmStyleToBootstrapClass</span><span class="hljs-params">(aTagName, aAttribs)</span> </span>{
+  <span class="hljs-keyword">if</span> (aAttribs.style) {
+    <span class="hljs-keyword">switch</span> (aAttribs.style) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'text-align:center'</span>:
+        <span class="hljs-keyword">return</span> {
+          tagName: aTagName,
+          attribs: { <span class="hljs-keyword">class</span>: <span class="hljs-string">'text-center'</span> }
+        };
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'text-align:left'</span>:
+        <span class="hljs-keyword">return</span> {
+          tagName: aTagName,
+          attribs: { <span class="hljs-keyword">class</span>: <span class="hljs-string">'text-left'</span> }
+        };
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'text-align:right'</span>:
+        <span class="hljs-keyword">return</span> {
+          tagName: aTagName,
+          attribs: { <span class="hljs-keyword">class</span>: <span class="hljs-string">'text-right'</span> }
+        };
+    }
+  }
+
+  <span class="hljs-keyword">return</span> {
+    tagName: aTagName,
+    attribs: aAttribs
+  };
+}
+
+htmlWhitelistPost.transformTags = {
+  <span class="hljs-string">'th'</span> : gfmStyleToBootstrapClass,
+  <span class="hljs-string">'td'</span> : gfmStyleToBootstrapClass
+};
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sanitize</span><span class="hljs-params">(aHtml)</span> </span>{
+  <span class="hljs-keyword">return</span> sanitizeHtml(aHtml, htmlWhitelistPost);
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Sanitize the output from the block level renderers</p></div></div><div class="code"><div class="wrapper">blockRenderers.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aType)</span> </span>{
+  renderer[aType] = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> sanitize(marked.Renderer.prototype[aType].apply(renderer, <span class="hljs-built_in">arguments</span>));
+  };
+});</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Automatically generate an anchor for each header</p></div></div><div class="code"><div class="wrapper">renderer.heading = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aText, aLevel)</span> </span>{
+  <span class="hljs-keyword">var</span> escapedText = aText.toLowerCase().replace(<span class="hljs-regexp">/&lt;\/?[^&gt;]+?&gt;/g</span>, <span class="hljs-string">''</span>)
+    .replace(<span class="hljs-regexp">/[^\w]+/g</span>, <span class="hljs-string">'-'</span>);
+
+  <span class="hljs-keyword">var</span> name = escapedText;
+  <span class="hljs-keyword">var</span> html = <span class="hljs-string">'&lt;h'</span> + aLevel + <span class="hljs-string">'&gt;'</span>;
+  html += <span class="hljs-string">'&lt;a name="'</span> + name + <span class="hljs-string">'"&gt;&lt;/a&gt;'</span>;
+  html += sanitize(aText);
+  html += <span class="hljs-string">'&lt;a href="#'</span> + name + <span class="hljs-string">'" class="anchor"&gt;'</span>;
+  html += <span class="hljs-string">'&lt;i class="fa fa-link"&gt;&lt;/i&gt;'</span>;
+  html += <span class="hljs-string">'&lt;/a&gt;'</span>;
+  html += <span class="hljs-string">'&lt;/h'</span> + aLevel + <span class="hljs-string">'&gt;'</span>;
+  <span class="hljs-keyword">return</span> html;
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Set the options to use for rendering markdown
+Keep in sync with ./views/includes/scripts/markdownEditor.html</p></div></div><div class="code"><div class="wrapper">marked.setOptions({
+  highlight: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCode, aLang)</span> </span>{
+    <span class="hljs-keyword">if</span> (aLang &amp;&amp; hljs.getLanguage(aLang)) {
+      <span class="hljs-keyword">return</span> hljs.highlight(aLang, aCode).value;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> hljs.highlightAuto(aCode).value;
+    }
+  },
+  renderer: renderer,
+  gfm: <span class="hljs-literal">true</span>,
+  tables: <span class="hljs-literal">true</span>,
+  breaks: <span class="hljs-literal">true</span>,
+  pedantic: <span class="hljs-literal">false</span>,
+  sanitize: <span class="hljs-literal">false</span>, <span class="hljs-comment">// we use sanitize-html to sanitize HTML</span>
+  smartLists: <span class="hljs-literal">true</span>,
+  smartypants: <span class="hljs-literal">false</span>
+});
+
+exports.renderMd = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aText)</span> </span>{
+  <span class="hljs-keyword">return</span> marked(aText);
+};</div></div></div></div></body></html>

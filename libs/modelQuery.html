@@ -1,0 +1,251 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/modelQuery</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/modelQuery"><meta name="groc-project-path" content="libs/modelQuery.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/modelQuery.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+
+<span class="hljs-keyword">var</span> getDefaultPagination = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).getDefaultPagination;
+
+<span class="hljs-keyword">var</span> findOrDefaultIfNull = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aQuery, aKey, aValue, aDefaultValue)</span> </span>{
+  <span class="hljs-keyword">var</span> conditions = [];
+  <span class="hljs-keyword">var</span> condition = {};
+  condition[aKey] = aValue;
+  conditions.push(condition);
+  <span class="hljs-keyword">if</span> (aValue == aDefaultValue) {
+    condition = {};
+    condition[aKey] = <span class="hljs-literal">null</span>;
+    conditions.push(condition);
+  }
+  aQuery.and({ $or: conditions });
+};
+exports.findOrDefaultIfNull = findOrDefaultIfNull;
+
+<span class="hljs-keyword">var</span> orderDirs = [<span class="hljs-string">'asc'</span>, <span class="hljs-string">'desc'</span>];
+<span class="hljs-keyword">var</span> parseModelListSort = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aModelListQuery, aOrderBy, aOrderDir, aDefaultSortFn)</span> </span>{
+  <span class="hljs-keyword">if</span> (aOrderBy) {
+    <span class="hljs-keyword">if</span> (_.isUndefined(aOrderDir) || !_.contains(orderDirs, aOrderDir)) {
+      aOrderDir = <span class="hljs-string">'asc'</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (_.has(aModelListQuery.model.schema.paths, aOrderBy)) {
+      <span class="hljs-keyword">var</span> sortBy = {};
+      sortBy[aOrderBy] = aOrderDir;
+      aModelListQuery.sort(sortBy);
+      <span class="hljs-keyword">return</span>;
+    }
+  }
+  aDefaultSortFn(aModelListQuery);
+};
+exports.parseModelListSort = parseModelListSort;
+
+<span class="hljs-keyword">var</span> parseSearchConditions = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aQ, aPrefixSearchFields, aFullSearchFields)</span> </span>{
+  <span class="hljs-keyword">var</span> conditions = [];
+  <span class="hljs-keyword">var</span> query = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> prefixStr = <span class="hljs-string">''</span>;
+  <span class="hljs-keyword">var</span> fullStr = <span class="hljs-string">''</span>;
+  <span class="hljs-keyword">var</span> prefixRegex = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> fullRegex = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">var</span> terms = aQ.replace(<span class="hljs-regexp">/([.*+?^=!:${}()|\[\]\/\\])/g</span>, <span class="hljs-string">'\\$1'</span>).split(<span class="hljs-regexp">/\s+/</span>).map(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aE)</span> </span>{ <span class="hljs-keyword">return</span> aE.trim(); });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Match all the terms but in any order</p></div></div><div class="code"><div class="wrapper">  terms.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aTerm)</span> </span>{
+    <span class="hljs-keyword">var</span> isNonASCII = <span class="hljs-regexp">/^\W/</span>.test(aTerm);
+    <span class="hljs-keyword">if</span> (isNonASCII) {
+      prefixStr += <span class="hljs-string">'(?=.*?([ \n\r\t.,\'"\+!?-]+)'</span> + aTerm + <span class="hljs-string">')'</span>;
+    } <span class="hljs-keyword">else</span> {
+      prefixStr += <span class="hljs-string">'(?=.*?\\b'</span> + aTerm + <span class="hljs-string">')'</span>;
+    }
+    fullStr += <span class="hljs-string">'(?=.*?'</span> + aTerm + <span class="hljs-string">')'</span>;
+  });
+  prefixRegex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(prefixStr, <span class="hljs-string">'i'</span>);
+  fullRegex = <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(fullStr, <span class="hljs-string">'i'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>One of the searchable fields must match the conditions</p></div></div><div class="code"><div class="wrapper">  aPrefixSearchFields.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aProp)</span> </span>{
+    <span class="hljs-keyword">var</span> condition = {};
+    condition[aProp] = prefixRegex;
+    conditions.push(condition);
+  });
+
+  aFullSearchFields.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aProp)</span> </span>{
+    <span class="hljs-keyword">var</span> condition = {};
+    condition[aProp] = fullRegex;
+    conditions.push(condition);
+  });
+  <span class="hljs-keyword">return</span> conditions;
+};
+exports.parseSearchConditions = parseSearchConditions;
+
+<span class="hljs-keyword">var</span> parseModelListSearchQuery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aModelListQuery, aQuery, aSearchOptions)</span> </span>{
+  <span class="hljs-keyword">var</span> q = <span class="hljs-built_in">unescape</span>(aQuery);
+  aModelListQuery.and({
+    $or: parseSearchConditions(q, aSearchOptions.partialWordMatchFields, aSearchOptions.fullWordMatchFields)
+  });
+};
+
+<span class="hljs-keyword">var</span> parseScriptSearchQuery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScriptListQuery, aQuery)</span> </span>{
+  parseModelListSearchQuery(aScriptListQuery, aQuery, {
+    partialWordMatchFields: [<span class="hljs-string">'name'</span>, <span class="hljs-string">'author'</span>, <span class="hljs-string">'about'</span>, <span class="hljs-string">'meta.description'</span>],
+    fullWordMatchFields: [<span class="hljs-string">'meta.include'</span>, <span class="hljs-string">'meta.match'</span>],
+  });
+};
+exports.parseScriptSearchQuery = parseScriptSearchQuery;
+
+<span class="hljs-keyword">var</span> parseGroupSearchQuery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGroupListQuery, aQuery)</span> </span>{
+  parseModelListSearchQuery(aGroupListQuery, aQuery, {
+    partialWordMatchFields: [<span class="hljs-string">'name'</span>],
+    fullWordMatchFields: [],
+  });
+};
+exports.parseGroupSearchQuery = parseGroupSearchQuery;
+
+<span class="hljs-keyword">var</span> parseDiscussionSearchQuery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDiscussionListQuery, aQuery)</span> </span>{
+  parseModelListSearchQuery(aDiscussionListQuery, aQuery, {
+    partialWordMatchFields: [<span class="hljs-string">'topic'</span>],
+    fullWordMatchFields: [<span class="hljs-string">'author'</span>],
+  });
+};
+exports.parseDiscussionSearchQuery = parseDiscussionSearchQuery;
+
+<span class="hljs-keyword">var</span> parseCommentSearchQuery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCommentListQuery, aQuery)</span> </span>{
+  parseModelListSearchQuery(aCommentListQuery, aQuery, {
+    partialWordMatchFields: [<span class="hljs-string">'content'</span>],
+    fullWordMatchFields: [<span class="hljs-string">'author'</span>],
+  });
+};
+exports.parseCommentSearchQuery = parseCommentSearchQuery;
+
+<span class="hljs-keyword">var</span> parseUserSearchQuery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUserListQuery, aQuery)</span> </span>{
+  parseModelListSearchQuery(aUserListQuery, aQuery, {
+    partialWordMatchFields: [<span class="hljs-string">'name'</span>],
+    fullWordMatchFields: [],
+  });
+};
+exports.parseCommentSearchQuery = parseCommentSearchQuery;
+
+<span class="hljs-keyword">var</span> parseRemovedItemSearchQuery = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRemovedItemListQuery, aQuery)</span> </span>{
+  parseModelListSearchQuery(aRemovedItemListQuery, aQuery, {
+    partialWordMatchFields: [<span class="hljs-string">'content.*'</span>],
+    fullWordMatchFields: [<span class="hljs-string">'model'</span>],
+  });
+};
+exports.parseCommentSearchQuery = parseCommentSearchQuery;
+
+exports.applyDiscussionCategoryFilter = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDiscussionListQuery, aOptions, aCatergorySlug)</span> </span>{
+  <span class="hljs-keyword">if</span> (aCatergorySlug === <span class="hljs-string">'all'</span>) {
+    <span class="hljs-keyword">return</span>;
+  }
+  <span class="hljs-keyword">if</span> (aCatergorySlug === <span class="hljs-string">'issues'</span>) {
+    aDiscussionListQuery.find({ issue: <span class="hljs-literal">true</span> });
+  } <span class="hljs-keyword">else</span> {
+    aDiscussionListQuery.find({ category: aCatergorySlug });
+  }
+};
+
+<span class="hljs-keyword">var</span> applyModelListQueryFlaggedFilter = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aModelListQuery, aOptions, aFlaggedQuery)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Only list flagged items if authedUser &gt;= moderator or if authedUser owns the item.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aOptions.isYou || aOptions.isMod) {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Mod</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (aFlaggedQuery) {
+      <span class="hljs-keyword">if</span> (aFlaggedQuery === <span class="hljs-string">'true'</span>) {
+        aOptions.isFlagged = <span class="hljs-literal">true</span>;
+        aOptions.searchBarPlaceholder = aOptions.searchBarPlaceholder.replace(<span class="hljs-regexp">/^Search /</span>, <span class="hljs-string">'Search Flagged '</span>);
+        <span class="hljs-keyword">if</span> (!_.findWhere(aOptions.searchBarFormHiddenVariables, { name: <span class="hljs-string">'flagged'</span> })) {
+          aOptions.searchBarFormHiddenVariables.push({ name: <span class="hljs-string">'flagged'</span>, value: <span class="hljs-string">'true'</span> });
+        }
+        aModelListQuery.and({ flags: { $gt: <span class="hljs-number">0</span> } });
+      }
+    } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove <code>flagged</code> form variable if present</p></div></div><div class="code"><div class="wrapper">      aOptions.searchBarFormHiddenVariables = _.without(
+        aOptions.searchBarFormHiddenVariables,
+        _.findWhere(aOptions.searchBarFormHiddenVariables, { name: <span class="hljs-string">'flagged'</span>, value: <span class="hljs-string">'true'</span> })
+      );
+    }
+  } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Hide
+Script.flagged is undefined by default.</p></div></div><div class="code"><div class="wrapper">    aModelListQuery.and({ flagged: { $ne: <span class="hljs-literal">true</span> } });
+  }
+};
+exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
+
+<span class="hljs-keyword">var</span> applyModelListQueryDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aModelListQuery, aOptions, aReq, aDefaultOptions)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Search</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aReq.query.q) {
+    aOptions.searchBarValue = aReq.query.q;
+
+    <span class="hljs-keyword">if</span> (aDefaultOptions.parseSearchQueryFn) {
+      aDefaultOptions.parseSearchQueryFn(aModelListQuery, aReq.query.q);
+    }
+  }
+  aOptions.searchBarFormAction = aDefaultOptions.searchBarFormAction || <span class="hljs-string">''</span>;
+  aOptions.searchBarPlaceholder = aDefaultOptions.searchBarPlaceholder || <span class="hljs-string">'Search'</span>;
+  aOptions.searchBarFormHiddenVariables = aDefaultOptions.searchBarFormHiddenVariables || [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>flagged</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (aDefaultOptions.filterFlaggedItems) {
+    applyModelListQueryFlaggedFilter(aModelListQuery, aOptions, aReq.query.flagged);
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Sort</p></div></div><div class="code"><div class="wrapper">  parseModelListSort(aModelListQuery, aReq.query.orderBy, aReq.query.orderDir, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    aModelListQuery.sort(aDefaultOptions.defaultSort);
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> pagination = getDefaultPagination(aReq);
+  pagination.applyToQuery(aModelListQuery);
+  aOptions.pagination = pagination;
+};
+
+exports.applyCommentListQueryDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCommentListQuery, aOptions, aReq)</span> </span>{
+  applyModelListQueryDefaults(aCommentListQuery, aOptions, aReq, {
+    defaultSort: <span class="hljs-string">'created'</span>,
+    parseSearchQueryFn: parseCommentSearchQuery,
+    searchBarPlaceholder: <span class="hljs-string">'Search Comments'</span>,
+    filterFlaggedItems: <span class="hljs-literal">true</span>
+  });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Populate</p></div></div><div class="code"><div class="wrapper">  aCommentListQuery.populate({
+    path: <span class="hljs-string">'_authorId'</span>,
+    model: <span class="hljs-string">'User'</span>,
+    select: <span class="hljs-string">'name role'</span>
+  });
+};
+
+exports.applyDiscussionListQueryDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDiscussionListQuery, aOptions, aReq)</span> </span>{
+  applyModelListQueryDefaults(aDiscussionListQuery, aOptions, aReq, {
+    defaultSort: <span class="hljs-string">'-updated -rating'</span>,
+    parseSearchQueryFn: parseDiscussionSearchQuery,
+    searchBarPlaceholder: <span class="hljs-string">'Search Topics'</span>,
+    filterFlaggedItems: <span class="hljs-literal">true</span>
+  });
+};
+
+exports.applyGroupListQueryDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGroupListQuery, aOptions, aReq)</span> </span>{
+  applyModelListQueryDefaults(aGroupListQuery, aOptions, aReq, {
+    defaultSort: <span class="hljs-string">'-rating name'</span>,
+    parseSearchQueryFn: parseGroupSearchQuery,
+    searchBarPlaceholder: <span class="hljs-string">'Search Groups'</span>,
+    filterFlaggedItems: <span class="hljs-literal">true</span>
+  });
+};
+
+<span class="hljs-keyword">var</span> scriptListQueryDefaults = {
+  defaultSort: <span class="hljs-string">'-rating -installs -updated'</span>,
+  parseSearchQueryFn: parseScriptSearchQuery,
+  searchBarPlaceholder: <span class="hljs-string">'Search Scripts'</span>,
+  searchBarFormAction: <span class="hljs-string">'/'</span>,
+  filterFlaggedItems: <span class="hljs-literal">true</span>
+};
+exports.scriptListQueryDefaults = scriptListQueryDefaults;
+exports.applyScriptListQueryDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScriptListQuery, aOptions, aReq)</span> </span>{
+  applyModelListQueryDefaults(aScriptListQuery, aOptions, aReq, scriptListQueryDefaults);
+};
+
+<span class="hljs-keyword">var</span> libraryListQueryDefaults = {
+  defaultSort: <span class="hljs-string">'-rating -installs -updated'</span>,
+  parseSearchQueryFn: parseScriptSearchQuery,
+  searchBarPlaceholder: <span class="hljs-string">'Search Libraries'</span>,
+  searchBarFormAction: <span class="hljs-string">'/'</span>,
+  searchBarFormHiddenVariables: [
+    { name: <span class="hljs-string">'library'</span>, value: <span class="hljs-string">'true'</span> }
+  ],
+  filterFlaggedItems: <span class="hljs-literal">true</span>
+};
+exports.libraryListQueryDefaults = libraryListQueryDefaults;
+exports.applyLibraryListQueryDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aLibraryListQuery, aOptions, aReq)</span> </span>{
+  applyModelListQueryDefaults(aLibraryListQuery, aOptions, aReq, libraryListQueryDefaults);
+};
+
+exports.applyUserListQueryDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUserListQuery, aOptions, aReq)</span> </span>{
+  applyModelListQueryDefaults(aUserListQuery, aOptions, aReq, {
+    defaultSort: <span class="hljs-string">'name'</span>,
+    parseSearchQueryFn: parseUserSearchQuery,
+    searchBarPlaceholder: <span class="hljs-string">'Search Users'</span>,
+    filterFlaggedItems: <span class="hljs-literal">true</span>
+  });
+};
+
+exports.applyRemovedItemListQueryDefaults = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRemovedItemListQuery, aOptions, aReq)</span> </span>{
+  applyModelListQueryDefaults(aRemovedItemListQuery, aOptions, aReq, {
+    defaultSort: <span class="hljs-string">'-removed'</span>,
+    parseSearchQueryFn: parseRemovedItemSearchQuery,
+    searchBarPlaceholder: <span class="hljs-string">'Search Removed Items'</span>,
+    filterFlaggedItems: <span class="hljs-literal">false</span>
+  });
+};</div></div></div></div></body></html>

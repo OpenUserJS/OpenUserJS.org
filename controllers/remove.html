@@ -1,31 +1,69 @@
-<!DOCTYPE html><html lang="en"><head><title>controllers/remove</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/remove"><meta name="groc-project-path" content="controllers/remove.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/remove.js">controllers/remove.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">removeLib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/remove&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Simple controller to remove content and save it in the graveyard</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">rm</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-  <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-  <span class="kd">var</span> <span class="nx">thisUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+<!DOCTYPE html><html lang="en"><head><title>controllers/remove</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/remove"><meta name="groc-project-path" content="controllers/remove.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/remove.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="k">switch</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">case</span> <span class="s1">&#39;scripts&#39;</span><span class="o">:</span>
-  <span class="k">case</span> <span class="s1">&#39;libs&#39;</span><span class="o">:</span>
-    <span class="nx">path</span> <span class="o">+=</span> <span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;libs&#39;</span> <span class="o">?</span> <span class="s1">&#39;.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;.user.js&#39;</span><span class="p">;</span>
-    <span class="nx">Script</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">installName</span><span class="o">:</span> <span class="nx">path</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">removeLib</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">Script</span><span class="p">,</span> <span class="nx">script</span><span class="p">,</span> <span class="nx">thisUser</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">removed</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">removed</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
-      <span class="p">});</span>
-    <span class="p">});</span>
-    <span class="k">break</span><span class="p">;</span>
-  <span class="k">case</span> <span class="s1">&#39;users&#39;</span><span class="o">:</span>
-    <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">name</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$regex</span> <span class="o">:</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^&#39;</span> <span class="o">+</span> <span class="nx">path</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">)</span> <span class="p">}</span> <span class="p">},</span>
-      <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">removeLib</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">User</span><span class="p">,</span> <span class="nx">user</span><span class="p">,</span> <span class="nx">thisUser</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">removed</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">removed</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
-          <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
-        <span class="p">});</span>
-    <span class="p">});</span>
-    <span class="k">break</span><span class="p">;</span>
-  <span class="k">default</span><span class="o">:</span>
-    <span class="nx">next</span><span class="p">();</span>
-  <span class="p">}</span>
-<span class="p">};</span></div></div></div></div></body></html>
+<span class="hljs-keyword">var</span> removeLib = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/remove'</span>);
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
+<span class="hljs-keyword">var</span> User = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/user'</span>).User;
+<span class="hljs-keyword">var</span> destroySessions = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modifySessions'</span>).destroy;
+
+<span class="hljs-keyword">var</span> formidable = <span class="hljs-built_in">require</span>(<span class="hljs-string">'formidable'</span>);
+<span class="hljs-keyword">var</span> statusCodePage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).statusCodePage;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Simple controller to remove content and save it in the graveyard</p></div></div><div class="code"><div class="wrapper">exports.rm = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> type = aReq.params[<span class="hljs-number">0</span>];
+  <span class="hljs-keyword">var</span> path = aReq.params[<span class="hljs-number">1</span>];
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> form = <span class="hljs-literal">null</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check to make sure multipart form data submission header is present</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (!<span class="hljs-regexp">/multipart\/form-data/</span>.test(aReq.headers[<span class="hljs-string">'content-type'</span>])) {
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusCode: <span class="hljs-number">400</span>,
+        statusMessage: <span class="hljs-string">'Missing required header.'</span>
+      });
+  }
+
+  form = <span class="hljs-keyword">new</span> formidable.IncomingForm();
+  form.parse(aReq, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aFields)</span> </span>{
+    <span class="hljs-keyword">var</span> reason = aFields.reason;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check to make sure form submission has this name available.
+This occurs either when no reason is supplied,
+or a rare edge case if the view is missing the input name.</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">if</span> (!reason) {
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusCode: <span class="hljs-number">403</span>,
+        statusMessage: <span class="hljs-string">'Missing reason for removal.'</span>
+      });
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Simple error check for string null and reserved phrase</p></div></div><div class="code"><div class="wrapper">    reason = reason.trim();
+    <span class="hljs-keyword">if</span> (reason === <span class="hljs-string">''</span> || <span class="hljs-regexp">/^User removed$/i</span>.test(reason)) {
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusCode: <span class="hljs-number">403</span>,
+        statusMessage: <span class="hljs-string">'Invalid reason for removal.'</span>
+      });
+    }
+
+    <span class="hljs-keyword">switch</span> (type) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'scripts'</span>:
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'libs'</span>:
+        path += type === <span class="hljs-string">'libs'</span> ? <span class="hljs-string">'.js'</span> : <span class="hljs-string">'.user.js'</span>;
+        Script.findOne({ installName: path }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScript)</span> </span>{
+          removeLib.remove(Script, aScript, authedUser, reason, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRemoved)</span> </span>{
+            <span class="hljs-keyword">if</span> (!aRemoved) {
+              <span class="hljs-keyword">return</span> aNext();
+            }
+            aRes.redirect(<span class="hljs-string">'/'</span>);
+          });
+        });
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'users'</span>:
+        User.findOne({ name: { $regex: <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">'^'</span> + path + <span class="hljs-string">'$'</span>, <span class="hljs-string">"i"</span>) } },
+          <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+            removeLib.remove(User, aUser, authedUser, reason, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRemoved)</span> </span>{
+              <span class="hljs-keyword">if</span> (!aRemoved) {
+                <span class="hljs-keyword">return</span> aNext();
+              }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Destroy all the sessions belonging to the removed user</p></div></div><div class="code"><div class="wrapper">              destroySessions(aReq, aUser, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+                aRes.redirect(<span class="hljs-string">'/'</span>);
+              });
+            });
+          });
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        aNext();
+    }
+  });
+};</div></div></div></div></body></html>

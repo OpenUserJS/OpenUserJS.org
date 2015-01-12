@@ -1,0 +1,325 @@
+<!DOCTYPE html><html lang="en"><head><title>libs/modelParser</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="libs/modelParser"><meta name="groc-project-path" content="libs/modelParser.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">libs/modelParser.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
+
+<span class="hljs-keyword">var</span> moment = <span class="hljs-built_in">require</span>(<span class="hljs-string">'moment'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);
+<span class="hljs-keyword">var</span> sanitizeHtml = <span class="hljs-built_in">require</span>(<span class="hljs-string">'sanitize-html'</span>);
+<span class="hljs-keyword">var</span> htmlWhitelistLink = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./htmlWhitelistLink.json'</span>);
+
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
+
+<span class="hljs-keyword">var</span> userRoles = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/userRoles.json'</span>);
+<span class="hljs-keyword">var</span> renderMd = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/markdown'</span>).renderMd;
+<span class="hljs-keyword">var</span> getRating = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/collectiveRating'</span>).getRating;
+<span class="hljs-keyword">var</span> cleanFilename = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/helpers'</span>).cleanFilename;
+
+<span class="hljs-keyword">var</span> parseModelFnMap = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Misc: Dates</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> momentLangFromNow = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDate)</span> </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-string">'['</span> + aDate.fromNow() + <span class="hljs-string">']'</span>;
+};
+<span class="hljs-keyword">var</span> momentLangTinyDate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDate)</span> </span>{
+  <span class="hljs-keyword">if</span> (aDate.year() === moment().year()) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'['</span> + aDate.format(<span class="hljs-string">"D MMM"</span>) + <span class="hljs-string">']'</span>;
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'['</span> + aDate.format(<span class="hljs-string">"MMM 'YY"</span>) + <span class="hljs-string">']'</span>;
+  }
+};
+moment.locale(<span class="hljs-string">'en-tiny'</span>, {
+  calendar : {
+    sameDay : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> momentLangFromNow(<span class="hljs-keyword">this</span>); },
+    lastDay : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> momentLangFromNow(<span class="hljs-keyword">this</span>); },
+    lastWeek : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> momentLangFromNow(<span class="hljs-keyword">this</span>); },
+    nextDay : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> momentLangTinyDate(<span class="hljs-keyword">this</span>); },
+    nextWeek : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> momentLangTinyDate(<span class="hljs-keyword">this</span>); },
+    sameElse : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> momentLangTinyDate(<span class="hljs-keyword">this</span>); },
+  },
+  relativeTime : {
+    future : <span class="hljs-string">"in %s"</span>,
+    past : <span class="hljs-string">"%s ago"</span>,
+    s : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aNumber, aWithoutSuffix, aKey, aIsFuture)</span> </span>{ <span class="hljs-keyword">return</span> aNumber + <span class="hljs-string">"s"</span>; },
+    m : <span class="hljs-string">"1m"</span>,
+    mm : <span class="hljs-string">"%dm"</span>,
+    h : <span class="hljs-string">"1h"</span>,
+    hh : <span class="hljs-string">"%dh"</span>,
+    d : <span class="hljs-string">"1d"</span>,
+    dd : <span class="hljs-string">"%dd"</span>,
+    M : <span class="hljs-string">"1M"</span>,
+    MM : <span class="hljs-string">"%dM"</span>,
+    y : <span class="hljs-string">"1y"</span>,
+    yy : <span class="hljs-string">"%dy"</span>
+  }
+});
+
+<span class="hljs-keyword">var</span> parseDateProperty = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aObj, aKey)</span> </span>{
+  <span class="hljs-keyword">var</span> date = aObj[aKey];
+  aObj[aKey + <span class="hljs-string">'ISOFormat'</span>] = date.toISOString();
+  aObj[aKey + <span class="hljs-string">'Humanized'</span>] = moment(date).locale(<span class="hljs-string">'en-tiny'</span>).calendar();
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Parse persisted model data and return a new object with additional generated fields used in view templates.</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> getScriptPageUrl = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+  <span class="hljs-keyword">var</span> isLib = aScript.isLib || <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">var</span> scriptPath = aScript.installName
+    .replace(isLib ? <span class="hljs-regexp">/\.js$/</span> : <span class="hljs-regexp">/\.user\.js$/</span>, <span class="hljs-string">''</span>);
+  <span class="hljs-keyword">return</span> (isLib ? <span class="hljs-string">'/libs/'</span> : <span class="hljs-string">'/scripts/'</span>) + <span class="hljs-built_in">encodeURI</span>(scriptPath);
+};
+
+<span class="hljs-keyword">var</span> getScriptViewSourcePageUrl = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+  <span class="hljs-keyword">return</span> getScriptPageUrl(aScript) + <span class="hljs-string">'/source'</span>;
+};
+
+<span class="hljs-keyword">var</span> getScriptEditAboutPageUrl = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+  <span class="hljs-keyword">var</span> isLib = aScript.isLib || <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">var</span> scriptPath = aScript.installName
+    .replace(isLib ? <span class="hljs-regexp">/\.js$/</span> : <span class="hljs-regexp">/\.user\.js$/</span>, <span class="hljs-string">''</span>);
+  <span class="hljs-keyword">var</span> editUrl = scriptPath.split(<span class="hljs-string">'/'</span>);
+  editUrl.shift();
+  <span class="hljs-keyword">return</span> (isLib ? <span class="hljs-string">'/lib/'</span> : <span class="hljs-string">'/script/'</span>) + editUrl.join(<span class="hljs-string">'/'</span>) + <span class="hljs-string">'/edit'</span>;
+};
+
+<span class="hljs-keyword">var</span> getScriptEditSourcePageUrl = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+  <span class="hljs-keyword">return</span> getScriptViewSourcePageUrl(aScript);
+};
+
+<span class="hljs-keyword">var</span> getScriptInstallPageUrl = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+  <span class="hljs-keyword">var</span> isLib = aScript.isLib || <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">return</span> (isLib ? <span class="hljs-string">'/src/libs/'</span> : <span class="hljs-string">'/install/'</span>) + aScript.installName;
+};
+
+<span class="hljs-keyword">var</span> parseScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScriptData)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aScriptData) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">var</span> script = aScriptData.toObject ? aScriptData.toObject() : aScriptData;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Temporaries</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> htmlStub = <span class="hljs-literal">null</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Author</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (_.isString(script.author)) {
+    script.author = parseUser({ name: script.author });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Icons</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (script.meta.icon) {
+    <span class="hljs-keyword">if</span> (_.isString(script.meta.icon)) {
+      script.icon16Url = script.meta.icon;
+      script.icon45Url = script.meta.icon;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isArray(script.meta.icon) &amp;&amp; !_.isEmpty(script.meta.icon)) {
+      script.icon16Url = script.meta.icon[script.meta.icon.length - <span class="hljs-number">1</span>];
+      script.icon45Url = script.meta.icon[script.meta.icon.length - <span class="hljs-number">1</span>];
+    }
+  }
+  <span class="hljs-keyword">if</span> (script.meta.icon64) {
+    script.icon45Url = script.meta.icon64;
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Support Url</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (script.meta.supportURL) {
+    script.hasSupport = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">if</span> (_.isString(script.meta.supportURL)) {
+      htmlStub = <span class="hljs-string">'&lt;a href="'</span> + script.meta.supportURL + <span class="hljs-string">'"&gt;&lt;/a&gt;'</span>;
+      <span class="hljs-keyword">if</span> (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        script.support = [{
+          url: script.meta.supportURL,
+          text: <span class="hljs-built_in">decodeURI</span>(script.meta.supportURL),
+          hasNoFollow: !<span class="hljs-regexp">/^(?:https?:\/\/)?openuserjs\.org/i</span>.test(script.meta.supportURL)
+        }];
+      }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isArray(script.meta.supportURL) &amp;&amp; !_.isEmpty(script.meta.supportURL)) {
+      htmlStub = <span class="hljs-string">'&lt;a href="'</span> + script.meta.supportURL[script.meta.supportURL.length - <span class="hljs-number">1</span>] + <span class="hljs-string">'"&gt;&lt;/a&gt;'</span>;
+      <span class="hljs-keyword">if</span> (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+        script.support = [{
+          url:  script.meta.supportURL[script.meta.supportURL.length - <span class="hljs-number">1</span>],
+          text: <span class="hljs-built_in">decodeURI</span>(script.meta.supportURL[script.meta.supportURL.length - <span class="hljs-number">1</span>]),
+          hasNoFollow:  !<span class="hljs-regexp">/^(?:https?:\/\/)?openuserjs\.org/i</span>.test(script.meta.supportURL[script.meta.supportURL.length - <span class="hljs-number">1</span>])
+        }];
+      }
+    }
+  }
+
+  script.fullName = script.author.name + <span class="hljs-string">'/'</span> + script.name; <span class="hljs-comment">// GitHub-like name</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Fork</p></div></div><div class="code"><div class="wrapper">  script.isFork = script.fork &amp;&amp; script.fork.length &gt; <span class="hljs-number">0</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Script Good/Bad bar.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> sumVotesAndFlags = script.votes + script.flags;
+
+  <span class="hljs-keyword">var</span> votesRatio = sumVotesAndFlags &gt; <span class="hljs-number">0</span> ? script.votes / sumVotesAndFlags : <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">var</span> flagsRatio = sumVotesAndFlags &gt; <span class="hljs-number">0</span> ? script.flags / sumVotesAndFlags : <span class="hljs-number">0</span>;
+
+  <span class="hljs-keyword">var</span> votesPercent = votesRatio * <span class="hljs-number">100</span>;
+  <span class="hljs-keyword">var</span> flagsPercent = flagsRatio * <span class="hljs-number">100</span>;
+
+  <span class="hljs-keyword">if</span> (flagsPercent &lt;= <span class="hljs-number">0</span>) {
+    votesPercent = script.votes === <span class="hljs-number">0</span> ? <span class="hljs-number">0</span> : (sumVotesAndFlags === <span class="hljs-number">0</span> ? <span class="hljs-number">100</span> : <span class="hljs-built_in">Math</span>.abs(flagsPercent) / votesPercent * <span class="hljs-number">100</span>);
+    flagsPercent = <span class="hljs-number">0</span>;
+  }
+
+  script.votesPercent = votesPercent;
+  script.flagsPercent = flagsPercent;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls: Slugs</p></div></div><div class="code"><div class="wrapper">  script.authorSlug = script.author.name;
+  script.nameSlug = cleanFilename(script.name);
+  script.installNameSlug = script.author.slug + <span class="hljs-string">'/'</span> + script.nameSlug;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls: Public</p></div></div><div class="code"><div class="wrapper">  script.scriptPageUrl = getScriptPageUrl(script);
+  script.scriptInstallPageUrl = getScriptInstallPageUrl(script);
+  script.scriptViewSourcePageUrl = getScriptViewSourcePageUrl(script);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls: Issues</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> slug = (script.isLib ? <span class="hljs-string">'libs'</span> : <span class="hljs-string">'scripts'</span>);
+  slug += <span class="hljs-string">'/'</span> + script.author.slug;
+  slug += <span class="hljs-string">'/'</span> + script.nameSlug;
+  script.issuesCategorySlug = slug + <span class="hljs-string">'/issues'</span>;
+  script.scriptIssuesPageUrl = <span class="hljs-string">'/'</span> + script.issuesCategorySlug;
+  script.scriptOpenIssuePageUrl = <span class="hljs-string">'/'</span> + slug + <span class="hljs-string">'/issue/new'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls: Author</p></div></div><div class="code"><div class="wrapper">  script.scriptEditMetadataPageUrl = getScriptEditAboutPageUrl(script);
+  script.scriptEditSourcePageUrl = getScriptEditSourcePageUrl(script);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls: Moderation</p></div></div><div class="code"><div class="wrapper">  script.scriptRemovePageUrl = <span class="hljs-string">'/remove'</span> + (script.isLib ? <span class="hljs-string">'/libs/'</span> : <span class="hljs-string">'/scripts/'</span>) + script.installNameSlug;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Dates</p></div></div><div class="code"><div class="wrapper">  parseDateProperty(script, <span class="hljs-string">'updated'</span>);
+
+  <span class="hljs-keyword">return</span> script;
+};
+parseModelFnMap.Script = parseScript;
+exports.parseScript = parseScript;
+
+exports.renderScript = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aScript)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aScript) <span class="hljs-keyword">return</span>;
+  aScript.aboutRendered = renderMd(aScript.about);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> parseUser = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUserData)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aUserData) <span class="hljs-keyword">return</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>var user = aUserData.toObject ? aUserData.toObject() : aUserData;</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Intermediates</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> user = aUserData;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Role</p></div></div><div class="code"><div class="wrapper">  user.isMod = user.role &lt; <span class="hljs-number">4</span>;
+  user.isAdmin = user.role &lt; <span class="hljs-number">3</span>;
+  user.roleName = userRoles[user.role];
+
+  user.slug = user.name;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls: Public</p></div></div><div class="code"><div class="wrapper">  user.userPageUrl = <span class="hljs-string">'/users/'</span> + user.name;
+  user.userCommentListPageUrl = user.userPageUrl + <span class="hljs-string">'/comments'</span>;
+  user.userScriptListPageUrl = user.userPageUrl + <span class="hljs-string">'/scripts'</span>;
+  user.userManageGitHubPageUrl = user.userPageUrl + <span class="hljs-string">'/github'</span>;
+  user.userGitHubRepoListPageUrl = user.userPageUrl + <span class="hljs-string">'/github/repos'</span>;
+  user.userGitHubRepoPageUrl = user.userPageUrl + <span class="hljs-string">'/github/repo'</span>;
+  user.userGitHubImportPageUrl = user.userPageUrl + <span class="hljs-string">'/github/import'</span>;
+  user.userEditProfilePageUrl = user.userPageUrl + <span class="hljs-string">'/profile/edit'</span>;
+  user.userUpdatePageUrl = user.userPageUrl + <span class="hljs-string">'/update'</span>;
+  user.userRemovePageUrl = <span class="hljs-string">'/remove/users/'</span> + user.name;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Funcs</p></div></div><div class="code"><div class="wrapper">  user.githubUserId = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">var</span> indexOfGH = user.strategies.indexOf(<span class="hljs-string">'github'</span>);
+    <span class="hljs-keyword">if</span> (indexOfGH &gt; -<span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">return</span> user.auths[indexOfGH];
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+  };
+
+  <span class="hljs-keyword">return</span> user;
+};
+parseModelFnMap.User = parseUser;
+exports.parseUser = parseUser;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Group</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> parseGroup = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aGroupData)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aGroupData) <span class="hljs-keyword">return</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>var group = aGroupData.toObject ? aGroupData.toObject() : aGroupData;</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Intermediates</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> group = aGroupData;
+
+  <span class="hljs-keyword">if</span> (!group.size) {
+    group.size = group._scriptIds.length;
+  }
+  group.multiple = group._scriptIds.length &gt; <span class="hljs-number">1</span>;
+
+  group.groupPageUrl = <span class="hljs-string">'/group/'</span> + group.name.replace(<span class="hljs-regexp">/\s+/g</span>, <span class="hljs-string">'_'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Wait two hours between group rating updates
+This calculation runs in the background</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().getTime() &gt; (group.updated.getTime() + <span class="hljs-number">1000</span> * <span class="hljs-number">60</span> * <span class="hljs-number">60</span> * <span class="hljs-number">2</span>)) {
+    Script.find({
+      _id: { $<span class="hljs-keyword">in</span>: group._scriptIds }
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aScripts)</span> </span>{
+      <span class="hljs-keyword">if</span> (!aErr &amp;&amp; aScripts.length &gt; <span class="hljs-number">1</span>) {
+        group.size = aScripts.length;
+        group.rating = getRating(aScripts);
+      }
+
+      group.updated = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
+      group.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aGroup)</span> </span>{
+        <span class="hljs-built_in">console</span>.log(util.format(<span class="hljs-string">'Group(%s) Rating Updated'</span>, aGroup.name));
+      });
+    });
+  }
+
+  <span class="hljs-keyword">return</span> group;
+};
+parseModelFnMap.Group = parseGroup;
+exports.parseGroup = parseGroup;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Discussion</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> parseDiscussion = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDiscussionData)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aDiscussionData) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">var</span> discussion = aDiscussionData.toObject ? aDiscussionData.toObject() : aDiscussionData;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>var discussion = aDiscussionData; // Can&#39;t override discussionData.category</p></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls</p></div></div><div class="code"><div class="wrapper">  discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? <span class="hljs-string">'_'</span> + discussion.duplicateId : <span class="hljs-string">''</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Dates</p></div></div><div class="code"><div class="wrapper">  parseDateProperty(discussion, <span class="hljs-string">'created'</span>);
+  parseDateProperty(discussion, <span class="hljs-string">'updated'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>RecentCommentors</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> recentCommentors = [];
+  <span class="hljs-keyword">if</span> (discussion.author)
+    recentCommentors.push(discussion.author);
+  <span class="hljs-keyword">if</span> (discussion.lastCommentor != discussion.author)
+    recentCommentors.push(discussion.lastCommentor);
+  recentCommentors = _.map(recentCommentors, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUsername)</span> </span>{
+    <span class="hljs-keyword">return</span> {
+      name: aUsername
+    };
+  });
+  discussion.recentCommentors = recentCommentors;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Replies</p></div></div><div class="code"><div class="wrapper">  discussion.replies = (discussion.comments &amp;&amp; discussion.comments &gt; <span class="hljs-number">0</span>) ? discussion.comments - <span class="hljs-number">1</span> : <span class="hljs-number">0</span>;
+
+  discussion.path = discussion.path + (discussion.duplicateId ? <span class="hljs-string">'_'</span> + discussion.duplicateId : <span class="hljs-string">''</span>);
+
+  discussion.open = <span class="hljs-keyword">typeof</span> (discussion.open) === <span class="hljs-string">'undefined'</span> ? <span class="hljs-literal">true</span> : discussion.open;
+
+  <span class="hljs-keyword">return</span> discussion;
+};
+parseModelFnMap.Discussion = parseDiscussion;
+exports.parseDiscussion = parseDiscussion;
+
+<span class="hljs-keyword">var</span> parseIssue = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aDiscussionData)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aDiscussionData) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">var</span> discussion = aDiscussionData.toObject ? aDiscussionData.toObject() : aDiscussionData;
+
+  discussion.issue = <span class="hljs-literal">true</span>;
+  discussion.open = (discussion.open === <span class="hljs-literal">undefined</span> || discussion.open === <span class="hljs-literal">null</span>) ? <span class="hljs-literal">true</span> : discussion.open;
+  discussion.issueCloseUrl = discussion.path + <span class="hljs-string">'/close'</span>;
+  discussion.issueOpenUrl = discussion.path + <span class="hljs-string">'/reopen'</span>;
+
+
+  <span class="hljs-keyword">return</span> discussion;
+};
+parseModelFnMap.Issue = parseIssue;
+exports.parseIssue = parseIssue;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Comment</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> parseComment = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCommentData)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aCommentData) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">var</span> comment = aCommentData.toObject ? aCommentData.toObject() : aCommentData;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Dates</p></div></div><div class="code"><div class="wrapper">  parseDateProperty(comment, <span class="hljs-string">'created'</span>);
+
+  <span class="hljs-keyword">return</span> comment;
+};
+parseModelFnMap.Comment = parseComment;
+exports.parseComment = parseComment;
+
+exports.renderComment = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aComment)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aComment) <span class="hljs-keyword">return</span>;
+  aComment.contentRendered = renderMd(aComment.content);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Category</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> canUserPostTopicToCategory = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUser, aCategory)</span> </span>{</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if user is logged in.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">if</span> (_.isUndefined(aUser) || _.isNull(aUser))
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; <span class="hljs-comment">// Not logged in.</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Check if this category requires a minimum role to post topics.</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-built_in">console</span>.log(aCategory.roleReqToPostTopic, _.isNumber(aCategory.roleReqToPostTopic), aUser.role, aUser.role &lt;= aCategory.roleReqToPostTopic);
+  <span class="hljs-keyword">if</span> (_.isNumber(aCategory.roleReqToPostTopic)) {
+    <span class="hljs-keyword">return</span> aUser.role &lt;= aCategory.roleReqToPostTopic;
+  } <span class="hljs-keyword">else</span> {</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>No specified role required</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+  }
+};
+
+<span class="hljs-keyword">var</span> parseCategory = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCategoryData)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aCategoryData) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">var</span> category = aCategoryData.toObject ? aCategoryData.toObject() : aCategoryData;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls</p></div></div><div class="code"><div class="wrapper">  category.categoryPageUrl = <span class="hljs-string">'/'</span> + category.slug;
+  category.categoryPostDiscussionPageUrl = <span class="hljs-string">'/post/'</span> + category.slug;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Functions</p></div></div><div class="code"><div class="wrapper">  category.canUserPostTopic = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUser)</span> </span>{
+    <span class="hljs-keyword">return</span> canUserPostTopicToCategory(aUser, category);
+  };
+
+  <span class="hljs-keyword">return</span> category;
+};
+parseModelFnMap.Category = parseCategory;
+exports.parseCategory = parseCategory;
+
+<span class="hljs-keyword">var</span> parseCategoryUnknown = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCategoryUnknownSlug)</span> </span>{
+  <span class="hljs-keyword">var</span> category = {
+    name: aCategoryUnknownSlug,
+    slug: aCategoryUnknownSlug
+  };
+
+  <span class="hljs-keyword">var</span> isScriptIssueRegex = <span class="hljs-regexp">/^(scripts|libs)\/([^\/]+)(\/[^\/]+)?\/([^\/]+)\/issues$/</span>;
+  <span class="hljs-keyword">var</span> isScriptIssue = isScriptIssueRegex.exec(category.slug);
+  <span class="hljs-keyword">if</span> (isScriptIssue) {
+    <span class="hljs-keyword">var</span> scriptAuthorNameSlug = isScriptIssue[<span class="hljs-number">2</span>];
+    <span class="hljs-keyword">var</span> scriptNameSlug = isScriptIssue[<span class="hljs-number">4</span>];
+    <span class="hljs-keyword">var</span> scriptName = scriptNameSlug.replace(<span class="hljs-regexp">/\_/g</span>, <span class="hljs-string">' '</span>);
+    category.name = scriptAuthorNameSlug + <span class="hljs-string">'/'</span> + scriptName;
+  }
+  <span class="hljs-keyword">return</span> category;
+};
+exports.parseCategoryUnknown = parseCategoryUnknown;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Remove</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> getRemovedItemDescription = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRemove)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aRemove.content)
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'No content'</span>;
+
+  <span class="hljs-keyword">switch</span> (aRemove.model) {
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'User'</span>:
+      <span class="hljs-keyword">return</span> aRemove.content.name;
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'Script'</span>:
+      <span class="hljs-keyword">return</span> aRemove.content.fullName || aRemove.content.name;
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'Comment'</span>:
+      <span class="hljs-keyword">return</span> util.format(<span class="hljs-string">'by %s'</span>, aRemove.content.author);
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'Discussion'</span>:
+      <span class="hljs-keyword">return</span> aRemove.content.path;
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">return</span> aRemove.content._id;
+  }
+};
+
+<span class="hljs-keyword">var</span> parseRemovedItem = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRemovedItemData)</span> </span>{
+  <span class="hljs-keyword">if</span> (!aRemovedItemData) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">var</span> removedItem = aRemovedItemData;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Dates</p></div></div><div class="code"><div class="wrapper">  parseDateProperty(removedItem, <span class="hljs-string">'removed'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">  removedItem.remover = parseUser({ name: removedItem.removerName });</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Content</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> parseModelFn = parseModelFnMap[removedItem.model];
+  <span class="hljs-keyword">if</span> (parseModelFn &amp;&amp; removedItem.content)
+    removedItem.content = parseModelFn(removedItem.content);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Item</p></div></div><div class="code"><div class="wrapper">  removedItem.itemDescription = getRemovedItemDescription(removedItem);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Urls</p></div></div><div class="code"><div class="wrapper">  removedItem.url = <span class="hljs-string">'/mod/removed/'</span> + removedItem._id;
+
+  <span class="hljs-keyword">return</span> removedItem;
+};
+parseModelFnMap.Remove = parseRemovedItem;
+exports.parseRemovedItem = parseRemovedItem;</div></div></div></div></body></html>

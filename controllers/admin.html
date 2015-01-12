@@ -1,185 +1,373 @@
-<!DOCTYPE html><html lang="en"><head><title>controllers/admin</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/admin"><meta name="groc-project-path" content="controllers/admin.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/admin.js">controllers/admin.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">Strategy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/strategy.js&#39;</span><span class="p">).</span><span class="nx">Strategy</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">User</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/user.js&#39;</span><span class="p">).</span><span class="nx">User</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Script</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/script&#39;</span><span class="p">).</span><span class="nx">Script</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">strategies</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./strategies.json&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">userRoles</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../models/userRoles.json&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">loadPassport</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/passportLoader&#39;</span><span class="p">).</span><span class="nx">loadPassport</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">strategyInstances</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/passportLoader&#39;</span><span class="p">).</span><span class="nx">strategyInstances</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">scriptStorage</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./scriptStorage&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">help</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/helpers&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
-<span class="kd">var</span> <span class="nx">nil</span> <span class="o">=</span> <span class="nx">help</span><span class="p">.</span><span class="nx">nil</span><span class="p">;</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This controller is only for use by users with a role of admin or above</p></div></div><div class="code"><div class="wrapper"><span class="kd">function</span> <span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span>
-<span class="p">}</span>
+<!DOCTYPE html><html lang="en"><head><title>controllers/admin</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/admin"><meta name="groc-project-path" content="controllers/admin.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/admin.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-<span class="kd">function</span> <span class="nx">getOAuthStrategies</span><span class="p">(</span><span class="nx">stored</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">oAuthStrats</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="kd">var</span> <span class="nx">strategy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> pkg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../package.json'</span>);
 
-  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">type</span> <span class="k">in</span> <span class="nx">strategies</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">strategy</span> <span class="o">=</span> <span class="nx">strategies</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">strategy</span><span class="p">.</span><span class="nx">oauth</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">oAuthStrats</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">stored</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">||</span>
-        <span class="nx">nil</span><span class="p">({</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">type</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">}));</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> exec = <span class="hljs-built_in">require</span>(<span class="hljs-string">'child_process'</span>).exec;
 
-  <span class="k">return</span> <span class="nx">oAuthStrats</span><span class="p">;</span>
-<span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Allow admins to set user roles and delete users</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">userAdmin</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span>
-  <span class="kd">var</span> <span class="nx">thisUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> Comment = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/comment'</span>).Comment;
+<span class="hljs-keyword">var</span> Discussion = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/discussion'</span>).Discussion;
+<span class="hljs-keyword">var</span> Flag = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/flag'</span>).Flag;
+<span class="hljs-keyword">var</span> Group = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/group'</span>).Group;
+<span class="hljs-keyword">var</span> Script = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/script'</span>).Script;
+<span class="hljs-keyword">var</span> Strategy = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/strategy'</span>).Strategy;
+<span class="hljs-keyword">var</span> User = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/user'</span>).User;
+<span class="hljs-keyword">var</span> Vote = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/vote'</span>).Vote;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can only see users with a role less than yours</p></div></div><div class="code"><div class="wrapper">  <span class="nx">User</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">role</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$gt</span><span class="o">:</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="p">}</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">users</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">users</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="hljs-keyword">var</span> userRoles = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/userRoles.json'</span>);
+<span class="hljs-keyword">var</span> strategies = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./strategies.json'</span>);
+<span class="hljs-keyword">var</span> loadPassport = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/passportLoader'</span>).loadPassport;
+<span class="hljs-keyword">var</span> strategyInstances = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/passportLoader'</span>).strategyInstances;
+<span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);
+<span class="hljs-keyword">var</span> helpers = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/helpers'</span>);
+<span class="hljs-keyword">var</span> statusCodePage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).statusCodePage;
+<span class="hljs-keyword">var</span> updateSessions = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modifySessions'</span>).update;
+<span class="hljs-keyword">var</span> nil = helpers.nil;
+<span class="hljs-keyword">var</span> pageMetadata = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).pageMetadata;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This controller is only for use by users with a role of admin or above</p></div></div><div class="code"><div class="wrapper"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">userIsAdmin</span><span class="hljs-params">(aReq)</span> </span>{
+  <span class="hljs-keyword">return</span> aReq.session.user &amp;&amp; aReq.session.user.role &lt; <span class="hljs-number">3</span>;
+}
 
-    <span class="nx">users</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">roles</span> <span class="o">=</span> <span class="p">[];</span>
-      <span class="nx">userRoles</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">role</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">roles</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;val&#39;</span> <span class="o">:</span> <span class="nx">index</span><span class="p">,</span> <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">role</span><span class="p">,</span>
-          <span class="s1">&#39;selected&#39;</span> <span class="o">:</span> <span class="nx">index</span> <span class="o">===</span> <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="p">});</span>
-      <span class="p">});</span>
-      <span class="nx">roles</span> <span class="o">=</span> <span class="nx">roles</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-      <span class="nx">roles</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getOAuthStrategies</span><span class="hljs-params">(aStored)</span> </span>{
+  <span class="hljs-keyword">var</span> oAuthStrats = [];
+  <span class="hljs-keyword">var</span> strategy = <span class="hljs-literal">null</span>;
 
-      <span class="nx">options</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="s1">&#39;id&#39;</span> <span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span> <span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-        <span class="s1">&#39;roles&#39;</span> <span class="o">:</span> <span class="nx">roles</span> <span class="p">});</span>
-    <span class="p">});</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> type <span class="hljs-keyword">in</span> strategies) {
+    strategy = strategies[type];
+    <span class="hljs-keyword">if</span> (strategy.oauth) {
+      oAuthStrats.push(aStored[type] ||
+        nil({
+          <span class="hljs-string">'strat'</span>: type,
+          <span class="hljs-string">'id'</span>: <span class="hljs-string">''</span>,
+          <span class="hljs-string">'key'</span>: <span class="hljs-string">''</span>
+        }));
+    }
+  }
 
-    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;userAdmin&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View everything about a particular user
-This is mostly for debugging in production</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">adminUserView</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">thisUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="hljs-keyword">return</span> oAuthStrats;
+}</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Allow admins to set user roles and delete users</p></div></div><div class="code"><div class="wrapper">exports.userAdmin = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> options = nil();
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Nothing fancy, just the stringified user object</p></div></div><div class="code"><div class="wrapper">  <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="s1">&#39;_id&#39;</span> <span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">role</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$gt</span><span class="o">:</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="p">}</span> <span class="p">},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+  <span class="hljs-keyword">if</span> (!userIsAdmin(aReq)) { <span class="hljs-keyword">return</span> aNext(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can only see users with a role less than yours</p></div></div><div class="code"><div class="wrapper">  User.find({ role: { $gt: authedUser.role } }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUsers)</span> </span>{
+    options.users = [];
 
-      <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;userAdmin&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">user</span><span class="o">:</span> <span class="p">{</span> 
-        <span class="nx">info</span><span class="o">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">toObject</span><span class="p">(),</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="p">}</span> <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Make changes to users listed</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">userAdminUpdate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">users</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">thisUser</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">remove</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    aUsers.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aUser)</span> </span>{
+      <span class="hljs-keyword">var</span> roles = [];
+      userRoles.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aRole, aIndex)</span> </span>{
+        roles.push({
+          <span class="hljs-string">'val'</span>: aIndex,
+          <span class="hljs-string">'display'</span>: aRole,
+          <span class="hljs-string">'selected'</span>: aIndex === aUser.role
+        });
+      });
+      roles = roles.splice(authedUser.role + <span class="hljs-number">1</span>);
+      roles.reverse();
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+      options.users.push({
+        <span class="hljs-string">'id'</span>: aUser._id,
+        <span class="hljs-string">'name'</span>: aUser.name,
+        <span class="hljs-string">'roles'</span>: roles
+      });
+    });
 
-  <span class="nx">users</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="nx">users</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">users</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">role</span><span class="o">:</span> <span class="nx">users</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="p">};</span>
-  <span class="p">});</span>
+    aRes.render(<span class="hljs-string">'userAdmin'</span>, options);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View everything about a particular user
+This is mostly for debugging in production</p></div></div><div class="code"><div class="wrapper">exports.adminUserView = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> id = aReq.params.id;
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-  <span class="nx">thisUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="nx">remove</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">remove</span> <span class="o">||</span> <span class="p">{};</span>
-  <span class="nx">remove</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">remove</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User removal and role change might be problematic
-But why would you change and user role and delete them?</p></div></div><div class="code"><div class="wrapper">  <span class="nx">async</span><span class="p">.</span><span class="nx">parallel</span><span class="p">([</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">users</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">user</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">role</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">role</span><span class="p">);</span>
+  <span class="hljs-keyword">if</span> (!userIsAdmin(aReq)) { <span class="hljs-keyword">return</span> aNext(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Nothing fancy, just the stringified user object</p></div></div><div class="code"><div class="wrapper">  User.findOne({ <span class="hljs-string">'_id'</span>: id, role: { $gt: authedUser.role } },
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUser)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr || !aUser) { <span class="hljs-keyword">return</span> aNext(); }
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">role</span> <span class="o">&lt;=</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span><span class="p">)</span> <span class="p">{</span> <span class="nx">cb</span><span class="p">();</span> <span class="p">}</span>
-        <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="s1">&#39;_id&#39;</span> <span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">role</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$gt</span><span class="o">:</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="p">}</span> <span class="p">},</span> 
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">=</span> <span class="nx">role</span><span class="p">;</span>
-            <span class="nx">user</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="nx">cb</span><span class="p">);</span>
-          <span class="p">});</span>
-      <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
-    <span class="p">},</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">remove</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="s1">&#39;_id&#39;</span> <span class="o">:</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">role</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">$gt</span><span class="o">:</span> <span class="nx">thisUser</span><span class="p">.</span><span class="nx">role</span> <span class="p">}</span> <span class="p">},</span>
-          <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">authorId</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">_id</span><span class="p">;</span>
-            <span class="nx">user</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">Script</span><span class="p">.</span><span class="nx">find</span><span class="p">({</span> <span class="nx">_authorId</span><span class="o">:</span> <span class="nx">authorId</span> <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">scripts</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">scripts</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">innerCb</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="nx">scriptStorage</span><span class="p">.</span><span class="nx">deleteScript</span><span class="p">(</span><span class="nx">script</span><span class="p">.</span><span class="nx">installName</span><span class="p">,</span> <span class="nx">innerCb</span><span class="p">);</span>
-                <span class="p">},</span> <span class="nx">cb</span><span class="p">);</span>
-              <span class="p">});</span>
-            <span class="p">});</span> 
-        <span class="p">});</span>
-      <span class="p">},</span> <span class="nx">callback</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
-  <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/admin/user&#39;</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This page allows admins to set oAuth keys for the available authenticators</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">apiAdmin</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+      aRes.render(<span class="hljs-string">'userAdmin'</span>, {
+        user: {
+          info: <span class="hljs-built_in">JSON</span>.stringify(aUser.toObject(), <span class="hljs-literal">null</span>, <span class="hljs-string">' '</span>)
+        }
+      });
+    });
+};
 
-  <span class="nx">Strategy</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strats</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">stored</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span>
-    <span class="kd">var</span> <span class="nx">strategies</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> jsonModelMap = {
+  <span class="hljs-string">'User'</span>: User,
+  <span class="hljs-string">'Script'</span>: Script,
+  <span class="hljs-string">'Group'</span>: Group,
+  <span class="hljs-string">'Discussion'</span>: Discussion,
+  <span class="hljs-string">'Comment'</span>: Comment,
+  <span class="hljs-string">'Vote'</span>: Vote,
+  <span class="hljs-string">'Flag'</span>: Flag
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View everything about a particular user
+This is mostly for debugging in production</p></div></div><div class="code"><div class="wrapper">exports.adminJsonView = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-    <span class="nx">strats</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">strat</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">stored</span><span class="p">[</span><span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;strat&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
-        <span class="s1">&#39;id&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span> <span class="o">:</span> <span class="nx">strat</span><span class="p">.</span><span class="nx">key</span> <span class="p">};</span>
-    <span class="p">});</span>
+  <span class="hljs-keyword">var</span> modelname = aReq.query.model;
+  <span class="hljs-keyword">var</span> id = aReq.query.id;
 
-    <span class="nx">strategies</span> <span class="o">=</span> <span class="nx">getOAuthStrategies</span><span class="p">(</span><span class="nx">stored</span><span class="p">);</span>
-    <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;strategies&#39;</span> <span class="o">:</span> <span class="nx">strategies</span> <span class="p">};</span>
+  <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
 
-    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;apiAdmin&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Manage oAuth strategies without having to restart the server
+  <span class="hljs-keyword">if</span> (!options.isAdmin)
+    <span class="hljs-keyword">return</span> aRes.status(<span class="hljs-number">403</span>).send({ status: <span class="hljs-number">403</span>, message: <span class="hljs-string">'Not an admin.'</span> });
+
+  <span class="hljs-keyword">var</span> model = jsonModelMap[modelname];
+  <span class="hljs-keyword">if</span> (!model)
+    <span class="hljs-keyword">return</span> aRes.status(<span class="hljs-number">400</span>).send({ status: <span class="hljs-number">400</span>, message: <span class="hljs-string">'Invalid model.'</span> });
+
+  model.findOne({
+    _id: id
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aObj)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aObj)
+      <span class="hljs-keyword">return</span> aRes.status(<span class="hljs-number">404</span>).send({ status: <span class="hljs-number">404</span>, message: <span class="hljs-string">'Id doesn\'t exist.'</span> });
+
+    aRes.json(aObj);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Make changes to users listed</p></div></div><div class="code"><div class="wrapper">exports.adminUserUpdate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> username = aReq.params.username;
+
+  User.findOne({
+    name: username
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUserData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aUserData) { <span class="hljs-keyword">return</span> aNext(); }
+
+    <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser &amp;&amp; authedUser.isMod;
+    options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+    <span class="hljs-keyword">if</span> (!options.isAdmin) {
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusCode: <span class="hljs-number">403</span>,
+        statusMessage: <span class="hljs-string">'This page is only accessible by admins'</span>,
+      });
+    }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> user = options.user = modelParser.parseUser(aUserData);
+    options.isYou = authedUser &amp;&amp; user &amp;&amp; authedUser._id == user._id;
+
+    <span class="hljs-comment">//---</span>
+
+    <span class="hljs-keyword">if</span> (aReq.body.role) {
+      <span class="hljs-keyword">var</span> role = <span class="hljs-built_in">Number</span>(aReq.body.role);
+      <span class="hljs-keyword">if</span> (role &lt;= authedUser.role) {
+        <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+          statusCode: <span class="hljs-number">403</span>,
+          statusMessage: <span class="hljs-string">'Cannot set a role equal to or higher than yourself.'</span>,
+        });
+      }
+
+      aUserData.role = role;
+    }
+
+    aUserData.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+      <span class="hljs-keyword">if</span> (aErr) {
+        <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+          statusMessage: aErr,
+        });
+      }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Make sure the change is reflected in the session store</p></div></div><div class="code"><div class="wrapper">      updateSessions(aReq, aUserData, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aSess)</span> </span>{
+        aRes.redirect(user.userPageUrl);
+      });
+    });
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Landing Page for admins</p></div></div><div class="code"><div class="wrapper">exports.adminPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  <span class="hljs-keyword">if</span> (!options.isAdmin) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">403</span>,
+      statusMessage: <span class="hljs-string">'This page is only accessible by admins'</span>,
+    });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, <span class="hljs-string">'Admin'</span>);
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aNext();
+    aRes.render(<span class="hljs-string">'pages/adminPage'</span>, options);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>This page allows admins to set oAuth keys for the available authenticators</p></div></div><div class="code"><div class="wrapper">exports.adminApiKeysPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  <span class="hljs-keyword">if</span> (!options.isAdmin) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">403</span>,
+      statusMessage: <span class="hljs-string">'This page is only accessible by admins'</span>,
+    });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, [<span class="hljs-string">'Site API Keys'</span>, <span class="hljs-string">'Admin'</span>]);
+
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>strategyListQuery</p></div></div><div class="code"><div class="wrapper">  tasks.push(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aCallback)</span> </span>{
+    Strategy.find({}, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStrats)</span> </span>{
+      <span class="hljs-keyword">var</span> stored = nil();
+      <span class="hljs-keyword">var</span> strategies = <span class="hljs-literal">null</span>;
+
+      aStrats.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStrat)</span> </span>{
+        stored[aStrat.name] = {
+          strat: aStrat.name,
+          id: aStrat.id,
+          key: aStrat.key
+        };
+      });
+
+      strategies = getOAuthStrategies(stored);
+      options.strategies = strategies;
+
+      aCallback();
+    });
+  });
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aNext();
+    aRes.render(<span class="hljs-string">'pages/adminApiKeysPage'</span>, options);
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View everything about current deployed <code>./package.json</code>
+This is mostly for debugging in production</p></div></div><div class="code"><div class="wrapper">exports.adminNpmPackageView = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  <span class="hljs-keyword">if</span> (!options.isAdmin)
+    <span class="hljs-keyword">return</span> aRes.status(<span class="hljs-number">403</span>).send({ status: <span class="hljs-number">403</span>, message: <span class="hljs-string">'Not an admin.'</span> });
+
+  aRes.json(pkg);
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View everything about current modules for the server
+This is mostly for debugging in production</p></div></div><div class="code"><div class="wrapper">exports.adminNpmListView = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  <span class="hljs-keyword">if</span> (!options.isAdmin)
+    <span class="hljs-keyword">return</span> aRes.status(<span class="hljs-number">403</span>).send({ status: <span class="hljs-number">403</span>, message: <span class="hljs-string">'Not an admin.'</span> });
+
+  exec(<span class="hljs-string">'npm ls --json'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStdout, aStderr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aRes.status(<span class="hljs-number">501</span>).send({ status: <span class="hljs-number">501</span>, message: <span class="hljs-string">'Not implemented.'</span> });
+    aRes.json(<span class="hljs-built_in">JSON</span>.parse(aStdout));
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>View current version of npm
+This is mostly for debugging in production</p></div></div><div class="code"><div class="wrapper">exports.adminNpmVersionView = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  <span class="hljs-keyword">if</span> (!options.isAdmin)
+    <span class="hljs-keyword">return</span> aRes.status(<span class="hljs-number">403</span>).send({ status: <span class="hljs-number">403</span>, message: <span class="hljs-string">'Not an admin.'</span> });
+
+  exec(<span class="hljs-string">'npm --version'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStdout, aStderr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aRes.status(<span class="hljs-number">501</span>).send({ status: <span class="hljs-number">501</span>, message: <span class="hljs-string">'Not implemented.'</span> });
+
+    aRes.set(<span class="hljs-string">'Content-Type'</span>, <span class="hljs-string">'text/plain; charset=UTF-8'</span>);
+    aRes.write(aStdout + <span class="hljs-string">'\n'</span>);
+    aRes.end();
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Manage oAuth strategies without having to restart the server
 When new keys are added, we load the new strategy
-When keys are removed, we remove the strategy</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">apiAdminUpdate</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">postStrats</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+When keys are removed, we remove the strategy</p></div></div><div class="code"><div class="wrapper">exports.apiAdminUpdate = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> postStrats = <span class="hljs-literal">null</span>;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">userIsAdmin</span><span class="p">(</span><span class="nx">req</span><span class="p">))</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+  <span class="hljs-keyword">if</span> (!userIsAdmin(aReq)) { <span class="hljs-keyword">return</span> aNext(); }
 
-  <span class="nx">postStrats</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">postStrat</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">values</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">[</span><span class="nx">postStrat</span><span class="p">];</span>
-    <span class="k">return</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="nx">postStrat</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">key</span><span class="o">:</span> <span class="nx">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">}</span>
-  <span class="p">});</span>
+  postStrats = <span class="hljs-built_in">Object</span>.keys(aReq.body).map(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aPostStrat)</span> </span>{
+    <span class="hljs-keyword">var</span> values = aReq.body[aPostStrat];
+    <span class="hljs-keyword">return</span> { name: aPostStrat, id: values[<span class="hljs-number">0</span>], key: values[<span class="hljs-number">1</span>] };
+  });
 
-  <span class="nx">Strategy</span><span class="p">.</span><span class="nx">find</span><span class="p">({},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strats</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">stored</span> <span class="o">=</span> <span class="nx">nil</span><span class="p">();</span>
+  Strategy.find({}, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStrats)</span> </span>{
+    <span class="hljs-keyword">var</span> stored = nil();
 
-    <span class="nx">strats</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">strat</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">stored</span><span class="p">[</span><span class="nx">strat</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">strat</span><span class="p">;</span>
-    <span class="p">});</span>
-    <span class="nx">async</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">postStrats</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">postStrat</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">strategy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">postStrat</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">postStrat</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">postStrat</span><span class="p">.</span><span class="nx">key</span><span class="p">;</span>
+    aStrats.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aStrat)</span> </span>{
+      stored[aStrat.name] = aStrat;
+    });
+    async.each(postStrats, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aPostStrat, aCallback)</span> </span>{
+      <span class="hljs-keyword">var</span> strategy = <span class="hljs-literal">null</span>;
+      <span class="hljs-keyword">var</span> name = aPostStrat.name;
+      <span class="hljs-keyword">var</span> id = aPostStrat.id;
+      <span class="hljs-keyword">var</span> key = aPostStrat.key;
 
-      <span class="k">if</span> <span class="p">(</span><span class="nx">stored</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">stored</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">remove</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-          <span class="k">delete</span> <span class="nx">strategyInstances</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-          <span class="nx">cb</span><span class="p">();</span>
-        <span class="p">});</span>
-        <span class="k">return</span><span class="p">;</span>
-      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">stored</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
-          <span class="nx">strategy</span> <span class="o">=</span> <span class="nx">stored</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-          <span class="nx">strategy</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
-          <span class="nx">strategy</span><span class="p">.</span><span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">strategy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Strategy</span><span class="p">({</span>
-            <span class="s1">&#39;id&#39;</span> <span class="o">:</span> <span class="nx">id</span><span class="p">,</span>
-            <span class="s1">&#39;key&#39;</span> <span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
-            <span class="s1">&#39;name&#39;</span> <span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-            <span class="s1">&#39;display&#39;</span> <span class="o">:</span> <span class="nx">strategies</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">name</span>
-          <span class="p">});</span>
-        <span class="p">}</span>
+      <span class="hljs-keyword">if</span> (stored[name] &amp;&amp; !id &amp;&amp; !key) {
+        stored[name].remove(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">delete</span> strategyInstances[name];
+          aCallback();
+        });
+        <span class="hljs-keyword">return</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (id &amp;&amp; key) {
+        <span class="hljs-keyword">if</span> (stored[name]) {
+          strategy = stored[name];
+          strategy.id = id;
+          strategy.key = key;
+        } <span class="hljs-keyword">else</span> {
+          strategy = <span class="hljs-keyword">new</span> Strategy({
+            <span class="hljs-string">'id'</span>: id,
+            <span class="hljs-string">'key'</span>: key,
+            <span class="hljs-string">'name'</span>: name,
+            <span class="hljs-string">'display'</span>: strategies[name].name
+          });
+        }
 
-        
-        <span class="k">return</span> <span class="nx">strategy</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">strategy</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">loadPassport</span><span class="p">(</span><span class="nx">strategy</span><span class="p">);</span>
-          <span class="nx">cb</span><span class="p">();</span>
-        <span class="p">});</span>
-      <span class="p">}</span>
+        <span class="hljs-keyword">return</span> strategy.save(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aStrategy)</span> </span>{
+          loadPassport(aStrategy);
+          aCallback();
+        });
+      }
 
-      <span class="nx">cb</span><span class="p">();</span>
-    <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/admin/api&#39;</span><span class="p">);</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">};</span></div></div></div></div></body></html>
+      aCallback();
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+      aRes.redirect(<span class="hljs-string">'/admin/api'</span>);
+    });
+  });
+};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Landing Page for admins</p></div></div><div class="code"><div class="wrapper">exports.authAsUser = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  <span class="hljs-keyword">if</span> (!options.isAdmin) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">403</span>,
+      statusMessage: <span class="hljs-string">'This page is only accessible by admins'</span>,
+    });
+  }
+
+  <span class="hljs-keyword">var</span> username = aReq.query.username;
+
+  <span class="hljs-keyword">if</span> (!username) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">400</span>,
+      statusMessage: <span class="hljs-string">'&lt;code&gt;username&lt;/code&gt; must be set.'</span>,
+    });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>You can only see users with a role less than yours</p></div></div><div class="code"><div class="wrapper">  User.findOne({
+    name: username
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aUserData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aUserData) { <span class="hljs-keyword">return</span> aNext(); }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>User</p></div></div><div class="code"><div class="wrapper">    <span class="hljs-keyword">var</span> user = options.user = modelParser.parseUser(aUserData);
+
+    <span class="hljs-keyword">if</span> (authedUser.role &gt;= user.role) {
+      <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+        statusCode: <span class="hljs-number">403</span>,
+        statusMessage: authedUser.role == user.role
+          ? <span class="hljs-string">'Cannot auth as a user with the same rank.'</span>
+          : <span class="hljs-string">'Cannot auth as a user with a higher rank.'</span>,
+      });
+    }
+
+    aReq.session.user = user;
+
+    aRes.redirect(user.userPageUrl);
+  });
+};</div></div></div></div></body></html>

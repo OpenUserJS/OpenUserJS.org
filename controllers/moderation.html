@@ -1,82 +1,88 @@
-<!DOCTYPE html><html lang="en"><head><title>controllers/moderation</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/moderation"><meta name="groc-project-path" content="controllers/moderation.js"><meta name="groc-github-url" content="https://github.com/sizzlemctwizzle/OpenUserJS.org"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path"><a href="https://github.com/sizzlemctwizzle/OpenUserJS.org/blob/master/controllers/moderation.js">controllers/moderation.js</a></div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="kd">var</span> <span class="nx">modelsList</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../libs/modelsList&#39;</span><span class="p">);</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>When content reaches a its threshold of flags it gets marked as flagged
-and it can now be removed by moderators</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">flagged</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span> <span class="o">||</span> <span class="s1">&#39;users&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">baseUrl</span> <span class="o">=</span> <span class="s1">&#39;/flagged&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">?</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Flagged Content&#39;</span><span class="p">,</span> <span class="nx">moderation</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> 
-    <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">};</span>
+<!DOCTYPE html><html lang="en"><head><title>controllers/moderation</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content="../"><meta name="groc-document-path" content="controllers/moderation"><meta name="groc-project-path" content="controllers/moderation.js"><link rel="stylesheet" type="text/css" media="all" href="../assets/style.css"><script type="text/javascript" src="../assets/behavior.js"></script><body><div id="meta"><div class="file-path">controllers/moderation.js</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Define some pseudo module globals</p></div></div><div class="code"><div class="wrapper"><span class="hljs-keyword">var</span> isPro = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isPro;
+<span class="hljs-keyword">var</span> isDev = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDev;
+<span class="hljs-keyword">var</span> isDbg = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/debug'</span>).isDbg;
 
-  <span class="nx">options</span><span class="p">[</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="hljs-keyword">var</span> async = <span class="hljs-built_in">require</span>(<span class="hljs-string">'async'</span>);
+<span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span> <span class="o">||</span> <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span>
+<span class="hljs-keyword">var</span> Remove = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../models/remove'</span>).Remove;
 
-  <span class="k">switch</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">case</span> <span class="s1">&#39;users&#39;</span><span class="o">:</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span> 
-      <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;flags&#39;</span><span class="p">];</span>
-    <span class="p">}</span>
+<span class="hljs-keyword">var</span> modelParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelParser'</span>);
+<span class="hljs-keyword">var</span> modelQuery = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/modelQuery'</span>);
+<span class="hljs-keyword">var</span> execQueryTask = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/tasks'</span>).execQueryTask;
+<span class="hljs-keyword">var</span> statusCodePage = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).statusCodePage;
+<span class="hljs-keyword">var</span> pageMetadata = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).pageMetadata;
+<span class="hljs-keyword">var</span> orderDir = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../libs/templateHelpers'</span>).orderDir;
 
-    <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listUsers</span><span class="p">({</span> <span class="nx">flagged</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span>
-      <span class="kd">function</span> <span class="p">(</span><span class="nx">usersList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">usersList</span> <span class="o">=</span> <span class="nx">usersList</span><span class="p">;</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;flagged&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    <span class="p">});</span>
-    <span class="k">break</span><span class="p">;</span>
-  <span class="k">case</span> <span class="s1">&#39;scripts&#39;</span><span class="o">:</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span> 
-      <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;flags&#39;</span><span class="p">,</span> <span class="s1">&#39;updated&#39;</span><span class="p">];</span>
-    <span class="p">}</span>
+exports.removedItemPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
 
-    <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listScripts</span><span class="p">({</span> <span class="nx">flagged</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">isLib</span><span class="o">:</span> <span class="kc">null</span> <span class="p">},</span>
-      <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span>
-      <span class="kd">function</span> <span class="p">(</span><span class="nx">scriptsList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">scriptsList</span> <span class="o">=</span> <span class="nx">scriptsList</span><span class="p">;</span>
-        <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;flagged&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    <span class="p">});</span>
-    <span class="k">break</span><span class="p">;</span>
-  <span class="k">default</span><span class="o">:</span>
-    <span class="nx">next</span><span class="p">();</span>
-  <span class="p">}</span>
-<span class="p">};</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>When content is remove via the community moderation system it isn't
-actually deleted. Instead it is sent to the graveyard where hopefully
-any mistakes can be undone.</p></div></div><div class="code"><div class="wrapper"><span class="nx">exports</span><span class="p">.</span><span class="nx">graveyard</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">contentTypes</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;users&#39;</span> <span class="o">:</span>
-    <span class="p">{</span> 
-      <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span>
-      <span class="s1">&#39;selected&#39;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="p">},</span> 
-    <span class="s1">&#39;scripts&#39;</span><span class="o">:</span>
-    <span class="p">{</span>
-      <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;Script&#39;</span><span class="p">,</span>
-      <span class="s1">&#39;selected&#39;</span><span class="o">:</span> <span class="kc">false</span>
-    <span class="p">}</span>
-  <span class="p">};</span>
-  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span> <span class="o">||</span> <span class="s1">&#39;users&#39;</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">baseUrl</span> <span class="o">=</span> <span class="s1">&#39;/graveyard&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">?</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-  <span class="kd">var</span> <span class="nx">contentType</span> <span class="o">=</span> <span class="nx">contentTypes</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
-  <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;The Graveyard&#39;</span><span class="p">,</span> <span class="nx">username</span><span class="o">:</span> <span class="nx">user</span> <span class="o">?</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span> <span class="p">};</span>
+  <span class="hljs-keyword">var</span> removedItemId = aReq.params.id;
 
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">contentType</span> <span class="o">||</span> <span class="o">!</span><span class="nx">user</span> <span class="o">||</span> <span class="nx">user</span><span class="p">.</span><span class="nx">role</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">next</span><span class="p">();</span> <span class="p">}</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Currently removed content is displayed as raw JSON data
-Hopefully one day it can actually be viewed read-only by
-those who have the authority</p></div></div><div class="code"><div class="wrapper">  <span class="nx">modelsList</span><span class="p">.</span><span class="nx">listRemoved</span><span class="p">({</span> <span class="nx">model</span><span class="o">:</span> <span class="nx">contentType</span><span class="p">.</span><span class="nx">name</span> <span class="p">},</span> <span class="nx">req</span><span class="p">.</span><span class="nx">route</span><span class="p">.</span><span class="nx">params</span><span class="p">,</span> <span class="nx">baseUrl</span><span class="p">,</span>
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">removedList</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-      <span class="nx">contentType</span><span class="p">.</span><span class="nx">selected</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">removedList</span> <span class="o">=</span> <span class="nx">removedList</span><span class="p">;</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">contentTypes</span> <span class="o">=</span> <span class="p">[];</span>
-      <span class="nx">options</span><span class="p">[</span><span class="nx">contentType</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
 
-      <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">contentTypes</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">contentTypes</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-        <span class="nx">type</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;/graveyard/&#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">;</span>
-        <span class="nx">type</span><span class="p">.</span><span class="nx">name</span> <span class="o">+=</span> <span class="s1">&#39;s&#39;</span><span class="p">;</span>
-        <span class="nx">options</span><span class="p">.</span><span class="nx">contentTypes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
-      <span class="p">}</span>
-      <span class="nx">options</span><span class="p">.</span><span class="nx">contentTypes</span><span class="p">[</span><span class="nx">options</span><span class="p">.</span><span class="nx">contentTypes</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="nx">last</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-      
-      <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;graveyard&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-    <span class="p">});</span>
-<span class="p">};</span></div></div></div></div></body></html>
+  <span class="hljs-keyword">if</span> (!options.isMod) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">403</span>,
+      statusMessage: <span class="hljs-string">'This page is only accessible by moderators'</span>,
+    });
+  }
+
+  Remove.find({
+    _id: removedItemId,
+  }, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr, aRemovedItemData)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr || !aRemovedItemData) { <span class="hljs-keyword">return</span> aNext(); }
+
+    aRes.json(aRemovedItemData);
+  });
+};
+
+exports.removedItemListPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};
+  <span class="hljs-keyword">var</span> tasks = [];</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  <span class="hljs-keyword">if</span> (!options.isMod) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">403</span>,
+      statusMessage: <span class="hljs-string">'This page is only accessible by moderators'</span>,
+    });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, <span class="hljs-string">'Graveyard'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Order dir</p></div></div><div class="code"><div class="wrapper">  orderDir(aReq, options, <span class="hljs-string">'model'</span>, <span class="hljs-string">'asc'</span>);
+  orderDir(aReq, options, <span class="hljs-string">'removerName'</span>, <span class="hljs-string">'asc'</span>);
+  orderDir(aReq, options, <span class="hljs-string">'removed'</span>, <span class="hljs-string">'desc'</span>);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>removedItemListQuery</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> removedItemListQuery = Remove.find();</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>removedItemListQuery: Defaults</p></div></div><div class="code"><div class="wrapper">  modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, aReq);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>removedItemListQuery: Pagination</p></div></div><div class="code"><div class="wrapper">  <span class="hljs-keyword">var</span> pagination = options.pagination; <span class="hljs-comment">// is set in modelQuery.apply___ListQueryDefaults</span>
+
+  <span class="hljs-comment">//--- Tasks</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">  tasks.push(pagination.getCountTask(removedItemListQuery));</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>removedItemListQuery</p></div></div><div class="code"><div class="wrapper">  tasks.push(execQueryTask(removedItemListQuery, options, <span class="hljs-string">'removedItemList'</span>));
+
+  <span class="hljs-comment">//---</span>
+  async.parallel(tasks, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aErr)</span> </span>{
+    <span class="hljs-keyword">if</span> (aErr) <span class="hljs-keyword">return</span> aNext();
+
+    <span class="hljs-comment">//--- PreRender</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>removedItemList</p></div></div><div class="code"><div class="wrapper">    options.removedItemList = _.map(options.removedItemList, modelParser.parseRemovedItem);</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Pagination</p></div></div><div class="code"><div class="wrapper">    options.paginationRendered = pagination.renderDefault(aReq);
+
+    <span class="hljs-comment">//---</span>
+    aRes.render(<span class="hljs-string">'pages/removedItemListPage.html'</span>, options);
+  });
+};
+
+exports.modPage = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(aReq, aRes, aNext)</span> </span>{
+  <span class="hljs-keyword">var</span> authedUser = aReq.session.user;
+
+  <span class="hljs-keyword">var</span> options = {};</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Session</p></div></div><div class="code"><div class="wrapper">  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser &amp;&amp; authedUser.isMod;
+  options.isAdmin = authedUser &amp;&amp; authedUser.isAdmin;
+
+  <span class="hljs-keyword">if</span> (!options.isMod) {
+    <span class="hljs-keyword">return</span> statusCodePage(aReq, aRes, aNext, {
+      statusCode: <span class="hljs-number">403</span>,
+      statusMessage: <span class="hljs-string">'This page is only accessible by moderators'</span>,
+    });
+  }</div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>Page metadata</p></div></div><div class="code"><div class="wrapper">  pageMetadata(options, <span class="hljs-string">'Moderation'</span>);
+
+  <span class="hljs-comment">//---</span>
+  aRes.render(<span class="hljs-string">'pages/modPage'</span>, options);
+};</div></div></div></div></body></html>
