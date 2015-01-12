@@ -12,10 +12,10 @@
     {{#removedItemList}}
     <tr class="tr-link">
       <td class="td-fit">
-        <p>{{model}}</p>
+        <p>{{#item.hasUrl}}<a href="{{item.url}}" class="tr-link-a">{{/item.hasUrl}}{{model}}{{#item.hasUrl}}</a>{{/item.hasUrl}}</p>
       </td>
       <td class="td-fit">
-        <p><a href="{{{url}}}" class="tr-link-a">{{itemDescription}}</a></p>
+        <p><a href="{{{url}}}" class="tr-link-a">{{item.description}}</a></p>
       </td>
       <td>
         <p>{{reason}}</p>
