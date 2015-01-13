@@ -329,7 +329,8 @@ exports.view = function (aReq, aRes, aNext) {
     options.isOwner = authedUser && authedUser._id == script._authorId;
     modelParser.renderScript(script);
     script.installNameSlug = installNameSlug;
-    script.scriptPermalinkInstallPageUrl = 'http://' + aReq.get('host') + script.scriptInstallPageUrl;
+    script.scriptPermalinkInstallPageUrl = aReq.protocol + '://' + aReq.get('host') +
+      script.scriptInstallPageUrl;
 
     // Page metadata
     pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
