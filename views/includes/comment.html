@@ -23,6 +23,7 @@
           <div class="user-data">
             {{{contentRendered}}}
           </div>
+          {{^isUserCommentListPage}}
           <section class="post-menu-area">
             <nav class="post-controls text-right">
               <div class="pull-right" {{^authedUser}} data-toggle="tooltip" data-placement="left" title="You need to be logged in to post!" {{/authedUser}}>
@@ -32,6 +33,7 @@
               </div>
              </nav>
           </section>
+          {{/isUserCommentListPage}}
         </div>
       </div>
     </div>
