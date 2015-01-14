@@ -21,14 +21,16 @@
           </a>
           {{/categoryList}}
         </div>
-        <div class="text-center">
-          {{{paginationRendered}}}
-        </div>
-        <div class="panel panel-default col-sm-12 col-md-10 col-lg-9">
-          {{> includes/discussionList.html }}
-        </div>
-        <div class="text-center">
-          {{{paginationRendered}}}
+        <div class="panel-group col-sm-offset-0 col-md-offset-2 col-lg-offset-3">
+          <div class="text-center">
+            {{{paginationRendered}}}
+          </div>
+          <div class="panel panel-default col-sm-12 col-md-12 col-lg-12">
+            {{> includes/discussionList.html }}
+          </div>
+          <div class="text-center">
+            {{{paginationRendered}}}
+          </div>
         </div>
       </div>
     </div>
