@@ -31,6 +31,9 @@
             <div class="container-fluid comments">
               <div class="row">
                 <section class="topic-area list-group">
+                  <div class="text-center">
+                    {{{paginationRendered}}}
+                  </div>
                   {{#commentList}}
                   {{> includes/comment.html }}
                   {{/commentList}}
