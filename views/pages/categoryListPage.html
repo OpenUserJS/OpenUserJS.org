@@ -10,15 +10,19 @@
     <div class="row">
       <div class="col-sm-12">
         <h2 class="page-heading">
-          Discuss
+          Discussions
         </h2>
         <div class="list-group col-sm-12 col-md-2 col-lg-3">
+          <h3>Categories</h3>
           {{#categoryList}}
           <a href="{{{categoryPageUrl}}}" class="list-group-item">
             <h4 class="list-group-item-heading">{{name}}</h4>
             <p class="list-group-item-text">{{description}}</p>
           </a>
           {{/categoryList}}
+        </div>
+        <div class="text-center">
+          {{{paginationRendered}}}
         </div>
         <div class="panel panel-default col-sm-12 col-md-10 col-lg-9">
           {{> includes/discussionList.html }}
