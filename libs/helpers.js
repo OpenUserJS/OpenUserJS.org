@@ -96,8 +96,11 @@ exports.cleanFilename = function (aFilename, aDefaultName) {
   return cleanName || aDefaultName;
 };
 
-exports.limitRange = function (aMin, aX, aMax) {
-  return Math.max(Math.min(aX, aMax), aMin);
+exports.limitRange = function (aMin, aX, aMax, aDefault) {
+  var x = Math.max(Math.min(aX, aMax), aMin);
+
+  // ES5 strict similar check to ES6 Number.isNaN()
+  return (x !== x ? aDefault : x);
 };
 
 exports.limitMin = function (aMin, aX) {
