@@ -80,7 +80,9 @@ var newPagination = function (aCurrentPage, aItemsPerPage) {
 
   //
   pagination.currentPage = aCurrentPage ? helpers.limitMin(1, aCurrentPage) : 1;
-  pagination.itemsPerPage = aItemsPerPage ? helpers.limitRange(1, aItemsPerPage, maxItemsPerPage) : defaultItemsPerPage;
+  pagination.itemsPerPage = aItemsPerPage ?
+    helpers.limitRange(1, aItemsPerPage, maxItemsPerPage, defaultItemsPerPage) :
+    defaultItemsPerPage;
 
   return pagination;
 };
