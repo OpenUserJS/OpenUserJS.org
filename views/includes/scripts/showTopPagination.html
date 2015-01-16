@@ -1,0 +1,50 @@
+<script type="text/javascript">
+  (function () {
+    function isElementInViewport(aEl) {
+      if (aEl instanceof jQuery) {
+        aEl = aEl[0];
+      }
+
+      var rect = aEl.getBoundingClientRect();
+
+      return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+      );
+    }
+
+    var hasShownPagination = false;
+    function callback(aEl) {
+      if (!hasShownPagination) {
+        aEl.collapse('show');
+        hasShownPagination = true;
+      }
+    }
+
+    var lastScrollTop = 0;
+    var hasScrolledDown = false;
+
+    function fireIfElementVisible(aEl, aCallback) {
+      return function () {
+        var scrollTop = $(document).scrollTop();
+
+        if (scrollTop > lastScrollTop) {
+          hasScrolledDown = true;
+        } else {
+          if (isElementInViewport(aEl) && hasScrolledDown) {
+            aCallback(aEl);
+          }
+        }
+        lastScrollTop = scrollTop;
+      }
+    }
+
+    var handler = fireIfElementVisible($('.pagination:first').parent(), callback);
+
+    // jQuery
+    $(window).on('scroll', handler);
+
+  })();
+</script>

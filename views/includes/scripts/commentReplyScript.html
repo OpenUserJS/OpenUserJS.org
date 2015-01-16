@@ -1,72 +1,73 @@
 <script type="text/javascript">
-  // Show spacer div
-  $('#reply-control').on('shown.bs.collapse', function () {
-    $('#show-reply-form-when-visible').css({
-      height: '210px'
+  (function () {
+    // Show spacer div
+    $('#reply-control').on('show.bs.collapse', function () {
+      $('#show-reply-form-when-visible').css({
+        height: '210px'
+      });
     });
-  });
 
-  // Hide spacer div
-  $('#reply-control').on('hidden.bs.collapse', function () {
-    $('#show-reply-form-when-visible').css({
-      height: '0'
+    // Hide spacer div
+    $('#reply-control').on('hide.bs.collapse', function () {
+      $('#show-reply-form-when-visible').css({
+        height: '0'
+      });
     });
-  });
 
-  $('.btn-comment-reply').click(function (aE) {
-    $('#reply-control').collapse('show');
-
-    var $comment = $(aE.target).closest('.topic-post');
-    var $author = $comment.find('.topic-meta-data .names .username').first();
-    var $replyTextarea = $('#reply-control textarea[name="comment-content"]');
-
-    document.location.hash = $comment.attr('id');
-
-    var text = $replyTextarea.text();
-    if (!/^\s*$/.test(text)) {
-      text += '\n\n'; // Add linebreak if reply already started.
-    }
-    text += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
-    text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
-    text += '  \n';
-    $replyTextarea.text(text);
-  });
-
-  function isElementInViewport(aEl) {
-    // special bonus for those using jQuery
-    if (aEl instanceof jQuery) {
-      aEl = aEl[0];
-    }
-
-    var rect = aEl.getBoundingClientRect();
-
-    return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
-    );
-  }
-
-  var hasShownReplyForm = false;
-  function callback(aEl) {
-    if (!hasShownReplyForm) {
+    $('.btn-comment-reply').click(function (aE) {
       $('#reply-control').collapse('show');
-      hasShownReplyForm = true;
-    }
-  }
 
-  function fireIfElementVisible(aEl, aCallback) {
-    return function () {
-      if ( isElementInViewport(aEl) ) {
-        aCallback(aEl);
+      var $comment = $(aE.target).closest('.topic-post');
+      var $author = $comment.find('.topic-meta-data .names .username').first();
+      var $replyTextarea = $('#reply-control textarea[name="comment-content"]');
+
+      document.location.hash = $comment.attr('id');
+
+      var text = $replyTextarea.text();
+      if (!/^\s*$/.test(text)) {
+        text += '\n\n'; // Add linebreak if reply already started.
+      }
+      text += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
+      text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
+      text += '  \n';
+      $replyTextarea.text(text);
+    });
+
+    function isElementInViewport(aEl) {
+      if (aEl instanceof jQuery) {
+        aEl = aEl[0];
+      }
+
+      var rect = aEl.getBoundingClientRect();
+
+      return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+      );
+    }
+
+    var hasShownReplyForm = false;
+    function callback(aEl) {
+      if (!hasShownReplyForm) {
+        $('#reply-control').collapse('show');
+        hasShownReplyForm = true;
       }
     }
-  }
 
-  var handler = fireIfElementVisible ($('#show-reply-form-when-visible'), callback);
+    function fireIfElementVisible(aEl, aCallback) {
+      return function () {
+        if (isElementInViewport(aEl)) {
+          aCallback(aEl);
+        }
+      }
+    }
 
-  // jQuery
-  $(window).on('DOMContentLoaded load resize scroll', handler);
+    var handler = fireIfElementVisible($('#show-reply-form-when-visible'), callback);
 
+    // jQuery
+    $(window).on('DOMContentLoaded load resize scroll', handler);
+
+  })();
 </script>

@@ -22,7 +22,7 @@
           {{/categoryList}}
         </div>
         <div class="panel-group col-sm-offset-0 col-md-offset-2 col-lg-offset-3">
-          <div class="text-center">
+          <div class="text-center collapse">
             {{{paginationRendered}}}
           </div>
           <div class="panel panel-default col-sm-12 col-md-12 col-lg-12">
@@ -36,6 +36,7 @@
     </div>
   </div>
   {{> includes/footer.html }}
+  {{> includes/scripts/showTopPagination.html }}
   {{> includes/scripts/tableTrLinkScript.html }}
 </body>
 </html>

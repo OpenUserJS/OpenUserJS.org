@@ -39,7 +39,7 @@
           <div class="container-fluid comments">
             <div class="row">
               <section class="topic-area list-group">
-                <div class="text-center">
+                <div class="text-center collapse">
                   {{{paginationRendered}}}
                 </div>
                 {{#commentList}}
@@ -62,6 +62,7 @@
   <div id="show-reply-form-when-visible"></div>
   {{> includes/commentForm.html }}
   {{> includes/footer.html }}
+  {{> includes/scripts/showTopPagination.html }}
   {{> includes/scripts/lazyIconScript.html }}
   {{#authedUser}}
   {{> includes/scripts/markdownEditor.html }}
