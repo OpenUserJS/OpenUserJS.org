@@ -15,7 +15,7 @@
             <div class="container-fluid comments">
               <div class="row">
                 <section class="topic-area list-group">
-                  <div class="text-center">
+                  <div class="text-center collapse">
                     {{{paginationRendered}}}
                   </div>
                   {{#commentList}}
@@ -51,5 +51,6 @@
     </div>
   </div>
   {{> includes/footer.html }}
+  {{> includes/scripts/showTopPagination.html }}
 </body>
 </html>

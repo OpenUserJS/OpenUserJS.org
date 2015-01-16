@@ -29,7 +29,7 @@
           The script author requests that you use their preferred primary support method when filing an issue. Please consider using that for regular issues.
         </div>
         {{/script.hasSupport}}
-        <div class="text-center">
+        <div class="text-center collapse">
           {{{paginationRendered}}}
         </div>
         <div class="panel panel-default">
@@ -54,6 +54,7 @@
   </div>
   {{> includes/footer.html }}
   {{> includes/scripts/tableTrLinkScript.html }}
+  {{> includes/scripts/showTopPagination.html }}
   {{> includes/scripts/lazyIconScript.html }}
 </body>
 </html>

@@ -12,7 +12,7 @@
         <h2 class="page-heading">
           {{pageHeading}}
         </h2>
-        <div class="text-center">
+        <div class="text-center collapse">
           {{{paginationRendered}}}
         </div>
         <div class="panel panel-default">
@@ -30,6 +30,7 @@
     </div>
   </div>
   {{> includes/footer.html }}
+  {{> includes/scripts/showTopPagination.html }}
   {{> includes/scripts/tableTrLinkScript.html }}
   {{> includes/scripts/lazyIconScript.html }}
 </body>
