@@ -22,21 +22,27 @@
           {{/categoryList}}
         </div>
         <div class="panel-group col-sm-offset-0 col-md-offset-2 col-lg-offset-3">
+          {{#paginationRendered}}
           <div class="text-center collapse">
             {{{paginationRendered}}}
           </div>
+          {{/paginationRendered}}
           <div class="panel panel-default col-sm-12 col-md-12 col-lg-12">
             {{> includes/discussionList.html }}
           </div>
+          {{#paginationRendered}}
           <div class="text-center">
             {{{paginationRendered}}}
           </div>
+          {{/paginationRendered}}
         </div>
       </div>
     </div>
   </div>
   {{> includes/footer.html }}
-  {{> includes/scripts/showTopPagination.html }}
+  {{#paginationRendered}}
+    {{> includes/scripts/showTopPagination.html }}
+  {{/paginationRendered}}
   {{> includes/scripts/tableTrLinkScript.html }}
 </body>
 </html>

@@ -11,9 +11,11 @@
     <div class="row">
       <div class="col-md-8">
         <h2><a href="{{{userGitHubRepoListPageUrl}}}" class="script-author">{{githubUser.login}}</a></h2>
+        {{#paginationRendered}}
         <div class="text-center collapse">
           {{{paginationRendered}}}
         </div>
+        {{/paginationRendered}}
         <div class="list-group">
           {{#githubRepoList}}
           <a href="{{{userGitHubRepoPageUrl}}}" class="list-group-item">
@@ -21,15 +23,19 @@
           </a>
           {{/githubRepoList}}
         </div>
+        {{#paginationRendered}}
         <div class="text-center">
           {{{paginationRendered}}}
         </div>
+        {{/paginationRendered}}
       </div>
       <div class="col-md-4">
       </div>
     </div>
   </div>
   {{> includes/footer.html }}
-  {{> includes/scripts/showTopPagination.html }}
+  {{#paginationRendered}}
+    {{> includes/scripts/showTopPagination.html }}
+  {{/paginationRendered}}
 </body>
 </html>

@@ -21,6 +21,11 @@ var paginateTemplate = function (aOpts) {
   var distVisible = aOpts.distVisible || 4;
   var firstVisible = aOpts.firstVisible || true;
   var lastVisible = aOpts.firstVisible || true;
+  var soleVisible = aOpts.soleVisible || false;
+
+  if (!soleVisible && lastPage === 1) {
+    return null;
+  }
 
   var linkedPages = [];
 
@@ -32,6 +37,10 @@ var paginateTemplate = function (aOpts) {
 
   if (lastVisible && linkedPages.length > 0 && linkedPages[linkedPages.length - 1] !== lastPage)
     linkedPages.push(lastPage);
+
+  if (linkedPages.length === 0) {
+    return null;
+  }
 
   var html = '';
   html += '<ul class="pagination">';

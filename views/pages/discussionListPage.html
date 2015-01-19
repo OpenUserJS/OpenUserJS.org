@@ -18,20 +18,26 @@
             <i class="fa fa-plus"></i> Create Topic
           </a>
         </div>
+        {{#paginationRendered}}
         <div class="text-center collapse">
           {{{paginationRendered}}}
         </div>
+        {{/paginationRendered}}
         <div class="panel panel-default">
           {{> includes/discussionList.html }}
         </div>
+        {{#paginationRendered}}
         <div class="text-center">
           {{{paginationRendered}}}
         </div>
+        {{/paginationRendered}}
       </div>
     </div>
   </div>
   {{> includes/footer.html }}
-  {{> includes/scripts/showTopPagination.html }}
+  {{#paginationRendered}}
+    {{> includes/scripts/showTopPagination.html }}
+  {{/paginationRendered}}
   {{> includes/scripts/tableTrLinkScript.html }}
 </body>
 </html>
