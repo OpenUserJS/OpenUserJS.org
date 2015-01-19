@@ -12,15 +12,19 @@
         <div class="row">
           <div class="col-xs-12">
             {{> includes/userPageHeader.html }}
+            {{#paginationRendered}}
             <div class="text-center collapse">
               {{{paginationRendered}}}
             </div>
+            {{/paginationRendered}}
             <div class="panel panel-default">
               {{> includes/scriptList.html }}
             </div>
+            {{#paginationRendered}}
             <div class="text-center">
               {{{paginationRendered}}}
             </div>
+            {{/paginationRendered}}
           </div>
         </div>
       </div>
@@ -31,7 +35,9 @@
     </div>
   </div>
   {{> includes/footer.html }}
-  {{> includes/scripts/showTopPagination.html }}
+  {{#paginationRendered}}
+    {{> includes/scripts/showTopPagination.html }}
+  {{/paginationRendered}}
   {{> includes/scripts/tableTrLinkScript.html }}
   {{> includes/scripts/lazyIconScript.html }}
 </body>

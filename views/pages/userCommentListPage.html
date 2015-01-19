@@ -15,9 +15,11 @@
             <div class="container-fluid comments">
               <div class="row">
                 <section class="topic-area list-group">
+                  {{#paginationRendered}}
                   <div class="text-center collapse">
                     {{{paginationRendered}}}
                   </div>
+                  {{/paginationRendered}}
                   {{#commentList}}
                   <div class="topic-title row container-fluid">
                     <ol class="breadcrumb pull-left">
@@ -36,9 +38,11 @@
                     </div>
                   </div>
                   {{/commentList}}
+                  {{#paginationRendered}}
                   <div class="text-center">
                     {{{paginationRendered}}}
                   </div>
+                  {{/paginationRendered}}
                 </section>
               </div>
             </div>
@@ -51,6 +55,8 @@
     </div>
   </div>
   {{> includes/footer.html }}
-  {{> includes/scripts/showTopPagination.html }}
+  {{#paginationRendered}}
+    {{> includes/scripts/showTopPagination.html }}
+  {{/paginationRendered}}
 </body>
 </html>

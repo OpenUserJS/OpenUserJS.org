@@ -3,7 +3,7 @@
     // Show spacer div
     $('#reply-control').on('show.bs.collapse', function () {
       $('#show-reply-form-when-visible').css({
-        height: '210px'
+        height: '{{#paginationRendered}}210{{/paginationRendered}}{{^paginationRendered}}268{{/paginationRendered}}px'
       });
     });
 
