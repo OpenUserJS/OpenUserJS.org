@@ -6,6 +6,8 @@ var isDev = require('./libs/debug').isDev;
 var isDbg = require('./libs/debug').isDbg;
 
 //
+var path = require('path');
+
 var express = require('express');
 var methodOverride = require('method-override');
 var morgan = require('morgan');
@@ -18,6 +20,8 @@ var minify = null;
 try {
   minify = require('express-minify');
 } catch (e) {}
+
+var lessMiddleware = require('less-middleware');
 
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
@@ -100,6 +104,14 @@ app.set('views', __dirname + '/views');
 if (minify && !isDbg) {
   app.use(minify());
 }
+
+app.use(lessMiddleware(__dirname + '/public', {
+  parser: {
+    paths: [
+      path.join(__dirname, 'node_modules/bootstrap/less')
+    ]
+  }
+}));
 
 // Routes
 require('./routes')(app);

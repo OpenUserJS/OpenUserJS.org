@@ -1,0 +1,162 @@
+// Custom 3.1.1
+// Bootswatch
+// -----------------------------------------------------
+
+// c53b597
+.label-info a {
+  color: #fff;
+  text-decoration: none;
+}
+// /c53b597
+
+// ce08ea6
+/*
+ * Homepage: http://www.google.com/fonts/specimen/Squada+One
+ * License: SIL Open Font License, 1.1
+ * From: @import url("https://fonts.googleapis.com/css?family=Squada+One");
+ */
+@font-face {
+  font-family: 'Squada One';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Squada One'), local('SquadaOne-Regular'), url(../../fonts/squadaone.woff) format('woff');
+}
+// /ce08ea6
+
+// 113f426
+.breadcrumb {
+  margin-bottom: 10px;
+}
+
+.pagination {
+  margin: 10px 0;
+}
+// /113f426
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+// Navbar =====================================================================
+
+.navbar {
+  border-width: 0;
+
+  // Adjust for using FontAwesome .fa.fa-bars
+  .navbar-toggle {
+    padding: 6px 10px;
+  }
+
+  &.navbar-default {
+    .navbar-toggle {
+      .fa.fa-bars {
+        color: lighten(@navbar-default-bg, 20%);
+      }
+
+      &:hover .fa.fa-bars,
+      &:focus .fa.fa-bars {
+        color: lighten(@navbar-default-bg, 25%);
+      }
+    }
+  }
+
+  &.navbar-inverse {
+    .navbar-toggle {
+      .fa.fa-bars {
+        color: lighten(@navbar-inverse-bg, 20%);
+      }
+
+      &:hover .fa.fa-bars,
+      &:focus .fa.fa-bars {
+        color: lighten(@navbar-inverse-bg, 25%);
+      }
+    }
+  }
+
+
+  &-default {
+
+    .badge {
+      background-color: #fff;
+      color: @navbar-default-bg;
+    }
+  }
+
+  &-inverse {
+
+    .badge {
+      background-color: #fff;
+      color: @navbar-inverse-bg;
+    }
+  }
+
+  &-brand {
+    padding: 10px;
+    font-family: @headings-font-family;
+    line-height: 30px;
+    font-size: 28px;
+  }
+}
+
+// Buttons ====================================================================
+
+// Typography =================================================================
+
+.btn,
+.label {
+  font-family: @font-family-sans-serif;
+}
+
+// Tables =====================================================================
+
+table {
+  // table-layout: fixed;
+  width: 100%;
+
+  td {
+    word-break: break-word;
+  }
+}
+
+
+// Forms ======================================================================
+
+// Navs =======================================================================
+
+// Indicators =================================================================
+
+// Progress bars ==============================================================
+
+// Containers =================================================================
+
+// Grid =====================================================================
+
+.no-gutter-right {
+  margin-right: -floor((@grid-gutter-width / 2));
+}
+.no-gutter-left {
+  margin-left: -floor((@grid-gutter-width / 2));
+}
+
+// Panels =====================================================================
+
+.panel-transparent {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+// Labels =====================================================================
+
+.label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.label-default {
+  color: @gray-darker;
+}
+
+.label-inverse {
+  background-color: @gray-dark;
+}
