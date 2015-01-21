@@ -83,7 +83,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     // Send the script
     aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-    aRes._no_minify = true;
+
+    // Disable *express-minify* for this response
+    aRes._skip = true;
+
     aStream.pipe(aRes);
 
     // Don't count installs on raw source route
@@ -112,7 +115,10 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       if (!aScript) { return aNext(); }
 
       aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-      aRes._no_minify = true;
+
+      // Disable *express-minify* for this response
+      aRes._skip = true;
+
       meta = aScript.meta; // NOTE: Watchpoint
 
       aRes.write('// ==UserScript==\n');
