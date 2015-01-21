@@ -45,6 +45,7 @@ Repository | Reference | Recent Version
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
+[less-middleware][less-middlewareGHUrl] | [Documentation][less-middlewareDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
@@ -97,13 +98,13 @@ Repository | Reference | Recent Version | Referenced
 [nodeDOCUrl]: http://nodejs.org/documentation/
 [nodeVersionImage]: http://img.shields.io/node/latest-version.svg
 
-[npmNPMUrl]: https://www.npmjs.org/package/npm
+[npmNPMUrl]: https://www.npmjs.com/package/npm
 [npmNPMVersionImage]: http://img.shields.io/npm/v/npm.svg
 [npmGHReleasesUrl]: https://github.com/npm/npm/releases
 [npmGHUrl]: https://github.com/npm/npm/
 [npmDOCUrl]: https://github.com/npm/npm/blob/master/README.md
 
-[jitsuNPMUrl]: https://www.npmjs.org/package/jitsu
+[jitsuNPMUrl]: https://www.npmjs.com/package/jitsu
 [jitsuNPMVersionImage]: http://img.shields.io/npm/v/jitsu.svg
 [jitsuGHReleasesUrl]: https://github.com/nodejitsu/jitsu/releases
 [jitsuGHUrl]: https://github.com/nodejitsu/jitsu
@@ -124,58 +125,58 @@ Repository | Reference | Recent Version | Referenced
 
 [asyncGHUrl]: https://github.com/caolan/async
 [asyncDOCUrl]: https://github.com/caolan/async/blob/master/README.md
-[asyncNPMUrl]: https://npmjs.org/package/async
+[asyncNPMUrl]: https://www.npmjs.com/package/async
 [asyncNPMVersionImage]: https://img.shields.io/npm/v/async.svg?style=flat
 
 [aws-sdkGHUrl]: https://github.com/aws/aws-sdk-js
 [aws-sdkDOCUrl]: https://github.com/aws/aws-sdk-js/blob/master/README.md
-[aws-sdkNPMUrl]: https://npmjs.org/package/aws-sdk
+[aws-sdkNPMUrl]: https://www.npmjs.com/package/aws-sdk
 [aws-sdkNPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
 
 [body-parserGHUrl]: https://github.com/expressjs/body-parser
 [body-parserDOCUrl]: https://github.com/expressjs/body-parser/blob/master/README.md
-[body-parserNPMUrl]: https://npmjs.org/package/body-parser
+[body-parserNPMUrl]: https://www.npmjs.com/package/body-parser
 [body-parserNPMVersionImage]: https://img.shields.io/npm/v/body-parser.svg?style=flat
 
 [bootstrapUrl]: http://getbootstrap.com/
 [bootstrapGHUrl]: https://github.com/twbs/bootstrap
 [bootstrapDOCUrl]: http://getbootstrap.com/components/
-[bootstrapNPMUrl]: https://www.npmjs.org/package/bootstrap
+[bootstrapNPMUrl]: https://www.npmjs.com/package/bootstrap
 [bootstrapNPMVersionImage]: https://img.shields.io/npm/v/bootstrap.svg?style=flat
 
 [bootstrap-markdownGHUrl]: https://github.com/toopay/bootstrap-markdown
 [bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
-[bootstrap-markdownNPMUrl]: https://www.npmjs.org/package/bootstrap-markdown
+[bootstrap-markdownNPMUrl]: https://www.npmjs.com/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
 
 [compressionGHUrl]: https://github.com/expressjs/compression
 [compressionDOCUrl]: https://github.com/expressjs/compression/blob/master/README.md
-[compressionNPMUrl]: https://npmjs.org/package/compression
+[compressionNPMUrl]: https://www.npmjs.com/package/compression
 [compressionNPMVersionImage]: https://img.shields.io/npm/v/compression.svg?style=flat
 
 [connect-mongoGHUrl]: https://github.com/kcbanner/connect-mongo
 [connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/Readme.md
-[connect-mongoNPMUrl]: https://npmjs.org/package/connect-mongo
+[connect-mongoNPMUrl]: https://www.npmjs.com/package/connect-mongo
 [connect-mongoNPMVersionImage]: https://img.shields.io/npm/v/connect-mongo.svg?style=flat
 
 [cookie-parserGHUrl]: https://github.com/expressjs/cookie-parser
 [cookie-parserDOCUrl]: https://github.com/expressjs/cookie-parser/blob/master/README.md
-[cookie-parserNPMUrl]: https://npmjs.org/package/cookie-parser
+[cookie-parserNPMUrl]: https://www.npmjs.com/package/cookie-parser
 [cookie-parserNPMVersionImage]: https://img.shields.io/npm/v/cookie-parser.svg?style=flat
 
 [expressGHUrl]: https://github.com/strongloop/express
 [expressDOCUrl]: http://expressjs.com/
-[expressNPMUrl]: https://www.npmjs.org/package/express
+[expressNPMUrl]: https://www.npmjs.com/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
 
 [express-minifyGHUrl]: https://github.com/breeswish/express-minify
 [express-minifyDOCUrl]: https://github.com/breeswish/express-minify/blob/master/README.md
-[express-minifyNPMUrl]: https://www.npmjs.org/package/express-minify
+[express-minifyNPMUrl]: https://www.npmjs.com/package/express-minify
 [express-minifyNPMVersionImage]: https://img.shields.io/npm/v/express-minify.svg?style=flat
 
 [express-sessionGHUrl]: https://github.com/expressjs/session
 [express-sessionDOCUrl]: https://github.com/expressjs/session/blob/master/README.md
-[express-sessionNPMUrl]: https://npmjs.org/package/express-session
+[express-sessionNPMUrl]: https://www.npmjs.com/package/express-session
 [express-sessionNPMVersionImage]: https://img.shields.io/npm/v/express-session.svg?style=flat
 
 [fakes3GHUrl]: https://github.com/jubos/fake-s3
@@ -185,58 +186,63 @@ Repository | Reference | Recent Version | Referenced
 
 [font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
 [font-awesomeDOCUrl]: http://fontawesome.io/
-[font-awesomeNPMUrl]: https://npmjs.org/package/font-awesome
+[font-awesomeNPMUrl]: https://www.npmjs.com/package/font-awesome
 [font-awesomeNPMVersionImage]: https://img.shields.io/npm/v/font-awesome.svg?style=flat
 
 [formidableGHUrl]: https://github.com/felixge/node-formidable
 [formidableDOCUrl]: https://github.com/felixge/node-formidable/blob/master/Readme.md
-[formidableNPMUrl]: https://npmjs.org/package/formidable
+[formidableNPMUrl]: https://www.npmjs.com/package/formidable
 [formidableNPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
 
 [githubGHUrl]: https://github.com/mikedeboer/node-github
 [githubDOCUrl]: https://github.com/mikedeboer/node-github/blob/master/README.md
-[githubNPMUrl]: https://npmjs.org/package/github
+[githubNPMUrl]: https://www.npmjs.com/package/github
 [githubNPMVersionImage]: https://img.shields.io/npm/v/github.svg?style=flat
 
 [highlight.jsGHUrl]: https://github.com/isagalaev/highlight.js
 [highlight.jsDOCUrl]: https://highlightjs.org/
-[highlight.jsNPMUrl]: https://npmjs.org/package/highlight.js
+[highlight.jsNPMUrl]: https://www.npmjs.com/package/highlight.js
 [highlight.jsNPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
 
-[jQueryNPMUrl]: https://www.npmjs.org/package/jquery
+[jQueryNPMUrl]: https://www.npmjs.com/package/jquery
 [jQueryNPMVersionImage]: https://img.shields.io/npm/v/jquery.svg?style=flat
 [jQueryGHUrl]: https://github.com/jquery/jquery
 [jQueryUrl]: http://jquery.com/
 [jQueryDOCUrl]: http://api.jquery.com/
 
+[less-middlewareGHUrl]: https://github.com/emberfeather/less.js-middleware
+[less-middlewareDOCUrl]: https://github.com/emberfeather/less.js-middleware/blob/master/readme.md
+[less-middlewareNPMUrl]: https://www.npmjs.com/package/less-middleware
+[less-middlewareNPMVersionImage]: https://img.shields.io/npm/v/less-middleware.svg?style=flat
+
 [markedGHUrl]: https://github.com/chjj/marked
 [markedDOCUrl]: https://github.com/chjj/marked/blob/master/README.md
-[markedNPMUrl]: https://npmjs.org/package/marked
+[markedNPMUrl]: https://www.npmjs.com/package/marked
 [markedNPMVersionImage]: https://img.shields.io/npm/v/marked.svg?style=flat
 
 [method-overrideGHUrl]: https://github.com/expressjs/method-override
 [method-overrideDOCUrl]: https://github.com/expressjs/method-override/blob/master/README.md
-[method-overrideNPMUrl]: https://www.npmjs.org/package/method-override
+[method-overrideNPMUrl]: https://www.npmjs.com/package/method-override
 [method-overrideNPMVersionImage]: https://img.shields.io/npm/v/method-override.svg?style=flat
 
 [momentGHUrl]: https://github.com/moment/moment
 [momentDOCUrl]: http://momentjs.com/docs/
-[momentNPMUrl]: https://npmjs.org/package/moment
+[momentNPMUrl]: https://www.npmjs.com/package/moment
 [momentNPMVersionImage]: https://img.shields.io/npm/v/moment.svg?style=flat
 
 [mongooseGHUrl]: https://github.com/LearnBoost/mongoose
 [mongooseDOCUrl]: http://mongoosejs.com
-[mongooseNPMUrl]: https://npmjs.org/package/mongoose
+[mongooseNPMUrl]: https://www.npmjs.com/package/mongoose
 [mongooseNPMVersionImage]: https://img.shields.io/npm/v/mongoose.svg?style=flat
 
 [morganGHUrl]: https://github.com/expressjs/morgan
 [morganDOCUrl]: https://github.com/expressjs/morgan/blob/master/README.md
-[morganNPMUrl]: https://npmjs.org/package/morgan
+[morganNPMUrl]: https://www.npmjs.com/package/morgan
 [morganNPMVersionImage]: https://img.shields.io/npm/v/morgan.svg?style=flat
 
 [mu2GHUrl]: https://github.com/raycmorgan/Mu
 [mu2DOCUrl]: https://github.com/raycmorgan/Mu/blob/master/README.md
-[mu2NPMUrl]: https://www.npmjs.org/package/mu2
+[mu2NPMUrl]: https://www.npmjs.com/package/mu2
 [mu2NPMVersionImage]: https://img.shields.io/npm/v/mu2.svg?style=flat
 
 [OcticonsUrl]: https://octicons.github.com/
@@ -246,129 +252,129 @@ Repository | Reference | Recent Version | Referenced
 
 [passportGHUrl]: https://github.com/jaredhanson/passport
 [passportDOCUrl]: http://passportjs.org/
-[passportNPMUrl]: https://npmjs.org/package/passport
+[passportNPMUrl]: https://www.npmjs.com/package/passport
 [passportNPMVersionImage]: https://img.shields.io/npm/v/passport.svg?style=flat
 
 [passport-amazonGHUrl]: https://github.com/jaredhanson/passport-amazon
 [passport-amazonDOCUrl]: https://github.com/jaredhanson/passport-amazon/blob/master/README.md
-[passport-amazonNPMUrl]: https://npmjs.org/package/passport-amazon
+[passport-amazonNPMUrl]: https://www.npmjs.com/package/passport-amazon
 [passport-amazonNPMVersionImage]: https://img.shields.io/npm/v/passport-amazon.svg?style=flat
 
 [passport-aolGHUrl]: http://github.com/jaredhanson/passport-aol
 [passport-aolDOCUrl]: https://github.com/jaredhanson/passport-aol/blob/master/README.md
-[passport-aolNPMUrl]: https://npmjs.org/package/passport-aol
+[passport-aolNPMUrl]: https://www.npmjs.com/package/passport-aol
 [passport-aolNPMVersionImage]: https://img.shields.io/npm/v/passport-aol.svg?style=flat
 
 [passport-facebookGHUrl]: https://github.com/jaredhanson/passport-facebook
 [passport-facebookDOCUrl]: https://github.com/jaredhanson/passport-facebook/blob/master/README.md
-[passport-facebookNPMUrl]: https://npmjs.org/package/passport-facebook
+[passport-facebookNPMUrl]: https://www.npmjs.com/package/passport-facebook
 [passport-facebookNPMVersionImage]: https://img.shields.io/npm/v/passport-facebook.svg?style=flat
 
 [passport-flickrGHUrl]: https://github.com/johnnyhalife/passport-flickr
 [passport-flickrDOCUrl]: https://github.com/johnnyhalife/passport-flickr/blob/master/README.md
-[passport-flickrNPMUrl]: https://npmjs.org/package/passport-flickr
+[passport-flickrNPMUrl]: https://www.npmjs.com/package/passport-flickr
 [passport-flickrNPMVersionImage]: https://img.shields.io/npm/v/passport-flickr.svg?style=flat
 
 [passport-foursquareGHUrl]: https://github.com/jaredhanson/passport-foursquare
 [passport-foursquareDOCUrl]: https://github.com/jaredhanson/passport-foursquare/blob/master/README.md
-[passport-foursquareNPMUrl]: https://npmjs.org/package/passport-foursquare
+[passport-foursquareNPMUrl]: https://www.npmjs.com/package/passport-foursquare
 [passport-foursquareNPMVersionImage]: https://img.shields.io/npm/v/passport-foursquare.svg?style=flat
 
 [passport-githubGHUrl]: https://github.com/jaredhanson/passport-github
 [passport-githubDOCUrl]: https://github.com/jaredhanson/passport-github/blob/master/README.md
-[passport-githubNPMUrl]: https://npmjs.org/package/passport-github
+[passport-githubNPMUrl]: https://www.npmjs.com/package/passport-github
 [passport-githubNPMVersionImage]: https://img.shields.io/npm/v/passport-github.svg?style=flat
 
 [passport-googleGHUrl]: https://github.com/jaredhanson/passport-google
 [passport-googleDOCUrl]: https://github.com/jaredhanson/passport-google/blob/master/README.md
-[passport-googleNPMUrl]: https://npmjs.org/package/passport-google
+[passport-googleNPMUrl]: https://www.npmjs.com/package/passport-google
 [passport-googleNPMVersionImage]: https://img.shields.io/npm/v/passport-google.svg?style=flat
 
 [passport-imgurGHUrl]: https://github.com/mindfreakthemon/passport-imgur
 [passport-imgurDOCUrl]: https://github.com/mindfreakthemon/passport-imgur/blob/master/README.md
-[passport-imgurNPMUrl]: https://npmjs.org/package/passport-imgur
+[passport-imgurNPMUrl]: https://www.npmjs.com/package/passport-imgur
 [passport-imgurNPMVersionImage]: https://img.shields.io/npm/v/passport-imgur.svg?style=flat
 
 [passport-instagramGHUrl]: https://github.com/jaredhanson/passport-instagram
 [passport-instagramDOCUrl]: https://github.com/jaredhanson/passport-instagram/blob/master/README.md
-[passport-instagramNPMUrl]: https://npmjs.org/package/passport-instagram
+[passport-instagramNPMUrl]: https://www.npmjs.com/package/passport-instagram
 [passport-instagramNPMVersionImage]: https://img.shields.io/npm/v/passport-instagram.svg?style=flat
 
 [passport-linkedinGHUrl]: https://github.com/jaredhanson/passport-linkedin
 [passport-linkedinDOCUrl]:  https://github.com/jaredhanson/passport-linkedin/blob/master/README.md
-[passport-linkedinNPMUrl]: https://npmjs.org/package/passport-linkedin
+[passport-linkedinNPMUrl]: https://www.npmjs.com/package/passport-linkedin
 [passport-linkedinNPMVersionImage]: https://img.shields.io/npm/v/passport-linkedin.svg?style=flat
 
 [passport-personaGHUrl]: https://github.com/jaredhanson/passport-persona
 [passport-personaDOCUrl]: https://github.com/jaredhanson/passport-persona/blob/master/README.md
-[passport-personaNPMUrl]: https://npmjs.org/package/passport-persona
+[passport-personaNPMUrl]: https://www.npmjs.com/package/passport-persona
 [passport-personaNPMVersionImage]: https://img.shields.io/npm/v/passport-persona.svg?style=flat
 
 [passport-redditGHUrl]: https://github.com/Slotos/passport-reddit
 [passport-redditDOCUrl]: https://github.com/Slotos/passport-reddit/blob/master/README.md
-[passport-redditNPMUrl]: https://npmjs.org/package/passport-reddit
+[passport-redditNPMUrl]: https://www.npmjs.com/package/passport-reddit
 [passport-redditNPMVersionImage]: https://img.shields.io/npm/v/passport-reddit.svg?style=flat
 
 [passport-steamGHUrl]: https://github.com/liamcurry/passport-steam
 [passport-steamDOCUrl]: https://github.com/liamcurry/passport-steam/blob/master/README.md
-[passport-steamNPMUrl]: https://npmjs.org/package/passport-steam
+[passport-steamNPMUrl]: https://www.npmjs.com/package/passport-steam
 [passport-steamNPMVersionImage]: https://img.shields.io/npm/v/passport-steam.svg?style=flat
 
 [passport-tumblrGHUrl]: https://github.com/jaredhanson/passport-tumblr
 [passport-tumblrDOCUrl]: https://github.com/jaredhanson/passport-tumblr/blob/master/README.md
-[passport-tumblrNPMUrl]: https://npmjs.org/package/passport-tumblr
+[passport-tumblrNPMUrl]: https://www.npmjs.com/package/passport-tumblr
 [passport-tumblrNPMVersionImage]: https://img.shields.io/npm/v/passport-tumblr.svg?style=flat
 
 [passport-twitterGHUrl]: https://github.com/jaredhanson/passport-twitter
 [passport-twitterDOCUrl]: https://github.com/jaredhanson/passport-twitter/blob/master/README.md
-[passport-twitterNPMUrl]: https://npmjs.org/package/passport-twitter
+[passport-twitterNPMUrl]: https://www.npmjs.com/package/passport-twitter
 [passport-twitterNPMVersionImage]: https://img.shields.io/npm/v/passport-twitter.svg?style=flat
 
 [passport-windowsliveGHUrl]: https://github.com/jaredhanson/passport-windowslive
 [passport-windowsliveDOCUrl]: https://github.com/jaredhanson/passport-windowslive/blob/master/README.md
-[passport-windowsliveNPMUrl]: https://npmjs.org/package/passport-windowslive
+[passport-windowsliveNPMUrl]: https://www.npmjs.com/package/passport-windowslive
 [passport-windowsliveNPMVersionImage]: https://img.shields.io/npm/v/passport-windowslive.svg?style=flat
 
 [passport-yahooGHUrl]: https://github.com/jaredhanson/passport-yahoo
 [passport-yahooDOCUrl]: https://github.com/jaredhanson/passport-yahoo/blob/master/README.md
-[passport-yahooNPMUrl]: https://npmjs.org/package/passport-yahoo
+[passport-yahooNPMUrl]: https://www.npmjs.com/package/passport-yahoo
 [passport-yahooNPMVersionImage]: https://img.shields.io/npm/v/passport-yahoo.svg?style=flat
 
 [requestGHUrl]: https://github.com/request/request
 [requestDOCUrl]: https://github.com/request/request/blob/master/README.md
-[requestNPMUrl]: https://npmjs.org/package/request
+[requestNPMUrl]: https://www.npmjs.com/package/request
 [requestNPMVersionImage]: https://img.shields.io/npm/v/request.svg?style=flat
 
 [sanitize-htmlGHUrl]: https://github.com/punkave/sanitize-html
 [sanitize-htmlDOCUrl]: https://github.com/punkave/sanitize-html/blob/master/README.md
-[sanitize-htmlNPMUrl]: https://npmjs.org/package/sanitize-html
+[sanitize-htmlNPMUrl]: https://www.npmjs.com/package/sanitize-html
 [sanitize-htmlNPMVersionImage]: https://img.shields.io/npm/v/sanitize-html.svg?style=flat
 
 [select2GHUrl]: https://github.com/ivaynberg/select2
 [select2DOCUrl]: http://ivaynberg.github.io/select2
-[select2NPMUrl]: https://www.npmjs.org/package/select2
+[select2NPMUrl]: https://www.npmjs.com/package/select2
 [select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
 
 [select2-bootstrap-cssGHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/select2-bootstrap.css
 [select2-bootstrap-cssDOCUrl]: https://github.com/t0m/select2-bootstrap-css/blob/bootstrap3/README.md
-[select2-bootstrap-cssNPMUrl]: https://www.npmjs.org/package/select2-bootstrap-css
+[select2-bootstrap-cssNPMUrl]: https://www.npmjs.com/package/select2-bootstrap-css
 [select2-bootstrap-cssNPMVersionImage]: https://img.shields.io/npm/v/select2-bootstrap-css.svg?style=flat
 [select2-bootstrap-cssGHHASHUrl]: https://github.com/t0m/select2-bootstrap-css/blob/fce5f9f984b0cc6c8483ce7225ad2639f3a4dae5/select2-bootstrap.css
 
 [serve-faviconGHUrl]: https://github.com/expressjs/serve-favicon
 [serve-faviconDOCUrl]: https://github.com/expressjs/serve-favicon/blob/master/README.md
-[serve-faviconNPMUrl]: https://npmjs.org/package/serve-favicon
+[serve-faviconNPMUrl]: https://www.npmjs.com/package/serve-favicon
 [serve-faviconNPMVersionImage]: https://img.shields.io/npm/v/serve-favicon.svg?style=flat
 
 [underscoreGHUrl]: https://github.com/jashkenas/underscore
 [underscoreDOCUrl]: http://underscorejs.org/
-[underscoreNPMUrl]: https://npmjs.org/package/underscore
+[underscoreNPMUrl]: https://www.npmjs.com/package/underscore
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
 
 
 [bootswatchGHUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/custom/bootstrap.css
 [bootswatchREPOUrl]: http://bootswatch.com
-[bootswatchNPMUrl]: https://www.npmjs.org/package/bootswatch
+[bootswatchNPMUrl]: https://www.npmjs.com/package/bootswatch
 [bootswatchNPMVersionImage]: https://img.shields.io/npm/v/bootswatch.svg?style=flat
 [bootswatchDOCUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/README.md
 [bootswatchBSUrl]: http://bootswatch.com/bower_components/bootstrap/dist/css/bootstrap.css
