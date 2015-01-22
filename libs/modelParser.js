@@ -247,7 +247,6 @@ var parseUser = function (aUserData) {
   user.userPageUrl = '/users/' + user.name;
   user.userCommentListPageUrl = user.userPageUrl + '/comments';
   user.userScriptListPageUrl = user.userPageUrl + '/scripts';
-  user.userManageGitHubPageUrl = user.userPageUrl + '/github';
   user.userGitHubRepoListPageUrl = user.userPageUrl + '/github/repos';
   user.userGitHubRepoPageUrl = user.userPageUrl + '/github/repo';
   user.userGitHubImportPageUrl = user.userPageUrl + '/github/import';
