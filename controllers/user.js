@@ -22,7 +22,6 @@ var categories = require('../controllers/discussion').categories;
 
 var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
-var RepoManager = require('../libs/repoManager');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var flagLib = require('../libs/flag');
@@ -1028,129 +1027,6 @@ var parseJavascriptBlob = function (aJavascriptBlob) {
     aJavascriptBlob.canUpload = !aJavascriptBlob.errors.length;
 
   return aJavascriptBlob;
-};
-
-// Sloppy code to let a user add scripts to their acount
-exports.userManageGitHubPage = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
-  //
-  var options = {};
-  var tasks = [];
-
-  // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
-
-  // Page metadata
-  pageMetadata(options, ['Manage', 'GitHub']);
-
-  //
-  tasks.push(function (aCallback) {
-    var githubUserName = aReq.query.user || authedUser.ghUsername;
-
-    async.waterfall([
-      // authedUser.ghUsername
-      function (aCallback) {
-        if (githubUserName || authedUser.ghUsername) {
-          aCallback(null);
-        } else {
-          async.waterfall([
-            function (aCallback) {
-              var githubUserId = authedUser.githubUserId();
-              github.user.getFrom({
-                user: encodeURIComponent(githubUserId)
-              }, aCallback);
-            },
-            function (aGithubUser, aCallback) {
-              options.githubUser = aGithubUser;
-              console.log(aGithubUser);
-              User.findOne({
-                _id: authedUser._id
-              }, aCallback);
-            },
-            function (aUserData, aCallback) {
-              console.log(aUserData);
-              aUserData.ghUsername = options.githubUser.login;
-              aUserData.save(aCallback);
-            },
-            function (aCallback) {
-              console.log(util.format('Updated User(%s).ghUsername', aUserData.name));
-              aCallback(null);
-            },
-          ], aCallback);
-        }
-      },
-      // Fetch repos and format for template.
-      function (aCallback) {
-        console.log(githubUserName);
-        var repoManager = RepoManager.getManager(githubUserName, authedUser);
-        repoManager.fetchRecentRepos(function () {
-          // convert the repos object to something mustache can use
-          options.repos = repoManager.makeRepoArray();
-
-          var repos = repoManager.repos;
-          aCallback(null, repos);
-        });
-      },
-      // Import repos.
-      function (aRepos, aCallback) {
-        var loadable = {};
-        var scriptname = null;
-
-        console.log(aReq.body);
-        _.each(aReq.body, function (aRepo, aReponame) {
-          // Load all scripts in the repo
-          if (typeof aRepo === 'string' && aReponame.substr(-4) === '_all') {
-            aReponame = aRepo;
-            aRepo = aRepos[aReponame];
-
-            if (aRepo) {
-              for (scriptname in aRepo) {
-                if (!loadable[aReponame]) { loadable[aReponame] = nil(); }
-                loadable[aReponame][scriptname] = aRepo[scriptname];
-              }
-            }
-          } else if (typeof aRepo === 'object') { // load individual scripts
-            for (scriptname in aRepo) {
-              if (aRepos[aReponame][scriptname]) {
-                if (!loadable[aReponame]) { loadable[aReponame] = nil(); }
-                loadable[aReponame][scriptname] = aRepos[aReponame][scriptname];
-              }
-            }
-          }
-        });
-
-        // Load the scripts onto the site
-        if (_.size(loadable) > 0) {
-          console.log('loadScripts');
-          var githubUserName = authedUser.ghUsername;
-          RepoManager.getManager(githubUserName, authedUser, loadable).loadScripts(function () {
-            console.log('preredirect');
-            aRes.redirect(authedUser.userScriptListPageUrl);
-            console.log('redirect');
-            aCallback(null);
-          });
-        } else {
-          aCallback(null);
-        }
-      },
-    ], aCallback);
-  });
-
-
-  //---
-  async.parallel(tasks, function (aErr) {
-    if (aErr) {
-      return statusCodePage(aReq, aRes, aNext, {
-        statusMessage: aErr
-      });
-    }
-
-    console.log('render');
-    aRes.render('pages/userManageGitHub', options);
-  });
 };
 
 exports.uploadScript = function (aReq, aRes, aNext) {
