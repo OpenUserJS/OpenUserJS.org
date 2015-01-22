@@ -144,8 +144,23 @@ function pageMetadata(aOptions, aTitle, aDescription, aKeywords) {
     aOptions.pageMetaDescription = aDescription;
   }
 
-  var pageMetaKeywords = ['userscript', 'userscripts', 'javascript', 'Greasemonkey', 'Scriptish',
-    'Tampermonkey', 'extension', 'browser'];
+  var pageMetaKeywords = [
+    'userscript',
+    'userscripts',
+    'user script',
+    'user scripts',
+    'user.js',
+    'repository',
+    'Greasemonkey',
+    'Greasemonkey Port',
+    'Scriptish',
+    'TamperMonkey',
+    'Violent monkey',
+    'JavaScript',
+    'add-ons',
+    'extensions',
+    'browser'
+  ];
   if (typeof (aKeywords) !== "undefined" && aKeywords !== null && _.isArray(aKeywords)) {
     pageMetaKeywords = _.union(pageMetaKeywords, aKeywords);
   }
