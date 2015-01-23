@@ -45,10 +45,12 @@ exports.auth = function (aReq, aRes, aNext) {
   var username = aReq.body.username || aReq.session.username;
 
   function auth() {
-    var authenticate = passport.authenticate(strategy);
+    var authenticate = passport.authenticate(strategy, { failureRedirect: '/register?stratfail' });
 
     // Just in case some dumbass tries a bad /auth/* url
-    if (!strategyInstances[strategy]) { return aNext(); }
+    if (!strategyInstances[strategy]) {
+      return aNext();
+    }
 
     authenticate(aReq, aRes);
   }
@@ -61,13 +63,17 @@ exports.auth = function (aReq, aRes, aNext) {
     return aNext();
   }
 
-  if (!username) { return aRes.redirect('/register?noname'); }
+  if (!username) {
+    return aRes.redirect('/register?noname');
+  }
   // Clean the username of leading and trailing whitespace,
   // and other stuff that is unsafe in a url
   username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
 
   // The username could be empty after the replacements
-  if (!username) { return aRes.redirect('/register?noname'); }
+  if (!username) {
+    return aRes.redirect('/register?noname');
+  }
 
   // Store the username in the session so we still have it when they
   // get back from authentication
@@ -113,10 +119,10 @@ exports.callback = function (aReq, aRes, aNext) {
   // The callback was called improperly
   if (!strategy || !username) { return aNext(); }
 
-  // Get the passport strategy instance so we can alter the _verfiy method
+  // Get the passport strategy instance so we can alter the _verify method
   strategyInstance = strategyInstances[strategy];
 
-  // Hijak the private verify method so we can fuck shit up freely
+  // Hijack the private verify method so we can fuck shit up freely
   // We use this library for things it was never intended to do
   if (openIdStrategies[strategy]) {
     strategyInstance._verify = function (aId, aDone) {
@@ -154,7 +160,7 @@ exports.callback = function (aReq, aRes, aNext) {
 
       addSession(aReq, aUser, function () {
         if (newstrategy) {
-          // Allow a user to link to another acount
+          // Allow a user to link to another account
           return aRes.redirect('/auth/' + newstrategy);
         } else {
           // Delete the username that was temporarily stored
