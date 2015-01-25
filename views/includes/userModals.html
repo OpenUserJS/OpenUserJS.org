@@ -1,3 +1,22 @@
+<div class="modal fade" id="flagUserModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Flag {{user.name}}</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to flag this user for inspection by a Moderator?</p>
+      </div>
+      <div class="modal-footer">
+        <form action="{{{flagUrl}}}" method="get">
+          <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
+          <button type="submit" class="btn btn-danger{{^canFlag}} disabled{{/canFlag}}"><i class="fa fa-fw fa-flag"></i> Flag</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {{#modTools}}
 <div class="modal fade" id="removeUserModal">
   <div class="modal-dialog">
