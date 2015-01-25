@@ -244,20 +244,20 @@ var getScriptPageTasks = function (aOptions) {
       return;
     }
 
-    removeLib.removeable(Script, script, authedUser,
-      function (aCanRemove, author) {
-        aOptions.canRemove = aCanRemove;
-        aOptions.flags = script.flags || 0;
-        aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
+    removeLib.removeable(Script, script, authedUser, function (aCanRemove, aAuthor) {
+      aOptions.canRemove = aCanRemove;
+      aOptions.flags = script.flags || 0;
+      aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
 
-        if (!aCanRemove) { return aCallback(); }
+      if (!aCanRemove) {
+        return aCallback();
+      }
 
-        flagLib.getThreshold(Script, script, author,
-          function (aThreshold) {
-            aOptions.threshold = aThreshold;
-            aCallback();
-          });
+      flagLib.getThreshold(Script, script, aAuthor, function (aThreshold) {
+        aOptions.threshold = aThreshold;
+        aCallback();
       });
+    });
   });
 
   return tasks;

@@ -72,7 +72,9 @@ var setupUserModerationUITask = function (aOptions) {
         aOptions.canRemove = aCanRemove;
         aOptions.flags = user.flags || 0;
 
-        if (!aCanRemove) { return aCallback(); }
+        if (!aCanRemove) {
+          return aCallback();
+        }
 
         flagLib.getThreshold(User, user, aAuthor, function (aThreshold) {
           aOptions.threshold = aThreshold;
