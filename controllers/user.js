@@ -50,6 +50,12 @@ var setupUserModerationUITask = function (aOptions) {
   var user = aOptions.user;
   var authedUser = aOptions.authedUser;
 
+  // Default to infinity
+  aOptions.threshold = '\u221E';
+
+  // Default to &ndash;
+  aOptions.flags = '\u2013';
+
   return function (aCallback) {
     var flagUrl = '/flag/users/' + user.name;
 
@@ -77,7 +83,7 @@ var setupUserModerationUITask = function (aOptions) {
         }
 
         flagLib.getThreshold(User, user, aAuthor, function (aThreshold) {
-          aOptions.threshold = aThreshold.toString();
+          aOptions.threshold = aThreshold || 0;
           aCallback();
         });
       });

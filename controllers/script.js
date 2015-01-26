@@ -52,6 +52,12 @@ var getScriptPageTasks = function (aOptions) {
   // Temporaries
   var htmlStub = null;
 
+  // Default to infinity
+  aOptions.threshold = '\u221E';
+
+  // Default to &ndash;
+  aOptions.flags = '\u2013';
+
   //--- Tasks
 
   // Show the number of open issues
