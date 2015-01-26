@@ -77,7 +77,7 @@ var setupUserModerationUITask = function (aOptions) {
         }
 
         flagLib.getThreshold(User, user, aAuthor, function (aThreshold) {
-          aOptions.threshold = aThreshold;
+          aOptions.threshold = aThreshold.toString();
           aCallback();
         });
       });
