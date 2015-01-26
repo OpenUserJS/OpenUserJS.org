@@ -254,7 +254,7 @@ var getScriptPageTasks = function (aOptions) {
       }
 
       flagLib.getThreshold(Script, script, aAuthor, function (aThreshold) {
-        aOptions.threshold = aThreshold;
+        aOptions.threshold = aThreshold.toString();
         aCallback();
       });
     });
