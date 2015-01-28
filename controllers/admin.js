@@ -372,7 +372,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
   postStrats = Object.keys(aReq.body).filter(function (aEl) {
     return /\[0\]$/.test(aEl);
   }).map(function (aPostStrat) {
-    var strat = aPostStrat.replace(/\[0\]/, '');
+    var strat = aPostStrat.replace(/\[0\]$/, '');
     return {
       name: strat,
       id: aReq.body[strat + '[0]'] || '',
