@@ -369,9 +369,15 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
 
   if (!userIsAdmin(aReq)) { return aNext(); }
 
-  postStrats = Object.keys(aReq.body).map(function (aPostStrat) {
-    var values = aReq.body[aPostStrat];
-    return { name: aPostStrat, id: values[0], key: values[1] };
+  postStrats = Object.keys(aReq.body).filter(function (aEl) {
+    return /\[0\]$/.test(aEl);
+  }).map(function (aPostStrat) {
+    var strat = aPostStrat.replace(/\[0\]/, '');
+    return {
+      name: strat,
+      id: aReq.body[strat + '[0]'] || '',
+      key: aReq.body[strat + '[1]'] || ''
+    };
   });
 
   Strategy.find({}, function (aErr, aStrats) {
@@ -380,6 +386,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
     aStrats.forEach(function (aStrat) {
       stored[aStrat.name] = aStrat;
     });
+
     async.each(postStrats, function (aPostStrat, aCallback) {
       var strategy = null;
       var name = aPostStrat.name;
