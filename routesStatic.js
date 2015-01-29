@@ -63,6 +63,7 @@ module.exports = function (aApp) {
     'fonts/fontawesome-webfont.svg': { maxage: day * 7 },
     'fonts/fontawesome-webfont.ttf': { maxage: day * 7 },
     'fonts/fontawesome-webfont.woff': { maxage: day * 7 },
+    'fonts/fontawesome-webfont.woff2': { maxage: day * 7 },
     'fonts/FontAwesome.otf': { maxage: day * 7 }
   });
 
