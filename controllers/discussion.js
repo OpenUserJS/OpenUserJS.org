@@ -362,7 +362,9 @@ function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aCallback) {
   var params = { sort: {} };
   params.sort.duplicateId = -1;
 
-  if (!urlTopic) { aCallback(null); }
+  if (!urlTopic) {
+    aCallback(null);
+  }
 
   Discussion.findOne({ path: path }, null, params, function (aErr, aDiscussion) {
     var newDiscussion = null;
@@ -414,8 +416,9 @@ exports.createTopic = function (aReq, aRes, aNext) {
   var content = aReq.body['comment-content'];
 
   var category = _.findWhere(categories, { slug: categorySlug });
-  if (!category)
+  if (!category) {
     return aNext();
+  }
 
   //
   var options = {};
@@ -428,7 +431,14 @@ exports.createTopic = function (aReq, aRes, aNext) {
   if (!category.canUserPostTopic(authedUser)) {
     return statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'You cannot post a topic to this category',
+      statusMessage: 'You cannot post a topic to this category'
+    });
+  }
+
+  if ((!topic || !topic.trim()) || (!content || !content.trim())) {
+    return statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'You cannot post an empty discussion topic to this category'
     });
   }
 
@@ -447,14 +457,25 @@ exports.createComment = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var content = aReq.body['comment-content'];
 
-  if (!authedUser) { return aNext(); }
+  if (!authedUser) {
+    return aNext();
+  }
 
-  findDiscussion(category, topic, function (discussion) {
-    if (!discussion) { return aNext(); }
+  findDiscussion(category, topic, function (aDiscussion) {
+    if (!aDiscussion) {
+      return aNext();
+    }
 
-    postComment(authedUser, discussion, content, false, function (err, discussion) {
-      aRes.redirect(encodeURI(discussion.path
-        + (discussion.duplicateId ? '_' + discussion.duplicateId : '')));
+    if (!content || !content.trim()) {
+      return statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403,
+        statusMessage: 'You cannot post an empty comment to this discussion'
+      });
+    }
+
+    postComment(authedUser, aDiscussion, content, false, function (aErr, aDiscussion) {
+      aRes.redirect(encodeURI(aDiscussion.path
+        + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
     });
   });
 };

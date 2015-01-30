@@ -19,6 +19,7 @@ var scriptStorage = require('./scriptStorage');
 var discussionLib = require('./discussion');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
 
@@ -284,6 +285,14 @@ exports.open = function (aReq, aRes, aNext) {
     options.category = category;
 
     if (topic && content) {
+      if (!topic.trim() || !content.trim()) {
+        return statusCodePage(aReq, aRes, aNext, {
+          statusCode: 403,
+          statusMessage: 'You cannot post an empty issue topic to this ' +
+            (type === 'libs' ? 'library' : 'script')
+        });
+      }
+
       // Issue Submission
       discussionLib.postTopic(authedUser, category.slug, topic, content, true,
         function (aDiscussion) {
@@ -315,12 +324,23 @@ exports.comment = function (aReq, aRes, aNext) {
 
   Script.findOne({ installName: scriptStorage.caseInsensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
-      var content = aReq.body['comment-content'];
+    var content = aReq.body['comment-content'];
 
-    if (aErr || !aScript) { return aNext(); }
+    if (aErr || !aScript) {
+      return aNext();
+    }
+
+    if (!content || !content.trim()) {
+      return statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403,
+        statusMessage: 'You cannot post an empty comment to this issue'
+      });
+    }
 
     discussionLib.findDiscussion(category, topic, function (aIssue) {
-      if (!aIssue) { return aNext(); }
+      if (!aIssue) {
+        return aNext();
+      }
 
       discussionLib.postComment(authedUser, aIssue, content, false,
         function (aErr, aDiscussion) {
