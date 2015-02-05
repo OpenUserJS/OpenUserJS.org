@@ -375,25 +375,27 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 
       // comment.discussion & comment.category & comment.script
       _.map(options.commentList, function (aComment) {
-        aComment.discussion = modelParser.parseDiscussion(aComment._discussionId);
+        if (aComment._discussionId) {
+          aComment.discussion = modelParser.parseDiscussion(aComment._discussionId);
 
-        var category = _.findWhere(categories, { slug: aComment.discussion.category });
-        if (!category) {
-          category = modelParser.parseCategoryUnknown(aComment.discussion.category);
-        }
-        aComment.category = modelParser.parseCategory(category);
+          var category = _.findWhere(categories, { slug: aComment.discussion.category });
+          if (!category) {
+            category = modelParser.parseCategoryUnknown(aComment.discussion.category);
+          }
+          aComment.category = modelParser.parseCategory(category);
 
-        if (aComment.discussion.issue) {
-          aComment.script = {
-            scriptPageUrl: aComment.category.categoryPageUrl.replace('/issues', ''),
-            name: category.name
-          };
-          category.name = 'Issues';
-        } else {
-          aComment.script = {
-            scriptPageUrl: '/forum',
-            name: 'Forum'
-          };
+          if (aComment.discussion.issue) {
+            aComment.script = {
+              scriptPageUrl: aComment.category.categoryPageUrl.replace('/issues', ''),
+              name: category.name
+            };
+            category.name = 'Issues';
+          } else {
+            aComment.script = {
+              scriptPageUrl: '/forum',
+              name: 'Forum'
+            };
+          }
         }
       });
 
