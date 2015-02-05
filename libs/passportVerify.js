@@ -16,9 +16,18 @@ var userRoles = require('../models/userRoles.json');
 exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
   var shasum = crypto.createHash('sha256');
   var digest = null;
+  var query = {};
+  var aIds = [];
 
-  // We only keep plaintext ids for GH since that's all we need
-  if (aStrategy === 'github') {
+  if (aId instanceof Array) {
+    aIds = aId.map(function (aId) {
+      var shasum = crypto.createHash('sha256');
+      shasum.update(String(aId));
+      return shasum.digest('hex');
+    });
+    query.auths = { '$in': aIds };
+  } else if (aStrategy === 'github') {
+    // We only keep plaintext ids for GH since that's all we need
     digest = aId;
   } else {
     // Having these ids would allow us to do things with the user's
@@ -27,9 +36,13 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
     digest = shasum.digest('hex');
   }
 
-  findDeadorAlive(User, { 'auths': digest }, true,
+  if (!query.auths) {
+    query.auths = digest;
+  }
+
+  findDeadorAlive(User, query, true,
     function (aAlive, aUser, aRemoved) {
-      var pos = aUser ? aUser.auths.indexOf(digest) : -1;
+      var pos = aUser ? aUser.auths.indexOf(digest || aIds[0]) : -1;
       if (aRemoved) { aDone(null, false, 'user was removed'); }
 
       if (!aUser) {
@@ -66,6 +79,12 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
         aUser.auths.splice(pos, 1);
         aUser.strategies.push(aStrategy);
         aUser.auths.push(digest);
+        aUser.save(function (aErr, aUser) {
+          return aDone(aErr, aUser);
+        });
+      } else if (aIds.length > 0 && pos > -1) {
+        // Migrate from OpenID to OAuth
+        aUser.auths[pos] = aIds[1];
         aUser.save(function (aErr, aUser) {
           return aDone(aErr, aUser);
         });

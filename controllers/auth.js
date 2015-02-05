@@ -15,6 +15,7 @@ var User = require('../models/user').User;
 var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var addSession = require('../libs/modifySessions').add;
+var jwt = require('jwt-simple');
 
 // Unused but removing it breaks passport
 passport.serializeUser(function (aUser, aDone) {
@@ -43,16 +44,22 @@ exports.auth = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var strategy = aReq.body.auth || aReq.params.strategy;
   var username = aReq.body.username || aReq.session.username;
+  var authOpts = { failureRedirect: '/register?stratfail' };
 
   function auth() {
-    var authenticate = passport.authenticate(strategy, { failureRedirect: '/register?stratfail' });
+    var authenticate = null;
+
+    if (strategy === 'google') {
+      authOpts.scope = ['https://www.googleapis.com/auth/userinfo.profile'];
+    }
+    authenticate = passport.authenticate(strategy, authOpts);
 
     // Just in case some dumbass tries a bad /auth/* url
     if (!strategyInstances[strategy]) {
       return aNext();
     }
 
-    authenticate(aReq, aRes);
+    authenticate(aReq, aRes, aNext);
   }
 
   // Allow a logged in user to add a new strategy
@@ -128,6 +135,14 @@ exports.callback = function (aReq, aRes, aNext) {
     strategyInstance._verify = function (aId, aDone) {
       verifyPassport(aId, strategy, username, aReq.session.user, aDone);
     };
+  } else if (strategy === 'google') { // OpenID to OAuth2 migration
+    strategyInstance._verify =
+      function(aAccessToken, aRefreshToken, aParams, aProfile, aDone) {
+        var openIdId = jwt.decode(aParams.id_token, null, true).openid_id;
+        var oAuthId = aProfile.id;
+
+        verifyPassport([openIdId, oAuthId], strategy, username, aReq.session.user, aDone);
+      };
   } else {
     strategyInstance._verify =
       function (aToken, aRefreshOrSecretToken, aProfile, aDone) {
