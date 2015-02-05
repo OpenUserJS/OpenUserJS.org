@@ -15,12 +15,6 @@ Repository | Reference | Recent Version
 
 ### Dependencies
 
-#### Aggregate
-
-[![Using David][davidImageViaShields]][davidReport]
-
-Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
-
 #### Dispersed
 These also may use [shields.io][shieldsHomepage] where applicable for more explicit and up to date results.
 
@@ -45,6 +39,7 @@ Repository | Reference | Recent Version
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
+[jwt-simple][jwt-simpleGHUrl] | [Documentation][jwt-simpleDOCUrl] | [![NPM version][jwt-simpleNPMVersionImage]][jwt-simpleNPMUrl]
 [less-middleware][less-middlewareGHUrl] | [Documentation][less-middlewareDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
@@ -90,6 +85,14 @@ Repository | Reference | Recent Version | Stored
 
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
+
+
+
+#### Aggregate
+
+[![Using David][davidImageViaShields]][davidReport]
+
+Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 
 [nodeDLUrl]: http://nodejs.org/download/
@@ -209,6 +212,11 @@ Repository | Reference | Recent Version | Referenced
 [jQueryGHUrl]: https://github.com/jquery/jquery
 [jQueryUrl]: http://jquery.com/
 [jQueryDOCUrl]: http://api.jquery.com/
+
+[jwt-simpleNPMUrl]: https://www.npmjs.com/package/jwt-simple
+[jwt-simpleNPMVersionImage]: https://img.shields.io/npm/v/jwt-simple.svg?style=flat
+[jwt-simpleGHUrl]: https://github.com/hokaccha/node-jwt-simple
+[jwt-simpleDOCUrl]: https://github.com/hokaccha/node-jwt-simple/blob/master/README.md
 
 [less-middlewareGHUrl]: https://github.com/emberfeather/less.js-middleware
 [less-middlewareDOCUrl]: https://github.com/emberfeather/less.js-middleware/blob/master/readme.md
