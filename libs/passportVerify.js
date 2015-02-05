@@ -17,15 +17,15 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
   var shasum = crypto.createHash('sha256');
   var digest = null;
   var query = {};
-  var aIds = [];
+  var ids = [];
 
   if (aId instanceof Array) {
-    aIds = aId.map(function (aId) {
+    ids = aId.map(function (aId) {
       var shasum = crypto.createHash('sha256');
       shasum.update(String(aId));
       return shasum.digest('hex');
     });
-    query.auths = { '$in': aIds };
+    query.auths = { '$in': ids };
   } else if (aStrategy === 'github') {
     // We only keep plaintext ids for GH since that's all we need
     digest = aId;
@@ -42,8 +42,18 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
 
   findDeadorAlive(User, query, true,
     function (aAlive, aUser, aRemoved) {
-      var pos = aUser ? aUser.auths.indexOf(digest || aIds[0]) : -1;
+      var pos = aUser ? aUser.auths.indexOf(digest) : -1;
+      var opendIdPos = -1;
       if (aRemoved) { aDone(null, false, 'user was removed'); }
+
+      // Set up for OpenId to OAuth Migration
+      if (!digest && ids.length > 0) { 
+        digest = ids[1];
+        if (aUser) {
+          pos = aUser.auths.indexOf(digest);
+          opendIdPos = aUser.auths.indexOf(ids[0]);
+        }
+      }
 
       if (!aUser) {
         User.findOne({ 'name': aUsername }, function (aErr, aUser) {
@@ -82,9 +92,9 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
         aUser.save(function (aErr, aUser) {
           return aDone(aErr, aUser);
         });
-      } else if (aIds.length > 0 && pos > -1) {
+      } else if (opendIdPos > 0) {
         // Migrate from OpenID to OAuth
-        aUser.auths[pos] = aIds[1];
+        aUser.auths[opendIdPos] = digest;
         aUser.save(function (aErr, aUser) {
           return aDone(aErr, aUser);
         });
