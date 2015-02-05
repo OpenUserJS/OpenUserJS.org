@@ -16,9 +16,18 @@ var userRoles = require('../models/userRoles.json');
 exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
   var shasum = crypto.createHash('sha256');
   var digest = null;
+  var query = {};
+  var ids = [];
 
-  // We only keep plaintext ids for GH since that's all we need
-  if (aStrategy === 'github') {
+  if (aId instanceof Array) {
+    ids = aId.map(function (aId) {
+      var shasum = crypto.createHash('sha256');
+      shasum.update(String(aId));
+      return shasum.digest('hex');
+    });
+    query.auths = { '$in': ids };
+  } else if (aStrategy === 'github') {
+    // We only keep plaintext ids for GH since that's all we need
     digest = aId;
   } else {
     // Having these ids would allow us to do things with the user's
@@ -27,10 +36,24 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
     digest = shasum.digest('hex');
   }
 
-  findDeadorAlive(User, { 'auths': digest }, true,
+  if (!query.auths) {
+    query.auths = digest;
+  }
+
+  findDeadorAlive(User, query, true,
     function (aAlive, aUser, aRemoved) {
       var pos = aUser ? aUser.auths.indexOf(digest) : -1;
+      var opendIdPos = -1;
       if (aRemoved) { aDone(null, false, 'user was removed'); }
+
+      // Set up for OpenId to OAuth Migration
+      if (!digest && ids.length > 0) { 
+        digest = ids[1];
+        if (aUser) {
+          pos = aUser.auths.indexOf(digest);
+          opendIdPos = aUser.auths.indexOf(ids[0]);
+        }
+      }
 
       if (!aUser) {
         User.findOne({ 'name': aUsername }, function (aErr, aUser) {
@@ -66,6 +89,12 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
         aUser.auths.splice(pos, 1);
         aUser.strategies.push(aStrategy);
         aUser.auths.push(digest);
+        aUser.save(function (aErr, aUser) {
+          return aDone(aErr, aUser);
+        });
+      } else if (opendIdPos > 0) {
+        // Migrate from OpenID to OAuth
+        aUser.auths[opendIdPos] = digest;
         aUser.save(function (aErr, aUser) {
           return aDone(aErr, aUser);
         });
