@@ -131,8 +131,21 @@ table {
 }
 
 // Staged =====================================================================
-.close {
-  font-size: @close-font-size;
+body > .navbar {
+  margin-bottom: 0;
+}
+
+.reminders {
+  margin-bottom: @line-height-computed;
+}
+
+.reminders .alert.small {
+  margin-bottom: 0;
+  padding: (@alert-padding * 0.66)
+}
+
+.reminders .alert.small .close {
+  font-size: (@font-size-base * 1.25);
 }
 
 // Unstaged ===================================================================
