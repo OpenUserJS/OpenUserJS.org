@@ -43,15 +43,15 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
   findDeadorAlive(User, query, true,
     function (aAlive, aUser, aRemoved) {
       var pos = aUser ? aUser.auths.indexOf(digest) : -1;
-      var opendIdPos = -1;
+      var openIdIdPos = -1;
       if (aRemoved) { aDone(null, false, 'user was removed'); }
 
       // Set up for OpenId to OAuth Migration
-      if (!digest && ids.length > 0) { 
+      if (!digest && ids.length > 0) {
         digest = ids[1];
         if (aUser) {
           pos = aUser.auths.indexOf(digest);
-          opendIdPos = aUser.auths.indexOf(ids[0]);
+          openIdIdPos = aUser.auths.indexOf(ids[0]);
         }
       }
 
@@ -92,9 +92,9 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
         aUser.save(function (aErr, aUser) {
           return aDone(aErr, aUser);
         });
-      } else if (opendIdPos > 0) {
+      } else if (openIdIdPos > 0) {
         // Migrate from OpenID to OAuth
-        aUser.auths[opendIdPos] = digest;
+        aUser.auths[openIdIdPos] = digest;
         aUser.save(function (aErr, aUser) {
           return aDone(aErr, aUser);
         });
