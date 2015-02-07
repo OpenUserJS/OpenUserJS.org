@@ -126,7 +126,6 @@ h2.page-heading {
   transition: height 0.4s ease;
   width: 100%;
   z-index: 1039;
-  height: 0;
   background-color: #ebebeb;
   bottom: 0;
   font-size: 14px;
