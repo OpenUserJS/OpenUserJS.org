@@ -1,17 +1,20 @@
 <script type="text/javascript">
   (function () {
-    // Show spacer div
     $('#reply-control').on('show.bs.collapse', function () {
+      // Show spacer div
       $('#show-reply-form-when-visible').css({
         height: '{{#paginationRendered}}210{{/paginationRendered}}{{^paginationRendered}}268{{/paginationRendered}}px'
       });
     });
 
-    // Hide spacer div
     $('#reply-control').on('hide.bs.collapse', function () {
+      // Hide spacer div
       $('#show-reply-form-when-visible').css({
         height: '0'
       });
+
+      // Clear text value from reply box
+      $('#reply-control textarea[name="comment-content"]').val('');
     });
 
     $('.btn-comment-reply').click(function (aE) {
@@ -23,14 +26,15 @@
 
       document.location.hash = $comment.attr('id');
 
-      var text = $replyTextarea.text();
-      if (!/^\s*$/.test(text)) {
-        text += '\n\n'; // Add linebreak if reply already started.
+      var value = $replyTextarea.val();
+      if (!/^\s*$/.test(value)) {
+        value += '\n\n'; // Add linebreaks if reply already started.
       }
-      text += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
-      text += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
-      text += '  \n';
-      $replyTextarea.text(text);
+      value += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
+      value += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
+      value += '  \n';
+      $replyTextarea.val(value);
+      $replyTextarea.focus();
     });
 
     function isElementInViewport(aEl) {
@@ -53,6 +57,8 @@
       if (!hasShownReplyForm) {
         $('#reply-control').collapse('show');
         hasShownReplyForm = true;
+
+        $('#reply-control textarea[name="comment-content"]').focus();
       }
     }
 
