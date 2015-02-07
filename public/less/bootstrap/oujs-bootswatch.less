@@ -141,7 +141,8 @@ body > .navbar {
 
 .reminders .alert.small {
   margin-bottom: 0;
-  padding: (@alert-padding * 0.66)
+  padding-top: floor((@alert-padding * 0.66));
+  padding-bottom: floor((@alert-padding * 0.66));
 }
 
 .reminders .alert.small .close {
