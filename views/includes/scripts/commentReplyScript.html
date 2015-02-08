@@ -73,7 +73,7 @@
     var handler = fireIfElementVisible($('#show-reply-form-when-visible'), callback);
 
     // jQuery
-    $(window).on('focus resize scroll', handler);
+    $(window).on('DOMContentLoaded load resize scroll', handler);
 
   })();
 </script>
