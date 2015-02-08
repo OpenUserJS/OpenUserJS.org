@@ -38,7 +38,7 @@
 
     var handler = fireIfElementVisible($('.reminders'), callback);
 
-    $(window).on('DOMContentLoaded load resize scroll', handler);
+    $(window).on('focus resize scroll', handler);
 
   })();
 </script>
