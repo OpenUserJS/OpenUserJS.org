@@ -203,7 +203,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [githubNPMVersionImage]: https://img.shields.io/npm/v/github.svg?style=flat
 
 [highlight.jsGHUrl]: https://github.com/isagalaev/highlight.js
-[highlight.jsDOCUrl]: https://highlightjs.org/
+[highlight.jsDOCUrl]: http://highlightjs.readthedocs.org
 [highlight.jsNPMUrl]: https://www.npmjs.com/package/highlight.js
 [highlight.jsNPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
 
