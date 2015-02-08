@@ -98,11 +98,33 @@ renderer.heading = function (aText, aLevel) {
 // Keep in sync with ./views/includes/scripts/markdownEditor.html
 marked.setOptions({
   highlight: function (aCode, aLang) {
+    var obj = null;
+
     if (aLang && hljs.getLanguage(aLang)) {
-      return hljs.highlight(aLang, aCode).value;
-    } else {
-      return hljs.highlightAuto(aCode).value;
+      try {
+        return hljs.highlight(aLang, aCode).value;
+      } catch (aErr) {
+      }
     }
+
+    try {
+      obj = hljs.highlightAuto(aCode);
+
+      switch (obj.language) {
+        // Transform list of auto-detected language highlights
+        case 'dust':
+        case '1c':
+          // Narrow auto-detection to something that is more likely
+          return hljs.highlightAuto(aCode, ['css', 'html', 'js', 'json']).value;
+        // Any other detected go ahead and return
+        default:
+          return obj.value;
+      }
+    } catch (aErr) {
+    }
+
+    // If any external package failure don't block return e.g. prevent empty
+    return aCode;
   },
   renderer: renderer,
   gfm: true,
