@@ -1,5 +1,10 @@
 <script type="text/javascript">
   (function () {
+
+    var events = 'DOMContentLoaded load resize scroll';
+    var handler = null;
+    var didCallback = false;
+
     $('#reply-control').on('show.bs.collapse', function () {
       // Show spacer div
       $('#show-reply-form-when-visible').css({
@@ -18,17 +23,19 @@
     });
 
     $('.btn-comment-reply').click(function (aE) {
-      $('#reply-control').collapse('show');
-
       var $comment = $(aE.target).closest('.topic-post');
       var $author = $comment.find('.topic-meta-data .names .username').first();
       var $replyTextarea = $('#reply-control textarea[name="comment-content"]');
+      var value = null;
+
+      $('#reply-control').collapse('show');
 
       document.location.hash = $comment.attr('id');
 
-      var value = $replyTextarea.val();
+      value = $replyTextarea.val();
       if (!/^\s*$/.test(value)) {
-        value += '\n\n'; // Add linebreaks if reply already started.
+        // Add linebreaks if reply already started.
+        value += '\n\n';
       }
       value += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
       value += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
@@ -37,43 +44,29 @@
       $replyTextarea.focus();
     });
 
-    function isElementInViewport(aEl) {
-      if (aEl instanceof jQuery) {
-        aEl = aEl[0];
-      }
-
-      var rect = aEl.getBoundingClientRect();
-
-      return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
-      );
-    }
-
-    var hasShownReplyForm = false;
     function callback(aEl) {
-      if (!hasShownReplyForm) {
-        $('#reply-control').collapse('show');
-        hasShownReplyForm = true;
+      if (!didCallback) {
+        didCallback = true;
 
+        $('#reply-control').collapse('show');
         $('#reply-control textarea[name="comment-content"]').focus();
       }
     }
 
+    {{> includes/scripts/isElementInViewport.js }}
+
     function fireIfElementVisible(aEl, aCallback) {
       return function () {
         if (isElementInViewport(aEl)) {
+          $(window).off(events, handler);
+
           aCallback(aEl);
         }
       }
     }
 
-    var handler = fireIfElementVisible($('#show-reply-form-when-visible'), callback);
-
-    // jQuery
-    $(window).on('DOMContentLoaded load resize scroll', handler);
+    handler = fireIfElementVisible($('#show-reply-form-when-visible'), callback);
+    $(window).on(events, handler);
 
   })();
 </script>
