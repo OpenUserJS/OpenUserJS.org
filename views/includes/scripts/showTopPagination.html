@@ -1,30 +1,22 @@
 <script type="text/javascript">
   (function () {
-    function isElementInViewport(aEl) {
-      if (aEl instanceof jQuery) {
-        aEl = aEl[0];
-      }
 
-      var rect = aEl.getBoundingClientRect();
-
-      return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
-      );
-    }
-
-    var hasShownPagination = false;
-    function callback(aEl) {
-      if (!hasShownPagination) {
-        aEl.collapse('show');
-        hasShownPagination = true;
-      }
-    }
+    var events = 'scroll';
+    var handler = null;
+    var didCallback = false;
 
     var lastScrollTop = 0;
     var hasScrolledDown = false;
+
+    function callback(aEl) {
+      if (!didCallback) {
+        didCallback = true;
+
+        aEl.collapse('show');
+      }
+    }
+
+    {{> includes/scripts/isElementInViewport.js }}
 
     function fireIfElementVisible(aEl, aCallback) {
       return function () {
@@ -34,6 +26,8 @@
           hasScrolledDown = true;
         } else {
           if (isElementInViewport(aEl) && hasScrolledDown) {
+            $(window).off(events, handler);
+
             aCallback(aEl);
           }
         }
@@ -41,10 +35,8 @@
       }
     }
 
-    var handler = fireIfElementVisible($('.pagination:first').parent(), callback);
-
-    // jQuery
-    $(window).on('scroll', handler);
+    handler = fireIfElementVisible($('.pagination:first').parent(), callback);
+    $(window).on(events, handler);
 
   })();
 </script>
