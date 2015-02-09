@@ -3,10 +3,7 @@ html, body {
 }
 
 @media (max-width: 767px) {
-  span.visible-xs {
-    display: inline !important;
-  }
-  ul.nav > li > a > span.visible-xs + i.fa {
+  ul.nav > li > a > span.visible-xs-inline + i.fa {
     float: right;
     line-height: 20px;
   }
