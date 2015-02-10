@@ -1,16 +1,31 @@
-<script>
-  $(document).ready(function () {
-    // https://stackoverflow.com/questions/4904938/link-entire-table-row
-    $('.tr-link').click(function (aE) {
-      if ($(aE.target).is('a,input,a *')) // anything else you don't want to trigger the click
-        return;
+<script type="text/javascript">
+  (function () {
 
-      var a = $(this).find('a.tr-link-a').first();
-      if (!a) return;
-      var url = a.attr('href');
-      if (!url) return;
-      window.location = url;
-      aE.stopPropagation();
-    })
-  });
+    $(document).ready(function () {
+      // https://stackoverflow.com/questions/4904938/link-entire-table-row
+
+      $('.tr-link').click(function (aE) {
+        var anchor = null;
+        var url = null;
+
+        if ($(aE.target).is('a,input,a *')) { // anything else you don't want to trigger the click
+          return;
+        }
+
+        anchor = $(this).find('a.tr-link-a').first();
+        if (!anchor) {
+          return;
+        }
+
+        url = anchor.attr('href');
+        if (!url) {
+          return;
+        }
+
+        window.location = url;
+        aE.stopPropagation();
+      })
+    });
+
+  })();
 </script>

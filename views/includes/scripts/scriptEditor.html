@@ -1,0 +1,47 @@
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/ace-builds/src/ace.js"></script>
+<script type="text/javascript">
+  (function () {
+
+    $(document).ready(function () {
+      var editor = ace.edit("editor");
+
+      function hasCalc(aPrefix) {
+        var el = null;
+
+        aPrefix = aPrefix || "";
+        el = document.createElement("div");
+        el.style.setProperty(aPrefix + "width", "calc(1px)", "");
+        return !!el.style.length;
+      }
+
+      function hasAnyCalc() {
+        return hasCalc("-moz-") || hasCalc("-ms-") || hasCalc("-o-") || hasCalc("-webkit-") || hasCalc();
+      }
+
+      function calcHeight() {
+        return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}};
+      }
+
+      editor.setTheme("ace/theme/dawn");
+      editor.getSession().setMode("ace/mode/javascript");
+
+      {{#readOnly}}editor.setReadOnly(true);{{/readOnly}}
+      {{^readOnly}}
+      // TODO: Submit using AJAX
+      $('#submit_code').click(function () {
+        $('#source').val(editor.getValue());
+        $('#code_form').submit();
+      });
+      {{/readOnly}}
+
+      // Older browser JavaScript work-around for #136
+      if (!hasAnyCalc()) {
+        $("#editor").height(calcHeight());
+        $(document).on("resize", function () {
+          $("#editor").height(calcHeight);
+        });
+      }
+    });
+
+  })();
+</script>
