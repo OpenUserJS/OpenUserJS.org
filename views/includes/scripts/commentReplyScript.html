@@ -8,7 +8,9 @@
     $('#reply-control').on('show.bs.collapse', function () {
       // Show spacer div
       $('#show-reply-form-when-visible').css({
-        height: '{{#paginationRendered}}210{{/paginationRendered}}{{^paginationRendered}}268{{/paginationRendered}}px'
+        height:
+          {{#paginationRendered}}'210px'{{/paginationRendered}}
+          {{^paginationRendered}}'268px'{{/paginationRendered}}
       });
     });
 

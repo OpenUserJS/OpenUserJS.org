@@ -1,0 +1,51 @@
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/select2/select2.js"></script>
+<script type="text/javascript">
+  (function () {
+
+    var preload_groups = {{{groupNameListJSON}}};
+    var preload_data = $.map(preload_groups, function (aGroup) {
+      return { id: aGroup, text: aGroup, locked: true };
+    });
+
+    $(document).ready(function () {
+      var canAddGroup = true;
+      var canCreateGroup = {{canCreateGroup}};
+      var prevTerm = '';
+
+      $('#groups').select2({
+        multiple: true,
+        minimumInputLength: 1,
+        query: function (aQuery) {
+          var url = '/api/group/search/' + encodeURIComponent(aQuery.term);
+
+          if (canCreateGroup) {
+            if (canAddGroup) {
+              if ($('#groups').val().length
+                && $('#groups').val().split(',').indexOf(prevTerm) > -1) {
+                canAddGroup = false;
+              } else {
+                prevTerm = aQuery.term;
+              }
+            } else if ($('#groups').val().split(',').indexOf(prevTerm) === -1) {
+              prevTerm = aQuery.term;
+              canAddGroup = true;
+            }
+
+            url += '/' + (canAddGroup ? 'true' : '');
+          }
+
+          $.ajax({ url: url, success: function (aData) {
+            var groups = { results: [] };
+
+            $.each(aData, function (index, group) {
+              groups.results.push({ id: group, text: group });
+            });
+            aQuery.callback(groups);
+          }});
+        }});
+
+      $('#groups').select2('data', preload_data);
+    });
+
+  })();
+</script>
