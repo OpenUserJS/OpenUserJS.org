@@ -29,12 +29,12 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 #### Installation
 
 1. Follow the forking instructions above to get a local copy of the project, or simply retrieve the code [as a ZIP](https://github.com/OpenUserJs/OpenUserJS.org/archive/master.zip) and extract it somewhere.
-2. Navigate to the project directory and run `npm install` to install the dependencies defined within [package.json](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json)
-3. If not already installed, install Ruby:
+2. If not already installed, install Ruby:
   * **Linux:** Run `sudo apt-get install ruby` (or similar for your package manager)
   * **Mac:** Use [Homebrew](http://brew.sh/) and [RubyGems](https://rubygems.org/)
   * **Windows:**  Use [RubyInstaller](http://rubyinstaller.org/)
-4. If not already installed, install bundler by running `sudo gem install bundler`
+3. If not already installed, install bundler by running `sudo gem install bundler`
+4. Navigate to the project directory and run `npm install` to install the dependencies defined within [package.json](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json) and [Gemfile](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/Gemfile)
 
 #### Configuration
 
