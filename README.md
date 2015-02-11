@@ -27,6 +27,7 @@ Repository | Reference | Recent Version
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
 [bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl]
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl]
+[bundler][bundlerGHUrl] | [Documentation][bundlerDOCUrl] | [![GEM version][bundlerGEMVersionImage]][bundlerGEMUrl]
 [compression][compressionGHUrl] | [Documentation][compressionDOCUrl] | [![NPM version][compressionNPMVersionImage]][compressionNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
@@ -151,6 +152,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
 [bootstrap-markdownNPMUrl]: https://www.npmjs.com/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
+
+[bundlerGHUrl]: https://github.com/bundler/bundler
+[bundlerDOCUrl]: http://bundler.io/
+[bundlerGEMUrl]: http://rubygems.org/gems/bundler
+[bundlerGEMVersionImage]: http://img.shields.io/gem/v/bundler.svg?style=flat
 
 [compressionGHUrl]: https://github.com/expressjs/compression
 [compressionDOCUrl]: https://github.com/expressjs/compression/blob/master/README.md

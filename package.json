@@ -74,10 +74,12 @@
     "openuserjs.org"
   ],
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "postinstall": "node dev/init.js"
   },
   "engines": {
-    "node": ">=0.10.32",
+    "node": ">=0.10.32 <0.11.0",
     "npm": ">=1.4.28"
-  }
+  },
+  "private": true
 }
