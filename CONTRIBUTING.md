@@ -11,7 +11,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 * [node.js 0.10.33 or other newer stable release](http://nodejs.org/)
 * [MongoDB](http://www.mongodb.org/) (Optional.  The project is preconfigured to use a dev DB on [MongoLab](https://mongolab.com/).)
 * [Ruby](https://www.ruby-lang.org/) (required to run [FakeS3](https://github.com/jubos/fake-s3/))
-* [FakeS3](https://github.com/jubos/fake-s3) (required to store libraries/scripts without [AWS S3](http://aws.amazon.com/s3/))
+* [FakeS3](https://github.com/jubos/fake-s3) (required to store libraries/scripts without [AWS S3](http://aws.amazon.com/s3/)) handled by [bundler](https://github.com/bundler/bundler)
 
 #### GitHub Fork Setup
 
@@ -34,7 +34,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
   * **Linux:** Run `sudo apt-get install ruby` (or similar for your package manager)
   * **Mac:** Use [Homebrew](http://brew.sh/) and [RubyGems](https://rubygems.org/)
   * **Windows:**  Use [RubyInstaller](http://rubyinstaller.org/)
-4. If not already installed, install FakeS3 by running `gem install fakes3`
+4. If not already installed, install bundler by running `sudo gem install bundler`
 
 #### Configuration
 
