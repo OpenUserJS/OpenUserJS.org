@@ -13,7 +13,13 @@ mu.root = __dirname + '/../views';
 function renderFile(aRes, aPath, aOptions) {
   // If you need to render a file with a different content
   // type, do it directly on the response object
-  if (isDev || isDbg) { mu.clearCache(); }
+  if (isDev || isDbg) {
+    mu.clearCache();
+
+    aOptions.isDbg = isDbg;
+    aOptions.isDev = isDev;
+  }
+
   aRes.set('Content-Type', 'text/html; charset=UTF-8');
   mu.compileAndRender(aPath, aOptions).pipe(aRes);
 }
@@ -23,15 +29,19 @@ function renderFile(aRes, aPath, aOptions) {
 exports.renderFile = function (aApp) {
   var render = aApp.response.__proto__.render;
 
-  aApp.response.__proto__.render = function (aView, aOptions, aFn) { // TODO: Non-descript function parm
+  aApp.response.__proto__.render = function (aView, aOptions, aFn) {
     var self = this;
 
     if (!aFn && aApp.get('view engine') === 'html') {
-      aFn = function (aPath, aOptions) { renderFile(self, aPath, aOptions); };
+      aFn = function (aPath, aOptions) {
+        renderFile(self, aPath, aOptions);
+      };
     }
 
     render.call(self, aView, aOptions, aFn);
   };
 
-  return (function (aPath, aOptions, aFn) { aFn(aPath, aOptions); });
+  return (function (aPath, aOptions, aFn) {
+    aFn(aPath, aOptions);
+  });
 };
