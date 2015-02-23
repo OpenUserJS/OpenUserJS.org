@@ -106,10 +106,8 @@ if (minify && !isDbg) {
 }
 
 app.use(lessMiddleware(__dirname + '/public', {
-  compiler: {
-    compress: false
-  },
-  parser: {
+  render: {
+    compress: false,
     paths: [
       path.join(__dirname, 'node_modules/bootstrap/less')
     ]
