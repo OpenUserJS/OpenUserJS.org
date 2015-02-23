@@ -41,7 +41,7 @@ Repository | Reference | Recent Version
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
 [jwt-simple][jwt-simpleGHUrl] | [Documentation][jwt-simpleDOCUrl] | [![NPM version][jwt-simpleNPMVersionImage]][jwt-simpleNPMUrl]
-[less-middleware][less-middlewareGHUrl] | [Documentation][less-middlewareDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
+[less-middleware][less-middlewareGHUrl][&#x00b9;][lessGHUrl] | [Documentation][less-middlewareDOCUrl][&#x00b9;][lessDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
@@ -228,6 +228,8 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [less-middlewareDOCUrl]: https://github.com/emberfeather/less.js-middleware/blob/master/readme.md
 [less-middlewareNPMUrl]: https://www.npmjs.com/package/less-middleware
 [less-middlewareNPMVersionImage]: https://img.shields.io/npm/v/less-middleware.svg?style=flat
+[lessGHUrl]: https://github.com/less/less.js
+[lessDOCUrl]: http://lesscss.org/
 
 [markedGHUrl]: https://github.com/chjj/marked
 [markedDOCUrl]: https://github.com/chjj/marked/blob/master/README.md
