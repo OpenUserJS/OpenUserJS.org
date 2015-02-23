@@ -264,7 +264,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [OcticonsUrl]: https://octicons.github.com/
 [OcticonsGHUrl]: https://github.com/github/octicons
 [OcticonsDOCUrl]: https://octicons.github.com/usage/
-[OcticonsGHHASHUrl]: https://github.com/github/octicons/tree/835ee0274fbbd74204df20791564ef997aabcf72
+[OcticonsGHHASHUrl]: https://github.com/github/octicons/tree/681229fad90b19f2b68fb7fbd0ce409bf9d4178a
 
 [passportGHUrl]: https://github.com/jaredhanson/passport
 [passportDOCUrl]: http://passportjs.org/
