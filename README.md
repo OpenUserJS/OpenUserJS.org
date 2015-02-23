@@ -48,7 +48,7 @@ Repository | Reference | Recent Version
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [morgan][morganGHUrl] | [Documentation][morganDOCUrl] | [![NPM version][morganNPMVersionImage]][morganNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
-[octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.1.2 835ee02][OcticonsGHHASHUrl]
+[octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.2.0+681229f][OcticonsGHHASHUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
 [passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl]
 [passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]

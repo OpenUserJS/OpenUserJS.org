@@ -29,7 +29,7 @@
     "mongoose": "3.8.23",
     "morgan": "1.5.1",
     "mu2": "0.5.20",
-    "octicons": "git://github.com/github/octicons.git#835ee02",
+    "octicons": "git://github.com/github/octicons.git#681229f",
     "passport": "0.2.1",
     "passport-amazon": "0.1.0",
     "passport-aol": "0.2.0",
