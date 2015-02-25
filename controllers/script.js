@@ -151,7 +151,6 @@ var getScriptPageTasks = function (aOptions) {
 
   // Show which libraries hosted on the site a script uses
   if (!script.isLib && script.uses && script.uses.length > 0) {
-    script.usesLibs = true;
     script.libs = [];
     tasks.push(function (aCallback) {
       Script.find({
@@ -161,6 +160,10 @@ var getScriptPageTasks = function (aOptions) {
 
         script.libs = aScriptLibraryList;
         script.libs = _.map(script.libs, modelParser.parseScript);
+
+        if (script.libs.length > 0) {
+          script.usesLibs = true;
+        }
         aCallback();
       });
     });
