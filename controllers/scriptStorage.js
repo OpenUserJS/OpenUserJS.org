@@ -270,11 +270,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var isLibrary = typeof aMeta === 'string';
   var libraries = [];
   var requires = null;
+  var match = null;
   var collaborators = null;
-  var libraryRegex = new RegExp('^https?:\/\/' +
-    (isPro ?
-      'openuserjs\.org' : 'localhost:8080') +
-    '\/(?:libs\/src|src\/libs)\/(.+?\/.+?\.js)$', '');
+  var rLibrary = new RegExp(
+    '^(?:(?:(?:https?:)?\/\/' +
+      (isPro ? 'openuserjs\.org' : 'localhost:8080') +
+        ')?\/(?:libs\/src|src\/libs)\/)?(.*?)([^\/]*\.js)$', '');
 
   if (!aMeta) { return aCallback(null); }
 
@@ -307,8 +308,16 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       }
 
       requires.forEach(function (aRequire) {
-        var match = libraryRegex.exec(aRequire);
-        if (match && match[1]) { libraries.push(match[1]); }
+        match = rLibrary.exec(aRequire);
+        if (match) {
+          if (!match[1]) {
+            match[1] = aUser.name + '/';
+          }
+
+          if (!/\.user\.js$/.test(match[2])) {
+            libraries.push(match[1] + match[2]);
+          }
+        }
       });
     }
   } else {
