@@ -21,7 +21,7 @@ These also may use [shields.io][shieldsHomepage] where applicable for more expli
 ##### Dynamic
 Repository | Reference | Recent Version
 --- | --- | ---
-[ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.1.11 b14d255][ace-buildsGHHASHUrl]
+[ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.1.8 beb9ff6][ace-buildsGHHASHUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
