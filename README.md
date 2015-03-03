@@ -122,7 +122,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
-[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/7fafd126c2d26bdec899274eb5c2080c7a081d47
+[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/beb9ff6
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
 [aceDOCUrl]: http://ace.c9.io/#nav=api "ace"
 
