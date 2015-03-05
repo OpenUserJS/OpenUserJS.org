@@ -56,7 +56,7 @@ Repository | Reference | Recent Version
 [passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl]
 [passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl]
 [passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl]
-[passport-google][passport-googleGHUrl] | [Documentation][passport-googleDOCUrl] | [![NPM version][passport-googleNPMVersionImage]][passport-googleNPMUrl]
+[passport-google-oauth][passport-google-oauthGHUrl] | [Documentation][passport-google-oauthDOCUrl] | [![NPM version][passport-google-oauthNPMVersionImage]][passport-google-oauthNPMUrl]
 [passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl]
 [passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl]
 [passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl]
@@ -301,10 +301,10 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-githubNPMUrl]: https://www.npmjs.com/package/passport-github
 [passport-githubNPMVersionImage]: https://img.shields.io/npm/v/passport-github.svg?style=flat
 
-[passport-googleGHUrl]: https://github.com/jaredhanson/passport-google
-[passport-googleDOCUrl]: https://github.com/jaredhanson/passport-google/blob/master/README.md
-[passport-googleNPMUrl]: https://www.npmjs.com/package/passport-google
-[passport-googleNPMVersionImage]: https://img.shields.io/npm/v/passport-google.svg?style=flat
+[passport-google-oauthGHUrl]: https://github.com/jaredhanson/passport-google-oauth
+[passport-google-oauthDOCUrl]: https://github.com/jaredhanson/passport-google-oauth/blob/master/README.md
+[passport-google-oauthNPMUrl]: https://www.npmjs.com/package/passport-google-oauth
+[passport-google-oauthNPMVersionImage]: https://img.shields.io/npm/v/passport-google-oauth.svg?style=flat
 
 [passport-imgurGHUrl]: https://github.com/mindfreakthemon/passport-imgur
 [passport-imgurDOCUrl]: https://github.com/mindfreakthemon/passport-imgur/blob/master/README.md
