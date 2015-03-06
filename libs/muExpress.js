@@ -20,6 +20,13 @@ function renderFile(aRes, aPath, aOptions) {
     aOptions.isDev = isDev;
   }
 
+  // Hide the Google OAuth migration reminder for logged-in users
+  // that don't use Google for authentication
+  if (aOptions.authedUser && aOptions.authedUser
+      .strategies.indexOf('google') === -1) {
+    aOptions.hideReminder = true;
+  }
+
   aRes.set('Content-Type', 'text/html; charset=UTF-8');
   mu.compileAndRender(aPath, aOptions).pipe(aRes);
 }

@@ -264,6 +264,9 @@ var parseUser = function (aUserData) {
     }
   };
 
+  // Strategies
+  user.userStrategies = user.strategies;
+
   return user;
 };
 parseModelFnMap.User = parseUser;
