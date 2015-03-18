@@ -49,15 +49,15 @@ exports.auth = function (aReq, aRes, aNext) {
   function auth() {
     var authenticate = null;
 
-    if (strategy === 'google') {
-      authOpts.scope = ['https://www.googleapis.com/auth/userinfo.profile'];
-    }
-    authenticate = passport.authenticate(strategy, authOpts);
-
     // Just in case some dumbass tries a bad /auth/* url
     if (!strategyInstances[strategy]) {
       return aNext();
     }
+
+    if (strategy === 'google') {
+      authOpts.scope = ['https://www.googleapis.com/auth/userinfo.profile'];
+    }
+    authenticate = passport.authenticate(strategy, authOpts);
 
     authenticate(aReq, aRes, aNext);
   }
@@ -180,7 +180,7 @@ exports.callback = function (aReq, aRes, aNext) {
         } else {
           // Delete the username that was temporarily stored
           delete aReq.session.username;
-          doneUrl = aReq.session.redirectTo || doneUrl;
+          doneUrl = aReq.session.redirectTo;
           delete aReq.session.redirectTo;
           return aRes.redirect(doneUrl);
         }
