@@ -8,6 +8,7 @@ var isDbg = require('../libs/debug').isDbg;
 //
 var async = require('async');
 var _ = require('underscore');
+var url = require('url');
 
 var Discussion = require('../models/discussion').Discussion;
 var Group = require('../models/group').Group;
@@ -151,13 +152,30 @@ exports.home = function (aReq, aRes) {
   async.parallel(tasks, asyncComplete);
 };
 
+// Get the referer url for redirect after login/logout
+function getRedirect(aReq) {
+  var referer = aReq.get('Referer');
+  var redirect = '/';
+
+  if (referer) {
+    referer = url.parse(referer);
+    if (referer.hostname === aReq.hostname) {
+      redirect = referer.path;
+    }
+  }
+
+  return redirect;
+}
+
 // UI for user registration
 exports.register = function (aReq, aRes) {
   var authedUser = aReq.session.user;
 
   // If already logged in, goto the front page.
-  if (authedUser)
-    return aRes.redirect('/');
+  if (authedUser) {
+    return aRes.redirect(getRedirect(aReq));
+  }
+  aReq.session.redirectTo = getRedirect(aReq);
 
   //
   var options = {};
@@ -225,12 +243,13 @@ exports.register = function (aReq, aRes) {
 
 exports.logout = function (aReq, aRes) {
   var authedUser = aReq.session.user;
+  var redirectUrl = getRedirect(aReq);
 
-  if (!authedUser) { return aRes.redirect('/'); }
+  if (!authedUser) { return aRes.redirect(redirectUrl); }
 
   User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
     removeSession(aReq, aUser, function () {
-      aRes.redirect('/');
+      aRes.redirect(redirectUrl);
     });
   });
 };
