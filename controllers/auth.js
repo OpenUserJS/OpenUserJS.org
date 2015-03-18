@@ -47,8 +47,7 @@ exports.auth = function (aReq, aRes, aNext) {
   var authOpts = { failureRedirect: '/register?stratfail' };
 
   function auth() {
-    var authenticate = null;  
-    var referer = aReq.get('Referer');
+    var authenticate = null;
 
     // Just in case some dumbass tries a bad /auth/* url
     if (!strategyInstances[strategy]) {
