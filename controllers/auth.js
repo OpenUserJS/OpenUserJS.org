@@ -182,7 +182,6 @@ exports.callback = function (aReq, aRes, aNext) {
           delete aReq.session.username;
           doneUrl = aReq.session.redirectTo;
           delete aReq.session.redirectTo;
-console.log('2. ' + doneUrl);
           return aRes.redirect(doneUrl);
         }
       });
