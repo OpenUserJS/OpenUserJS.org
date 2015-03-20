@@ -9,6 +9,7 @@
   <div class="container-fluid">
     <div class="row">
       <form action="/auth/" method="post" class="form-signin">
+        <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
         <h3>
           Login
           <span class="help-block small">Login with your preferred <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>
@@ -24,6 +25,7 @@
     </div>
     <div class="row">
       <form action="/auth/" method="post" class="form-register">
+        <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
         <h3>
           Register
           <span class="help-block small">Sign up with a <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>

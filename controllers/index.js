@@ -171,15 +171,16 @@ function getRedirect(aReq) {
 exports.register = function (aReq, aRes) {
   var authedUser = aReq.session.user;
 
-  // If already logged in, goto the front page.
+  // If already logged in, go back.
   if (authedUser) {
     return aRes.redirect(getRedirect(aReq));
   }
-  aReq.session.redirectTo = getRedirect(aReq);
 
   //
   var options = {};
   var tasks = [];
+
+  options.redirectTo = getRedirect(aReq);
 
   // Page metadata
   pageMetadata(options, 'Login / Register');

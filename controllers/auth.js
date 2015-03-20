@@ -54,6 +54,9 @@ exports.auth = function (aReq, aRes, aNext) {
     aReq._passport.session = aReq.session[passportKey];
   }
 
+  // Save redirect url from the form submission on the session
+  aReq.session.redirectTo = aReq.body.redirectTo || '/';
+
   function auth() {
     var authenticate = null;
 
@@ -202,8 +205,8 @@ exports.callback = function (aReq, aRes, aNext) {
 
 exports.validateUser = function validateUser(aReq, aRes, aNext) {
   if (!aReq.session.user) {
-    aReq.session.redirectTo = aReq.path;
-    return aRes.redirect('/login');
+    aRes.location('/login');
+    return aRes.status(302).send();
   }
   return aNext();
 };
