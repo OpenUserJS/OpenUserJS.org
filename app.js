@@ -87,11 +87,6 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 // the creation of useless session data
 app.use(function (aReq, aRes, aNext) {
   var matches = null;
-  var next = function (aReq, aRes) {
-    aRes.set('Content-Type', 'text/javascript');
-    aRes.send(404, '// 404 - Not Found');
-    aRes.end();
-  };
 
   if (aReq.method === 'GET' && 
       (matches = 
@@ -108,10 +103,10 @@ app.use(function (aReq, aRes, aNext) {
 
     switch (matches[1]) {
     case 'meta':
-      scriptStorage.sendMeta(aReq, aRes, next);
+      scriptStorage.sendMeta(aReq, aRes, aNext);
       break;
     default:
-      scriptStorage.sendScript(aReq, aRes, next);
+      scriptStorage.sendScript(aReq, aRes, aNext);
       break;
     }
   } else {
