@@ -13,7 +13,6 @@ var methodOverride = require('method-override');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var compression = require('compression');
-var cookieParser = require('cookie-parser');
 var favicon = require('serve-favicon');
 
 var minify = null;
@@ -38,8 +37,6 @@ var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
 var dbOptions = { server: { socketOptions: { keepAlive: 1 } } };
-
-var scriptStorage = require('./controllers/scriptStorage');
 
 app.set('port', process.env.PORT || 8080);
 
@@ -83,46 +80,16 @@ app.use(bodyParser.json({
 app.use(compression());
 app.use(methodOverride('X-HTTP-Method-Override'));
 
-// Intercept script/library/metadata requests to prevent
-// the creation of useless session data
-app.use(function (aReq, aRes, aNext) {
-  var matches = null;
-
-  if (aReq.method === 'GET' && 
-      (matches = 
-       /^\/(install|meta|src)(?:\/(scripts|libs))?\/([^\/]+)\/([^\/]+)/
-       .exec(aReq.url))) {
-
-    // Set route parameters to mimick express route middleware
-    aReq.params = {};
-    if (matches[1] === 'src' && matches[2]) {
-      aReq.params.type = matches[2];
-    }
-    aReq.params.username = matches[3];
-    aReq.params.scriptname = matches[4];
-
-    switch (matches[1]) {
-    case 'meta':
-      scriptStorage.sendMeta(aReq, aRes, aNext);
-      break;
-    default:
-      scriptStorage.sendScript(aReq, aRes, aNext);
-      break;
-    }
-  } else {
-    aNext();
-  }
-});
-
 // Order is very important here (i.e mess with at your own risk)
-app.use(cookieParser());
+app.use(passport.initialize());
 app.use(session({
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
+  unset: 'destroy',
+  cookie: { maxAge: null },
   secret: sessionSecret,
   store: sessionStore
 }));
-app.use(passport.initialize());
 app.use(modifySessions.init(sessionStore));
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
