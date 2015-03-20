@@ -39,6 +39,8 @@ var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
 var dbOptions = { server: { socketOptions: { keepAlive: 1 } } };
 
+var scriptStorage = require('./controllers/scriptStorage');
+
 app.set('port', process.env.PORT || 8080);
 
 // Connect to the database
@@ -80,6 +82,42 @@ app.use(bodyParser.json({
 
 app.use(compression());
 app.use(methodOverride('X-HTTP-Method-Override'));
+
+// Intercept script/library/metadata requests to prevent
+// the creation of useless session data
+app.use(function (aReq, aRes, aNext) {
+  var matches = null;
+  var next = function (aReq, aRes) {
+    aRes.set('Content-Type', 'text/javascript');
+    aRes.send(404, '// 404 - Not Found');
+    aRes.end();
+  };
+
+  if (aReq.method === 'GET' && 
+      (matches = 
+       /^\/(install|meta|src)(?:\/(scripts|libs))?\/([^\/]+)\/([^\/]+)/
+       .exec(aReq.url))) {
+
+    // Set route parameters to mimick express route middleware
+    aReq.params = {};
+    if (matches[1] === 'src' && matches[2]) {
+      aReq.params.type = matches[2];
+    }
+    aReq.params.username = matches[3];
+    aReq.params.scriptname = matches[4];
+
+    switch (matches[1]) {
+    case 'meta':
+      scriptStorage.sendMeta(aReq, aRes, next);
+      break;
+    default:
+      scriptStorage.sendScript(aReq, aRes, next);
+      break;
+    }
+  } else {
+    aNext();
+  }
+});
 
 // Order is very important here (i.e mess with at your own risk)
 app.use(cookieParser());
