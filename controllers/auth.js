@@ -45,6 +45,14 @@ exports.auth = function (aReq, aRes, aNext) {
   var strategy = aReq.body.auth || aReq.params.strategy;
   var username = aReq.body.username || aReq.session.username;
   var authOpts = { failureRedirect: '/register?stratfail' };
+  var passportKey = aReq._passport.instance._key;
+
+  // Yet another passport hack. 
+  // Initialize the passport session data only when we need it.
+  if (!aReq.session[passportKey] && aReq._passport.session) {
+    aReq.session[passportKey] = {};
+    aReq._passport.session = aReq.session[passportKey];
+  }
 
   function auth() {
     var authenticate = null;
