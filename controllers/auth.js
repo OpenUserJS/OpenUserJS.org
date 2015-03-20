@@ -106,7 +106,7 @@ exports.auth = function (aReq, aRes, aNext) {
         strat = strategies.pop();
 
         if (aReq.session.newstrategy) { // authenticate with a new strategy
-          delete aReq.session.newstrategy;
+          strategy = aReq.session.newstrategy;
         } else if (!strategy) { // use an existing strategy
           strategy = strat;
         } else if (strategies.indexOf(strategy) === -1) {
@@ -182,12 +182,13 @@ exports.callback = function (aReq, aRes, aNext) {
       }
 
       addSession(aReq, aUser, function () {
-        if (newstrategy) {
+        if (newstrategy && newstrategy !== strategy) {
           // Allow a user to link to another account
           return aRes.redirect('/auth/' + newstrategy);
         } else {
           // Delete the username that was temporarily stored
           delete aReq.session.username;
+          delete aReq.session.newstrategy;
           doneUrl = aReq.session.redirectTo;
           delete aReq.session.redirectTo;
           return aRes.redirect(doneUrl);

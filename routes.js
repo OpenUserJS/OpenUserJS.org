@@ -28,7 +28,7 @@ module.exports = function (aApp) {
   // Authentication routes
   aApp.route('/auth/').post(authentication.auth);
   aApp.route('/auth/:strategy').get(authentication.auth);
-  aApp.route('/auth/:strategy/callback/').get(authentication.callback);
+  aApp.route('/auth/:strategy/callback/:junk?').get(authentication.callback);
   aApp.route('/login').get(main.register);
   aApp.route('/register').get(main.register);
   aApp.route('/logout').get(main.logout);

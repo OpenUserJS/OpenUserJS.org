@@ -192,6 +192,7 @@ exports.register = function (aReq, aRes) {
   //
   options.wantname = aReq.session.username;
   delete aReq.session.username;
+  delete aReq.session.newstrategy;
 
   //
   options.strategies = [];
