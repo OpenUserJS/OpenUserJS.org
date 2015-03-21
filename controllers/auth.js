@@ -77,7 +77,6 @@ exports.auth = function (aReq, aRes, aNext) {
   if (strategy && authedUser) {
     aReq.session.username = authedUser.name;
     aReq.session.newstrategy = strategy;
-    //return auth();
   } else if (authedUser) {
     delete aReq.session.redirectTo;
     return aRes.redirect(aReq.body.redirectTo || '/');
