@@ -76,9 +76,11 @@ exports.auth = function (aReq, aRes, aNext) {
   // Allow a logged in user to add a new strategy
   if (strategy && authedUser) {
     aReq.session.username = authedUser.name;
-    return auth();
+    aReq.session.newstrategy = strategy;
+    //return auth();
   } else if (authedUser) {
-    return aNext();
+    delete aReq.session.redirectTo;
+    return aRes.redirect(aReq.body.redirectTo || '/');
   }
 
   if (!username) {

@@ -90,6 +90,13 @@ app.use(session({
   secret: sessionSecret,
   store: sessionStore
 }));
+app.use(function (aReq, aRes, aNext) {
+  if (aReq.session[passport._key]) {
+    // load data from existing session
+    aReq._passport.session = aReq.session[passport._key];
+  }
+  aNext();
+});
 app.use(modifySessions.init(sessionStore));
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
