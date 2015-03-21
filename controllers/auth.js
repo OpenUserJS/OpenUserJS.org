@@ -16,6 +16,7 @@ var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var addSession = require('../libs/modifySessions').add;
 var jwt = require('jwt-simple');
+var url = require('url');
 
 // Unused but removing it breaks passport
 passport.serializeUser(function (aUser, aDone) {
@@ -40,10 +41,26 @@ Strategy.find({}, function (aErr, aStrategies) {
   });
 });
 
+// Get the referer url for redirect after login/logout
+function getRedirect(aReq) {
+  var referer = aReq.get('Referer');
+  var redirect = '/';
+
+  if (referer) {
+    referer = url.parse(referer);
+    if (referer.hostname === aReq.hostname) {
+      redirect = referer.path;
+    }
+  }
+
+  return redirect;
+}
+
 exports.auth = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var strategy = aReq.body.auth || aReq.params.strategy;
-  var username = aReq.body.username || aReq.session.username;
+  var username = aReq.body.username || aReq.session.username || 
+    (authedUser ? authedUser.name : null);
   var authOpts = { failureRedirect: '/register?stratfail' };
   var passportKey = aReq._passport.instance._key;
 
@@ -55,7 +72,7 @@ exports.auth = function (aReq, aRes, aNext) {
   }
 
   // Save redirect url from the form submission on the session
-  aReq.session.redirectTo = aReq.body.redirectTo || '/';
+  aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
 
   function auth() {
     var authenticate = null;
@@ -75,11 +92,12 @@ exports.auth = function (aReq, aRes, aNext) {
 
   // Allow a logged in user to add a new strategy
   if (strategy && authedUser) {
-    aReq.session.username = authedUser.name;
     aReq.session.newstrategy = strategy;
+    aReq.session.username = authedUser.name;
   } else if (authedUser) {
+    aRes.redirect(aReq.session.redirectTo || '/');
     delete aReq.session.redirectTo;
-    return aRes.redirect(aReq.body.redirectTo || '/');
+    return;
   }
 
   if (!username) {

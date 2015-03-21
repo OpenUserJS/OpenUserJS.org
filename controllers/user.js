@@ -633,22 +633,20 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
         });
 
         // Get OpenId strategies
-        if (isPro) {
-          for (name in strategies) {
-            strategy = strategies[name];
+        for (name in strategies) {
+          strategy = strategies[name];
 
-            if (!strategy.oauth && name !== defaultStrategy) {
-              if (userStrats.indexOf(name) > -1) {
-                options.usedStrategies.push({
-                  'strat': name,
-                  'display': strategy.name
-                });
-              } else {
-                options.openStrategies.push({
-                  'strat': name,
-                  'display': strategy.name
-                });
-              }
+          if (!strategy.oauth && name !== defaultStrategy) {
+            if (userStrats.indexOf(name) > -1) {
+              options.usedStrategies.push({
+                'strat': name,
+                'display': strategy.name
+              });
+            } else {
+              options.openStrategies.push({
+                'strat': name,
+                'display': strategy.name
+              });
             }
           }
         }
