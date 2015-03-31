@@ -1,7 +1,7 @@
 {
   "name": "OpenUserJS.org",
   "description": "An open source user scripts repo built using Node.js",
-  "version": "0.1.7+0000000",
+  "version": "0.1.7-50",
   "main": "app",
   "dependencies": {
     "ace-builds": "git://github.com/ajaxorg/ace-builds#beb9ff6",
@@ -33,7 +33,7 @@
     "passport": "0.2.1",
     "passport-amazon": "0.1.0",
     "passport-aol": "0.2.0",
-    "passport-facebook": "1.0.3",
+    "passport-facebook": "2.0.0",
     "passport-flickr": "0.2.0",
     "passport-foursquare": "1.0.0",
     "passport-github": "0.1.5",
