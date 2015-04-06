@@ -37,7 +37,7 @@
     "passport-flickr": "0.2.0",
     "passport-foursquare": "1.0.0",
     "passport-github": "0.1.5",
-    "passport-google-oauth": "0.1.5",
+    "passport-google-oauth": "0.2.0",
     "passport-imgur": "0.0.2",
     "passport-instagram": "0.1.2",
     "passport-linkedin": "0.1.3",
