@@ -59,12 +59,12 @@ function getRedirect(aReq) {
 exports.auth = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var strategy = aReq.body.auth || aReq.params.strategy;
-  var username = aReq.body.username || aReq.session.username || 
+  var username = aReq.body.username || aReq.session.username ||
     (authedUser ? authedUser.name : null);
   var authOpts = { failureRedirect: '/register?stratfail' };
   var passportKey = aReq._passport.instance._key;
 
-  // Yet another passport hack. 
+  // Yet another passport hack.
   // Initialize the passport session data only when we need it.
   if (!aReq.session[passportKey] && aReq._passport.session) {
     aReq.session[passportKey] = {};
@@ -83,7 +83,7 @@ exports.auth = function (aReq, aRes, aNext) {
     }
 
     if (strategy === 'google') {
-      authOpts.scope = ['https://www.googleapis.com/auth/userinfo.profile'];
+      authOpts.scope = ['https://www.googleapis.com/auth/plus.login'];
     }
     authenticate = passport.authenticate(strategy, authOpts);
 
