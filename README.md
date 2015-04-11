@@ -122,7 +122,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
-[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/beb9ff6
+[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/e3ccd2c
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
 [aceDOCUrl]: http://ace.c9.io/#nav=api "ace"
 
@@ -264,7 +264,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [OcticonsUrl]: https://octicons.github.com/
 [OcticonsGHUrl]: https://github.com/github/octicons
 [OcticonsDOCUrl]: https://octicons.github.com/usage/
-[OcticonsGHHASHUrl]: https://github.com/github/octicons/tree/681229fad90b19f2b68fb7fbd0ce409bf9d4178a
+[OcticonsGHHASHUrl]: https://github.com/github/octicons/tree/14ab7c3
 
 [passportGHUrl]: https://github.com/jaredhanson/passport
 [passportDOCUrl]: http://passportjs.org/
