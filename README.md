@@ -6,6 +6,7 @@ Repository | Reference | Recent Version
 :--- | :---: | :---
 [node][nodeGHUrl] | [Documentation][nodeDOCUrl] | [![node][nodeVersionImage]][nodeDLUrl] [CHANGELOG][nodeGHReleasesUrl]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
+[bundler][bundlerGHUrl] | [Documentation][bundlerDOCUrl] | [![GEM version][bundlerGEMVersionImage]][bundlerGEMUrl]
 [jitsu][jitsuGHUrl] | [Documentation][jitsuDOCUrl] | [![npm][jitsuNPMVersionImage]][jitsuNPMUrl] ![build status][jitsuTravisBuildStatusImage] [CHANGELOG][jitsuGHReleasesUrl]
 
 ### Contributing
@@ -27,7 +28,6 @@ Repository | Reference | Recent Version
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
 [bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl]
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl]
-[bundler][bundlerGHUrl] | [Documentation][bundlerDOCUrl] | [![GEM version][bundlerGEMVersionImage]][bundlerGEMUrl]
 [compression][compressionGHUrl] | [Documentation][compressionDOCUrl] | [![NPM version][compressionNPMVersionImage]][compressionNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
