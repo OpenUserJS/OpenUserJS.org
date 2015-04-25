@@ -31,6 +31,7 @@ exports.list = function (aReq, aRes, aNext) {
   var username = aReq.params.username;
   var scriptname = aReq.params.scriptname;
   var open = aReq.params.open !== 'closed';
+  var listAll = aReq.params.open === 'all';
 
   var installNameSlug = username + '/' + scriptname;
 
@@ -85,8 +86,11 @@ exports.list = function (aReq, aRes, aNext) {
     // discussionListQuery: category
     discussionListQuery.find({ category: category.slug });
 
-    // discussionListQuery: open
-    modelQuery.findOrDefaultIfNull(discussionListQuery, 'open', options.openIssuesOnly, true);
+    // discussionListQuery: Optionally filter discussion list
+    options.allIssues = !aReq.params.open && !options.isOwner || listAll;
+    if (!options.allIssues) {
+      modelQuery.findOrDefaultIfNull(discussionListQuery, 'open', options.openIssuesOnly, true);
+    }
 
     // discussionListQuery: Defaults
     modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
@@ -100,7 +104,10 @@ exports.list = function (aReq, aRes, aNext) {
     //--- Tasks
 
     // Show the number of open issues
-    var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: { $ne: false } });
+    var scriptOpenIssueCountQuery = Discussion.find({
+      category: script.issuesCategorySlug,
+      open: { $ne: false }
+    });
     tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
     // Pagination
@@ -121,16 +128,24 @@ exports.list = function (aReq, aRes, aNext) {
 
       // Empty list
       if (options.searchBarValue) {
-        if (open) {
-          options.discussionListIsEmptyMessage = 'We couldn\'t find any open discussions with this search value.';
+        if (options.allIssues) {
+          options.discussionListIsEmptyMessage = 'We couldn\'t find any discussions with this search value.';
         } else {
-          options.discussionListIsEmptyMessage = 'We couldn\'t find any closed discussions with this search value.';
+          if (open) {
+            options.discussionListIsEmptyMessage = 'We couldn\'t find any open discussions with this search value.';
+          } else {
+            options.discussionListIsEmptyMessage = 'We couldn\'t find any closed discussions with this search value.';
+          }
         }
       } else {
-        if (open) {
-          options.discussionListIsEmptyMessage = 'No open discussions.';
+        if (options.allIssues) {
+          options.discussionListIsEmptyMessage = 'No discussions.';
         } else {
-          options.discussionListIsEmptyMessage = 'No closed discussions.';
+          if (open) {
+            options.discussionListIsEmptyMessage = 'No open discussions.';
+          } else {
+            options.discussionListIsEmptyMessage = 'No closed discussions.';
+          }
         }
       }
     }
@@ -204,7 +219,10 @@ exports.view = function (aReq, aRes, aNext) {
       //--- Tasks
 
       // Show the number of open issues
-      var scriptOpenIssueCountQuery = Discussion.find({ category: script.issuesCategorySlug, open: { $ne: false } }); // TODO: STYLEGUIDE.md conformance needed here
+      var scriptOpenIssueCountQuery = Discussion.find({
+        category: script.issuesCategorySlug,
+        open: { $ne: false }
+      });
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
       // Pagination
