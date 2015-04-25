@@ -67,11 +67,6 @@ exports.list = function (aReq, aRes, aNext) {
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
 
-    // Page metadata
-    pageMetadata(
-      options,
-      [(open ? 'Issues' : 'Closed Issues'), script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-      category.description);
     options.isScriptIssuesPage = true;
 
     // Order dir
@@ -91,6 +86,15 @@ exports.list = function (aReq, aRes, aNext) {
     if (!options.allIssues) {
       modelQuery.findOrDefaultIfNull(discussionListQuery, 'open', options.openIssuesOnly, true);
     }
+
+    // Page metadata
+    pageMetadata(options,
+      [
+        (options.allIssues ? 'All' : (open ? 'Open' : 'Closed')) + ' Issues',
+        script.name,
+        (script.isLib ? 'Libraries' : 'Scripts')
+      ],
+      category.description);
 
     // discussionListQuery: Defaults
     modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
