@@ -83,7 +83,7 @@ module.exports = function (aApp) {
   aApp.route('/libs/src/:username/:scriptname').get(scriptStorage.sendScript); // Legacy
 
   // Issues routes
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
+  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(open|closed|all)?').get(issue.list);
   aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
   aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view).post(authentication.validateUser, issue.comment);
   aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
