@@ -22,7 +22,7 @@ These also may use [shields.io][shieldsHomepage] where applicable for more expli
 ##### Dynamic
 Repository | Reference | Recent Version
 --- | --- | ---
-[ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.1.9 e3ccd2c][ace-buildsGHHASHUrl]
+[ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.1.9 9d12839][ace-buildsGHHASHUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
@@ -122,7 +122,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
-[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/e3ccd2c
+[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/9d12839
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
 [aceDOCUrl]: http://ace.c9.io/#nav=api "ace"
 
