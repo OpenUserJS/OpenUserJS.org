@@ -1281,6 +1281,8 @@ exports.editScript = function (aReq, aRes, aNext) {
       script.installNameSlug = installNameSlug;
       script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
         script.scriptInstallPageUrl;
+      script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
+        + installNameSlug + (isLib ? '.js' : '.user.js#');
 
       // Page metadata
       pageMetadata(options);

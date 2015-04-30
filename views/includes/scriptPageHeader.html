@@ -1,14 +1,16 @@
 <h2 class="page-heading">
   {{#isScriptPage}}
-  <a href="{{{script.scriptInstallPageUrl}}}" class="btn btn-info pull-right">
-    {{#script.isLib}}
-    <i class="fa fa-file-text-o"></i> Raw Source
-    {{/script.isLib}}
     {{^script.isLib}}
-    <i class="fa fa-download"></i> Install
+    <a href="{{{script.scriptInstallPageUrl}}}" class="btn btn-info pull-right">
+      <i class="fa fa-download"></i> Install
+    </a>
     {{/script.isLib}}
-  </a>
   {{/isScriptPage}}
+  {{#isScriptViewSourcePage}}
+    <a href="{{{script.scriptRawPageUrl}}}" class="btn btn-info pull-right">
+      <i class="fa fa-file-text-o"></i> Raw Source
+    </a>
+  {{/isScriptViewSourcePage}}
   {{#script.icon45Url}}
   <span class="page-heading-icon" {{#script.icon45Url}}data-icon-src="{{{script.icon45Url}}}"{{/script.icon45Url}}>
     {{#script.isLib}}<i class="fa fa-fw fa-file-excel-o"></i>{{/script.isLib}}{{^script.isLib}}<i class="fa fa-fw fa-file-code-o"></i>{{/script.isLib}}
