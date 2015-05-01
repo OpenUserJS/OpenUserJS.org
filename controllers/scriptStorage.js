@@ -22,7 +22,7 @@ if (isPro) {
 } else {
   // You need to install (and ruby too): https://github.com/jubos/fake-s3
   // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
-  var DEV_AWS_URL = process.env.DEV_AWS_URL || 'localhost:10001';
+  var DEV_AWS_URL = process.env.DEV_AWS_URL || 'http://localhost:10001';
   AWS.config.update({
     accessKeyId: 'fakeId',
     secretAccessKey: 'fakeKey',
