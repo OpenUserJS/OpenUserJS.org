@@ -46,7 +46,7 @@ Within moderation we understand the occasional necessity to conserve device stor
 * If a Content only license is included then the [Default Code Licensing](#default-code-licensing) will be applied with licensing arbitration, but may not always be visibly indicated on a script home page.
 * Any license that prohibits derivatives is eligible for removal.
 * Non-reusable licenses, of course, may not be used.
-* Public domain type licenses may mean different things in different jurisdictions and therefore are not allowed and eligible for removal.
+* [Public domain type](http://opensource.org/faq#public-domain) licenses may mean different things in different jurisdictions and therefore are not allowed and eligible for removal.
 * Any attempt to unlicense a published work will be eligible for removal.
 * In the event of any code licensing dispute resolution the [Default Code Licensing](#default-code-licensing) shall prevail if previously undeclared and/or undocumented.
 
