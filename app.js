@@ -46,6 +46,7 @@ var server = http.createServer(app);
 var secureServer = null;
 
 app.set('port', process.env.PORT || 8080);
+app.set('securePort', process.env.SECURE_PORT || null);
 
 // Connect to the database
 mongoose.connect(connectStr, dbOptions);
@@ -55,7 +56,7 @@ db.once('open', function () {});
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // Force HTTPS
-if (app.get('port') === 443) {
+if (app.get('securePort')) {
   sslOptions = {
     key: fs.readFileSync('./keys/private.key'),
     cert: fs.readFileSync('./keys/cert.crt'),
@@ -74,8 +75,8 @@ if (app.get('port') === 443) {
     aNext();
   });
 
-  server.listen(80);
-  secureServer.listen(443);
+  server.listen(app.get('port'));
+  secureServer.listen(app.get('securePort'));
 } else {
   server.listen(app.get('port'));
 }
