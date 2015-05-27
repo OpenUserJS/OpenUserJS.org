@@ -57,8 +57,8 @@ var sessionStore = new MongoStore({ mongooseConnection: db });
 // Force HTTPS
 if (app.get('port') === 443) {
   sslOptions = {
-    key: fs.readFileSync('./keys/private.key')
-    cert: fs.readFileSync('./keys/cert.crt')
+    key: fs.readFileSync('./keys/private.key'),
+    cert: fs.readFileSync('./keys/cert.crt'),
     ca: fs.readFileSync('./keys/intermediate.crt')
   };
   secureServer = https.createServer(sslOptions, app);
