@@ -10,6 +10,8 @@ var pkg = require('../package.json');
 
 var fs = require('fs');
 var async = require('async');
+var git = require('git-rev');
+
 var renderMd = require('../libs/markdown').renderMd;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
@@ -115,7 +117,32 @@ exports.view = function (aReq, aRes, aNext) {
 
     options.pkg = {};
     options.pkg.name = pkg.name;
-    options.pkg.version = pkg.version;
+    options.pkg.version = pkg.version.replace(/\+.*$/, '');
+
+    options.git = {};
+    //--- Tasks
+    tasks.push(function (aCallback) {
+      async.waterfall([
+
+        // Read git short hash HEAD for current tree
+        function (aCallback) {
+          git.short(function (aStr) {
+            options.git.short = aStr;
+
+            aCallback(null);
+          });
+        },
+
+        // Read git branch name of current tree
+        function (aCallback) {
+          git.branch(function (aStr) {
+            options.git.branch = aStr;
+
+            aCallback(null);
+          });
+        }
+      ], aCallback);
+    });
   }
 
   //---
