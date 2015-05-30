@@ -7,7 +7,6 @@ Repository | Reference | Recent Version
 [node][nodeGHUrl] | [Documentation][nodeDOCUrl] | [![node][nodeVersionImage]][nodeDLUrl] [CHANGELOG][nodeGHReleasesUrl]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
 [bundler][bundlerGHUrl] | [Documentation][bundlerDOCUrl] | [![GEM version][bundlerGEMVersionImage]][bundlerGEMUrl]
-[jitsu][jitsuGHUrl] | [Documentation][jitsuDOCUrl] | [![npm][jitsuNPMVersionImage]][jitsuNPMUrl] ![build status][jitsuTravisBuildStatusImage] [CHANGELOG][jitsuGHReleasesUrl]
 
 ### Contributing
 
@@ -37,6 +36,7 @@ Repository | Reference | Recent Version
 [fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
+[git-rev][git-revGHUrl] | [Documentation][git-revDOCUrl] | [![NPM version][git-revNPMVersionImage]][git-revNPMUrl]
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
@@ -107,13 +107,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [npmGHReleasesUrl]: https://github.com/npm/npm/releases
 [npmGHUrl]: https://github.com/npm/npm/
 [npmDOCUrl]: https://github.com/npm/npm/blob/master/README.md
-
-[jitsuNPMUrl]: https://www.npmjs.com/package/jitsu
-[jitsuNPMVersionImage]: http://img.shields.io/npm/v/jitsu.svg
-[jitsuGHReleasesUrl]: https://github.com/nodejitsu/jitsu/releases
-[jitsuGHUrl]: https://github.com/nodejitsu/jitsu
-[jitsuDOCUrl]: https://github.com/nodejitsu/jitsu/blob/master/README.md
-[jitsuTravisBuildStatusImage]: https://img.shields.io/travis/nodejitsu/jitsu.svg
 
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
 [davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
@@ -207,6 +200,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [githubDOCUrl]: https://github.com/mikedeboer/node-github/blob/master/README.md
 [githubNPMUrl]: https://www.npmjs.com/package/github
 [githubNPMVersionImage]: https://img.shields.io/npm/v/github.svg?style=flat
+
+[git-revGHUrl]: https://github.com/tblobaum/git-rev
+[git-revDOCUrl]: https://github.com/tblobaum/git-rev/blob/master/README.md
+[git-revNPMUrl]: https://www.npmjs.com/package/git-rev
+[git-revNPMVersionImage]: https://img.shields.io/npm/v/git-rev.svg?style=flat
 
 [highlight.jsGHUrl]: https://github.com/isagalaev/highlight.js
 [highlight.jsDOCUrl]: http://highlightjs.readthedocs.org
