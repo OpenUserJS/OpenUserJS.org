@@ -38,29 +38,47 @@ var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
 var dbOptions = { server: { socketOptions: { keepAlive: 1 } } };
 
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var sslOptions = null;
+var server = http.createServer(app);
+var secureServer = null;
+
 app.set('port', process.env.PORT || 8080);
+app.set('securePort', process.env.SECURE_PORT || null);
 
 // Connect to the database
 mongoose.connect(connectStr, dbOptions);
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
-  app.listen(app.get('port'));
-});
+db.once('open', function () {});
 
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // Force HTTPS
-if (app.get('port') === 443) {
+if (app.get('securePort')) {
+  sslOptions = {
+    key: fs.readFileSync('./keys/private.key'),
+    cert: fs.readFileSync('./keys/cert.crt'),
+    ca: fs.readFileSync('./keys/intermediate.crt')
+  };
+  secureServer = https.createServer(sslOptions, app);
+
   app.use(function (aReq, aRes, aNext) {
     aRes.setHeader('Strict-Transport-Security',
       'max-age=8640000; includeSubDomains');
 
-    if (aReq.headers['x-forwarded-proto'] !== 'https') {
+    if (!aReq.secure) {
       return aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
     }
 
     aNext();
   });
+
+  server.listen(app.get('port'));
+  secureServer.listen(app.get('securePort'));
+} else {
+  server.listen(app.get('port'));
 }
 
 if (isDev || isDbg) {
