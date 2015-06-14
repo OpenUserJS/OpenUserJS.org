@@ -259,7 +259,6 @@ exports.show = function (aReq, aRes, aNext) {
     // commentListQuery: discussion
     commentListQuery.find({ _discussionId: discussion._id });
 
-
     // commentListQuery: Defaults
     modelQuery.applyCommentListQueryDefaults(commentListQuery, options, aReq);
 
@@ -273,18 +272,6 @@ exports.show = function (aReq, aRes, aNext) {
 
     // commentListQuery
     tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
-
-    // Update comment count incase comments where removed
-    tasks.push(function (callback) {
-      Comment.count({ _discussionId: discussion._id }, function (err, count) {
-        if (discussion.comments != count) {
-          discussion.comments = count;
-          discussion.save(callback);
-        }
-
-        return callback();
-      });
-    });
 
     //---
     async.parallel(tasks, function (aErr) {
