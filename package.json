@@ -66,8 +66,8 @@
     "postinstall": "node dev/init.js"
   },
   "engines": {
-    "node": ">=0.10.32 <0.11.0 || >=0.12.0 <=0.12.4",
-    "npm": ">=1.4.28"
+    "node": ">=0.12.0 <=0.13.0",
+    "npm": ">=2.11.2"
   },
   "private": true
 }
