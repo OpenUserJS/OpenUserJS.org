@@ -229,7 +229,12 @@ function parseMeta(aString, aNormalize) {
         }
       }
       if (!header[key] || aNormalize && unique[key]) {
-        header[key] = value || '';
+        try {
+          header[key] = value || '';
+        } catch (aE) {
+          // Ignore this key on read only exception fault and log... See #285 commit history
+          console.log('WARNING: Key name `@' + lineMatches[1] + '` failed in parseMeta');
+        }
       } else if (!aNormalize || header[key] !== (value || '')
           && !(header[key] instanceof Array && header[key].indexOf(value) > -1)) {
         if (!(header[key] instanceof Array)) {
@@ -239,6 +244,7 @@ function parseMeta(aString, aNormalize) {
       }
     }
   }
+
   return headers;
 }
 exports.parseMeta = parseMeta;
