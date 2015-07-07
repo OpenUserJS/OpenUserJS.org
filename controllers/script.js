@@ -62,7 +62,7 @@ var getScriptPageTasks = function (aOptions) {
 
   // Show the number of open issues
   var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
-      .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
+      .caseSensitive(script.issuesCategorySlug, true), open: {$ne: false} });
   tasks.push(countTask(scriptOpenIssueCountQuery, aOptions, 'issueCount'));
 
   // Show the groups the script belongs to
@@ -311,7 +311,7 @@ exports.view = function (aReq, aRes, aNext) {
 
   Script.findOne({
     installName: scriptStorage
-      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
+      .caseSensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     function preRender() {
       if (script.groups) {
@@ -373,7 +373,7 @@ exports.edit = function (aReq, aRes, aNext) {
 
   Script.findOne({
     installName: scriptStorage
-      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
+      .caseSensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     function preRender() {
       var groupNameList = (options.script.groups || []).map(function (aGroup) {
@@ -467,7 +467,7 @@ exports.vote = function (aReq, aRes, aNext) {
     return aRes.redirect(url);
   }
 
-  Script.findOne({ installName: scriptStorage.caseInsensitive(installName) },
+  Script.findOne({ installName: scriptStorage.caseSensitive(installName) },
     function (aErr, aScript) {
       if (aErr || !aScript) { return aRes.redirect(url); }
 
@@ -532,7 +532,7 @@ exports.flag = function (aReq, aRes, aNext) {
   var unflag = aReq.params.unflag;
 
   Script.findOne({ installName:  scriptStorage
-      .caseInsensitive(installName + (isLib ? '.js' : '.user.js')) },
+      .caseSensitive(installName + (isLib ? '.js' : '.user.js')) },
     function (aErr, aScript) {
       var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
       if (aErr || !aScript) { return aNext(); }

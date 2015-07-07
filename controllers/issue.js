@@ -36,7 +36,7 @@ exports.list = function (aReq, aRes, aNext) {
   var installNameSlug = username + '/' + scriptname;
 
   Script.findOne({
-    installName: scriptStorage.caseInsensitive(
+    installName: scriptStorage.caseSensitive(
       installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, scriptData) {
     if (aErr || !scriptData) { return aNext(); }
@@ -171,7 +171,7 @@ exports.view = function (aReq, aRes, aNext) {
   var installNameSlug = username + '/' + scriptname;
 
   Script.findOne({
-    installName: scriptStorage.caseInsensitive(
+    installName: scriptStorage.caseSensitive(
       installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     if (aErr || !aScriptData) { return aNext(); }
@@ -270,7 +270,7 @@ exports.open = function (aReq, aRes, aNext) {
   var installNameSlug = scriptStorage.getInstallName(aReq);
 
   Script.findOne({
-    installName: scriptStorage.caseInsensitive(
+    installName: scriptStorage.caseSensitive(
       installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     function preRender() {
@@ -344,7 +344,7 @@ exports.comment = function (aReq, aRes, aNext) {
   var category = type + '/' + installName + '/issues';
   var authedUser = aReq.session.user;
 
-  Script.findOne({ installName: scriptStorage.caseInsensitive(installName
+  Script.findOne({ installName: scriptStorage.caseSensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
     var content = aReq.body['comment-content'];
 
@@ -383,7 +383,7 @@ exports.changeStatus = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var changed = false;
 
-  Script.findOne({ installName: scriptStorage.caseInsensitive(installName
+  Script.findOne({ installName: scriptStorage.caseSensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
 
     if (aErr || !aScript) { return aNext(); }

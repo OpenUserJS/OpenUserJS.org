@@ -1269,7 +1269,7 @@ exports.editScript = function (aReq, aRes, aNext) {
 
     Script.findOne({
       installName: scriptStorage
-        .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
+        .caseSensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
     }, function (aErr, aScriptData) {
       //---
       if (aErr || !aScriptData) { return aNext(); }
@@ -1293,7 +1293,7 @@ exports.editScript = function (aReq, aRes, aNext) {
 
       // Show the number of open issues
       var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
-          .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
+          .caseSensitive(script.issuesCategorySlug, true), open: {$ne: false} });
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
       //---

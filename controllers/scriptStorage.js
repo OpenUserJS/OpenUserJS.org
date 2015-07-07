@@ -44,11 +44,67 @@ function caseInsensitive(aInstallName) {
 }
 exports.caseInsensitive = caseInsensitive;
 
+function caseSensitive(aInstallName, aMoreThanInstallName) {
+
+  var rExpression = null;
+  var rMatchExpression = aMoreThanInstallName ? /^(.*)\/(.*)\/(.*)\/(.*)$/ : /^(.*)\/(.*)$/;
+  var username = '';
+
+  var matches = aInstallName.match(rMatchExpression);
+  if (matches) {
+    if (aMoreThanInstallName) {
+
+      for (var char in matches[2]) {
+
+        if (matches[2][char].toLowerCase() !== matches[2][char].toUpperCase()) {
+        username += '[' +
+          matches[2][char].toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") +
+            matches[2][char].toUpperCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + ']';
+        } else {
+          username += matches[2][char].replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+        }
+
+      }
+
+      rExpression = new RegExp(
+        '^' +
+          matches[1] + '/' +
+            username + '/' +
+              matches[3].replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '/' +
+                matches[4] + '$',
+        ''
+      );
+    } else {
+
+      for (var char in matches[1]) {
+
+        if (matches[1][char].toLowerCase() !== matches[1][char].toUpperCase()) {
+          username += '[' +
+            matches[1][char].toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") +
+              matches[1][char].toUpperCase().replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + ']';
+        } else {
+          username += matches[1][char].replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+        }
+      }
+
+      rExpression = new RegExp(
+        '^' +
+          username + '/' +
+            matches[2].replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '$',
+        ''
+      );
+    }
+  }
+
+  return rExpression;
+}
+exports.caseSensitive = caseSensitive;
+
 exports.getSource = function (aReq, aCallback) {
   var s3 = new AWS.S3();
   var installName = getInstallName(aReq);
 
-  Script.findOne({ installName: caseInsensitive(installName) },
+  Script.findOne({ installName: caseSensitive(installName) },
     function (aErr, aScript) {
       var s3Object = null;
 
@@ -104,7 +160,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 exports.sendMeta = function (aReq, aRes, aNext) {
   var installName = getInstallName(aReq).replace(/\.meta\.js$/, '.user.js');
 
-  Script.findOne({ installName: caseInsensitive(installName) },
+  Script.findOne({ installName: caseSensitive(installName) },
     function (aErr, aScript) {
       var meta = null;
       var data = null;
@@ -334,7 +390,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   }
 
   // Prevent a removed script from being reuploaded
-  findDeadorAlive(Script, { installName: caseInsensitive(installName) }, true,
+  findDeadorAlive(Script, { installName: caseSensitive(installName) }, true,
     function (aAlive, aScript, aRemoved) {
       if (aRemoved || (!aScript && (aUpdate || collaborators))) {
         return aCallback(null);
@@ -399,7 +455,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 };
 
 exports.deleteScript = function (aInstallName, aCallback) {
-  Script.findOne({ installName: caseInsensitive(aInstallName) },
+  Script.findOne({ installName: caseSensitive(aInstallName) },
     function (aErr, aScript) {
       var s3 = new AWS.S3();
       s3.deleteObject({ Bucket : bucketName, Key : aScript.installName},
