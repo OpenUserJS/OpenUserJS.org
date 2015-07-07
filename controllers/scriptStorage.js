@@ -46,15 +46,16 @@ exports.caseInsensitive = caseInsensitive;
 
 function caseSensitive(aInstallName, aMoreThanInstallName) {
 
-  var rExpression = null;
   var rMatchExpression = aMoreThanInstallName ? /^(.*)\/(.*)\/(.*)\/(.*)$/ : /^(.*)\/(.*)$/;
   var username = '';
+  var char = null;
+  var rExpression = null;
 
   var matches = aInstallName.match(rMatchExpression);
   if (matches) {
     if (aMoreThanInstallName) {
 
-      for (var char in matches[2]) {
+      for (char in matches[2]) {
 
         if (matches[2][char].toLowerCase() !== matches[2][char].toUpperCase()) {
         username += '[' +
@@ -76,7 +77,7 @@ function caseSensitive(aInstallName, aMoreThanInstallName) {
       );
     } else {
 
-      for (var char in matches[1]) {
+      for (char in matches[1]) {
 
         if (matches[1][char].toLowerCase() !== matches[1][char].toUpperCase()) {
           username += '[' +
