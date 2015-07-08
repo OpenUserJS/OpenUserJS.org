@@ -365,7 +365,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [sanitize-htmlNPMVersionImage]: https://img.shields.io/npm/v/sanitize-html.svg?style=flat
 
 [select2GHUrl]: https://github.com/ivaynberg/select2
-[select2DOCUrl]: http://ivaynberg.github.io/select2
+[select2DOCUrl]: https://select2.github.io/
 [select2NPMUrl]: https://www.npmjs.com/package/select2
 [select2NPMVersionImage]: https://img.shields.io/npm/v/select2.svg?style=flat
 
