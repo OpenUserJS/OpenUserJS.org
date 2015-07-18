@@ -98,6 +98,11 @@ app.use(bodyParser.json({
 app.use(compression());
 app.use(methodOverride('X-HTTP-Method-Override'));
 
+// Add absent from server MIME Content Type for PEG Grammar files
+express.static.mime.define({
+  'text/javascript':  ['pegjs']
+});
+
 // Order is very important here (i.e mess with at your own risk)
 app.use(passport.initialize());
 app.use(session({
