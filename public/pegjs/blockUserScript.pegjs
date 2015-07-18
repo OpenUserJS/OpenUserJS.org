@@ -1,94 +1,189 @@
-// PEG grammar for parsing user script metadata
-// http://pegjs.org/online
+// PEG grammar for parsing the UserScript metadata block
 
 /*
-Test value:
+Test the generated parser with some input for PEG.js site at http://pegjs.org/online:
 
 // ==UserScript==
-// @name      Metadata Test
-// @name:de   Auf deutsch bitte!
-// @namespace test
-// @description Test value including all metas.
-// @version   1.2.3
+// @name            RFC 2606§3 - Hello, World!
+// @name:es         ¡Hola mundo!
+// @name:fr         Salut tout le monde!
+// @namespace       http://localhost.localdomain
+// @description     Test values with known UserScript metadata keys.
+// @description:es  Prueba de valores con UserScript metadatos llaves conocidas.
+// @description:fr  Valeurs d'essai avec des clés de métadonnées UserScript connues.
+// @copyright     2013+, OpenUserJS Group (https://github.com/orgs/OpenUserJs/people)
+// @license       GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
+// @licence       (CC); http://creativecommons.org/licenses/by-nc-sa/3.0/
+// @version       1.2.3
 // @icon      http://example.com/favicon.ico
-// @include   http://example.com/*
-// @match     http://example.net/*
-// @exclude   http://example.com/foo
+// @iconURL   http://example.com/faviconURL.ico
+// @run-at    document-end
 // @run-at    document-start
-// @grant     none
-// @downloadURL http://example.org/foo.user.js
-// @updateURL http://example.org/foo.meta.js
-// @require   http://example.net/library.js
-// @resource  css http://example.net/library.css
 // @noframes
+// @grant     GM_log
+// @grant     none
+// @homepageURL  http://example.com/foo/atHomepageURL1
+// @homepage     http://example.com/foo/atHomepage2
+// @website      http://example.com/foo/atSite3
+// @source       http://example.com/foo/atSource4
+// @downloadURL http://example.org/foo1.atDownloadURL.user.js
+// @installURL  http://example.org/foo2.atInstallURL.user.js
+// @downloadURL http://example.org/foo3.atDownloadURL.user.js
+// @updateURL     http://example.org/foo1.atUpdateURL.meta.js
+// @updateURL     http://example.org/foo2.atUpdateURL.meta.js
+// @updateURL     http://example.org/foo3.atUpdateURL.meta.js
+// @require   http://example.net/library1.js
+// @require   http://example.net/library2.js
+// @require   http://example.net/library3.js
+// @resource    css http://example.net/library1.css
+// @resource    peg http://example.net/grammar2.pegjs
+// @resource    img http://example.net/image3.png
+// @include   http://example.com/*
+// @include   http://example.org/*
+// @include   http://example.net/*
+// @match       http://example.net/*
+// @exclude   http://example.com/foo
+// @exclude   http://example.org/foo
 // ==/UserScript==
 
 */
 
+{
+  upmix = function (aKey) {
+    // Keys need to mirrored in the below rules for detection and transformation
+    switch (aKey) {
+      case 'homepage':
+      case 'source':
+      case 'website':
+        aKey = 'homepageURL';
+        break;
+      case 'defaulticon':
+      case 'iconURL':
+        aKey = 'icon';
+        break;
+      case 'licence':
+        aKey = 'license';
+        break;
+      case 'installURL':
+        aKey = 'downloadURL';
+        break;
+    }
+
+    return aKey;
+  }
+}
+
+// Uncomment to parse an entire metadata block for PEG.js site.
+// e.g. for testing/development only
+
 /*
-// Uncomment to parse an entire metadata block.
-// I.E for testing/development.
-meta =
-  "// ==UserScript==\n"
+block =
+  '// ==UserScript==\n'
   lines:line*
-  "// ==/UserScript==" ("\n"?)
-  { return lines; }
+  '// ==/UserScript==' ('\n'?)
+  {
+    return lines;
+  }
 */
 
+
 line =
-    "// @"
-    meta:(
-        keyword0 /
-        keyword1 /
-        keyword2 /
-        keywordLocale)
-    "\n"?
-    { return meta; }
+  '// @'
+  keyphrases:
+    (
+      keyphrase0 /
+      keyphrase1 /
+      keyphrase2 /
+      keyphraseLocalized
+    )
+  '\n'?
+  {
+    return keyphrases;
+  }
 
 whitespace = [ \t\n]+
 non_whitespace = $[^ \t\n]+
 non_newline = $[^\n]+
 
-keyword0 =
-    keyword:(
-        "noframes"
-        )
-    { return {keyword:keyword}; }
+keyphrase0 =
+  keyword:
+    (
+      'unwrap' /
+      'noframes'
+    )
+  {
+    return {
+      key: upmix(keyword)
+    };
+  }
 
-keyword1 =
-    keyword:(
-        "downloadURL" /
-        "exclude" /
-        "grant" /
-        "icon" /
-        "include" /
-        "installURL" /
-        "match" /
-        "namespace" /
-        "require" /
-        "run-at" /
-        "updateURL" /
-        "version"
-        )
-    whitespace
-    value:non_newline
-    { return {keyword:keyword, value:value}; }
+keyphrase1 =
+  keyword:
+    (
+      'website' /
+      'version' /
+      'updateURL' /
+      'supportURL' /
+      'source' /
+      'run-at' /
+      'require' /
+      'namespace' /
+      'match' /
+      'license' /
+      'licence' /
+      'installURL' /
+      'include' /
+      'iconURL' /
+      'icon' /
+      'homepageURL' /
+      'homepage' /
+      'grant' /
+      'exclude' /
+      'downloadURL' /
+      'defaulticon' /
+      'copyright'
+    )
+  whitespace
+  value: non_newline
+  {
+    return {
+      key: upmix(keyword),
+      value: value
+    };
+  }
 
-keyword2 =
-    keyword:("resource")
-    whitespace
-    value1:non_whitespace
-    whitespace
-    value2:non_newline
-    { return {keyword:keyword, value1:value1, value2:value2}; }
+keyphrase2 =
+  keyword:
+    (
+      'resource'
+    )
+  whitespace
+  value1: non_whitespace
+  whitespace
+  value2: non_newline
+  {
+    return {
+      key: upmix(keyword),
+      value1: value1,
+      value2: value2
+    };
+  }
 
-keywordLocale
-  = keyword:(
-        "description" /
-        "name"
-        )
-    locale:(":" localeValue:$[a-zA-Z-]+ { return localeValue })?
-    whitespace
-    value:non_newline
-    { return {keyword:keyword, locale:locale, value:value}; }
-
+keyphraseLocalized =
+  keyword:
+    (
+      'name' /
+      'description'
+    )
+  locale: (':' localeValue:$[a-zA-Z-]+ {
+    return localeValue;
+  })?
+  whitespace
+  value: non_newline
+  {
+    return {
+      key: upmix(keyword),
+      locale: locale,
+      value: value
+    };
+  }
