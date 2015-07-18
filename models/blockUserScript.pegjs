@@ -1,5 +1,5 @@
 // PEG grammar for parsing user script metadata
-// http://pegjs.majda.cz/online
+// http://pegjs.org/online
 
 /*
 Test value:
