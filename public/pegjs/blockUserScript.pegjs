@@ -89,7 +89,7 @@ block =
 
 line =
   '// @'
-  keyphrases:
+  keyphrase:
     (
       keyphrase0 /
       keyphrase1 /
@@ -100,7 +100,7 @@ line =
     )
   '\n'?
   {
-    return keyphrases;
+    return keyphrase;
   }
 
 whitespace = [ \t\n]+
@@ -191,7 +191,7 @@ keysphrase1 =
       'grant' /
       'exclude' /
       'copyright'
-   )
+    )
   whitespace
   value: non_newline
   {
