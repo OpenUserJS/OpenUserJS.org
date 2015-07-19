@@ -93,8 +93,10 @@ line =
     (
       keyphrase0 /
       keyphrase1 /
-      keyphrase2 /
-      keyphraseLocalized
+      keyphraseLocalized /
+
+      keysphrase1 /
+      keysphrase2 /
     )
   '\n'?
   {
@@ -106,71 +108,52 @@ non_whitespace = $[^ \t\n]+
 non_newline = $[^\n]+
 
 keyphrase0 =
-  keyword:
+  key:
     (
       'unwrap' /
       'noframes'
     )
   {
+    var keyUpmixed = upmix(key);
+
     return {
-      key: upmix(keyword)
+      key: keyUpmixed,
+
+      unique: true,
+      keyword: keyUpmixed
     };
   }
 
 keyphrase1 =
-  keyword:
+  key:
     (
-      'website' /
       'version' /
       'updateURL' /
       'supportURL' /
-      'source' /
       'run-at' /
-      'require' /
       'namespace' /
-      'match' /
-      'license' /
-      'licence' /
       'installURL' /
-      'include' /
       'iconURL' /
       'icon' /
-      'homepageURL' /
-      'homepage' /
-      'grant' /
-      'exclude' /
       'downloadURL' /
-      'defaulticon' /
-      'copyright'
+      'defaulticon'
     )
   whitespace
   value: non_newline
   {
-    return {
-      key: upmix(keyword),
-      value: value
-    };
-  }
+    var keyUpmixed = upmix(key);
 
-keyphrase2 =
-  keyword:
-    (
-      'resource'
-    )
-  whitespace
-  value1: non_whitespace
-  whitespace
-  value2: non_newline
-  {
     return {
-      key: upmix(keyword),
-      value1: value1,
-      value2: value2
+      key: keyUpmixed,
+      value: value,
+
+      unique: true,
+      keyword: keyUpmixed
     };
   }
 
 keyphraseLocalized =
-  keyword:
+  key:
     (
       'name' /
       'description'
@@ -181,9 +164,64 @@ keyphraseLocalized =
   whitespace
   value: non_newline
   {
+    var keyUpmixed = upmix(key);
+
     return {
-      key: upmix(keyword),
+      key: keyUpmixed,
       locale: locale,
-      value: value
+      value: value,
+
+      unique: true,
+      keyword: keyUpmixed + (locale ? ":" + locale : '')
+    };
+  }
+
+keysphrase1 =
+  key:
+    (
+      'website' /
+      'source' /
+      'require' /
+      'match' /
+      'license' /
+      'licence' /
+      'include' /
+      'homepageURL' /
+      'homepage' /
+      'grant' /
+      'exclude' /
+      'copyright'
+   )
+  whitespace
+  value: non_newline
+  {
+    var keyUpmixed = upmix(key);
+
+    return {
+      key: keyUpmixed,
+      value: value,
+
+      keyword: keyUpmixed
+    };
+  }
+
+keysphrase2 =
+  key:
+    (
+      'resource'
+    )
+  whitespace
+  value1: non_whitespace
+  whitespace
+  value2: non_newline
+  {
+    var keyUpmixed = upmix(key);
+
+    return {
+      key: keyUpmixed,
+      value1: value1,
+      value2: value2,
+
+      keyword: keyUpmixed
     };
   }
