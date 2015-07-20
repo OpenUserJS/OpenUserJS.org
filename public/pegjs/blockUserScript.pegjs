@@ -73,10 +73,6 @@ Test the generated parser with some input for PEG.js site at http://pegjs.org/on
   }
 }
 
-// Uncomment to parse an entire metadata block for PEG.js site.
-// e.g. for testing/development only
-
-/*
 block =
   '// ==UserScript==\n'
   lines:line*
@@ -84,8 +80,6 @@ block =
   {
     return lines;
   }
-*/
-
 
 line =
   '// @'
@@ -166,14 +160,23 @@ keyphraseLocalized =
   {
     var keyUpmixed = upmix(key);
 
-    return {
-      key: keyUpmixed,
-      locale: locale,
-      value: value,
+    return (locale
+      ? {
+        key: keyUpmixed,
+        locale: locale,
+        value: value,
 
-      unique: true,
-      keyword: keyUpmixed + (locale ? ":" + locale : '')
-    };
+        unique: true,
+        keyword: keyUpmixed + ":" + locale
+      }
+
+      : {
+        key: keyUpmixed,
+        value: value,
+
+        unique: true,
+        keyword: keyUpmixed
+      });
   }
 
 keysphrase1 =
