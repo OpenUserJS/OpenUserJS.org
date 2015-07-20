@@ -10,10 +10,6 @@ Test the generated parser with some input for PEG.js site at http://pegjs.org/on
 
 */
 
-// Uncomment to parse an entire metadata block for PEG.js site.
-// e.g. for testing/development only
-
-/*
 block =
   '// ==OpenUserJS==\n'
   lines:line*
@@ -21,8 +17,6 @@ block =
   {
     return lines;
   }
-*/
-
 
 line =
   '// @'
