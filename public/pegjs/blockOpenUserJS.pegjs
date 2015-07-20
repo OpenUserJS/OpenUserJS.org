@@ -46,8 +46,7 @@ keyphrase1 =
       key: key,
       value: value,
 
-      unique: true,
-      keyword: key
+      unique: true
     };
   }
 
@@ -61,8 +60,6 @@ keysphrase1 =
   {
     return {
       key: key,
-      value: value,
-
-      keyword: key
+      value: value
     };
   }

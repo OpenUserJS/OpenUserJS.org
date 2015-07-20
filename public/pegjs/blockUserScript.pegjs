@@ -108,13 +108,10 @@ keyphrase0 =
       'noframes'
     )
   {
-    var keyUpmixed = upmix(key);
-
     return {
-      key: keyUpmixed,
+      key: upmix(key),
 
-      unique: true,
-      keyword: keyUpmixed
+      unique: true
     };
   }
 
@@ -135,14 +132,11 @@ keyphrase1 =
   whitespace
   value: non_newline
   {
-    var keyUpmixed = upmix(key);
-
     return {
-      key: keyUpmixed,
+      key: upmix(key),
       value: value,
 
-      unique: true,
-      keyword: keyUpmixed
+      unique: true
     };
   }
 
@@ -174,8 +168,7 @@ keyphraseLocalized =
         key: keyUpmixed,
         value: value,
 
-        unique: true,
-        keyword: keyUpmixed
+        unique: true
       });
   }
 
@@ -198,13 +191,9 @@ keysphrase1 =
   whitespace
   value: non_newline
   {
-    var keyUpmixed = upmix(key);
-
     return {
-      key: keyUpmixed,
-      value: value,
-
-      keyword: keyUpmixed
+      key: upmix(key),
+      value: value
     };
   }
 
@@ -218,13 +207,9 @@ keysphrase2 =
   whitespace
   value2: non_newline
   {
-    var keyUpmixed = upmix(key);
-
     return {
-      key: keyUpmixed,
+      key: upmix(key),
       value1: value1,
-      value2: value2,
-
-      keyword: keyUpmixed
+      value2: value2
     };
   }
