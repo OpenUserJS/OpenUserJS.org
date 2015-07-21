@@ -134,7 +134,7 @@ keyphrase1 =
   {
     return {
       key: upmix(key),
-      value: value,
+      value: value.replace(/\s+$/, ''),
 
       unique: true
     };
@@ -158,7 +158,7 @@ keyphraseLocalized =
       ? {
         key: keyUpmixed,
         locale: locale,
-        value: value,
+        value: value.replace(/\s+$/, ''),
 
         unique: true,
         keyword: keyUpmixed + ":" + locale
@@ -166,7 +166,7 @@ keyphraseLocalized =
 
       : {
         key: keyUpmixed,
-        value: value,
+        value: value.replace(/\s+$/, ''),
 
         unique: true
       });
@@ -193,7 +193,7 @@ keysphrase1 =
   {
     return {
       key: upmix(key),
-      value: value
+      value: value.replace(/\s+$/, '')
     };
   }
 
@@ -210,6 +210,6 @@ keysphrase2 =
     return {
       key: upmix(key),
       value1: value1,
-      value2: value2
+      value2: value2.replace(/\s+$/, '')
     };
   }

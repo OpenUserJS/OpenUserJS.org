@@ -44,7 +44,7 @@ keyphrase1 =
   {
     return {
       key: key,
-      value: value,
+      value: value.replace(/\s+$/, ''),
 
       unique: true
     };
@@ -60,6 +60,6 @@ keysphrase1 =
   {
     return {
       key: key,
-      value: value
+      value: value.replace(/\s+$/, '')
     };
   }
