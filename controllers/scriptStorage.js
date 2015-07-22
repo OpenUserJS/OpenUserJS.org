@@ -343,7 +343,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   if (!aMeta) { return aCallback(null); }
 
   if (!isLibrary) {
-    scriptName = cleanFilename(aMeta.name, '');
+    scriptName = (typeof aMeta.name === 'string' ? cleanFilename(aMeta.name, '') : null);
 
     // Can't install a script without a @name (maybe replace with random value)
     if (!scriptName) { return aCallback(null); }

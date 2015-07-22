@@ -878,7 +878,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           options.script = aScript;
           aCallback(null);
         } else {
-          aCallback('Error while uploading script.');
+          aCallback('Error while importing script.');
         }
       };
 
@@ -1137,7 +1137,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
       scriptStorage.storeScript(aUser, aMeta, aSource, function (aScript) {
         var redirectUrl = encodeURI(aScript ? (aScript.isLib ? '/libs/'
           + aScript.installName.replace(jsRegex, '') : '/scripts/'
-          + aScript.installName.replace(userjsRegex, '')) : aReq.body.url);
+          + aScript.installName.replace(userjsRegex, '')) : decodeURI(aReq.body.url));
 
         if (!aScript || !aReq.body.original) {
           return aRes.redirect(redirectUrl);
