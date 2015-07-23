@@ -87,7 +87,7 @@ line =
     (
       keyphrase0 /
       keyphrase1 /
-      keyphraseLocalized /
+      keyphraseLocalized1 /
 
       keysphrase1 /
       keysphrase2 /
@@ -140,7 +140,7 @@ keyphrase1 =
     };
   }
 
-keyphraseLocalized =
+keyphraseLocalized1 =
   key:
     (
       'name' /
@@ -210,6 +210,7 @@ keysphrase2 =
     return {
       key: upmix(key),
       value1: value1,
-      value2: value2.replace(/\s+$/, '')
+      value2: value2.replace(/\s+$/, ''),
+      valueword: value1 + '\u0020' + value2.replace(/\s+$/, '')
     };
   }
