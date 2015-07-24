@@ -109,9 +109,9 @@ item0 =
     )
   {
     return {
-      key: upmix(keyword),
-
-      unique: true
+      unique: true,
+      
+      key: upmix(keyword)
     };
   }
 
