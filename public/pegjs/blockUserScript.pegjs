@@ -49,27 +49,27 @@ Test the generated parser with some input for PEG.js site at http://pegjs.org/on
 */
 
 {
-  upmix = function (aKey) {
-    // Keys need to mirrored in the below rules for detection and transformation
-    switch (aKey) {
+  upmix = function (aKeyword) {
+    // Keywords need to mirrored in the below rules for detection and transformation
+    switch (aKeyword) {
       case 'homepage':
       case 'source':
       case 'website':
-        aKey = 'homepageURL';
+        aKeyword = 'homepageURL';
         break;
       case 'defaulticon':
       case 'iconURL':
-        aKey = 'icon';
+        aKeyword = 'icon';
         break;
       case 'licence':
-        aKey = 'license';
+        aKeyword = 'license';
         break;
       case 'installURL':
-        aKey = 'downloadURL';
+        aKeyword = 'downloadURL';
         break;
     }
 
-    return aKey;
+    return aKeyword;
   }
 }
 
@@ -83,40 +83,40 @@ block =
 
 line =
   '// @'
-  keyphrase:
+  data:
     (
-      keyphrase0 /
-      keyphrase1 /
-      keyphraseLocalized1 /
+      item0 /
+      item1 /
+      item1Localized /
 
-      keysphrase1 /
-      keysphrase2 /
+      items1 /
+      items2 /
     )
   '\n'?
   {
-    return keyphrase;
+    return data;
   }
 
 whitespace = [ \t\n]+
 non_whitespace = $[^ \t\n]+
 non_newline = $[^\n]+
 
-keyphrase0 =
-  key:
+item0 =
+  keyword:
     (
       'unwrap' /
       'noframes'
     )
   {
     return {
-      key: upmix(key),
+      key: upmix(keyword),
 
       unique: true
     };
   }
 
-keyphrase1 =
-  key:
+item1 =
+  keyword:
     (
       'version' /
       'updateURL' /
@@ -133,15 +133,15 @@ keyphrase1 =
   value: non_newline
   {
     return {
-      key: upmix(key),
-      value: value.replace(/\s+$/, ''),
+      unique: true,
 
-      unique: true
+      key: upmix(keyword),
+      value: value.replace(/\s+$/, '')
     };
   }
 
-keyphraseLocalized1 =
-  key:
+item1Localized =
+  keyword:
     (
       'name' /
       'description'
@@ -152,28 +152,26 @@ keyphraseLocalized1 =
   whitespace
   value: non_newline
   {
-    var keyUpmixed = upmix(key);
+    var keywordUpmixed = upmix(keyword);
 
-    return (locale
-      ? {
-        key: keyUpmixed,
-        locale: locale,
-        value: value.replace(/\s+$/, ''),
+    var obj = {
+      unique: true,
 
-        unique: true,
-        keyword: keyUpmixed + ":" + locale
-      }
+      key: keywordUpmixed,
+      value: value.replace(/\s+$/, '')
+    }
 
-      : {
-        key: keyUpmixed,
-        value: value.replace(/\s+$/, ''),
+    if (locale) {
+      obj.key += ':' + locale;
+      obj.keyword = keywordUpmixed;
+      obj.locale = locale;
+    }
 
-        unique: true
-      });
+    return obj;
   }
 
-keysphrase1 =
-  key:
+items1 =
+  keyword:
     (
       'website' /
       'source' /
@@ -192,13 +190,13 @@ keysphrase1 =
   value: non_newline
   {
     return {
-      key: upmix(key),
+      key: upmix(keyword),
       value: value.replace(/\s+$/, '')
     };
   }
 
-keysphrase2 =
-  key:
+items2 =
+  keyword:
     (
       'resource'
     )
@@ -207,10 +205,13 @@ keysphrase2 =
   whitespace
   value2: non_newline
   {
+    var value2trimmed = value2.replace(/\s+$/, '');
+
     return {
-      key: upmix(key),
+      key: upmix(keyword),
+      value: value1 + '\u0020' + value2trimmed,
+
       value1: value1,
-      value2: value2.replace(/\s+$/, ''),
-      valueword: value1 + '\u0020' + value2.replace(/\s+$/, '')
+      value2: value2trimmed
     };
   }
