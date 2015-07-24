@@ -20,21 +20,21 @@ block =
 
 line =
   '// @'
-  keyphrase:
+  data:
     (
-      keyphrase1 /
-      keysphrase1
+      item1 /
+      items1
     )
   '\n'?
   {
-    return keyphrase;
+    return data;
   }
 
 whitespace = [ \t\n]+
 non_whitespace = $[^ \t\n]+
 non_newline = $[^\n]+
 
-keyphrase1 =
+item1 =
   key:
     (
       'author'
@@ -43,14 +43,14 @@ keyphrase1 =
   value: non_newline
   {
     return {
-      key: key,
-      value: value.replace(/\s+$/, ''),
+      unique: true,
 
-      unique: true
+      key: key,
+      value: value.replace(/\s+$/, '')
     };
   }
 
-keysphrase1 =
+items1 =
   key:
     (
       'collaborator'
