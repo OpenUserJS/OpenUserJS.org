@@ -22,5 +22,20 @@
 <!-- JS -->
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/jquery/dist/jquery.js"></script>
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/bootstrap/dist/js/bootstrap.js"></script>
+<script type="text/javascript">
+// Google Analytics Code
+(function () {
+    var win = window;
+    win['GoogleAnalyticsObject'] = 'ga';
+    win['ga'] = win['ga'] || function () {
+        (win['ga'].q = win['ga'].q || []).push(arguments);
+    }
+        
+    win['ga'].l = 1 * new Date();
+
+    ga('create', 'UA-59965387-1', 'auto');
+    ga('send', 'pageview')
+})
+</script>
 {{> includes/scripts/hideReminders.html }}
 
