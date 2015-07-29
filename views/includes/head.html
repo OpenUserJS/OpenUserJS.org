@@ -1,22 +1,24 @@
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {{#pageMetaDescription}}<meta name="description" content="{{pageMetaDescription}}">{{/pageMetaDescription}}
-  {{#pageMetaKeywords}}<meta name="keywords" content="{{pageMetaKeywords}}">{{/pageMetaKeywords}}
-  <link rel="shortcut icon" href="/images/favicon.ico" >
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{{#pageMetaDescription}}<meta name="description" content="{{pageMetaDescription}}">{{/pageMetaDescription}}
+{{#pageMetaKeywords}}<meta name="keywords" content="{{pageMetaKeywords}}">{{/pageMetaKeywords}}
+<link rel="shortcut icon" href="/images/favicon.ico" >
 
-  <!-- Open Search -->
-  <link href="/xml/opensearch-groups.xml" type="application/opensearchdescription+xml" rel="search" title="OpenUserJS Groups">
-  <link href="/xml/opensearch-libraries.xml" type="application/opensearchdescription+xml" rel="search" title="OpenUserJS Libraries">
-  <link href="/xml/opensearch-scripts.xml" type="application/opensearchdescription+xml" rel="search" title="OpenUserJS Scripts">
-  <link href="/xml/opensearch-users.xml" type="application/opensearchdescription+xml" rel="search" title="OpenUserJS Users">
+<!-- Open Search -->
+<link href="/xml/opensearch-groups.xml" type="application/opensearchdescription+xml" rel="search" title="OpenUserJS Groups">
+<link href="/xml/opensearch-libraries.xml" type="application/opensearchdescription+xml" rel="search" title="OpenUserJS Libraries">
+<link href="/xml/opensearch-scripts.xml" type="application/opensearchdescription+xml" rel="search" title="OpenUserJS Scripts">
+<link href="/xml/opensearch-users.xml" type="application/opensearchdescription+xml" rel="search" title="OpenUserJS Users">
 
-  <!-- CSS -->
-  <link rel="stylesheet" type="text/css" media="all" href='/redist/npm/font-awesome/css/font-awesome.min.css'>
-  <link rel="stylesheet" type="text/css" media="all" href='/redist/npm/octicons/octicons/octicons.css'>
-  <link rel="stylesheet" type="text/css" media="all" href="/less/bootstrap/oujs.css">
-  <link rel="stylesheet" type="text/css" media="all" href="/css/common.css">
-  <link rel="stylesheet" type="text/css" media="all" href="/css/github.css">
-  
-  <!-- Google Analytics -->
-  <script type="text/javascript" src="//www.google-analytics.com/analytics.js" async></script>
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" media="all" href='/redist/npm/font-awesome/css/font-awesome.min.css'>
+<link rel="stylesheet" type="text/css" media="all" href='/redist/npm/octicons/octicons/octicons.css'>
+<link rel="stylesheet" type="text/css" media="all" href="/less/bootstrap/oujs.css">
+<link rel="stylesheet" type="text/css" media="all" href="/css/common.css">
+<link rel="stylesheet" type="text/css" media="all" href="/css/github.css">
+
+{{^isDev}}
+<!-- Google Analytics -->
+<script type="text/javascript" src="//www.google-analytics.com/analytics.js" async="async"></script>
+{{/isDev}}
