@@ -67,6 +67,8 @@ var getScriptPageTasks = function (aOptions) {
 
   // Show the groups the script belongs to
   tasks.push(function (aCallback) {
+    var header = null;
+
     script.hasGroups = false;
     script.groups = [];
 
@@ -85,68 +87,50 @@ var getScriptPageTasks = function (aOptions) {
   });
 
   // Show homepages of the script
-  if (script.meta.homepageURL) {
-    if (typeof script.meta.homepageURL === 'string') {
-      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
+  if (script.meta.UserScript && script.meta.UserScript.homepageURL) {
+    aOptions.script.homepages = [];
+    script.meta.UserScript.homepageURL.forEach(function (aHomepage) {
+      var value = aHomepage.value;
+
+      htmlStub = '<a href="' + value + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        aOptions.script.homepages = [{
-          url: script.meta.homepageURL,
-          text: decodeURI(script.meta.homepageURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
-        }];
+        aOptions.script.homepages.unshift({
+          url: value,
+          text: decodeURI(value),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(value)
+        });
       }
-    } else {
-      aOptions.script.homepages = [];
-      script.meta.homepageURL.forEach(function (aHomepage) {
-        htmlStub = '<a href="' + aHomepage + '"></a>';
-        if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-          aOptions.script.homepages.unshift({
-            url: aHomepage,
-            text: decodeURI(aHomepage),
-            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(aHomepage)
-          });
-        }
-      });
-    }
+    });
   }
 
   // Show copyrights of the script
-  if (script.meta.copyright) {
-    if (typeof script.meta.copyright === 'string') {
-      aOptions.script.copyrights = [{ name: script.meta.copyright }];
-    } else {
-      aOptions.script.copyrights = [];
-      script.meta.copyright.forEach(function (aCopyright) {
-        aOptions.script.copyrights.unshift({ name: aCopyright });
-      });
-    }
+  if (script.meta.UserScript && script.meta.UserScript.copyright) {
+    aOptions.script.copyrights = [];
+    script.meta.UserScript.copyright.forEach(function (aCopyright) {
+      aOptions.script.copyrights.unshift({ name: aCopyright.value });
+    });
   }
 
   // Show licensings of the script
-  if (script.meta.license) {
-    if (typeof script.meta.license === 'string') {
-      aOptions.script.licenses = [{ name: script.meta.license }];
-    } else {
-      aOptions.script.licenses = [];
-      script.meta.license.forEach(function (aLicense) {
-        aOptions.script.licenses.unshift({ name: aLicense });
-      });
-    }
+  if (script.meta.UserScript && script.meta.UserScript.license) {
+    aOptions.script.licenses = [];
+    script.meta.UserScript.license.forEach(function (aLicense) {
+      aOptions.script.licenses.unshift({ name: aLicense.value });
+    });
   } else if (!script.isLib) {
     aOptions.script.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
   // Show collaborators of the script
-  if (script.meta.oujs && script.meta.oujs.author && script.meta.oujs.collaborator) {
+  if (script.meta.OpenUserJS &&
+    script.meta.OpenUserJS.author &&
+      script.meta.OpenUserJS.collaborator) {
     aOptions.hasCollab = true;
-    if (typeof script.meta.oujs.collaborator === 'string') {
-      aOptions.script.collaborators = [{ url: encodeURIComponent(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];
-    } else {
-      aOptions.script.collaborators = [];
-      script.meta.oujs.collaborator.forEach(function (aCollaborator) {
-        aOptions.script.collaborators.unshift({ url: encodeURIComponent(aCollaborator), text: aCollaborator });
-      });
-    }
+    aOptions.script.collaborators = [];
+    script.meta.OpenUserJS.collaborator.forEach(function (aCollaborator) {
+      aOptions.script.collaborators.unshift(
+        { url: encodeURIComponent(aCollaborator.value), text: aCollaborator.value });
+    });
   }
 
   // Show which libraries hosted on the site a script uses
@@ -256,7 +240,8 @@ var getScriptPageTasks = function (aOptions) {
     removeLib.removeable(Script, script, authedUser, function (aCanRemove, aAuthor) {
       aOptions.canRemove = aCanRemove;
       aOptions.flags = script.flags || 0;
-      aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
+      aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') +
+        script.installNameSlug;
 
       if (!aCanRemove) {
         return aCallback();
@@ -316,17 +301,25 @@ exports.view = function (aReq, aRes, aNext) {
     function preRender() {
       if (script.groups) {
         pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-          script.meta.description, _.pluck(script.groups, 'name'));
+          script.description, _.pluck(script.groups, 'name'));
       }
     }
-    function render() { aRes.render('pages/scriptPage', options); }
-    function asyncComplete() { preRender(); render(); }
+
+    function render() {
+      aRes.render('pages/scriptPage', options);
+    }
+
+    function asyncComplete() {
+      preRender(); render();
+    }
 
     //---
-    if (aErr || !aScriptData) { return aNext(); }
-
     var options = {};
     var tasks = [];
+
+    if (aErr || !aScriptData) {
+      return aNext();
+    }
 
     // Session
     authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -343,7 +336,7 @@ exports.view = function (aReq, aRes, aNext) {
 
     // Page metadata
     pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-      script.meta.description);
+      script.description);
     options.isScriptPage = true;
 
     // SearchBar
@@ -445,8 +438,8 @@ exports.edit = function (aReq, aRes, aNext) {
 // Script voting
 exports.vote = function (aReq, aRes, aNext) {
   var isLib = aReq.params.isLib;
-  var installName = scriptStorage.getInstallName(aReq)
-    + (isLib ? '.js' : '.user.js');
+  var installName = scriptStorage.getInstallName(aReq) +
+    (isLib ? '.js' : '.user.js');
   var vote = aReq.params.vote;
   var authedUser = aReq.session.user;
   var url = aReq._parsedUrl.pathname.split('/');

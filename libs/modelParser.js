@@ -68,7 +68,8 @@ var parseDateProperty = function (aObj, aKey) {
 };
 
 /**
- * Parse persisted model data and return a new object with additional generated fields used in view templates.
+ * Parse persisted model data and
+ * return a new object with additional generated fields used in view templates.
  */
 
 /**
@@ -114,47 +115,53 @@ var parseScript = function (aScriptData) {
 
   // Temporaries
   var htmlStub = null;
+  var header = null;
+  var item = null;
 
   // Author
   if (_.isString(script.author)) {
     script.author = parseUser({ name: script.author });
   }
 
-  // Icons
-  if (script.meta.icon) {
-    if (_.isString(script.meta.icon)) {
-      script.icon16Url = script.meta.icon;
-      script.icon45Url = script.meta.icon;
-    } else if (_.isArray(script.meta.icon) && !_.isEmpty(script.meta.icon)) {
-      script.icon16Url = script.meta.icon[script.meta.icon.length - 1];
-      script.icon45Url = script.meta.icon[script.meta.icon.length - 1];
-    }
+  // Description default
+  if (script.meta.UserScript && script.meta.UserScript.description) {
+    for (item in script.meta.UserScript.description) {
+      if (!script.meta.UserScript.description[item].key) {
+        script.description = script.meta.UserScript.description[item].value;
+      }
+    };
   }
-  if (script.meta.icon64) {
-    script.icon45Url = script.meta.icon64;
+
+  // Icons
+  if (script.meta.UserScript && script.meta.UserScript.icon) {
+    header = script.meta.UserScript.icon;
+
+    // Local upmix
+    script.icon16Url = header[0].value; // TODO: Unsupported currently
+    script.icon45Url = header[0].value; // TODO: Unsupported currently
+  }
+
+  // TODO: Unsupported currently
+  if (script.meta.UserScript && script.meta.UserScript.icon64) {
+    header = script.meta.UserScript.icon64;
+
+    // Local downmix
+    script.icon45Url = header[0].value;
   }
 
   // Support Url
-  if (script.meta.supportURL) {
+  if (script.meta.UserScript && script.meta.UserScript.supportURL) {
+    header = script.meta.UserScript.supportURL;
+
     script.hasSupport = true;
-    if (_.isString(script.meta.supportURL)) {
-      htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
-      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        script.support = [{
-          url: script.meta.supportURL,
-          text: decodeURI(script.meta.supportURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL)
-        }];
-      }
-    } else if (_.isArray(script.meta.supportURL) && !_.isEmpty(script.meta.supportURL)) {
-      htmlStub = '<a href="' + script.meta.supportURL[script.meta.supportURL.length - 1] + '"></a>';
-      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        script.support = [{
-          url:  script.meta.supportURL[script.meta.supportURL.length - 1],
-          text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]),
-          hasNoFollow:  !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL[script.meta.supportURL.length - 1])
-        }];
-      }
+
+    htmlStub = '<a href="' + header[0].value + '"></a>';
+    if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+      script.support = [{
+        url: header[0].value,
+        text: decodeURI(header[0].value),
+        hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(header[0].value)
+      }];
     }
   }
 
@@ -174,7 +181,9 @@ var parseScript = function (aScriptData) {
   var flagsPercent = flagsRatio * 100;
 
   if (flagsPercent <= 0) {
-    votesPercent = script.votes === 0 ? 0 : (sumVotesAndFlags === 0 ? 100 : Math.abs(flagsPercent) / votesPercent * 100);
+    votesPercent = script.votes === 0
+      ? 0
+        : (sumVotesAndFlags === 0 ? 100 : Math.abs(flagsPercent) / votesPercent * 100);
     flagsPercent = 0;
   }
 
@@ -204,7 +213,8 @@ var parseScript = function (aScriptData) {
   script.scriptEditSourcePageUrl = getScriptEditSourcePageUrl(script);
 
   // Urls: Moderation
-  script.scriptRemovePageUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
+  script.scriptRemovePageUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') +
+    script.installNameSlug;
 
   // Dates
   parseDateProperty(script, 'updated');
@@ -327,7 +337,8 @@ var parseDiscussion = function (aDiscussionData) {
   // var discussion = aDiscussionData; // Can't override discussionData.category
 
   // Urls
-  discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
+  discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' +
+    discussion.duplicateId : '');
 
   // Dates
   parseDateProperty(discussion, 'created');
@@ -349,7 +360,9 @@ var parseDiscussion = function (aDiscussionData) {
   discussion.recentCommentors = recentCommentors;
 
   // Replies
-  discussion.replies = (discussion.comments && discussion.comments > 0) ? discussion.comments - 1 : 0;
+  discussion.replies = (discussion.comments && discussion.comments > 0)
+    ? discussion.comments - 1
+      : 0;
 
   discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
@@ -367,7 +380,9 @@ var parseIssue = function (aDiscussionData) {
   var discussion = aDiscussionData.toObject ? aDiscussionData.toObject() : aDiscussionData;
 
   discussion.issue = true;
-  discussion.open = (discussion.open === undefined || discussion.open === null) ? true : discussion.open;
+  discussion.open = (discussion.open === undefined || discussion.open === null)
+    ? true
+      : discussion.open;
   discussion.issueCloseUrl = discussion.path + '/close';
   discussion.issueOpenUrl = discussion.path + '/reopen';
 
@@ -414,7 +429,9 @@ var canUserPostTopicToCategory = function (aUser, aCategory) {
   }
 
   // Check if this category requires a minimum role to post topics.
-  console.log(aCategory.roleReqToPostTopic, _.isNumber(aCategory.roleReqToPostTopic), aUser.role, aUser.role <= aCategory.roleReqToPostTopic);
+  console.log(aCategory.roleReqToPostTopic, _.isNumber(aCategory.roleReqToPostTopic), aUser.role,
+    aUser.role <= aCategory.roleReqToPostTopic);
+
   if (_.isNumber(aCategory.roleReqToPostTopic)) {
     return aUser.role <= aCategory.roleReqToPostTopic;
   } else {

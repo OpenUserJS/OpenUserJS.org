@@ -489,9 +489,11 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
         }
       } else if (options.searchBarValue) {
         if (options.librariesOnly) {
-          options.scriptListIsEmptyMessage = 'We couldn\'t find any libraries with this search value.';
+          options.scriptListIsEmptyMessage =
+            'We couldn\'t find any libraries with this search value.';
         } else {
-          options.scriptListIsEmptyMessage = 'We couldn\'t find any scripts with this search value.';
+          options.scriptListIsEmptyMessage =
+            'We couldn\'t find any scripts with this search value.';
         }
       } else if (options.isUserScriptListPage) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
@@ -742,7 +744,8 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // GitHub
-  var githubUserId = options.githubUserId = aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
+  var githubUserId = options.githubUserId = aReq.query.user || authedUser.ghUsername ||
+    authedUser.githubUserId();
 
   // Page metadata
   pageMetadata(options, ['Repositories', 'GitHub']);
@@ -762,9 +765,9 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
       },
       function (aGithubUser, aCallback) {
         options.githubUser = aGithubUser;
-        options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
-          user: aGithubUser.login
-        });
+        options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(
+          authedUser.userGitHubRepoListPageUrl,
+          { user: aGithubUser.login });
 
         // Pagination
         pagination.numItems = aGithubUser.public_repos;
@@ -828,14 +831,16 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // GitHub
-  var githubUserId = options.githubUserId = aReq.body.user || aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
+  var githubUserId = options.githubUserId = aReq.body.user || aReq.query.user ||
+    authedUser.ghUsername || authedUser.githubUserId();
   var githubRepoName = options.githubRepoName = aReq.body.repo || aReq.query.repo;
   var githubBlobPath = options.githubBlobPath = aReq.body.path || aReq.query.path;
 
   if (!(githubUserId && githubRepoName && githubBlobPath)) {
     return statusCodePage(aReq, aRes, aNext, {
       statusCode: 400,
-      statusMessage: 'Bad Request. Require <code>user</code>, <code>repo</code>, and <code>path</code> to be set.'
+      statusMessage:
+        'Require <code>user</code>, <code>repo</code>, and <code>path</code> need to be set.'
     });
   }
 
@@ -869,11 +874,20 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       }, aCallback);
     },
     function (aBlobUtf8, aCallback) {
+      var onScriptStored = null;
+      var parser = null;
+      var rHeaderContent = null;
+      var headerContent = null;
+      var hasUserScriptHeaderContent = false;
+      var blocksContent = {};
+      var blocks = {};
+
       // Double check file size.
       if (aBlobUtf8.length > settings.maximum_upload_script_size)
-        return aCallback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
+        return aCallback(util.format('File size is larger than maximum (%s bytes).',
+          settings.maximum_upload_script_size));
 
-      var onScriptStored = function (aScript) {
+      onScriptStored = function (aScript) {
         if (aScript) {
           options.script = aScript;
           aCallback(null);
@@ -883,12 +897,29 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       };
 
       if (options.javascriptBlob.isUserJS) {
-        //
-        var userscriptHeaderRegex = /^(?:\uFEFF)?\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m;
-        var m = userscriptHeaderRegex.exec(aBlobUtf8);
-        if (m && m[1]) {
-          var userscriptMeta = scriptStorage.parseMeta(m[1], true);
-          scriptStorage.storeScript(authedUser, userscriptMeta, aBlobUtf8, onScriptStored);
+        for (parser in scriptStorage.parsers) {
+          rHeaderContent = new RegExp(
+            '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+          );
+          headerContent = rHeaderContent.exec(aBlobUtf8);
+          if (headerContent && headerContent[1]) {
+            if (parser === 'UserScript') {
+              hasUserScriptHeaderContent = true;
+            }
+
+            blocksContent[parser] = headerContent[1];
+          }
+        }
+
+        if (hasUserScriptHeaderContent) {
+          for (parser in scriptStorage.parsers) {
+            if (blocksContent[parser]) {
+              blocks[parser] = scriptStorage.parseMeta(
+                scriptStorage.parsers[parser], blocksContent[parser]
+              );
+            }
+          }
+          scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, onScriptStored);
         } else {
           aCallback('Specified file does not contain a userscript header.');
         }
@@ -896,6 +927,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
         var scriptName = options.javascriptBlob.path.name;
         var jsLibraryMeta = scriptName;
         scriptStorage.storeScript(authedUser, jsLibraryMeta, aBlobUtf8, onScriptStored);
+
       } else {
         aCallback('Invalid filetype.');
       }
@@ -928,23 +960,23 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // GitHub
-  var githubUserId = options.githubUserId = aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
+  var githubUserId = options.githubUserId = aReq.query.user || authedUser.ghUsername ||
+    authedUser.githubUserId();
   var githubRepoName = options.githubRepoName = aReq.query.repo;
 
   if (!(githubUserId && githubRepoName)) {
     return statusCodePage(aReq, aRes, aNext, {
       statusCode: 400,
-      statusMessage: 'Bad Request. Require <code>?user=githubUserName&repo=githubRepoName</code>'
+      statusMessage: 'Require <code>?user=githubUserName&repo=githubRepoName</code>'
     });
   }
 
-  options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
-    user: githubUserId,
-  });
-  options.userGitHubRepoPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoPageUrl, {
-    user: githubUserId,
-    repo: githubRepoName
-  });
+  options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(
+    authedUser.userGitHubRepoListPageUrl,
+    { user: githubUserId });
+  options.userGitHubRepoPageUrl = helpers.updateUrlQueryString(
+    authedUser.userGitHubRepoPageUrl,
+      { user: githubUserId, repo: githubRepoName });
 
   // Page metadata
   pageMetadata(options, ['Import', 'GitHub']);
@@ -974,11 +1006,9 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
         options.javascriptBlobs = aJavascriptBlobs;
         _.each(aJavascriptBlobs, function (javascriptBlob) {
           // Urls
-          javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
-            user: githubUserId,
-            repo: githubRepoName,
-            path: javascriptBlob.path
-          });
+          javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(
+            authedUser.userGitHubImportPageUrl,
+              { user: githubUserId, repo: githubRepoName, path: javascriptBlob.path });
         });
         _.each(aJavascriptBlobs, parseJavascriptBlob);
 
@@ -1027,7 +1057,8 @@ var parseJavascriptBlob = function (aJavascriptBlob) {
 
   if (aJavascriptBlob.size > settings.maximum_upload_script_size) {
     aJavascriptBlob.errors.push({
-      msg: util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size)
+      msg: util.format('File size is larger than maximum (%s bytes).',
+        settings.maximum_upload_script_size)
     });
   }
 
@@ -1170,7 +1201,22 @@ exports.submitSource = function (aReq, aRes, aNext) {
     storeScript(aReq.body.script_name, source);
   } else {
     scriptStorage.getMeta([source], function (aMeta) {
-      if (!aMeta || !aMeta.name) { return aRes.redirect(url); }
+      var item = null;
+      var scriptName = null;
+
+      if (!aMeta || !aMeta.UserScript || !aMeta.UserScript.name) { // NOTE: Redundant check
+        return aRes.redirect(url);
+      }
+
+      for (item in aMeta.UserScript.name) {
+        if (!aMeta.UserScript.name[item].key) {
+          scriptName = aMeta.UserScript.name[item].value;
+        }
+      };
+
+      if (!scriptName) {
+        return aRes.redirect(url);
+      }
       storeScript(aMeta, source);
     });
   }
@@ -1202,12 +1248,10 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
 
       if (!aScript) { return aCallback(null); }
 
-      if (aScript.meta.oujs && aScript.meta.oujs.collaborator) {
-        if (typeof aScript.meta.oujs.collaborator === 'string') {
-          collaborators.push(aScript.meta.oujs.collaborator);
-        } else {
-          collaborators = aScript.meta.oujs.collaborator;
-        }
+      if (aScript.meta.OpenUserJS && aScript.meta.OpenUserJS.collaborator) {
+        aScript.meta.OpenUserJS.collaborator.forEach(function (aElement, aIndex, aArray) {
+          collaborators.push(aElement.value);
+        });
       }
 
       aStream.on('data', function (aData) { bufs.push(aData); });
