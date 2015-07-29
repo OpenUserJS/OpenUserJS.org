@@ -86,7 +86,7 @@ Repository | Reference | Recent Version | Stored
 
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
-
+Google Analytics | [Documentation][gaDOCUrl] | Client-side from GA | [gaCDNUrl] *(__NOTE__: Not currently directly accessible from browser address bar)*
 
 
 #### Aggregate
@@ -399,3 +399,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [styleguide]: STYLEGUIDE.md
 [contributing]: CONTRIBUTING.md
+
+[gaDOCUrl]: https://www.google.com/analytics/
+[gaCDNUrl]: //www.google-analytics.com/analytics.js
