@@ -63,8 +63,10 @@ moment.locale('en-tiny', {
 
 var parseDateProperty = function (aObj, aKey) {
   var date = aObj[aKey];
-  aObj[aKey + 'ISOFormat'] = date.toISOString();
-  aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
+  if (aObj[aKey]) {
+    aObj[aKey + 'ISOFormat'] = date.toISOString();
+    aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
+  }
 };
 
 /**
@@ -266,6 +268,9 @@ var parseUser = function (aUserData) {
 
   // Strategies
   user.userStrategies = user.strategies;
+
+  // Dates
+  parseDateProperty(user, '_since'); // Virtual
 
   return user;
 };
