@@ -63,7 +63,7 @@ moment.locale('en-tiny', {
 
 var parseDateProperty = function (aObj, aKey) {
   var date = aObj[aKey];
-  if (aObj[aKey]) {
+  if (date) {
     aObj[aKey + 'ISOFormat'] = date.toISOString();
     aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
   }
