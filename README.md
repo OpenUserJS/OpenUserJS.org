@@ -86,7 +86,7 @@ Repository | Reference | Recent Version | Stored
 
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
-[Google Analytics][gaCFGUrl] | [Documentation][gaDOCUrl] | Client-side from GA | [gaCDNUrl] *(__NOTE__: Not currently directly accessible from browser address bar)*
+[Google Analytics][gaCFGUrl] | [Documentation][gaDOCUrl] | Client-side from GA | [gaCDNUrl]
 
 
 #### Aggregate
