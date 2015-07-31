@@ -47,8 +47,8 @@ Repository | Reference | Recent Version
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [morgan][morganGHUrl] | [Documentation][morganDOCUrl] | [![NPM version][morganNPMVersionImage]][morganNPMUrl]
-[mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NpmUrl]
-[octicons][OcticonsGHUrl] | [Documentation][OcticonsDOCUrl] | [2.4.1+ bb60b84][OcticonsGHHASHUrl]
+[mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
+[octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
 [passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl]
 [passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
@@ -259,10 +259,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [mu2NPMUrl]: https://www.npmjs.com/package/mu2
 [mu2NPMVersionImage]: https://img.shields.io/npm/v/mu2.svg?style=flat
 
-[OcticonsUrl]: https://octicons.github.com/
-[OcticonsGHUrl]: https://github.com/github/octicons
-[OcticonsDOCUrl]: https://octicons.github.com/usage/
-[OcticonsGHHASHUrl]: https://github.com/github/octicons/tree/bb60b84
+[octiconsUrl]: https://octicons.github.com/
+[octiconsGHUrl]: https://github.com/github/octicons
+[octiconsDOCUrl]: https://octicons.github.com/usage/
+[octiconsNPMUrl]: https://www.npmjs.com/package/octicons
+[octiconsNPMVersionImage]: https://img.shields.io/npm/v/octicons.svg?style=flat
 
 [passportGHUrl]: https://github.com/jaredhanson/passport
 [passportDOCUrl]: http://passportjs.org/
