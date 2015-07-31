@@ -393,6 +393,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   // Prevent a removed script from being reuploaded
   findDeadorAlive(Script, { installName: caseSensitive(installName) }, true,
     function (aAlive, aScript, aRemoved) {
+      var script = null;
+
       if (aRemoved || (!aScript && (aUpdate || collaborators))) {
         return aCallback(null);
       } else if (!aScript) {
@@ -414,10 +416,16 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           _authorId: aUser._id
         });
       } else {
+        // WARNING: Work-around what appears to be like a race condition
+        // Grab an early copy of the live *mongoose* script object to test against
+        // This should provide more true values to test against and should alleviate a detected
+        // security issue... unless if `toObject` is not present then it will probably fail
+        script = aScript.toObject ? aScript.toObject({ virtuals: true }) : aScript;
+
         // Script already exists.
         if (!aScript.isLib) {
-          if (collaborators && (aScript.meta.oujs && aScript.meta.oujs.author != aMeta.oujs.author
-              || (aScript.meta.oujs && JSON.stringify(aScript.meta.oujs.collaborator) !=
+          if (collaborators && (script.meta.oujs && script.meta.oujs.author != aMeta.oujs.author
+              || (script.meta.oujs && JSON.stringify(script.meta.oujs.collaborator) !=
              JSON.stringify(aMeta.oujs.collaborator)))) {
             return aCallback(null);
           }
@@ -425,7 +433,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           aScript.uses = libraries;
         }
         aScript.updated = new Date();
-        aScript.installsSinceUpdate = 0;
+        if (script.meta.version !== aMeta.version) {
+          aScript.installsSinceUpdate = 0;
+        }
       }
 
       aScript.save(function (aErr, aScript) {
