@@ -24,8 +24,14 @@
 
             <div class="script-meta">
               <p><i class="fa fa-fw fa-clock-o"></i> <b>Published:</b> <time datetime="{{script._sinceISOFormat}}" title="{{script._since}}">{{script._sinceHumanized}}</time></p>
-              {{#script.meta.version}}<p><i class="fa fa-fw fa-history"></i> <b>Version:</b> <code>{{script.meta.version}}</code> updated <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>{{/script.meta.version}}
-              {{^script.meta.version}}<p><i class="fa fa-fw fa-history"></i> <b>Updated:</b> <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>{{/script.meta.version}}
+              {{#script.meta.version}}
+                <p><i class="fa fa-fw fa-history"></i> <b>Version:</b> <code>{{script.meta.version}}</code>{{#script.isUpdated}} updated <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time>{{/script.isUpdated}}</p>
+              {{/script.meta.version}}
+              {{^script.meta.version}}
+                {{#script.isUpdated}}
+                  <p><i class="fa fa-fw fa-history"></i> <b>Updated:</b> <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>
+                {{/script.isUpdated}}
+              {{/script.meta.version}}
               {{#script.meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{script.meta.description}}</p>{{/script.meta.description}}
               {{#script.hasGroups}}
                 <span>

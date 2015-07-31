@@ -212,6 +212,10 @@ var parseScript = function (aScriptData) {
   parseDateProperty(script, 'updated');
   parseDateProperty(script, '_since'); // Virtual
 
+  if (script.updated.toString() !== script._since.toString()) {
+    script.isUpdated = true;
+  }
+
   return script;
 };
 parseModelFnMap.Script = parseScript;
