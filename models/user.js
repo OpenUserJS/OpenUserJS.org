@@ -28,6 +28,10 @@ var userSchema = new Schema({
   sessionIds: [String]
 });
 
+userSchema.virtual('_since').get(function () {
+  return this._id.getTimestamp();
+});
+
 var User = mongoose.model('User', userSchema);
 
 exports.User = User;
