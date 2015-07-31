@@ -34,6 +34,10 @@ var scriptSchema = new Schema({
   _authorId: Schema.Types.ObjectId
 });
 
+scriptSchema.virtual('_since').get(function () {
+  return this._id.getTimestamp();
+});
+
 var Script = mongoose.model('Script', scriptSchema);
 
 exports.Script = Script;
