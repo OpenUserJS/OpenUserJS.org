@@ -113,7 +113,7 @@ var parseScript = function (aScriptData) {
   if (!aScriptData) {
     return;
   }
-  var script = aScriptData.toObject ? aScriptData.toObject() : aScriptData;
+  var script = aScriptData.toObject ? aScriptData.toObject({ virtuals: true }) : aScriptData;
 
   // Temporaries
   var htmlStub = null;
@@ -220,6 +220,7 @@ var parseScript = function (aScriptData) {
 
   // Dates
   parseDateProperty(script, 'updated');
+  parseDateProperty(script, '_since'); // Virtual
 
   return script;
 };
