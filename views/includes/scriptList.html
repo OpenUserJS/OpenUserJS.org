@@ -19,7 +19,7 @@
         <span class="script-version label label-default">{{meta.version}}</span>
         {{/meta.version}}
         <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</a></span>
-        <p>{{meta.description}}</p>
+        {{#description}}<p>{{description}}</p>{{/description}}
       </td>
       {{^librariesOnly}}
       <td class="text-center td-fit">
