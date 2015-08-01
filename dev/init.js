@@ -57,16 +57,27 @@ var tasks = [
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
-        aCallback(aErr);
-        return;
+        if (aErr.code === 7) {
+          aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+          aCallback(null, false, aStdouts);
+          return;
+        } else {
+          aCallback(aErr);
+          return;
+        }
       }
 
       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
-      aCallback(null, aStdouts);
+      aCallback(null, true, aStdouts);
     });
   },
-  function (aStdouts, aCallback) {
+  function (aSkip, aStdouts, aCallback) {
     var cmd = 'bundler install';
+
+    if (aSkip) {
+      aCallback(null, aStdouts);
+      return;
+    }
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
@@ -109,7 +120,11 @@ var tasks = [
 
 async.waterfall(tasks, function (aErr, aResults) {
   if (aErr) {
-    console.error(chalk.red('Missing a project dependencies!\n\n'), aErr.message);
+    console.error(
+      chalk.red('Project dependency error!\n\n'),
+      'Code ' + aErr.code + '\n',
+      aErr.message
+    );
     return;
   }
 
