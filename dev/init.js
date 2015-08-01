@@ -11,7 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var exec = require('child_process').exec;
 var async = require('async');
 
-console.log(chalk.yellow('Checking project dependencies. Please wait.'));
+console.log(chalk.yellow('Checking project dependencies. Please wait...'));
 
 var tasks = [
   function (aCallback) {
@@ -90,6 +90,19 @@ var tasks = [
     });
   },
   function (aStdouts, aCallback) {
+    var cmd = 'gem list';
+
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
+
+      aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+      aCallback(null, aStdouts);
+    });
+  },
+  function (aStdouts, aCallback) {
     var cmd = 'npm -v';
 
     exec(cmd, function (aErr, aStdout, aStderr) {
@@ -121,13 +134,14 @@ var tasks = [
 async.waterfall(tasks, function (aErr, aResults) {
   if (aErr) {
     console.error(
-      chalk.red('Project dependency error!\n\n'),
+      chalk.red.inverse('Project dependency error!\n\n'),
       'Code ' + aErr.code + '\n',
       aErr.message
     );
     return;
   }
 
-  aResults.push(chalk.green('Returning to npm'));
+  aResults.push(chalk.green('Complete'));
+
   console.log(aResults.join('\n'));
 });
