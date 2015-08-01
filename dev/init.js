@@ -20,6 +20,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         aCallback(aErr);
+        return;
       }
 
       aCallback(null, ['$ ' + cmd + '\n' + chalk.gray(aStdout)]);
@@ -31,6 +32,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         aCallback(aErr);
+        return;
       }
 
       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
@@ -43,6 +45,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         aCallback(aErr);
+        return;
       }
 
       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
@@ -55,6 +58,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         aCallback(aErr);
+        return;
       }
 
       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
@@ -67,6 +71,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         aCallback(aErr);
+        return;
       }
 
       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
@@ -79,6 +84,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         aCallback(aErr);
+        return;
       }
 
       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
@@ -91,12 +97,13 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         aCallback(aErr);
+        return;
       }
 
       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
       aCallback(null, aStdouts);
     });
-  },
+  }
 
 ];
 

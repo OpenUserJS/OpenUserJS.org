@@ -22,10 +22,11 @@ exports.view = function (aReq, aRes, aNext) {
   //
   var authedUser = aReq.session.user;
   var options = {};
-  var tasks = [];
 
-  var documentPath = null;
   var document = aReq.params.document;
+  var documentPath = null;
+
+  var tasks = null;
   var then = null;
 
   // Session
@@ -38,68 +39,64 @@ exports.view = function (aReq, aRes, aNext) {
     documentPath = 'views/includes/documents';
 
     //--- Tasks
-    tasks.push(function (aCallback) {
-      async.waterfall([
+    tasks = [
+      // Read file listing
+      function (aCallback) {
+        fs.readdir(documentPath, function (aErr, aFiles) {
+          if (aErr) {
+            aCallback({ statusCode: 500, statusMessage : 'Error retrieving page list' });
+            return;
+          }
 
-        // Read file listing
-        function (aCallback) {
-          fs.readdir(documentPath, function (aErr, aFiles) {
-            if (aErr) {
-              aCallback({ statusCode: 500, statusMessage : 'Error retrieving page list' });
-              return;
+          var file = null;
+
+          // Dynamically create a file listing of the pages
+          options.files = [];
+          for (file in aFiles) {
+            if (/\.md$/.test(aFiles[file])) {
+              options.files.push({
+                href: aFiles[file].replace(/\.md$/, ''),
+                textContent: aFiles[file].replace(/\.md$/, '').replace(/-/g, ' ')
+              });
             }
+          }
 
-            var file = null;
+          aCallback(null);
+        });
+      },
+      // Read md file contents
+      function (aCallback) {
+        fs.readFile(documentPath + '/' + document + '.md', 'utf8', function (aErr, aData) {
+          if (aErr) {
+            aCallback({ statusCode: 404, statusMessage: 'Error retrieving page' });
+            return;
+          }
 
-            // Dynamically create a file listing of the pages
-            options.files = [];
-            for (file in aFiles) {
-              if (/\.md$/.test(aFiles[file])) {
-                options.files.push({
-                  href: aFiles[file].replace(/\.md$/, ''),
-                  textContent: aFiles[file].replace(/\.md$/, '').replace(/-/g, ' ')
-                });
-              }
-            }
+          var lines = null;
+          var matches = null;
+          var heading = null;
+          var content = null;
 
-            aCallback(null);
-          });
-        },
+          // Check if first line is h2 and use for title/heading if present
+          lines = aData.split('\n');
+          matches = lines[0].match(/^##\s(.*)$/);
+          if (matches) {
+            heading = lines.shift().replace(/^##\s+/, "");
+          } else {
+            heading = document;
+          }
+          content = lines.join('\n');
 
-        // Read md file contents
-        function (aCallback) {
-          fs.readFile(documentPath + '/' + document + '.md', 'utf8', function (aErr, aData) {
-            if (aErr) {
-              aCallback({ statusCode: 404, statusMessage: 'Error retrieving page' });
-              return;
-            }
+          // Page metadata
+          pageMetadata(options, [heading, 'About']);
 
-            var lines = null;
-            var matches = null;
-            var heading = null;
-            var content = null;
+          options.pageHeading = heading;
+          options.pageData = renderMd(content);
 
-            // Check if first line is h2 and use for title/heading if present
-            lines = aData.split('\n');
-            matches = lines[0].match(/^##\s(.*)$/);
-            if (matches) {
-              heading = lines.shift().replace(/^##\s+/, "");
-            } else {
-              heading = document;
-            }
-            content = lines.join('\n');
-
-            // Page metadata
-            pageMetadata(options, [heading, 'About']);
-
-            options.pageHeading = heading;
-            options.pageData = renderMd(content);
-
-            aCallback(null);
-          });
-        }
-      ], aCallback);
-    });
+          aCallback(null);
+        });
+      }
+    ];
   }
   else {
     // Page metadata
@@ -121,32 +118,29 @@ exports.view = function (aReq, aRes, aNext) {
 
     options.git = {};
     //--- Tasks
-    tasks.push(function (aCallback) {
-      async.waterfall([
+    tasks = [
+      // Read git short hash HEAD for current tree
+      function (aCallback) {
+        git.short(function (aStr) {
+          options.git.short = aStr;
 
-        // Read git short hash HEAD for current tree
-        function (aCallback) {
-          git.short(function (aStr) {
-            options.git.short = aStr;
+          aCallback(null);
+        });
+      },
 
-            aCallback(null);
-          });
-        },
+      // Read git branch name of current tree
+      function (aCallback) {
+        git.branch(function (aStr) {
+          options.git.branch = aStr;
 
-        // Read git branch name of current tree
-        function (aCallback) {
-          git.branch(function (aStr) {
-            options.git.branch = aStr;
-
-            aCallback(null);
-          });
-        }
-      ], aCallback);
-    });
+          aCallback(null);
+        });
+      }
+    ];
   }
 
   //---
-  async.parallel(tasks, function (aErr) {
+  async.waterfall(tasks, function (aErr) {
     if (aErr) {
       return statusCodePage(aReq, aRes, aNext, {
         statusCode: aErr.statusCode,
