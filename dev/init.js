@@ -44,11 +44,37 @@ var tasks = [
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
+        if (aErr.code === 127) {
+//           aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+          aCallback(null, false, aStdouts);
+          return;
+        } else {
+          aCallback(aErr);
+          return;
+        }
+      }
+
+//       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+      aCallback(null, true, aStdouts);
+    });
+  },
+  function (aSkip, aStdouts, aCallback) {
+    var cmd = 'sudo gem install bundler -v 1.10.6';
+
+    if (aSkip) {
+      aCallback(null, aStdouts);
+      return;
+    }
+
+    console.log(chalk.cyan('Installing *bundler* gem as global...'));
+
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
         aCallback(aErr);
         return;
       }
 
-      aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
       aCallback(null, aStdouts);
     });
   },
@@ -58,7 +84,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         if (aErr.code === 7) {
-          aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//           aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
           aCallback(null, false, aStdouts);
           return;
         } else {
@@ -67,7 +93,7 @@ var tasks = [
         }
       }
 
-      aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
       aCallback(null, true, aStdouts);
     });
   },
@@ -79,6 +105,21 @@ var tasks = [
       return;
     }
 
+    console.log(chalk.cyan('Installing bundled gem(s) as global...'));
+
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
+
+//       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+      aCallback(null, aStdouts);
+    });
+  },
+  function (aStdouts, aCallback) {
+    var cmd = 'gem list';
+
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         aCallback(aErr);
@@ -90,7 +131,7 @@ var tasks = [
     });
   },
   function (aStdouts, aCallback) {
-    var cmd = 'gem list';
+    var cmd = 'gem outdated';
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
@@ -141,7 +182,7 @@ async.waterfall(tasks, function (aErr, aResults) {
     return;
   }
 
-  aResults.push(chalk.green('Complete'));
+  aResults.push(chalk.cyan('Completed checking project dependencies'));
 
   console.log(aResults.join('\n'));
 });
