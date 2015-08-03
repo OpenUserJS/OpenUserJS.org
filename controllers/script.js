@@ -49,6 +49,12 @@ var getScriptPageTasks = function (aOptions) {
   var script = aOptions.script;
   var authedUser = aOptions.authedUser;
 
+  // Intermediates
+  var homepagesURL = null;
+  var copyrights = null;
+  var licenses = null;
+  var collaborators = null;
+
   // Temporaries
   var htmlStub = null;
 
@@ -73,7 +79,9 @@ var getScriptPageTasks = function (aOptions) {
     Group.find({
       _scriptIds: script._id
     }, function (aErr, aScriptGroupList) {
-      if (aErr) return aCallback(aErr);
+      if (aErr) {
+        return aCallback(aErr);
+      }
 
       aScriptGroupList = _.map(aScriptGroupList, modelParser.parseGroup);
 
@@ -85,19 +93,21 @@ var getScriptPageTasks = function (aOptions) {
   });
 
   // Show homepages of the script
-  if (script.meta.homepageURL) {
-    if (typeof script.meta.homepageURL === 'string') {
-      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
+  homepagesURL = scriptStorage.findMeta(script.meta, 'homepageURL');
+  if (homepagesURL) {
+    if (typeof homepagesURL === 'string') {
+      htmlStub = '<a href="' + homepagesURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         aOptions.script.homepages = [{
-          url: script.meta.homepageURL,
-          text: decodeURI(script.meta.homepageURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
+          url: homepagesURL,
+          text: decodeURI(homepagesURL),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.
+            test(homepagesURL)
         }];
       }
     } else {
       aOptions.script.homepages = [];
-      script.meta.homepageURL.forEach(function (aHomepage) {
+      homepagesURL.forEach(function (aHomepage) {
         htmlStub = '<a href="' + aHomepage + '"></a>';
         if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
           aOptions.script.homepages.unshift({
@@ -111,24 +121,26 @@ var getScriptPageTasks = function (aOptions) {
   }
 
   // Show copyrights of the script
-  if (script.meta.copyright) {
-    if (typeof script.meta.copyright === 'string') {
-      aOptions.script.copyrights = [{ name: script.meta.copyright }];
+  copyrights = scriptStorage.findMeta(script.meta, 'copyright');
+  if (copyrights) {
+    if (typeof copyrights === 'string') {
+      aOptions.script.copyrights = [{ name: copyrights }];
     } else {
       aOptions.script.copyrights = [];
-      script.meta.copyright.forEach(function (aCopyright) {
+      copyrights.forEach(function (aCopyright) {
         aOptions.script.copyrights.unshift({ name: aCopyright });
       });
     }
   }
 
   // Show licensings of the script
-  if (script.meta.license) {
-    if (typeof script.meta.license === 'string') {
-      aOptions.script.licenses = [{ name: script.meta.license }];
+  licenses = scriptStorage.findMeta(script.meta, 'license');
+  if (licenses) {
+    if (typeof licenses === 'string') {
+      aOptions.script.licenses = [{ name: licenses }];
     } else {
       aOptions.script.licenses = [];
-      script.meta.license.forEach(function (aLicense) {
+      licenses.forEach(function (aLicense) {
         aOptions.script.licenses.unshift({ name: aLicense });
       });
     }
@@ -137,14 +149,21 @@ var getScriptPageTasks = function (aOptions) {
   }
 
   // Show collaborators of the script
-  if (script.meta.oujs && script.meta.oujs.author && script.meta.oujs.collaborator) {
+
+  collaborators = scriptStorage.findMeta(script.meta, 'oujs.collaborator');
+  if (scriptStorage.findMeta(script.meta, 'oujs.author') && collaborators) {
+
     aOptions.hasCollab = true;
-    if (typeof script.meta.oujs.collaborator === 'string') {
-      aOptions.script.collaborators = [{ url: encodeURIComponent(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];
+    if (typeof collaborators === 'string') {
+      aOptions.script.collaborators = [{
+        url: encodeURIComponent(collaborators),
+          text: collaborators }];
     } else {
       aOptions.script.collaborators = [];
-      script.meta.oujs.collaborator.forEach(function (aCollaborator) {
-        aOptions.script.collaborators.unshift({ url: encodeURIComponent(aCollaborator), text: aCollaborator });
+      collaborators.forEach(function (aCollaborator) {
+        aOptions.script.collaborators.unshift({
+          url: encodeURIComponent(aCollaborator),
+            text: aCollaborator });
       });
     }
   }
@@ -156,7 +175,9 @@ var getScriptPageTasks = function (aOptions) {
       Script.find({
         installName: { $in: script.uses }
       }, function (aErr, aScriptLibraryList) {
-        if (aErr) return aCallback(aErr);
+        if (aErr) {
+          return aCallback(aErr);
+        }
 
         script.libs = aScriptLibraryList;
         script.libs = _.map(script.libs, modelParser.parseScript);
@@ -174,7 +195,9 @@ var getScriptPageTasks = function (aOptions) {
       Script.find({
         uses: script.installName
       }, function (aErr, aLibraryScriptList) {
-        if (aErr) return aCallback(aErr);
+        if (aErr) {
+          return aCallback(aErr);
+        }
 
         script.isUsed = aLibraryScriptList.length > 0;
         script.usedBy = aLibraryScriptList;
@@ -316,14 +339,16 @@ exports.view = function (aReq, aRes, aNext) {
     function preRender() {
       if (script.groups) {
         pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-          script.meta.description, _.pluck(script.groups, 'name'));
+          scriptStorage.findMeta(script.meta, 'description'), _.pluck(script.groups, 'name'));
       }
     }
     function render() { aRes.render('pages/scriptPage', options); }
     function asyncComplete() { preRender(); render(); }
 
     //---
-    if (aErr || !aScriptData) { return aNext(); }
+    if (aErr || !aScriptData) {
+      return aNext();
+    }
 
     var options = {};
     var tasks = [];
@@ -343,7 +368,7 @@ exports.view = function (aReq, aRes, aNext) {
 
     // Page metadata
     pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-      script.meta.description);
+      scriptStorage.findMeta(script.meta, 'description'));
     options.isScriptPage = true;
 
     // SearchBar
@@ -386,7 +411,9 @@ exports.edit = function (aReq, aRes, aNext) {
     function asyncComplete() { preRender(); render(); }
 
     // ---
-    if (aErr || !aScriptData) { return aNext(); }
+    if (aErr || !aScriptData) {
+      return aNext();
+    }
 
     //
     var options = {};
@@ -404,7 +431,9 @@ exports.edit = function (aReq, aRes, aNext) {
       script.name);
 
     // If authed user is not the script author.
-    if (!options.isOwner) { return aNext(); }
+    if (!options.isOwner) {
+      return aNext();
+    }
 
     // SearchBar
     options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
@@ -469,7 +498,10 @@ exports.vote = function (aReq, aRes, aNext) {
 
   Script.findOne({ installName: scriptStorage.caseSensitive(installName) },
     function (aErr, aScript) {
-      if (aErr || !aScript) { return aRes.redirect(url); }
+
+      if (aErr || !aScript) {
+        return aRes.redirect(url);
+      }
 
       Vote.findOne({ _scriptId: aScript._id, _userId: authedUser._id },
         function (aErr, aVoteModel) {
@@ -535,7 +567,9 @@ exports.flag = function (aReq, aRes, aNext) {
       .caseSensitive(installName + (isLib ? '.js' : '.user.js')) },
     function (aErr, aScript) {
       var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
-      if (aErr || !aScript) { return aNext(); }
+      if (aErr || !aScript) {
+        return aNext();
+      }
 
       fn(Script, aScript, aReq.session.user, function (aFlagged) { // NOTE: Inline function here
         aRes.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));

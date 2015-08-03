@@ -1170,7 +1170,9 @@ exports.submitSource = function (aReq, aRes, aNext) {
     storeScript(aReq.body.script_name, source);
   } else {
     scriptStorage.getMeta([source], function (aMeta) {
-      if (!aMeta || !aMeta.name) { return aRes.redirect(url); }
+      if (!scriptStorage.findMeta(aMeta, 'name')) {
+        return aRes.redirect(url);
+      }
       storeScript(aMeta, source);
     });
   }
@@ -1182,7 +1184,9 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
   if (aReq.params.isNew) {
 
     // A user who isn't logged in can't write a new script
-    if (!aAuthedUser) { return aCallback(null); }
+    if (!aAuthedUser) {
+      return aCallback(null);
+    }
 
     // Page metadata
     pageMetadata(aOptions, 'New ' + (aOptions.isLib ? 'Library ' : 'Script'));
@@ -1198,16 +1202,19 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
     aReq.params.scriptname += aOptions.isLib ? '.js' : '.user.js';
     scriptStorage.getSource(aReq, function (aScript, aStream) {
       var bufs = [];
-      var collaborators = [];
+      var collaborators = null;
 
-      if (!aScript) { return aCallback(null); }
+      if (!aScript) {
+        return aCallback(null);
+      }
 
-      if (aScript.meta.oujs && aScript.meta.oujs.collaborator) {
-        if (typeof aScript.meta.oujs.collaborator === 'string') {
-          collaborators.push(aScript.meta.oujs.collaborator);
-        } else {
-          collaborators = aScript.meta.oujs.collaborator;
+      collaborators = scriptStorage.findMeta(aScript.meta, 'oujs.collaborator');
+      if (collaborators) {
+        if (typeof collaborators === 'string') {
+          collaborators = [collaborators];
         }
+      } else {
+        collaborators = []; // WATCHPOINT
       }
 
       aStream.on('data', function (aData) { bufs.push(aData); });

@@ -18,6 +18,7 @@ var userRoles = require('../models/userRoles.json');
 var renderMd = require('../libs/markdown').renderMd;
 var getRating = require('../libs/collectiveRating').getRating;
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var findMeta = require('../controllers/scriptStorage').findMeta;
 
 var parseModelFnMap = {};
 
@@ -114,6 +115,10 @@ var parseScript = function (aScriptData) {
   }
   var script = aScriptData.toObject ? aScriptData.toObject({ virtuals: true }) : aScriptData;
 
+  // Intermediates
+  var icon = null;
+  var supportURL = null;
+
   // Temporaries
   var htmlStub = null;
 
@@ -123,38 +128,44 @@ var parseScript = function (aScriptData) {
   }
 
   // Icons
-  if (script.meta.icon) {
-    if (_.isString(script.meta.icon)) {
-      script.icon16Url = script.meta.icon;
-      script.icon45Url = script.meta.icon;
-    } else if (_.isArray(script.meta.icon) && !_.isEmpty(script.meta.icon)) {
-      script.icon16Url = script.meta.icon[script.meta.icon.length - 1];
-      script.icon45Url = script.meta.icon[script.meta.icon.length - 1];
+  icon = findMeta(script.meta, 'icon');
+  if (icon) {
+    // TODO: `@icon` has been unique but may not be in early scripts in the DB.
+    // Should be fixed on migration so this can be modified
+    if (_.isString(icon)) {
+      script.icon16Url = icon;
+      script.icon45Url = icon;
+    } else if (_.isArray(icon) && !_.isEmpty(icon)) { // NOTE: Should never be empty
+      script.icon16Url = icon[icon.length - 1];
+      script.icon45Url = icon[icon.length - 1];
     }
   }
-  if (script.meta.icon64) {
-    script.icon45Url = script.meta.icon64;
+
+  icon = findMeta(script.meta, 'icon64');
+  if (icon) {
+    script.icon45Url = icon;
   }
 
   // Support Url
-  if (script.meta.supportURL) {
+  supportURL = findMeta(script.meta, 'supportURL');
+  if (supportURL) {
     script.hasSupport = true;
-    if (_.isString(script.meta.supportURL)) {
-      htmlStub = '<a href="' + script.meta.supportURL + '"></a>';
+    if (_.isString(supportURL)) {
+      htmlStub = '<a href="' + supportURL + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         script.support = [{
-          url: script.meta.supportURL,
-          text: decodeURI(script.meta.supportURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL)
+          url: supportURL,
+          text: decodeURI(supportURL),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL)
         }];
       }
-    } else if (_.isArray(script.meta.supportURL) && !_.isEmpty(script.meta.supportURL)) {
-      htmlStub = '<a href="' + script.meta.supportURL[script.meta.supportURL.length - 1] + '"></a>';
+    } else if (_.isArray(supportURL) && !_.isEmpty(supportURL)) { // NOTE: Should never be empty
+      htmlStub = '<a href="' + supportURL[supportURL - 1] + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
         script.support = [{
-          url:  script.meta.supportURL[script.meta.supportURL.length - 1],
-          text: decodeURI(script.meta.supportURL[script.meta.supportURL.length - 1]),
-          hasNoFollow:  !/^(?:https?:\/\/)?openuserjs\.org/i.test(script.meta.supportURL[script.meta.supportURL.length - 1])
+          url:  supportURL[supportURL.length - 1],
+          text: decodeURI(supportURL[supportURL.length - 1]),
+          hasNoFollow:  !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL[supportURL.length - 1])
         }];
       }
     }

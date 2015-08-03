@@ -39,8 +39,7 @@ function getInstallName(aReq) {
 exports.getInstallName = getInstallName;
 
 function caseInsensitive(aInstallName) {
-  return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
-    + '$', 'i');
+  return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '$', 'i');
 }
 exports.caseInsensitive = caseInsensitive;
 
@@ -136,7 +135,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
   exports.getSource(aReq, function (aScript, aStream) {
 
-    if (!aScript) { return aNext(); }
+    if (!aScript) {
+      return aNext();
+    }
 
     // Send the script
     aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
@@ -147,7 +148,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
     aStream.pipe(aRes);
 
     // Don't count installs on raw source route
-    if (aScript.isLib || aReq.params.type) { return; }
+    if (aScript.isLib || aReq.params.type) {
+      return;
+    }
 
     // Update the install count
     ++aScript.installs;
@@ -169,7 +172,9 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       var key = null;
       var whitespace = '\u0020\u0020\u0020\u0020';
 
-      if (!aScript) { return aNext(); }
+      if (!aScript) {
+        return aNext();
+      }
 
       aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
 
@@ -206,6 +211,32 @@ exports.sendMeta = function (aReq, aRes, aNext) {
   });
 };
 
+function findMeta(aMeta, aQuery) {
+  var header = aMeta;
+  var headers = null;
+
+  aQuery.split('.').forEach(function (aElement, aIndex, aArray) {
+    if (header && header[aElement] !== undefined ) {
+      header = header[aElement];
+    } else if (header && Array.isArray(header)) {
+      headers = [];
+      header.forEach(function(aElement2, aIndex2, aArray2) {
+        if (headers && header[aIndex2][aElement] !== undefined) {
+          headers.push(header[aIndex2][aElement]);
+        } else {
+          headers = null;
+        }
+      });
+      header = headers;
+    } else {
+      header = null;
+    }
+  });
+
+  return header;
+}
+exports.findMeta = findMeta;
+
 // Modified from Count Issues (http://userscripts.org/scripts/show/69307)
 // By Marti Martz (http://userscripts.org/users/37004)
 function parseMeta(aString, aNormalize) {
@@ -221,6 +252,7 @@ function parseMeta(aString, aNormalize) {
   var uniques = {
     'description': true,
     'icon': true,
+    'icon64': true,
     'name': true,
     'namespace': true,
     'version': true,
@@ -320,7 +352,9 @@ exports.getMeta = function (aChunks, aCallback) {
     str += aChunks[i];
     header = /^(?:\uFEFF)?\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m.exec(str);
 
-    if (header && header[1]) { return aCallback(parseMeta(header[1], true)); }
+    if (header && header[1]) {
+      return aCallback(parseMeta(header[1], true));
+    }
   }
 
   aCallback(null);
@@ -328,46 +362,52 @@ exports.getMeta = function (aChunks, aCallback) {
 
 exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var s3 = new AWS.S3();
+  var name = null;
   var scriptName = null;
   var installName = aUser.name + '/';
   var isLibrary = typeof aMeta === 'string';
   var libraries = [];
   var requires = null;
   var match = null;
+  var collaboration = false;
   var collaborators = null;
+  var author = null;
   var rLibrary = new RegExp(
     '^(?:(?:(?:https?:)?\/\/' +
       (isPro ? 'openuserjs\.org' : 'localhost:8080') +
         ')?\/(?:libs\/src|src\/libs)\/)?(.*?)([^\/]*\.js)$', '');
 
-  if (!aMeta) { return aCallback(null); }
+  if (!aMeta) {
+    return aCallback(null);
+  }
 
   if (!isLibrary) {
-    scriptName = (typeof aMeta.name === 'string' ? cleanFilename(aMeta.name, '') : null);
+    name = findMeta(aMeta, 'name');
+    scriptName = typeof name === 'string' ? cleanFilename(name, '') : null;
 
     // Can't install a script without a @name (maybe replace with random value)
-    if (!scriptName) { return aCallback(null); }
+    if (!scriptName) {
+      return aCallback(null);
+    }
 
-    if (!isLibrary && aMeta.oujs && aMeta.oujs.author
-        && aMeta.oujs.author != aUser.name && aMeta.oujs.collaborator) {
-      collaborators = aMeta.oujs.collaborator;
-      if ((typeof collaborators === 'string'
-          && collaborators === aUser.name)
-          || (collaborators instanceof Array
-          && collaborators.indexOf(aUser.name) > -1)) {
-        installName = aMeta.oujs.author + '/';
-      } else {
-        collaborators = null;
+    author = findMeta(aMeta, 'oujs.author');
+    collaborators = findMeta(aMeta, 'oujs.collaborator');
+
+    if (!isLibrary && author !== aUser.name && collaborators) {
+      if ((typeof collaborators === 'string' && collaborators === aUser.name) ||
+        (collaborators instanceof Array && collaborators.indexOf(aUser.name) > -1)) {
+
+        installName = author + '/';
+        collaboration = true;
       }
     }
 
     installName += scriptName + '.user.js';
 
-    if (aMeta.require) {
-      if (typeof aMeta.require === 'string') {
-        requires = [aMeta.require];
-      } else {
-        requires = aMeta.require;
+    requires = findMeta(aMeta, 'require');
+    if (requires) {
+      if (typeof requires === 'string') {
+        requires = [requires];
       }
 
       requires.forEach(function (aRequire) {
@@ -385,7 +425,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     }
   } else {
     scriptName = cleanFilename(aMeta.replace(/^\s+|\s+$/g, ''), '');
-    if (!scriptName) { return aCallback(null); }
+    if (!scriptName) {
+      return aCallback(null);
+    }
 
     installName += scriptName + '.js';
   }
@@ -395,12 +437,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     function (aAlive, aScript, aRemoved) {
       var script = null;
 
-      if (aRemoved || (!aScript && (aUpdate || collaborators))) {
+      if (aRemoved || (!aScript && (aUpdate || collaboration))) {
         return aCallback(null);
       } else if (!aScript) {
         // New script
         aScript = new Script({
-          name: isLibrary ? aMeta : aMeta.name,
+          name: isLibrary ? aMeta : findMeta(aMeta, 'name'),
           author: aUser.name,
           installs: 0,
           rating: 0,
@@ -424,16 +466,17 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
         // Script already exists.
         if (!aScript.isLib) {
-          if (collaborators && (script.meta.oujs && script.meta.oujs.author != aMeta.oujs.author
-              || (script.meta.oujs && JSON.stringify(script.meta.oujs.collaborator) !=
-             JSON.stringify(aMeta.oujs.collaborator)))) {
+          if (collaboration &&
+            (findMeta(script.meta, 'oujs.author') !== findMeta(aMeta, 'oujs.author') ||
+              JSON.stringify(findMeta(script.meta, 'oujs.collaborator')) != 
+                JSON.stringify(collaborators))) {
             return aCallback(null);
           }
           aScript.meta = aMeta;
           aScript.uses = libraries;
         }
         aScript.updated = new Date();
-        if (script.meta.version !== aMeta.version) {
+        if (findMeta(script.meta, 'version') !== findMeta(aMeta, 'version')) {
           aScript.installsSinceUpdate = 0;
         }
       }
@@ -502,7 +545,9 @@ exports.webhook = function (aReq, aRes) {
   payload = JSON.parse(aReq.body.payload);
 
   // Only accept commits to the master branch
-  if (!payload || payload.ref !== 'refs/heads/master') { return; }
+  if (!payload || payload.ref !== 'refs/heads/master') {
+    return;
+  }
 
   // Gather all the info for the RepoManager
   username = payload.repository.owner.name;
@@ -512,7 +557,9 @@ exports.webhook = function (aReq, aRes) {
 
   // Find the user that corresponds the repo owner
   User.findOne({ ghUsername: username }, function (aErr, aUser) {
-    if (!aUser) { return; }
+    if (!aUser) {
+      return;
+    }
 
     // Gather the modified user scripts
     payload.commits.forEach(function (aCommit) {
