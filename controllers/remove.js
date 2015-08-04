@@ -44,9 +44,9 @@ exports.rm = function (aReq, aRes, aNext) {
       });
     }
 
-    // Simple error check for string null and reserved phrase
+    // Simple error check for string null
     reason = reason.trim();
-    if (reason === '' || /^User removed$/i.test(reason)) {
+    if (reason === '') {
       return statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
         statusMessage: 'Invalid reason for removal.'

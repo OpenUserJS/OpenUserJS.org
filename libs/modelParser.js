@@ -533,7 +533,15 @@ var parseRemovedItem = function (aRemovedItemData) {
   parseDateProperty(removedItem, 'removed');
 
   // User
-  removedItem.remover = parseUser({ name: removedItem.removerName });
+  removedItem.remover = parseUser({
+    name: removedItem.removerName,
+    automated: removedItem.removerAutomated
+  });
+
+  // Reason
+  removedItem.reason = removedItem.reason ?
+    removedItem.reason :
+      (removedItem.removerAutomated ? removedItem.model + ' removed' : null);
 
   // Content
   var parseModelFn = parseModelFnMap[removedItem.model];
