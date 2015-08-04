@@ -90,14 +90,14 @@ var parseModelListSearchQuery = function (aModelListQuery, aQuery, aSearchOption
 var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
   parseModelListSearchQuery(aScriptListQuery, aQuery, {
     partialWordMatchFields: ['name', 'author', 'about', 'meta.description'],
-    fullWordMatchFields: ['meta.include', 'meta.match'],
+    fullWordMatchFields: ['meta.include', 'meta.match']
   });
 };
 exports.parseScriptSearchQuery = parseScriptSearchQuery;
 
 var parseGroupSearchQuery = function (aGroupListQuery, aQuery) {
   parseModelListSearchQuery(aGroupListQuery, aQuery, {
-    partialWordMatchFields: ['name'],
+    partialWordMatchFields: ['name']
     fullWordMatchFields: [],
   });
 };
@@ -106,7 +106,7 @@ exports.parseGroupSearchQuery = parseGroupSearchQuery;
 var parseDiscussionSearchQuery = function (aDiscussionListQuery, aQuery) {
   parseModelListSearchQuery(aDiscussionListQuery, aQuery, {
     partialWordMatchFields: ['topic'],
-    fullWordMatchFields: ['author'],
+    fullWordMatchFields: ['author']
   });
 };
 exports.parseDiscussionSearchQuery = parseDiscussionSearchQuery;
@@ -114,7 +114,7 @@ exports.parseDiscussionSearchQuery = parseDiscussionSearchQuery;
 var parseCommentSearchQuery = function (aCommentListQuery, aQuery) {
   parseModelListSearchQuery(aCommentListQuery, aQuery, {
     partialWordMatchFields: ['content'],
-    fullWordMatchFields: ['author'],
+    fullWordMatchFields: ['author']
   });
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
@@ -122,15 +122,22 @@ exports.parseCommentSearchQuery = parseCommentSearchQuery;
 var parseUserSearchQuery = function (aUserListQuery, aQuery) {
   parseModelListSearchQuery(aUserListQuery, aQuery, {
     partialWordMatchFields: ['name'],
-    fullWordMatchFields: [],
+    fullWordMatchFields: []
   });
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
 var parseRemovedItemSearchQuery = function (aRemovedItemListQuery, aQuery) {
   parseModelListSearchQuery(aRemovedItemListQuery, aQuery, {
-    partialWordMatchFields: ['content.*'],
-    fullWordMatchFields: ['model'],
+    partialWordMatchFields: [
+      'removerName',
+      'reason',
+
+      'content.*', // NOTE: Watchpoint... Wildcards don't appear to work (yet?)...
+      'content.name', // NOTE: ... instead use some exact key names. See #490
+      'content.author'
+    ],
+    fullWordMatchFields: ['model']
   });
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;

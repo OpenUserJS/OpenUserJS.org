@@ -1214,7 +1214,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
           collaborators = [collaborators];
         }
       } else {
-        collaborators = []; // WATCHPOINT
+        collaborators = []; // NOTE: Watchpoint
       }
 
       aStream.on('data', function (aData) { bufs.push(aData); });
