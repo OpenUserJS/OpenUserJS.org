@@ -97,8 +97,8 @@ exports.parseScriptSearchQuery = parseScriptSearchQuery;
 
 var parseGroupSearchQuery = function (aGroupListQuery, aQuery) {
   parseModelListSearchQuery(aGroupListQuery, aQuery, {
-    partialWordMatchFields: ['name']
-    fullWordMatchFields: [],
+    partialWordMatchFields: ['name'],
+    fullWordMatchFields: []
   });
 };
 exports.parseGroupSearchQuery = parseGroupSearchQuery;
