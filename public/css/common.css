@@ -291,3 +291,7 @@ a.panel-heading {
   text-align: center;
   width: 1.28571429em;
 }
+
+.reason-automated {
+  opacity: 0.25;
+}

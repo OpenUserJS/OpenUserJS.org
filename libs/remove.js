@@ -49,7 +49,7 @@ function removeable(aModel, aContent, aUser, aCallback) {
 }
 exports.removeable = removeable;
 
-function remove(aModel, aContent, aUser, aReason, aCallback) {
+function remove(aModel, aContent, aUser, aReason, aAutomated, aCallback) {
   var removeModel = new Remove({
     'model': aModel.modelName,
     'content': aContent.toObject(),
@@ -57,6 +57,7 @@ function remove(aModel, aContent, aUser, aReason, aCallback) {
     'reason': aReason,
     'removerName': aUser.name,
     'removerRole': aUser.role,
+    'removerAutomated': aAutomated,
     '_removerId': aUser._id
   });
 
@@ -67,10 +68,12 @@ function remove(aModel, aContent, aUser, aReason, aCallback) {
 
 exports.remove = function (aModel, aContent, aUser, aReason, aCallback) {
   removeable(aModel, aContent, aUser, function (aCanRemove, aAuthor) {
-    if (!aCanRemove) { return aCallback(false); }
+    if (!aCanRemove) {
+      return aCallback(false);
+    }
 
     if (aModel.modelName !== 'User') {
-      remove(aModel, aContent, aUser, aReason, aCallback);
+      remove(aModel, aContent, aUser, aReason, false, aCallback);
     } else {
       // Remove all the user's content
       async.each(modelNames, function (aModelName, aCallback) {
@@ -78,11 +81,11 @@ exports.remove = function (aModel, aContent, aUser, aReason, aCallback) {
         model.find({ _authorId: aContent._id },
           function (aErr, aContentArr) {
             async.each(aContentArr, function (aContent, innerCb) {
-              remove(model, aContent, aUser, 'User removed', innerCb);
+              remove(model, aContent, aUser, '', true, innerCb);
             }, aCallback);
           });
       }, function () {
-        remove(aModel, aContent, aUser, aReason, aCallback);
+        remove(aModel, aContent, aUser, aReason, false, aCallback);
       });
     }
   });

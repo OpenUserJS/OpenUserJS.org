@@ -16,6 +16,7 @@ var removeSchema = new Schema({
   reason: String,
   removerName: String,
   removerRole: Number,
+  removerAutomated: Boolean,
   _removerId: Schema.Types.ObjectId
 });
 
