@@ -125,7 +125,7 @@ var parseUserSearchQuery = function (aUserListQuery, aQuery) {
     fullWordMatchFields: []
   });
 };
-exports.parseCommentSearchQuery = parseCommentSearchQuery;
+exports.parseUserSearchQuery = parseUserSearchQuery;
 
 var parseRemovedItemSearchQuery = function (aRemovedItemListQuery, aQuery) {
   parseModelListSearchQuery(aRemovedItemListQuery, aQuery, {
@@ -140,7 +140,7 @@ var parseRemovedItemSearchQuery = function (aRemovedItemListQuery, aQuery) {
     fullWordMatchFields: ['model']
   });
 };
-exports.parseCommentSearchQuery = parseCommentSearchQuery;
+exports.parseRemovedItemSearchQuery = parseRemovedItemSearchQuery;
 
 exports.applyDiscussionCategoryFilter = function (aDiscussionListQuery, aOptions, aCatergorySlug) {
   if (aCatergorySlug === 'all') {
@@ -279,6 +279,104 @@ exports.applyUserListQueryDefaults = function (aUserListQuery, aOptions, aReq) {
     searchBarPlaceholder: 'Search Users',
     filterFlaggedItems: true
   });
+};
+
+var removedItemUserListQueryDefaults = {
+  defaultSort: '-removed',
+  parseSearchQueryFn: parseRemovedItemSearchQuery,
+  searchBarPlaceholder: 'Search Removed Items in Users',
+  searchBarFormHiddenVariables: [
+    { name: 'byModel', value: 'User' }
+  ],
+  filterFlaggedItems: false
+}
+exports.removedItemUserListQueryDefaults = removedItemUserListQueryDefaults;
+exports.applyRemovedItemUserListQueryDefaults = function (aRemovedItemUserListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aRemovedItemUserListQuery, aOptions, aReq, removedItemUserListQueryDefaults);
+};
+
+var removedItemScriptListQueryDefaults = {
+  defaultSort: '-removed',
+  parseSearchQueryFn: parseRemovedItemSearchQuery,
+  searchBarPlaceholder: 'Search Removed Items in Scripts',
+  searchBarFormHiddenVariables: [
+    { name: 'byModel', value: 'Script' }
+  ],
+  filterFlaggedItems: false
+}
+exports.removedItemScriptListQueryDefaults = removedItemScriptListQueryDefaults;
+exports.applyRemovedItemScriptListQueryDefaults = function (aRemovedItemScriptListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aRemovedItemScriptListQuery, aOptions, aReq, removedItemScriptListQueryDefaults);
+};
+
+var removedItemCommentListQueryDefaults = {
+  defaultSort: '-removed',
+  parseSearchQueryFn: parseRemovedItemSearchQuery,
+  searchBarPlaceholder: 'Search Removed Items in Comments',
+  searchBarFormHiddenVariables: [
+    { name: 'byModel', value: 'Comment' }
+  ],
+  filterFlaggedItems: false
+}
+exports.removedItemCommentListQueryDefaults = removedItemCommentListQueryDefaults;
+exports.applyRemovedItemCommentListQueryDefaults = function (aRemovedItemCommentListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aRemovedItemCommentListQuery, aOptions, aReq, removedItemCommentListQueryDefaults);
+};
+
+var removedItemDiscussionListQueryDefaults = {
+  defaultSort: '-removed',
+  parseSearchQueryFn: parseRemovedItemSearchQuery,
+  searchBarPlaceholder: 'Search Removed Items in Discussions',
+  searchBarFormHiddenVariables: [
+    { name: 'byModel', value: 'Discussion' }
+  ],
+  filterFlaggedItems: false
+}
+exports.removedItemDiscussionListQueryDefaults = removedItemDiscussionListQueryDefaults;
+exports.applyRemovedItemDiscussionListQueryDefaults = function (aRemovedItemDiscussionListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aRemovedItemDiscussionListQuery, aOptions, aReq, removedItemDiscussionListQueryDefaults);
+};
+
+var removedItemFlagListQueryDefaults = {
+  defaultSort: '-removed',
+  parseSearchQueryFn: parseRemovedItemSearchQuery,
+  searchBarPlaceholder: 'Search Removed Items in Flags',
+  searchBarFormHiddenVariables: [
+    { name: 'byModel', value: 'Flag' }
+  ],
+  filterFlaggedItems: false
+}
+exports.removedItemFlagListQueryDefaults = removedItemFlagListQueryDefaults;
+exports.applyRemovedItemFlagListQueryDefaults = function (aRemovedItemFlagListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aRemovedItemFlagListQuery, aOptions, aReq, removedItemFlagListQueryDefaults);
+};
+
+var removedItemGroupListQueryDefaults = {
+  defaultSort: '-removed',
+  parseSearchQueryFn: parseRemovedItemSearchQuery,
+  searchBarPlaceholder: 'Search Removed Items in Groups',
+  searchBarFormHiddenVariables: [
+    { name: 'byModel', value: 'Group' }
+  ],
+  filterFlaggedItems: false
+}
+exports.removedItemGroupListQueryDefaults = removedItemGroupListQueryDefaults;
+exports.applyRemovedItemGroupListQueryDefaults = function (aRemovedItemGroupListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aRemovedItemGroupListQuery, aOptions, aReq, removedItemGroupListQueryDefaults);
+};
+
+var removedItemVoteListQueryDefaults = {
+  defaultSort: '-removed',
+  parseSearchQueryFn: parseRemovedItemSearchQuery,
+  searchBarPlaceholder: 'Search Removed Items in Votes',
+  searchBarFormHiddenVariables: [
+    { name: 'byModel', value: 'Vote' }
+  ],
+  filterFlaggedItems: false
+}
+exports.removedItemVoteListQueryDefaults = removedItemVoteListQueryDefaults;
+exports.applyRemovedItemVoteListQueryDefaults = function (aRemovedItemVoteListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aRemovedItemVoteListQuery, aOptions, aReq, removedItemVoteListQueryDefaults);
 };
 
 exports.applyRemovedItemListQueryDefaults = function (aRemovedItemListQuery, aOptions, aReq) {
