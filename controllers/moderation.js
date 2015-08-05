@@ -66,6 +66,9 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
     });
   }
 
+  //
+  options.byModel = aReq.query.byModel !== undefined ? aReq.query.byModel : null;
+
   // Page metadata
   pageMetadata(options, 'Graveyard');
 
@@ -77,8 +80,37 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
   // removedItemListQuery
   var removedItemListQuery = Remove.find();
 
+  // removedItemListQuery: byModel
+  if (options.byModel) {
+    modelQuery.findOrDefaultIfNull(removedItemListQuery, 'model', options.byModel, null);
+  }
+
   // removedItemListQuery: Defaults
-  modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, aReq);
+  switch (options.byModel) {
+    case 'User':
+      modelQuery.applyRemovedItemUserListQueryDefaults(removedItemListQuery, options, aReq);
+      break;
+    case 'Script':
+      modelQuery.applyRemovedItemScriptListQueryDefaults(removedItemListQuery, options, aReq);
+      break;
+    case 'Comment':
+      modelQuery.applyRemovedItemCommentListQueryDefaults(removedItemListQuery, options, aReq);
+      break;
+    case 'Discussion':
+      modelQuery.applyRemovedItemDiscussionListQueryDefaults(removedItemListQuery, options, aReq);
+      break;
+    case 'Flag':
+      modelQuery.applyRemovedItemFlagListQueryDefaults(removedItemListQuery, options, aReq);
+      break;
+    case 'Group':
+      modelQuery.applyRemovedItemGroupListQueryDefaults(removedItemListQuery, options, aReq);
+      break;
+    case 'Vote':
+      modelQuery.applyRemovedItemVoteListQueryDefaults(removedItemListQuery, options, aReq);
+      break;
+    default:
+      modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, aReq);
+  }
 
   // removedItemListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults

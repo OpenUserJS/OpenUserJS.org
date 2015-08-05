@@ -30,15 +30,16 @@
         {{> includes/searchBarPanel.html }}
         <h3>Filters</h3>
         <div class="list-group">
-          <a href="./removed" class="list-group-item"><i class="fa fa-fw fa-times"></i> Clear search</a>
-          <a href="?q=User" class="list-group-item"><i class="fa fa-fw fa-search"></i> Users</a>
-          <a href="?q=Script" class="list-group-item"><i class="fa fa-fw fa-search"></i> Scripts</a>
-          <a href="?q=Comment" class="list-group-item"><i class="fa fa-fw fa-search"></i> Comments</a>
-          <a href="?q=Discussion" class="list-group-item"><i class="fa fa-fw fa-search"></i> Discussion</a>
-          <a href="?q=Flag" class="list-group-item"><i class="fa fa-fw fa-search"></i> Flags</a>
-          <a href="?q=Group" class="list-group-item"><i class="fa fa-fw fa-search"></i> Groups</a>
-          <a href="?q=Vote" class="list-group-item"><i class="fa fa-fw fa-search"></i> Votes</a>
+          <a href="./removed{{#searchBarValue}}?q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-times"></i> Clear Filter</a>
+          <a href="?byModel=User{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-user"></i> User</a>
+          <a href="?byModel=Script{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-file"></i> Script</a>
+          <a href="?byModel=Comment{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-comment"></i> Comment</a>
+          <a href="?byModel=Discussion{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-commenting"></i> Discussion</a>
+          <a href="?byModel=Flag{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-flag"></i> Flag</a>
+          <a href="?byModel=Group{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-tag"></i> Group</a>
+          <a href="?byModel=Vote{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-signal"></i> Vote</a>
         </div>
+
       </div>
     </div>
   </div>
