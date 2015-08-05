@@ -33,6 +33,40 @@ if (isPro) {
   });
 }
 
+var script_getSource = function (aScript, aCallback) {
+  var s3 = new AWS.S3();
+  s3.getObject({
+    Bucket: bucketName,
+    Key: aScript.installName
+  }, function(aErr, aData) {
+    if (aErr) {
+      return aCallback(aErr);
+    }
+
+    aCallback(null, aData.Body);
+  });
+};
+exports.script_getSource = script_getSource;
+
+var script_setSource = function (aScript, aSource, aCallback) {
+  var s3 = new AWS.S3();
+  s3.putObject({
+    Bucket: bucketName,
+    Key: aScript.installName,
+    Body: aSource
+  }, aCallback);
+};
+exports.script_setSource = script_setSource;
+
+var script_deleteSource = function (aScript, aCallback) {
+  var s3 = new AWS.S3();
+  s3.deleteObject({
+    Bucket : bucketName,
+    Key : aScript.installName
+  }, aCallback);
+};
+exports.script_deleteSource = script_deleteSource;
+
 function getInstallName(aReq) {
   return aReq.params.username + '/' + aReq.params.scriptname;
 }
@@ -468,7 +502,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         if (!aScript.isLib) {
           if (collaboration &&
             (findMeta(script.meta, 'oujs.author') !== findMeta(aMeta, 'oujs.author') ||
-              JSON.stringify(findMeta(script.meta, 'oujs.collaborator')) != 
+              JSON.stringify(findMeta(script.meta, 'oujs.collaborator')) !=
                 JSON.stringify(collaborators))) {
             return aCallback(null);
           }
