@@ -81,9 +81,7 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
   var removedItemListQuery = Remove.find();
 
   // removedItemListQuery: byModel
-  if (options.byModel) {
-    modelQuery.findOrDefaultIfNull(removedItemListQuery, 'model', options.byModel, null);
-  }
+  modelQuery.findOrUseDefaultIfNull(removedItemListQuery, 'model', options.byModel, null);
 
   // removedItemListQuery: Defaults
   switch (options.byModel) {
