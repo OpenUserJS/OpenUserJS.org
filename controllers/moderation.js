@@ -115,7 +115,6 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
       break;
     default:
       modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, aReq);
-      options.filterNull = true;
   }
 
   // removedItemListQuery: Pagination
