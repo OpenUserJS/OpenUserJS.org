@@ -87,27 +87,35 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
   switch (options.byModel) {
     case 'User':
       modelQuery.applyRemovedItemUserListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterUser = true;
       break;
     case 'Script':
       modelQuery.applyRemovedItemScriptListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterScript = true;
       break;
     case 'Comment':
       modelQuery.applyRemovedItemCommentListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterComment = true;
       break;
     case 'Discussion':
       modelQuery.applyRemovedItemDiscussionListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterDiscussion = true;
       break;
     case 'Flag':
       modelQuery.applyRemovedItemFlagListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterFlag = true;
       break;
     case 'Group':
       modelQuery.applyRemovedItemGroupListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterGroup = true;
       break;
     case 'Vote':
       modelQuery.applyRemovedItemVoteListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterVote = true;
       break;
     default:
       modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterNull = true;
   }
 
   // removedItemListQuery: Pagination
