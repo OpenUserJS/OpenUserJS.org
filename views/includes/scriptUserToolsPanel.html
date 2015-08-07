@@ -5,7 +5,7 @@
         <a rel="nofollow" href="{{^votedUp}}{{{voteUpUrl}}}{{/votedUp}}{{#votedUp}}{{{unvoteUrl}}}{{/votedUp}}" class="btn-vote {{^voteable}}disabled{{/voteable}} {{#votedUp}}active{{/votedUp}}"><i class="fa fa-2x fa-caret-up"></i></a>
         <a rel="nofollow" href="{{^votedDown}}{{{voteDownUrl}}}{{/votedDown}}{{#votedDown}}{{{unvoteUrl}}}{{/votedDown}}" class="btn-vote {{^voteable}}disabled{{/voteable}} {{#votedDown}}active{{/votedDown}}"><i class="fa fa-2x fa-caret-down"></i></a>
       </div>
-      <p><i class="fa fa-fw fa-signal"></i> <b>Rating:</b> {{script.rating}}</p>
+      <p><i class="fa fa-fw fa-heartbeat"></i> <b>Rating:</b> {{script.rating}}</p>
       <div class="progress">
         <div style="width: {{script.votesPercent}}%" class="progress-bar progress-bar-good">{{#script.votes}}{{script.votes}} Votes{{/script.votes}}</div>
         <div style="width: {{script.flagsPercent}}%" class="progress-bar progress-bar-danger">{{#script.flags}}{{script.flags}} <i class="fa fa-fw fa-flag"></i>{{/script.flags}}</div>
