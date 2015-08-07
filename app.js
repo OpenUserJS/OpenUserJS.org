@@ -100,7 +100,7 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 
 // Add absent from server MIME Content Type for PEG Grammar files
 express.static.mime.define({
-  'text/javascript':  ['pegjs']
+  'text/x-pegjs':  ['pegjs']
 });
 
 // Order is very important here (i.e mess with at your own risk)
