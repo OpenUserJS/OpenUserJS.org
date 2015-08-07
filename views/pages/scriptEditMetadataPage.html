@@ -34,6 +34,7 @@
         </div>
         <div class="container-fluid col-sm-4">
           {{#script}}
+          {{^isLib}}
           <div class="panel panel-default">
             <div class="panel-heading">
               <div class="panel-title">Script Groups</div>
@@ -42,6 +43,7 @@
               <input type="hidden" id="groups" name="groups" style="width: 100%;" />
             </div>
           </div>
+          {{/isLib}}
           {{> includes/scriptAuthorToolsPanel.html }}
           {{> includes/scriptModToolsPanel.html }}
           {{/script}}
