@@ -30,7 +30,7 @@
         {{> includes/searchBarPanel.html }}
         <h3>Filters</h3>
         <div class="list-group">
-          <a href="./removed{{#searchBarValue}}?q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterNull}} active{{/filterNull}}"><i class="fa fa-fw fa-times"></i> Clear Filter</a>
+          <a href="./removed{{#searchBarValue}}?q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item list-group-item-info"><i class="fa fa-fw fa-times"></i> Clear Filter</a>
           <a href="?byModel=User{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterUser}} active{{/filterUser}}"><i class="fa fa-fw fa-user"></i> User</a>
           <a href="?byModel=Script{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterScript}} active{{/filterScript}}"><i class="fa fa-fw fa-file"></i> Script</a>
           <a href="?byModel=Comment{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterComment}} active{{/filterComment}}"><i class="fa fa-fw fa-comment"></i> Comment</a>
