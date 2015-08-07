@@ -10,19 +10,43 @@ var _ = require('underscore');
 
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
-var findOrDefaultIfNull = function (aQuery, aKey, aValue, aDefaultValue) {
+// Transform a "tri-state" value condition to null for true/false/null stored DB values
+// See also #701
+var findOrDefaultToNull = function (aQuery, aKey, aValue, aDefaultValue) {
   var conditions = [];
   var condition = {};
+
   condition[aKey] = aValue;
   conditions.push(condition);
+
   if (aValue == aDefaultValue) {
     condition = {};
     condition[aKey] = null;
     conditions.push(condition);
   }
+
   aQuery.and({ $or: conditions });
 };
-exports.findOrDefaultIfNull = findOrDefaultIfNull;
+exports.findOrDefaultToNull = findOrDefaultToNull;
+
+var findOrUseDefaultIfNull = function (aQuery, aKey, aValue, aDefaultValue) {
+  var conditions = [];
+  var condition = {};
+
+  if (aValue === null) {
+    if (aDefaultValue !== null) {
+      aValue = aDefaultValue;
+    } else {
+      return;
+    }
+  }
+
+  condition[aKey] = aValue;
+  conditions.push(condition);
+
+  aQuery.and({ $or: conditions });
+};
+exports.findOrUseDefaultIfNull = findOrUseDefaultIfNull;
 
 var orderDirs = ['asc', 'desc'];
 var parseModelListSort = function (aModelListQuery, aOrderBy, aOrderDir, aDefaultSortFn) {
@@ -284,7 +308,7 @@ exports.applyUserListQueryDefaults = function (aUserListQuery, aOptions, aReq) {
 var removedItemUserListQueryDefaults = {
   defaultSort: '-removed',
   parseSearchQueryFn: parseRemovedItemSearchQuery,
-  searchBarPlaceholder: 'Search Removed Items in Users',
+  searchBarPlaceholder: 'Search Removed Items in User',
   searchBarFormHiddenVariables: [
     { name: 'byModel', value: 'User' }
   ],
@@ -298,7 +322,7 @@ exports.applyRemovedItemUserListQueryDefaults = function (aRemovedItemUserListQu
 var removedItemScriptListQueryDefaults = {
   defaultSort: '-removed',
   parseSearchQueryFn: parseRemovedItemSearchQuery,
-  searchBarPlaceholder: 'Search Removed Items in Scripts',
+  searchBarPlaceholder: 'Search Removed Items in Script',
   searchBarFormHiddenVariables: [
     { name: 'byModel', value: 'Script' }
   ],
@@ -312,7 +336,7 @@ exports.applyRemovedItemScriptListQueryDefaults = function (aRemovedItemScriptLi
 var removedItemCommentListQueryDefaults = {
   defaultSort: '-removed',
   parseSearchQueryFn: parseRemovedItemSearchQuery,
-  searchBarPlaceholder: 'Search Removed Items in Comments',
+  searchBarPlaceholder: 'Search Removed Items in Comment',
   searchBarFormHiddenVariables: [
     { name: 'byModel', value: 'Comment' }
   ],
@@ -326,7 +350,7 @@ exports.applyRemovedItemCommentListQueryDefaults = function (aRemovedItemComment
 var removedItemDiscussionListQueryDefaults = {
   defaultSort: '-removed',
   parseSearchQueryFn: parseRemovedItemSearchQuery,
-  searchBarPlaceholder: 'Search Removed Items in Discussions',
+  searchBarPlaceholder: 'Search Removed Items in Discussion',
   searchBarFormHiddenVariables: [
     { name: 'byModel', value: 'Discussion' }
   ],
@@ -340,7 +364,7 @@ exports.applyRemovedItemDiscussionListQueryDefaults = function (aRemovedItemDisc
 var removedItemFlagListQueryDefaults = {
   defaultSort: '-removed',
   parseSearchQueryFn: parseRemovedItemSearchQuery,
-  searchBarPlaceholder: 'Search Removed Items in Flags',
+  searchBarPlaceholder: 'Search Removed Items in Flag',
   searchBarFormHiddenVariables: [
     { name: 'byModel', value: 'Flag' }
   ],
@@ -354,7 +378,7 @@ exports.applyRemovedItemFlagListQueryDefaults = function (aRemovedItemFlagListQu
 var removedItemGroupListQueryDefaults = {
   defaultSort: '-removed',
   parseSearchQueryFn: parseRemovedItemSearchQuery,
-  searchBarPlaceholder: 'Search Removed Items in Groups',
+  searchBarPlaceholder: 'Search Removed Items in Group',
   searchBarFormHiddenVariables: [
     { name: 'byModel', value: 'Group' }
   ],
@@ -368,7 +392,7 @@ exports.applyRemovedItemGroupListQueryDefaults = function (aRemovedItemGroupList
 var removedItemVoteListQueryDefaults = {
   defaultSort: '-removed',
   parseSearchQueryFn: parseRemovedItemSearchQuery,
-  searchBarPlaceholder: 'Search Removed Items in Votes',
+  searchBarPlaceholder: 'Search Removed Items in Vote',
   searchBarFormHiddenVariables: [
     { name: 'byModel', value: 'Vote' }
   ],
