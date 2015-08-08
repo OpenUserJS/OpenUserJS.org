@@ -4,8 +4,10 @@
   <title>{{title}}</title>
   {{> includes/head.html }}
   <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/bootstrap-markdown/css/bootstrap-markdown.min.css">
+  {{^isLib}}
   <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/select2/select2.css">
   <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/select2-bootstrap-css/select2-bootstrap.css"> <!-- Bootstrap 3 theme -->
+  {{/isLib}}
   <link rel="stylesheet" type="text/css" media="all" href="/css/scriptPage.css">
 </head>
 <body>
@@ -54,6 +56,8 @@
   {{> includes/footer.html }}
   {{> includes/scripts/lazyIconScript.html }}
   {{> includes/scripts/markdownEditor.html }}
-  {{> includes/scripts/groupSelector.html }}
+  {{^isLib}}
+    {{> includes/scripts/groupSelector.html }}
+  {{/isLib}}
 </body>
 </html>
