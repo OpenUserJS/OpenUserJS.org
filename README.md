@@ -1,6 +1,6 @@
 ## OpenUserJS.org
 
-The home of Free and Open Source Software (FOSS) user scripts. Built using Node.js and other web fimilar technologies.
+The home of Free and Open Source Software (FOSS) user scripts. Built using Node.js and other web familiar technologies.
 
 Repository | Reference | Recent Version
 :--- | :---: | :---
