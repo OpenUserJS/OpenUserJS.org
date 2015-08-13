@@ -40,7 +40,7 @@
         value += '\n\n';
       }
       value += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
-      value += '[@' + $author.text() + '](' + $author.attr('href') + '): ';
+      value += '@' + $author.text() + ': ';
       value += '  \n';
       $replyTextarea.val(value);
       $replyTextarea.focus();
