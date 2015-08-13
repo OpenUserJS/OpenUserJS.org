@@ -94,6 +94,23 @@ renderer.heading = function (aText, aLevel) {
   return html;
 };
 
+// Autolink @username syntax
+renderer.text = function (aText) {
+  return aText.replace(/@([^\s\\\/:*?\'\"<>|#;@=&]+)/gm, function ($0, $1) {
+    return '<a href="/users/' + $1 + '">' + $0 + '</a>';
+  });
+};
+
+renderer.link = function (aHref, aTitle, aText) {
+  // Prevent double linking @username
+  var autoLinkMatch = />(@[^<]+)<\/a>/mi.exec(aText);
+  if (autoLinkMatch) {
+    aText = autoLinkMatch[1];
+  }
+
+  return marked.Renderer.prototype.link.call(renderer, aHref, aTitle, aText);
+};
+
 // Set the options to use for rendering markdown
 // Keep in sync with ./views/includes/scripts/markdownEditor.html
 marked.setOptions({
