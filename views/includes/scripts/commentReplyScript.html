@@ -35,7 +35,9 @@
 
       document.location.hash = $comment.attr('id');
 
-      reUrl = document.location.pathname + document.location.hash;
+      reUrl = document.location.pathname +
+        location.search +
+        document.location.hash;
       reUrl = reUrl.replace(/\(/g, '%28').replace(/\)/g, '%29');
 
       value = $replyTextarea.val();
