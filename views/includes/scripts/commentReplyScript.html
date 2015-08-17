@@ -36,7 +36,7 @@
       document.location.hash = $comment.attr('id');
 
       reUrl = document.location.pathname +
-        location.search +
+        document.location.search +
         document.location.hash;
       reUrl = reUrl.replace(/\(/g, '%28').replace(/\)/g, '%29');
 
