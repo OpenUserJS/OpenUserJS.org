@@ -29,17 +29,21 @@
       var $author = $comment.find('.topic-meta-data .names .username').first();
       var $replyTextarea = $('#reply-control textarea[name="comment-content"]');
       var value = null;
+      var reUrl = null;
 
       $('#reply-control').collapse('show');
 
       document.location.hash = $comment.attr('id');
+
+      reUrl = document.location.pathname + document.location.hash;
+      reUrl = reUrl.replace(/\(/g, '%28').replace(/\)/g, '%29');
 
       value = $replyTextarea.val();
       if (!/^\s*$/.test(value)) {
         // Add linebreaks if reply already started.
         value += '\n\n';
       }
-      value += '[Re](' + document.location.href.replace(/\(/g, '%28').replace(/\)/g, '%29') + '): ';
+      value += '[Re](' + reUrl + '): ';
       value += '@' + $author.text() + ': ';
       value += '  \n';
       $replyTextarea.val(value);
