@@ -54,7 +54,7 @@ exports.home = function (aReq, aRes) {
   var scriptListQuery = Script.find();
 
   // scriptListQuery: isLib
-  modelQuery.findOrDefaultIfNull(scriptListQuery, 'isLib', options.librariesOnly, false);
+  modelQuery.findOrDefaultToNull(scriptListQuery, 'isLib', options.librariesOnly, false);
 
   // scriptListQuery: Defaults
   if (options.librariesOnly) {

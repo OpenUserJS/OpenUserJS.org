@@ -84,7 +84,7 @@ exports.list = function (aReq, aRes, aNext) {
     // discussionListQuery: Optionally filter discussion list
     options.allIssues = !aReq.params.open && !options.isOwner || listAll;
     if (!options.allIssues) {
-      modelQuery.findOrDefaultIfNull(discussionListQuery, 'open', options.openIssuesOnly, true);
+      modelQuery.findOrDefaultToNull(discussionListQuery, 'open', options.openIssuesOnly, true);
     }
 
     // Page metadata

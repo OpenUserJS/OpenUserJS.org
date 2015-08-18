@@ -10,6 +10,7 @@ var AWS = require('aws-sdk');
 
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
+var RepoManager = require('../libs/repoManager');
 
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
@@ -17,12 +18,16 @@ var userRoles = require('../models/userRoles.json');
 
 var bucketName = 'OpenUserJS.org';
 
+var DEV_AWS_URL = null;
+
 if (isPro) {
-  AWS.config.update({ region: 'us-east-1' });
+  AWS.config.update({
+    region: 'us-east-1'
+  });
 } else {
   // You need to install (and ruby too): https://github.com/jubos/fake-s3
   // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
-  var DEV_AWS_URL = process.env.DEV_AWS_URL || 'http://localhost:10001';
+  DEV_AWS_URL = process.env.DEV_AWS_URL || 'http://localhost:10001';
   AWS.config.update({
     accessKeyId: 'fakeId',
     secretAccessKey: 'fakeKey',
@@ -80,8 +85,8 @@ exports.caseInsensitive = caseInsensitive;
 function caseSensitive(aInstallName, aMoreThanInstallName) {
 
   var rMatchExpression = aMoreThanInstallName ? /^(.*)\/(.*)\/(.*)\/(.*)$/ : /^(.*)\/(.*)$/;
-  var username = '';
   var char = null;
+  var username = '';
   var rExpression = null;
 
   var matches = aInstallName.match(rMatchExpression);
@@ -135,12 +140,13 @@ function caseSensitive(aInstallName, aMoreThanInstallName) {
 exports.caseSensitive = caseSensitive;
 
 exports.getSource = function (aReq, aCallback) {
-  var s3 = new AWS.S3();
   var installName = getInstallName(aReq);
-
   Script.findOne({ installName: caseSensitive(installName) },
     function (aErr, aScript) {
       var s3Object = null;
+      var s3 = new AWS.S3();
+
+      // WARNING: Partial error handling at this stage
 
       if (!aScript) {
         return aCallback(null);
@@ -190,7 +196,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
     ++aScript.installs;
     ++aScript.installsSinceUpdate;
 
-    aScript.save(function (aErr, aScript) { });
+    aScript.save(function (aErr, aScript) {
+      // WARNING: Resaving the script... WHY?
+    });
   });
 };
 
@@ -229,7 +237,8 @@ exports.sendMeta = function (aReq, aRes, aNext) {
             data = meta[prefix][key];
             if (data instanceof Array) {
               data.forEach(function (aValue) {
-                aRes.write('// @' + prefix + ':' + key + (aValue ? whitespace + aValue : '') + '\n');
+                aRes.write('// @' + prefix + ':' + key + (aValue ? whitespace + aValue : '') +
+                  '\n');
               });
             }
             else {
@@ -274,15 +283,19 @@ exports.findMeta = findMeta;
 // Modified from Count Issues (http://userscripts.org/scripts/show/69307)
 // By Marti Martz (http://userscripts.org/users/37004)
 function parseMeta(aString, aNormalize) {
-  var rLine = /\/\/ @(\S+)(?:\s+(.*))?/;
-  var headers = {};
-  var name = null;
-  var prefix = null;
-  var key = null;
-  var value = null;
-  var line = null;
-  var lineMatches = null;
   var lines = {};
+  var rLine = /\/\/ @(\S+)(?:\s+(.*))?/;
+  var line = null;
+  var header = null;
+
+  var headers = {};
+  var lineMatches = null;
+  var name = null;
+  var value = null;
+  var key = null;
+  var prefix = null;
+  var unique = null;
+  var one = null;
   var uniques = {
     'description': true,
     'icon': true,
@@ -292,16 +305,15 @@ function parseMeta(aString, aNormalize) {
     'version': true,
     'oujs:author': true
   };
-  var unique = null;
-  var one = null;
   var matches = null;
+
 
   lines = aString.split(/[\r\n]+/).filter(function (aElement, aIndex, aArray) {
     return (aElement.match(rLine));
   });
 
   for (line in lines) {
-    var header = null;
+    header = null;
 
     lineMatches = lines[line].replace(/\s+$/, '').match(rLine);
     name = lineMatches[1];
@@ -377,9 +389,9 @@ exports.getMeta = function (aChunks, aCallback) {
   // parse the header. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
   // get the user script header.
-  var str = '';
   var i = 0;
   var header = null;
+  var str = '';
 
   for (; i < aChunks.length; ++i) {
     header = null;
@@ -395,21 +407,21 @@ exports.getMeta = function (aChunks, aCallback) {
 };
 
 exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
-  var s3 = new AWS.S3();
+  var isLibrary = typeof aMeta === 'string';
   var name = null;
   var scriptName = null;
+  var author = null;
+  var collaborators = null;
   var installName = aUser.name + '/';
-  var isLibrary = typeof aMeta === 'string';
-  var libraries = [];
+  var collaboration = false;
   var requires = null;
   var match = null;
-  var collaboration = false;
-  var collaborators = null;
-  var author = null;
   var rLibrary = new RegExp(
     '^(?:(?:(?:https?:)?\/\/' +
       (isPro ? 'openuserjs\.org' : 'localhost:8080') +
         ')?\/(?:libs\/src|src\/libs)\/)?(.*?)([^\/]*\.js)$', '');
+  var libraries = [];
+
 
   if (!aMeta) {
     return aCallback(null);
@@ -516,8 +528,14 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       }
 
       aScript.save(function (aErr, aScript) {
+        var s3 = new AWS.S3();
+
+        // WARNING: No error handling at this stage
+
         s3.putObject({ Bucket: bucketName, Key: installName, Body: aBuf },
           function (aErr, aData) {
+            var userDoc = null;
+
             // Don't save a script if storing failed
             if (aErr) {
               console.error(aUser.name, '-', installName);
@@ -527,13 +545,15 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
             }
 
             if (aUser.role === userRoles.length - 1) {
-              var userDoc = aUser;
+              userDoc = aUser;
               if (!userDoc.save) {
                 // We're probably using req.session.user which may have gotten serialized.
                 userDoc = new User(userDoc);
               }
               --userDoc.role;
-              userDoc.save(function (aErr, aUser) { aCallback(aScript); });
+              userDoc.save(function (aErr, aUser) {
+                aCallback(aScript);
+              });
             } else {
               aCallback(aScript);
             }
@@ -546,6 +566,9 @@ exports.deleteScript = function (aInstallName, aCallback) {
   Script.findOne({ installName: caseSensitive(aInstallName) },
     function (aErr, aScript) {
       var s3 = new AWS.S3();
+
+      // WARNING: No error handling at this stage
+
       s3.deleteObject({ Bucket : bucketName, Key : aScript.installName},
         function (aErr) {
           if (!aErr) {
@@ -560,7 +583,6 @@ exports.deleteScript = function (aInstallName, aCallback) {
 // GitHub calls this on a push if a webhook is setup
 // This controller makes sure we have the latest version of a script
 exports.webhook = function (aReq, aRes) {
-  var RepoManager = require('../libs/repoManager');
   var payload = null;
   var username = null;
   var reponame = null;
@@ -572,7 +594,7 @@ exports.webhook = function (aReq, aRes) {
   // Test for know GH webhook ips: https://api.github.com/meta
   if (!aReq.body.payload ||
     !/192\.30\.25[2-5]\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
-    .test(aReq.connection.remoteAddress)) {
+      .test(aReq.connection.remoteAddress)) {
     return;
   }
 
@@ -591,6 +613,10 @@ exports.webhook = function (aReq, aRes) {
 
   // Find the user that corresponds the repo owner
   User.findOne({ ghUsername: username }, function (aErr, aUser) {
+    var repoManager = null;
+
+    // WARNING: Partial error handling at this stage
+
     if (!aUser) {
       return;
     }
@@ -605,7 +631,8 @@ exports.webhook = function (aReq, aRes) {
     });
 
     // Update modified scripts
-    var repoManager = RepoManager.getManager(null, aUser, repos);
-    repoManager.loadScripts(function () { }, true);
+    repoManager = RepoManager.getManager(null, aUser, repos);
+    repoManager.loadScripts(function () {
+    }, true);
   });
 };

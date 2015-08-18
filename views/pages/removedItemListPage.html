@@ -30,14 +30,14 @@
         {{> includes/searchBarPanel.html }}
         <h3>Filters</h3>
         <div class="list-group">
-          <a href="./removed{{#searchBarValue}}?q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-times"></i> Clear Filter</a>
-          <a href="?byModel=User{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-user"></i> User</a>
-          <a href="?byModel=Script{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-file"></i> Script</a>
-          <a href="?byModel=Comment{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-comment"></i> Comment</a>
-          <a href="?byModel=Discussion{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-commenting"></i> Discussion</a>
-          <a href="?byModel=Flag{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-flag"></i> Flag</a>
-          <a href="?byModel=Group{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-tag"></i> Group</a>
-          <a href="?byModel=Vote{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item"><i class="fa fa-fw fa-signal"></i> Vote</a>
+          <a href="./removed{{#searchBarValue}}?q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item list-group-item-info"><i class="fa fa-fw fa-times"></i> Clear Filter</a>
+          <a href="?byModel=User{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterUser}} active{{/filterUser}}"><i class="fa fa-fw fa-user"></i> User</a>
+          <a href="?byModel=Script{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterScript}} active{{/filterScript}}"><i class="fa fa-fw fa-file"></i> Script</a>
+          <a href="?byModel=Comment{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterComment}} active{{/filterComment}}"><i class="fa fa-fw fa-comment"></i> Comment</a>
+          <a href="?byModel=Discussion{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterDiscussion}} active{{/filterDiscussion}}"><i class="fa fa-fw fa-commenting"></i> Discussion</a>
+          <a href="?byModel=Flag{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterFlag}} active{{/filterFlag}}"><i class="fa fa-fw fa-flag"></i> Flag</a>
+          <a href="?byModel=Group{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterGroup}} active{{/filterGroup}}"><i class="fa fa-fw fa-tag"></i> Group</a>
+          <a href="?byModel=Vote{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}" class="list-group-item{{#filterVote}} active{{/filterVote}}"><i class="fa fa-fw fa-unsorted"></i> Vote</a>
         </div>
 
       </div>
