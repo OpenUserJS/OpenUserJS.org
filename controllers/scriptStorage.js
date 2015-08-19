@@ -162,8 +162,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
     ++aScript.installs;
     ++aScript.installsSinceUpdate;
 
+    // Resave affected properties
     aScript.save(function (aErr, aScript) {
-      // WARNING: Resaving the script... WHY?
+      // WARNING: No error handling at this stage
     });
   });
 };
