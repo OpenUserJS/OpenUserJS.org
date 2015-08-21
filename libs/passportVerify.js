@@ -44,7 +44,14 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
     function (aAlive, aUser, aRemoved) {
       var pos = aUser ? aUser.auths.indexOf(digest) : -1;
       var openIdIdPos = -1;
-      if (aRemoved) { aDone(null, false, 'user was removed'); }
+      if (aRemoved) {
+        aDone(null, false, 'User was removed');
+
+        // Always return if production... allows for testing in dev with or without dbg
+        if (isPro) {
+          return;
+        }
+      }
 
       // Set up for OpenId to OAuth Migration
       if (!digest && ids.length > 0) {
