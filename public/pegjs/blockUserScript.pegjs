@@ -110,7 +110,7 @@ item0 =
   {
     return {
       unique: true,
-      
+
       key: upmix(keyword)
     };
   }
@@ -125,6 +125,7 @@ item1 =
       'namespace' /
       'installURL' /
       'iconURL' /
+      'icon64' /
       'icon' /
       'downloadURL' /
       'defaulticon'

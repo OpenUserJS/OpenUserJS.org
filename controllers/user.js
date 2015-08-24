@@ -869,11 +869,19 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       }, aCallback);
     },
     function (aBlobUtf8, aCallback) {
+      var onScriptStored = null;
+      var parser = null;
+      var rHeaderContent = null;
+      var headerContent = null;
+      var hasUserScriptHeaderContent = false;
+      var blocksContent = {};
+      var blocks = {};
+
       // Double check file size.
       if (aBlobUtf8.length > settings.maximum_upload_script_size)
         return aCallback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
 
-      var onScriptStored = function (aScript) {
+      onScriptStored = function (aScript) {
         if (aScript) {
           options.script = aScript;
           aCallback(null);
@@ -883,12 +891,29 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       };
 
       if (options.javascriptBlob.isUserJS) {
-        //
-        var userscriptHeaderRegex = /^(?:\uFEFF)?\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m;
-        var m = userscriptHeaderRegex.exec(aBlobUtf8);
-        if (m && m[1]) {
-          var userscriptMeta = scriptStorage.parseMeta(m[1], true);
-          scriptStorage.storeScript(authedUser, userscriptMeta, aBlobUtf8, onScriptStored);
+        for (parser in scriptStorage.parsers) {
+          rHeaderContent = new RegExp(
+            '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+          );
+          headerContent = rHeaderContent.exec(aBlobUtf8);
+          if (headerContent && headerContent[1]) {
+            if (parser === 'UserScript') {
+              hasUserScriptHeaderContent = true;
+            }
+
+            blocksContent[parser] = headerContent[1];
+          }
+        }
+
+        if (hasUserScriptHeaderContent) {
+          for (parser in scriptStorage.parsers) {
+            if (blocksContent[parser]) {
+              blocks[parser] = scriptStorage.parseMeta(
+                scriptStorage.parsers[parser], blocksContent[parser]
+              );
+            }
+          }
+          scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, onScriptStored);
         } else {
           aCallback('Specified file does not contain a userscript header.');
         }
@@ -1170,9 +1195,25 @@ exports.submitSource = function (aReq, aRes, aNext) {
     storeScript(aReq.body.script_name, source);
   } else {
     scriptStorage.getMeta([source], function (aMeta) {
-      if (!scriptStorage.findMeta(aMeta, 'name')) {
+      var name = null;
+      var hasName = false;
+
+      name = scriptStorage.findMeta(aMeta, 'UserScript.name');
+
+      if (!name) {
         return aRes.redirect(url);
       }
+
+      name.forEach(function (aElement, aIndex, aArray) {
+        if (!name[aIndex].key) {
+          hasName = true;
+        }
+      });
+
+      if (!hasName) {
+        return aRes.redirect(url);
+      }
+
       storeScript(aMeta, source);
     });
   }
@@ -1182,7 +1223,6 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
   aOptions.isLib = aReq.params.isLib;
 
   if (aReq.params.isNew) {
-
     // A user who isn't logged in can't write a new script
     if (!aAuthedUser) {
       return aCallback(null);
@@ -1208,12 +1248,8 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         return aCallback(null);
       }
 
-      collaborators = scriptStorage.findMeta(aScript.meta, 'oujs.collaborator');
-      if (collaborators) {
-        if (typeof collaborators === 'string') {
-          collaborators = [collaborators];
-        }
-      } else {
+      collaborators = scriptStorage.findMeta(aScript.meta, 'OpenUserJS.collaborator.value');
+      if (!collaborators) {
         collaborators = []; // NOTE: Watchpoint
       }
 
@@ -1239,7 +1275,6 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
 }
 
 exports.editScript = function (aReq, aRes, aNext) {
-
   var authedUser = aReq.session.user;
 
   var isNew = aReq.params.isNew;
@@ -1313,7 +1348,9 @@ exports.editScript = function (aReq, aRes, aNext) {
   } else {
     //---
     async.parallel(tasks, function (aErr) {
-      if (aErr) return aNext();
+      if (aErr) {
+        return aNext();
+      }
 
       aRes.render('pages/scriptViewSourcePage', options);
     });

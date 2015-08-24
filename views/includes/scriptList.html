@@ -15,11 +15,11 @@
           {{#isLib}}<i class="fa fa-fw fa-file-excel-o"></i>{{/isLib}}{{^isLib}}<i class="fa fa-fw fa-file-code-o"></i>{{/isLib}}
         </span>
         <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>
-        {{#meta.version}}
-        <span class="script-version label label-default">{{meta.version}}</span>
-        {{/meta.version}}
+        {{#meta.UserScript.version}}
+        <span class="script-version label label-default">{{value}}</span>
+        {{/meta.UserScript.version}}
         <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</a></span>
-        <p>{{meta.description}}</p>
+        {{#description}}<p>{{description}}</p>{{/description}}
       </td>
       {{^librariesOnly}}
       <td class="text-center td-fit">
