@@ -113,8 +113,8 @@ var parseModelListSearchQuery = function (aModelListQuery, aQuery, aSearchOption
 
 var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
   parseModelListSearchQuery(aScriptListQuery, aQuery, {
-    partialWordMatchFields: ['name', 'author', 'about', 'meta.description'],
-    fullWordMatchFields: ['meta.include', 'meta.match']
+    partialWordMatchFields: ['name', 'author', 'about', 'meta.UserScript.description.value'],
+    fullWordMatchFields: ['meta.UserScript.include.value', 'meta.UserScript.match.value']
   });
 };
 exports.parseScriptSearchQuery = parseScriptSearchQuery;

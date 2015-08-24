@@ -6,6 +6,8 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+var fs = require('fs');
+var PEG = require('pegjs');
 var AWS = require('aws-sdk');
 
 var Script = require('../models/script').Script;
@@ -15,6 +17,16 @@ var RepoManager = require('../libs/repoManager');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var userRoles = require('../models/userRoles.json');
+
+var parsers = (function () {
+  return {
+    UserScript: PEG.buildParser(fs.readFileSync('./public/pegjs/blockUserScript.pegjs', 'utf8'),
+      { allowedStartRules: ['line'] }),
+    OpenUserJS: PEG.buildParser(fs.readFileSync('./public/pegjs/blockOpenUserJS.pegjs', 'utf8'),
+      { allowedStartRules: ['line'] })
+  };
+})();
+exports.parsers = parsers;
 
 var bucketName = 'OpenUserJS.org';
 
@@ -176,9 +188,6 @@ exports.sendMeta = function (aReq, aRes, aNext) {
   Script.findOne({ installName: caseSensitive(installName) },
     function (aErr, aScript) {
       var meta = null;
-      var data = null;
-      var prefix = null;
-      var key = null;
       var whitespace = '\u0020\u0020\u0020\u0020';
 
       if (!aScript) {
@@ -192,33 +201,26 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
       meta = aScript.meta; // NOTE: Watchpoint
 
-      aRes.write('// ==UserScript==\n');
-      Object.keys(meta).reverse().forEach(function (aName) {
-        if (meta[aName] instanceof Array) {
-          meta[aName].forEach(function (aValue) {
-            aRes.write('// @' + aName + (aValue ? whitespace + aValue : '') + '\n');
+      Object.keys(meta).reverse().forEach(function (aBlock) {
+        aRes.write('// ==' + aBlock + '==\n');
+
+        Object.keys(meta[aBlock]).reverse().forEach(function (aKey) {
+          Object.keys(meta[aBlock][aKey]).forEach(function (aIndex) {
+            var header = meta[aBlock][aKey][aIndex];
+            var key = null;
+            var value = null;
+
+            key = (header ? header.key : null) || aKey;
+            value = (header ? header.value : null);
+
+            aRes.write('// @' + key + (value ? whitespace + value : '') + '\n');
           });
-        } else if (meta[aName] instanceof Object) {
-          prefix = aName;
-          for (key in meta[aName]) {
-            data = meta[prefix][key];
-            if (data instanceof Array) {
-              data.forEach(function (aValue) {
-                aRes.write('// @' + prefix + ':' + key + (aValue ? whitespace + aValue : '') +
-                  '\n');
-              });
-            }
-            else {
-              aRes.write('// @' + prefix + ':' + key + (data ? whitespace + data : '') + '\n');
-            }
-          }
-        } else {
-          data = meta[aName];
-          aRes.write('// @' + aName + (data ? whitespace + data : '') + '\n');
-        }
+        });
+
+        aRes.write('// ==/' + aBlock + '==\n\n');
       });
-      aRes.end('// ==/UserScript==\n');
-  });
+      aRes.end();
+    });
 };
 
 function findMeta(aMeta, aQuery) {
@@ -247,104 +249,71 @@ function findMeta(aMeta, aQuery) {
 }
 exports.findMeta = findMeta;
 
-// Modified from Count Issues (http://userscripts.org/scripts/show/69307)
-// By Marti Martz (http://userscripts.org/users/37004)
-function parseMeta(aString, aNormalize) {
+// Parse a specific metadata block content with a specified *pegjs* parser
+function parseMeta(aParser, aString) {
   var lines = {};
   var rLine = /\/\/ @(\S+)(?:\s+(.*))?/;
   var line = null;
   var header = null;
-
-  var headers = {};
-  var lineMatches = null;
-  var name = null;
-  var value = null;
   var key = null;
-  var prefix = null;
+  var keyword = null;
+  var name = null;
   var unique = null;
-  var one = null;
-  var uniques = {
-    'description': true,
-    'icon': true,
-    'icon64': true,
-    'name': true,
-    'namespace': true,
-    'version': true,
-    'oujs:author': true
-  };
-  var matches = null;
-
+  var headers = {};
+  var i = null;
+  var thisHeader = null;
 
   lines = aString.split(/[\r\n]+/).filter(function (aElement, aIndex, aArray) {
     return (aElement.match(rLine));
   });
 
   for (line in lines) {
-    header = null;
-
-    lineMatches = lines[line].replace(/\s+$/, '').match(rLine);
-    name = lineMatches[1];
-    value = lineMatches[2];
-    if (aNormalize) {
-      // Upmix from...
-      switch (name) {
-        case 'homepage':
-        case 'source':
-        case 'website':
-          name = 'homepageURL';
-          break;
-        case 'defaulticon':
-        case 'iconURL':
-          name = 'icon';
-          break;
-        case 'licence':
-          name = 'license';
-          break;
-      }
+    try {
+      header = aParser.parse(lines[line], { startRule: 'line' });
+    } catch (aE) {
+      // Ignore anything not understood
+      header = null;
     }
-    name = name.split(/:/).reverse();
-    key = name[0];
-    prefix = name[1];
-    if (key) {
-      unique = {};
-      if (prefix) {
-        if (!headers[prefix]) {
-          headers[prefix] = {};
-        }
-        header = headers[prefix];
-        if (aNormalize) {
-          for (one in uniques) {
-            matches = one.match(/(.*):(.*)$/);
-            if (uniques[one] && matches && matches[1] === prefix) {
-              unique[matches[2]] = true;
-            }
+
+    if (header) {
+      key = header.key;
+      keyword = header.keyword;
+      name = keyword || key;
+      unique = header.unique;
+
+      delete header.unique;
+
+      // Create if doesn't exist
+      if (!headers[name]) {
+        headers[name] = [];
+      }
+
+      // Check for unique
+      if (unique) {
+        for (i = 0; thisHeader = headers[name][i]; ++i) {
+          if (thisHeader.key === header.key) {
+            headers[name].splice(i, 1);
           }
         }
       } else {
-        header = headers;
-        if (aNormalize) {
-          for (one in uniques) {
-            if (uniques[one] && !/:/.test(one)) {
-              unique[one] = true;
-            }
+        for (i = 0; thisHeader = headers[name][i]; ++i) {
+          if (thisHeader.value === header.value) {
+            headers[name].splice(i, 1);
           }
         }
       }
-      if (!header[key] || aNormalize && unique[key]) {
-        try {
-          header[key] = value || '';
-        } catch (aE) {
-          // Ignore this key on read only exception fault and log... See #285 commit history
-          console.log('WARNING: Key name `@' + lineMatches[1] + '` failed in parseMeta');
-        }
-      } else if (!aNormalize || header[key] !== (value || '')
-          && !(header[key] instanceof Array && header[key].indexOf(value) > -1)) {
-        if (!(header[key] instanceof Array)) {
-          header[key] = [header[key]];
-        }
-        header[key].push(value || '');
-      }
+
+      headers[name].push(header);
     }
+  }
+
+  // Clean up for DB storage
+  for (name in headers) {
+    headers[name].forEach(function (aElement, aIndex, aArray) {
+      if (!aElement.keyword) {
+        delete aElement.key;
+      }
+    });
   }
 
   return headers;
@@ -353,20 +322,42 @@ exports.parseMeta = parseMeta;
 
 exports.getMeta = function (aChunks, aCallback) {
   // We need to convert the array of buffers to a string to
-  // parse the header. But strings are memory inefficient compared
+  // parse the blocks. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
-  // get the user script header.
+  // get the metadata blocks.
   var i = 0;
-  var header = null;
   var str = '';
+  var parser = null;
+  var rHeaderContent = null;
+  var headerContent = null;
+  var hasUserScriptHeaderContent = false;
+  var blocksContent = {};
+  var blocks = {};
 
   for (; i < aChunks.length; ++i) {
-    header = null;
     str += aChunks[i];
-    header = /^(?:\uFEFF)?\/\/ ==UserScript==([\s\S]*?)^\/\/ ==\/UserScript==/m.exec(str);
 
-    if (header && header[1]) {
-      return aCallback(parseMeta(header[1], true));
+    for (parser in parsers) {
+      rHeaderContent = new RegExp(
+        '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+      );
+      headerContent = rHeaderContent.exec(str);
+      if (headerContent && headerContent[1]) {
+        if (parser === 'UserScript') {
+          hasUserScriptHeaderContent = true;
+        }
+
+        blocksContent[parser] = headerContent[1];
+      }
+    }
+
+    if (hasUserScriptHeaderContent) {
+      for (parser in parsers) {
+        if (blocksContent[parser]) {
+          blocks[parser] = parseMeta(parsers[parser], blocksContent[parser]);
+        }
+      }
+      return aCallback(blocks);
     }
   }
 
@@ -376,6 +367,7 @@ exports.getMeta = function (aChunks, aCallback) {
 exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var isLibrary = typeof aMeta === 'string';
   var name = null;
+  var thisName = null;
   var scriptName = null;
   var author = null;
   var collaborators = null;
@@ -395,34 +387,39 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   }
 
   if (!isLibrary) {
-    name = findMeta(aMeta, 'name');
-    scriptName = typeof name === 'string' ? cleanFilename(name, '') : null;
+    name = findMeta(aMeta, 'UserScript.name');
 
     // Can't install a script without a @name (maybe replace with random value)
+    if (!name) {
+      return aCallback(null);
+    }
+
+    name.forEach(function (aElement, aIndex, aArray) {
+      if (!name[aIndex].key) {
+        thisName = aElement.value;
+        scriptName = cleanFilename(thisName, '');
+      }
+    });
+
+    // Can't install a script without a cleaned @name (maybe replace with random value)
     if (!scriptName) {
       return aCallback(null);
     }
 
-    author = findMeta(aMeta, 'oujs.author');
-    collaborators = findMeta(aMeta, 'oujs.collaborator');
+    author = findMeta(aMeta, 'OpenUserJS.author.0.value');
+    collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');
 
-    if (!isLibrary && author !== aUser.name && collaborators) {
-      if ((typeof collaborators === 'string' && collaborators === aUser.name) ||
-        (collaborators instanceof Array && collaborators.indexOf(aUser.name) > -1)) {
+    if (!isLibrary && author !== aUser.name &&
+      collaborators && collaborators.indexOf(aUser.name) > -1) {
 
-        installName = author + '/';
-        collaboration = true;
-      }
+      installName = author + '/';
+      collaboration = true;
     }
 
     installName += scriptName + '.user.js';
 
-    requires = findMeta(aMeta, 'require');
+    requires = findMeta(aMeta, 'UserScript.require.value');
     if (requires) {
-      if (typeof requires === 'string') {
-        requires = [requires];
-      }
-
       requires.forEach(function (aRequire) {
         match = rLibrary.exec(aRequire);
         if (match) {
@@ -455,7 +452,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       } else if (!aScript) {
         // New script
         aScript = new Script({
-          name: isLibrary ? aMeta : findMeta(aMeta, 'name'),
+          name: isLibrary ? aMeta : thisName,
           author: aUser.name,
           installs: 0,
           rating: 0,
@@ -480,16 +477,20 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         // Script already exists.
         if (!aScript.isLib) {
           if (collaboration &&
-            (findMeta(script.meta, 'oujs.author') !== findMeta(aMeta, 'oujs.author') ||
-              JSON.stringify(findMeta(script.meta, 'oujs.collaborator')) !=
-                JSON.stringify(collaborators))) {
+            (findMeta(script.meta, 'OpenUserJS.author.0.value') !==
+              findMeta(aMeta, 'OpenUserJS.author.0.value') ||
+                JSON.stringify(findMeta(script.meta, 'OpenUserJS.collaborator.value')) !==
+                  JSON.stringify(collaborators))) {
+
             return aCallback(null);
           }
           aScript.meta = aMeta;
           aScript.uses = libraries;
         }
         aScript.updated = new Date();
-        if (findMeta(script.meta, 'version') !== findMeta(aMeta, 'version')) {
+        if (findMeta(script.meta, 'UserScript.version.0.value') !==
+          findMeta(aMeta, 'UserScript.version.0.value')) {
+
           aScript.installsSinceUpdate = 0;
         }
       }

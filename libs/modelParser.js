@@ -116,6 +116,7 @@ var parseScript = function (aScriptData) {
   var script = aScriptData.toObject ? aScriptData.toObject({ virtuals: true }) : aScriptData;
 
   // Intermediates
+  var description = null;
   var icon = null;
   var supportURL = null;
 
@@ -127,47 +128,41 @@ var parseScript = function (aScriptData) {
     script.author = parseUser({ name: script.author });
   }
 
-  // Icons
-  icon = findMeta(script.meta, 'icon');
-  if (icon) {
-    // TODO: `@icon` has been unique but may not be in early scripts in the DB.
-    // Should be fixed on migration so this can be modified
-    if (_.isString(icon)) {
-      script.icon16Url = icon;
-      script.icon45Url = icon;
-    } else if (_.isArray(icon) && !_.isEmpty(icon)) { // NOTE: Should never be empty
-      script.icon16Url = icon[icon.length - 1];
-      script.icon45Url = icon[icon.length - 1];
-    }
+  // Description default
+  description = findMeta(script.meta, 'UserScript.description');
+  if (description) {
+    description.forEach(function (aElement, aIndex, aArray) {
+      if (!description[aIndex].key) {
+        script.description = aElement.value;
+      }
+    });
   }
 
-  icon = findMeta(script.meta, 'icon64');
+  // Icons
+  icon = findMeta(script.meta, 'UserScript.icon.0.value');
   if (icon) {
+    script.icon16Url = icon;
+    script.icon45Url = icon;
+  }
+
+  icon = findMeta(script.meta, 'UserScript.icon64.0.value');
+  if (icon) {
+    // Local downmix
     script.icon45Url = icon;
   }
 
   // Support Url
-  supportURL = findMeta(script.meta, 'supportURL');
+  supportURL = findMeta(script.meta, 'UserScript.supportURL.0.value');
   if (supportURL) {
-    script.hasSupport = true;
-    if (_.isString(supportURL)) {
-      htmlStub = '<a href="' + supportURL + '"></a>';
-      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        script.support = [{
-          url: supportURL,
-          text: decodeURI(supportURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL)
-        }];
-      }
-    } else if (_.isArray(supportURL) && !_.isEmpty(supportURL)) { // NOTE: Should never be empty
-      htmlStub = '<a href="' + supportURL[supportURL - 1] + '"></a>';
-      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        script.support = [{
-          url:  supportURL[supportURL.length - 1],
-          text: decodeURI(supportURL[supportURL.length - 1]),
-          hasNoFollow:  !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL[supportURL.length - 1])
-        }];
-      }
+    htmlStub = '<a href="' + supportURL + '"></a>';
+    if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+      script.hasSupport = true;
+
+      script.support = [{
+        url: supportURL,
+        text: decodeURI(supportURL),
+        hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL)
+      }];
     }
   }
 
