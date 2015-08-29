@@ -183,7 +183,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
 // Send user script metadata block
 exports.sendMeta = function (aReq, aRes, aNext) {
-  var installName = getInstallName(aReq).replace(/\.meta\.js$/, '.user.js');
+  var installName = getInstallName(aReq).replace(/\.meta\.(?:js|json)$/, '.user.js');
 
   Script.findOne({ installName: caseSensitive(installName) },
     function (aErr, aScript) {
@@ -194,32 +194,38 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         return aNext();
       }
 
-      aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-
-      // Disable *express-minify* for this response
-      aRes._skip = true;
-
       meta = aScript.meta; // NOTE: Watchpoint
 
-      Object.keys(meta).reverse().forEach(function (aBlock) {
-        aRes.write('// ==' + aBlock + '==\n');
+      if (/\.json$/.test(aReq.params.scriptname)) {
+        aRes.set('Content-Type', 'application/json; charset=UTF-8');
 
-        Object.keys(meta[aBlock]).reverse().forEach(function (aKey) {
-          Object.keys(meta[aBlock][aKey]).forEach(function (aIndex) {
-            var header = meta[aBlock][aKey][aIndex];
-            var key = null;
-            var value = null;
+        aRes.end(JSON.stringify(meta, null, ''));
+      } else {
+        aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
 
-            key = (header ? header.key : null) || aKey;
-            value = (header ? header.value : null);
+        // Disable *express-minify* for this response
+        aRes._skip = true;
 
-            aRes.write('// @' + key + (value ? whitespace + value : '') + '\n');
+        Object.keys(meta).reverse().forEach(function (aBlock) {
+          aRes.write('// ==' + aBlock + '==\n');
+
+          Object.keys(meta[aBlock]).reverse().forEach(function (aKey) {
+            Object.keys(meta[aBlock][aKey]).forEach(function (aIndex) {
+              var header = meta[aBlock][aKey][aIndex];
+              var key = null;
+              var value = null;
+
+              key = (header ? header.key : null) || aKey;
+              value = (header ? header.value : null);
+
+              aRes.write('// @' + key + (value ? whitespace + value : '') + '\n');
+            });
           });
-        });
 
-        aRes.write('// ==/' + aBlock + '==\n\n');
-      });
-      aRes.end();
+          aRes.write('// ==/' + aBlock + '==\n\n');
+        });
+        aRes.end();
+      }
     });
 };
 
