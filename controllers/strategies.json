@@ -39,10 +39,6 @@
     "name": "LinkedIn",
     "oauth": true
   },
-  "persona": {
-    "name": "Mozilla Persona",
-    "oauth": false
-  },
   "reddit": {
     "name": "Reddit",
     "oauth": true
