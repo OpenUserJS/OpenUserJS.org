@@ -729,6 +729,34 @@ exports.newLibraryPage = function (aReq, aRes, aNext) {
   });
 };
 
+
+var hasMissingExcludeAll = function (aSource) {
+  var block = {};
+  var exclude = null;
+  var missingExcludeAll = true;
+
+  var rHeaderContent = new RegExp(
+    '^(?:\\uFEFF)?\/\/ ==UserScript==([\\s\\S]*?)^\/\/ ==\/UserScript==', 'm'
+  );
+  var headerContent = rHeaderContent.exec(aSource);
+  if (headerContent && headerContent[1]) {
+    block = scriptStorage.parseMeta(scriptStorage.parsers['UserScript'], headerContent[1]);
+
+    exclude = scriptStorage.findMeta(block, 'exclude.value');
+    if (exclude) {
+      exclude.forEach(function (aElement, aIndex, aArray) {
+        if (aElement === '*') {
+          missingExcludeAll = false;
+        }
+      });
+    }
+  } else {
+    missingExcludeAll = false;
+  }
+
+  return missingExcludeAll;
+}
+
 exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
@@ -877,6 +905,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       var blocksContent = {};
       var blocks = {};
 
+      var scriptName = null;
+      var jsLibraryMeta = null;
+
       // Double check file size.
       if (aBlobUtf8.length > settings.maximum_upload_script_size)
         return aCallback(util.format('File size is larger than maximum (%s bytes).', settings.maximum_upload_script_size));
@@ -918,9 +949,14 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           aCallback('Specified file does not contain a userscript header.');
         }
       } else if (options.javascriptBlob.isJSLibrary) {
-        var scriptName = options.javascriptBlob.path.name;
-        var jsLibraryMeta = scriptName;
-        scriptStorage.storeScript(authedUser, jsLibraryMeta, aBlobUtf8, onScriptStored);
+        if (!hasMissingExcludeAll(aBlobUtf8)) {
+          scriptName = options.javascriptBlob.path.name;
+          jsLibraryMeta = scriptName;
+          scriptStorage.storeScript(authedUser, jsLibraryMeta, aBlobUtf8, onScriptStored);
+        } else {
+          aCallback('Invalid library header.');
+        }
+
       } else {
         aCallback('Invalid filetype.');
       }
@@ -1078,6 +1114,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     var script = aFiles.script;
     var stream = null;
     var bufs = [];
+    var bufsConcat = null;
     var failUrl = '/user/add/' + (isLib ? 'lib' : 'scripts');
 
     // Reject non-js and huge files
@@ -1092,17 +1129,26 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     stream.on('end', function () {
       User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
         var scriptName = aFields.script_name;
-        if (isLib) {
-          scriptStorage.storeScript(aUser, scriptName, Buffer.concat(bufs),
-            function (aScript) {
-              if (!aScript) { return aRes.redirect(failUrl); }
+        var bufferConcat = Buffer.concat(bufs);
 
-              aRes.redirect('/libs/' + encodeURI(aScript.installName
-                .replace(jsRegex, '')));
-            });
+        if (isLib) {
+          if (!hasMissingExcludeAll(bufferConcat)) {
+            scriptStorage.storeScript(aUser, scriptName, bufferConcat,
+              function (aScript) {
+                if (!aScript) {
+                  return aRes.redirect(failUrl);
+                }
+
+                aRes.redirect('/libs/' + encodeURI(aScript.installName
+                  .replace(jsRegex, '')));
+              });
+          } else {
+            return aRes.redirect(failUrl);
+          }
+
         } else {
           scriptStorage.getMeta(bufs, function (aMeta) {
-            scriptStorage.storeScript(aUser, aMeta, Buffer.concat(bufs),
+            scriptStorage.storeScript(aUser, aMeta, bufferConcat,
               function (aScript) {
                 if (!aScript) { return aRes.redirect(failUrl); }
 
@@ -1192,6 +1238,10 @@ exports.submitSource = function (aReq, aRes, aNext) {
   url = aReq.body.url;
 
   if (isLib) {
+    if (hasMissingExcludeAll(source)) {
+      return aRes.redirect(url);
+    }
+
     storeScript(aReq.body.script_name, source);
   } else {
     scriptStorage.getMeta([source], function (aMeta) {
