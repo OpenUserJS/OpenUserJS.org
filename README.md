@@ -68,6 +68,7 @@ Repository | Reference | Recent Version
 [passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl]
 [passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl]
 [passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl]
+[pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
@@ -360,6 +361,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-yahooDOCUrl]: https://github.com/jaredhanson/passport-yahoo/blob/master/README.md
 [passport-yahooNPMUrl]: https://www.npmjs.com/package/passport-yahoo
 [passport-yahooNPMVersionImage]: https://img.shields.io/npm/v/passport-yahoo.svg?style=flat
+
+[pegjsGHUrl]: https://github.com/pegjs/pegjs
+[pegjsDOCUrl]: https://github.com/pegjs/pegjs/blob/master/README.md
+[pegjsNPMUrl]: https://www.npmjs.com/package/pegjs
+[pegjsNPMVersionImage]: https://img.shields.io/npm/v/pegjs.svg?style=flat
 
 [requestGHUrl]: https://github.com/request/request
 [requestDOCUrl]: https://github.com/request/request/blob/master/README.md
