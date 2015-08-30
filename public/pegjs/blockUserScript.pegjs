@@ -49,7 +49,7 @@ Test the generated parser with some input for PEG.js site at http://pegjs.org/on
 */
 
 {
-  upmix = function (aKeyword) {
+  var upmix = function (aKeyword) {
     // Keywords need to mirrored in the below rules for detection and transformation
     switch (aKeyword) {
       case 'homepage':
@@ -90,7 +90,7 @@ line =
       item1Localized /
 
       items1 /
-      items2 /
+      items2
     )
   '\n'?
   {
