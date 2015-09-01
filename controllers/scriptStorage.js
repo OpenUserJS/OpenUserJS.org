@@ -18,8 +18,6 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var userRoles = require('../models/userRoles.json');
 
-var settings = require('../models/settings.json');
-
 var parsers = (function () {
   return {
     UserScript: PEG.buildParser(fs.readFileSync('./public/pegjs/blockUserScript.pegjs', 'utf8'),
@@ -390,7 +388,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var libraries = [];
 
 
-  if (!aMeta || settings.read_only_script_storage) {
+  if (!aMeta || process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
     return aCallback(null);
   }
 
@@ -540,7 +538,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
 exports.deleteScript = function (aInstallName, aCallback) {
   // Return if script storage is in read-only mode
-  if (settings.read_only_script_storage) {
+  if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
     aCallback(null);
     return;
   }
@@ -574,7 +572,7 @@ exports.webhook = function (aReq, aRes) {
   aRes.end(); // Close connection
 
   // Return if script storage is in read-only mode
-  if (settings.read_only_script_storage) {
+  if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
     return;
   }
 
