@@ -18,6 +18,8 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var userRoles = require('../models/userRoles.json');
 
+var settings = require('../models/settings.json');
+
 var parsers = (function () {
   return {
     UserScript: PEG.buildParser(fs.readFileSync('./public/pegjs/blockUserScript.pegjs', 'utf8'),
@@ -388,7 +390,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var libraries = [];
 
 
-  if (!aMeta) {
+  if (!aMeta || settings.read_only_script_storage) {
     return aCallback(null);
   }
 
@@ -564,6 +566,11 @@ exports.webhook = function (aReq, aRes) {
   var repo = null;
 
   aRes.end(); // Close connection
+
+  // Return if script storage is in read-only mode
+  if (settings.read_only_script_storage) {
+    return;
+  }
 
   // Test for known GH webhook ips: https://api.github.com/meta
   if (!aReq.body.payload ||
