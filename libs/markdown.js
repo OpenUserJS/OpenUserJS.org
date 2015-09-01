@@ -18,20 +18,6 @@ var blockRenderers = [
   'paragraph',
   'table'
 ];
-var allWhitelistAttrs = htmlWhitelistPost.allowedAttributes.all;
-
-// Whitelist a bunch of attributes for all tags
-// Doing this until we have an upstream fix
-htmlWhitelistPost.allowedTags.forEach(function (aTag) {
-  var otherAttrs = htmlWhitelistPost.allowedAttributes[aTag];
-
-  htmlWhitelistPost.allowedAttributes[aTag] = allWhitelistAttrs;
-  if (otherAttrs) {
-    htmlWhitelistPost.allowedAttributes[aTag] = htmlWhitelistPost
-      .allowedAttributes[aTag].concat(otherAttrs);
-  }
-});
-delete htmlWhitelistPost.allowedAttributes.all;
 
 // Transform exact Github Flavored Markdown generated style tags to bootstrap custom classes
 // to allow the sanitizer to whitelist on th and td tags for table alignment
