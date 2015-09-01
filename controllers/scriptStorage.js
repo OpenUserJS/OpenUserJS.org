@@ -539,6 +539,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 };
 
 exports.deleteScript = function (aInstallName, aCallback) {
+  // Return if script storage is in read-only mode
+  if (settings.read_only_script_storage) {
+    aCallback(null);
+    return;
+  }
+
   Script.findOne({ installName: caseSensitive(aInstallName) },
     function (aErr, aScript) {
       var s3 = new AWS.S3();
