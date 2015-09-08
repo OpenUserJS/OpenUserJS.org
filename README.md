@@ -4,7 +4,7 @@ The home of Free and Open Source Software (FOSS) user scripts. Built using Node.
 
 Repository | Reference | Recent Version
 :--- | :---: | :---
-[node][nodeGHUrl] | [Documentation][nodeDOCUrl] | [![node][nodeVersionImage]][nodeDLUrl] [CHANGELOG][nodeGHReleasesUrl]
+[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | [![nodejs][nodeVersionImage]][nodejsDLUrl] [CHANGELOG][nodejsReleasesUrl]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
 [bundler][bundlerGHUrl] | [Documentation][bundlerDOCUrl] | [![GEM version][bundlerGEMVersionImage]][bundlerGEMUrl]
 
@@ -98,11 +98,12 @@ Repository | Reference | Recent Version | Referenced
 Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 
-[nodeDLUrl]: http://nodejs.org/download/
-[nodeGHUrl]: https://github.com/joyent/node
-[nodeGHReleasesUrl]: https://github.com/joyent/node/releases
-[nodeDOCUrl]: http://nodejs.org/documentation/
+[nodeGHUrl]: https://github.com/nodejs/node
+[nodeGHReleasesUrl]: https://github.com/nodejs/node/releases
 [nodeVersionImage]: http://img.shields.io/node/latest-version.svg
+[nodejsDLUrl]: http://nodejs.org/download/
+[nodejsReleasesUrl]: https://nodejs.org/download/release/
+[nodejsDOCUrl]: http://nodejs.org/documentation/
 
 [npmNPMUrl]: https://www.npmjs.com/package/npm
 [npmNPMVersionImage]: http://img.shields.io/npm/v/npm.svg
