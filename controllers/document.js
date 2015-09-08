@@ -109,6 +109,9 @@ exports.view = function (aReq, aRes, aNext) {
       options.process.version = process.version;
     }
 
+    options.readonly = {};
+    options.readonly.scriptStorage = process.env.READ_ONLY_SCRIPT_STORAGE === 'true';
+
     then = new Date(Date.now() - parseInt(process.uptime() * 1000, 10));
     options.lastRestart = then.toLocaleString();
 

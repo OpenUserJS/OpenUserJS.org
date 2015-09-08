@@ -1,6 +1,5 @@
 {
   "secret" : "someSecretStringForSession",
   "connect" : "mongodb://dev:oujs@ds041651.mongolab.com:41651/openuserjs_dev",
-  "maximum_upload_script_size": 1048576,
-  "read_only_script_storage": false
+  "maximum_upload_script_size": 1048576
 }
