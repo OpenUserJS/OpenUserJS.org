@@ -762,7 +762,7 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
 
   //
   var options = {};
-  var tasks = [];
+  var tasks = null;
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -779,57 +779,54 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   pagination.itemsPerPage = 30; // GitHub Default
 
   //--- Tasks
-  tasks.push(function (aCallback) {
-    async.waterfall([
+  tasks = [
+    // githubUser
+    function (aCallback) {
+      github.user.getFrom({
+        user: encodeURIComponent(githubUserId),
+      }, aCallback);
+    },
+    function (aGithubUser, aCallback) {
+      options.githubUser = aGithubUser;
+      options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
+        user: aGithubUser.login
+      });
 
-      // githubUser
-      function (aCallback) {
-        github.user.getFrom({
-          user: encodeURIComponent(githubUserId),
-        }, aCallback);
-      },
-      function (aGithubUser, aCallback) {
-        options.githubUser = aGithubUser;
-        options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoListPageUrl, {
-          user: aGithubUser.login
+      // Pagination
+      pagination.numItems = aGithubUser.public_repos;
+
+      aCallback(null);
+    },
+
+    // gihubRepos
+    function (aCallback) {
+      github.repos.getFromUser({
+        user: encodeURIComponent(githubUserId),
+        page: pagination.currentPage,
+        per_page: pagination.itemsPerPage
+      }, aCallback);
+    },
+    // function (aGithubRepoList, aCallback) {
+    //   githubRepoList = _.where(aGithubRepoList, {language: 'JavaScript'});
+    //   aCallback(null, githubRepoList);
+    // },
+    function (aGithubRepoList, aCallback) {
+      _.each(aGithubRepoList, function (aGithubRepo) {
+        var url = authedUser.userGitHubRepoPageUrl;
+        url = helpers.updateUrlQueryString(url, {
+          user: options.githubUser.login,
+          repo: aGithubRepo.name
         });
+        aGithubRepo.userGitHubRepoPageUrl = url;
+      });
+      options.githubRepoList = aGithubRepoList;
 
-        // Pagination
-        pagination.numItems = aGithubUser.public_repos;
-
-        aCallback(null);
-      },
-
-      // gihubRepos
-      function (aCallback) {
-        github.repos.getFromUser({
-          user: encodeURIComponent(githubUserId),
-          page: pagination.currentPage,
-          per_page: pagination.itemsPerPage
-        }, aCallback);
-      },
-      // function (aGithubRepoList, aCallback) {
-      //   githubRepoList = _.where(aGithubRepoList, {language: 'JavaScript'});
-      //   aCallback(null, githubRepoList);
-      // },
-      function (aGithubRepoList, aCallback) {
-        _.each(aGithubRepoList, function (aGithubRepo) {
-          var url = authedUser.userGitHubRepoPageUrl;
-          url = helpers.updateUrlQueryString(url, {
-            user: options.githubUser.login,
-            repo: aGithubRepo.name
-          });
-          aGithubRepo.userGitHubRepoPageUrl = url;
-        });
-        options.githubRepoList = aGithubRepoList;
-
-        aCallback(null);
-      },
-    ], aCallback);
-  });
+      aCallback(null);
+    },
+  ];
 
   //---
-  async.parallel(tasks, function (aErr) {
+  async.waterfall(tasks, function (aErr) {
     if (aErr) {
       console.error(aErr);
       return statusCodePage(aReq, aRes, aNext, {
@@ -842,6 +839,8 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
 
     aRes.render('pages/userGitHubRepoListPage', options);
   });
+
+
 };
 
 exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
@@ -981,7 +980,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
 
   //
   var options = {};
-  var tasks = [];
+  var tasks = null;
 
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
@@ -1011,49 +1010,50 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   pageMetadata(options, ['Import', 'GitHub']);
 
   //--- Tasks
+  tasks = [
+    function (aCallback) {
+      github.repos.get({
+        user: encodeURIComponent(githubUserId),
+        repo: encodeURIComponent(githubRepoName)
+      }, aCallback);
+    },
 
-  tasks.push(function (aCallback) {
-    async.waterfall([
-      function (aCallback) {
-        github.repos.get({
-          user: encodeURIComponent(githubUserId),
-          repo: encodeURIComponent(githubRepoName)
-        }, aCallback);
-      },
-      function (aRepo, aCallback) {
-        options.repo = aRepo;
-        options.repoAsEncoded = {
-          default_branch: encodeURI(options.repo.default_branch)
-        };
+    function (aRepo, aCallback) {
+      options.repo = aRepo;
+      options.repoAsEncoded = {
+        default_branch: encodeURI(options.repo.default_branch)
+      };
 
-        github.gitdata.getJavascriptBlobs({
-          user: encodeURIComponent(aRepo.owner.login),
-          repo: encodeURIComponent(aRepo.name)
-        }, aCallback);
-      },
-      function (aJavascriptBlobs, aCallback) {
-        options.javascriptBlobs = aJavascriptBlobs;
-        _.each(aJavascriptBlobs, function (javascriptBlob) {
-          // Urls
-          javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
-            user: githubUserId,
-            repo: githubRepoName,
-            path: javascriptBlob.path
-          });
+      github.gitdata.getJavascriptBlobs({
+        user: encodeURIComponent(aRepo.owner.login),
+        repo: encodeURIComponent(aRepo.name)
+      }, aCallback);
+    },
+
+    function (aJavascriptBlobs, aCallback) {
+      options.javascriptBlobs = aJavascriptBlobs;
+      _.each(aJavascriptBlobs, function (javascriptBlob) {
+        // Urls
+        javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubImportPageUrl, {
+          user: githubUserId,
+          repo: githubRepoName,
+          path: javascriptBlob.path
         });
-        _.each(aJavascriptBlobs, parseJavascriptBlob);
+      });
+      _.each(aJavascriptBlobs, parseJavascriptBlob);
 
-        // If the repo has >1 script, keep the the current page open.
-        options.openImportInNewTab = aJavascriptBlobs.length > 1;
+      // If the repo has > 1 script, keep the the current page open.
+      options.openImportInNewTab = aJavascriptBlobs.length > 1;
 
-        aCallback(null);
-      },
-    ], aCallback);
-  });
+      aCallback(null);
+    }
+  ];
 
   //---
-  async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
+  async.waterfall(tasks, function (aErr) {
+    if (aErr) {
+      return aNext();
+    }
 
     aRes.render('pages/userGitHubRepoPage', options);
   });
