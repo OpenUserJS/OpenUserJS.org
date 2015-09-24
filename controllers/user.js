@@ -1117,14 +1117,16 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     var bufsConcat = null;
     var failUrl = '/user/add/' + (isLib ? 'lib' : 'scripts');
 
-    // Reject non-js and huge files
-    if (script.type !== 'application/javascript' ||
+    // Reject missing, non-js, and huge files
+    if (!script || script.type !== 'application/javascript' ||
       script.size > settings.maximum_upload_script_size) {
       return aRes.redirect(failUrl);
     }
 
     stream = fs.createReadStream(script.path);
-    stream.on('data', function (aData) { bufs.push(aData); });
+    stream.on('data', function (aData) {
+      bufs.push(aData);
+    });
 
     stream.on('end', function () {
       User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
@@ -1150,7 +1152,9 @@ exports.uploadScript = function (aReq, aRes, aNext) {
           scriptStorage.getMeta(bufs, function (aMeta) {
             scriptStorage.storeScript(aUser, aMeta, bufferConcat,
               function (aScript) {
-                if (!aScript) { return aRes.redirect(failUrl); }
+                if (!aScript) {
+                  return aRes.redirect(failUrl);
+                }
 
                 aRes.redirect('/scripts/' + encodeURI(aScript.installName
                   .replace(userjsRegex, '')));
