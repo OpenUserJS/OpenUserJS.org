@@ -137,7 +137,7 @@ Strong recommendation to do this as soon as possible. Don't abuse this unless yo
 Recommendation to have this done sooner rather than later. This should always be cleared on any PR and related Issue that is merged.
 
 ##### later
-Recommendation to have this done later. This doesn't mean never *(that is a mightfix or wontfix label)*. This should always be cleared on any PR and related Issue that is merged.
+Recommendation to have this done later. This doesn't mean never *(that may be a mightfix or wontfix label)*. This should always be cleared on any PR and related Issue that is merged.
 
 ##### mightfix
 Someone with privileges is considering adding a fix in to acccomodate a feature or enhancement.
@@ -232,9 +232,16 @@ $ git prune upstream
 There are multiple ways to retrieve this however this appears to work best for most cases. Please ensure that you have the proper dependencies installed first depending on the version selected and your distribution:
 
 ``` sh-session
-$ git clone git://github.com/joyent/node.git
+$ git clone git@github.com:nodejs/node.git
 $ cd node
-$ git checkout origin/v0.12.5-release
+```
+
+``` sh-session
+$ git pull
+```
+
+``` sh-session
+$ git checkout tags/v0.12.7
 $ ./configure --prefix=/usr
 $ make
 $ sudo make install
