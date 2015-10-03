@@ -8,7 +8,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 #### Prerequisites
 
 * [Git](http://git-scm.com/)
-* [node.js 0.12.0 or other newer stable release](http://nodejs.org/)
+* [node.js](http://nodejs.org/) *(see [`./package.json`](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json) engines for specific requirements)*
 * [MongoDB](http://www.mongodb.org/) (Optional.  The project is preconfigured to use a dev DB on [MongoLab](https://mongolab.com/).)
 * [Ruby](https://www.ruby-lang.org/) (required to run [FakeS3](https://github.com/jubos/fake-s3/))
 * [FakeS3](https://github.com/jubos/fake-s3) (required to store libraries/scripts without [AWS S3](http://aws.amazon.com/s3/)) handled by [bundler](https://github.com/bundler/bundler)
@@ -79,7 +79,7 @@ To contribute code to OpenUserJS.org the following process should generally be u
 The following is a brief list of **some** of the labels used on the project and is used to establish teamwork. Not everyone has permission to set these and usually will be set by someone, unless expressly prohibited, either when an Issue or Pull Request *(PR)* is created or after an Issue is reported:
 
 ##### BLOCKING
-Only the establishing owner of the project may add and remove this. Recommendations by other contributors and collaborators are always accepted to have this put on or removed. This label means that merging unrelated or non-bug fix PRs will be put on hold until this label has been removed.
+Only the establishing owner and in extreme cases the active maintainer of the project may add this. Removal is done by the establishing owner. Recommendations by other contributors and collaborators are always accepted to have this put on or removed. This label means that merging unrelated or non-bug fix PRs will be put on hold until this label has been removed.
 
 ---
 
