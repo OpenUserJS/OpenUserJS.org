@@ -21,7 +21,7 @@ These also may use [shields.io][shieldsHomepage] where applicable for more expli
 ##### Dynamic
 Repository | Reference | Recent Version
 --- | --- | ---
-[ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.2.0 0982db4][ace-buildsGHHASHUrl]
+[ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.2.0 hash][ace-buildsGHHASHUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
@@ -49,7 +49,7 @@ Repository | Reference | Recent Version
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [morgan][morganGHUrl] | [Documentation][morganDOCUrl] | [![NPM version][morganNPMVersionImage]][morganNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
-[octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
+[octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl] [3.1.0 hash][octiconsGHHASHUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
 [passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl]
 [passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
@@ -118,7 +118,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
-[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/0982db4
+[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/b082bcb
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
 [aceDOCUrl]: http://ace.c9.io/#nav=api "ace"
 
@@ -270,6 +270,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [octiconsUrl]: https://octicons.github.com/
 [octiconsGHUrl]: https://github.com/github/octicons
 [octiconsDOCUrl]: https://octicons.github.com/usage/
+[octiconsGHHASHUrl]: https://github.com/github/octicons/tree/d622851
 [octiconsNPMUrl]: https://www.npmjs.com/package/octicons
 [octiconsNPMVersionImage]: https://img.shields.io/npm/v/octicons.svg?style=flat
 
