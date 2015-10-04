@@ -29,6 +29,8 @@ exports.view = function (aReq, aRes, aNext) {
   var tasks = null;
   var then = null;
 
+  var matches = null;
+
   // Session
   authedUser = options.authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
@@ -118,6 +120,12 @@ exports.view = function (aReq, aRes, aNext) {
     options.pkg = {};
     options.pkg.name = pkg.name;
     options.pkg.version = pkg.version.replace(/\+.*$/, '');
+
+    // Find active clone
+    matches = /.*\/.*(\d)$/.exec(process.cwd());
+    if (matches && options.isAdmin) {
+      options.pkg.clone = matches[1];
+    }
 
     options.git = {};
     //--- Tasks
