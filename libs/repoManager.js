@@ -34,7 +34,7 @@ function fetchRaw(aHost, aPath, aCallback) {
       'User-Agent': 'Node.js',
 
       // See #678
-      'Accept-Charset': 'UTF-16'
+      'Accept-Charset': 'utf-16'
     }
   };
 
