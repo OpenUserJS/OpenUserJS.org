@@ -30,15 +30,27 @@ function fetchRaw(aHost, aPath, aCallback) {
     port: 443,
     path: aPath,
     method: 'GET',
-    headers: { 'User-Agent': 'Node.js' }
+    headers: {
+      'User-Agent': 'Node.js'
+    }
   };
 
   var req = https.request(options,
     function (aRes) {
+
+      if (isDbg) {
+        console.log(JSON.stringify(aRes, null, ' '));
+      }
+
       var bufs = [];
-      if (aRes.statusCode !== 200) { console.log(aRes.statusCode); return aCallback([new Buffer('')]); }
+      if (aRes.statusCode !== 200) {
+        console.warn(aRes.statusCode);
+        return aCallback([new Buffer('')]);
+      }
       else {
-        aRes.on('data', function (aData) { bufs.push(aData); });
+        aRes.on('data', function (aData) {
+          bufs.push(aData);
+        });
         aRes.on('end', function () {
           aCallback(bufs);
         });
@@ -109,6 +121,11 @@ RepoManager.prototype.loadScripts = function (aCallback, aUpdate) {
       fetchRaw('raw.githubusercontent.com', url, function (aBufs) {
         scriptStorage.getMeta(aBufs, function (aMeta) {
           if (aMeta) {
+
+            if (isDbg) {
+              console.log(JSON.stringify(aMeta, null, ' '));
+            }
+
             scriptStorage.storeScript(that.user, aMeta, Buffer.concat(aBufs),
               aCallback, aUpdate);
           }
