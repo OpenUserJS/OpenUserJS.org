@@ -31,7 +31,10 @@ function fetchRaw(aHost, aPath, aCallback) {
     path: aPath,
     method: 'GET',
     headers: {
-      'User-Agent': 'Node.js'
+      'User-Agent': 'Node.js',
+
+      // See #678
+      'Accept-Charset': 'UTF-16'
     }
   };
 
