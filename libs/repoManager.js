@@ -39,7 +39,7 @@ function fetchRaw(aHost, aPath, aCallback) {
     function (aRes) {
 
       if (isDbg) {
-        console.log(JSON.stringify(aRes, null, ' '));
+        console.log(aRes);
       }
 
       var bufs = [];
