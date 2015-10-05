@@ -340,8 +340,14 @@ exports.getMeta = function (aChunks, aCallback) {
   var blocksContent = {};
   var blocks = {};
 
+  // Define a local instance of this since it is node native
+  var StringDecoder = require('string_decoder').StringDecoder;
+
+  // Always enforce UTF-8
+  var decoder = new StringDecoder('utf8');
+
   for (; i < aChunks.length; ++i) {
-    str += aChunks[i];
+    str += decoder.write([aChunks[i]]);
 
     for (parser in parsers) {
       rHeaderContent = new RegExp(
