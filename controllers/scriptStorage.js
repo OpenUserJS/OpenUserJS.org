@@ -327,6 +327,10 @@ function parseMeta(aParser, aString) {
 exports.parseMeta = parseMeta;
 
 exports.getMeta = function (aChunks, aCallback) {
+  if (isDbg) {
+    console.log('> getMeta()');
+  }
+
   // We need to convert the array of buffers to a string to
   // parse the blocks. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
@@ -349,6 +353,11 @@ exports.getMeta = function (aChunks, aCallback) {
   for (; i < aChunks.length; ++i) {
     str += decoder.write([aChunks[i]]);
 
+    if (isDbg) {
+      console.log('>> Chunks loop ' + i);
+      console.log(str);
+    }
+
     for (parser in parsers) {
       rHeaderContent = new RegExp(
         '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
@@ -363,12 +372,23 @@ exports.getMeta = function (aChunks, aCallback) {
       }
     }
 
+    if (isDbg) {
+      console.log('>> blocksContent');
+      console.log(blocksContent);
+    }
+
     if (hasUserScriptHeaderContent) {
       for (parser in parsers) {
         if (blocksContent[parser]) {
           blocks[parser] = parseMeta(parsers[parser], blocksContent[parser]);
         }
       }
+
+      if (isDbg) {
+        console.log('>> blocks');
+        console.log(JSON.stringify(blocks, null, ' '));
+      }
+
       return aCallback(blocks);
     }
   }
