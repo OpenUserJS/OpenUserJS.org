@@ -121,11 +121,6 @@ RepoManager.prototype.loadScripts = function (aCallback, aUpdate) {
       fetchRaw('raw.githubusercontent.com', url, function (aBufs) {
         scriptStorage.getMeta(aBufs, function (aMeta) {
           if (aMeta) {
-
-            if (isDbg) {
-              console.log(JSON.stringify(aMeta, null, ' '));
-            }
-
             scriptStorage.storeScript(that.user, aMeta, Buffer.concat(aBufs),
               aCallback, aUpdate);
           }
