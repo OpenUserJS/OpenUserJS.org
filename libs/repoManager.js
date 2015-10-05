@@ -34,7 +34,7 @@ function fetchRaw(aHost, aPath, aCallback) {
       'User-Agent': 'Node.js',
 
       // See #678
-      'Accept': 'text/plain; charset=UTF-16'
+      'Accept': 'text/plain; charset=utf-16'
     }
   };
 
