@@ -326,11 +326,14 @@ function parseMeta(aParser, aString) {
 }
 exports.parseMeta = parseMeta;
 
-exports.getMeta = function (aChunks, aCallback) {
+exports.getMeta = function (aBufs, aCallback) {
   // We need to convert the array of buffers to a string to
   // parse the blocks. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
   // get the metadata blocks.
+  var i = 0;
+  var len = 0;
+  var str = null;
   var parser = null;
   var rHeaderContent = null;
   var headerContent = null;
@@ -338,42 +341,37 @@ exports.getMeta = function (aChunks, aCallback) {
   var blocksContent = {};
   var blocks = {};
 
-  if (isDbg) {
-    console.log('> getMeta() > aChunks.length');
-    console.log(aChunks.length);
-  }
+  for (; i < aBufs.length; ++i) {
+    // Convert the current Buffer to a `String` and accumulate it's `String` totalLength
+    len += aBufs[i].toString('utf8').length; // NOTE: Watchpoint
 
-  var buf = Buffer.concat(aChunks);
-  var str = buf.toString('utf8');
+    // Read from the start of the Buffers to the `String` length end-point
+    // See also #678
+    str = Buffer.concat(aBufs, len).toString('utf8');
 
-  if (isDbg) {
-    console.log('> getMeta() > str');
-    console.log(str);
-  }
-
-  for (parser in parsers) {
-    rHeaderContent = new RegExp(
-      '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
-    );
-    headerContent = rHeaderContent.exec(str);
-    if (headerContent && headerContent[1]) {
-      if (parser === 'UserScript') {
-        hasUserScriptHeaderContent = true;
-      }
-
-      blocksContent[parser] = headerContent[1];
-    }
-  }
-
-  if (hasUserScriptHeaderContent) {
     for (parser in parsers) {
-      if (blocksContent[parser]) {
-        blocks[parser] = parseMeta(parsers[parser], blocksContent[parser]);
+      rHeaderContent = new RegExp(
+        '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+      );
+      headerContent = rHeaderContent.exec(str);
+      if (headerContent && headerContent[1]) {
+        if (parser === 'UserScript') {
+          hasUserScriptHeaderContent = true;
+        }
+
+        blocksContent[parser] = headerContent[1];
       }
     }
-    return aCallback(blocks);
-  }
 
+    if (hasUserScriptHeaderContent) {
+      for (parser in parsers) {
+        if (blocksContent[parser]) {
+          blocks[parser] = parseMeta(parsers[parser], blocksContent[parser]);
+        }
+      }
+      return aCallback(blocks);
+    }
+  }
 
   aCallback(null);
 };
