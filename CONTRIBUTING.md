@@ -231,21 +231,46 @@ $ git prune upstream
 #### node.js
 There are multiple ways to retrieve this however this appears to work best for most cases. Please ensure that you have the proper dependencies installed first depending on the version selected and your distribution:
 
+Get it with:
 ``` sh-session
 $ git clone git@github.com:nodejs/node.git
 $ cd node
 ```
 
+Update it with:
+
 ``` sh-session
 $ git pull
 ```
 
+Check it out with:
+
 ``` sh-session
 $ git checkout tags/v0.12.7
+```
+
+Configure it with:
+```
 $ ./configure --prefix=/usr
+```
+
+Compile it with:
+```
 $ make
+```
+
+Test the success of the build with:
+
+``` sh-session
+$ ./node -e "console.log('Hello from node.js ' + process.version);"
+```
+
+Finally install it:
+
+``` sh-session
 $ sudo make install
 ```
+
 
 Think you may have messed up with installation or compiling then use these commands to clean up:
 
@@ -253,7 +278,7 @@ Think you may have messed up with installation or compiling then use these comma
 $ sudo make uninstall
 $ make clean
 ```
-... **NOTE**: You can always rerun the above `./configure` command when necessary too.
+... **NOTE**: You can always rerun the above `./configure` command when necessary to change the start path for installation.
 
 Checking your installation is a snap by by:
 
