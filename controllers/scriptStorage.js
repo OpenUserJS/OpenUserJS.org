@@ -342,10 +342,10 @@ exports.getMeta = function (aBufs, aCallback) {
   var blocks = {};
 
   for (; i < aBufs.length; ++i) {
-    // Convert the current Buffer to a `String` and accumulate it's `String` totalLength
-    len += aBufs[i].toString('utf8').length; // NOTE: Watchpoint
+    // Accumulate the indexed Buffer length to use with `totalLength` parameter
+    len += aBufs[i].length;
 
-    // Read from the start of the Buffers to the `String` length end-point
+    // Read from the start of the Buffers to the Buffers length end-point
     // See also #678
     str = Buffer.concat(aBufs, len).toString('utf8');
 
