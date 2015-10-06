@@ -338,6 +338,11 @@ exports.getMeta = function (aChunks, aCallback) {
   var blocksContent = {};
   var blocks = {};
 
+  if (isDbg) {
+    console.log('> getMeta() > aChunks.length');
+    console.log(aChunks.length);
+  }
+
   var buf = Buffer.concat(aChunks);
   var str = buf.toString('utf8');
 
