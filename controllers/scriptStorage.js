@@ -341,7 +341,7 @@ exports.getMeta = function (aChunks, aCallback) {
   var blocks = {};
 
   for (; i < aChunks.length; ++i) {
-    str += aChunks[i];
+    str += aChunks[i].toString('utf8');
 
     for (parser in parsers) {
       rHeaderContent = new RegExp(
