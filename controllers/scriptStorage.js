@@ -331,8 +331,6 @@ exports.getMeta = function (aChunks, aCallback) {
   // parse the blocks. But strings are memory inefficient compared
   // to buffers so we only convert the least number of chunks to
   // get the metadata blocks.
-  var i = 0;
-  var str = '';
   var parser = null;
   var rHeaderContent = null;
   var headerContent = null;
@@ -340,32 +338,37 @@ exports.getMeta = function (aChunks, aCallback) {
   var blocksContent = {};
   var blocks = {};
 
-  for (; i < aChunks.length; ++i) {
-    str += aChunks[i].toString('utf8');
+  var buf = Buffer.concat(aChunks);
+  var str = buf.toString('utf8');
 
-    for (parser in parsers) {
-      rHeaderContent = new RegExp(
-        '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
-      );
-      headerContent = rHeaderContent.exec(str);
-      if (headerContent && headerContent[1]) {
-        if (parser === 'UserScript') {
-          hasUserScriptHeaderContent = true;
-        }
+  if (isDbg) {
+    console.log('> getMeta() > str');
+    console.log(str);
+  }
 
-        blocksContent[parser] = headerContent[1];
+  for (parser in parsers) {
+    rHeaderContent = new RegExp(
+      '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+    );
+    headerContent = rHeaderContent.exec(str);
+    if (headerContent && headerContent[1]) {
+      if (parser === 'UserScript') {
+        hasUserScriptHeaderContent = true;
       }
-    }
 
-    if (hasUserScriptHeaderContent) {
-      for (parser in parsers) {
-        if (blocksContent[parser]) {
-          blocks[parser] = parseMeta(parsers[parser], blocksContent[parser]);
-        }
-      }
-      return aCallback(blocks);
+      blocksContent[parser] = headerContent[1];
     }
   }
+
+  if (hasUserScriptHeaderContent) {
+    for (parser in parsers) {
+      if (blocksContent[parser]) {
+        blocks[parser] = parseMeta(parsers[parser], blocksContent[parser]);
+      }
+    }
+    return aCallback(blocks);
+  }
+
 
   aCallback(null);
 };
