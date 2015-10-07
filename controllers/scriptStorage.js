@@ -206,24 +206,25 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         // Disable *express-minify* for this response
         aRes._skip = true;
 
-        Object.keys(meta).reverse().forEach(function (aBlock) {
-          aRes.write('// ==' + aBlock + '==\n');
+        aRes.write('// ==UserScript==\n');
 
-          Object.keys(meta[aBlock]).reverse().forEach(function (aKey) {
-            Object.keys(meta[aBlock][aKey]).forEach(function (aIndex) {
-              var header = meta[aBlock][aKey][aIndex];
-              var key = null;
-              var value = null;
+        if (meta.UserScript.version) {
+          aRes.write('// @version' + whitespace + meta.UserScript.version[0].value + '\n');
+        }
 
-              key = (header ? header.key : null) || aKey;
-              value = (header ? header.value : null);
+        Object.keys(meta.UserScript.name).reverse().forEach(function (aName) {
+          var key = meta.UserScript.name[aName].key || 'name';
+          var value = meta.UserScript.name[aName].value;
 
-              aRes.write('// @' + key + (value ? whitespace + value : '') + '\n');
-            });
-          });
-
-          aRes.write('// ==/' + aBlock + '==\n\n');
+          aRes.write('// @' + key + whitespace + value + '\n');
         });
+
+        if (meta.UserScript.namespace) {
+          aRes.write('// @namespace' + whitespace + meta.UserScript.namespace[0].value + '\n');
+        }
+
+        aRes.write('// ==/UserScript==\n');
+
         aRes.end();
       }
     });
