@@ -212,7 +212,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
           aRes.write('// @version' + whitespace + meta.UserScript.version[0].value + '\n');
         }
 
-        Object.keys(meta.UserScript.name).reverse().forEach(function (aName) {
+        Object.keys(meta.UserScript.name).forEach(function (aName) {
           var key = meta.UserScript.name[aName].key || 'name';
           var value = meta.UserScript.name[aName].value;
 
