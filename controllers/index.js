@@ -15,6 +15,7 @@ var Group = require('../models/group').Group;
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
+var Flag = require('../models/flag').Flag;
 
 var strategies = require('./strategies.json');
 var discussionLib = require('./discussion');
@@ -147,8 +148,75 @@ exports.home = function (aReq, aRes) {
       }
     }
   }
-  function render() { aRes.render('pages/scriptListPage', options); }
-  function asyncComplete() { preRender(); render(); }
+  function render() {
+    aRes.render('pages/scriptListPage', options);
+  }
+  function asyncComplete() {
+
+    async.parallel([
+      function (aOuterCallback) {
+        if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+          aOuterCallback();
+          return;
+        }
+
+        // Loop through the script list
+        async.forEachOf(options.scriptList, function (aScript, aScriptKey, aEachOuterCallback) {
+
+          // Always convert to a snapshot copy here
+          if (options.scriptList[aScriptKey].toObject) {
+            options.scriptList[aScriptKey] = options.scriptList[aScriptKey].toObject({
+              virtuals: true
+            });
+          }
+
+          // Ensure reset
+          options.scriptList[aScriptKey]._flagged = [];
+
+          // Find any flags
+          async.parallel([
+            function (aInnerCallback) {
+              Flag.find({ model: 'Script', _contentId: aScript._id }, aInnerCallback);
+            }
+          ], function (aErr, aResults) {
+            var flagList = aResults[0];
+
+            if (flagList.length > 0) {
+              options.hasFlagged = true;
+
+              // Loop through the flag list
+              async.forEachOfSeries(flagList, function (aFlag, aFlagKey, aEachInnerCallback) {
+
+                // Find the user name
+                async.parallel([
+                  function (aInner2Callback) {
+                    User.findOne({ _id: aFlag._userId }, aInner2Callback);
+                  }
+                ], function (aErr, aResults) {
+                  var user = aResults[0];
+
+                  options.scriptList[aScriptKey]._flagged.push({
+                    name: user.name,
+                    reason: flagList[aFlagKey].reason,
+                    since: flagList[aFlagKey]._since
+                  });
+
+                  aEachInnerCallback();
+                });
+
+              }, aEachOuterCallback);
+            } else {
+              aEachOuterCallback();
+            }
+          });
+        }, aOuterCallback);
+      }
+    ], function (aErr) {
+      preRender();
+      render();
+    });
+
+  }
   async.parallel(tasks, asyncComplete);
 };
 

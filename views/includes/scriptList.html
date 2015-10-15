@@ -5,6 +5,9 @@
       {{^librariesOnly}}<th class="text-center td-fit"><a href="?orderBy=installs&orderDir={{orderDir.install}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Installs</a></th>{{/librariesOnly}}
       <th class="text-center td-fit"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Rating</a></th>
       <th class="text-center td-fit"><a href="?orderBy=updated&orderDir={{orderDir.updated}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Last Updated</a></th>
+      {{#hasFlagged}}
+      <th>Flagged</th>
+      {{/hasFlagged}}
     </tr>
   </thead>
   <tbody>
@@ -36,6 +39,18 @@
       <td class="text-center td-fit">
         <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
       </td>
+      {{#hasFlagged}}
+      <td>
+        <ul class="flagged">
+        {{#_flagged}}
+          <li>
+            {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+            <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+          </li>
+        {{/_flagged}}
+        </ul>
+      </td>
+      {{/hasFlagged}}
     </tr>
     {{/scriptList}}
     {{^scriptList}}

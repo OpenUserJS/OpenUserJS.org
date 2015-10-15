@@ -295,3 +295,8 @@ a.panel-heading {
 .reason-automated {
   opacity: 0.25;
 }
+
+ul.flagged {
+  list-style-type: none;
+  padding-left: 0;
+}

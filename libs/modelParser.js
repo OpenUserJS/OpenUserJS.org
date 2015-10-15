@@ -243,10 +243,9 @@ var parseUser = function (aUserData) {
   if (!aUserData) {
     return;
   }
-  // var user = aUserData.toObject ? aUserData.toObject() : aUserData;
 
   // Intermediates
-  var user = aUserData;
+  var user = aUserData.toObject ? aUserData.toObject({ virtuals: true }) : aUserData;
 
   // Role
   user.isMod = user.role < 4;

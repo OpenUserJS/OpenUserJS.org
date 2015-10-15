@@ -17,6 +17,7 @@ var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
 var Discussion = require('../models/discussion').Discussion;
+var Flag = require('../models/flag').Flag;
 
 var categories = require('../controllers/discussion').categories;
 
@@ -234,8 +235,79 @@ exports.userListPage = function (aReq, aRes, aNext) {
       pageMetadata(options, ['Flagged Users', 'Moderation']);
     }
   }
-  function render() { aRes.render('pages/userListPage', options); }
-  function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } }
+  function render() {
+    aRes.render('pages/userListPage', options);
+  }
+  function asyncComplete(aErr) {
+    if (aErr) {
+      aNext();
+      return;
+    }
+
+    async.parallel([
+      function (aOuterCallback) {
+        if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+          aOuterCallback();
+          return;
+        }
+
+        // Loop through the user list
+        async.forEachOf(options.userList, function (aUser, aUserKey, aEachOuterCallback) {
+
+          // Always convert to a snapshot copy here
+          if (options.userList[aUserKey].toObject) {
+            options.userList[aUserKey] = options.userList[aUserKey].toObject({
+              virtuals: true
+            });
+          }
+
+          // Ensure reset
+          options.userList[aUserKey]._flagged = [];
+
+          // Find any flags
+          async.parallel([
+            function (aInnerCallback) {
+              Flag.find({ model: 'User', _contentId: aUser._id }, aInnerCallback);
+            }
+          ], function (aErr, aResults) {
+            var flagList = aResults[0];
+
+            if (flagList.length > 0) {
+              options.hasFlagged = true;
+
+              // Loop through the flag list
+              async.forEachOfSeries(flagList, function (aFlag, aFlagKey, aEachInnerCallback) {
+
+                // Find the user name
+                async.parallel([
+                  function (aInner2Callback) {
+                    User.findOne({ _id: aFlag._userId }, aInner2Callback);
+                  }
+                ], function (aErr, aResults) {
+                  var user = aResults[0];
+
+                  options.userList[aUserKey]._flagged.push({
+                    name: user.name,
+                    reason: flagList[aFlagKey].reason,
+                    since: flagList[aFlagKey]._since
+                  });
+
+                  aEachInnerCallback();
+                });
+
+              }, aEachOuterCallback);
+            } else {
+              aEachOuterCallback();
+            }
+          });
+        }, aOuterCallback);
+      }
+    ], function (aErr) {
+      preRender();
+      render();
+    });
+
+  }
   async.parallel(tasks, asyncComplete);
 };
 
@@ -292,9 +364,73 @@ exports.view = function (aReq, aRes, aNext) {
     tasks = tasks.concat(stats.getSummaryTasks(options));
 
     //---
-    function preRender() { }
-    function render() { aRes.render('pages/userPage', options); }
-    function asyncComplete() { preRender(); render(); }
+    function preRender() {
+    }
+    function render() {
+      aRes.render('pages/userPage', options);
+    }
+    function asyncComplete() {
+
+      async.parallel([
+        function (aOuterCallback) {
+          if (!options.isAdmin) {  // NOTE: Watchpoint
+            aOuterCallback();
+            return;
+          }
+
+          // Always convert to a snapshot copy here
+          if (options.user.toObject) {
+            options.user = options.user.toObject({
+              virtuals: true
+            });
+          }
+
+          // Ensure reset
+          options.user._flagged = [];
+
+          // Find any flags
+          async.parallel([
+            function (aInnerCallback) {
+              Flag.find({ model: 'User', _contentId: options.user._id }, aInnerCallback);
+            }
+          ], function (aErr, aResults) {
+            var flagList = aResults[0];
+
+            if (flagList.length > 0) {
+              options.hasFlagged = true;
+
+              // Loop through the flag list
+              async.forEachOfSeries(flagList, function (aFlag, aFlagKey, aEachInnerCallback) {
+
+                // Find the user name
+                async.series([
+                  function (aInner2Callback) {
+                    User.findOne({ _id: aFlag._userId }, aInner2Callback);
+                  }
+                ], function (aErr, aResults) {
+                  var user = aResults[0];
+
+                  options.user._flagged.push({
+                    name: user.name,
+                    reason: flagList[aFlagKey].reason,
+                    since: flagList[aFlagKey]._since
+                  });
+
+                  aEachInnerCallback();
+                });
+
+              }, aOuterCallback);
+            } else {
+              aOuterCallback();
+            }
+          });
+        }
+      ], function (aErr) {
+        preRender();
+        render();
+      });
+
+    }
     async.parallel(tasks, asyncComplete);
   });
 };
@@ -410,13 +546,14 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 
 exports.userScriptListPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
   var username = aReq.params.username;
 
   User.findOne({
     name: caseInsensitive(username)
   }, function (aErr, aUserData) {
-    if (aErr || !aUserData) { return aNext(); }
+    if (aErr || !aUserData) {
+      return aNext();
+    }
 
     //
     var options = {};
@@ -497,8 +634,75 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
     }
-    function render() { aRes.render('pages/userScriptListPage', options); }
-    function asyncComplete() { preRender(); render(); }
+    function render() {
+      aRes.render('pages/userScriptListPage', options);
+    }
+    function asyncComplete() {
+
+      async.parallel([
+        function (aOuterCallback) {
+          if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+            aOuterCallback();
+            return;
+          }
+
+          // Loop through the script list
+          async.forEachOf(options.scriptList, function (aScript, aScriptKey, aEachOuterCallback) {
+
+            // Always convert to a snapshot copy here
+            if (options.scriptList[aScriptKey].toObject) {
+              options.scriptList[aScriptKey] = options.scriptList[aScriptKey].toObject({
+                virtuals: true
+              });
+            }
+
+            // Ensure reset
+            options.scriptList[aScriptKey]._flagged = [];
+
+            // Find any flags
+            async.parallel([
+              function (aInnerCallback) {
+                Flag.find({ model: 'Script', _contentId: aScript._id }, aInnerCallback);
+              }
+            ], function (aErr, aResults) {
+              var flagList = aResults[0];
+
+              if (flagList.length > 0) {
+                options.hasFlagged = true;
+
+                // Loop through the flag list
+                async.forEachOfSeries(flagList, function (aFlag, aFlagKey, aEachInnerCallback) {
+
+                  // Find the user name
+                  async.series([
+                    function (aInner2Callback) {
+                      User.findOne({ _id: aFlag._userId }, aInner2Callback);
+                    }
+                  ], function (aErr, aResults) {
+                    var user = aResults[0];
+
+                    options.scriptList[aScriptKey]._flagged.push({
+                      name: user.name,
+                      reason: flagList[aFlagKey].reason,
+                      since: flagList[aFlagKey]._since
+                    });
+
+                    aEachInnerCallback();
+                  });
+
+                }, aEachOuterCallback);
+              } else {
+                aEachOuterCallback();
+              }
+            });
+          }, aOuterCallback);
+        }
+      ], function (aErr) {
+        preRender();
+        render();
+      });
+
+    }
     async.parallel(tasks, asyncComplete);
   });
 };

@@ -15,6 +15,8 @@ var Discussion = require('../models/discussion').Discussion;
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
+var Flag = require('../models/flag').Flag;
+var User = require('../models/user').User;
 
 var scriptStorage = require('./scriptStorage');
 var addScriptToGroups = require('./group').addScriptToGroups;
@@ -319,8 +321,71 @@ exports.view = function (aReq, aRes, aNext) {
           script.description, _.pluck(script.groups, 'name'));
       }
     }
-    function render() { aRes.render('pages/scriptPage', options); }
-    function asyncComplete() { preRender(); render(); }
+    function render() {
+      aRes.render('pages/scriptPage', options);
+    }
+    function asyncComplete() {
+
+      async.parallel([
+        function (aOuterCallback) {
+          if (!options.isAdmin) {  // NOTE: Watchpoint
+            aOuterCallback();
+            return;
+          }
+
+          // Always convert to a snapshot copy here
+          if (options.script.toObject) {
+            options.script = options.script.toObject({
+              virtuals: true
+            });
+          }
+
+          // Ensure reset
+          options.script._flagged = [];
+
+          // Find any flags
+          async.parallel([
+            function (aInnerCallback) {
+              Flag.find({ model: 'Script', _contentId: options.script._id }, aInnerCallback);
+            }
+          ], function (aErr, aResults) {
+            var flagList = aResults[0];
+
+            if (flagList.length > 0) {
+              options.hasFlagged = true;
+
+              // Loop through the flag list
+              async.forEachOfSeries(flagList, function (aFlag, aFlagKey, aEachInnerCallback) {
+
+                // Find the user name
+                async.parallel([
+                  function (aInner2Callback) {
+                    User.findOne({ _id: aFlag._userId }, aInner2Callback);
+                  }
+                ], function (aErr, aResults) {
+                  var user = aResults[0];
+
+                  options.script._flagged.push({
+                    name: user.name,
+                    reason: flagList[aFlagKey].reason,
+                    since: flagList[aFlagKey]._since
+                  });
+
+                  aEachInnerCallback();
+                });
+
+              }, aOuterCallback);
+            } else {
+              aOuterCallback();
+            }
+          });
+        }
+      ], function (aErr) {
+        preRender();
+        render();
+      });
+
+    }
 
     //---
     if (aErr || !aScriptData) {
