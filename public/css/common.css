@@ -250,6 +250,13 @@ h6:hover a.anchor {
   margin-top: 0;
 }
 
+.user-data pre,
+.user-content pre,
+.document-content pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
 .user-data code,
 .user-content code,
 .document-content code {
