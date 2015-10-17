@@ -6,7 +6,7 @@
   "dependencies": {
     "ace-builds": "git://github.com/ajaxorg/ace-builds#b082bcb",
     "async": "1.4.2",
-    "aws-sdk": "2.2.9",
+    "aws-sdk": "2.2.10",
     "body-parser": "1.14.1",
     "bootstrap": "3.3.5",
     "bootstrap-markdown": "2.9.0",
@@ -52,7 +52,7 @@
     "passport-yahoo": "0.3.0",
     "pegjs": "0.9.0",
     "request": "2.65.0",
-    "sanitize-html": "1.11.0",
+    "sanitize-html": "1.11.1",
     "select2": "3.5.2-browserify",
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.3.0",
