@@ -63,10 +63,12 @@ moment.locale('en-tiny', {
 });
 
 var parseDateProperty = function (aObj, aKey) {
-  var date = aObj[aKey];
-  if (date) {
-    aObj[aKey + 'ISOFormat'] = date.toISOString();
-    aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
+  if (aObj[aKey]) {
+    var date = new Date(aObj[aKey]);
+    if (date) {
+      aObj[aKey + 'ISOFormat'] = date.toISOString();
+      aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
+    }
   }
 };
 

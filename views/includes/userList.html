@@ -23,13 +23,13 @@
       </td>
       {{#hasFlagged}}
       <td>
-        <ul class="flagged">
-        {{#_flagged}}
+        <ul class="flaggedList">
+        {{#flaggedList}}
           <li>
             {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
             <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
           </li>
-        {{/_flagged}}
+        {{/flaggedList}}
         </ul>
       </td>
       {{/hasFlagged}}

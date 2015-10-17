@@ -17,7 +17,6 @@ var Script = require('../models/script').Script;
 var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
 var Discussion = require('../models/discussion').Discussion;
-var Flag = require('../models/flag').Flag;
 
 var categories = require('../controllers/discussion').categories;
 
@@ -245,62 +244,12 @@ exports.userListPage = function (aReq, aRes, aNext) {
     }
 
     async.parallel([
-      function (aOuterCallback) {
+      function (aCallback) {
         if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
-          aOuterCallback();
+          aCallback();
           return;
         }
-
-        // Loop through the user list
-        async.forEachOf(options.userList, function (aUser, aUserKey, aEachOuterCallback) {
-
-          // Always convert to a snapshot copy here
-          if (options.userList[aUserKey].toObject) {
-            options.userList[aUserKey] = options.userList[aUserKey].toObject({
-              virtuals: true
-            });
-          }
-
-          // Ensure reset
-          options.userList[aUserKey]._flagged = [];
-
-          // Find any flags
-          async.parallel([
-            function (aInnerCallback) {
-              Flag.find({ model: 'User', _contentId: aUser._id }, aInnerCallback);
-            }
-          ], function (aErr, aResults) {
-            var flagList = aResults[0];
-
-            if (flagList.length > 0) {
-              options.hasFlagged = true;
-
-              // Loop through the flag list
-              async.forEachOfSeries(flagList, function (aFlag, aFlagKey, aEachInnerCallback) {
-
-                // Find the user name
-                async.parallel([
-                  function (aInner2Callback) {
-                    User.findOne({ _id: aFlag._userId }, aInner2Callback);
-                  }
-                ], function (aErr, aResults) {
-                  var user = aResults[0];
-
-                  options.userList[aUserKey]._flagged.push({
-                    name: user.name,
-                    reason: flagList[aFlagKey].reason,
-                    since: flagList[aFlagKey]._since
-                  });
-
-                  aEachInnerCallback();
-                });
-
-              }, aEachOuterCallback);
-            } else {
-              aEachOuterCallback();
-            }
-          });
-        }, aOuterCallback);
+        flagLib.setFlaggedListInModel('User', options, aCallback);
       }
     ], function (aErr) {
       preRender();
@@ -372,58 +321,12 @@ exports.view = function (aReq, aRes, aNext) {
     function asyncComplete() {
 
       async.parallel([
-        function (aOuterCallback) {
+        function (aCallback) {
           if (!options.isAdmin) {  // NOTE: Watchpoint
-            aOuterCallback();
+            aCallback();
             return;
           }
-
-          // Always convert to a snapshot copy here
-          if (options.user.toObject) {
-            options.user = options.user.toObject({
-              virtuals: true
-            });
-          }
-
-          // Ensure reset
-          options.user._flagged = [];
-
-          // Find any flags
-          async.parallel([
-            function (aInnerCallback) {
-              Flag.find({ model: 'User', _contentId: options.user._id }, aInnerCallback);
-            }
-          ], function (aErr, aResults) {
-            var flagList = aResults[0];
-
-            if (flagList.length > 0) {
-              options.hasFlagged = true;
-
-              // Loop through the flag list
-              async.forEachOfSeries(flagList, function (aFlag, aFlagKey, aEachInnerCallback) {
-
-                // Find the user name
-                async.series([
-                  function (aInner2Callback) {
-                    User.findOne({ _id: aFlag._userId }, aInner2Callback);
-                  }
-                ], function (aErr, aResults) {
-                  var user = aResults[0];
-
-                  options.user._flagged.push({
-                    name: user.name,
-                    reason: flagList[aFlagKey].reason,
-                    since: flagList[aFlagKey]._since
-                  });
-
-                  aEachInnerCallback();
-                });
-
-              }, aOuterCallback);
-            } else {
-              aOuterCallback();
-            }
-          });
+          flagLib.setFlaggedListInModel('User', options, aCallback);
         }
       ], function (aErr) {
         preRender();
@@ -640,62 +543,12 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     function asyncComplete() {
 
       async.parallel([
-        function (aOuterCallback) {
+        function (aCallback) {
           if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
-            aOuterCallback();
+            aCallback();
             return;
           }
-
-          // Loop through the script list
-          async.forEachOf(options.scriptList, function (aScript, aScriptKey, aEachOuterCallback) {
-
-            // Always convert to a snapshot copy here
-            if (options.scriptList[aScriptKey].toObject) {
-              options.scriptList[aScriptKey] = options.scriptList[aScriptKey].toObject({
-                virtuals: true
-              });
-            }
-
-            // Ensure reset
-            options.scriptList[aScriptKey]._flagged = [];
-
-            // Find any flags
-            async.parallel([
-              function (aInnerCallback) {
-                Flag.find({ model: 'Script', _contentId: aScript._id }, aInnerCallback);
-              }
-            ], function (aErr, aResults) {
-              var flagList = aResults[0];
-
-              if (flagList.length > 0) {
-                options.hasFlagged = true;
-
-                // Loop through the flag list
-                async.forEachOfSeries(flagList, function (aFlag, aFlagKey, aEachInnerCallback) {
-
-                  // Find the user name
-                  async.series([
-                    function (aInner2Callback) {
-                      User.findOne({ _id: aFlag._userId }, aInner2Callback);
-                    }
-                  ], function (aErr, aResults) {
-                    var user = aResults[0];
-
-                    options.scriptList[aScriptKey]._flagged.push({
-                      name: user.name,
-                      reason: flagList[aFlagKey].reason,
-                      since: flagList[aFlagKey]._since
-                    });
-
-                    aEachInnerCallback();
-                  });
-
-                }, aEachOuterCallback);
-              } else {
-                aEachOuterCallback();
-              }
-            });
-          }, aOuterCallback);
+          flagLib.setFlaggedListInModel('Script', options, aCallback);
         }
       ], function (aErr) {
         preRender();

@@ -12,13 +12,13 @@
       <div class="form-group">
         <label class="col-sm-4 control-label">Flagged</label>
         <div class="col-sm-8">
-          <ul class="flagged">
-          {{#user._flagged}}
+          <ul class="flaggedList">
+          {{#user.flaggedList}}
             <li>
               {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
               <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
             </li>
-          {{/user._flagged}}
+          {{/user.flaggedList}}
           </ul>
         </div>
       </div>
