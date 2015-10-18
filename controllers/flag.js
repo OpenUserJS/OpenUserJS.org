@@ -11,7 +11,7 @@ var async = require('async');
 var Flag = require('../models/flag').Flag;
 var User = require('../models/user').User;
 
-exports.setFlaggedListToModel = function (aModelName, aOptions, aCallback) {
+exports.getFlaggedListForContent = function (aModelName, aOptions, aCallback) {
 
   var content = aModelName.toLowerCase();
   var contentList = aOptions[content + 'List'] || [aOptions[content]];

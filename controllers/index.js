@@ -18,7 +18,7 @@ var Strategy = require('../models/strategy').Strategy;
 
 var strategies = require('./strategies.json');
 var discussionLib = require('./discussion');
-var setFlaggedListToModel = require('./flag').setFlaggedListToModel;
+var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
@@ -159,7 +159,7 @@ exports.home = function (aReq, aRes) {
           aCallback();
           return;
         }
-        setFlaggedListToModel('Script', options, aCallback);
+        getFlaggedListForContent('Script', options, aCallback);
       }
     ], function (aErr) {
       preRender();

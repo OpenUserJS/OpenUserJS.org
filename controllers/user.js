@@ -21,7 +21,7 @@ var Discussion = require('../models/discussion').Discussion;
  // TODO: Possible unneccessary directory traversal
 var categories = require('../controllers/discussion').categories;
 
-var setFlaggedListToModel = require('./flag').setFlaggedListToModel;
+var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 
 var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
@@ -252,7 +252,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
           aCallback();
           return;
         }
-        setFlaggedListToModel('User', options, aCallback);
+        getFlaggedListForContent('User', options, aCallback);
       }
     ], function (aErr) {
       preRender();
@@ -329,7 +329,7 @@ exports.view = function (aReq, aRes, aNext) {
             aCallback();
             return;
           }
-          setFlaggedListToModel('User', options, aCallback);
+          getFlaggedListForContent('User', options, aCallback);
         }
       ], function (aErr) {
         preRender();
@@ -551,7 +551,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
             aCallback();
             return;
           }
-          setFlaggedListToModel('Script', options, aCallback);
+          getFlaggedListForContent('Script', options, aCallback);
         }
       ], function (aErr) {
         preRender();
