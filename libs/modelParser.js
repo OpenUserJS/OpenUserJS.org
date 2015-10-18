@@ -63,10 +63,12 @@ moment.locale('en-tiny', {
 });
 
 var parseDateProperty = function (aObj, aKey) {
-  var date = aObj[aKey];
-  if (date) {
-    aObj[aKey + 'ISOFormat'] = date.toISOString();
-    aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
+  if (aObj[aKey]) {
+    var date = new Date(aObj[aKey]);
+    if (date) {
+      aObj[aKey + 'ISOFormat'] = date.toISOString();
+      aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
+    }
   }
 };
 
@@ -243,10 +245,9 @@ var parseUser = function (aUserData) {
   if (!aUserData) {
     return;
   }
-  // var user = aUserData.toObject ? aUserData.toObject() : aUserData;
 
   // Intermediates
-  var user = aUserData;
+  var user = aUserData.toObject ? aUserData.toObject({ virtuals: true }) : aUserData;
 
   // Role
   user.isMod = user.role < 4;

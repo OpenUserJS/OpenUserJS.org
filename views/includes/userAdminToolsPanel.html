@@ -7,6 +7,23 @@
     </div>
   </div>
   <div class="panel-body">
+    {{#hasFlagged}}
+    <div class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Flagged</label>
+        <div class="col-sm-8">
+          <ul class="flaggedList">
+          {{#user.flaggedList}}
+            <li>
+              {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+              <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+            </li>
+          {{/user.flaggedList}}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {{/hasFlagged}}
     <form class="form-horizontal" role="form" method="post" action="{{{user.userUpdatePageUrl}}}">
       <div class="form-group container-fluid">
         <label class="col-sm-2 control-label">Role</label>

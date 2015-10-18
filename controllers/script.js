@@ -16,8 +16,10 @@ var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 
+
 var scriptStorage = require('./scriptStorage');
 var addScriptToGroups = require('./group').addScriptToGroups;
+var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var modelQuery = require('../libs/modelQuery');
@@ -319,8 +321,25 @@ exports.view = function (aReq, aRes, aNext) {
           script.description, _.pluck(script.groups, 'name'));
       }
     }
-    function render() { aRes.render('pages/scriptPage', options); }
-    function asyncComplete() { preRender(); render(); }
+    function render() {
+      aRes.render('pages/scriptPage', options);
+    }
+    function asyncComplete() {
+
+      async.parallel([
+        function (aCallback) {
+          if (!options.isAdmin) {  // NOTE: Watchpoint
+            aCallback();
+            return;
+          }
+          getFlaggedListForContent('Script', options, aCallback);
+        }
+      ], function (aErr) {
+        preRender();
+        render();
+      });
+
+    }
 
     //---
     if (aErr || !aScriptData) {

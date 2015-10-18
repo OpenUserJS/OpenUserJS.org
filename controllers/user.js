@@ -18,7 +18,10 @@ var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
 var Discussion = require('../models/discussion').Discussion;
 
+ // TODO: Possible unneccessary directory traversal
 var categories = require('../controllers/discussion').categories;
+
+var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 
 var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
@@ -234,8 +237,29 @@ exports.userListPage = function (aReq, aRes, aNext) {
       pageMetadata(options, ['Flagged Users', 'Moderation']);
     }
   }
-  function render() { aRes.render('pages/userListPage', options); }
-  function asyncComplete(err) { if (err) { return aNext(); } else { preRender(); render(); } }
+  function render() {
+    aRes.render('pages/userListPage', options);
+  }
+  function asyncComplete(aErr) {
+    if (aErr) {
+      aNext();
+      return;
+    }
+
+    async.parallel([
+      function (aCallback) {
+        if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+          aCallback();
+          return;
+        }
+        getFlaggedListForContent('User', options, aCallback);
+      }
+    ], function (aErr) {
+      preRender();
+      render();
+    });
+
+  }
   async.parallel(tasks, asyncComplete);
 };
 
@@ -292,9 +316,27 @@ exports.view = function (aReq, aRes, aNext) {
     tasks = tasks.concat(stats.getSummaryTasks(options));
 
     //---
-    function preRender() { }
-    function render() { aRes.render('pages/userPage', options); }
-    function asyncComplete() { preRender(); render(); }
+    function preRender() {
+    }
+    function render() {
+      aRes.render('pages/userPage', options);
+    }
+    function asyncComplete() {
+
+      async.parallel([
+        function (aCallback) {
+          if (!options.isAdmin) {  // NOTE: Watchpoint
+            aCallback();
+            return;
+          }
+          getFlaggedListForContent('User', options, aCallback);
+        }
+      ], function (aErr) {
+        preRender();
+        render();
+      });
+
+    }
     async.parallel(tasks, asyncComplete);
   });
 };
@@ -410,13 +452,14 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 
 exports.userScriptListPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-
   var username = aReq.params.username;
 
   User.findOne({
     name: caseInsensitive(username)
   }, function (aErr, aUserData) {
-    if (aErr || !aUserData) { return aNext(); }
+    if (aErr || !aUserData) {
+      return aNext();
+    }
 
     //
     var options = {};
@@ -497,8 +540,25 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
     }
-    function render() { aRes.render('pages/userScriptListPage', options); }
-    function asyncComplete() { preRender(); render(); }
+    function render() {
+      aRes.render('pages/userScriptListPage', options);
+    }
+    function asyncComplete() {
+
+      async.parallel([
+        function (aCallback) {
+          if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+            aCallback();
+            return;
+          }
+          getFlaggedListForContent('Script', options, aCallback);
+        }
+      ], function (aErr) {
+        preRender();
+        render();
+      });
+
+    }
     async.parallel(tasks, asyncComplete);
   });
 };

@@ -18,6 +18,7 @@ var Strategy = require('../models/strategy').Strategy;
 
 var strategies = require('./strategies.json');
 var discussionLib = require('./discussion');
+var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
@@ -147,8 +148,25 @@ exports.home = function (aReq, aRes) {
       }
     }
   }
-  function render() { aRes.render('pages/scriptListPage', options); }
-  function asyncComplete() { preRender(); render(); }
+  function render() {
+    aRes.render('pages/scriptListPage', options);
+  }
+  function asyncComplete() {
+
+    async.parallel([
+      function (aCallback) {
+        if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+          aCallback();
+          return;
+        }
+        getFlaggedListForContent('Script', options, aCallback);
+      }
+    ], function (aErr) {
+      preRender();
+      render();
+    });
+
+  }
   async.parallel(tasks, asyncComplete);
 };
 
