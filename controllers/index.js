@@ -18,13 +18,13 @@ var Strategy = require('../models/strategy').Strategy;
 
 var strategies = require('./strategies.json');
 var discussionLib = require('./discussion');
+var setFlaggedListToModel = require('./flag').setFlaggedListToModel;
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var removeSession = require('../libs/modifySessions').remove;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
-var flagLib = require('../libs/flag');
 
 // The home page has scripts and groups in a sidebar
 exports.home = function (aReq, aRes) {
@@ -159,7 +159,7 @@ exports.home = function (aReq, aRes) {
           aCallback();
           return;
         }
-        flagLib.setFlaggedListInModel('Script', options, aCallback);
+        setFlaggedListToModel('Script', options, aCallback);
       }
     ], function (aErr) {
       preRender();

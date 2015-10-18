@@ -18,7 +18,10 @@ var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
 var Discussion = require('../models/discussion').Discussion;
 
+ // TODO: Possible unneccessary directory traversal
 var categories = require('../controllers/discussion').categories;
+
+var setFlaggedListToModel = require('./flag').setFlaggedListToModel;
 
 var userRoles = require('../models/userRoles.json');
 var scriptStorage = require('./scriptStorage');
@@ -249,7 +252,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
           aCallback();
           return;
         }
-        flagLib.setFlaggedListInModel('User', options, aCallback);
+        setFlaggedListToModel('User', options, aCallback);
       }
     ], function (aErr) {
       preRender();
@@ -326,7 +329,7 @@ exports.view = function (aReq, aRes, aNext) {
             aCallback();
             return;
           }
-          flagLib.setFlaggedListInModel('User', options, aCallback);
+          setFlaggedListToModel('User', options, aCallback);
         }
       ], function (aErr) {
         preRender();
@@ -548,7 +551,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
             aCallback();
             return;
           }
-          flagLib.setFlaggedListInModel('Script', options, aCallback);
+          setFlaggedListToModel('Script', options, aCallback);
         }
       ], function (aErr) {
         preRender();

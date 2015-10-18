@@ -16,8 +16,10 @@ var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 
+
 var scriptStorage = require('./scriptStorage');
 var addScriptToGroups = require('./group').addScriptToGroups;
+var setFlaggedListToModel = require('./flag').setFlaggedListToModel;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var modelQuery = require('../libs/modelQuery');
@@ -330,7 +332,7 @@ exports.view = function (aReq, aRes, aNext) {
             aCallback();
             return;
           }
-          flagLib.setFlaggedListInModel('Script', options, aCallback);
+          setFlaggedListToModel('Script', options, aCallback);
         }
       ], function (aErr) {
         preRender();
