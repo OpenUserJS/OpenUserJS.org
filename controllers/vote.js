@@ -6,3 +6,14 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+
+//--- Dependency inclusions
+
+//--- Model inclusions
+
+//--- Library inclusions
+var voteLib = require('../libs/vote');
+
+//--- Configuration inclusions
+
+//---

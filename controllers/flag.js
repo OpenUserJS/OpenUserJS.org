@@ -6,11 +6,20 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+
+//--- Dependency inclusions
 var async = require('async');
 
+//--- Model inclusions
 var Flag = require('../models/flag').Flag;
 var User = require('../models/user').User;
 
+//--- Library inclusions
+var flagLib = require('../libs/flag');
+
+//--- Configuration inclusions
+
+//---
 exports.getFlaggedListForContent = function (aModelName, aOptions, aCallback) {
 
   var content = aModelName.toLowerCase();

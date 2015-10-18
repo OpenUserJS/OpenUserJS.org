@@ -6,12 +6,18 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+
+//--- Dependency inclusions
 var async = require('async');
 var _ = require('underscore');
+
+//--- Model inclusions
+var Group = require('../models/group').Group;
+
+//--- Library inclusions
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
-//--- Models
-var Group = require('../models/group').Group;
+//--- Configuration inclusions
 
 //--- Local
 
