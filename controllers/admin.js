@@ -474,6 +474,6 @@ exports.authAsUser = function (aReq, aRes, aNext) {
 
     aReq.session.user = user;
 
-    aRes.redirect(user.userPageUrl);
+    aRes.redirect(encodeURI(user.userPageUrl));
   });
 };

@@ -1481,7 +1481,7 @@ exports.flag = function (aReq, aRes, aNext) {
     if (aErr || !aUser) { return aNext(); }
 
     fn(User, aUser, aReq.session.user, function (aFlagged) { // NOTE: Inline function here
-      aRes.redirect('/users/' + username);
+      aRes.redirect('/users/' + encodeURI(username));
     });
   });
 };
