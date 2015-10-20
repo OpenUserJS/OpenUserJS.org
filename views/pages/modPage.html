@@ -12,13 +12,13 @@
         <h3>Flagged Items</h3>
         <p>These are items over their threshold.</p>
         <div class="list-group">
-          <a href="/?flagged=true" class="list-group-item">
+          <a href="/?flagged={{#isAdmin}}critical{{/isAdmin}}{{^isAdmin}}true{{/isAdmin}}" class="list-group-item">
             <i class="fa fa-fw fa-file-code-o"></i> <i class="fa fa-fw fa-flag"></i> Flagged Scripts
           </a>
-          <a href="/?library=true&flagged=true" class="list-group-item">
+          <a href="/?library=true&flagged={{#isAdmin}}critical{{/isAdmin}}{{^isAdmin}}true{{/isAdmin}}" class="list-group-item">
             <i class="fa fa-fw fa-file-excel-o"></i> <i class="fa fa-fw fa-flag"></i> Flagged Libraries
           </a>
-          <a href="/users?flagged=true" class="list-group-item">
+          <a href="/users?flagged={{#isAdmin}}critical{{/isAdmin}}{{^isAdmin}}true{{/isAdmin}}" class="list-group-item">
             <i class="fa fa-fw fa-user"></i> <i class="fa fa-fw fa-flag"></i> Flagged Users
           </a>
         </div>

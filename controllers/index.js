@@ -116,7 +116,7 @@ exports.home = function (aReq, aRes) {
 
     // Empty list
     options.scriptListIsEmptyMessage = 'No scripts.';
-    if (options.isFlagged) {
+    if (!!options.isFlagged) {
       if (options.librariesOnly) {
         options.scriptListIsEmptyMessage = 'No flagged libraries.';
       } else {
@@ -134,13 +134,13 @@ exports.home = function (aReq, aRes) {
 
     // Heading
     if (options.librariesOnly) {
-      options.pageHeading = options.isFlagged ? 'Flagged Libraries' : 'Libraries';
+      options.pageHeading = !!options.isFlagged ? 'Flagged Libraries' : 'Libraries';
     } else {
-      options.pageHeading = options.isFlagged ? 'Flagged Scripts' : 'Scripts';
+      options.pageHeading = !!options.isFlagged ? 'Flagged Scripts' : 'Scripts';
     }
 
     // Page metadata
-    if (options.isFlagged) {
+    if (!!options.isFlagged) {
       if (options.librariesOnly) {
         pageMetadata(options, ['Flagged Libraries', 'Moderation']);
       } else {
@@ -155,7 +155,7 @@ exports.home = function (aReq, aRes) {
 
     async.parallel([
       function (aCallback) {
-        if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+        if (!!!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
           aCallback();
           return;
         }

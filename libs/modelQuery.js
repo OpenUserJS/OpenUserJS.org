@@ -182,25 +182,59 @@ var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFla
   if (aOptions.isYou || aOptions.isMod) {
     // Mod
     if (aFlaggedQuery) {
-      if (aFlaggedQuery === 'true') {
-        aOptions.isFlagged = true;
-        aOptions.searchBarPlaceholder = aOptions.searchBarPlaceholder.replace(/^Search /, 'Search Flagged ');
-        if (!_.findWhere(aOptions.searchBarFormHiddenVariables, { name: 'flagged' })) {
-          aOptions.searchBarFormHiddenVariables.push({ name: 'flagged', value: 'true' });
-        }
-        aModelListQuery.and({ flags: { $gt: 0 } });
+
+      aOptions.isFlagged = aFlaggedQuery;
+      aOptions.searchBarPlaceholder = aOptions.searchBarPlaceholder.replace(
+        /^Search /, 'Search Flagged '
+      );
+
+      switch (aOptions.isFlagged) {
+        case 'none':
+          if (aOptions.isAdmin) {
+            // Filter nothing but still show Flagged column
+            break;
+          }
+          // fallthrough
+        case 'absolute':
+          if (aOptions.isAdmin) {
+            aOptions.filterAbsolute = true;
+            aModelListQuery.and({ flagsAbsolute: { $gt: 0 } }); // TODO: This does not exist yet
+            break;
+          }
+          // fallthrough
+        default:
+           // Ensure default depending on role
+          if (aOptions.isAdmin) {
+            aOptions.isFlagged = 'critical';
+            aOptions.filterCritical = true;
+
+          } else {
+            aOptions.isFlagged = 'true';
+          }
+
+          aModelListQuery.and({ flags: { $gt: 0 } });
+          break;
       }
+
+      if (!_.findWhere(aOptions.searchBarFormHiddenVariables, { name: 'flagged' })) {
+        aOptions.searchBarFormHiddenVariables.push({ name: 'flagged', value: aOptions.isFlagged });
+      }
+
     } else {
+
       // Remove `flagged` form variable if present
       aOptions.searchBarFormHiddenVariables = _.without(
         aOptions.searchBarFormHiddenVariables,
-        _.findWhere(aOptions.searchBarFormHiddenVariables, { name: 'flagged', value: 'true' })
+        _.findWhere(aOptions.searchBarFormHiddenVariables, { name: 'flagged' })
       );
+
     }
   } else {
+
     // Hide
     // Script.flagged is undefined by default.
     aModelListQuery.and({ flagged: { $ne: true } });
+
   }
 };
 exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
