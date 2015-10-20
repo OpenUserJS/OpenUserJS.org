@@ -254,7 +254,7 @@ exports.view = function (aReq, aRes, aNext) {
 
       // Empty list
       options.scriptListIsEmptyMessage = 'No scripts.';
-      if (options.isFlagged) {
+      if (!!options.isFlagged) {
         if (options.librariesOnly) {
           options.scriptListIsEmptyMessage = 'No flagged libraries.';
         } else {

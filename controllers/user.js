@@ -223,17 +223,17 @@ exports.userListPage = function (aReq, aRes, aNext) {
 
     // Empty list
     options.userListIsEmptyMessage = 'No users.';
-    if (options.isFlagged) {
+    if (!!options.isFlagged) {
       options.userListIsEmptyMessage = 'No flagged users.';
     } else if (options.searchBarValue) {
       options.userListIsEmptyMessage = 'We couldn\'t find any users by this name.';
     }
 
     // Heading
-    options.pageHeading = options.isFlagged ? 'Flagged Users' : 'Users';
+    options.pageHeading = !!options.isFlagged ? 'Flagged Users' : 'Users';
 
     // Page metadata
-    if (options.isFlagged) {
+    if (!!options.isFlagged) {
       pageMetadata(options, ['Flagged Users', 'Moderation']);
     }
   }
@@ -248,7 +248,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
 
     async.parallel([
       function (aCallback) {
-        if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+        if (!!!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
           aCallback();
           return;
         }
@@ -524,7 +524,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 
       // Empty list
       options.scriptListIsEmptyMessage = 'No scripts.';
-      if (options.isFlagged) {
+      if (!!options.isFlagged) {
         if (options.librariesOnly) {
           options.scriptListIsEmptyMessage = 'No flagged libraries.';
         } else {
@@ -547,7 +547,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 
       async.parallel([
         function (aCallback) {
-          if (!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+          if (!!!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
             aCallback();
             return;
           }

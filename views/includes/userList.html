@@ -1,8 +1,8 @@
 <table class="table table-hover table-condensed">
   <thead>
     <tr>
-      <th><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Name</a></th>
-      <th class="td-fit"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Rank</a></th>
+      <th><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
+      <th class="td-fit"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Rank</a></th>
       {{#hasFlagged}}
       <th>Flagged</th>
       {{/hasFlagged}}
