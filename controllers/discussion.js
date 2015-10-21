@@ -338,7 +338,7 @@ function postComment(aUser, aDiscussion, aContent, aCreator, aCallback) {
     created: created,
     rating: 0,
     creator: aCreator,
-    flags: { critical: 0 },
+    flags: { critical: 0, absolute: 0 },
     flagged: false,
     id: created.getTime().toString(16),
     _discussionId: aDiscussion._id,

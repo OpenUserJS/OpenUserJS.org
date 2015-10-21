@@ -94,7 +94,13 @@ function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
   if (!aContent.flags.critical) {
     aContent.flags.critical = 0;
   }
+
+  if (!aContent.flags.absolute) {
+    aContent.flags.absolute = 0;
+  }
+
   aContent.flags.critical += aFlags;
+  aContent.flags.absolute += (aFlags > 0 ? 1 : -1); // NOTE: ES6 `Math.sign(x)`
 
   if (aContent.flags.critical >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
     return getThreshold(aModel, aContent, aAuthor, function (aThreshold) {
@@ -139,6 +145,11 @@ function flag(aModel, aContent, aUser, aAuthor, aCallback) {
     if (!aContent.flags.critical) {
       aContent.flags.critical = 0;
     }
+
+    if (!aContent.flags.absolute) {
+      aContent.flags.absolute = 0;
+    }
+
     if (!aContent.flagged) { aContent.flagged = false; }
 
     saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? 2 : 1, aCallback);
@@ -168,6 +179,11 @@ exports.unflag = function (aModel, aContent, aUser, aCallback) {
     if (!aContent.flags.critical) {
       aContent.flags.critical = 0;
     }
+
+    if (!aContent.flags.absolute) {
+      aContent.flags.absolute = 0;
+    }
+
     if (!aContent.flagged) { aContent.flagged = false; }
 
     function removeFlag(aAuthor) {

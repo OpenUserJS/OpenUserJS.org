@@ -472,7 +472,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           about: '',
           updated: new Date(),
           votes: 0,
-          flags: { critical: 0 },
+          flags: { critical: 0, absolute: 0 },
           installName: installName,
           fork: null,
           meta: isLibrary ? { name: aMeta } : aMeta,
