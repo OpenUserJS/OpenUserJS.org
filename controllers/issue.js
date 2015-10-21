@@ -92,7 +92,7 @@ exports.list = function (aReq, aRes, aNext) {
       [
         (options.allIssues ? 'All' : (open ? 'Open' : 'Closed')) + ' Issues',
         script.name,
-        (script.isLib ? 'Libraries' : 'Scripts')
+        (script.isLib ? 'Libraries' : 'Userscripts')
       ],
       category.description);
 

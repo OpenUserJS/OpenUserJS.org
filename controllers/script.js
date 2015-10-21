@@ -317,7 +317,7 @@ exports.view = function (aReq, aRes, aNext) {
   }, function (aErr, aScriptData) {
     function preRender() {
       if (script.groups) {
-        pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+        pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
           script.description, _.pluck(script.groups, 'name'));
       }
     }
@@ -363,7 +363,7 @@ exports.view = function (aReq, aRes, aNext) {
       script.scriptInstallPageUrl;
 
     // Page metadata
-    pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+    pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
       script.description);
     options.isScriptPage = true;
 
@@ -423,7 +423,7 @@ exports.edit = function (aReq, aRes, aNext) {
     // Page metadata
     var script = options.script = modelParser.parseScript(aScriptData);
     options.isOwner = authedUser && authedUser._id == script._authorId;
-    pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
+    pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
       script.name);
 
     // If authed user is not the script author.
