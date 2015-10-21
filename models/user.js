@@ -23,7 +23,10 @@ var userSchema = new Schema({
 
   // Moderation
   role: Number,
-  flags: Number,
+  flags: {
+    critical: Number,
+    absolute: Number
+  },
   flagged: Boolean,
   sessionIds: [String]
 });

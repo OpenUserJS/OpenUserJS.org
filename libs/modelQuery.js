@@ -198,7 +198,7 @@ var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFla
         case 'absolute':
           if (aOptions.isAdmin) {
             aOptions.filterAbsolute = true;
-            aModelListQuery.and({ flagsAbsolute: { $gt: 0 } }); // TODO: This does not exist yet
+            aModelListQuery.and({ 'flags.absolute': { $gt: 0 } }); // TODO: Exists in schema but needs linkage
             break;
           }
           // fallthrough
@@ -212,7 +212,7 @@ var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFla
             aOptions.isFlagged = 'true';
           }
 
-          aModelListQuery.and({ flags: { $gt: 0 } });
+          aModelListQuery.and({ 'flags.critical': { $gt: 0 } });
           break;
       }
 

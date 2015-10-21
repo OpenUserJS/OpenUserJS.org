@@ -257,7 +257,7 @@ var getScriptPageTasks = function (aOptions) {
 
     removeLib.removeable(Script, script, authedUser, function (aCanRemove, aAuthor) {
       aOptions.canRemove = aCanRemove;
-      aOptions.flags = script.flags || 0;
+      aOptions.flags = (script.flags ? script.flags.critical : null) || 0;
       aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
 
       if (!aCanRemove) {

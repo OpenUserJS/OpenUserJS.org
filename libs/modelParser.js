@@ -175,10 +175,11 @@ var parseScript = function (aScriptData) {
   script.isFork = script.fork && script.fork.length > 0;
 
   // Script Good/Bad bar.
-  var sumVotesAndFlags = script.votes + script.flags;
+  var criticalFlags = (script.flags ? script.flags.critical : null) || 0;
+  var sumVotesAndFlags = script.votes + criticalFlags;
 
   var votesRatio = sumVotesAndFlags > 0 ? script.votes / sumVotesAndFlags : 1;
-  var flagsRatio = sumVotesAndFlags > 0 ? script.flags / sumVotesAndFlags : 0;
+  var flagsRatio = sumVotesAndFlags > 0 ? criticalFlags / sumVotesAndFlags : 0;
 
   var votesPercent = votesRatio * 100;
   var flagsPercent = flagsRatio * 100;

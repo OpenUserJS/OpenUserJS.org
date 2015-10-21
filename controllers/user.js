@@ -79,7 +79,7 @@ var setupUserModerationUITask = function (aOptions) {
 
       removeLib.removeable(User, user, authedUser, function (aCanRemove, aAuthor) {
         aOptions.canRemove = aCanRemove;
-        aOptions.flags = user.flags || 0;
+        aOptions.flags = (user.flags ? user.flags.critical : null) || 0;
 
         if (!aCanRemove) {
           return aCallback();
@@ -1481,7 +1481,7 @@ exports.flag = function (aReq, aRes, aNext) {
     if (aErr || !aUser) { return aNext(); }
 
     fn(User, aUser, aReq.session.user, function (aFlagged) { // NOTE: Inline function here
-      aRes.redirect('/users/' + username);
+      aRes.redirect('/users/' + encodeURI(username));
     });
   });
 };

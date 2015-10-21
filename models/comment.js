@@ -18,7 +18,10 @@ var commentSchema = new Schema({
 
   // Moderation
   creator: Boolean,
-  flags: Number,
+  flags: {
+    critical: Number,
+    absolute: Number
+  },
   flagged: Boolean,
 
   // Extra info

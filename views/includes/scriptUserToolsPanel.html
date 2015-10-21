@@ -8,7 +8,7 @@
       <p><i class="fa fa-fw fa-heartbeat"></i> <b>Rating:</b> {{script.rating}}</p>
       <div class="progress">
         <div style="width: {{script.votesPercent}}%" class="progress-bar progress-bar-good">{{#script.votes}}{{script.votes}} Votes{{/script.votes}}</div>
-        <div style="width: {{script.flagsPercent}}%" class="progress-bar progress-bar-danger">{{#script.flags}}{{script.flags}} <i class="fa fa-fw fa-flag"></i>{{/script.flags}}</div>
+        <div style="width: {{script.flagsPercent}}%" class="progress-bar progress-bar-danger">{{#script.flags.critical}}{{script.flags.critical}} <i class="fa fa-fw fa-flag"></i>{{/script.flags.critical}}</div>
       </div>
     </div>
     <ul class="nav nav-pills nav-justified">
