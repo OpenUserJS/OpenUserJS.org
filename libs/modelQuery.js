@@ -306,7 +306,7 @@ exports.applyGroupListQueryDefaults = function (aGroupListQuery, aOptions, aReq)
 var scriptListQueryDefaults = {
   defaultSort: '-rating -installs -updated',
   parseSearchQueryFn: parseScriptSearchQuery,
-  searchBarPlaceholder: 'Search Scripts',
+  searchBarPlaceholder: 'Search Userscripts',
   searchBarFormAction: '/',
   filterFlaggedItems: true
 };

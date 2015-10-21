@@ -474,6 +474,8 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     var user = options.user = modelParser.parseUser(aUserData);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
+    options.librariesOnly = aReq.query.library !== undefined;
+
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
     options.isUserScriptListPage = true;
@@ -490,14 +492,25 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     // scriptListQuery: author=user
     scriptListQuery.find({ _authorId: user._id });
 
+
     // scriptListQuery: Defaults
-    modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
+    if (options.librariesOnly) {
+      // scriptListQuery: isLib
+      modelQuery.findOrDefaultToNull(scriptListQuery, 'isLib', options.librariesOnly, false);
+
+      // Libraries
+      modelQuery.applyLibraryListQueryDefaults(scriptListQuery, options, aReq);
+    } else {
+      // Scripts (all including libraries)
+      modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
+    }
 
     // scriptListQuery: Pagination
     var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     // SearchBar
-    options.searchBarPlaceholder = 'Search Scripts from ' + user.name;
+    options.searchBarPlaceholder = 'Search ' +
+      (options.librariesOnly ? 'Libraries' : 'Scripts') + ' from ' + user.name;
     options.searchBarFormAction = '';
 
     //--- Tasks
