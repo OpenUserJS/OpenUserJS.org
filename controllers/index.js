@@ -136,7 +136,7 @@ exports.home = function (aReq, aRes) {
     if (options.librariesOnly) {
       options.pageHeading = !!options.isFlagged ? 'Flagged Libraries' : 'Libraries';
     } else {
-      options.pageHeading = !!options.isFlagged ? 'Flagged Userscripts' : 'Scripts';
+      options.pageHeading = !!options.isFlagged ? 'Flagged Userscripts' : 'Userscripts';
     }
 
     // Page metadata
