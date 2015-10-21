@@ -87,19 +87,40 @@ function getThreshold(aModel, aContent, aAuthor, aCallback) {
 exports.getThreshold = getThreshold;
 
 function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
-  if (!aContent.flags) { aContent.flags = 0; }
-  aContent.flags += aFlags;
+  if (!aContent.flags) {
+    aContent.flags = {};
+  }
 
-  if (aContent.flags >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
+  if (!aContent.flags.critical) {
+    aContent.flags.critical = 0;
+  }
+  aContent.flags.critical += aFlags;
+
+  if (aContent.flags.critical >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
     return getThreshold(aModel, aContent, aAuthor, function (aThreshold) {
-      aContent.flagged = aContent.flags >= aThreshold;
-      aContent.save(function (aErr, aContent) { aCallback(aContent.flagged); });
+      aContent.flagged = aContent.flags.critical >= aThreshold;
+
+      aContent.save(function (aErr, aContent) {
+        if (aErr) {
+          console.warn('Error flagging content', aErr);
+          aCallback(null);
+          return;
+        }
+        aCallback(aContent.flagged);
+      });
     });
   } else {
     aContent.flagged = false;
   }
 
-  aContent.save(function (aErr, aContent) { aCallback(aContent.flagged); });
+  aContent.save(function (aErr, aContent) {
+    if (aErr) {
+      console.warn('Error unflagging content', aErr);
+      aCallback(null);
+      return;
+    }
+    aCallback(aContent.flagged);
+  });
 }
 exports.saveContent = saveContent;
 
@@ -111,7 +132,13 @@ function flag(aModel, aContent, aUser, aAuthor, aCallback) {
   });
 
   flag.save(function (aErr, aFlag) {
-    if (!aContent.flags) { aContent.flags = 0; }
+    if (!aContent.flags) {
+      aContent.flags = {};
+    }
+
+    if (!aContent.flags.critical) {
+      aContent.flags.critical = 0;
+    }
     if (!aContent.flagged) { aContent.flagged = false; }
 
     saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? 2 : 1, aCallback);
@@ -130,9 +157,17 @@ exports.unflag = function (aModel, aContent, aUser, aCallback) {
   if (!aUser) { return aCallback(null); }
 
   getFlag(aModel, aContent, aUser, function (aFlag) {
-    if (!aFlag) { return aCallback(null); }
+    if (!aFlag) {
+      return aCallback(null);
+    }
 
-    if (!aContent.flags) { aContent.flags = 0; }
+    if (!aContent.flags) {
+      aContent.flags = {};
+    }
+
+    if (!aContent.flags.critical) {
+      aContent.flags.critical = 0;
+    }
     if (!aContent.flagged) { aContent.flagged = false; }
 
     function removeFlag(aAuthor) {

@@ -20,8 +20,11 @@ var scriptSchema = new Schema({
   updated: Date,
 
   // Moderation
-  votes: Number, // upvotes negate flags
-  flags: Number,
+  votes: Number, // upvotes negate flags.critical
+  flags: {
+    critical: Number,
+    absolute: Number
+  },
   flagged: Boolean,
   installName: String,
 
