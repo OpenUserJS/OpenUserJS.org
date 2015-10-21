@@ -1,6 +1,6 @@
 <h3>Filters</h3>
 <div class="list-group">
-  <a class="list-group-item list-group-item-info" href="?flagged=none{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><i class="fa fa-fw fa-times"></i> Clear Filter</a>
-  <a class="list-group-item{{#filterCritical}} active{{/filterCritical}}" href="?flagged=critical{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><i class="fa fa-fw fa-flag-o"></i> Critical Flags</a>
-  <a class="list-group-item{{#filterAbsolute}} active{{/filterAbsolute}}" href="?flagged=absolute{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><i class="fa fa-fw fa-flag"></i> Absolute Flags</a>
+  <a class="list-group-item list-group-item-info" href="?flagged=none{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}"><i class="fa fa-fw fa-times"></i> Clear Filter</a>
+  <a class="list-group-item{{#filterCritical}} active{{/filterCritical}}" href="?flagged=critical{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}"><i class="fa fa-fw fa-flag-o"></i> Critical Flags</a>
+  <a class="list-group-item{{#filterAbsolute}} active{{/filterAbsolute}}" href="?flagged=absolute{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}"><i class="fa fa-fw fa-flag"></i> Absolute Flags</a>
 </div>
