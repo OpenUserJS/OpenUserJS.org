@@ -136,7 +136,7 @@ exports.home = function (aReq, aRes) {
     if (options.librariesOnly) {
       options.pageHeading = !!options.isFlagged ? 'Flagged Libraries' : 'Libraries';
     } else {
-      options.pageHeading = !!options.isFlagged ? 'Flagged Scripts' : 'Scripts';
+      options.pageHeading = !!options.isFlagged ? 'Flagged Userscripts' : 'Scripts';
     }
 
     // Page metadata
@@ -144,7 +144,7 @@ exports.home = function (aReq, aRes) {
       if (options.librariesOnly) {
         pageMetadata(options, ['Flagged Libraries', 'Moderation']);
       } else {
-        pageMetadata(options, ['Flagged Scripts', 'Moderation']);
+        pageMetadata(options, ['Flagged Userscripts', 'Moderation']);
       }
     }
   }

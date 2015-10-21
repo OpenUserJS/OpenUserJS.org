@@ -474,7 +474,19 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     var user = options.user = modelParser.parseUser(aUserData);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
-    options.librariesOnly = aReq.query.library !== undefined;
+    var librariesOnly = null;
+
+    switch (aReq.query.library) {
+      case 'true': // List just libraries
+        options.includeLibraries = true;
+        librariesOnly = true;
+        break;
+      case 'false': // List just userscripts
+        options.excludeLibraries = true;
+        // fallthrough
+      default: // List userscripts and libraries
+        librariesOnly = false;
+    }
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -492,16 +504,20 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     // scriptListQuery: author=user
     scriptListQuery.find({ _authorId: user._id });
 
+    if (options.includeLibraries) { // List just Libraries and not Userscripts
+      // scriptListQuery: isLib
+      modelQuery.findOrDefaultToNull(scriptListQuery, 'isLib', librariesOnly, false);
+    }
 
     // scriptListQuery: Defaults
-    if (options.librariesOnly) {
-      // scriptListQuery: isLib
-      modelQuery.findOrDefaultToNull(scriptListQuery, 'isLib', options.librariesOnly, false);
+    if (options.excludeLibraries) { // List just Userscripts and not Libraries
+        // scriptListQuery: isLib
+        modelQuery.findOrDefaultToNull(scriptListQuery, 'isLib', librariesOnly, false);
 
       // Libraries
       modelQuery.applyLibraryListQueryDefaults(scriptListQuery, options, aReq);
     } else {
-      // Scripts (all including libraries)
+      // List Userscripts and Libraries
       modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
     }
 
