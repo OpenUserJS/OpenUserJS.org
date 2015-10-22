@@ -16,9 +16,12 @@ var maxKarma = 10;
 // This is heavily commented so that my logic and
 // reasoning is documented for myself and others.
 function flaggable(aModel, aContent, aUser, aCallback) {
-  // Not logged in.
-  if (!aUser) { return aCallback(false); }
-
+  // Not logged in or role is above moderator
+  // No one above a moderator is part of the moderation system
+  // since they can just remove content directly
+  if (!aUser || aUser.role < 3) {
+    return aCallback(false);
+  }
 
   // You can't flag yourself
   // Only someone less than an admin can be flagged
@@ -32,13 +35,19 @@ function flaggable(aModel, aContent, aUser, aCallback) {
 
   getAuthor(aContent, function (aAuthor) {
     // Content without an author shouldn't exist
-    if (!aAuthor) { return aCallback(false); }
+    if (!aAuthor) {
+      return aCallback(false);
+    }
 
     // You can't flag your own content
-    if (aAuthor._id == aUser._id) { return aCallback(false); }
+    if (aAuthor._id == aUser._id) {
+      return aCallback(false);
+    }
 
     // Content belonging to an admin or above cannot be flagged
-    if (aAuthor.role < 3) { return aCallback(aAuthor.role > 2, aAuthor); }
+    if (aAuthor.role < 3) {
+      return aCallback(aAuthor.role > 2, aAuthor);
+    }
 
     // You can't flag something twice
     getFlag(aModel, aContent, aUser, function (aFlag) {
