@@ -224,8 +224,6 @@ var getScriptPageTasks = function (aOptions) {
 
   // Setup the flagging UI
   tasks.push(function (aCallback) {
-    var flagUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
-
     // Can't flag when not logged in or when user owns the script.
     if (!authedUser || aOptions.isOwner) {
       aCallback();
@@ -235,13 +233,11 @@ var getScriptPageTasks = function (aOptions) {
     flagLib.flaggable(Script, script, authedUser,
       function (aCanFlag, aAuthor, aFlag) {
         if (aFlag) {
-          flagUrl += '/unflag';
           aOptions.flagged = true;
           aOptions.canFlag = true;
         } else {
           aOptions.canFlag = aCanFlag;
         }
-        aOptions.flagUrl = flagUrl;
 
         aCallback();
       });
@@ -549,27 +545,6 @@ exports.vote = function (aReq, aRes, aNext) {
           aVoteModel.save(saveScript);
         }
       );
-    }
-  );
-};
-
-// Script flagging
-exports.flag = function (aReq, aRes, aNext) {
-  var isLib = aReq.params.isLib;
-  var installName = scriptStorage.getInstallName(aReq);
-  var unflag = aReq.params.unflag;
-
-  Script.findOne({ installName:  scriptStorage
-      .caseSensitive(installName + (isLib ? '.js' : '.user.js')) },
-    function (aErr, aScript) {
-      var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
-      if (aErr || !aScript) {
-        return aNext();
-      }
-
-      fn(Script, aScript, aReq.session.user, function (aFlagged) { // NOTE: Inline function here
-        aRes.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
-      });
     }
   );
 };

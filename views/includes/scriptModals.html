@@ -9,8 +9,10 @@
         <p>Are you sure you want to flag this script for potential inspection by a Moderator?</p>
       </div>
       <div class="modal-footer">
-        <form action="{{{flagUrl}}}" method="get">
+        <form action="{{{script.scriptFlagPageUrl}}}" method="post" enctype="multipart/form-data">
+          <input type="text" class="form-control" name="reason" placeholder="Reason for removal.">
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
+          <input type="hidden" name="flag" value="true">
           <button type="submit" class="btn btn-danger{{^canFlag}} disabled{{/canFlag}}"><i class="fa fa-fw fa-flag"></i> Flag</button>
         </form>
       </div>

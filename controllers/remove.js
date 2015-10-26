@@ -16,23 +16,24 @@ var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 // Simple controller to remove content and save it in the graveyard
 exports.rm = function (aReq, aRes, aNext) {
-  var type = aReq.params[0];
-  var path = aReq.params[1];
-  var authedUser = aReq.session.user;
-
   var form = null;
 
   // Check to make sure multipart form data submission header is present
   if (!/multipart\/form-data/.test(aReq.headers['content-type'])) {
-      return statusCodePage(aReq, aRes, aNext, {
-        statusCode: 400,
-        statusMessage: 'Missing required header.'
-      });
+    return statusCodePage(aReq, aRes, aNext, {
+      statusCode: 400,
+      statusMessage: 'Missing required header.'
+    });
   }
 
   form = new formidable.IncomingForm();
   form.parse(aReq, function (aErr, aFields) {
     var reason = aFields.reason;
+
+    var type = aReq.params[0];
+    var path = aReq.params[1];
+
+    var authedUser = aReq.session.user;
 
     // Check to make sure form submission has this name available.
     // This occurs either when no reason is supplied,

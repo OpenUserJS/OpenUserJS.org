@@ -12,12 +12,19 @@
       </div>
     </div>
     <ul class="nav nav-pills nav-justified">
-      {{#flagged}}
-        <li><a rel="nofollow" href="{{{flagUrl}}}" class="{{^canFlag}}disabled{{/canFlag}}"><i class="fa fa-flag"></i> Unflag</a></li>
-      {{/flagged}}
-      {{^flagged}}
-        <li><a rel="nofollow" href="#" data-toggle="modal" data-target="#flagScriptModal" class="{{^canFlag}}disabled{{/canFlag}}"><i class="fa fa-flag-o"></i> Flag</a></li>
-      {{/flagged}}
+      <li>
+        <div class="text-center">
+          {{#flagged}}
+          <form action="{{{script.scriptFlagPageUrl}}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="flag" value="false">
+            <button class="btn btn-link" type="submit" class="{{^canFlag}} disabled{{/canFlag}}"><i class="fa fa-fw fa-flag"></i> Unflag</button>
+          </form>
+          {{/flagged}}
+          {{^flagged}}
+          <a rel="nofollow" href="#" data-toggle="modal" data-target="#flagScriptModal" class="{{^canFlag}}disabled{{/canFlag}}"><i class="fa fa-flag-o"></i> Flag</a>
+          {{/flagged}}
+        </div>
+      </li>
     </ul>
   </div>
 </div>

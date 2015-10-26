@@ -60,8 +60,6 @@ var setupUserModerationUITask = function (aOptions) {
   aOptions.flags = '\u2013';
 
   return function (aCallback) {
-    var flagUrl = '/flag/users/' + user.name;
-
     // Can't flag when not logged in or when is authedUser.
     if (!authedUser || aOptions.isYou) {
       aCallback();
@@ -69,13 +67,11 @@ var setupUserModerationUITask = function (aOptions) {
     }
     flagLib.flaggable(User, user, authedUser, function (aCanFlag, aAuthor, aFlag) {
       if (aFlag) {
-        flagUrl += '/unflag';
         aOptions.flagged = true;
         aOptions.canFlag = true;
       } else {
         aOptions.canFlag = aCanFlag;
       }
-      aOptions.flagUrl = flagUrl;
 
       removeLib.removeable(User, user, authedUser, function (aCanRemove, aAuthor) {
         aOptions.canRemove = aCanRemove;
@@ -1498,19 +1494,4 @@ exports.editScript = function (aReq, aRes, aNext) {
       aRes.render('pages/scriptViewSourcePage', options);
     });
   }
-};
-
-// route to flag a user
-exports.flag = function (aReq, aRes, aNext) {
-  var username = aReq.params.username;
-  var unflag = aReq.params.unflag;
-
-  User.findOne({ name: username }, function (aErr, aUser) {
-    var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
-    if (aErr || !aUser) { return aNext(); }
-
-    fn(User, aUser, aReq.session.user, function (aFlagged) { // NOTE: Inline function here
-      aRes.redirect('/users/' + encodeURI(username));
-    });
-  });
 };
