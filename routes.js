@@ -11,6 +11,7 @@ var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
 var user = require('./controllers/user');
 var script = require('./controllers/script');
+var flag = require('./controllers/flag');
 var remove = require('./controllers/remove');
 var moderation = require('./controllers/moderation');
 var group = require('./controllers/group');
@@ -110,10 +111,7 @@ module.exports = function (aApp) {
   aApp.route('/vote/libs/:username/:scriptname/:vote').get(authentication.validateUser, script.lib(script.vote));
 
   // Flag routes
-  // TODO: Single flag route + POST
-  aApp.route('/flag/users/:username/:unflag?').get(user.flag);
-  aApp.route('/flag/scripts/:username/:scriptname/:unflag?').get(script.flag);
-  aApp.route('/flag/libs/:username/:scriptname/:unflag?').get(script.lib(script.flag));
+  aApp.route(/^\/flag\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(flag.flag);
 
   // Remove route
   aApp.route(/^\/remove\/(.+?)\/(.+)$/).post(remove.rm);

@@ -216,6 +216,7 @@ var parseScript = function (aScriptData) {
 
   // Urls: Moderation
   script.scriptRemovePageUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
+  script.scriptFlagPageUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
 
   // Dates
   parseDateProperty(script, 'updated');
@@ -268,6 +269,7 @@ var parseUser = function (aUserData) {
   user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
   user.userUpdatePageUrl = user.userPageUrl + '/update';
   user.userRemovePageUrl = '/remove/users/' + user.name;
+  user.userFlagPageUrl = '/flag/users/' + user.name;
 
   // Funcs
   user.githubUserId = function () {

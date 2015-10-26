@@ -139,11 +139,12 @@ function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
 }
 exports.saveContent = saveContent;
 
-function flag(aModel, aContent, aUser, aAuthor, aCallback) {
+function flag(aModel, aContent, aUser, aAuthor, aReason, aCallback) {
   var flag = new Flag({
     'model': aModel.modelName,
     '_contentId': aContent._id,
-    '_userId': aUser._id
+    '_userId': aUser._id,
+    'reason': aReason
   });
 
   flag.save(function (aErr, aFlag) {
@@ -159,22 +160,28 @@ function flag(aModel, aContent, aUser, aAuthor, aCallback) {
       aContent.flags.absolute = 0;
     }
 
-    if (!aContent.flagged) { aContent.flagged = false; }
+    if (!aContent.flagged) {
+      aContent.flagged = false;
+    }
 
     saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? 2 : 1, aCallback);
   });
 }
 
-exports.flag = function (aModel, aContent, aUser, aCallback) {
+exports.flag = function (aModel, aContent, aUser, aReason, aCallback) {
   flaggable(aModel, aContent, aUser, function (aCanFlag, aAuthor) {
-    if (!aCanFlag) { return aCallback(false); }
+    if (!aCanFlag) {
+      return aCallback(false);
+    }
 
-    flag(aModel, aContent, aUser, aAuthor, aCallback);
+    flag(aModel, aContent, aUser, aAuthor, aReason, aCallback);
   });
 };
 
-exports.unflag = function (aModel, aContent, aUser, aCallback) {
-  if (!aUser) { return aCallback(null); }
+exports.unflag = function (aModel, aContent, aUser, aReason, aCallback) {
+  if (!aUser) {
+    return aCallback(null);
+  }
 
   getFlag(aModel, aContent, aUser, function (aFlag) {
     if (!aFlag) {
@@ -193,7 +200,9 @@ exports.unflag = function (aModel, aContent, aUser, aCallback) {
       aContent.flags.absolute = 0;
     }
 
-    if (!aContent.flagged) { aContent.flagged = false; }
+    if (!aContent.flagged) {
+      aContent.flagged = false;
+    }
 
     function removeFlag(aAuthor) {
       aFlag.remove(function (aErr) {

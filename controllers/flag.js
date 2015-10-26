@@ -9,17 +9,127 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var async = require('async');
+var formidable = require('formidable');
 
 //--- Model inclusions
 var Flag = require('../models/flag').Flag;
 var User = require('../models/user').User;
+var Script = require('../models/script').Script;
+
+//--- Controller inclusions
+var scriptStorage = require('./scriptStorage');
 
 //--- Library inclusions
 var flagLib = require('../libs/flag');
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
 
 //---
+
+
+// Controller to flag and unflag content
+exports.flag = function (aReq, aRes, aNext) {
+  var form = null;
+
+  // Check to make sure multipart form data submission header is present
+  if (!/multipart\/form-data/.test(aReq.headers['content-type'])) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 400,
+      statusMessage: 'Missing required header.'
+    });
+    return;
+  }
+
+  form = new formidable.IncomingForm();
+  form.parse(aReq, function (aErr, aFields) {
+    var flag = aFields.flag === 'false' ? false : true;
+    var reason = null;
+
+    var type = aReq.params[0];
+    var isLib = null;
+    var installName = null;
+    var path = aReq.params[1];
+
+    var authedUser = aReq.session.user;
+
+    if (flag) {
+      reason = aFields.reason;
+
+      // Check to make sure form submission has this name available.
+      // This occurs either when no reason is supplied,
+      // or a rare edge case if the view is missing the input name.
+      if (!reason) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 403,
+          statusMessage: 'Missing reason for removal.'
+        });
+        return;
+      }
+
+      // Simple error check for string null and limit to max characters
+      reason = reason.trim();
+      if (reason === '' || reason.length > 300) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 403,
+          statusMessage: 'Invalid reason for removal.'
+        });
+        return;
+      }
+    }
+
+    switch (type) {
+      case 'libs':
+        isLib = true;
+        // fallthrough
+      case 'scripts':
+        installName = scriptStorage.getInstallName({
+          params: {
+            username: aReq.params[2],
+            scriptname: aReq.params[3]
+        }});
+
+        path += type === 'libs' ? '.js' : '.user.js';
+
+        Script.findOne({ installName: path },
+          function (aErr, aScript) {
+            var fn = flagLib[flag ? 'flag' : 'unflag'];
+
+            if (aErr || !aScript) {
+              aNext();
+              return;
+            }
+
+            fn(Script, aScript, authedUser, reason, function (aFlagged) {
+              aRes.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
+            });
+
+        });
+        break;
+      case 'users':
+        User.findOne({ name: { $regex: new RegExp('^' + path + '$', "i") } },
+          function (aErr, aUser) {
+            var fn = flagLib[flag ? 'flag' : 'unflag'];
+
+            if (aErr || !aUser) {
+              aNext();
+              return;
+            }
+
+            fn(User, aUser, authedUser, reason, function (aFlagged) {
+              aRes.redirect('/users/' + encodeURI(path));
+            });
+
+          });
+
+        break;
+      default:
+        aNext();
+        return;
+    }
+  });
+}
+
 exports.getFlaggedListForContent = function (aModelName, aOptions, aCallback) {
 
   var content = aModelName.toLowerCase();
