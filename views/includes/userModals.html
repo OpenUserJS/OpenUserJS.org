@@ -10,7 +10,7 @@
       </div>
       <div class="modal-footer">
         <form action="{{{user.userFlagPageUrl}}}" method="post" enctype="multipart/form-data">
-          <input type="text" class="form-control" name="reason" placeholder="Reason for removal.">
+          <input type="text" class="form-control" name="reason" placeholder="Reason for moderation inspection.">
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
           <input type="hidden" name="flag" value="true">
           <button type="submit" class="btn btn-danger{{^canFlag}} disabled{{/canFlag}}"><i class="fa fa-fw fa-flag"></i> Flag</button>
