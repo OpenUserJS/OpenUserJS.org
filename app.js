@@ -63,13 +63,22 @@ if (app.get('securePort')) {
     ca: fs.readFileSync('./keys/intermediate.crt'),
     // default node 0.12 ciphers with RC4 disabled
     ciphers: [
+      "ECDHE-RSA-AES256-SHA384",
+      "DHE-RSA-AES256-SHA384",
+      "ECDHE-RSA-AES256-SHA256",
+      "DHE-RSA-AES256-SHA256",
       "ECDHE-RSA-AES128-SHA256",
       "DHE-RSA-AES128-SHA256",
-      "AES128-GCM-SHA256",
       "HIGH",
+      "!aNULL",
+      "!eNULL",
+      "!EXPORT",
+      "!DES",
       "!RC4",
       "!MD5",
-      "!aNULL"
+      "!PSK",
+      "!SRP",
+      "!CAMELLIA"
     ].join(':'),
     honorCipherOrder: true
   };
