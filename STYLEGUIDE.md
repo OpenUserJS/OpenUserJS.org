@@ -15,6 +15,8 @@ Neatness counts.
 
 **Always use `'use strict';` in all .js files**
 
+Current ECMAScript 5 is implemented and supported at this time. This may change eventually to some ECMAScript 6 from the finalization that occurred in June of 2015.
+
 ---
 
 ### EditorConfig
