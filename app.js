@@ -60,13 +60,24 @@ if (app.get('securePort')) {
   sslOptions = {
     key: fs.readFileSync('./keys/private.key'),
     cert: fs.readFileSync('./keys/cert.crt'),
-    ca: fs.readFileSync('./keys/intermediate.crt')
+    ca: fs.readFileSync('./keys/intermediate.crt'),
+    // default node 0.12 ciphers with RC4 disabled
+    ciphers: [
+      "ECDHE-RSA-AES128-SHA256",
+      "DHE-RSA-AES128-SHA256",
+      "AES128-GCM-SHA256",
+      "HIGH",
+      "!RC4",
+      "!MD5",
+      "!aNULL"
+    ].join(':'),
+    honorCipherOrder: true
   };
   secureServer = https.createServer(sslOptions, app);
 
   app.use(function (aReq, aRes, aNext) {
     aRes.setHeader('Strict-Transport-Security',
-      'max-age=8640000; includeSubDomains');
+      'max-age=31536000000; includeSubDomains');
 
     if (!aReq.secure) {
       return aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
