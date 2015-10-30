@@ -279,7 +279,7 @@ Think you may have messed up with installation or compiling then use these comma
 $ sudo make uninstall
 $ make clean
 ```
-... **NOTE**: You can always rerun the above `./configure` command when necessary to change the start path for installation.
+... **NOTE**: You can always rerun the above `./configure` command when necessary to change the start path for installation and rerun `make`.
 
 Checking your installation is a snap by by:
 
