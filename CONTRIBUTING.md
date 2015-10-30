@@ -1,6 +1,6 @@
 ## Contributing
 
-This project uses [editor config](http://editorconfig.org/), please make sure to [download the plugin for your editor](http://editorconfig.org/#download) so that we stay consistent.
+This project uses [editor config](http://editorconfig.org/), please make sure to [download the plugin for your editor](http://editorconfig.org/#download) so that we stay consistent. Current ECMAScript 5 is implemented and supported at this time. This may change eventually to some ECMAScript 6 from the finalization that occurred in June of 2015.
 
 
 ### Creating a Local Environment
@@ -246,7 +246,7 @@ $ git pull
 Check it out with:
 
 ``` sh-session
-$ git checkout tags/v0.12.7
+$ git checkout tags/v4.2.1
 ```
 
 Configure it with:
