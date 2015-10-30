@@ -240,6 +240,7 @@ $ cd node
 Update it with:
 
 ``` sh-session
+$ git checkout master
 $ git pull
 ```
 
