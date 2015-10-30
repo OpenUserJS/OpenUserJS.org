@@ -60,7 +60,9 @@ function sanitize(aHtml) {
 // Sanitize the output from the block level renderers
 blockRenderers.forEach(function (aType) {
   renderer[aType] = function () {
-    return sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments));
+    return sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments)
+      .replace(/(^|\s|>)@([^\s\\\/:*?\'\"<>|#;@=&]+)/gm,
+      '$1<a href="/users/$2">@$2</a>'));
   };
 });
 
@@ -80,20 +82,7 @@ renderer.heading = function (aText, aLevel) {
   return html;
 };
 
-// Autolink @username syntax
-renderer.text = function (aText) {
-  return aText.replace(/@([^\s\\\/:*?\'\"<>|#;@=&]+)/gm, function ($0, $1) {
-    return '<a href="/users/' + $1 + '">' + $0 + '</a>';
-  });
-};
-
 renderer.link = function (aHref, aTitle, aText) {
-  // Prevent double linking @username
-  var autoLinkMatch = />(@[^<]+)<\/a>/mi.exec(aText);
-  if (autoLinkMatch) {
-    aText = autoLinkMatch[1];
-  }
-
   return marked.Renderer.prototype.link.call(renderer, aHref, aTitle, aText);
 };
 
