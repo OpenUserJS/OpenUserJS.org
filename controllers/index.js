@@ -83,7 +83,7 @@ exports.home = function (aReq, aRes) {
   var announcementsDiscussionListQuery = Discussion.find();
   announcementsDiscussionListQuery
     .and({category: options.announcementsCategory.slug})
-    .sort('-created')
+    .sort('-updated')
     .limit(5);
 
   //--- Tasks
