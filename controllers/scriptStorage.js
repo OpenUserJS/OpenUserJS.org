@@ -163,6 +163,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     // Disable *express-minify* for this response
     aRes._skip = true;
 
+    aStream.setEncoding('utf8');
     aStream.pipe(aRes);
 
     // Don't count installs on raw source route
