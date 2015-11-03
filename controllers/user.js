@@ -1108,7 +1108,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
       function (aRepo, aCallback) {
         options.repo = aRepo;
         options.repoAsEncoded = {
-          default_branch: encodeURI(options.repo.default_branch)
+          default_branch: encodeURIComponent(options.repo.default_branch)
         };
 
         github.gitdata.getJavascriptBlobs({
