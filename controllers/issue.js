@@ -6,17 +6,23 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+
+//--- Dependency inclusions
 var async = require('async');
 var _ = require('underscore');
 
+//--- Model inclusions
 var Comment = require('../models/comment').Comment;
 var Discussion = require('../models/discussion').Discussion;
 var Script = require('../models/script').Script;
 
+//--- Controller inclusions
+var scriptStorage = require('./scriptStorage');
+var discussionLib = require('./discussion'); // NOTE: Project tree inconsistency
+
+//--- Library inclusions
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
-var scriptStorage = require('./scriptStorage');
-var discussionLib = require('./discussion');
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
@@ -28,18 +34,61 @@ exports.list = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var type = aReq.params.type;
-  var username = aReq.params.username;
-  var scriptname = aReq.params.scriptname;
+
   var open = aReq.params.open !== 'closed';
   var listAll = aReq.params.open === 'all';
 
-  var installNameSlug = username + '/' + scriptname;
+  var installName = scriptStorage.getInstallName(aReq);
 
   Script.findOne({
     installName: scriptStorage.caseSensitive(
-      installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
+      installName + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, scriptData) {
-    if (aErr || !scriptData) { return aNext(); }
+    function preRender() {
+      options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
+
+      // Script
+      options.issuesCount = pagination.numItems;
+
+      // Pagination
+      options.paginationRendered = pagination.renderDefault(aReq);
+
+      // Empty list
+      if (options.searchBarValue) {
+        if (options.allIssues) {
+          options.discussionListIsEmptyMessage = 'We couldn\'t find any discussions with this search value.';
+        } else {
+          if (open) {
+            options.discussionListIsEmptyMessage = 'We couldn\'t find any open discussions with this search value.';
+          } else {
+            options.discussionListIsEmptyMessage = 'We couldn\'t find any closed discussions with this search value.';
+          }
+        }
+      } else {
+        if (options.allIssues) {
+          options.discussionListIsEmptyMessage = 'No discussions.';
+        } else {
+          if (open) {
+            options.discussionListIsEmptyMessage = 'No open discussions.';
+          } else {
+            options.discussionListIsEmptyMessage = 'No closed discussions.';
+          }
+        }
+      }
+    }
+
+    function render() {
+      aRes.render('pages/scriptIssueListPage', options);
+    }
+
+    function asyncComplete() {
+      preRender();
+      render();
+    }
+
+    if (aErr || !scriptData) {
+      return aNext();
+    }
 
     //
     var options = {};
@@ -59,7 +108,7 @@ exports.list = function (aReq, aRes, aNext) {
 
     // Category
     var category = {};
-    category.slug = type + '/' + installNameSlug + '/issues';
+    category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
     category = options.category = modelParser.parseCategory(category);
@@ -121,40 +170,6 @@ exports.list = function (aReq, aRes, aNext) {
     tasks.push(execQueryTask(discussionListQuery, options, 'discussionList'));
 
     //---
-    function preRender() {
-      options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
-
-      // Script
-      options.issuesCount = pagination.numItems;
-
-      // Pagination
-      options.paginationRendered = pagination.renderDefault(aReq);
-
-      // Empty list
-      if (options.searchBarValue) {
-        if (options.allIssues) {
-          options.discussionListIsEmptyMessage = 'We couldn\'t find any discussions with this search value.';
-        } else {
-          if (open) {
-            options.discussionListIsEmptyMessage = 'We couldn\'t find any open discussions with this search value.';
-          } else {
-            options.discussionListIsEmptyMessage = 'We couldn\'t find any closed discussions with this search value.';
-          }
-        }
-      } else {
-        if (options.allIssues) {
-          options.discussionListIsEmptyMessage = 'No discussions.';
-        } else {
-          if (open) {
-            options.discussionListIsEmptyMessage = 'No open discussions.';
-          } else {
-            options.discussionListIsEmptyMessage = 'No closed discussions.';
-          }
-        }
-      }
-    }
-    function render() { aRes.render('pages/scriptIssueListPage', options); }
-    function asyncComplete() { preRender(); render(); }
     async.parallel(tasks, asyncComplete);
   });
 };
@@ -164,17 +179,18 @@ exports.view = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var type = aReq.params.type;
-  var username = aReq.params.username;
-  var scriptname = aReq.params.scriptname;
+
   var topic = aReq.params.topic;
 
-  var installNameSlug = username + '/' + scriptname;
+  var installName = scriptStorage.getInstallName(aReq);
 
   Script.findOne({
     installName: scriptStorage.caseSensitive(
-      installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
+      installName + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
-    if (aErr || !aScriptData) { return aNext(); }
+    if (aErr || !aScriptData) {
+      return aNext();
+    }
 
     //
     var options = {};
@@ -191,7 +207,7 @@ exports.view = function (aReq, aRes, aNext) {
 
     // Category
     var category = {};
-    category.slug = type + '/' + installNameSlug + '/issues';
+    category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
     category = options.category = modelParser.parseCategory(category);
@@ -200,7 +216,36 @@ exports.view = function (aReq, aRes, aNext) {
     options.category = category;
 
     discussionLib.findDiscussion(category.slug, topic, function (aDiscussionData) {
-      if (aErr || !aDiscussionData) { return aNext(); }
+      function preRender() {
+        // Page metadata
+        pageMetadata(options, [discussion.topic, 'Discussions'], discussion.topic);
+
+        // commentList
+        options.commentList = _.map(options.commentList, modelParser.parseComment);
+        _.map(options.commentList, function (aComment) {
+          aComment.author = modelParser.parseUser(aComment._authorId);
+        });
+        _.map(options.commentList, modelParser.renderComment);
+
+        // Script
+        options.issuesCount = pagination.numItems;
+
+        // Pagination
+        options.paginationRendered = pagination.renderDefault(aReq);
+      }
+
+      function render() {
+        aRes.render('pages/scriptIssuePage', options);
+      }
+
+      function asyncComplete() {
+        preRender();
+        render();
+      }
+
+      if (aErr || !aDiscussionData) {
+        return aNext();
+      }
 
       // Discussion
       var discussion = options.discussion = modelParser.parseDiscussion(aDiscussionData);
@@ -235,25 +280,6 @@ exports.view = function (aReq, aRes, aNext) {
       // commentListQuery
       tasks.push(execQueryTask(commentListQuery, options, 'commentList'));
 
-      function preRender() {
-        // Page metadata
-        pageMetadata(options, [discussion.topic, 'Discussions'], discussion.topic);
-
-        // commentList
-        options.commentList = _.map(options.commentList, modelParser.parseComment);
-        _.map(options.commentList, function (aComment) {
-          aComment.author = modelParser.parseUser(aComment._authorId);
-        });
-        _.map(options.commentList, modelParser.renderComment);
-
-        // Script
-        options.issuesCount = pagination.numItems;
-
-        // Pagination
-        options.paginationRendered = pagination.renderDefault(aReq);
-      }
-      function render() { aRes.render('pages/scriptIssuePage', options); }
-      function asyncComplete() { preRender(); render(); }
       async.parallel(tasks, asyncComplete);
     });
   });
@@ -263,25 +289,35 @@ exports.view = function (aReq, aRes, aNext) {
 exports.open = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
+  var type = aReq.params.type;
+
   var topic = aReq.body['discussion-topic'];
   var content = aReq.body['comment-content'];
 
-  var type = aReq.params.type;
-  var installNameSlug = scriptStorage.getInstallName(aReq);
+  var installName = scriptStorage.getInstallName(aReq);
 
   Script.findOne({
     installName: scriptStorage.caseSensitive(
-      installNameSlug + (type === 'libs' ? '.js' : '.user.js'))
+      installName + (type === 'libs' ? '.js' : '.user.js'))
   }, function (aErr, aScriptData) {
     function preRender() {
       // Page metadata
       pageMetadata(options, ['New Issue', script.name]);
     }
-    function render() { aRes.render('pages/scriptNewIssuePage', options); }
-    function asyncComplete() { preRender(); render(); }
+
+    function render() {
+      aRes.render('pages/scriptNewIssuePage', options);
+    }
+
+    function asyncComplete() {
+      preRender();
+      render();
+    }
 
     // ---
-    if (aErr || !aScriptData) { return aNext(); }
+    if (aErr || !aScriptData) {
+      return aNext();
+    }
 
     //
     var options = {};
@@ -298,7 +334,7 @@ exports.open = function (aReq, aRes, aNext) {
 
     // Category
     var category = {};
-    category.slug = type + '/' + installNameSlug + '/issues';
+    category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
     category = options.category = modelParser.parseCategory(category);
@@ -336,13 +372,17 @@ exports.open = function (aReq, aRes, aNext) {
   });
 };
 
-// post route to add a new comment to a discussion on an issue
+// Post route to add a new comment to a discussion on an issue
 exports.comment = function (aReq, aRes, aNext) {
-  var type = aReq.params.type;
-  var topic = aReq.params.topic;
-  var installName = scriptStorage.getInstallName(aReq);
-  var category = type + '/' + installName + '/issues';
   var authedUser = aReq.session.user;
+
+  var type = aReq.params.type;
+
+  var topic = aReq.params.topic;
+
+  var installName = scriptStorage.getInstallName(aReq);
+
+  var category = type + '/' + installName + '/issues';
 
   Script.findOne({ installName: scriptStorage.caseSensitive(installName
     + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
@@ -373,14 +413,18 @@ exports.comment = function (aReq, aRes, aNext) {
   });
 };
 
-// Open or close and issue you are allowed
+// Open or close an issue you are allowed
 exports.changeStatus = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
+
   var type = aReq.params.type;
+
   var topic = aReq.params.topic;
+
   var installName = scriptStorage.getInstallName(aReq);
+
   var category = type + '/' + installName + '/issues';
   var action = aReq.params.action;
-  var authedUser = aReq.session.user;
   var changed = false;
 
   Script.findOne({ installName: scriptStorage.caseSensitive(installName
