@@ -109,7 +109,7 @@ exports.list = function (aReq, aRes, aNext) {
     options.openIssuesOnly = open;
 
     // Script
-    script = options.script = modelParser.parseScript(aScript);
+    options.script = script = modelParser.parseScript(aScript);
     options.isOwner = authedUser && authedUser._id == script._authorId;
 
     // Category
@@ -117,7 +117,7 @@ exports.list = function (aReq, aRes, aNext) {
     category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
-    category = options.category = modelParser.parseCategory(category);
+    category = modelParser.parseCategory(category);
     category.categoryPageUrl = script.scriptIssuesPageUrl;
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
@@ -208,7 +208,7 @@ exports.view = function (aReq, aRes, aNext) {
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // Script
-    script = options.script = modelParser.parseScript(aScript);
+    options.script = script = modelParser.parseScript(aScript);
     options.isOwner = authedUser && authedUser._id == script._authorId;
 
     // Category
@@ -216,7 +216,7 @@ exports.view = function (aReq, aRes, aNext) {
     category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
-    category = options.category = modelParser.parseCategory(category);
+    category = modelParser.parseCategory(category);
     category.categoryPageUrl = script.scriptIssuesPageUrl;
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
@@ -260,8 +260,8 @@ exports.view = function (aReq, aRes, aNext) {
       }
 
       // Discussion
-      discussion = options.discussion = modelParser.parseDiscussion(aDiscussion);
-      modelParser.parseIssue(discussion);
+      options.discussion = discussion = modelParser.parseDiscussion(aDiscussion);
+      modelParser.parseIssue(discussion); // WARNING: Return value never used
       options.canClose = authedUser &&
         (authedUser._id == script._authorId || authedUser._id == discussion._authorId);
       options.canOpen = authedUser && authedUser._id == script._authorId;
@@ -341,7 +341,7 @@ exports.open = function (aReq, aRes, aNext) {
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // Script
-    script = options.script = modelParser.parseScript(aScript);
+    options.script = script = modelParser.parseScript(aScript);
     options.isOwner = authedUser && authedUser._id == script._authorId;
 
     // Category
@@ -349,7 +349,7 @@ exports.open = function (aReq, aRes, aNext) {
     category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
-    category = options.category = modelParser.parseCategory(category);
+    category = modelParser.parseCategory(category);
     category.categoryPageUrl = script.scriptIssuesPageUrl;
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
