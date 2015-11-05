@@ -32,6 +32,10 @@ var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
 
+//--- Configuration inclusions
+
+//---
+
 // List script issues
 exports.list = function (aReq, aRes, aNext) {
   //
