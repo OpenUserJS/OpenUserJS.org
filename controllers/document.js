@@ -70,33 +70,6 @@ exports.view = function (aReq, aRes, aNext) {
 
     //--- Tasks
 
-    // Read file listing
-    tasks.push(
-      function (aCallback) {
-        fs.readdir(documentPath, function (aErr, aFileList) {
-          var file = null;
-
-          if (aErr || !aFileList) {
-            aCallback({ statusCode: 500, statusMessage : 'Error retrieving page list' });
-            return;
-          }
-
-          // Dynamically create a file listing of the pages
-          options.fileList = [];
-          for (file in aFileList) {
-            if (/\.md$/.test(aFileList[file])) {
-              options.fileList.push({
-                href: aFileList[file].replace(/\.md$/, ''),
-                textContent: aFileList[file].replace(/\.md$/, '').replace(/-/g, ' ')
-              });
-            }
-          }
-
-          aCallback(null);
-        });
-      }
-    );
-
     // Read the requested md file contents
     tasks.push(
       function (aCallback) {
@@ -126,6 +99,33 @@ exports.view = function (aReq, aRes, aNext) {
 
           options.pageHeading = heading;
           options.pageData = renderMd(content);
+
+          aCallback(null);
+        });
+      }
+    );
+
+    // Read file listing
+    tasks.push(
+      function (aCallback) {
+        fs.readdir(documentPath, function (aErr, aFileList) {
+          var file = null;
+
+          if (aErr || !aFileList) {
+            aCallback({ statusCode: 500, statusMessage : 'Error retrieving page list' });
+            return;
+          }
+
+          // Dynamically create a file listing of the pages
+          options.fileList = [];
+          for (file in aFileList) {
+            if (/\.md$/.test(aFileList[file])) {
+              options.fileList.push({
+                href: aFileList[file].replace(/\.md$/, ''),
+                textContent: aFileList[file].replace(/\.md$/, '').replace(/-/g, ' ')
+              });
+            }
+          }
 
           aCallback(null);
         });
