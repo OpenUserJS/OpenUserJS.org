@@ -6,78 +6,110 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
-var pkg = require('../package.json');
 
+//--- Dependency inclusions
 var fs = require('fs');
 var async = require('async');
 var git = require('git-rev');
+
+//--- Model inclusions
+
+//--- Controller inclusions
+
+//--- Library inclusions
+var modelParser = require('../libs/modelParser');
 
 var renderMd = require('../libs/markdown').renderMd;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
-var modelParser = require('../libs/modelParser');
+//--- Configuration inclusions
+var pkg = require('../package.json');
+
+//---
 
 exports.view = function (aReq, aRes, aNext) {
-  //
-  var authedUser = aReq.session.user;
+  function preRender() {
+  }
+
+  function render() {
+    aRes.render('pages/documentPage', options);
+  }
+
+  function asyncComplete(aErr) {
+    if (aErr) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: aErr.statusCode,
+        statusMessage: aErr.statusMessage
+      });
+      return;
+    }
+
+    preRender();
+    render();
+  }
+
   var options = {};
+  var authedUser = aReq.session.user;
 
   var document = aReq.params.document;
   var documentPath = null;
 
-  var tasks = null;
+  var tasks = [];
   var then = null;
 
   var matches = null;
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
-
 
   if (document) {
     documentPath = 'views/includes/documents';
 
     //--- Tasks
-    tasks = [
-      // Read file listing
+
+    // Read file listing
+    tasks.push(
       function (aCallback) {
-        fs.readdir(documentPath, function (aErr, aFiles) {
-          if (aErr) {
+        fs.readdir(documentPath, function (aErr, aFileList) {
+          var file = null;
+
+          if (aErr || !aFileList) {
             aCallback({ statusCode: 500, statusMessage : 'Error retrieving page list' });
             return;
           }
 
-          var file = null;
-
           // Dynamically create a file listing of the pages
-          options.files = [];
-          for (file in aFiles) {
-            if (/\.md$/.test(aFiles[file])) {
-              options.files.push({
-                href: aFiles[file].replace(/\.md$/, ''),
-                textContent: aFiles[file].replace(/\.md$/, '').replace(/-/g, ' ')
+          options.fileList = [];
+          for (file in aFileList) {
+            if (/\.md$/.test(aFileList[file])) {
+              options.fileList.push({
+                href: aFileList[file].replace(/\.md$/, ''),
+                textContent: aFileList[file].replace(/\.md$/, '').replace(/-/g, ' ')
               });
             }
           }
 
           aCallback(null);
         });
-      },
-      // Read md file contents
+      }
+    );
+
+    // Read the requested md file contents
+    tasks.push(
       function (aCallback) {
         fs.readFile(documentPath + '/' + document + '.md', 'utf8', function (aErr, aData) {
-          if (aErr) {
-            aCallback({ statusCode: 404, statusMessage: 'Error retrieving page' });
-            return;
-          }
-
           var lines = null;
           var matches = null;
           var heading = null;
           var content = null;
+
+          if (aErr) {
+            aCallback({ statusCode: 404, statusMessage: 'Error retrieving page' });
+            return;
+          }
 
           // Check if first line is h2 and use for title/heading if present
           lines = aData.split('\n');
@@ -98,7 +130,7 @@ exports.view = function (aReq, aRes, aNext) {
           aCallback(null);
         });
       }
-    ];
+    );
   }
   else {
     // Page metadata
@@ -106,17 +138,21 @@ exports.view = function (aReq, aRes, aNext) {
 
     options.isAbout = true;
 
-    options.process = {};
+    // Only show node version to admins+
     if (options.isAdmin) {
+      options.process = {};
       options.process.version = process.version;
     }
 
+    // Denote if storage is in RO mode
     options.readonly = {};
     options.readonly.scriptStorage = process.env.READ_ONLY_SCRIPT_STORAGE === 'true';
 
+    // Calculate when the server was last restarted
     then = new Date(Date.now() - parseInt(process.uptime() * 1000, 10));
     options.lastRestart = then.toLocaleString();
 
+    // Output some package.json details to the view
     options.pkg = {};
     options.pkg.name = pkg.name;
     options.pkg.version = pkg.version.replace(/\+.*$/, '');
@@ -127,19 +163,25 @@ exports.view = function (aReq, aRes, aNext) {
       options.pkg.clone = matches[1];
     }
 
+    // Find git branch and version of current clone
     options.git = {};
+
     //--- Tasks
-    tasks = [
-      // Read git short hash HEAD for current tree
+
+    // Read git short hash HEAD for current tree
+    tasks.push(
+
       function (aCallback) {
         git.short(function (aStr) {
           options.git.short = aStr;
 
           aCallback(null);
         });
-      },
+      }
+    );
 
-      // Read git branch name of current tree
+    // Read git branch name of current tree
+    tasks.push(
       function (aCallback) {
         git.branch(function (aStr) {
           options.git.branch = aStr;
@@ -147,18 +189,9 @@ exports.view = function (aReq, aRes, aNext) {
           aCallback(null);
         });
       }
-    ];
+    );
   }
 
   //---
-  async.waterfall(tasks, function (aErr) {
-    if (aErr) {
-      return statusCodePage(aReq, aRes, aNext, {
-        statusCode: aErr.statusCode,
-        statusMessage: aErr.statusMessage
-      });
-    }
-
-    aRes.render('pages/documentPage', options);
-  });
+  async.parallel(tasks, asyncComplete);
 };
