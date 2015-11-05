@@ -6,13 +6,25 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
-var removeLib = require('../libs/remove');
+
+//--- Dependency inclusions
+var formidable = require('formidable');
+
+//--- Model inclusions
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
-var destroySessions = require('../libs/modifySessions').destroy;
 
-var formidable = require('formidable');
+//--- Controller inclusions
+
+//--- Library inclusions
+var removeLib = require('../libs/remove');
+
+var destroySessions = require('../libs/modifySessions').destroy;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+
+//--- Configuration inclusions
+
+//---
 
 // Simple controller to remove content and save it in the graveyard
 exports.rm = function (aReq, aRes, aNext) {

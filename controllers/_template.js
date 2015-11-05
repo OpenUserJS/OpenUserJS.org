@@ -42,9 +42,9 @@ var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Configuration inclusions
 
-//--- Local
+//---
 
-//--- Views
+//--- This does what example1 does
 exports.example1 = function (aReq, aRes, aNext) {
   function preRender() {
   }
@@ -77,6 +77,7 @@ exports.example1 = function (aReq, aRes, aNext) {
   async.parallel(tasks, asyncComplete);
 };
 
+// This does what example2 does
 exports.example2 = function (aReq, aRes, aNext) {
   function preRender() {
     // Pagination
