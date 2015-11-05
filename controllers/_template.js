@@ -1,5 +1,12 @@
 'use strict';
 
+/*
+ * NOTE: This file is used as a general guideline to creating a new controller file.
+ *       As the project progressing there may some changes to it.
+ *
+ *       Please remember to omit this comment block when creating a new controller file.
+ */
+
 // Define some pseudo module globals
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
@@ -14,15 +21,14 @@ var _ = require('underscore');
 //--- Model inclusions
 var Group = require('../models/group').Group;
 
+//--- Controller inclusions
+var group = require('./group');
+
 //--- Library inclusions
-var pageMetadata = require('../libs/templateHelpers').pageMetadata;
-
-//--- Configuration inclusions
-
-//--- Local
+var _templateLib = require('../libs/_template');
 
 // Parse a mongoose model and add generated fields (eg: urls, formatted dates)
-// Seperate functions for rendering
+// Separate functions for rendering
 var modelParser = require('../libs/modelParser');
 
 // Tools for parsing req.query.q and applying it to a mongoose query.
@@ -31,21 +37,34 @@ var modelQuery = require('../libs/modelQuery');
 // Generate a bootstrap3 pagination widget.
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
 
+// General specific helpers
+var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+
+//--- Configuration inclusions
+
+//--- Local
+
 //--- Views
-exports.example = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
+exports.example1 = function (aReq, aRes, aNext) {
+  function preRender() {
+  }
+
+  function render() {
+    aRes.render('pages/_templatePage', options);
+  }
+
+  function asyncComplete() {
+    preRender();
+    render();
+  }
 
   //
   var options = {};
+  var authedUser = aReq.session.user;
   var tasks = [];
 
-  //---
-  function preRender() { }
-  function render() { aRes.render('pages/_templatePage', options); }
-  function asyncComplete() { preRender(); render(); }
-
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
@@ -58,23 +77,30 @@ exports.example = function (aReq, aRes, aNext) {
   async.parallel(tasks, asyncComplete);
 };
 
-exports.example = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
-  //
-  var options = {};
-  var tasks = [];
-
-  //---
+exports.example2 = function (aReq, aRes, aNext) {
   function preRender() {
     // Pagination
     options.paginationRendered = pagination.renderDefault(aReq);
   }
-  function render() { aRes.render('pages/_templatePage', options); }
-  function asyncComplete() { preRender(); render(); }
+
+  function render() {
+    aRes.render('pages/_templatePage', options);
+  }
+
+  function asyncComplete() {
+    preRender();
+    render();
+  }
+
+  //
+  var options = {};
+  var authedUser = aReq.session.user;
+  var scriptListQuery = null;
+  var pagination = null;
+  var tasks = [];
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
@@ -82,22 +108,24 @@ exports.example = function (aReq, aRes, aNext) {
   pageMetadata(options);
 
   // Scripts: Query
-  var scriptListQuery = Script.find();
+  scriptListQuery = Script.find();
 
   // Scripts: Query: isLib=false
   scriptListQuery.find({ isLib: false });
 
   // Scripts: Query: Search
-  if (aReq.query.q)
+  if (aReq.query.q) {
     modelQuery.parseScriptSearchQuery(scriptListQuery, aReq.query.q);
+  }
 
   // Scripts: Query: Sort
-  modelQuery.parseModelListSort(scriptListQuery, aReq.query.orderBy, aReq.query.orderDir, function () {
-    scriptListQuery.sort('-rating -installs -updated');
-  });
+  modelQuery.parseModelListSort(scriptListQuery, aReq.query.orderBy, aReq.query.orderDir,
+    function () {
+      scriptListQuery.sort('-rating -installs -updated');
+    });
 
   // Pagination
-  var pagination = getDefaultPagination(aReq);
+  pagination = getDefaultPagination(aReq);
   pagination.applyToQuery(scriptListQuery);
 
   //--- Tasks
@@ -120,4 +148,3 @@ exports.example = function (aReq, aRes, aNext) {
   //---
   async.parallel(tasks, asyncComplete);
 };
-
