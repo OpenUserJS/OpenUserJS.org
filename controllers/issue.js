@@ -21,8 +21,11 @@ var scriptStorage = require('./scriptStorage');
 var discussionLib = require('./discussion'); // NOTE: Project tree inconsistency
 
 //--- Library inclusions
+var issueLib = require('../libs/issue');
+
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
+
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
@@ -31,19 +34,14 @@ var orderDir = require('../libs/templateHelpers').orderDir;
 
 // List script issues
 exports.list = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
+  //
+  var installName = scriptStorage.getInstallName(aReq);
   var type = aReq.params.type;
 
-  var open = aReq.params.open !== 'closed';
-  var listAll = aReq.params.open === 'all';
-
-  var installName = scriptStorage.getInstallName(aReq);
-
   Script.findOne({
-    installName: scriptStorage.caseSensitive(
-      installName + (type === 'libs' ? '.js' : '.user.js'))
-  }, function (aErr, scriptData) {
+    installName: scriptStorage.caseSensitive(installName +
+      (type === 'libs' ? '.js' : '.user.js'))
+  }, function (aErr, aScript) {
     function preRender() {
       options.discussionList = _.map(options.discussionList, modelParser.parseDiscussion);
 
@@ -86,16 +84,24 @@ exports.list = function (aReq, aRes, aNext) {
       render();
     }
 
-    if (aErr || !scriptData) {
+    //
+    var options = {};
+    var authedUser = aReq.session.user;
+    var open = aReq.params.open !== 'closed';
+    var script = null;
+    var category = null;
+    var discussionListQuery = null;
+    var listAll = aReq.params.open === 'all';
+    var pagination = null;
+    var scriptOpenIssueCountQuery = null;
+    var tasks = [];
+
+    if (aErr || !aScript) {
       return aNext();
     }
 
-    //
-    var options = {};
-    var tasks = [];
-
     // Session
-    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.authedUser = authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
@@ -103,11 +109,11 @@ exports.list = function (aReq, aRes, aNext) {
     options.openIssuesOnly = open;
 
     // Script
-    var script = options.script = modelParser.parseScript(scriptData);
+    script = options.script = modelParser.parseScript(aScript);
     options.isOwner = authedUser && authedUser._id == script._authorId;
 
     // Category
-    var category = {};
+    category = {};
     category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
@@ -125,7 +131,7 @@ exports.list = function (aReq, aRes, aNext) {
     orderDir(aReq, options, 'updated', 'desc');
 
     // discussionListQuery
-    var discussionListQuery = Discussion.find();
+    discussionListQuery = Discussion.find();
 
     // discussionListQuery: category
     discussionListQuery.find({ category: category.slug });
@@ -149,7 +155,7 @@ exports.list = function (aReq, aRes, aNext) {
     modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
 
     // discussionListQuery: Pagination
-    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+    pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     // SearchBar
     options.searchBarPlaceholder = 'Search Issues';
@@ -157,7 +163,7 @@ exports.list = function (aReq, aRes, aNext) {
     //--- Tasks
 
     // Show the number of open issues
-    var scriptOpenIssueCountQuery = Discussion.find({
+    scriptOpenIssueCountQuery = Discussion.find({
       category: script.issuesCategorySlug,
       open: { $ne: false }
     });
@@ -176,37 +182,37 @@ exports.list = function (aReq, aRes, aNext) {
 
 // Show the discussion on an issue
 exports.view = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
+  //
+  var installName = scriptStorage.getInstallName(aReq);
   var type = aReq.params.type;
 
-  var topic = aReq.params.topic;
-
-  var installName = scriptStorage.getInstallName(aReq);
-
   Script.findOne({
-    installName: scriptStorage.caseSensitive(
-      installName + (type === 'libs' ? '.js' : '.user.js'))
-  }, function (aErr, aScriptData) {
-    if (aErr || !aScriptData) {
+    installName: scriptStorage.caseSensitive(installName +
+      (type === 'libs' ? '.js' : '.user.js'))
+  }, function (aErr, aScript) {
+    //
+    var options = {};
+    var authedUser = aReq.session.user;
+    var script = null;
+    var category = null;
+    var topic = aReq.params.topic;
+    var tasks = [];
+
+    if (aErr || !aScript) {
       return aNext();
     }
 
-    //
-    var options = {};
-    var tasks = [];
-
     // Session
-    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.authedUser = authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // Script
-    var script = options.script = modelParser.parseScript(aScriptData);
+    script = options.script = modelParser.parseScript(aScript);
     options.isOwner = authedUser && authedUser._id == script._authorId;
 
     // Category
-    var category = {};
+    category = {};
     category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
@@ -215,7 +221,7 @@ exports.view = function (aReq, aRes, aNext) {
     category.categoryPostDiscussionPageUrl = script.scriptOpenIssuePageUrl;
     options.category = category;
 
-    discussionLib.findDiscussion(category.slug, topic, function (aDiscussionData) {
+    discussionLib.findDiscussion(category.slug, topic, function (aDiscussion) {
       function preRender() {
         // Page metadata
         pageMetadata(options, [discussion.topic, 'Discussions'], discussion.topic);
@@ -243,18 +249,25 @@ exports.view = function (aReq, aRes, aNext) {
         render();
       }
 
-      if (aErr || !aDiscussionData) {
+      //
+      var discussion = null;
+      var commentListQuery = null;
+      var pagination = null;
+      var scriptOpenIssueCountQuery = null;
+
+      if (aErr || !aDiscussion) {
         return aNext();
       }
 
       // Discussion
-      var discussion = options.discussion = modelParser.parseDiscussion(aDiscussionData);
+      discussion = options.discussion = modelParser.parseDiscussion(aDiscussion);
       modelParser.parseIssue(discussion);
-      options.canClose = authedUser && (authedUser._id == script._authorId || authedUser._id == discussion._authorId);
+      options.canClose = authedUser &&
+        (authedUser._id == script._authorId || authedUser._id == discussion._authorId);
       options.canOpen = authedUser && authedUser._id == script._authorId;
 
       // commentListQuery
-      var commentListQuery = Comment.find();
+      commentListQuery = Comment.find();
 
       // commentListQuery: discussion
       commentListQuery.find({ _discussionId: discussion._id });
@@ -263,12 +276,12 @@ exports.view = function (aReq, aRes, aNext) {
       modelQuery.applyCommentListQueryDefaults(commentListQuery, options, aReq);
 
       // commentListQuery: Pagination
-      var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+      pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
       //--- Tasks
 
       // Show the number of open issues
-      var scriptOpenIssueCountQuery = Discussion.find({
+      scriptOpenIssueCountQuery = Discussion.find({
         category: script.issuesCategorySlug,
         open: { $ne: false }
       });
@@ -287,19 +300,14 @@ exports.view = function (aReq, aRes, aNext) {
 
 // Open a new issue
 exports.open = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
+  //
+  var installName = scriptStorage.getInstallName(aReq);
   var type = aReq.params.type;
 
-  var topic = aReq.body['discussion-topic'];
-  var content = aReq.body['comment-content'];
-
-  var installName = scriptStorage.getInstallName(aReq);
-
   Script.findOne({
-    installName: scriptStorage.caseSensitive(
-      installName + (type === 'libs' ? '.js' : '.user.js'))
-  }, function (aErr, aScriptData) {
+    installName: scriptStorage.caseSensitive(installName +
+      (type === 'libs' ? '.js' : '.user.js'))
+  }, function (aErr, aScript) {
     function preRender() {
       // Page metadata
       pageMetadata(options, ['New Issue', script.name]);
@@ -315,25 +323,29 @@ exports.open = function (aReq, aRes, aNext) {
     }
 
     // ---
-    if (aErr || !aScriptData) {
+    if (aErr || !aScript) {
       return aNext();
     }
 
     //
     var options = {};
-    var tasks = [];
+    var authedUser = aReq.session.user;
+    var script = null;
+    var category = null;
+    var topic = aReq.body['discussion-topic'];
+    var content = aReq.body['comment-content'];
 
     // Session
-    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.authedUser = authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // Script
-    var script = options.script = modelParser.parseScript(aScriptData);
+    script = options.script = modelParser.parseScript(aScript);
     options.isOwner = authedUser && authedUser._id == script._authorId;
 
     // Category
-    var category = {};
+    category = {};
     category.slug = type + '/' + installName + '/issues';
     category.name = 'Issues';
     category.description = '';
@@ -357,7 +369,8 @@ exports.open = function (aReq, aRes, aNext) {
           if (!aDiscussion)
             return aRes.redirect('/' + encodeURI(category) + '/open');
 
-          aRes.redirect(encodeURI(aDiscussion.path + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+          aRes.redirect(encodeURI(aDiscussion.path +
+            (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
         }
       );
     } else {
@@ -374,19 +387,17 @@ exports.open = function (aReq, aRes, aNext) {
 
 // Post route to add a new comment to a discussion on an issue
 exports.comment = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
+  //
+  var installName = scriptStorage.getInstallName(aReq);
   var type = aReq.params.type;
 
-  var topic = aReq.params.topic;
-
-  var installName = scriptStorage.getInstallName(aReq);
-
-  var category = type + '/' + installName + '/issues';
-
-  Script.findOne({ installName: scriptStorage.caseSensitive(installName
-    + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
+  Script.findOne({ installName: scriptStorage.caseSensitive(installName +
+    (type === 'libs' ? '.js' : '.user.js'))
+  }, function (aErr, aScript) {
+    //
     var content = aReq.body['comment-content'];
+    var category = type + '/' + installName + '/issues';
+    var topic = aReq.params.topic;
 
     if (aErr || !aScript) {
       return aNext();
@@ -400,6 +411,9 @@ exports.comment = function (aReq, aRes, aNext) {
     }
 
     discussionLib.findDiscussion(category, topic, function (aIssue) {
+      //
+      var authedUser = aReq.session.user;
+
       if (!aIssue) {
         return aNext();
       }
@@ -415,25 +429,27 @@ exports.comment = function (aReq, aRes, aNext) {
 
 // Open or close an issue you are allowed
 exports.changeStatus = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
+  var installName = scriptStorage.getInstallName(aReq);
   var type = aReq.params.type;
 
-  var topic = aReq.params.topic;
+  Script.findOne({ installName: scriptStorage.caseSensitive(installName +
+    (type === 'libs' ? '.js' : '.user.js'))
+  }, function (aErr, aScript) {
+    var category = type + '/' + installName + '/issues';
+    var topic = aReq.params.topic;
+    var action = aReq.params.action;
+    var changed = false;
 
-  var installName = scriptStorage.getInstallName(aReq);
-
-  var category = type + '/' + installName + '/issues';
-  var action = aReq.params.action;
-  var changed = false;
-
-  Script.findOne({ installName: scriptStorage.caseSensitive(installName
-    + (type === 'libs' ? '.js' : '.user.js')) }, function (aErr, aScript) {
-
-    if (aErr || !aScript) { return aNext(); }
+    if (aErr || !aScript) {
+      return aNext();
+    }
 
     discussionLib.findDiscussion(category, topic, function (aIssue) {
-      if (!aIssue) { return aNext(); }
+      var authedUser = aReq.session.user;
+
+      if (!aIssue) {
+        return aNext();
+      }
 
       // Both the script author and the issue creator can close the issue
       // Only the script author can reopen a closed issue
