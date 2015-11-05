@@ -260,8 +260,11 @@ exports.view = function (aReq, aRes, aNext) {
       }
 
       // Discussion
-      options.discussion = discussion = modelParser.parseDiscussion(aDiscussion);
-      modelParser.parseIssue(discussion); // WARNING: Return value never used
+      discussion = {};
+      discussion = modelParser.parseDiscussion(aDiscussion);
+      discussion = modelParser.parseIssue(discussion);
+      options.discussion = discussion;
+
       options.canClose = authedUser &&
         (authedUser._id == script._authorId || authedUser._id == discussion._authorId);
       options.canOpen = authedUser && authedUser._id == script._authorId;
