@@ -6,19 +6,32 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+
+//--- Dependency inclusions
 var async = require('async');
 var _ = require('underscore');
 
+//--- Model inclusions
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
 
+//--- Controller inclusions
+
+//--- Library inclusions
+// var groupLib = require('../libs/group');
+
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
+
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var getRating = require('../libs/collectiveRating').getRating;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
+
+//--- Configuration inclusions
+
+//---
 
 // clean the name of the group so it is url safe
 function cleanGroupName(aName) {
@@ -46,7 +59,9 @@ exports.search = function (aReq, aRes) {
   queryRegex = new RegExp(queryStr, 'i');
 
   Group.find({ name: queryRegex }, 'name', function (aErr, aGroups) {
-    if (aErr) { aGroups = []; }
+    if (aErr) {
+      aGroups = [];
+    }
 
     results = aGroups.map(function (aGroup) {
       return aGroup.name;
@@ -63,7 +78,8 @@ exports.search = function (aReq, aRes) {
 // When the select2 library submits
 exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
   if (aScript.isLib || !aGroupNames || aGroupNames[0].length === 0) {
-    return aScript.save(aCallback);
+    aScript.save(aCallback);
+    return;
   }
 
   Group.find({ name: { $in: aGroupNames } }, function (aErr, aGroups) {
@@ -72,7 +88,9 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
     var newGroup = null;
     var tasks = [];
 
-    if (aErr || !aGroups) { aGroups = []; }
+    if (aErr || !aGroups) {
+      aGroups = [];
+    }
 
     // Groups to add the script to
     // This could have been added to the above query but
@@ -124,28 +142,26 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
       aGroups.forEach(function (aGroup) {
         Script.find({ _id: { $in: aGroup._scriptIds } },
           function (aErr, aScripts) {
-            if (aErr || aScripts.length < 2) { return; }
+            if (aErr || aScripts.length < 2) {
+              return;
+            }
 
             aGroup.size = aScripts.length;
             aGroup.rating = getRating(aScripts);
             aGroup.updated = new Date();
-            aGroup.save(function () { });
+            aGroup.save(function () {
+              // NOTE: This is a callback that does nothing
+            });
           }
         );
       });
     });
+
   });
 };
 
 // list groups
 exports.list = function (aReq, aRes) {
-  var authedUser = aReq.session.user;
-
-  //
-  var options = {};
-  var tasks = [];
-
-  //---
   function preRender() {
     // groupList
     options.groupList = _.map(options.groupList, modelParser.parseGroup);
@@ -161,11 +177,23 @@ exports.list = function (aReq, aRes) {
       pageMetadata(options, 'Groups', null, _.pluck(options.groupList, 'name'));
     }
   }
-  function render() { aRes.render('pages/groupListPage', options); }
-  function asyncComplete() { preRender(); render(); }
+
+  function render() {
+    aRes.render('pages/groupListPage', options);
+  }
+
+  function asyncComplete() {
+    preRender();
+    render();
+  }
+
+  //
+  var options = {};
+  var authedUser = aReq.session.user;
+  var tasks = [];
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
@@ -178,7 +206,7 @@ exports.list = function (aReq, aRes) {
   orderDir(aReq, options, 'rating', 'desc');
 
   // groupListQuery
-  var groupListQuery = Group.find();  // TODO: STYLEGUIDE.md conformance needed here
+  var groupListQuery = Group.find();
 
   // groupListQuery: Defaults
   modelQuery.applyGroupListQueryDefaults(groupListQuery, options, aReq);
@@ -224,24 +252,14 @@ var setupGroupSidePanel = function (aOptions) {
 
 // list the scripts in a group
 exports.view = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
+  var groupname = aReq.params.groupname;
 
-  var groupNameSlug = aReq.params.groupname;
-  var groupName = groupNameSlug.replace(/_+/g, ' ');
+  // Strip out underscores for display
+  var groupName = groupname.replace(/_+/g, ' ');
 
   Group.findOne({
     name: groupName
-  }, function (aErr, aGroupData) {
-    if (aErr || !aGroupData) { return aNext(); }
-
-    // Don't show page if we have no scripts assigned to it yet.
-    if (aGroupData._scriptIds.length === 0) { return aNext(); }
-
-    //
-    var options = {};
-    var tasks = [];
-
-    //---
+  }, function (aErr, aGroup) {
     function preRender() {
       // scriptList
       options.scriptList = _.map(options.scriptList, modelParser.parseScript);
@@ -270,16 +288,45 @@ exports.view = function (aReq, aRes, aNext) {
         options.scriptListIsEmptyMessage = 'This user hasn\'t added any scripts yet.';
       }
     }
-    function render() { aRes.render('pages/groupScriptListPage', options); }
-    function asyncComplete() { preRender(); render(); }
+
+    function render() {
+      aRes.render('pages/groupScriptListPage', options);
+    }
+
+    function asyncComplete() {
+      preRender();
+      render();
+    }
+
+    //
+    var options = {};
+    var authedUser = aReq.session.user;
+    var group = null;
+    var scriptListQuery = null;
+    var pagination = null;
+    var popularGroupListQuery = null;
+    var tasks = [];
+
+    if (aErr || !aGroup) {
+      aNext();
+      return;
+    }
+
+    // Don't show page if we have no scripts assigned to it yet.
+    if (aGroup._scriptIds.length === 0) {
+      aNext();
+      return;
+    }
 
     // Session
-    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.authedUser = authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
+    // Group
+    options.group = group = modelParser.parseGroup(aGroup);
+
     // Page metadata
-    var group = options.group = modelParser.parseGroup(aGroupData);
     pageMetadata(options, [group.name, 'Groups']);
 
     // Order dir
@@ -289,7 +336,7 @@ exports.view = function (aReq, aRes, aNext) {
     orderDir(aReq, options, 'updated', 'desc');
 
     // scriptListQuery
-    var scriptListQuery = Script.find();
+    scriptListQuery = Script.find();
 
     // scriptListQuery: script in group
     scriptListQuery.find({ _id: { $in: group._scriptIds } });
@@ -301,10 +348,10 @@ exports.view = function (aReq, aRes, aNext) {
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
 
     // scriptListQuery: Pagination
-    var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+    pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     // popularGroupListQuery
-    var popularGroupListQuery = Group.find();
+    popularGroupListQuery = Group.find();
     popularGroupListQuery
       .sort('-size')
       .limit(25);
