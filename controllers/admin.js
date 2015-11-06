@@ -6,11 +6,12 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
-var pkg = require('../package.json');
 
+//--- Dependency inclusions
 var async = require('async');
 var exec = require('child_process').exec;
 
+//--- Model inclusions
 var Comment = require('../models/comment').Comment;
 var Discussion = require('../models/discussion').Discussion;
 var Flag = require('../models/flag').Flag;
@@ -20,16 +21,27 @@ var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
 var Vote = require('../models/vote').Vote;
 
-var userRoles = require('../models/userRoles.json');
-var strategies = require('./strategies.json');
+//--- Controller inclusions
+
+//--- Library inclusions
+// var adminLib = require('../libs/admin');
+
+var modelParser = require('../libs/modelParser');
+
+var nil = require('../libs/helpers').nil;
+
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
-var modelParser = require('../libs/modelParser');
-var helpers = require('../libs/helpers');
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var updateSessions = require('../libs/modifySessions').update;
-var nil = helpers.nil;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+
+//--- Configuration inclusions
+var pkg = require('../package.json');
+var userRoles = require('../models/userRoles.json');
+var strategies = require('./strategies.json');
+
+//---
 
 // This controller is only for use by users with a role of admin or above
 
@@ -58,10 +70,14 @@ function getOAuthStrategies(aStored) {
 
 // Allow admins to set user roles and delete users
 exports.userAdmin = function (aReq, aRes, aNext) {
-  var options = nil();
+  //
+  var options = nil(); // NOTE: Inconsistent usage of object creation here
   var authedUser = aReq.session.user;
 
-  if (!userIsAdmin(aReq)) { return aNext(); }
+  if (!userIsAdmin(aReq)) { // TODO:
+    aNext();
+    return;
+  }
 
   // You can only see users with a role less than yours
   User.find({ role: { $gt: authedUser.role } }, function (aErr, aUsers) {
@@ -86,7 +102,7 @@ exports.userAdmin = function (aReq, aRes, aNext) {
       });
     });
 
-    aRes.render('userAdmin', options);
+    aRes.render('userAdmin', options); // NOTE: Watchpoint
   });
 };
 
@@ -96,12 +112,18 @@ exports.adminUserView = function (aReq, aRes, aNext) {
   var id = aReq.params.id;
   var authedUser = aReq.session.user;
 
-  if (!userIsAdmin(aReq)) { return aNext(); }
+  if (!userIsAdmin(aReq)) {
+    aNext();
+    return;
+  }
 
   // Nothing fancy, just the stringified user object
   User.findOne({ '_id': id, role: { $gt: authedUser.role } },
     function (aErr, aUser) {
-      if (aErr || !aUser) { return aNext(); }
+      if (aErr || !aUser) {
+        aNext();
+        return;
+      }
 
       aRes.render('userAdmin', {
         user: {
@@ -123,31 +145,29 @@ var jsonModelMap = {
 // View everything about a particular user
 // This is mostly for debugging in production
 exports.adminJsonView = function (aReq, aRes, aNext) {
+  //
   var authedUser = aReq.session.user;
-
   var modelname = aReq.query.model;
   var id = aReq.query.id;
 
-  //
-  var options = {};
-
-  // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
-
-  if (!options.isAdmin)
-    return aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+  if (!userIsAdmin(aReq)) {
+    aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+    return;
+  }
 
   var model = jsonModelMap[modelname];
-  if (!model)
-    return aRes.status(400).send({ status: 400, message: 'Invalid model.' });
+  if (!model) {
+    aRes.status(400).send({ status: 400, message: 'Invalid model.' });
+    return;
+  }
 
   model.findOne({
     _id: id
   }, function (aErr, aObj) {
-    if (aErr || !aObj)
-      return aRes.status(404).send({ status: 404, message: 'Id doesn\'t exist.' });
+    if (aErr || !aObj) {
+      aRes.status(404).send({ status: 404, message: 'Id doesn\'t exist.' });
+      return;
+    }
 
     aRes.json(aObj);
   });
@@ -155,57 +175,64 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
 
 // Make changes to users listed
 exports.adminUserUpdate = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
   var username = aReq.params.username;
 
   User.findOne({
     name: username
-  }, function (aErr, aUserData) {
-    if (aErr || !aUserData) { return aNext(); }
+  }, function (aErr, aUser) {
+    if (aErr || !aUser) {
+      aNext();
+      return;
+    }
 
     //
     var options = {};
+    var authedUser = aReq.session.user;
+    var user = null;
+    var role = null;
 
     // Session
-    authedUser = options.authedUser = modelParser.parseUser(authedUser);
+    options.authedUser = authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.isMod;
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     if (!options.isAdmin) {
-      return statusCodePage(aReq, aRes, aNext, {
+      statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
         statusMessage: 'This page is only accessible by admins',
       });
+      return;
     }
 
     // User
-    var user = options.user = modelParser.parseUser(aUserData);
+    options.user = user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     //---
 
     if (aReq.body.role) {
-      var role = Number(aReq.body.role);
+      role = Number(aReq.body.role);
       if (role <= authedUser.role) {
-        return statusCodePage(aReq, aRes, aNext, {
+        statusCodePage(aReq, aRes, aNext, {
           statusCode: 403,
           statusMessage: 'Cannot set a role equal to or higher than yourself.',
         });
+        return;
       }
 
-      aUserData.role = role;
+      aUser.role = role;
     }
 
-    aUserData.save(function (aErr) {
+    aUser.save(function (aErr) {
       if (aErr) {
-        return statusCodePage(aReq, aRes, aNext, {
+        statusCodePage(aReq, aRes, aNext, {
           statusMessage: aErr,
         });
+        return;
       }
 
       // Make sure the change is reflected in the session store
-      updateSessions(aReq, aUserData, function (aErr, aSess) {
+      updateSessions(aReq, aUser, function (aErr, aSess) {
         aRes.redirect(user.userPageUrl);
       });
     });
@@ -214,52 +241,83 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
 
 // Landing Page for admins
 exports.adminPage = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
+  function preRender() {
+  }
+
+  function render() {
+    aRes.render('pages/adminPage', options);
+  }
+
+  function asyncComplete(aErr) {
+    if (aErr) {
+      aNext();
+      return;
+    }
+
+    preRender();
+    render();
+  }
 
   //
   var options = {};
+  var authedUser = aReq.session.user;
   var tasks = [];
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isAdmin) {
-    return statusCodePage(aReq, aRes, aNext, {
+    statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by admins',
     });
+    return;
   }
 
   // Page metadata
   pageMetadata(options, 'Admin');
 
   //---
-  async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
-    aRes.render('pages/adminPage', options);
-  });
+  async.parallel(tasks, asyncComplete);
 };
 
 // This page allows admins to set oAuth keys for the available authenticators
 exports.adminApiKeysPage = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
+  function preRender() {
+  }
+
+  function render() {
+    aRes.render('pages/adminApiKeysPage', options);
+  }
+
+  function asyncComplete(aErr) {
+    if (aErr) {
+      aNext();
+      return;
+    }
+
+    preRender();
+    render();
+  }
 
   //
   var options = {};
+  var authedUser = aReq.session.user;
   var tasks = [];
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isAdmin) {
-    return statusCodePage(aReq, aRes, aNext, {
+    statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by admins',
     });
+    return;
   }
 
   // Page metadata
@@ -270,7 +328,7 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
   // strategyListQuery
   tasks.push(function (aCallback) {
     Strategy.find({}, function (aErr, aStrats) {
-      var stored = nil();
+      var stored = nil();  // NOTE: Inconsistent usage of object creation here
       var strategies = null;
 
       aStrats.forEach(function (aStrat) {
@@ -289,27 +347,18 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
   });
 
   //---
-  async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
-    aRes.render('pages/adminApiKeysPage', options);
-  });
+  async.parallel(tasks, asyncComplete);
 };
 
 // View everything about current deployed `./package.json`
 // This is mostly for debugging in production
 exports.adminNpmPackageView = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
   //
-  var options = {};
 
-  // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
-
-  if (!options.isAdmin)
-    return aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+  if (!userIsAdmin(aReq)) {
+    aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+    return;
+  }
 
   aRes.json(pkg);
 };
@@ -317,21 +366,19 @@ exports.adminNpmPackageView = function (aReq, aRes, aNext) {
 // View everything about current modules for the server
 // This is mostly for debugging in production
 exports.adminNpmListView = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
   //
-  var options = {};
 
-  // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
-
-  if (!options.isAdmin)
-    return aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+  if (!userIsAdmin(aReq)) {
+    aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+    return;
+  }
 
   exec('npm ls --json', function (aErr, aStdout, aStderr) {
-    if (aErr) return aRes.status(501).send({ status: 501, message: 'Not implemented.' });
+    if (aErr) {
+      aRes.status(501).send({ status: 501, message: 'Not implemented.' });
+      return;
+    }
+
     aRes.json(JSON.parse(aStdout));
   });
 };
@@ -339,21 +386,18 @@ exports.adminNpmListView = function (aReq, aRes, aNext) {
 // View current version of npm
 // This is mostly for debugging in production
 exports.adminNpmVersionView = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
   //
-  var options = {};
 
-  // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
-
-  if (!options.isAdmin)
-    return aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+  if (!userIsAdmin(aReq)) {
+    aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+    return;
+  }
 
   exec('npm --version', function (aErr, aStdout, aStderr) {
-    if (aErr) return aRes.status(501).send({ status: 501, message: 'Not implemented.' });
+    if (aErr) {
+      aRes.status(501).send({ status: 501, message: 'Not implemented.' });
+      return;
+    }
 
     aRes.set('Content-Type', 'text/plain; charset=UTF-8');
     aRes.write(aStdout + '\n');
@@ -367,7 +411,10 @@ exports.adminNpmVersionView = function (aReq, aRes, aNext) {
 exports.apiAdminUpdate = function (aReq, aRes, aNext) {
   var postStrats = null;
 
-  if (!userIsAdmin(aReq)) { return aNext(); }
+  if (!userIsAdmin(aReq)) {
+    aNext();
+    return;
+  }
 
   postStrats = Object.keys(aReq.body).filter(function (aEl) {
     return /\[0\]$/.test(aEl);
@@ -381,7 +428,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
   });
 
   Strategy.find({}, function (aErr, aStrats) {
-    var stored = nil();
+    var stored = nil(); // NOTE: Inconsistent usage of object creation here
 
     aStrats.forEach(function (aStrat) {
       stored[aStrat.name] = aStrat;
@@ -413,10 +460,12 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
           });
         }
 
-        return strategy.save(function (aErr, aStrategy) {
+        strategy.save(function (aErr, aStrategy) {
           loadPassport(aStrategy);
           aCallback();
         });
+
+        return;
       }
 
       aCallback();
@@ -428,40 +477,47 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
 
 // Landing Page for admins
 exports.authAsUser = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
   //
   var options = {};
+  var authedUser = aReq.session.user;
+  var username = null;
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isAdmin) {
-    return statusCodePage(aReq, aRes, aNext, {
+    statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by admins',
     });
+    return;
   }
 
-  var username = aReq.query.username;
+  username = aReq.query.username;
 
   if (!username) {
-    return statusCodePage(aReq, aRes, aNext, {
+    statusCodePage(aReq, aRes, aNext, {
       statusCode: 400,
       statusMessage: '<code>username</code> must be set.',
     });
+    return;
   }
 
   // You can only see users with a role less than yours
   User.findOne({
     name: username
-  }, function (aErr, aUserData) {
-    if (aErr || !aUserData) { return aNext(); }
+  }, function (aErr, aUser) {
+    var user = null;
+
+    if (aErr || !aUser) {
+      aNext();
+      return;
+    }
 
     // User
-    var user = options.user = modelParser.parseUser(aUserData);
+    options.user = user = modelParser.parseUser(aUser);
 
     if (authedUser.role >= user.role) {
       return statusCodePage(aReq, aRes, aNext, {
@@ -474,6 +530,6 @@ exports.authAsUser = function (aReq, aRes, aNext) {
 
     aReq.session.user = user;
 
-    aRes.redirect(encodeURI(user.userPageUrl));
+    aRes.redirect(encodeURI(user.userPageUrl)); // NOTE: Watchpoint
   });
 };
