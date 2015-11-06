@@ -341,6 +341,7 @@ exports.open = function (aReq, aRes, aNext) {
     var category = null;
     var topic = aReq.body['discussion-topic'];
     var content = aReq.body['comment-content'];
+    var tasks = [];
 
     // Session
     options.authedUser = authedUser = modelParser.parseUser(authedUser);
