@@ -6,71 +6,110 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+
+//--- Dependency inclusions
 var async = require('async');
 var _ = require('underscore');
 
+//--- Model inclusions
 var Remove = require('../models/remove').Remove;
+
+//--- Controller inclusions
+
+//--- Library inclusions
+// var moderationLib = require('../libs/moderation');
 
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
+
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
 
+//--- Configuration inclusions
+
+//---
+
 exports.removedItemPage = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
-  var removedItemId = aReq.params.id;
-
   //
   var options = {};
+  var authedUser = aReq.session.user;
+  var removedItemId = aReq.params.id;
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isMod) {
-    return statusCodePage(aReq, aRes, aNext, {
+    statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by moderators',
     });
+    return;
   }
 
   Remove.find({
-    _id: removedItemId,
+    _id: removedItemId
   }, function (aErr, aRemovedItemData) {
-    if (aErr || !aRemovedItemData) { return aNext(); }
+    if (aErr || !aRemovedItemData) {
+      aNext();
+      return;
+    }
 
     aRes.json(aRemovedItemData);
   });
 };
 
 exports.removedItemListPage = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
+  function preRender() {
+    // removedItemList
+    options.removedItemList = _.map(options.removedItemList, modelParser.parseRemovedItem);
+
+    // Pagination
+    options.paginationRendered = pagination.renderDefault(aReq);
+
+    // Page metadata
+    pageMetadata(options, 'Graveyard');
+  }
+
+  function render() {
+    aRes.render('pages/removedItemListPage.html', options);
+  }
+
+  function asyncComplete(aErr) {
+    if (aErr) {
+      aNext();
+      return;
+    }
+
+    preRender();
+    render();
+  }
 
   //
   var options = {};
+  var authedUser = aReq.session.user;
+  var removedItemListQuery = null;
+  var pagination = null;
   var tasks = [];
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isMod) {
-    return statusCodePage(aReq, aRes, aNext, {
+    statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by moderators',
     });
+    return;
   }
 
   //
   options.byModel = aReq.query.byModel !== undefined ? aReq.query.byModel : null;
-
-  // Page metadata
-  pageMetadata(options, 'Graveyard');
 
   // Order dir
   orderDir(aReq, options, 'model', 'asc');
@@ -78,7 +117,7 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
   orderDir(aReq, options, 'removed', 'desc');
 
   // removedItemListQuery
-  var removedItemListQuery = Remove.find();
+  removedItemListQuery = Remove.find();
 
   // removedItemListQuery: byModel
   modelQuery.findOrUseDefaultIfNull(removedItemListQuery, 'model', options.byModel, null);
@@ -118,7 +157,7 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
   }
 
   // removedItemListQuery: Pagination
-  var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+  pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
   //--- Tasks
 
@@ -129,42 +168,42 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
   tasks.push(execQueryTask(removedItemListQuery, options, 'removedItemList'));
 
   //---
-  async.parallel(tasks, function (aErr) {
-    if (aErr) return aNext();
-
-    //--- PreRender
-    // removedItemList
-    options.removedItemList = _.map(options.removedItemList, modelParser.parseRemovedItem);
-
-    // Pagination
-    options.paginationRendered = pagination.renderDefault(aReq);
-
-    //---
-    aRes.render('pages/removedItemListPage.html', options);
-  });
+  async.parallel(tasks, asyncComplete);
 };
 
 exports.modPage = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
+  function preRender() {
+    // Page metadata
+    pageMetadata(options, 'Moderation');
+  }
+
+  function render() {
+    aRes.render('pages/modPage', options);
+  }
+
+  function asyncComplete() {
+    preRender();
+    render();
+  }
 
   //
   var options = {};
+  var authedUser = aReq.session.user;
+  var tasks = [];
 
   // Session
-  authedUser = options.authedUser = modelParser.parseUser(authedUser);
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (!options.isMod) {
-    return statusCodePage(aReq, aRes, aNext, {
+    statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by moderators',
     });
+    return;
   }
 
-  // Page metadata
-  pageMetadata(options, 'Moderation');
-
   //---
-  aRes.render('pages/modPage', options);
+  async.parallel(tasks, asyncComplete);
 };
