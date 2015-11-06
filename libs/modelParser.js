@@ -222,7 +222,7 @@ var parseScript = function (aScriptData) {
   parseDateProperty(script, 'updated');
   parseDateProperty(script, '_since'); // Virtual
 
-  if (script._since && script._since.toString() !== script.updated.toString()) {
+  if (script._since && script.updated && script._since.toString() !== script.updated.toString()) {
     script.isUpdated = true;
   }
 
