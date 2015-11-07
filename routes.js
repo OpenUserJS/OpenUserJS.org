@@ -58,8 +58,7 @@ module.exports = function (aApp) {
 
   // Script routes
   aApp.route('/scripts/:username/:namespace?/:scriptname').get(script.view);
-  aApp.route('/script/:username/:namespace?/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
-  aApp.route('/script/:namespace?/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
+  aApp.route('/scripts/:username/:namespace?/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
   aApp.route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript);
   aApp.route('/scripts/:username').get(function (aReq, aRes) {
     aRes.redirect('/users/' + aReq.params.username + '/scripts');
@@ -74,8 +73,7 @@ module.exports = function (aApp) {
 
   // Library routes
   aApp.route('/libs/:username/:scriptname').get(script.lib(script.view));
-  aApp.route('/lib/:scriptname/edit').get(authentication.validateUser, script.lib(script.edit));
-  aApp.route('/lib/:scriptname/edit').post(authentication.validateUser, script.lib(script.edit));
+  aApp.route('/libs/:username/:scriptname/edit').get(authentication.validateUser, script.lib(script.edit)).post(authentication.validateUser, script.lib(script.edit));
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
   aApp.route('/libs/src/:username/:scriptname').get(scriptStorage.sendScript);
 

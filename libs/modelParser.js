@@ -93,12 +93,7 @@ var getScriptViewSourcePageUrl = function (aScript) {
 };
 
 var getScriptEditAboutPageUrl = function (aScript) {
-  var isLib = aScript.isLib || false;
-  var scriptPath = aScript.installName
-    .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
-  var editUrl = scriptPath.split('/');
-  editUrl.shift();
-  return (isLib ? '/lib/' : '/script/') + editUrl.join('/') + '/edit';
+  return getScriptPageUrl(aScript) + '/edit';
 };
 
 var getScriptEditSourcePageUrl = function (aScript) {
