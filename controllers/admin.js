@@ -68,44 +68,6 @@ function getOAuthStrategies(aStored) {
   return oAuthStrats;
 }
 
-// Allow admins to set user roles and delete users
-exports.userAdmin = function (aReq, aRes, aNext) {
-  //
-  var options = nil(); // NOTE: Inconsistent usage of object creation here
-  var authedUser = aReq.session.user;
-
-  if (!userIsAdmin(aReq)) { // TODO:
-    aNext();
-    return;
-  }
-
-  // You can only see users with a role less than yours
-  User.find({ role: { $gt: authedUser.role } }, function (aErr, aUsers) {
-    options.users = [];
-
-    aUsers.forEach(function (aUser) {
-      var roles = [];
-      userRoles.forEach(function (aRole, aIndex) {
-        roles.push({
-          'val': aIndex,
-          'display': aRole,
-          'selected': aIndex === aUser.role
-        });
-      });
-      roles = roles.splice(authedUser.role + 1);
-      roles.reverse();
-
-      options.users.push({
-        'id': aUser._id,
-        'name': aUser.name,
-        'roles': roles
-      });
-    });
-
-    aRes.render('userAdmin', options); // NOTE: Watchpoint
-  });
-};
-
 // View everything about a particular user
 // This is mostly for debugging in production
 exports.adminUserView = function (aReq, aRes, aNext) {
@@ -328,7 +290,7 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
   // strategyListQuery
   tasks.push(function (aCallback) {
     Strategy.find({}, function (aErr, aStrats) {
-      var stored = nil();  // NOTE: Inconsistent usage of object creation here
+      var stored = nil();
       var strategies = null;
 
       aStrats.forEach(function (aStrat) {
@@ -428,7 +390,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
   });
 
   Strategy.find({}, function (aErr, aStrats) {
-    var stored = nil(); // NOTE: Inconsistent usage of object creation here
+    var stored = nil();
 
     aStrats.forEach(function (aStrat) {
       stored[aStrat.name] = aStrat;
