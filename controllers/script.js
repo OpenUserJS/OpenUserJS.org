@@ -402,6 +402,8 @@ exports.view = function (aReq, aRes, aNext) {
 
 // route to edit a script
 exports.edit = function (aReq, aRes, aNext) {
+  //
+  var authedUser = aReq.session.user;
 
   // Support routes lacking the :username. TODO: Remove this functionality.
   aReq.params.username = authedUser.name.toLowerCase();
@@ -409,6 +411,7 @@ exports.edit = function (aReq, aRes, aNext) {
   var installNameSlug = scriptStorage.getInstallName(aReq);
   var isLib = aReq.params.isLib;
 
+  //---
   Script.findOne({
     installName: scriptStorage
       .caseSensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
@@ -431,7 +434,6 @@ exports.edit = function (aReq, aRes, aNext) {
 
     //
     var options = {};
-    var authedUser = aReq.session.user;
     var script = null;
     var scriptGroups = null;
     var tasks = [];
