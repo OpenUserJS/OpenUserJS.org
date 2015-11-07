@@ -6,18 +6,33 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+
+//--- Dependency inclusions
 var fs = require('fs');
 var PEG = require('pegjs');
 var AWS = require('aws-sdk');
 
+//--- Model inclusions
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
+
+//--- Controller inclusions
+
+//--- Library inclusions
+// var scriptStorageLib = require('../libs/scriptStorage');
+
 var RepoManager = require('../libs/repoManager');
 
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
+
+//--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
 
+//---
+
+// Load in the pegjs configuration files synchronously to detect immediate change errors.
+// NOTE: These aren't JSON so not included in configuration inclusions but nearby
 var parsers = (function () {
   return {
     UserScript: PEG.buildParser(fs.readFileSync('./public/pegjs/blockUserScript.pegjs', 'utf8'),
@@ -61,13 +76,14 @@ function caseInsensitive(aInstallName) {
 exports.caseInsensitive = caseInsensitive;
 
 function caseSensitive(aInstallName, aMoreThanInstallName) {
-
+  //
   var rMatchExpression = aMoreThanInstallName ? /^(.*)\/(.*)\/(.*)\/(.*)$/ : /^(.*)\/(.*)$/;
+  var matches = aInstallName.match(rMatchExpression);
+
   var char = null;
   var username = '';
   var rExpression = null;
 
-  var matches = aInstallName.match(rMatchExpression);
   if (matches) {
     if (aMoreThanInstallName) {
 
@@ -127,7 +143,8 @@ exports.getSource = function (aReq, aCallback) {
       // WARNING: Partial error handling at this stage
 
       if (!aScript) {
-        return aCallback(null);
+        aCallback(null);
+        return;
       }
 
       s3Object = s3.getObject({ Bucket: bucketName, Key: installName }).createReadStream().
@@ -136,7 +153,8 @@ exports.getSource = function (aReq, aCallback) {
             console.error('S3 Key Not Found ' + installName);
           }
 
-          return aCallback(null);
+          aCallback(null);
+          return;
         });
 
       // Get the script
@@ -148,13 +166,15 @@ exports.sendScript = function (aReq, aRes, aNext) {
   var accept = aReq.headers.accept;
 
   if (0 !== aReq.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
-    return exports.sendMeta(aReq, aRes, aNext);
+    exports.sendMeta(aReq, aRes, aNext);
+    return;
   }
 
   exports.getSource(aReq, function (aScript, aStream) {
 
     if (!aScript) {
-      return aNext();
+      aNext();
+      return;
     }
 
     // Send the script
@@ -192,7 +212,8 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       var whitespace = '\u0020\u0020\u0020\u0020';
 
       if (!aScript) {
-        return aNext();
+        aNext();
+        return;
       }
 
       meta = aScript.meta; // NOTE: Watchpoint
@@ -371,7 +392,8 @@ exports.getMeta = function (aBufs, aCallback) {
           blocks[parser] = parseMeta(parsers[parser], blocksContent[parser]);
         }
       }
-      return aCallback(blocks);
+      aCallback(blocks);
+      return;
     }
   }
 
@@ -397,7 +419,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
 
   if (!aMeta || process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
-    return aCallback(null);
+    aCallback(null);
+    return;
   }
 
   if (!isLibrary) {
@@ -405,7 +428,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
     // Can't install a script without a @name (maybe replace with random value)
     if (!name) {
-      return aCallback(null);
+      aCallback(null);
+      return;
     }
 
     name.forEach(function (aElement, aIndex, aArray) {
@@ -417,7 +441,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
     // Can't install a script without a cleaned @name (maybe replace with random value)
     if (!scriptName) {
-      return aCallback(null);
+      aCallback(null);
+      return;
     }
 
     author = findMeta(aMeta, 'OpenUserJS.author.0.value');
@@ -450,7 +475,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   } else {
     scriptName = cleanFilename(aMeta.replace(/^\s+|\s+$/g, ''), '');
     if (!scriptName) {
-      return aCallback(null);
+      aCallback(null);
+      return;
     }
 
     installName += scriptName + '.js';
@@ -462,7 +488,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       var script = null;
 
       if (aRemoved || (!aScript && (aUpdate || collaboration))) {
-        return aCallback(null);
+        aCallback(null);
+        return;
       } else if (!aScript) {
         // New script
         aScript = new Script({
@@ -496,7 +523,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
                 JSON.stringify(findMeta(script.meta, 'OpenUserJS.collaborator.value')) !==
                   JSON.stringify(collaborators))) {
 
-            return aCallback(null);
+            aCallback(null);
+            return;
           }
           aScript.meta = aMeta;
           aScript.uses = libraries;
@@ -523,7 +551,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
               console.error(aUser.name, '-', installName);
               console.error(JSON.stringify(aErr));
               console.error(JSON.stringify(aScript.toObject()));
-              return aCallback(null);
+              aCallback(null);
+              return;
             }
 
             if (aUser.role === userRoles.length - 1) {
