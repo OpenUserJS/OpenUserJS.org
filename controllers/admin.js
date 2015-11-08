@@ -407,6 +407,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
           delete strategyInstances[name];
           aCallback();
         });
+
         return;
       } else if (id && key) {
         if (stored[name]) {
@@ -482,12 +483,13 @@ exports.authAsUser = function (aReq, aRes, aNext) {
     options.user = user = modelParser.parseUser(aUser);
 
     if (authedUser.role >= user.role) {
-      return statusCodePage(aReq, aRes, aNext, {
+      statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
         statusMessage: authedUser.role == user.role
           ? 'Cannot auth as a user with the same rank.'
           : 'Cannot auth as a user with a higher rank.',
       });
+      return;
     }
 
     aReq.session.user = user;

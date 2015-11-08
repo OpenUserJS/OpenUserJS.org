@@ -276,7 +276,8 @@ var getScriptPageTasks = function (aOptions) {
       aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
 
       if (!aCanRemove) {
-        return aCallback();
+        aCallback();
+        return;
       }
 
       flagLib.getThreshold(Script, script, aAuthor, function (aThreshold) {

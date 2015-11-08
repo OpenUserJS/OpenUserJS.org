@@ -236,7 +236,8 @@ exports.callback = function (aReq, aRes, aNext) {
       addSession(aReq, aUser, function () {
         if (newstrategy && newstrategy !== strategy) {
           // Allow a user to link to another account
-          return aRes.redirect('/auth/' + newstrategy);
+          aRes.redirect('/auth/' + newstrategy);
+          return;
         } else {
           // Delete the username that was temporarily stored
           delete aReq.session.username;

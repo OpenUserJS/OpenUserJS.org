@@ -32,10 +32,11 @@ exports.rm = function (aReq, aRes, aNext) {
 
   // Check to make sure multipart form data submission header is present
   if (!/multipart\/form-data/.test(aReq.headers['content-type'])) {
-    return statusCodePage(aReq, aRes, aNext, {
+    statusCodePage(aReq, aRes, aNext, {
       statusCode: 400,
       statusMessage: 'Missing required header.'
     });
+    return;
   }
 
   form = new formidable.IncomingForm();
@@ -51,19 +52,21 @@ exports.rm = function (aReq, aRes, aNext) {
     // This occurs either when no reason is supplied,
     // or a rare edge case if the view is missing the input name.
     if (!reason) {
-      return statusCodePage(aReq, aRes, aNext, {
+      statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
         statusMessage: 'Missing reason for removal.'
       });
+      return;
     }
 
     // Simple error check for string null
     reason = reason.trim();
     if (reason === '') {
-      return statusCodePage(aReq, aRes, aNext, {
+      statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
         statusMessage: 'Invalid reason for removal.'
       });
+      return;
     }
 
     switch (type) {
@@ -73,7 +76,8 @@ exports.rm = function (aReq, aRes, aNext) {
         Script.findOne({ installName: path }, function (aErr, aScript) {
           removeLib.remove(Script, aScript, authedUser, reason, function (aRemoved) {
             if (!aRemoved) {
-              return aNext();
+              aNext();
+              return;
             }
             aRes.redirect('/');
           });
@@ -84,7 +88,8 @@ exports.rm = function (aReq, aRes, aNext) {
           function (aErr, aUser) {
             removeLib.remove(User, aUser, authedUser, reason, function (aRemoved) {
               if (!aRemoved) {
-                return aNext();
+                aNext();
+                return;
               }
 
               // Destroy all the sessions belonging to the removed user
