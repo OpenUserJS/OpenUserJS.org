@@ -313,7 +313,8 @@ exports.show = function (aReq, aRes, aNext) {
     var tasks = [];
 
     if (!aDiscussionData) {
-      return aNext();
+      aNext();
+      return;
     }
 
     // Session

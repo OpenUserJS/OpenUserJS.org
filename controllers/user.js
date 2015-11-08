@@ -783,7 +783,9 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
 
         // Get the strategies we have OAuth keys for
         aStrats.forEach(function (aStrat) {
-          if (aStrat.name === defaultStrategy) { return; }
+          if (aStrat.name === defaultStrategy) {
+            return;
+          }
 
           if (userStrats.indexOf(aStrat.name) > -1) {
             options.usedStrategies.push({

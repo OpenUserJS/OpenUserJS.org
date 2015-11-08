@@ -176,15 +176,13 @@ exports.view = function (aReq, aRes, aNext) {
     });
 
     // Read git branch name of current tree
-    tasks.push(
-      function (aCallback) {
-        git.branch(function (aStr) {
-          options.git.branch = aStr;
+    tasks.push(function (aCallback) {
+      git.branch(function (aStr) {
+        options.git.branch = aStr;
 
-          aCallback(null);
-        });
-      }
-    );
+        aCallback(null);
+      });
+    });
   }
 
   //---

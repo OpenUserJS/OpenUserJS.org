@@ -101,7 +101,8 @@ exports.list = function (aReq, aRes, aNext) {
     var tasks = [];
 
     if (aErr || !aScript) {
-      return aNext();
+      aNext();
+      return;
     }
 
     // Session
@@ -203,7 +204,8 @@ exports.view = function (aReq, aRes, aNext) {
     var tasks = [];
 
     if (aErr || !aScript) {
-      return aNext();
+      aNext();
+      return;
     }
 
     // Session
@@ -260,7 +262,8 @@ exports.view = function (aReq, aRes, aNext) {
       var scriptOpenIssueCountQuery = null;
 
       if (aErr || !aDiscussion) {
-        return aNext();
+        aNext();
+        return;
       }
 
       // Discussion
@@ -331,7 +334,8 @@ exports.open = function (aReq, aRes, aNext) {
 
     // ---
     if (aErr || !aScript) {
-      return aNext();
+      aNext();
+      return;
     }
 
     //
@@ -364,18 +368,21 @@ exports.open = function (aReq, aRes, aNext) {
 
     if (topic && content) {
       if (!topic.trim() || !content.trim()) {
-        return statusCodePage(aReq, aRes, aNext, {
+        statusCodePage(aReq, aRes, aNext, {
           statusCode: 403,
           statusMessage: 'You cannot post an empty issue topic to this ' +
             (type === 'libs' ? 'library' : 'script')
         });
+        return;
       }
 
       // Issue Submission
       discussionLib.postTopic(authedUser, category.slug, topic, content, true,
         function (aDiscussion) {
-          if (!aDiscussion)
-            return aRes.redirect('/' + encodeURI(category) + '/open');
+          if (!aDiscussion) {
+            aRes.redirect('/' + encodeURI(category) + '/open');
+            return;
+          }
 
           aRes.redirect(encodeURI(aDiscussion.path +
             (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
@@ -408,14 +415,16 @@ exports.comment = function (aReq, aRes, aNext) {
     var topic = aReq.params.topic;
 
     if (aErr || !aScript) {
-      return aNext();
+      aNext();
+      return;
     }
 
     if (!content || !content.trim()) {
-      return statusCodePage(aReq, aRes, aNext, {
+      statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
         statusMessage: 'You cannot post an empty comment to this issue'
       });
+      return;
     }
 
     discussionLib.findDiscussion(category, topic, function (aIssue) {
@@ -423,7 +432,8 @@ exports.comment = function (aReq, aRes, aNext) {
       var authedUser = aReq.session.user;
 
       if (!aIssue) {
-        return aNext();
+        aNext();
+        return;
       }
 
       discussionLib.postComment(authedUser, aIssue, content, false,
@@ -449,14 +459,16 @@ exports.changeStatus = function (aReq, aRes, aNext) {
     var changed = false;
 
     if (aErr || !aScript) {
-      return aNext();
+      aNext();
+      return;
     }
 
     discussionLib.findDiscussion(category, topic, function (aIssue) {
       var authedUser = aReq.session.user;
 
       if (!aIssue) {
-        return aNext();
+        aNext();
+        return;
       }
 
       // Both the script author and the issue creator can close the issue
