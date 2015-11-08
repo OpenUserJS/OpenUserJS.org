@@ -2,7 +2,7 @@
 
 /*
  * NOTE: This file is used as a general guideline to creating a new controller file.
- *       As the project progressing there may some changes to it.
+ *       As the project progresses there may some changes to it.
  *
  *       Please remember to omit this comment block when creating a new controller file.
  */

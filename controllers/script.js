@@ -38,6 +38,7 @@ var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Configuration inclusions
 var htmlWhitelistLink = require('../libs/htmlWhitelistLink.json');
+
 var removeReasons = require('../views/includes/scriptModals.json').removeReasons;
 
 //---
@@ -299,7 +300,6 @@ var setupScriptSidePanel = function (aOptions) {
 
   // Mod
   if (authedUser && authedUser.isMod) {
-    //aOptions.authorTools = {}; // TODO: Support moderator edits on scripts?
     aOptions.modTools = {};
 
     if (removeReasons) {

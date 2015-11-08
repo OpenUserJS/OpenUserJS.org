@@ -17,6 +17,8 @@ var git = require('git-rev');
 //--- Controller inclusions
 
 //--- Library inclusions
+// var documentLib = require('../libs/document');
+
 var modelParser = require('../libs/modelParser');
 
 var renderMd = require('../libs/markdown').renderMd;
@@ -71,66 +73,62 @@ exports.view = function (aReq, aRes, aNext) {
     //--- Tasks
 
     // Read the requested md file contents
-    tasks.push(
-      function (aCallback) {
-        fs.readFile(documentPath + '/' + document + '.md', 'utf8', function (aErr, aData) {
-          var lines = null;
-          var matches = null;
-          var heading = null;
-          var content = null;
+    tasks.push(function (aCallback) {
+      fs.readFile(documentPath + '/' + document + '.md', 'utf8', function (aErr, aData) {
+        var lines = null;
+        var matches = null;
+        var heading = null;
+        var content = null;
 
-          if (aErr) {
-            aCallback({ statusCode: 404, statusMessage: 'Error retrieving page' });
-            return;
-          }
+        if (aErr) {
+          aCallback({ statusCode: 404, statusMessage: 'Error retrieving page' });
+          return;
+        }
 
-          // Check if first line is h2 and use for title/heading if present
-          lines = aData.split('\n');
-          matches = lines[0].match(/^##\s(.*)$/);
-          if (matches) {
-            heading = lines.shift().replace(/^##\s+/, "");
-          } else {
-            heading = document;
-          }
-          content = lines.join('\n');
+        // Check if first line is h2 and use for title/heading if present
+        lines = aData.split('\n');
+        matches = lines[0].match(/^##\s(.*)$/);
+        if (matches) {
+          heading = lines.shift().replace(/^##\s+/, "");
+        } else {
+          heading = document;
+        }
+        content = lines.join('\n');
 
-          // Page metadata
-          pageMetadata(options, [heading, 'About']);
+        // Page metadata
+        pageMetadata(options, [heading, 'About']);
 
-          options.pageHeading = heading;
-          options.pageData = renderMd(content);
+        options.pageHeading = heading;
+        options.pageData = renderMd(content);
 
-          aCallback(null);
-        });
-      }
-    );
+        aCallback(null);
+      });
+    });
 
     // Read file listing
-    tasks.push(
-      function (aCallback) {
-        fs.readdir(documentPath, function (aErr, aFileList) {
-          var file = null;
+    tasks.push(function (aCallback) {
+      fs.readdir(documentPath, function (aErr, aFileList) {
+        var file = null;
 
-          if (aErr || !aFileList) {
-            aCallback({ statusCode: 500, statusMessage : 'Error retrieving page list' });
-            return;
+        if (aErr || !aFileList) {
+          aCallback({ statusCode: 500, statusMessage : 'Error retrieving page list' });
+          return;
+        }
+
+        // Dynamically create a file listing of the pages
+        options.fileList = [];
+        for (file in aFileList) {
+          if (/\.md$/.test(aFileList[file])) {
+            options.fileList.push({
+              href: aFileList[file].replace(/\.md$/, ''),
+              textContent: aFileList[file].replace(/\.md$/, '').replace(/-/g, ' ')
+            });
           }
+        }
 
-          // Dynamically create a file listing of the pages
-          options.fileList = [];
-          for (file in aFileList) {
-            if (/\.md$/.test(aFileList[file])) {
-              options.fileList.push({
-                href: aFileList[file].replace(/\.md$/, ''),
-                textContent: aFileList[file].replace(/\.md$/, '').replace(/-/g, ' ')
-              });
-            }
-          }
-
-          aCallback(null);
-        });
-      }
-    );
+        aCallback(null);
+      });
+    });
   }
   else {
     // Page metadata
@@ -169,16 +167,13 @@ exports.view = function (aReq, aRes, aNext) {
     //--- Tasks
 
     // Read git short hash HEAD for current tree
-    tasks.push(
+    tasks.push(function (aCallback) {
+      git.short(function (aStr) {
+        options.git.short = aStr;
 
-      function (aCallback) {
-        git.short(function (aStr) {
-          options.git.short = aStr;
-
-          aCallback(null);
-        });
-      }
-    );
+        aCallback(null);
+      });
+    });
 
     // Read git branch name of current tree
     tasks.push(

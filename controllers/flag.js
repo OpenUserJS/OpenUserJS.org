@@ -21,12 +21,12 @@ var scriptStorage = require('./scriptStorage');
 
 //--- Library inclusions
 var flagLib = require('../libs/flag');
+
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
 
 //---
-
 
 // Controller to flag and unflag content
 exports.flag = function (aReq, aRes, aNext) {

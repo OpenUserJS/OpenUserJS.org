@@ -22,12 +22,13 @@ var User = require('../models/user').User;
 var Discussion = require('../models/discussion').Discussion;
 
 //--- Controller inclusions
-var categories = require('./discussion').categories;
-var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 var scriptStorage = require('./scriptStorage');
 
+var categories = require('./discussion').categories;
+var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
+
 //--- Library inclusions
-//var userLib = require('../libs/user');
+// var userLib = require('../libs/user');
 
 var helpers = require('../libs/helpers');
 
@@ -150,7 +151,6 @@ var setupUserSidePanel = function (aOptions) {
 
   // Mod
   if (authedUser && authedUser.isMod && (authedUser.role < user.role || aOptions.isYou)) {
-    //aOptions.userTools = {}; // TODO: Support moderator edits of user profiles?
     aOptions.modTools = {};
 
     if (removeReasons) {
