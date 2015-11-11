@@ -76,7 +76,7 @@ exports.auth = function (aReq, aRes, aNext) {
   function auth() {
     var authenticate = null;
 
-    // Just in case some dumbass tries a bad /auth/* url
+    // Just in case someone tries a bad /auth/* url
     if (!strategyInstances[strategy]) {
       aNext();
       return;
