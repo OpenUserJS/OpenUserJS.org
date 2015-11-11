@@ -11,6 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var passport = require('passport');
 var jwt = require('jwt-simple');
 var url = require('url');
+var chalk = require('chalk');
 
 //--- Model inclusions
 var Strategy = require('../models/strategy.js').Strategy;
@@ -207,19 +208,45 @@ exports.callback = function (aReq, aRes, aNext) {
   // This callback will happen after the verify routine
   var authenticate = passport.authenticate(strategy, function (aErr, aUser, aInfo) {
     if (aErr) {
+      // Some possible catastrophic error with *passport*... and/or authentication
+      console.error(chalk.red(aErr));
+      if (aInfo) {
+        console.warn(chalk.yellow(aInfo));
+      }
+
       aNext(aErr);
       return;
     }
 
+    // If there is some info from *passport*... display it only in development and debug modes
+    // This includes, but not limited to, `username is taken`
+    if ((isDev || isDbg) && aInfo) {
+      console.warn(chalk.yellow(aInfo));
+    }
+
     if (!aUser) {
+      // If there is no User then authentication could have failed
+      // Only display if development or debug modes
+      if (isDev || isDbg) {
+        console.error(chalk.red('`User` not found'));
+      }
+
       aRes.redirect(doneUrl + (doneUrl === '/' ? 'register' : '') + '?authfail');
       return;
     }
 
     aReq.logIn(aUser, function (aErr) {
       if (aErr) {
+        console.error('Not logged in');
+        console.error(aErr);
+
         aNext(aErr);
         return;
+      }
+
+      // Show a console notice that successfully logged in with development and debug modes
+      if (isDev || isDbg) {
+        console.log(chalk.green('Logged in'));
       }
 
       // Store the user info in the session
