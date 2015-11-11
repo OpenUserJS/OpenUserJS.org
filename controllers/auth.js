@@ -183,7 +183,7 @@ exports.callback = function (aReq, aRes, aNext) {
   // Get the passport strategy instance so we can alter the _verify method
   strategyInstance = strategyInstances[strategy];
 
-  // Hijack the private verify method so we can fuck shit up freely
+  // Hijack the private verify method so we can mess stuff up freely
   // We use this library for things it was never intended to do
   if (openIdStrategies[strategy]) {
     strategyInstance._verify = function (aId, aDone) {
