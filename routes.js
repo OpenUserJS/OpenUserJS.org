@@ -75,11 +75,9 @@ module.exports = function (aApp) {
   aApp.route('/libs/:username/:scriptname').get(script.lib(script.view));
   aApp.route('/libs/:username/:scriptname/edit').get(authentication.validateUser, script.lib(script.edit)).post(authentication.validateUser, script.lib(script.edit));
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
-  aApp.route('/libs/src/:username/:scriptname').get(scriptStorage.sendScript);
 
   // Raw source
   aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(scriptStorage.sendScript);
-  aApp.route('/libs/src/:username/:scriptname').get(scriptStorage.sendScript); // Legacy
 
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(open|closed|all)?').get(issue.list);
