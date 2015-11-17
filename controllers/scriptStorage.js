@@ -65,10 +65,36 @@ if (isPro) {
   });
 }
 
-function getInstallName(aReq) {
-  return aReq.params.username + '/' + aReq.params.scriptname;
+function getScriptBaseName(aReq, aOptions) {
+  //
+  var base = null;
+
+  var username = aReq.params.username;
+  var scriptname = aReq.params.scriptname;
+
+  var rKnownExtensions = /(?:\.(?:user|meta))?\.js(?:on)?$/;
+
+  if (!aOptions) {
+    aOptions = {};
+  }
+
+  if (aOptions.hasExtension) {
+    scriptname = scriptname.replace(rKnownExtensions, '');
+  }
+
+  switch (aOptions.encoding) {
+    case 'uri':
+      base = encodeURIComponent(username) + '/' + encodeURIComponent(scriptname);
+      break;
+
+    default:
+      base = username + '/' + scriptname;
+  }
+
+
+  return base;
 }
-exports.getInstallName = getInstallName;
+exports.getScriptBaseName = getScriptBaseName;
 
 function caseInsensitive(aInstallName) {
   return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '$', 'i');
@@ -134,9 +160,13 @@ function caseSensitive(aInstallName, aMoreThanInstallName) {
 exports.caseSensitive = caseSensitive;
 
 exports.getSource = function (aReq, aCallback) {
-  var installName = getInstallName(aReq);
-  Script.findOne({ installName: caseSensitive(installName) },
-    function (aErr, aScript) {
+  var installName = getScriptBaseName(aReq, { hasExtension: true });
+  var isLib = aReq.params.isLib;
+
+  Script.findOne({
+      installName: caseSensitive(installName +
+        (isLib ? '.js' : '.user.js'))
+    }, function (aErr, aScript) {
       var s3Object = null;
       var s3 = new AWS.S3();
 
@@ -144,10 +174,11 @@ exports.getSource = function (aReq, aCallback) {
 
       if (!aScript) {
         aCallback(null);
+        console.warn('no script found' );
         return;
       }
 
-      s3Object = s3.getObject({ Bucket: bucketName, Key: installName }).createReadStream().
+      s3Object = s3.getObject({ Bucket: bucketName, Key: installName + (isLib ? '.js' : '.user.js') }).createReadStream().
         on('error', function () {
           if (isPro) {
             console.error('S3 Key Not Found ' + installName);
@@ -163,6 +194,11 @@ exports.getSource = function (aReq, aCallback) {
 };
 
 exports.sendScript = function (aReq, aRes, aNext) {
+
+  if (aReq.params.type === 'libs') {
+    aReq.params.isLib = true;
+  }
+
   var accept = aReq.headers.accept;
 
   if (0 !== aReq.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
@@ -204,9 +240,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
 // Send user script metadata block
 exports.sendMeta = function (aReq, aRes, aNext) {
-  var installName = getInstallName(aReq).replace(/\.meta\.(?:js|json)$/, '.user.js');
+  var installName = getScriptBaseName(aReq, { hasExtension: true });
 
-  Script.findOne({ installName: caseSensitive(installName) },
+  Script.findOne({ installName: caseSensitive(installName + '.user.js') },
     function (aErr, aScript) {
       var meta = null;
       var whitespace = '\u0020\u0020\u0020\u0020';
