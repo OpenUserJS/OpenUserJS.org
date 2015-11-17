@@ -321,11 +321,11 @@ var setupScriptSidePanel = function (aOptions) {
 // View a detailed description of a script
 // This is the most intensive page to render on the site
 exports.view = function (aReq, aRes, aNext) {
-  var installName = scriptStorage.getScriptBaseName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var isLib = aReq.params.isLib;
 
   Script.findOne({
-    installName: scriptStorage.caseSensitive(installName +
+    installName: scriptStorage.caseSensitive(installNameBase +
       (isLib ? '.js' : '.user.js'))
     }, function (aErr, aScriptData) {
       function preRender() {
@@ -377,7 +377,7 @@ exports.view = function (aReq, aRes, aNext) {
       options.script = script = modelParser.parseScript(aScriptData);
       options.isOwner = authedUser && authedUser._id == script._authorId;
       modelParser.renderScript(script);
-      script.installNameSlug = installName;
+      script.installNameSlug = installNameBase;
       script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
         script.scriptInstallPageUrl;
 
@@ -404,12 +404,12 @@ exports.view = function (aReq, aRes, aNext) {
 // route to edit a script
 exports.edit = function (aReq, aRes, aNext) {
   //
-  var installName = scriptStorage.getScriptBaseName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var isLib = aReq.params.isLib;
 
   //---
   Script.findOne({
-    installName: scriptStorage.caseSensitive(installName +
+    installName: scriptStorage.caseSensitive(installNameBase +
       (isLib ? '.js' : '.user.js'))
     }, function (aErr, aScriptData) {
       function preRender() {
@@ -498,7 +498,7 @@ exports.vote = function (aReq, aRes, aNext) {
   var unvote = false;
 
   var isLib = aReq.params.isLib;
-  var installName = scriptStorage.getScriptBaseName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
 
   // ---
   if (url.length > 5) {
@@ -520,7 +520,7 @@ exports.vote = function (aReq, aRes, aNext) {
   }
 
   Script.findOne({
-    installName: scriptStorage.caseSensitive(installName +
+    installName: scriptStorage.caseSensitive(installNameBase +
       (isLib ? '.js' : '.user.js'))
     }, function (aErr, aScript) {
       //

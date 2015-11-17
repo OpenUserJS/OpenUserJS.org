@@ -1598,7 +1598,7 @@ exports.editScript = function (aReq, aRes, aNext) {
   var options = {};
   var authedUser = aReq.session.user;
   var isNew = aReq.params.isNew;
-  var installName = null;
+  var installNameBase = null;
   var isLib = aReq.params.isLib;
   var tasks = [];
 
@@ -1619,10 +1619,10 @@ exports.editScript = function (aReq, aRes, aNext) {
   });
 
   if (!isNew) {
-    installName = scriptStorage.getScriptBaseName(aReq);
+    installNameBase = scriptStorage.getInstallNameBase(aReq);
 
     Script.findOne({
-      installName: scriptStorage.caseSensitive(installName +
+      installName: scriptStorage.caseSensitive(installNameBase +
         (isLib ? '.js' : '.user.js'))
       }, function (aErr, aScriptData) {
         //
@@ -1639,11 +1639,11 @@ exports.editScript = function (aReq, aRes, aNext) {
         options.script = script = modelParser.parseScript(aScriptData);
         options.isOwner = authedUser && authedUser._id == script._authorId;
         modelParser.renderScript(script);
-        script.installNameSlug = installName;
+        script.installNameSlug = installNameBase;
         script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
           script.scriptInstallPageUrl;
         script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
-          + scriptStorage.getScriptBaseName(aReq, { encoding: 'uri' }) +
+          + scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
             (isLib ? '.js#' : '.user.js#');
 
         // Page metadata
