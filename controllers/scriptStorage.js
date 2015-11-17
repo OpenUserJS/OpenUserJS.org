@@ -65,7 +65,7 @@ if (isPro) {
   });
 }
 
-function getScriptBaseName(aReq, aOptions) {
+function getInstallNameBase(aReq, aOptions) {
   //
   var base = null;
 
@@ -94,7 +94,7 @@ function getScriptBaseName(aReq, aOptions) {
 
   return base;
 }
-exports.getScriptBaseName = getScriptBaseName;
+exports.getInstallNameBase = getInstallNameBase;
 
 function caseInsensitive(aInstallName) {
   return new RegExp('^' + aInstallName.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '$', 'i');
@@ -160,11 +160,11 @@ function caseSensitive(aInstallName, aMoreThanInstallName) {
 exports.caseSensitive = caseSensitive;
 
 exports.getSource = function (aReq, aCallback) {
-  var installName = getScriptBaseName(aReq, { hasExtension: true });
+  var installNameBase = getInstallNameBase(aReq, { hasExtension: true });
   var isLib = aReq.params.isLib;
 
   Script.findOne({
-      installName: caseSensitive(installName +
+      installName: caseSensitive(installNameBase +
         (isLib ? '.js' : '.user.js'))
     }, function (aErr, aScript) {
       var s3Object = null;
@@ -178,10 +178,10 @@ exports.getSource = function (aReq, aCallback) {
         return;
       }
 
-      s3Object = s3.getObject({ Bucket: bucketName, Key: installName + (isLib ? '.js' : '.user.js') }).createReadStream().
+      s3Object = s3.getObject({ Bucket: bucketName, Key: installNameBase + (isLib ? '.js' : '.user.js') }).createReadStream().
         on('error', function () {
           if (isPro) {
-            console.error('S3 Key Not Found ' + installName);
+            console.error('S3 Key Not Found ' + installNameBase + (isLib ? '.js' : '.user.js'));
           }
 
           aCallback(null);
@@ -240,9 +240,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
 // Send user script metadata block
 exports.sendMeta = function (aReq, aRes, aNext) {
-  var installName = getScriptBaseName(aReq, { hasExtension: true });
+  var installNameBase = getInstallNameBase(aReq, { hasExtension: true });
 
-  Script.findOne({ installName: caseSensitive(installName + '.user.js') },
+  Script.findOne({ installName: caseSensitive(installNameBase + '.user.js') },
     function (aErr, aScript) {
       var meta = null;
       var whitespace = '\u0020\u0020\u0020\u0020';

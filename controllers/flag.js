@@ -49,7 +49,7 @@ exports.flag = function (aReq, aRes, aNext) {
     var type = aReq.params[0];
     var isLib = null;
 
-    var installName = null;
+    var installNameBase = null;
     var username = null;
 
     var authedUser = aReq.session.user;
@@ -84,14 +84,13 @@ exports.flag = function (aReq, aRes, aNext) {
         isLib = true;
         // fallthrough
       case 'scripts':
-
         aReq.params.username = aReq.params[2];
         aReq.params.scriptname = aReq.params[3]
 
-        installName = scriptStorage.getScriptBaseName(aReq);
+        installNameBase = scriptStorage.getInstallNameBase(aReq);
 
         Script.findOne({
-          installName: scriptStorage.caseSensitive(installName +
+          installName: scriptStorage.caseSensitive(installNameBase +
             (isLib ? '.js' : '.user.js'))
           },
           function (aErr, aScript) {
@@ -103,7 +102,7 @@ exports.flag = function (aReq, aRes, aNext) {
             }
 
             fn(Script, aScript, authedUser, reason, function (aFlagged) {
-              aRes.redirect((isLib ? '/libs/' : '/scripts/') + scriptStorage.getScriptBaseName(
+              aRes.redirect((isLib ? '/libs/' : '/scripts/') + scriptStorage.getInstallNameBase(
                 aReq, { encoding: 'uri' }));
             });
 

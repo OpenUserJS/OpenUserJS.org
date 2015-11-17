@@ -39,11 +39,11 @@ var orderDir = require('../libs/templateHelpers').orderDir;
 // List script issues
 exports.list = function (aReq, aRes, aNext) {
   //
-  var installName = scriptStorage.getScriptBaseName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var type = aReq.params.type;
 
   Script.findOne({
-    installName: scriptStorage.caseSensitive(installName +
+    installName: scriptStorage.caseSensitive(installNameBase +
       (type === 'libs' ? '.js' : '.user.js'))
     }, function (aErr, aScript) {
       function preRender() {
@@ -119,7 +119,7 @@ exports.list = function (aReq, aRes, aNext) {
 
       // Category
       category = {};
-      category.slug = type + '/' + installName + '/issues';
+      category.slug = type + '/' + installNameBase + '/issues';
       category.name = 'Issues';
       category.description = '';
       category = modelParser.parseCategory(category);
@@ -188,11 +188,11 @@ exports.list = function (aReq, aRes, aNext) {
 // Show the discussion on an issue
 exports.view = function (aReq, aRes, aNext) {
   //
-  var installName = scriptStorage.getScriptBaseName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var type = aReq.params.type;
 
   Script.findOne({
-    installName: scriptStorage.caseSensitive(installName +
+    installName: scriptStorage.caseSensitive(installNameBase +
       (type === 'libs' ? '.js' : '.user.js'))
     }, function (aErr, aScript) {
       //
@@ -219,7 +219,7 @@ exports.view = function (aReq, aRes, aNext) {
 
       // Category
       category = {};
-      category.slug = type + '/' + installName + '/issues';
+      category.slug = type + '/' + installNameBase + '/issues';
       category.name = 'Issues';
       category.description = '';
       category = modelParser.parseCategory(category);
@@ -311,11 +311,11 @@ exports.view = function (aReq, aRes, aNext) {
 // Open a new issue
 exports.open = function (aReq, aRes, aNext) {
   //
-  var installName = scriptStorage.getScriptBaseName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var type = aReq.params.type;
 
   Script.findOne({
-    installName: scriptStorage.caseSensitive(installName +
+    installName: scriptStorage.caseSensitive(installNameBase +
       (type === 'libs' ? '.js' : '.user.js'))
     }, function (aErr, aScript) {
       function preRender() {
@@ -358,7 +358,7 @@ exports.open = function (aReq, aRes, aNext) {
 
       // Category
       category = {};
-      category.slug = type + '/' + installName + '/issues';
+      category.slug = type + '/' + installNameBase + '/issues';
       category.name = 'Issues';
       category.description = '';
       category = modelParser.parseCategory(category);
@@ -403,16 +403,16 @@ exports.open = function (aReq, aRes, aNext) {
 // Post route to add a new comment to a discussion on an issue
 exports.comment = function (aReq, aRes, aNext) {
   //
-  var installName = scriptStorage.getScriptBaseName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var type = aReq.params.type;
 
   Script.findOne({
-    installName: scriptStorage.caseSensitive(installName +
+    installName: scriptStorage.caseSensitive(installNameBase +
       (type === 'libs' ? '.js' : '.user.js'))
     }, function (aErr, aScript) {
       //
       var content = aReq.body['comment-content'];
-      var category = type + '/' + installName + '/issues';
+      var category = type + '/' + installNameBase + '/issues';
       var topic = aReq.params.topic;
 
       if (aErr || !aScript) {
@@ -448,14 +448,14 @@ exports.comment = function (aReq, aRes, aNext) {
 
 // Open or close an issue you are allowed
 exports.changeStatus = function (aReq, aRes, aNext) {
-  var installName = scriptStorage.getScriptBaseName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var type = aReq.params.type;
 
   Script.findOne({
-    installName: scriptStorage.caseSensitive(installName +
+    installName: scriptStorage.caseSensitive(installNameBase +
       (type === 'libs' ? '.js' : '.user.js'))
     }, function (aErr, aScript) {
-      var category = type + '/' + installName + '/issues';
+      var category = type + '/' + installNameBase + '/issues';
       var topic = aReq.params.topic;
       var action = aReq.params.action;
       var changed = false;
