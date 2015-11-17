@@ -1391,7 +1391,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
                 }
 
                 aRes.redirect('/libs/' + encodeURI(aScript.installName
-                  .replace(rJS, '')));
+                  .replace(rJS, ''))); // TODO: Split handling
               });
           } else {
             aRes.redirect(failUrl);
@@ -1408,7 +1408,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
                 }
 
                 aRes.redirect('/scripts/' + encodeURI(aScript.installName
-                  .replace(rUserJS, '')));
+                  .replace(rUserJS, ''))); // TODO: Split handling
               });
           });
         }
@@ -1450,7 +1450,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
       scriptStorage.storeScript(aUser, aMeta, aSource, function (aScript) {
         var redirectUrl = encodeURI(aScript ? (aScript.isLib ? '/libs/'
           + aScript.installName.replace(rJS, '') : '/scripts/'
-          + aScript.installName.replace(rUserJS, '')) : decodeURI(aReq.body.url));
+          + aScript.installName.replace(rUserJS, '')) : decodeURI(aReq.body.url)); // TODO: Split handling
 
         if (!aScript || !aReq.body.original) {
           aRes.redirect(redirectUrl);
@@ -1469,7 +1469,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
             fork = aOrigScript.fork || [];
             fork.unshift({
               author: aOrigScript.author, url: aOrigScript
-                .installName.replace(aOrigScript.isLib ? rJS : rUserJS, '')
+                .installName.replace(aOrigScript.isLib ? rJS : rUserJS, '') // TODO: Split handling
             });
             aScript.fork = fork;
 
@@ -1598,7 +1598,7 @@ exports.editScript = function (aReq, aRes, aNext) {
   var options = {};
   var authedUser = aReq.session.user;
   var isNew = aReq.params.isNew;
-  var installNameSlug = null;
+  var installName = null;
   var isLib = aReq.params.isLib;
   var tasks = [];
 
@@ -1619,47 +1619,48 @@ exports.editScript = function (aReq, aRes, aNext) {
   });
 
   if (!isNew) {
-    installNameSlug = scriptStorage.getInstallName(aReq);
+    installName = scriptStorage.getScriptBaseName(aReq);
 
     Script.findOne({
-      installName: scriptStorage
-        .caseSensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
-    }, function (aErr, aScriptData) {
-      //
-      var script = null;
-      var scriptOpenIssueCountQuery = null;
+      installName: scriptStorage.caseSensitive(installName +
+        (isLib ? '.js' : '.user.js'))
+      }, function (aErr, aScriptData) {
+        //
+        var script = null;
+        var scriptOpenIssueCountQuery = null;
 
-      //---
-      if (aErr || !aScriptData) {
-        aNext();
-        return;
-      }
+        //---
+        if (aErr || !aScriptData) {
+          aNext();
+          return;
+        }
 
-      // Script
-      options.script = script = modelParser.parseScript(aScriptData);
-      options.isOwner = authedUser && authedUser._id == script._authorId;
-      modelParser.renderScript(script);
-      script.installNameSlug = installNameSlug;
-      script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
-        script.scriptInstallPageUrl;
-      script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
-        + installNameSlug + (isLib ? '.js' : '.user.js#');
+        // Script
+        options.script = script = modelParser.parseScript(aScriptData);
+        options.isOwner = authedUser && authedUser._id == script._authorId;
+        modelParser.renderScript(script);
+        script.installNameSlug = installName;
+        script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
+          script.scriptInstallPageUrl;
+        script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
+          + scriptStorage.getScriptBaseName(aReq, { encoding: 'uri' }) +
+            (isLib ? '.js#' : '.user.js#');
 
-      // Page metadata
-      pageMetadata(options);
+        // Page metadata
+        pageMetadata(options);
 
-      options.isScriptViewSourcePage = true;
+        options.isScriptViewSourcePage = true;
 
-      //--- Tasks
+        //--- Tasks
 
-      // Show the number of open issues
-      scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
-          .caseSensitive(script.issuesCategorySlug, true), open: {$ne: false} });
-      tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
+        // Show the number of open issues
+        scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+            .caseSensitive(script.issuesCategorySlug, true), open: {$ne: false} });
+        tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
 
-      //---
-      async.parallel(tasks, asyncComplete);
-    });
+        //---
+        async.parallel(tasks, asyncComplete);
+      });
   } else {
     //---
     async.parallel(tasks, asyncComplete);

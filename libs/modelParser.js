@@ -85,7 +85,7 @@ var getScriptPageUrl = function (aScript) {
   var isLib = aScript.isLib || false;
   var scriptPath = aScript.installName
     .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
-  return (isLib ? '/libs/' : '/scripts/') + encodeURI(scriptPath);
+  return (isLib ? '/libs/' : '/scripts/') + encodeURI(scriptPath); // TODO: Split handling
 };
 
 var getScriptViewSourcePageUrl = function (aScript) {
@@ -102,7 +102,7 @@ var getScriptEditSourcePageUrl = function (aScript) {
 
 var getScriptInstallPageUrl = function (aScript) {
   var isLib = aScript.isLib || false;
-  return (isLib ? '/src/libs/' : '/install/') + aScript.installName;
+  return (isLib ? '/src/libs/' : '/install/') + encodeURI(aScript.installName); // TODO: Split handling
 };
 
 //
@@ -190,7 +190,7 @@ var parseScript = function (aScriptData) {
   // Urls: Slugs
   script.authorSlug = script.author.name;
   script.nameSlug = cleanFilename(script.name);
-  script.installNameSlug = script.author.slug + '/' + script.nameSlug;
+  script.installNameSlug = encodeURIComponent(script.author.slug) + '/' + encodeURIComponent(script.nameSlug);
 
   // Urls: Public
   script.scriptPageUrl = getScriptPageUrl(script);
@@ -199,8 +199,8 @@ var parseScript = function (aScriptData) {
 
   // Urls: Issues
   var slug = (script.isLib ? 'libs' : 'scripts');
-  slug += '/' + script.author.slug;
-  slug += '/' + script.nameSlug;
+  slug += '/' + encodeURIComponent(script.author.slug);
+  slug += '/' + encodeURIComponent(script.nameSlug);
   script.issuesCategorySlug = slug + '/issues';
   script.scriptIssuesPageUrl = '/' + script.issuesCategorySlug;
   script.scriptOpenIssuePageUrl = '/' + slug + '/issue/new';

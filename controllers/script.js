@@ -321,173 +321,173 @@ var setupScriptSidePanel = function (aOptions) {
 // View a detailed description of a script
 // This is the most intensive page to render on the site
 exports.view = function (aReq, aRes, aNext) {
-  var installNameSlug = scriptStorage.getInstallName(aReq);
+  var installName = scriptStorage.getScriptBaseName(aReq);
   var isLib = aReq.params.isLib;
 
   Script.findOne({
-    installName: scriptStorage
-      .caseSensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
-  }, function (aErr, aScriptData) {
-    function preRender() {
-      if (script.groups) {
-        pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
-          script.description, _.pluck(script.groups, 'name'));
-      }
-    }
-
-    function render() {
-      aRes.render('pages/scriptPage', options);
-    }
-
-    function asyncComplete() {
-
-      async.parallel([
-        function (aCallback) {
-          if (!options.isAdmin) {  // NOTE: Watchpoint
-            aCallback();
-            return;
-          }
-          getFlaggedListForContent('Script', options, aCallback);
+    installName: scriptStorage.caseSensitive(installName +
+      (isLib ? '.js' : '.user.js'))
+    }, function (aErr, aScriptData) {
+      function preRender() {
+        if (script.groups) {
+          pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
+            script.description, _.pluck(script.groups, 'name'));
         }
-      ], function (aErr) {
-        preRender();
-        render();
-      });
+      }
 
-    }
+      function render() {
+        aRes.render('pages/scriptPage', options);
+      }
 
-    //
-    var options = {};
-    var authedUser = aReq.session.user;
-    var script = null;
-    var tasks = [];
+      function asyncComplete() {
 
-    //---
-    if (aErr || !aScriptData) {
-      aNext();
-      return;
-    }
+        async.parallel([
+          function (aCallback) {
+            if (!options.isAdmin) {  // NOTE: Watchpoint
+              aCallback();
+              return;
+            }
+            getFlaggedListForContent('Script', options, aCallback);
+          }
+        ], function (aErr) {
+          preRender();
+          render();
+        });
 
-    // Session
-    options.authedUser = authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.isMod;
-    options.isAdmin = authedUser && authedUser.isAdmin;
+      }
 
-    // Script
-    options.script = script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
-    modelParser.renderScript(script);
-    script.installNameSlug = installNameSlug;
-    script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
-      script.scriptInstallPageUrl;
+      //
+      var options = {};
+      var authedUser = aReq.session.user;
+      var script = null;
+      var tasks = [];
 
-    // Page metadata
-    pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
-      script.description);
-    options.isScriptPage = true;
+      //---
+      if (aErr || !aScriptData) {
+        aNext();
+        return;
+      }
 
-    // SearchBar
-    options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
-    options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
+      // Session
+      options.authedUser = authedUser = modelParser.parseUser(authedUser);
+      options.isMod = authedUser && authedUser.isMod;
+      options.isAdmin = authedUser && authedUser.isAdmin;
 
-    // SideBar
-    setupScriptSidePanel(options);
+      // Script
+      options.script = script = modelParser.parseScript(aScriptData);
+      options.isOwner = authedUser && authedUser._id == script._authorId;
+      modelParser.renderScript(script);
+      script.installNameSlug = installName;
+      script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
+        script.scriptInstallPageUrl;
 
-    //--- Tasks
-    tasks = tasks.concat(getScriptPageTasks(options));
+      // Page metadata
+      pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
+        script.description);
+      options.isScriptPage = true;
 
-    //---
-    async.parallel(tasks, asyncComplete);
-  });
+      // SearchBar
+      options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
+      options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
+
+      // SideBar
+      setupScriptSidePanel(options);
+
+      //--- Tasks
+      tasks = tasks.concat(getScriptPageTasks(options));
+
+      //---
+      async.parallel(tasks, asyncComplete);
+    });
 };
 
 // route to edit a script
 exports.edit = function (aReq, aRes, aNext) {
   //
-  var installNameSlug = scriptStorage.getInstallName(aReq);
+  var installName = scriptStorage.getScriptBaseName(aReq);
   var isLib = aReq.params.isLib;
 
   //---
   Script.findOne({
-    installName: scriptStorage
-      .caseSensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
-  }, function (aErr, aScriptData) {
-    function preRender() {
-      var groupNameList = (options.script.groups || []).map(function (aGroup) {
-        return aGroup.name;
-      });
-      options.groupNameListJSON = JSON.stringify(groupNameList);
-    }
+    installName: scriptStorage.caseSensitive(installName +
+      (isLib ? '.js' : '.user.js'))
+    }, function (aErr, aScriptData) {
+      function preRender() {
+        var groupNameList = (options.script.groups || []).map(function (aGroup) {
+          return aGroup.name;
+        });
+        options.groupNameListJSON = JSON.stringify(groupNameList);
+      }
 
-    function render() {
-      aRes.render('pages/scriptEditMetadataPage', options);
-    }
+      function render() {
+        aRes.render('pages/scriptEditMetadataPage', options);
+      }
 
-    function asyncComplete() {
-      preRender();
-      render();
-    }
+      function asyncComplete() {
+        preRender();
+        render();
+      }
 
-    //
-    var options = {};
-    var authedUser = aReq.session.user;
-    var script = null;
-    var scriptGroups = null;
-    var tasks = [];
+      //
+      var options = {};
+      var authedUser = aReq.session.user;
+      var script = null;
+      var scriptGroups = null;
+      var tasks = [];
 
-    // ---
-    if (aErr || !aScriptData) {
-      aNext();
-      return;
-    }
+      // ---
+      if (aErr || !aScriptData) {
+        aNext();
+        return;
+      }
 
-    // Session
-    options.authedUser = authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.isMod;
-    options.isAdmin = authedUser && authedUser.isAdmin;
+      // Session
+      options.authedUser = authedUser = modelParser.parseUser(authedUser);
+      options.isMod = authedUser && authedUser.isMod;
+      options.isAdmin = authedUser && authedUser.isAdmin;
 
-    // Page metadata
-    options.script = script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
-    pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
-      script.name);
+      // Page metadata
+      options.script = script = modelParser.parseScript(aScriptData);
+      options.isOwner = authedUser && authedUser._id == script._authorId;
+      pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
+        script.name);
 
-    // If authed user is not the script author.
-    if (!options.isOwner) {
-      aNext();
-      return;
-    }
+      // If authed user is not the script author.
+      if (!options.isOwner) {
+        aNext();
+        return;
+      }
 
-    // SearchBar
-    options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
-    options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
+      // SearchBar
+      options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
+      options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
 
-    if (aReq.body.remove) {
-      // POST
-      scriptStorage.deleteScript(aScriptData.installName, function () {
-        aRes.redirect(authedUser.userScriptListPageUrl);
-      });
-    } else if (typeof aReq.body.about !== 'undefined') {
-      // POST
-      aScriptData.about = aReq.body.about;
-      scriptGroups = (aReq.body.groups || '');
-      scriptGroups = scriptGroups.split(/,/);
-      addScriptToGroups(aScriptData, scriptGroups, function () {
-        aRes.redirect(script.scriptPageUrl);
-      });
-    } else {
-      // GET
+      if (aReq.body.remove) {
+        // POST
+        scriptStorage.deleteScript(aScriptData.installName, function () {
+          aRes.redirect(authedUser.userScriptListPageUrl);
+        });
+      } else if (typeof aReq.body.about !== 'undefined') {
+        // POST
+        aScriptData.about = aReq.body.about;
+        scriptGroups = (aReq.body.groups || '');
+        scriptGroups = scriptGroups.split(/,/);
+        addScriptToGroups(aScriptData, scriptGroups, function () {
+          aRes.redirect(script.scriptPageUrl);
+        });
+      } else {
+        // GET
 
-      options.script = script;
+        options.script = script;
 
-      tasks = tasks.concat(getScriptPageTasks(options));
+        tasks = tasks.concat(getScriptPageTasks(options));
 
-      // Groups
-      options.canCreateGroup = (!script._groupId).toString();
+        // Groups
+        options.canCreateGroup = (!script._groupId).toString();
 
-      async.parallel(tasks, asyncComplete);
-    }
-  });
+        async.parallel(tasks, asyncComplete);
+      }
+    });
 };
 
 // Script voting
@@ -498,8 +498,7 @@ exports.vote = function (aReq, aRes, aNext) {
   var unvote = false;
 
   var isLib = aReq.params.isLib;
-  var installName = scriptStorage.getInstallName(aReq)
-    + (isLib ? '.js' : '.user.js');
+  var installName = scriptStorage.getScriptBaseName(aReq);
 
   // ---
   if (url.length > 5) {
@@ -520,8 +519,10 @@ exports.vote = function (aReq, aRes, aNext) {
     return;
   }
 
-  Script.findOne({ installName: scriptStorage.caseSensitive(installName) },
-    function (aErr, aScript) {
+  Script.findOne({
+    installName: scriptStorage.caseSensitive(installName +
+      (isLib ? '.js' : '.user.js'))
+    }, function (aErr, aScript) {
       //
       var authedUser = aReq.session.user;
 
@@ -595,6 +596,5 @@ exports.vote = function (aReq, aRes, aNext) {
           aVoteModel.save(saveScript);
         }
       );
-    }
-  );
+    });
 };
