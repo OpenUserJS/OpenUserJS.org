@@ -110,7 +110,7 @@ module.exports = function (aApp) {
   aApp.route(/^\/flag\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(flag.flag);
 
   // Remove route
-  aApp.route(/^\/remove\/(.+?)\/(.+)$/).post(remove.rm);
+  aApp.route(/^\/remove\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(remove.rm);
 
   // Group routes
   aApp.route('/groups').get(group.list);

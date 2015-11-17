@@ -84,7 +84,6 @@ exports.flag = function (aReq, aRes, aNext) {
         isLib = true;
         // fallthrough
       case 'scripts':
-
         aReq.params.username = aReq.params[2];
         aReq.params.scriptname = aReq.params[3]
 
