@@ -49,7 +49,8 @@ module.exports = function (aApp) {
     'dist/fonts/glyphicons-halflings-regular.eot': { maxage: day * 7 },
     'dist/fonts/glyphicons-halflings-regular.svg': { maxage: day * 7 },
     'dist/fonts/glyphicons-halflings-regular.ttf': { maxage: day * 7 },
-    'dist/fonts/glyphicons-halflings-regular.woff': { maxage: day * 7 }
+    'dist/fonts/glyphicons-halflings-regular.woff': { maxage: day * 7 },
+    'dist/fonts/glyphicons-halflings-regular.woff2': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'bootstrap-markdown/', {
