@@ -1,8 +1,4 @@
 {
-  "amazon": {
-    "name": "Amazon",
-    "oauth": true
-  },
   "aol": {
     "name": "AOL",
     "oauth": false
