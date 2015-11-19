@@ -337,11 +337,14 @@ exports.adminNpmListView = function (aReq, aRes, aNext) {
 
   exec('npm ls --json', function (aErr, aStdout, aStderr) {
     if (aErr) {
-      aRes.status(501).send({ status: 501, message: 'Not implemented.' });
-      return;
+      console.warn(aErr);
     }
 
-    aRes.json(JSON.parse(aStdout));
+    try {
+      aRes.json(JSON.parse(aStdout));
+    } catch (aE) {
+      aRes.status(520).send({ status: 520, message: 'Unknown error.' });
+    }
   });
 };
 
