@@ -51,7 +51,6 @@ Repository | Reference | Recent Version
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
 [octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl] [3.1.0 hash][octiconsGHHASHUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
-[passport-amazon][passport-amazonGHUrl] | [Documentation][passport-amazonDOCUrl] | [![NPM version][passport-amazonNPMVersionImage]][passport-amazonNPMUrl]
 [passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
 [passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl]
 [passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl]
@@ -278,11 +277,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passportDOCUrl]: http://passportjs.org/
 [passportNPMUrl]: https://www.npmjs.com/package/passport
 [passportNPMVersionImage]: https://img.shields.io/npm/v/passport.svg?style=flat
-
-[passport-amazonGHUrl]: https://github.com/jaredhanson/passport-amazon
-[passport-amazonDOCUrl]: https://github.com/jaredhanson/passport-amazon/blob/master/README.md
-[passport-amazonNPMUrl]: https://www.npmjs.com/package/passport-amazon
-[passport-amazonNPMVersionImage]: https://img.shields.io/npm/v/passport-amazon.svg?style=flat
 
 [passport-aolGHUrl]: http://github.com/jaredhanson/passport-aol
 [passport-aolDOCUrl]: https://github.com/jaredhanson/passport-aol/blob/master/README.md
