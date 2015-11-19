@@ -42,6 +42,7 @@ Repository | Reference | Recent Version
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
 [jwt-simple][jwt-simpleGHUrl] | [Documentation][jwt-simpleDOCUrl] | [![NPM version][jwt-simpleNPMVersionImage]][jwt-simpleNPMUrl]
+[kerberos][kerberosGHUrl] | [Documentation][kerberosDOCUrl] | [![NPM version][kerberosNPMVersionImage]][kerberosNPMUrl]
 [less-middleware][less-middlewareGHUrl][&#x00b9;][lessGHUrl] | [Documentation][less-middlewareDOCUrl][&#x00b9;][lessDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
@@ -228,6 +229,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [jwt-simpleNPMVersionImage]: https://img.shields.io/npm/v/jwt-simple.svg?style=flat
 [jwt-simpleGHUrl]: https://github.com/hokaccha/node-jwt-simple
 [jwt-simpleDOCUrl]: https://github.com/hokaccha/node-jwt-simple/blob/master/README.md
+
+[kerberosNPMUrl]: https://www.npmjs.com/package/kerberos
+[kerberosNPMVersionImage]: https://img.shields.io/npm/v/kerberos.svg?style=flat
+[kerberosGHUrl]: https://github.com/christkv/kerberos
+[kerberosDOCUrl]: https://github.com/christkv/kerberos/blob/master/README.md
 
 [less-middlewareGHUrl]: https://github.com/emberfeather/less.js-middleware
 [less-middlewareDOCUrl]: https://github.com/emberfeather/less.js-middleware/blob/master/readme.md
