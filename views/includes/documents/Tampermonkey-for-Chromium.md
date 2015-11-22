@@ -45,6 +45,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 ### More
 
 * [Get Tampermonkey from the Chrome Web Store][gooChromeWebStoreTampermonkey]
+* [Tampermonkey for Chrome][tampermonkeyForChrome]
 * [Tampermonkey for Opera][tampermonkeyForOpera]
 * [Tampermonkey for Android][tampermonkeyForAndroid]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
@@ -62,5 +63,6 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.png "Ready to install a script"
 [tampermonkeyChromeScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr4.gif "Installing a script"
 [tampermonkeyChromeScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr5.png "Tampermonkey Dashboard"
+[tampermonkeyForChrome]: Tampermonkey-for-Chrome
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
