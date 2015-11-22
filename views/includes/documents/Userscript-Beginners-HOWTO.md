@@ -30,6 +30,7 @@ Find your web browser in the table below, and follow the links to find out the o
 Web browser | Installation Method
 ---  | ---
 [Chrome][chrome] | [Tampermonkey][tampermonkeyForChrome]
+[Chromium][chromium] | [Tampermonkey][tampermonkeyForChromium]
 [Firefox][firefox] | [Greasemonkey][greasemonkeyForFirefox]
 [Opera][opera] | [Violentmonkey][violentMonekyForOpera]
 [Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
@@ -42,9 +43,11 @@ Web browser | Installation Method
 [greasemonkeyPortForSeaMonkey]: Greasemonkey-Port-for-SeaMonkey
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
+[tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [violentMonekyForOpera]: Violentmonkey-for-Opera
 [chrome]: Chrome
+[chromium]: Chromium
 [firefox]: Firefox
 [opera]: Opera
 [seamonkey]: SeaMonkey
