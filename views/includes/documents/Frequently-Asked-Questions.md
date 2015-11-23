@@ -6,7 +6,7 @@ In this FAQ here are some of the most common questions and answers asked, some m
 
 A: Place two line breaks in between your quote and reply like this:
 
-```
+``` md
 > Something to be quoted
 
 This is my reply
