@@ -4,7 +4,7 @@ In this FAQ here are some of the most common questions and answers asked, some m
 
 ### Q: With markdown why does my quoted text merge with my response?
 
-#### A: Place two line breaks in between your quote and reply like this:
+A: Place two line breaks in between your quote and reply like this:
 
 ```
 > Something to be quoted
@@ -24,7 +24,7 @@ This is my reply
 
 ### Q: How do I ensure the correct syntax highlighting of my code snippets?
 
-#### A: Use markdown like these:
+A: Use markdown like these:
 
 Example 1:
 
@@ -86,7 +86,7 @@ The smaller the code snippet, or having a flawed Code snippet, the more likely i
 
 ### Q: Does OpenUserJS.org have meta?
 
-#### A: Yes, use the meta routine.
+A: Yes, use the meta routine.
 
 Multiple forms exist for various purposes:
 
@@ -104,7 +104,7 @@ A Userscript Unit Test is available to demonstrate and test these features at [o
 
 ### Q: Is there a way to not to count script updates with this sites install counter?
 
-#### A: Yes, use the raw source route like this in the UserScript metadata block:
+A: Yes, use the raw source route like this in the UserScript metadata block:
 
 ``` js
 // @updateURL https://openuserjs.org/meta/username/scriptname.meta.js
