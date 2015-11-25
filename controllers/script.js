@@ -87,7 +87,7 @@ var getScriptPageTasks = function (aOptions) {
 
   // Show the number of open issues
   scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
-    .caseSensitive(script.issuesCategorySlug, true), open: {$ne: false} });
+    .caseSensitive(decodeURIComponent(script.issuesCategorySlug), true), open: {$ne: false} });
   tasks.push(countTask(scriptOpenIssueCountQuery, aOptions, 'issueCount'));
 
   // Show the groups the script belongs to

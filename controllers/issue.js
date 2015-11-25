@@ -169,7 +169,7 @@ exports.list = function (aReq, aRes, aNext) {
 
       // Show the number of open issues
       scriptOpenIssueCountQuery = Discussion.find({
-        category: script.issuesCategorySlug,
+        category: decodeURIComponent(script.issuesCategorySlug),
         open: { $ne: false }
       });
       tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
@@ -292,7 +292,7 @@ exports.view = function (aReq, aRes, aNext) {
 
         // Show the number of open issues
         scriptOpenIssueCountQuery = Discussion.find({
-          category: script.issuesCategorySlug,
+          category: decodeURIComponent(script.issuesCategorySlug),
           open: { $ne: false }
         });
         tasks.push(countTask(scriptOpenIssueCountQuery, options, 'issueCount'));
