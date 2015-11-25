@@ -61,7 +61,7 @@ function sanitize(aHtml) {
 blockRenderers.forEach(function (aType) {
   renderer[aType] = function () {
     return sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments)
-      .replace(/(^|\s|>)@([^\s\\\/:*?\'\"<>|#;@=&]+)/gm,
+      .replace(/(^|\s|(?:[^c][^o][^d][^e])>)@([^\s\\\/:*?\'\"<>|#;@=&]+)/gm,
       '$1<a href="/users/$2">@$2</a>'));
   };
 });
