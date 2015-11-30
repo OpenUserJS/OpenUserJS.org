@@ -287,7 +287,7 @@ Checking your installation is a snap by by:
 $ node -v
 $ npm -v
 ```
-It is highly recommended to update to the latest npm by using npm itself to update itself with:
+It may be recommended to update to the latest npm by using npm itself to update itself with:
 
 ``` sh-session
 $ sudo npm install npm -g
