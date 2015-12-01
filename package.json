@@ -17,7 +17,7 @@
     "express": "4.13.3",
     "express-minify": "0.1.6",
     "express-session": "1.12.1",
-    "font-awesome": "4.4.0",
+    "font-awesome": "4.5.0",
     "formidable": "1.0.17",
     "git-rev": "0.2.1",
     "github": "0.2.4",
