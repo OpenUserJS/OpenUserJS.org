@@ -68,6 +68,10 @@ module.exports = function (aApp) {
     'fonts/FontAwesome.otf': { maxage: day * 7 }
   });
 
+  serveModule('/redist/npm/', 'highlight.js/', {
+    'styles/github.css': { maxage: day * 1 }
+  });
+
   serveModule('/redist/npm/', 'jquery/', {
     'dist/jquery.js': { maxage: day * 7 },
     'dist/jquery.min.map': { maxage: day * 7 }
