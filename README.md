@@ -165,7 +165,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [compressionNPMVersionImage]: https://img.shields.io/npm/v/compression.svg?style=flat
 
 [connect-mongoGHUrl]: https://github.com/kcbanner/connect-mongo
-[connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/Readme.md
+[connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/README.md
 [connect-mongoNPMUrl]: https://www.npmjs.com/package/connect-mongo
 [connect-mongoNPMVersionImage]: https://img.shields.io/npm/v/connect-mongo.svg?style=flat
 
