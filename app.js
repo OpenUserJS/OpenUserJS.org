@@ -36,7 +36,15 @@ var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
-var dbOptions = { server: { socketOptions: { keepAlive: 1 } } };
+var dbOptions = {
+  server: {
+    socketOptions: {
+      keepAlive: 1
+    },
+    reconnectTries: 60,
+    reconnectInterval: 4000
+  }
+};
 
 var fs = require('fs');
 var http = require('http');
