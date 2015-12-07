@@ -26,6 +26,7 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
 var passport = require('passport');
+var chalk = require('chalk');
 
 var app = express();
 
@@ -59,7 +60,12 @@ app.set('securePort', process.env.SECURE_PORT || null);
 // Connect to the database
 mongoose.connect(connectStr, dbOptions);
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {});
+db.once('open', function () {
+  var admin = new mongoose.mongo.Admin(mongoose.connection.db);
+  admin.buildInfo(function (aErr, aInfo) {
+    console.log(chalk.green('Connected to MongoDB v' + aInfo.version));
+  });
+});
 
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
