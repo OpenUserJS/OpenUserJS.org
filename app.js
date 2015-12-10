@@ -5,6 +5,14 @@ var isPro = require('./libs/debug').isPro;
 var isDev = require('./libs/debug').isDev;
 var isDbg = require('./libs/debug').isDbg;
 
+// Stamp a message for stdout...
+console.log('Starting application...');
+
+//  ... and stderr
+if (isPro) {
+  console.warn('Starting application...');
+}
+
 //
 var path = require('path');
 
