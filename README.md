@@ -6,7 +6,7 @@ Repository | Reference | Recent Version
 :--- | :---: | :---
 [nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | [![nodejs][nodeVersionImage]][nodejsDLUrl] [CHANGELOG][nodejsReleasesUrl]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
-[bundler][bundlerGHUrl] | [Documentation][bundlerDOCUrl] | [![GEM version][bundlerGEMVersionImage]][bundlerGEMUrl]
+[bundler][bundlerGHUrl] | [Documentation][bundlerDOCUrl] | [![GEM version][bundlerGEMVersionImage]][bundlerGEMUrl] [CHANGELOG][bundlerGHReleasesUrl]
 
 ### Contributing
 
@@ -153,6 +153,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [bundlerDOCUrl]: http://bundler.io/
 [bundlerGEMUrl]: http://rubygems.org/gems/bundler
 [bundlerGEMVersionImage]: http://img.shields.io/gem/v/bundler.svg?style=flat
+[bundlerGHReleasesUrl]: https://github.com/bundler/bundler/blob/master/CHANGELOG.md
 
 [chalkGHUrl]: https://github.com/chalk/chalk
 [chalkDOCUrl]: https://github.com/chalk/chalk/blob/master/readme.md
