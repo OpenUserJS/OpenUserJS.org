@@ -50,7 +50,7 @@ Repository | Reference | Recent Version
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [morgan][morganGHUrl] | [Documentation][morganDOCUrl] | [![NPM version][morganNPMVersionImage]][morganNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
-[octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl] [3.1.0 hash][octiconsGHHASHUrl]
+[octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
 [passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
 [passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl]
@@ -277,7 +277,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [octiconsUrl]: https://octicons.github.com/
 [octiconsGHUrl]: https://github.com/github/octicons
 [octiconsDOCUrl]: https://octicons.github.com/usage/
-[octiconsGHHASHUrl]: https://github.com/github/octicons/tree/d622851
 [octiconsNPMUrl]: https://www.npmjs.com/package/octicons
 [octiconsNPMVersionImage]: https://img.shields.io/npm/v/octicons.svg?style=flat
 
