@@ -174,13 +174,16 @@ exports.getSource = function (aReq, aCallback) {
 
       if (!aScript) {
         aCallback(null);
-        console.warn('no script found' );
+        if (isDbg) {
+          console.warn('no script found yet' );
+        }
         return;
       }
 
       s3Object = s3.getObject({ Bucket: bucketName, Key: installNameBase + (isLib ? '.js' : '.user.js') }).createReadStream().
         on('error', function () {
-          if (isPro) {
+          // TODO: #486
+          if (isDbg) {
             console.error('S3 Key Not Found ' + installNameBase + (isLib ? '.js' : '.user.js'));
           }
 

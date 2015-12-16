@@ -45,13 +45,32 @@ var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
+
 var dbOptions = {
   server: {
+    poolSize: 5,
     socketOptions: {
-      keepAlive: 1
+      autoReconnect: false,
+      noDelay: true,
+      keepAlive: 1,
+      connectTimeoutMS: 0,
+      socketTimeoutMS: 0
     },
-    reconnectTries: 60,
-    reconnectInterval: 4000
+    reconnectTries: 30,
+    reconnectInterval: 1000
+  }
+};
+
+if (isPro) {
+  dbOptions.replset = {
+    secondaryAcceptableLatencyMS: 15,
+    poolSize: 5,
+    socketOptions: {
+      noDelay: true,
+      keepAlive: 0,
+      connectTimeoutMS: 0,
+      socketTimeoutMS: 0
+    }
   }
 };
 
