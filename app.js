@@ -86,11 +86,35 @@ app.set('securePort', process.env.SECURE_PORT || null);
 
 // Connect to the database
 mongoose.connect(connectStr, dbOptions);
-db.on('error', console.error.bind(console, 'connection error:'));
+
+// Trap a few events for MongoDB
+db.on('error', function () {
+  console.error(chalk.red('MongoDB connection error'));
+});
+
 db.once('open', function () {
+  console.log(chalk.green('MongoDB connection is opened'));
+});
+
+db.on('connected', function () {
   var admin = new mongoose.mongo.Admin(mongoose.connection.db);
   admin.buildInfo(function (aErr, aInfo) {
     console.log(chalk.green('Connected to MongoDB v' + aInfo.version));
+  });
+});
+
+db.on('disconnected', function () {
+  console.error(chalk.yellow('\nMongoDB connection is disconnected'));
+});
+
+db.on('reconnected', function () {
+  console.error(chalk.yellow('MongoDB connection is reconnected'));
+});
+
+process.on('SIGINT', function () {
+  db.close(function () {
+    console.log(chalk.green('MongoDB connection disconnected gracefully with app termination'));
+    process.exit(0);
   });
 });
 
