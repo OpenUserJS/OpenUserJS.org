@@ -321,7 +321,11 @@ var parseGroup = function (aGroupData) {
 
       group.updated = new Date();
       group.save(function (aErr, aGroup) {
-        console.log(util.format('Group(%s) Rating Updated', aGroup.name));
+        if (aErr || !aGroup) {
+          console.error('Group rating NOT updated', 'aErr := ' + aErr, 'aGroup := ' + aGroup);
+          return;
+        }
+        console.log(util.format('Group(%s) rating updated', aGroup.name));
       });
     });
   }
