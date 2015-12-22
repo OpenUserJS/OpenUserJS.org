@@ -307,3 +307,8 @@ ul.flaggedList {
   list-style-type: none;
   padding-left: 0;
 }
+
+/* A *bootstrap* fix for drop-down menus on buttons */
+.navbar {
+  position: static;
+}
