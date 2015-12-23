@@ -224,7 +224,9 @@ if (minify && !isDbg) {
 }
 
 app.use(function(aReq, aRes, aNext) {
-  if (/\.(user|meta)\.js$/.test(aReq.url)) {
+  var pathname = aReq._parsedUrl.pathname;
+
+  if (/(\.user|\.meta)?\.js$/.test(pathname) && /^\/(install|src)\//.test(pathname)) {
     aRes._uglifyOutput = {
       comments: true
     };

@@ -218,8 +218,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
     // Send the script
     aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
 
-    // Disable *express-minify* for responses that don't contain `.min.` extension
-    if (!/\.min\.user\.js$/.test(aReq.url)) {
+    // Disable *express-minify* for response that don't contain `.min.` extension
+    if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)) {
       aRes._skip = true;
     }
 
