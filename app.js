@@ -223,6 +223,15 @@ if (minify && !isDbg) {
   app.use(minify());
 }
 
+app.use(function(aReq, aRes, aNext) {
+  if (/\.(user|meta)\.js$/.test(aReq.url)) {
+    aRes._uglifyOutput = {
+      comments: true
+    };
+  }
+  aNext();
+});
+
 app.use(lessMiddleware(__dirname + '/public', {
   render: {
     compress: false,

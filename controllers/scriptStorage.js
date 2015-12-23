@@ -72,7 +72,7 @@ function getInstallNameBase(aReq, aOptions) {
   var username = aReq.params.username;
   var scriptname = aReq.params.scriptname;
 
-  var rKnownExtensions = /(?:\.(?:user|meta))?\.js(?:on)?$/;
+  var rKnownExtensions = /\.((min\.)?(user\.)?js|meta\.js(on)?)$/;
 
   if (!aOptions) {
     aOptions = {};
@@ -197,7 +197,6 @@ exports.getSource = function (aReq, aCallback) {
 };
 
 exports.sendScript = function (aReq, aRes, aNext) {
-
   if (aReq.params.type === 'libs') {
     aReq.params.isLib = true;
   }
@@ -219,8 +218,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
     // Send the script
     aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
 
-    // Disable *express-minify* for this response
-    aRes._skip = true;
+    // Disable *express-minify* for responses that don't contain `.min.` extension
+    if (!/\.min\.user\.js$/.test(aReq.url)) {
+      aRes._skip = true;
+    }
 
     aStream.setEncoding('utf8');
     aStream.pipe(aRes);
@@ -484,6 +485,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       return;
     }
 
+    // Can't install a userscript ending in a reserved extension
+    if (/\.min$/.test(scriptName)) {
+      aCallback(null);
+      return;
+    }
+
     author = findMeta(aMeta, 'OpenUserJS.author.0.value');
     collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');
 
@@ -514,6 +521,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   } else {
     scriptName = cleanFilename(aMeta.replace(/^\s+|\s+$/g, ''), '');
     if (!scriptName) {
+      aCallback(null);
+      return;
+    }
+
+    // Can't install a library ending in a reserved extension
+    if (/\.(min|user)$/.test(scriptName)) {
       aCallback(null);
       return;
     }

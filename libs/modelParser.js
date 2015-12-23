@@ -195,6 +195,7 @@ var parseScript = function (aScriptData) {
   // Urls: Public
   script.scriptPageUrl = getScriptPageUrl(script);
   script.scriptInstallPageUrl = getScriptInstallPageUrl(script);
+  script.scriptInstallPageXUrl = script.scriptInstallPageUrl.replace(/(\.user)?\.js/, '');
   script.scriptViewSourcePageUrl = getScriptViewSourcePageUrl(script);
 
   // Urls: Issues
