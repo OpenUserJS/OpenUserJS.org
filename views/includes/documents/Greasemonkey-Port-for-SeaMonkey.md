@@ -69,5 +69,5 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [greasemonkeyPortSFscreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport1.png "Greasemonkey Port on SourceForge"
 [greasemonkeyPortSeaMonkeyScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport2.png "Firefox add-on installation warning"
 [greasemonkeyPortSeaMonkeyScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport3.png "Greasemonkey Port installed"
-[oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.png "Ready to install a script"
+[oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [greasemonkeyInstallationScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport4.png "Greasemonkey Port script installation warning"
