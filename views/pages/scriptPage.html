@@ -16,8 +16,12 @@
             {{#script.isLib}}
             <div class="form-group">
               <div class="input-group col-xs-12">
-                <div class="input-group-addon">// @require </div>
-                <input type="text" class="form-control" value="{{{script.scriptPermalinkInstallPageUrl}}}">
+                <div class="input-group input-group-addon">// @require </div>
+                <input type="text" class="form-control" id="require" value="{{{script.scriptPermalinkInstallPageUrl}}}" readonly="readonly">
+                <span class="input-group-btn">
+                  <button class="btn btn-warning" id="require-min" data-clipboard-text="// @require {{{script.scriptPermalinkInstallPageXUrl}}}.min.js" title="EXPERIMENTAL: Copy key and minified URL to clipboard"><i class="glyphicon glyphicon-copy"></i></button>
+                  <button class="btn btn-info" id="require-raw" data-clipboard-text="// @require {{{script.scriptPermalinkInstallPageUrl}}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i></button>
+                </span>
               </div>
             </div>
             {{/script.isLib}}
@@ -114,5 +118,8 @@
   {{> includes/scriptModals.html }}
   {{> includes/footer.html }}
   {{> includes/scripts/lazyIconScript.html }}
+  {{#script.isLib}}
+    {{> includes/scripts/clipboard.html }}
+  {{/script.isLib}}
 </body>
 </html>
