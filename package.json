@@ -11,6 +11,7 @@
     "bootstrap": "3.3.6",
     "bootstrap-markdown": "2.9.0",
     "chalk": "1.1.1",
+    "clipboard": "1.5.5",
     "compression": "1.6.0",
     "connect-mongo": "1.0.2",
     "cookie-parser": "1.4.0",

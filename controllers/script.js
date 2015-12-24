@@ -380,6 +380,8 @@ exports.view = function (aReq, aRes, aNext) {
       script.installNameSlug = installNameBase;
       script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
         script.scriptInstallPageUrl;
+      script.scriptPermalinkInstallPageXUrl = 'https://' + aReq.get('host') +
+        script.scriptInstallPageXUrl;
 
       // Page metadata
       pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],

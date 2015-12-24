@@ -1,0 +1,21 @@
+<script type="text/javascript" src="/redist/npm/clipboard/dist/clipboard.js"></script>
+<script type="text/javascript">
+  (function () {
+    var clipboard = new Clipboard('#require-raw, #require-min');
+    var rMin = /\.min\.js$/;
+
+    clipboard.on('success', function(aE) {
+      if (rMin.test(aE.text)) {
+        // TODO: Flash tooltip saying copied and then restore it
+      } else {
+        // TODO: Flash tooltip saying copied and then restore it
+      }
+    });
+
+    clipboard.on('error', function(aE) {
+      $('#require-min').prop('disabled', true);
+      $('#require-raw').prop('disabled', true);
+    });
+
+  })();
+</script>

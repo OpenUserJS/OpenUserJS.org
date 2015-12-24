@@ -1642,6 +1642,8 @@ exports.editScript = function (aReq, aRes, aNext) {
         script.installNameSlug = installNameBase;
         script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
           script.scriptInstallPageUrl;
+        script.scriptPermalinkInstallPageXUrl = 'https://' + aReq.get('host') +
+          script.scriptInstallPageXUrl;
         script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
           + scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
             (isLib ? '.js#' : '.user.js#');

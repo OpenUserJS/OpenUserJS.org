@@ -58,6 +58,10 @@ module.exports = function (aApp) {
     'css/bootstrap-markdown.min.css': { maxage: day * 1 }
   });
 
+  serveModule('/redist/npm/', 'clipboard/', {
+    'dist/clipboard.js': { maxage: day * 7 }
+  });
+
   serveModule('/redist/npm/', 'font-awesome/', {
     'css/font-awesome.min.css': { maxage: day * 1 },
     'fonts/fontawesome-webfont.eot': { maxage: day * 7 },
