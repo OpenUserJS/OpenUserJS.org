@@ -513,7 +513,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           }
 
           if (!/\.user\.js$/.test(match[2])) {
-            libraries.push(match[1] + match[2]);
+            libraries.push(match[1] + match[2].replace(/\.min\.js$/, '.js'));
           }
         }
       });
