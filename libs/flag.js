@@ -109,7 +109,7 @@ function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
   }
 
   aContent.flags.critical += aFlags;
-  aContent.flags.absolute += (aFlags > 0 ? 1 : -1); // NOTE: ES6 `Math.sign(x)`
+  aContent.flags.absolute += (aFlags > 0 ? 1 : (aFlags < 0 ? -1 : 0)); // NOTE: ES6 `Math.sign(x)`
 
   if (aContent.flags.critical >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
     return getThreshold(aModel, aContent, aAuthor, function (aThreshold) {
