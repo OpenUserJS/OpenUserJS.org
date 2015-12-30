@@ -485,7 +485,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       return;
     }
 
-    // Can't install a userscript ending in a reserved extension
+    // Can't install a userscript name ending in a reserved extension
     if (/\.min$/.test(scriptName)) {
       aCallback(null);
       return;
@@ -525,8 +525,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       return;
     }
 
-    // Can't install a library ending in a reserved extension
-    if (/\.(min|user)$/.test(scriptName)) {
+    // Can't install a library name ending in a reserved extension
+    if (/\.(min|user|meta)$/.test(scriptName)) {
       aCallback(null);
       return;
     }
