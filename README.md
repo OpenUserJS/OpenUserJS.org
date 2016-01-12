@@ -62,7 +62,6 @@ Repository | Reference | Recent Version
 [passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl]
 [passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl]
 [passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl]
-[passport-persona][passport-personaGHUrl] | [Documentation][passport-personaDOCUrl] | [![NPM version][passport-personaNPMVersionImage]][passport-personaNPMUrl]
 [passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl]
 [passport-steam][passport-steamGHUrl] | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl]
 [passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl]
@@ -335,11 +334,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-linkedinDOCUrl]:  https://github.com/jaredhanson/passport-linkedin/blob/master/README.md
 [passport-linkedinNPMUrl]: https://www.npmjs.com/package/passport-linkedin
 [passport-linkedinNPMVersionImage]: https://img.shields.io/npm/v/passport-linkedin.svg?style=flat
-
-[passport-personaGHUrl]: https://github.com/jaredhanson/passport-persona
-[passport-personaDOCUrl]: https://github.com/jaredhanson/passport-persona/blob/master/README.md
-[passport-personaNPMUrl]: https://www.npmjs.com/package/passport-persona
-[passport-personaNPMVersionImage]: https://img.shields.io/npm/v/passport-persona.svg?style=flat
 
 [passport-redditGHUrl]: https://github.com/Slotos/passport-reddit
 [passport-redditDOCUrl]: https://github.com/Slotos/passport-reddit/blob/master/README.md
