@@ -1,2 +1,2 @@
 source 'https://rubygems.org'
-gem 'fakes3', '0.2.2'
+gem 'fakes3', '0.2.3'
