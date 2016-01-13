@@ -1363,8 +1363,9 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     var failUrl = '/user/add/' + (isLib ? 'lib' : 'scripts');
 
     // Reject missing, non-js, and huge files
-    if (!script || script.type !== 'application/javascript' ||
-      script.size > settings.maximum_upload_script_size) {
+    if (!script ||
+      !(script.type === 'application/javascript' || script.type === 'application/x-javascript') ||
+        script.size > settings.maximum_upload_script_size) {
       aRes.redirect(failUrl);
       return;
     }

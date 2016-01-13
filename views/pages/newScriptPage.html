@@ -100,16 +100,27 @@
                   <input type="hidden" name="uploadScript" value="true">
                   {{#newJSLibrary}}
                   <div class="form-group">
-                    <input type="text" class="form-control" name="script_name" placeholder="Script Name" required />
+                    <input type="text" class="form-control" name="script_name" placeholder="Script Name" required="required" />
                   </div>
                   {{/newJSLibrary}}
                   <div class="form-group">
                     <div class="input-group">
-                      <input type="file" class="form-control" name="script" placeholder="Enter email" required />
+                      <span class="input-group-btn">
+                        <span class="btn btn-primary btn-file">
+                          Browse...
+                          <input type="file" name="script" required="required" />
+                        </span>
+                      </span>
+                      <input type="text" readonly="readonly" class="form-control" />
                       <span class="input-group-btn">
                         <button class="btn btn-success" type="submit">Submit</button>
                       </span>
                     </div>
+                    <noscript>
+                      <div role="alert" class="alert alert-warning small">
+                        <i class="fa fa-exclamation-triangle"></i> <strong>JavaScript DISABLED</strong>: No file selection feedback will be given.
+                      </div>
+                    </noscript>
                   </div>
                 </form>
               </p>
@@ -166,5 +177,6 @@
     </div>
   </div>
   {{> includes/footer.html }}
+  {{> includes/scripts/browseFeedback.html }}
 </body>
 </html>
