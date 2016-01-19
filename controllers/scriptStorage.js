@@ -221,6 +221,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
     // Disable *express-minify* for response that don't contain `.min.` extension
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)) {
       aRes._skip = true;
+    } else {
+      // Otherwise set some defaults per script request in *express-minify* via *UglifyJS2*
+      aRes._uglifyMangle = false;
     }
 
     aStream.setEncoding('utf8');
