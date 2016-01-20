@@ -4,9 +4,9 @@
   "version": "0.2.2",
   "main": "app",
   "dependencies": {
-    "ace-builds": "git://github.com/ajaxorg/ace-builds#3fb55e8",
+    "ace-builds": "git://github.com/ajaxorg/ace-builds#e94cb3c",
     "async": "1.5.2",
-    "aws-sdk": "2.2.30",
+    "aws-sdk": "2.2.31",
     "body-parser": "1.14.2",
     "bootstrap": "3.3.6",
     "bootstrap-markdown": "2.10.0",
@@ -16,7 +16,7 @@
     "connect-mongo": "1.1.0",
     "cookie-parser": "1.4.1",
     "express": "4.13.3",
-    "express-minify": "0.1.6",
+    "express-minify": "0.1.7",
     "express-session": "1.13.0",
     "font-awesome": "4.5.0",
     "formidable": "1.0.17",
@@ -58,7 +58,7 @@
     "underscore": "1.8.3"
   },
   "optionalDependencies": {
-    "kerberos": "0.0.17"
+    "kerberos": "0.0.18"
   },
   "repository": {
     "type": "git",
