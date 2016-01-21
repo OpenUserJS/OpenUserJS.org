@@ -219,8 +219,30 @@ app.set('views', __dirname + '/views');
 
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue
+var minifyErrorHandler = function (aErr, aStage, aAssetType, aMinifyOptions, aBody, aCallback) {
+
+  // TODO: Lookup script meta with aBody for script identification?
+
+  console.warn([ // NOTE: Pushing this to stderr instead of default stdout
+    'message: ' + aErr.message,
+    'line: ' + aErr.line,
+    'col: ' + aErr.col,
+    'pos: ' + aErr.pos
+
+  ].join('\n'));
+
+  if (aStage === 'compile') {
+    aCallback(aErr, JSON.stringify(aErr));
+    return;
+  }
+
+  aCallback(aErr, aBody);
+};
+
 if (minify && !isDbg) {
-  app.use(minify());
+  app.use(minify({
+    onerror: minifyErrorHandler
+  }));
 }
 
 app.use(function(aReq, aRes, aNext) {
