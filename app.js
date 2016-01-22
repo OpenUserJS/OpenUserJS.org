@@ -249,7 +249,7 @@ app.use(function(aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
 
   // If a userscript or libary...
-  if (/(\.user|\.meta)?\.js$/.test(pathname) && /^\/(install|src)\//.test(pathname)) {
+  if (/(\.user|\.meta)?\.js$/.test(pathname) && /^\/(meta|install|src)\//.test(pathname)) {
     aRes._skip = true; // ... skip using release minification
   }
   aNext();
