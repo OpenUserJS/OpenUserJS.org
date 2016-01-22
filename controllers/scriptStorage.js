@@ -11,6 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var fs = require('fs');
 var PEG = require('pegjs');
 var AWS = require('aws-sdk');
+var UglifyJS = require("uglify-js-harmony");
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
@@ -209,6 +210,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
   }
 
   exports.getSource(aReq, function (aScript, aStream) {
+    var chunks = [];
 
     if (!aScript) {
       aNext();
@@ -217,17 +219,50 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     // Send the script
     aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+    aStream.setEncoding('utf8');
 
-    // Disable *express-minify* for response that don't contain `.min.` extension
+    // Only minify for response that doesn't contain `.min.` extension
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)) {
-      aRes._skip = true;
+      aStream.pipe(aRes);
     } else {
       // Otherwise set some defaults per script request in *express-minify* via *UglifyJS2*
-      aRes._uglifyMangle = false;
-    }
+      // and try minifying output
 
-    aStream.setEncoding('utf8');
-    aStream.pipe(aRes);
+      aStream.on('data', function (aData) {
+        chunks.push(aData);
+      });
+
+      aStream.on('end', function () {
+        var source = chunks.join(''); // NOTE: Watchpoint
+        var minified = null;
+
+        try {
+          minified = UglifyJS.minify(source, {
+            fromString: true,
+            mangle: false,
+            output: {
+              comments: true
+            }
+          }).code;
+
+          aRes.write(minified);
+          aRes.end();
+
+          console.log('MINIFICATION REQUEST:', 'installName: ' + aScript.installName);
+
+        } catch (aE) { // On any failure default to unminified
+          console.warn([
+            'MINIFICATION WARNING (harmony):',
+            '  message: ' + aE.message,
+            '  installName: ' + aScript.installName,
+            '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos
+
+          ].join('\n'));
+
+          aStream.pipe(aRes);
+        }
+      });
+    }
 
     // Don't count installs on raw source route
     if (aScript.isLib || aReq.params.type) {
@@ -267,9 +302,6 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         aRes.end(JSON.stringify(meta, null, ''));
       } else {
         aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-
-        // Disable *express-minify* for this response
-        aRes._skip = true;
 
         aRes.write('// ==UserScript==\n');
 

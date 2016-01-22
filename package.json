@@ -55,6 +55,7 @@
     "select2": "3.5.2-browserify",
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.3.0",
+    "uglify-js-harmony": "git://github.com/OpenUserJs/UglifyJS2#harmony-named",
     "underscore": "1.8.3"
   },
   "optionalDependencies": {

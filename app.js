@@ -224,10 +224,10 @@ var minifyErrorHandler = function (aErr, aStage, aAssetType, aMinifyOptions, aBo
   // TODO: Lookup script meta with aBody for script identification?
 
   console.warn([ // NOTE: Pushing this to stderr instead of default stdout
-    'message: ' + aErr.message,
-    'line: ' + aErr.line,
-    'col: ' + aErr.col,
-    'pos: ' + aErr.pos
+    'MINIFICATION WARNING (release):',
+    '  filename: ' + aErr.filename,
+    '  message: ' + aErr.message,
+    '  line: ' + aErr.line + ' col: ' + aErr.col + ' pos: ' + aErr.pos
 
   ].join('\n'));
 
@@ -248,10 +248,9 @@ if (minify && !isDbg) {
 app.use(function(aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
 
+  // If a userscript or libary...
   if (/(\.user|\.meta)?\.js$/.test(pathname) && /^\/(install|src)\//.test(pathname)) {
-    aRes._uglifyOutput = {
-      comments: true
-    };
+    aRes._skip = true; // ... skip using release minification
   }
   aNext();
 });
