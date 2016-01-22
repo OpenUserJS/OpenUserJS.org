@@ -234,21 +234,17 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
       aStream.on('end', function () {
         var source = chunks.join(''); // NOTE: Watchpoint
-        var minified = null;
+
+        console.log('MINIFICATION REQUEST:', 'installName: ' + aScript.installName);
 
         try {
-          minified = UglifyJS.minify(source, {
+          source = UglifyJS.minify(source, {
             fromString: true,
             mangle: false,
             output: {
               comments: true
             }
           }).code;
-
-          aRes.write(minified);
-          aRes.end();
-
-          console.log('MINIFICATION REQUEST:', 'installName: ' + aScript.installName);
 
         } catch (aE) { // On any failure default to unminified
           console.warn([
@@ -259,8 +255,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
           ].join('\n'));
 
-          aStream.pipe(aRes);
         }
+
+        aRes.write(source);
+        aRes.end();
       });
     }
 
