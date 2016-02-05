@@ -248,7 +248,7 @@ if (minify && !isDbg) {
 app.use(function(aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
 
-  // If a userscript or libary...
+  // If a userscript or library...
   if (/(\.user|\.meta)?\.js$/.test(pathname) && /^\/(meta|install|src)\//.test(pathname)) {
     aRes._skip = true; // ... skip using release minification
   }

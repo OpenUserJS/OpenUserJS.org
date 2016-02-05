@@ -225,7 +225,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)) {
       aStream.pipe(aRes);
     } else {
-      // Otherwise set some defaults per script request in *express-minify* via *UglifyJS2*
+      // Otherwise set some defaults per script request via *UglifyJS2*
       // and try minifying output
 
       aStream.on('data', function (aData) {
@@ -486,7 +486,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var match = null;
   var rLibrary = new RegExp(
     '^(?:(?:(?:https?:)?\/\/' +
-      (isPro ? 'openuserjs\.org' : 'localhost:8080') +
+      (isPro ? 'openuserjs\.org' : 'localhost:' + (process.env.PORT || 8080)) +
         ')?\/(?:libs\/src|src\/libs)\/)?(.*?)([^\/]*\.js)$', '');
   var libraries = [];
 

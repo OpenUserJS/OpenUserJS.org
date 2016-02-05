@@ -117,6 +117,9 @@ var parseScript = function (aScriptData) {
   var icon = null;
   var supportURL = null;
 
+  var downloadURL = null;
+  var rAlternateDownload = null;
+
   // Temporaries
   var htmlStub = null;
 
@@ -161,6 +164,34 @@ var parseScript = function (aScriptData) {
         hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL)
       }];
     }
+  }
+
+  // Download Url
+  downloadURL = findMeta(script.meta, 'UserScript.downloadURL.0.value');
+  if (downloadURL) {
+    rAlternateDownload = new RegExp(
+      '^https?://(?:openuserjs\.org|localhost:' + (process.env.PORT || 8080) +
+        ')/(?:install|src/scripts)/' +
+          script.installName.replace(/\.user\.js$/, '.min.user.js'));
+
+    try {
+      downloadURL = decodeURIComponent(downloadURL);
+
+    } catch (aE) {
+      script.hasInvalidDownloadURL = true;
+      script.showMinficationNotices = true;
+    }
+
+    if (!rAlternateDownload.test(downloadURL)) {
+      script.hasAlternateDownloadURL = true;
+      script.showMinficationNotices = true;
+    }
+  }
+
+  // OpenUserJS metadata block checks
+  if (findMeta(script.meta, 'OpenUserJS.unstableMinify.0.value')) {
+    script.hasUnstableMinify = true;
+    script.showMinficationNotices = true;
   }
 
   //
