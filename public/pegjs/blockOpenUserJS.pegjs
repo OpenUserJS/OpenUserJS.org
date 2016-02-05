@@ -6,6 +6,7 @@ Test the generated parser with some input for PEG.js site at http://pegjs.org/on
 // ==OpenUserJS==
 // @author          Marti
 // @collaborator    sizzle
+// @unstableMinify  Some reason
 // ==/OpenUserJS==
 
 */
@@ -37,7 +38,8 @@ non_newline = $[^\n]+
 item1 =
   key:
     (
-      'author'
+      'author' /
+      'unstableMinify'
     )
   whitespace
   value: non_newline
