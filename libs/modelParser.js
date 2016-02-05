@@ -117,10 +117,6 @@ var parseScript = function (aScriptData) {
   var icon = null;
   var supportURL = null;
 
-  var downloadURL = null;
-  var rAlternateDownload = null;
-  var skipAlternateDownloadValidation = false;
-
   // Temporaries
   var htmlStub = null;
 
@@ -164,36 +160,6 @@ var parseScript = function (aScriptData) {
         text: decodeURI(supportURL),
         hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL)
       }];
-    }
-  }
-
-  // Download Url
-  downloadURL = findMeta(script.meta, 'UserScript.downloadURL.0.value');
-  if (downloadURL) {
-
-    console.log(script.installName);
-
-    try {
-      rAlternateDownload = new RegExp(
-        '^https?://(?:openuserjs\.org|localhost:' + (process.env.PORT || 8080) +
-          ')/(?:install|src/scripts)/' +
-            script.installName.replace(/\.user\.js$/, '.min.user.js'));
-    } catch (aE) {
-      console.warn('Unicode issue with ' + script.installName);
-      skipAlternateDownloadValidation = true;
-    }
-
-    try {
-      downloadURL = decodeURIComponent(downloadURL);
-
-    } catch (aE) {
-      script.hasInvalidDownloadURL = true;
-      script.showMinficationNotices = true;
-    }
-
-    if (!skipAlternateDownloadValidation && !rAlternateDownload.test(downloadURL)) {
-      script.hasAlternateDownloadURL = true;
-      script.showMinficationNotices = true;
     }
   }
 
