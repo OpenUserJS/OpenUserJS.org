@@ -243,6 +243,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
             mangle: false,
             output: {
               comments: true
+            },
+            parse: {
+              bare_returns: true
             }
           }).code;
 
