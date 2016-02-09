@@ -12,8 +12,6 @@ var fs = require('fs');
 var PEG = require('pegjs');
 var AWS = require('aws-sdk');
 var UglifyJS = require("uglify-js-harmony");
-var crypto = require('crypto');
-var moment = require('moment');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
@@ -219,26 +217,24 @@ exports.sendScript = function (aReq, aRes, aNext) {
       return;
     }
 
-    // Retrieve the script
+    // Send the script
+    aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
     aStream.setEncoding('utf8');
 
-    aStream.on('data', function (aData) {
-      chunks.push(aData);
-    });
-
-    aStream.on('end', function () {
-      var source = chunks.join(''); // NOTE: Watchpoint
-
-      var lastModified = null;
-      var eTag = null;
-
-      var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
-
-      // Only minify for response that doesn't contain `.min.` extension...
-      // otherwise set some defaults per script request via *UglifyJS2*
+    // Only minify for response that doesn't contain `.min.` extension
+    if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)) {
+      aStream.pipe(aRes);
+    } else {
+      // Otherwise set some defaults per script request via *UglifyJS2*
       // and try minifying output
 
-      if (/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)) {
+      aStream.on('data', function (aData) {
+        chunks.push(aData);
+      });
+
+      aStream.on('end', function () {
+        var source = chunks.join(''); // NOTE: Watchpoint
+
         try {
           source = UglifyJS.minify(source, {
             fromString: true,
@@ -259,46 +255,26 @@ exports.sendScript = function (aReq, aRes, aNext) {
             '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos
 
           ].join('\n'));
+
         }
-      }
 
-      // Set up server to client caching
-      lastModified = moment(aScript.updated).utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
-
-      eTag = '"'  + crypto.createHash('sha256').update(source).digest('hex') + '"';
-
-      aRes.set('Etag', eTag);
-      aRes.set('Last-Modified', lastModified);
-      aRes.set('Cache-Control', 'public, max-age=' + maxAge);
-
-      // If already client-side...
-      if (aReq.get('if-modified-since') === lastModified || aReq.get('if-none-match') === eTag) {
-        aRes.status(304).send({ status: 304, message: 'Not Modified' });
-        return;
-      }
-
-      // Otherwise send script
-      aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
-        .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
-
-      aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-
-      aRes.write(source);
-      aRes.end();
-
-      // Don't count installs on raw source route
-      if (aScript.isLib || aReq.params.type) {
-        return;
-      }
-
-      // Update the install count
-      ++aScript.installs;
-      ++aScript.installsSinceUpdate;
-
-      // Resave affected properties
-      aScript.save(function (aErr, aScript) {
-        // WARNING: No error handling at this stage
+        aRes.write(source);
+        aRes.end();
       });
+    }
+
+    // Don't count installs on raw source route
+    if (aScript.isLib || aReq.params.type) {
+      return;
+    }
+
+    // Update the install count
+    ++aScript.installs;
+    ++aScript.installsSinceUpdate;
+
+    // Resave affected properties
+    aScript.save(function (aErr, aScript) {
+      // WARNING: No error handling at this stage
     });
   });
 };
