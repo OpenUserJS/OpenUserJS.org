@@ -181,7 +181,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [cookie-parserNPMUrl]: https://www.npmjs.com/package/cookie-parser
 [cookie-parserNPMVersionImage]: https://img.shields.io/npm/v/cookie-parser.svg?style=flat
 
-[expressGHUrl]: https://github.com/strongloop/express
+[expressGHUrl]: https://github.com/expressjs/express
 [expressDOCUrl]: http://expressjs.com/
 [expressNPMUrl]: https://www.npmjs.com/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
