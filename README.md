@@ -423,7 +423,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 
 [styleguide]: STYLEGUIDE.md
-[contributing]: CONTRIBUTING.md
+[contributing]: .github/CONTRIBUTING.md
 
 [gaCFGUrl]: https://www.google.com/analytics/
 [gaDOCUrl]: https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced
