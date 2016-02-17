@@ -288,7 +288,7 @@ exports.view = function (aReq, aRes, aNext) {
 
   User.findOne({
     name: caseInsensitive(username)
-  }, function (aErr, aUserData) {
+  }, function (aErr, aUser) {
     function preRender() {
     }
 
@@ -320,7 +320,7 @@ exports.view = function (aReq, aRes, aNext) {
     var scriptListQuery = null;
     var tasks = [];
 
-    if (aErr || !aUserData) {
+    if (aErr || !aUser) {
       aNext();
       return;
     }
@@ -331,7 +331,7 @@ exports.view = function (aReq, aRes, aNext) {
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // User
-    options.user = user = modelParser.parseUser(aUserData);
+    options.user = user = modelParser.parseUser(aUser);
     user.aboutRendered = renderMd(user.about);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
@@ -373,7 +373,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
 
   User.findOne({
     name: caseInsensitive(username)
-  }, function (aErr, aUserData) {
+  }, function (aErr, aUser) {
     function preRender() {
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
@@ -433,7 +433,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
     var pagination = null;
     var tasks = [];
 
-    if (aErr || !aUserData) {
+    if (aErr || !aUser) {
       aNext();
       return;
     }
@@ -444,7 +444,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // User
-    user = options.user = modelParser.parseUser(aUserData);
+    user = options.user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Page metadata
@@ -495,7 +495,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 
   User.findOne({
     name: caseInsensitive(username)
-  }, function (aErr, aUserData) {
+  }, function (aErr, aUser) {
     function preRender() {
       // scriptList
       options.scriptList = _.map(options.scriptList, modelParser.parseScript);
@@ -552,7 +552,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     var pagination = null;
     var tasks = [];
 
-    if (aErr || !aUserData) {
+    if (aErr || !aUser) {
       aNext();
       return;
     }
@@ -563,7 +563,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // User
-    options.user = user = modelParser.parseUser(aUserData);
+    options.user = user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     switch (aReq.query.library) {
@@ -643,7 +643,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
 
   User.findOne({
     _id: authedUser._id
-  }, function (aErr, aUserData) {
+  }, function (aErr, aUser) {
     function preRender() {
     }
 
@@ -662,7 +662,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
     var scriptListQuery = null;
     var tasks = [];
 
-    if (aErr || !aUserData) {
+    if (aErr || !aUser) {
       aNext();
       return;
     }
@@ -673,7 +673,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // User
-    options.user = user = modelParser.parseUser(aUserData);
+    options.user = user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Page metadata
@@ -715,7 +715,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
 
   User.findOne({
     _id: authedUser._id
-  }, function (aErr, aUserData) {
+  }, function (aErr, aUser) {
     function preRender() {
     }
 
@@ -734,7 +734,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     var scriptListQuery = null;
     var tasks = [];
 
-    if (aErr || !aUserData) {
+    if (aErr || !aUser) {
       aNext();
       return;
     }
@@ -745,7 +745,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     options.isAdmin = authedUser && authedUser.isAdmin;
 
     // User
-    options.user = user = modelParser.parseUser(aUserData);
+    options.user = user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
     // Page metadata
@@ -1625,19 +1625,19 @@ exports.editScript = function (aReq, aRes, aNext) {
     Script.findOne({
       installName: scriptStorage.caseSensitive(installNameBase +
         (isLib ? '.js' : '.user.js'))
-      }, function (aErr, aScriptData) {
+      }, function (aErr, aScript) {
         //
         var script = null;
         var scriptOpenIssueCountQuery = null;
 
         //---
-        if (aErr || !aScriptData) {
+        if (aErr || !aScript) {
           aNext();
           return;
         }
 
         // Script
-        options.script = script = modelParser.parseScript(aScriptData);
+        options.script = script = modelParser.parseScript(aScript);
         options.isOwner = authedUser && authedUser._id == script._authorId;
         modelParser.renderScript(script);
         script.installNameSlug = installNameBase;

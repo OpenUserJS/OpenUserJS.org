@@ -327,7 +327,7 @@ exports.view = function (aReq, aRes, aNext) {
   Script.findOne({
     installName: scriptStorage.caseSensitive(installNameBase +
       (isLib ? '.js' : '.user.js'))
-    }, function (aErr, aScriptData) {
+    }, function (aErr, aScript) {
       function preRender() {
         if (script.groups) {
           pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
@@ -363,7 +363,7 @@ exports.view = function (aReq, aRes, aNext) {
       var tasks = [];
 
       //---
-      if (aErr || !aScriptData) {
+      if (aErr || !aScript) {
         aNext();
         return;
       }
@@ -374,7 +374,7 @@ exports.view = function (aReq, aRes, aNext) {
       options.isAdmin = authedUser && authedUser.isAdmin;
 
       // Script
-      options.script = script = modelParser.parseScript(aScriptData);
+      options.script = script = modelParser.parseScript(aScript);
       options.isOwner = authedUser && authedUser._id == script._authorId;
       modelParser.renderScript(script);
       script.installNameSlug = installNameBase;
@@ -413,7 +413,7 @@ exports.edit = function (aReq, aRes, aNext) {
   Script.findOne({
     installName: scriptStorage.caseSensitive(installNameBase +
       (isLib ? '.js' : '.user.js'))
-    }, function (aErr, aScriptData) {
+    }, function (aErr, aScript) {
       function preRender() {
         var groupNameList = (options.script.groups || []).map(function (aGroup) {
           return aGroup.name;
@@ -438,7 +438,7 @@ exports.edit = function (aReq, aRes, aNext) {
       var tasks = [];
 
       // ---
-      if (aErr || !aScriptData) {
+      if (aErr || !aScript) {
         aNext();
         return;
       }
@@ -449,7 +449,7 @@ exports.edit = function (aReq, aRes, aNext) {
       options.isAdmin = authedUser && authedUser.isAdmin;
 
       // Page metadata
-      options.script = script = modelParser.parseScript(aScriptData);
+      options.script = script = modelParser.parseScript(aScript);
       options.isOwner = authedUser && authedUser._id == script._authorId;
       pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
         script.name);
@@ -466,15 +466,15 @@ exports.edit = function (aReq, aRes, aNext) {
 
       if (aReq.body.remove) {
         // POST
-        scriptStorage.deleteScript(aScriptData.installName, function () {
+        scriptStorage.deleteScript(aScript.installName, function () {
           aRes.redirect(authedUser.userScriptListPageUrl);
         });
       } else if (typeof aReq.body.about !== 'undefined') {
         // POST
-        aScriptData.about = aReq.body.about;
+        aScript.about = aReq.body.about;
         scriptGroups = (aReq.body.groups || '');
         scriptGroups = scriptGroups.split(/,/);
-        addScriptToGroups(aScriptData, scriptGroups, function () {
+        addScriptToGroups(aScript, scriptGroups, function () {
           aRes.redirect(script.scriptPageUrl);
         });
       } else {
