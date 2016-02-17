@@ -275,7 +275,7 @@ exports.show = function (aReq, aRes, aNext) {
     return;
   }
 
-  findDiscussion(category.slug, topic, function (aDiscussionData) {
+  findDiscussion(category.slug, topic, function (aDiscussion) {
     function preRender() {
       // commentList
       options.commentList = _.map(options.commentList, modelParser.parseComment);
@@ -312,7 +312,7 @@ exports.show = function (aReq, aRes, aNext) {
     var pagination = null;
     var tasks = [];
 
-    if (!aDiscussionData) {
+    if (!aDiscussion) {
       aNext();
       return;
     }
@@ -326,7 +326,7 @@ exports.show = function (aReq, aRes, aNext) {
     category = options.category = modelParser.parseCategory(category);
 
     // Discussion
-    discussion = options.discussion = modelParser.parseDiscussion(aDiscussionData);
+    discussion = options.discussion = modelParser.parseDiscussion(aDiscussion);
 
     // Page metadata
     pageMetadata(options, [discussion.topic, 'Discussions'], discussion.topic);

@@ -136,11 +136,11 @@ exports.example2 = function (aReq, aRes, aNext) {
 
   // Scripts
   tasks.push(function (aCallback) {
-    scriptListQuery.exec(function (aErr, aScriptDataList) {
+    scriptListQuery.exec(function (aErr, aScriptList) {
       if (aErr) {
         aCallback();
       } else {
-        options.scriptList = _.map(aScriptDataList, modelParser.parseScript);
+        options.scriptList = _.map(aScriptList, modelParser.parseScript);
         aCallback();
       }
     });

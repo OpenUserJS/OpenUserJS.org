@@ -52,13 +52,13 @@ exports.removedItemPage = function (aReq, aRes, aNext) {
 
   Remove.find({
     _id: removedItemId
-  }, function (aErr, aRemovedItemData) {
-    if (aErr || !aRemovedItemData) {
+  }, function (aErr, aRemovedItem) {
+    if (aErr || !aRemovedItem) {
       aNext();
       return;
     }
 
-    aRes.json(aRemovedItemData);
+    aRes.json(aRemovedItem);
   });
 };
 
