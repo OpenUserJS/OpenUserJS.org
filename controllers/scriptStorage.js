@@ -298,7 +298,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       if (/\.json$/.test(aReq.params.scriptname)) {
         aRes.set('Content-Type', 'application/json; charset=UTF-8');
 
-        aRes.end(JSON.stringify(meta, null, ''));
+        aRes.end(JSON.stringify(meta, null, isPro ? '' : ' '));
       } else {
         aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
 
