@@ -20,6 +20,8 @@ var scriptStorage = require('./scriptStorage');
 //--- Library inclusions
 var removeLib = require('../libs/remove');
 
+var encode = require('../libs/helpers').encode;
+
 var destroySessions = require('../libs/modifySessions').destroy;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
@@ -92,7 +94,7 @@ exports.rm = function (aReq, aRes, aNext) {
                 aNext();
                 return;
               }
-              aRes.redirect('/users/' + encodeURIComponent(username) + '/scripts');
+              aRes.redirect('/users/' + encode(username) + '/scripts'); // NOTE: Watchpoint
             });
           });
         break;

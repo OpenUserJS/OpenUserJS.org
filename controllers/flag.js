@@ -23,6 +23,7 @@ var scriptStorage = require('./scriptStorage');
 var flagLib = require('../libs/flag');
 
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
+var encode = require('../libs/helpers').encode;
 
 //--- Configuration inclusions
 
@@ -103,7 +104,7 @@ exports.flag = function (aReq, aRes, aNext) {
 
             fn(Script, aScript, authedUser, reason, function (aFlagged) {
               aRes.redirect((isLib ? '/libs/' : '/scripts/') + scriptStorage.getInstallNameBase(
-                aReq, { encoding: 'uri' }));
+                  aReq, { encoding: 'url' })); // NOTE: Watchpoint
             });
 
         });
@@ -121,7 +122,7 @@ exports.flag = function (aReq, aRes, aNext) {
             }
 
             fn(User, aUser, authedUser, reason, function (aFlagged) {
-              aRes.redirect('/users/' + encodeURIComponent(username));
+              aRes.redirect('/users/' + encode(username)); // NOTE: Watchpoint
             });
 
           });
