@@ -96,6 +96,13 @@ exports.cleanFilename = function (aFilename, aDefaultName) {
   return cleanName || aDefaultName;
 };
 
+// Default encoding like GitHubs
+// Future code point for the smart encoder
+// pending *express* redirect issue resolution
+exports.encode = function (aStr) {
+  return encodeURIComponent(aStr);
+}
+
 exports.limitRange = function (aMin, aX, aMax, aDefault) {
   var x = Math.max(Math.min(aX, aMax), aMin);
 

@@ -26,6 +26,7 @@ var RepoManager = require('../libs/repoManager');
 
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
+var encode = require('../libs/helpers').encode;
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
@@ -84,14 +85,13 @@ function getInstallNameBase(aReq, aOptions) {
   }
 
   switch (aOptions.encoding) {
-    case 'uri':
-      base = encodeURIComponent(username) + '/' + encodeURIComponent(scriptname);
+    case 'url':
+      base = encode(username) + '/' + encode(scriptname);
       break;
 
     default:
       base = username + '/' + scriptname;
   }
-
 
   return base;
 }

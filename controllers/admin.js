@@ -497,6 +497,6 @@ exports.authAsUser = function (aReq, aRes, aNext) {
 
     aReq.session.user = user;
 
-    aRes.redirect(encodeURI(user.userPageUrl)); // NOTE: Watchpoint
+    aRes.redirect(user.userPageUrl); // NOTE: Watchpoint
   });
 };

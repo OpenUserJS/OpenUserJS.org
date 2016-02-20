@@ -24,6 +24,8 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var encode = require('../libs/helpers').encode;
+
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
@@ -243,9 +245,12 @@ exports.list = function (aReq, aRes, aNext) {
 
 // Locate a discussion and deal with topic url collisions
 function findDiscussion(aCategory, aTopicUrl, aCallback) {
+
   // To prevent collisions we add an incrementing id to the topic url
   var topic = /(.+?)(?:_(\d+))?$/.exec(aTopicUrl);
-  var query = { path: '/' + aCategory + '/' + topic[1] };
+  var query = { path: '/' + aCategory.split('/').map(function (aStr) {
+    return encode(aStr);
+  }).join('/') + '/' + encode(topic[1]) };
 
   // We only need to look for the proper duplicate if there is one
   if (topic[2]) {
@@ -433,8 +438,10 @@ exports.postComment = postComment;
 // Does all the work of submitting a new topic and
 // resolving topic url collisions
 function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aCallback) {
-  var urlTopic = cleanFilename(aTopic, '').replace(/_\d+$/, '');
-  var path = '/' + aCategory + '/' + urlTopic;
+  var urlTopic = encode(cleanFilename(aTopic, '').replace(/_\d+$/, ''));
+  var path = '/' + aCategory.split('/').map(function (aStr) {
+    return encode(aStr);
+  }).join('/') + '/' + urlTopic;
   var params = { sort: {} };
   params.sort.duplicateId = -1;
 
@@ -525,8 +532,8 @@ exports.createTopic = function (aReq, aRes, aNext) {
       return;
     }
 
-    aRes.redirect(encodeURI(aDiscussion.path
-      + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+    aRes.redirect(aDiscussion.path
+      + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : ''));  // NOTE: Watchpoint
   });
 };
 
@@ -560,8 +567,8 @@ exports.createComment = function (aReq, aRes, aNext) {
     }
 
     postComment(authedUser, aDiscussion, content, false, function (aErr, aDiscussion) {
-      aRes.redirect(encodeURI(aDiscussion.path
-        + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+      aRes.redirect(aDiscussion.path
+        + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')); // NOTE: Watchpoint
     });
   });
 };
