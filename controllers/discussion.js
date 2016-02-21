@@ -525,8 +525,10 @@ exports.createTopic = function (aReq, aRes, aNext) {
       return;
     }
 
-    aRes.redirect(encodeURI(aDiscussion.path
-      + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+    aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
+      return encodeURIComponent(aStr);
+    }).join('/')
+      + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : ''));
   });
 };
 
@@ -560,8 +562,10 @@ exports.createComment = function (aReq, aRes, aNext) {
     }
 
     postComment(authedUser, aDiscussion, content, false, function (aErr, aDiscussion) {
-      aRes.redirect(encodeURI(aDiscussion.path
-        + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+      aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
+        return encodeURIComponent(aStr);
+      }).join('/') +
+        (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : ''));
     });
   });
 };

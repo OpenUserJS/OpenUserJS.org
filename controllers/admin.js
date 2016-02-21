@@ -195,7 +195,7 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
 
       // Make sure the change is reflected in the session store
       updateSessions(aReq, aUser, function (aErr, aSess) {
-        aRes.redirect(user.userPageUrl);
+        aRes.redirect(user.userPageUri);
       });
     });
   });
@@ -497,6 +497,6 @@ exports.authAsUser = function (aReq, aRes, aNext) {
 
     aReq.session.user = user;
 
-    aRes.redirect(encodeURI(user.userPageUrl)); // NOTE: Watchpoint
+    aRes.redirect(user.userPageUri);
   });
 };

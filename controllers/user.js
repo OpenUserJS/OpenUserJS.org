@@ -1194,7 +1194,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
     script = modelParser.parseScript(options.script);
 
-    aRes.redirect(script.scriptPageUrl);
+    aRes.redirect(script.scriptPageUri);
   });
 };
 
@@ -1360,13 +1360,13 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     var stream = null;
     var bufs = [];
     var authedUser = aReq.session.user;
-    var failUrl = '/user/add/' + (isLib ? 'lib' : 'scripts');
+    var failUri = '/user/add/' + (isLib ? 'lib' : 'scripts');
 
     // Reject missing, non-js, and huge files
     if (!script ||
       !(script.type === 'application/javascript' || script.type === 'application/x-javascript') ||
         script.size > settings.maximum_upload_script_size) {
-      aRes.redirect(failUrl);
+      aRes.redirect(failUri);
       return;
     }
 
@@ -1387,15 +1387,19 @@ exports.uploadScript = function (aReq, aRes, aNext) {
             scriptStorage.storeScript(aUser, scriptName, bufferConcat,
               function (aScript) {
                 if (!aScript) {
-                  aRes.redirect(failUrl);
+                  aRes.redirect(failUri);
                   return;
                 }
 
-                aRes.redirect('/libs/' + encodeURI(aScript.installName
-                  .replace(rJS, ''))); // TODO: Split handling
+                aRes.redirect(
+                  '/libs/' +
+                    encodeURIComponent(helpers.cleanFilename(aScript.author)) +
+                      '/' +
+                        encodeURIComponent(helpers.cleanFilename(aScript.name))
+                );
               });
           } else {
-            aRes.redirect(failUrl);
+            aRes.redirect(failUri);
             return;
           }
 
@@ -1404,12 +1408,16 @@ exports.uploadScript = function (aReq, aRes, aNext) {
             scriptStorage.storeScript(aUser, aMeta, bufferConcat,
               function (aScript) {
                 if (!aScript) {
-                  aRes.redirect(failUrl);
+                  aRes.redirect(failUri);
                   return;
                 }
 
-                aRes.redirect('/scripts/' + encodeURI(aScript.installName
-                  .replace(rUserJS, ''))); // TODO: Split handling
+                aRes.redirect(
+                  '/scripts/' +
+                    encodeURIComponent(helpers.cleanFilename(aScript.author)) +
+                      '/' +
+                        encodeURIComponent(helpers.cleanFilename(aScript.name))
+                );
               });
           });
         }
@@ -1432,7 +1440,7 @@ exports.update = function (aReq, aRes, aNext) {
       }
 
       authedUser.about = aUser.about;
-      aRes.redirect('/users/' + aUser.name);
+      aRes.redirect('/users/' + encodeURIComponent(aUser.name));
     });
 };
 
@@ -1441,7 +1449,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var isLib = aReq.params.isLib;
   var source = null;
-  var url = null;
+  var uri = null;
 
   function storeScript(aMeta, aSource) {
     var rUserJS = /\.user\.js$/;
@@ -1449,12 +1457,15 @@ exports.submitSource = function (aReq, aRes, aNext) {
 
     User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
       scriptStorage.storeScript(aUser, aMeta, aSource, function (aScript) {
-        var redirectUrl = encodeURI(aScript ? (aScript.isLib ? '/libs/'
-          + aScript.installName.replace(rJS, '') : '/scripts/'
-          + aScript.installName.replace(rUserJS, '')) : decodeURI(aReq.body.url)); // TODO: Split handling
+        var redirectUri = aScript
+          ? ((aScript.isLib ? '/libs/' : '/scripts/') +
+            encodeURIComponent(helpers.cleanFilename(aScript.author)) +
+              '/' +
+                encodeURIComponent(helpers.cleanFilename(aScript.name)))
+          : aReq.body.url;
 
         if (!aScript || !aReq.body.original) {
-          aRes.redirect(redirectUrl);
+          aRes.redirect(redirectUri);
           return;
         }
 
@@ -1462,20 +1473,25 @@ exports.submitSource = function (aReq, aRes, aNext) {
           function (aErr, aOrigScript) {
             var fork = null;
 
+            var origInstallNameSlugUrl = helpers.encode(helpers.cleanFilename(aOrigScript.author)) +
+              '/' +
+                helpers.encode(helpers.cleanFilename(aOrigScript.name));
+
             if (aErr || !aOrigScript) {
-              aRes.redirect(redirectUrl);
+              aRes.redirect(redirectUri);
               return;
             }
 
             fork = aOrigScript.fork || [];
             fork.unshift({
-              author: aOrigScript.author, url: aOrigScript
-                .installName.replace(aOrigScript.isLib ? rJS : rUserJS, '') // TODO: Split handling
+              author: aOrigScript.author,
+              url: origInstallNameSlugUrl,
+              utf: aOrigScript.author + '/' + aOrigScript.name
             });
             aScript.fork = fork;
 
             aScript.save(function (aErr, aScript) {
-              aRes.redirect(redirectUrl);
+              aRes.redirect(redirectUri);
             });
           });
       });
@@ -1483,11 +1499,11 @@ exports.submitSource = function (aReq, aRes, aNext) {
   }
 
   source = new Buffer(aReq.body.source);
-  url = aReq.body.url;
+  uri = aReq.body.url;
 
   if (isLib) {
     if (hasMissingExcludeAll(source)) {
-      aRes.redirect(url);
+      aRes.redirect(uri);
       return;
     }
 
@@ -1500,7 +1516,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
       name = scriptStorage.findMeta(aMeta, 'UserScript.name');
 
       if (!name) {
-        aRes.redirect(url);
+        aRes.redirect(uri);
         return;
       }
 
@@ -1511,7 +1527,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
       });
 
       if (!hasName) {
-        aRes.redirect(url);
+        aRes.redirect(uri);
         return;
       }
 

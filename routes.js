@@ -57,14 +57,15 @@ module.exports = function (aApp) {
   aApp.route('/user/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
 
   // Script routes
-  aApp.route('/scripts/:username/:namespace?/:scriptname').get(script.view);
-  aApp.route('/scripts/:username/:namespace?/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
-  aApp.route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript);
+  aApp.route('/scripts/:username/:scriptname').get(script.view);
+  aApp.route('/scripts/:username/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
+  aApp.route('/scripts/:username/:scriptname/source').get(user.editScript);
   aApp.route('/scripts/:username').get(function (aReq, aRes) {
-    aRes.redirect('/users/' + aReq.params.username + '/scripts');
+    aRes.redirect('/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
-  aApp.route('/install/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
-  aApp.route('/meta/:username/:namespace?/:scriptname').get(scriptStorage.sendMeta);
+
+  aApp.route('/install/:username/:scriptname').get(scriptStorage.sendScript);
+  aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
   // Github hook routes
   aApp.route('/github/hook').post(scriptStorage.webhook);
@@ -80,10 +81,10 @@ module.exports = function (aApp) {
   aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(scriptStorage.sendScript);
 
   // Issues routes
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(open|closed|all)?').get(issue.list);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view).post(authentication.validateUser, issue.comment);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(issue.list);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(issue.view).post(authentication.validateUser, issue.comment);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
 
   // Admin routes
   aApp.route('/admin').get(admin.adminPage);
@@ -103,7 +104,7 @@ module.exports = function (aApp) {
 
   // Vote routes
   // TODO: Single vote route + POST
-  aApp.route('/vote/scripts/:username/:namespace?/:scriptname/:vote').get(authentication.validateUser, script.vote);
+  aApp.route('/vote/scripts/:username/:scriptname/:vote').get(authentication.validateUser, script.vote);
   aApp.route('/vote/libs/:username/:scriptname/:vote').get(authentication.validateUser, script.lib(script.vote));
 
   // Flag routes

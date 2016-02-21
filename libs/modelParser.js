@@ -23,6 +23,7 @@ var findMeta = require('../controllers/scriptStorage').findMeta;
 var renderMd = require('../libs/markdown').renderMd;
 var getRating = require('../libs/collectiveRating').getRating;
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var encode = require('../libs/helpers').encode;
 
 //--- Configuration inclusions
 var htmlWhitelistLink = require('./htmlWhitelistLink.json');
@@ -98,7 +99,8 @@ var parseDateProperty = function (aObj, aKey) {
   }
 };
 
-// Parse persisted model data and return a new object with additional generated fields used in view templates.
+// Parse persisted model data and return a new object
+// with additional generated fields used in view templates.
 
 /**
  * Script
@@ -107,9 +109,11 @@ var parseDateProperty = function (aObj, aKey) {
 // Urls
 var getScriptPageUrl = function (aScriptData) {
   var isLib = aScriptData.isLib || false;
-  var scriptPath = aScriptData.installName
-    .replace(isLib ? /\.js$/ : /\.user\.js$/, '');
-  return (isLib ? '/libs/' : '/scripts/') + encodeURI(scriptPath); // TODO: #819 Split handling
+
+  return (isLib ? '/libs/' : '/scripts/') +
+    aScriptData.authorSlugUrl +
+      '/' +
+        aScriptData.nameSlugUrl
 };
 
 var getScriptViewSourcePageUrl = function (aScriptData) {
@@ -126,8 +130,49 @@ var getScriptEditSourcePageUrl = function (aScriptData) {
 
 var getScriptInstallPageUrl = function (aScriptData) {
   var isLib = aScriptData.isLib || false;
-  return (isLib ? '/src/libs/' : '/install/') + encodeURI(aScriptData.installName); // TODO: #819 Split handling
+
+  return (isLib ? '/src/libs/' : '/install/') +
+    aScriptData.authorSlugUrl +
+      '/' +
+        aScriptData.nameSlugUrl +
+          (isLib ? '.js' : '.user.js')
 };
+
+
+
+// Uris
+var getScriptPageUri = function (aScriptData) {
+  var isLib = aScriptData.isLib || false;
+
+  return (isLib ? '/libs/' : '/scripts/') +
+    aScriptData.authorSlugUri +
+      '/' +
+        aScriptData.nameSlugUri
+};
+
+var getScriptViewSourcePageUri = function (aScriptData) {
+  return getScriptPageUri(aScriptData) + '/source';
+};
+
+var getScriptEditAboutPageUri = function (aScriptData) {
+  return getScriptPageUri(aScriptData) + '/edit';
+};
+
+var getScriptEditSourcePageUri = function (aScriptData) {
+  return getScriptViewSourcePageUri(aScriptData);
+};
+
+var getScriptInstallPageUri = function (aScriptData) {
+  var isLib = aScriptData.isLib || false;
+
+  return (isLib ? '/src/libs/' : '/install/') +
+    aScriptData.authorSlugUri +
+      '/' +
+        aScriptData.nameSlugUri +
+          (isLib ? '.js' : '.user.js')
+};
+
+
 
 //
 var parseScript = function (aScript) {
@@ -151,7 +196,7 @@ var parseScript = function (aScript) {
   var votesPercent = null;
   var flagsPercent = null;
 
-  var slug = null;
+  var folders = null;
 
 
   if (!aScript) {
@@ -163,7 +208,9 @@ var parseScript = function (aScript) {
   // Author
   // Extend with rewrite the User model `name` key to be an Object instead of String
   if (_.isString(script.author)) {
-    script.author = parseUser({ name: script.author });
+    script.author = parseUser({
+      name: script.author
+    });
   }
 
   // Description default
@@ -236,11 +283,21 @@ var parseScript = function (aScript) {
   script.votesPercent = votesPercent;
   script.flagsPercent = flagsPercent;
 
-  // Urls: Slugs
+  // DB: Slugs
   script.authorSlug = script.author.name;
   script.nameSlug = cleanFilename(script.name);
-  script.installNameSlug = encodeURIComponent(script.author.slug) + '/' +
-    encodeURIComponent(script.nameSlug);
+  script.installNameSlug = script.author.slug + '/' + script.nameSlug; // NOTE: Redundant as `installName` is already "slugged"
+
+  // Urls: Slugs
+  script.authorSlugUrl = encode(script.authorSlug);
+  script.nameSlugUrl = encode(script.nameSlug);
+  script.installNameSlugUrl = encode(script.authorSlug) + '/' + encode(script.nameSlug);
+
+  // Uris: Slugs
+  script.authorSlugUri = encodeURIComponent(script.authorSlug);
+  script.nameSlugUri = encodeURIComponent(script.nameSlug);
+  script.installNameSlugUri = encodeURIComponent(script.authorSlug) + '/' + encodeURIComponent(script.nameSlug);
+
 
   // Urls: Public
   script.scriptPageUrl = getScriptPageUrl(script);
@@ -249,12 +306,12 @@ var parseScript = function (aScript) {
   script.scriptViewSourcePageUrl = getScriptViewSourcePageUrl(script);
 
   // Urls: Issues
-  slug = (script.isLib ? 'libs' : 'scripts');
-  slug += '/' + encodeURIComponent(script.author.slug);
-  slug += '/' + encodeURIComponent(script.nameSlug);
-  script.issuesCategorySlug = slug + '/issues';
+  folders = (script.isLib ? 'libs' : 'scripts');
+  folders += '/' + script.authorSlugUrl;
+  folders += '/' + script.nameSlugUrl;
+  script.issuesCategorySlug = folders + '/issues';
   script.scriptIssuesPageUrl = '/' + script.issuesCategorySlug;
-  script.scriptOpenIssuePageUrl = '/' + slug + '/issue/new';
+  script.scriptOpenIssuePageUrl = '/' + folders + '/issue/new';
 
   // Urls: Author
   script.scriptEditMetadataPageUrl = getScriptEditAboutPageUrl(script);
@@ -262,9 +319,37 @@ var parseScript = function (aScript) {
 
   // Urls: Moderation
   script.scriptRemovePageUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') +
-    script.installNameSlug;
+    script.installNameSlugUrl;
   script.scriptFlagPageUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/') +
-    script.installNameSlug;
+    script.installNameSlugUrl;
+
+
+
+  // Uris: Public
+  script.scriptPageUri = getScriptPageUri(script);
+  script.scriptInstallPageUri = getScriptInstallPageUri(script);
+  script.scriptInstallPageXUri = script.scriptInstallPageUri.replace(/(\.user)?\.js/, '');
+  script.scriptViewSourcePageUri = getScriptViewSourcePageUri(script);
+
+  // Uris: Issues
+  folders = (script.isLib ? 'libs' : 'scripts');
+  folders += '/' + script.authorSlugUri;
+  folders += '/' + script.nameSlugUri;
+  script.issuesCategorySlug = folders + '/issues'; // BUG: Placement/Naming??
+  script.scriptIssuesPageUri = '/' + script.issuesCategorySlug; // BUG: Placement/Naming??
+  script.scriptOpenIssuePageUri = '/' + folders + '/issue/new';
+
+  // Uris: Author
+  script.scriptEditMetadataPageUri = getScriptEditAboutPageUri(script);
+  script.scriptEditSourcePageUri = getScriptEditSourcePageUri(script);
+
+  // Uris: Moderation
+  script.scriptRemovePageUri = '/remove' + (script.isLib ? '/libs/' : '/scripts/') +
+    script.installNameSlugUri;
+  script.scriptFlagPageUri = '/flag' + (script.isLib ? '/libs/' : '/scripts/') +
+    script.installNameSlugUri;
+
+
 
   // Dates
   parseDateProperty(script, 'updated');
@@ -308,8 +393,11 @@ var parseUser = function (aUser) {
   //
   user.slug = user.name;
 
+  user.slugUrl = encode(user.slug);
+  user.slugUri = encodeURIComponent(user.slug);
+
   // Urls: Public
-  user.userPageUrl = '/users/' + user.name;
+  user.userPageUrl = '/users/' + user.slugUrl;
   user.userCommentListPageUrl = user.userPageUrl + '/comments';
   user.userScriptListPageUrl = user.userPageUrl + '/scripts';
   user.userGitHubRepoListPageUrl = user.userPageUrl + '/github/repos';
@@ -317,8 +405,20 @@ var parseUser = function (aUser) {
   user.userGitHubImportPageUrl = user.userPageUrl + '/github/import';
   user.userEditProfilePageUrl = user.userPageUrl + '/profile/edit';
   user.userUpdatePageUrl = user.userPageUrl + '/update';
-  user.userRemovePageUrl = '/remove/users/' + user.name;
-  user.userFlagPageUrl = '/flag/users/' + user.name;
+  user.userRemovePageUrl = '/remove/users/' + user.slugUrl;
+  user.userFlagPageUrl = '/flag/users/' + user.slugUrl;
+
+  // Uris: Public
+  user.userPageUri = '/users/' + user.slugUri;
+  user.userCommentListPageUri = user.userPageUri + '/comments';
+  user.userScriptListPageUri = user.userPageUri + '/scripts';
+  user.userGitHubRepoListPageUri = user.userPageUri + '/github/repos';
+  user.userGitHubRepoPageUri = user.userPageUri + '/github/repo';
+  user.userGitHubImportPageUri = user.userPageUri + '/github/import';
+  user.userEditProfilePageUri = user.userPageUri + '/profile/edit';
+  user.userUpdatePageUri = user.userPageUri + '/update';
+  user.userRemovePageUri = '/remove/users/' + user.slugUri;
+  user.userFlagPageUri = '/flag/users/' + user.slugUri;
 
   // Funcs
   user.githubUserId = function () {
@@ -381,7 +481,9 @@ var parseGroup = function (aGroup) {
           console.error('Group rating NOT updated', 'aErr := ' + aErr, 'aGroup := ' + aGroup);
           return;
         }
-        console.log(util.format('Group(%s) rating updated', aGroup.name));
+        if (isDbg) {
+          console.log(util.format('Group(%s) rating updated', aGroup.name));
+        }
       });
     });
   }
@@ -409,8 +511,16 @@ var parseDiscussion = function (aDiscussion) {
   // discussion = aDiscussion; // Can't override discussion.category // TODO: Why is this commented and/or not removed?
 
   // Urls
-  discussion.discussionPageUrl = discussion.path + (discussion.duplicateId ? '_' +
-    discussion.duplicateId : '');
+  discussion.discussionPageUrl = discussion.path.split('/').map(function (aStr) {
+    return encode(aStr);
+  }).join('/') +
+    (discussion.duplicateId ? '_' + discussion.duplicateId : '');
+
+  // Uris
+  discussion.discussionPageUri = discussion.path.split('/').map(function (aStr) { // NOTE: May not be used yet
+    return encodeURIComponent(aStr);
+  }).join('/') +
+    (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
   // Dates
   parseDateProperty(discussion, 'created');
@@ -436,7 +546,10 @@ var parseDiscussion = function (aDiscussion) {
     ? discussion.comments - 1
     : 0;
 
-  discussion.path = discussion.path + (discussion.duplicateId ? '_' + discussion.duplicateId : '');
+  discussion.path = discussion.path.split('/').map(function (aStr) {
+    return encode(aStr);
+  }).join('/') +
+    (discussion.duplicateId ? '_' + discussion.duplicateId : '');
 
   discussion.open = typeof (discussion.open) === 'undefined' ? true : discussion.open;
 
@@ -463,8 +576,14 @@ var parseIssue = function (aDiscussion) {
   discussion.open = (discussion.open === undefined || discussion.open === null)
     ? true
     : discussion.open;
-  discussion.issueCloseUrl = discussion.path + '/close';
-  discussion.issueOpenUrl = discussion.path + '/reopen';
+  discussion.issueCloseUrl = discussion.path.split('/').map(function (aStr) {
+    return encode(aStr);
+  }).join('/') +
+    '/close';
+  discussion.issueOpenUrl = discussion.path.split('/').map(function (aStr) {
+    return encode(aStr);
+  }).join('/') +
+    '/reopen';
 
 
   return discussion;
@@ -513,13 +632,14 @@ var canUserPostTopicToCategory = function (aUser, aCategory) {
 
   // Check if this category requires a minimum role to post topics.
 
-  // TODO: #430
-  console.log(
-    aCategory.roleReqToPostTopic,
-    _.isNumber(aCategory.roleReqToPostTopic),
-    aUser.role,
-    aUser.role <= aCategory.roleReqToPostTopic
-  );
+  if (isDbg) {
+    console.log(
+      aCategory.roleReqToPostTopic,
+      _.isNumber(aCategory.roleReqToPostTopic),
+      aUser.role,
+      aUser.role <= aCategory.roleReqToPostTopic
+    );
+  }
 
   if (_.isNumber(aCategory.roleReqToPostTopic)) {
     return aUser.role <= aCategory.roleReqToPostTopic;
@@ -540,8 +660,25 @@ var parseCategory = function (aCategory) {
   category = aCategory.toObject ? aCategory.toObject() : aCategory;
 
   // Urls
-  category.categoryPageUrl = '/' + category.slug;
-  category.categoryPostDiscussionPageUrl = '/post/' + category.slug;
+
+  category.slugUrl = category.slug.split('/').map(function (aStr) {
+    return encode(aStr);
+  }).join('/');
+
+  category.categoryPageUrl = '/' + category.slugUrl;
+  category.categoryPostDiscussionPageUrl = '/post/' + category.slugUrl;
+
+
+
+  // Uris
+  category.slugUri = category.slug.split('/').map(function (aStr) {
+    return encodeURIComponent(aStr);
+  }).join('/');
+
+  category.categoryPageUri = '/' + category.slugUri;
+  category.categoryPostDiscussionPageUri = '/post/' + category.slugUri;
+
+
 
   // Functions
   category.canUserPostTopic = function (aUser) {
