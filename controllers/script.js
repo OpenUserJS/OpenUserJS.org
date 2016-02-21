@@ -467,7 +467,7 @@ exports.edit = function (aReq, aRes, aNext) {
       if (aReq.body.remove) {
         // POST
         scriptStorage.deleteScript(aScript.installName, function () {
-          aRes.redirect(authedUser.userScriptListPageUrl);
+          aRes.redirect(authedUser.userScriptListPageUri);
         });
       } else if (typeof aReq.body.about !== 'undefined') {
         // POST
@@ -475,7 +475,7 @@ exports.edit = function (aReq, aRes, aNext) {
         scriptGroups = (aReq.body.groups || '');
         scriptGroups = scriptGroups.split(/,/);
         addScriptToGroups(aScript, scriptGroups, function () {
-          aRes.redirect(script.scriptPageUrl);
+          aRes.redirect(script.scriptPageUri);
         });
       } else {
         // GET
@@ -495,7 +495,7 @@ exports.edit = function (aReq, aRes, aNext) {
 // Script voting
 exports.vote = function (aReq, aRes, aNext) {
   //
-  var url = aReq._parsedUrl.pathname.split('/');
+  var uri = aReq._parsedUrl.pathname.split('/');
   var vote = aReq.params.vote;
   var unvote = false;
 
@@ -503,12 +503,12 @@ exports.vote = function (aReq, aRes, aNext) {
   var installNameBase = scriptStorage.getInstallNameBase(aReq);
 
   // ---
-  if (url.length > 5) {
-    url.pop();
+  if (uri.length > 5) {
+    uri.pop();
   }
-  url.shift();
-  url.shift();
-  url = '/' + url.join('/');
+  uri.shift();
+  uri.shift();
+  uri = '/' + uri.join('/');
 
   if (vote === 'up') {
     vote = true;
@@ -517,7 +517,7 @@ exports.vote = function (aReq, aRes, aNext) {
   } else if (vote === 'unvote') {
     unvote = true;
   } else {
-    aRes.redirect(url);
+    aRes.redirect(uri);
     return;
   }
 
@@ -530,7 +530,7 @@ exports.vote = function (aReq, aRes, aNext) {
 
       // ---
       if (aErr || !aScript) {
-        aRes.redirect(url);
+        aRes.redirect(uri);
         return;
       }
 
@@ -543,7 +543,7 @@ exports.vote = function (aReq, aRes, aNext) {
           function saveScript() {
             if (!flags) {
               aScript.save(function (aErr, aScript) {
-                aRes.redirect(url);
+                aRes.redirect(uri);
               });
               return;
             }
@@ -551,7 +551,7 @@ exports.vote = function (aReq, aRes, aNext) {
             flagLib.getAuthor(aScript, function (aAuthor) {
               flagLib.saveContent(Script, aScript, aAuthor, flags,
                 function (aFlagged) {
-                  aRes.redirect(url);
+                  aRes.redirect(uri);
                 });
             });
           }
@@ -565,7 +565,7 @@ exports.vote = function (aReq, aRes, aNext) {
           }
 
           if (authedUser._id == aScript._authorId || (!aVoteModel && unvote)) {
-            aRes.redirect(url);
+            aRes.redirect(uri);
             return;
           } else if (!aVoteModel) {
             aVoteModel = new Vote({

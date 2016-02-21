@@ -26,6 +26,7 @@ var RepoManager = require('../libs/repoManager');
 
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
+var encode = require('../libs/helpers').encode;
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
@@ -87,6 +88,9 @@ function getInstallNameBase(aReq, aOptions) {
     case 'uri':
       base = encodeURIComponent(username) + '/' + encodeURIComponent(scriptname);
       break;
+
+    case 'url':
+      base = encode(username) + '/' + encode(scriptname);
 
     default:
       base = username + '/' + scriptname;
@@ -733,7 +737,11 @@ exports.webhook = function (aReq, aRes) {
     payload.commits.forEach(function (aCommit) {
       aCommit.modified.forEach(function (aFilename) {
         if (aFilename.substr(-8) === '.user.js') {
-          repo[aFilename] = '/' + encodeURI(aFilename);
+          console.log([
+            'Webhook filename:',
+            '  ' + aFilename
+          ].join('\n')); // TODO: After some data collected, reaffirm and remove this
+          repo[aFilename] = '/' + encodeURI(aFilename); // NOTE: Watchpoint
         }
       });
     });

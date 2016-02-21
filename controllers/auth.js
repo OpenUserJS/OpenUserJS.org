@@ -172,7 +172,7 @@ exports.callback = function (aReq, aRes, aNext) {
   var username = aReq.session.username;
   var newstrategy = aReq.session.newstrategy;
   var strategyInstance = null;
-  var doneUrl = aReq.session.user ? '/user/preferences' : '/';
+  var doneUri = aReq.session.user ? '/user/preferences' : '/';
 
   // The callback was called improperly
   if (!strategy || !username) {
@@ -231,7 +231,7 @@ exports.callback = function (aReq, aRes, aNext) {
         console.error(chalk.red('`User` not found'));
       }
 
-      aRes.redirect(doneUrl + (doneUrl === '/' ? 'register' : '') + '?authfail');
+      aRes.redirect(doneUri + (doneUri === '/' ? 'register' : '') + '?authfail');
       return;
     }
 
@@ -263,16 +263,16 @@ exports.callback = function (aReq, aRes, aNext) {
       addSession(aReq, aUser, function () {
         if (newstrategy && newstrategy !== strategy) {
           // Allow a user to link to another account
-          aRes.redirect('/auth/' + newstrategy);
+          aRes.redirect('/auth/' + newstrategy); // NOTE: Watchpoint... careful with encoding
           return;
         } else {
           // Delete the username that was temporarily stored
           delete aReq.session.username;
           delete aReq.session.newstrategy;
-          doneUrl = aReq.session.redirectTo;
+          doneUri = aReq.session.redirectTo;
           delete aReq.session.redirectTo;
 
-          aRes.redirect(doneUrl);
+          aRes.redirect(doneUri);
           return;
         }
       });

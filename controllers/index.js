@@ -297,16 +297,16 @@ exports.register = function (aReq, aRes) {
 
 exports.logout = function (aReq, aRes) {
   var authedUser = aReq.session.user;
-  var redirectUrl = getRedirect(aReq);
+  var redirectUri = getRedirect(aReq); // NOTE: Watchpoint
 
   if (!authedUser) {
-    aRes.redirect(redirectUrl);
+    aRes.redirect(redirectUri);
     return;
   }
 
   User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
     removeSession(aReq, aUser, function () {
-      aRes.redirect(redirectUrl);
+      aRes.redirect(redirectUri);
     });
   });
 };

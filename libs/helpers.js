@@ -96,6 +96,19 @@ exports.cleanFilename = function (aFilename, aDefaultName) {
   return cleanName || aDefaultName;
 };
 
+// Smarter encoder
+exports.encode = function (aStr) {
+  try {
+    // Check for bad decoding
+    decodeURIComponent(aStr);
+
+    return aStr;
+
+  } catch (aE) {
+    return encodeURIComponent(aStr);
+  }
+}
+
 exports.limitRange = function (aMin, aX, aMax, aDefault) {
   var x = Math.max(Math.min(aX, aMax), aMin);
 

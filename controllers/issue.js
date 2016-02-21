@@ -380,12 +380,14 @@ exports.open = function (aReq, aRes, aNext) {
         discussionLib.postTopic(authedUser, category.slug, topic, content, true,
           function (aDiscussion) {
             if (!aDiscussion) {
-              aRes.redirect('/' + encodeURI(category) + '/open');
+              aRes.redirect('/' + category.slugUri + '/open');
               return;
             }
 
-            aRes.redirect(encodeURI(aDiscussion.path +
-              (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+            aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
+              return encodeURIComponent(aStr);
+            }).join('/') +
+              (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : ''));
           }
         );
       } else {
@@ -439,8 +441,10 @@ exports.comment = function (aReq, aRes, aNext) {
 
         discussionLib.postComment(authedUser, aIssue, content, false,
           function (aErr, aDiscussion) {
-            aRes.redirect(encodeURI(aDiscussion.path
-              + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+            aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
+              return encodeURIComponent(aStr);
+            }).join('/') +
+              (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : ''));
           });
       });
     });
@@ -487,8 +491,10 @@ exports.changeStatus = function (aReq, aRes, aNext) {
 
         if (changed) {
           aIssue.save(function (aErr, aDiscussion) {
-            aRes.redirect(encodeURI(aDiscussion.path
-              + (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : '')));
+            aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
+              return encodeURIComponent(aStr);
+            }).join('/') +
+              (aDiscussion.duplicateId ? '_' + aDiscussion.duplicateId : ''));
           });
         } else {
           aNext();
