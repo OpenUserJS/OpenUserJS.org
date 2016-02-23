@@ -11,7 +11,7 @@ var User = require('../models/user').User;
 var async = require('async');
 
 // Get the models for removable content that belongs to a user
-var modelNames = ['Script'];
+var modelNames = ['Script']; // TODO: , 'Group', 'Comment', 'Discussion', 'Flag', 'Vote' eventually
 var models = {};
 
 modelNames.forEach(function (aModelName) {
@@ -35,13 +35,19 @@ function removeable(aModel, aContent, aUser, aCallback) {
       aContent);
   }
 
-  User.findOne({ _id: aContent._authorId }, function (aErr, aAuthor) {
+  User.findOne({
+    _id: aContent._authorId
+  }, function (aErr, aAuthor) {
     // Content without an author shouldn't exist
-    if (aErr || !aAuthor) { return aCallback(false); }
+    if (aErr || !aAuthor) {
+      return aCallback(false);
+    }
 
     // You can't remove your own content this way
     // When you remove your own content it's removed for good
-    if (aAuthor._id == aUser._id) { return aCallback(false, aAuthor); }
+    if (aAuthor._id == aUser._id) {
+      return aCallback(false, aAuthor);
+    }
 
     // You can only remove content by an author with a lesser user role
     aCallback(aAuthor.role > aUser.role, aAuthor);
@@ -50,6 +56,34 @@ function removeable(aModel, aContent, aUser, aCallback) {
 exports.removeable = removeable;
 
 function remove(aModel, aContent, aUser, aReason, aAutomated, aCallback) {
+
+  // TODO: #126, #93
+  switch (aModel.modelName) {
+    case 'Script':
+      // TODO: Remove from any non-owned Groups and decrement that Group counter
+      break;
+    case 'Group':
+      // TODO: Find all Scripts in it and do something
+      break;
+    case 'Comment':
+      // TODO: Find Discussion... if owned do nothing will be caught next...
+      //         if non-owned decrement counter and reset the last
+      //         commentator with that date
+      break;
+    case 'Discussion':
+      // TODO: Find all Comments in it and do something with non-owned...
+      //         probably set `.path` to parent "slug" for non-owned
+      break;
+    case 'Flag':
+      // TODO: Recalculate affected scripts (and any other model) with `.flags`
+      break;
+    case 'Vote':
+      // TODO: Recalculate affected scripts (and any other model) with `.votes`
+      break;
+    default:
+      console.error('Unknown Model not covered in remove');
+  }
+
   var removeModel = new Remove({
     'model': aModel.modelName,
     'content': aContent.toObject(),
@@ -62,27 +96,56 @@ function remove(aModel, aContent, aUser, aReason, aAutomated, aCallback) {
   });
 
   removeModel.save(function (aErr, aRemove) {
-    aContent.remove(function (aErr) { aCallback(aRemove); });
+    if (aErr || !aRemove) {
+      console.error('Failed to save to the Graveyard');
+      aCallback(aErr);
+      return;
+    }
+
+    aContent.remove(function (aErr) {
+      if (aErr) {
+        console.error('Failed to remove', aModel.modelName);
+        aCallback(aErr);
+        return;
+      }
+
+      if (aModel.modelName === 'User') {
+        aCallback(true); // NOTE: Stop any series removals
+      } else {
+        aCallback(null); // NOTE: Continue any series and non-User single removals
+      }
+    });
   });
 }
 
 exports.remove = function (aModel, aContent, aUser, aReason, aCallback) {
   removeable(aModel, aContent, aUser, function (aCanRemove, aAuthor) {
     if (!aCanRemove) {
-      return aCallback(false);
+      aCallback(false);
+      return;
     }
 
     if (aModel.modelName !== 'User') {
-      remove(aModel, aContent, aUser, aReason, false, aCallback);
+      remove(aModel, aContent, aUser, aReason, false, function (aErr) {
+        if (aErr) {
+          console.warn('Failed to remove User\n', aErr);
+          aCallback(false);
+          return;
+        }
+
+        aCallback(true);
+      });
     } else {
       // Remove all the user's content
-      async.each(modelNames, function (aModelName, aCallback) {
+      async.eachSeries(modelNames, function (aModelName, aEachOuterCallback) {
         var model = models[aModelName];
-        model.find({ _authorId: aContent._id },
+        model.find({
+          _authorId: aContent._id
+        },
           function (aErr, aContentArr) {
-            async.each(aContentArr, function (aContent, innerCb) {
-              remove(model, aContent, aUser, '', true, innerCb);
-            }, aCallback);
+            async.eachSeries(aContentArr, function (aContent, aEachInnerCallback) {
+              remove(model, aContent, aUser, '', true, aEachInnerCallback);
+            }, aEachOuterCallback);
           });
       }, function () {
         remove(aModel, aContent, aUser, aReason, false, aCallback);
@@ -114,7 +177,10 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
     var name = null;
     var rmQuery = { model: modelName };
 
-    if (!aErr && aContent) { return aCallback(true, aContent, null); }
+    if (!aErr && aContent) {
+      return aCallback(true, aContent, null);
+    }
+
     if (modelName !== 'User' && -1 === modelNames.indexOf(modelName)) {
       return aCallback(null, null, null);
     }
@@ -124,7 +190,10 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
     }
 
     Remove.findOne(rmQuery, function (aErr, aRemoved) {
-      if (aErr || !aRemoved) { return aCallback(null, null, null); }
+      if (aErr || !aRemoved) {
+        return aCallback(null, null, null);
+      }
+
       if (!aUser || (aUser !== true && aUser.role > aRemoved.removerRole)) {
         return aCallback(false, null, aRemoved);
       }
