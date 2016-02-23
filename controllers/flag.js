@@ -169,6 +169,15 @@ exports.getFlaggedListForContent = function (aModelName, aOptions, aCallback) {
 
       async.forEachOfSeries(aFlagList, function (aFlag, aFlagKey, aEachInnerCallback) {
         User.findOne({ _id: aFlag._userId }, function (aErr, aUser) {
+          if (aErr || !aUser) {
+            // Notify in stdout
+            console.warn('getFlaggedListForContent(): `_userId` not found for Flag:\n', aFlag);
+
+            // Ignore for now and move onto the next flag
+            aEachInnerCallback();
+            return;
+          }
+
           contentList[aContentKey].flaggedList.push({
             name: aUser.name,
             reason: aFlagList[aFlagKey].reason,
