@@ -105,12 +105,12 @@ function remove(aModel, aContent, aUser, aReason, aAutomated, aCallback) {
     aContent.remove(function (aErr) {
       if (aErr) {
         console.error('Failed to remove', aModel.modelName);
-        aCallback(aErr);
+        aCallback(aErr); // NOTE: Same as `true` but specific e.g. stop all removal(s)
         return;
       }
 
       if (aModel.modelName === 'User') {
-        aCallback(true); // NOTE: Stop any series removals
+        aCallback(true); // NOTE: Stop any series removals and done
       } else {
         aCallback(null); // NOTE: Continue any series and non-User single removals
       }
@@ -128,7 +128,7 @@ exports.remove = function (aModel, aContent, aUser, aReason, aCallback) {
     if (aModel.modelName !== 'User') {
       remove(aModel, aContent, aUser, aReason, false, function (aErr) {
         if (aErr) {
-          console.warn('Failed to remove User\n', aErr);
+          console.warn('Failed to remove', aModel.modelName, '\n', aErr);
           aCallback(false);
           return;
         }
