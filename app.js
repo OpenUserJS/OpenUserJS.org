@@ -220,14 +220,12 @@ app.set('views', __dirname + '/views');
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue
 var minifyErrorHandler = function (aErr, aStage, aAssetType, aMinifyOptions, aBody, aCallback) {
-
-  // TODO: Lookup script meta with aBody for script identification?
-
   console.warn([ // NOTE: Pushing this to stderr instead of default stdout
     'MINIFICATION WARNING (release):',
     '  filename: ' + aErr.filename,
     '  message: ' + aErr.message,
-    '  line: ' + aErr.line + ' col: ' + aErr.col + ' pos: ' + aErr.pos
+    '  line: ' + aErr.line + ' col: ' + aErr.col + ' pos: ' + aErr.pos,
+    '  body: ' + body.slice(0, 100)
 
   ].join('\n'));
 
