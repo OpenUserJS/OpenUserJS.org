@@ -737,10 +737,6 @@ exports.webhook = function (aReq, aRes) {
     payload.commits.forEach(function (aCommit) {
       aCommit.modified.forEach(function (aFilename) {
         if (aFilename.substr(-8) === '.user.js') {
-          console.log([
-            'Webhook filename:',
-            '  ' + aFilename
-          ].join('\n')); // TODO: After some data collected, reaffirm and remove this
           repo[aFilename] = '/' + encodeURI(aFilename); // NOTE: Watchpoint
         }
       });

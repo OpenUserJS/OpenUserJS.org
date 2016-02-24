@@ -97,14 +97,14 @@ function remove(aModel, aContent, aUser, aReason, aAutomated, aCallback) {
 
   removeModel.save(function (aErr, aRemove) {
     if (aErr || !aRemove) {
-      console.error('Failed to save to the Graveyard');
+      console.error('Failed to save to the Graveyard', aModel.modelName, aContent._id);
       aCallback(aErr);
       return;
     }
 
     aContent.remove(function (aErr) {
       if (aErr) {
-        console.error('Failed to remove', aModel.modelName);
+        console.error('Failed to remove', aModel.modelName, aContent._id);
         aCallback(aErr); // NOTE: Same as `true` but specific e.g. stop all removal(s)
         return;
       }
