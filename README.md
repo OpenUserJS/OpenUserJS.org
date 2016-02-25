@@ -83,7 +83,7 @@ Repository | Reference | Recent Version
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
 [bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
-
+[SquadaOne-Regular][squadaOneGHUrl][&#x00b9;][squadaOneREPOUrl] | [Documentation][squadaOneDOCUrl] | [SquadaOne-Regular.ttf][squadaOneGHUrlRecent] | SHA256 7fb11ce5541246c83ebc3640543c9f53de186964bcbbf184c1a00cb9ec6cc457
 
 ##### CDN
 
@@ -420,6 +420,12 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [normalizeGHUrl]: https://github.com/necolas/normalize.css
 [normalizeDOCUrl]: http://git.io/normalize
+
+[squadaOneGHUrl]: https://github.com/google/fonts/tree/master/ofl/squadaone
+[squadaOneREPOUrl]: https://www.google.com/fonts/specimen/Squada+One
+[squadaOneDOCUrl]: https://github.com/google/fonts/blob/master/README.md
+[squadaOneGHUrlRecent]: https://github.com/google/fonts/blob/master/ofl/squadaone/SquadaOne-Regular.ttf
+
 
 
 [styleguide]: STYLEGUIDE.md
