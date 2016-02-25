@@ -11,7 +11,7 @@ var User = require('../models/user').User;
 var async = require('async');
 
 // Get the models for removable content that belongs to a user
-var modelNames = ['Script']; // TODO: , 'Group', 'Comment', 'Discussion', 'Flag', 'Vote' eventually
+var modelNames = ['Script', 'Comment', 'Discussion']; // TODO: , 'Group', 'Comment', 'Discussion', 'Flag', 'Vote' eventually
 var models = {};
 
 modelNames.forEach(function (aModelName) {
