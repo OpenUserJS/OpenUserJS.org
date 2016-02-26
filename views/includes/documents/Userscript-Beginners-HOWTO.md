@@ -34,9 +34,10 @@ Web browser | Installation Method
 [Firefox][firefox] | [Greasemonkey][greasemonkeyForFirefox]
 [Opera][opera] | [Violentmonkey][violentMonekyForOpera]
 [Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
+[QupZilla][qupzilla] | *(native support)*
 [SeaMonkey][seamonkey] | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
 [Tampermonkey for Android][tampermonkeyForAndroid] |
-[QupZilla][qupzilla] | *(native support)*
+
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
@@ -51,5 +52,6 @@ Web browser | Installation Method
 [chromium]: Chromium
 [firefox]: Firefox
 [opera]: Opera
-[seamonkey]: SeaMonkey
 [qupzilla]: QupZilla
+[seamonkey]: SeaMonkey
+
