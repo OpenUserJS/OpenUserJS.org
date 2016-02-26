@@ -36,7 +36,7 @@ Web browser | Installation Method
 [Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
 [QupZilla][qupzilla] | *(native support)*
 [SeaMonkey][seamonkey] | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
-[Tampermonkey for Android][tampermonkeyForAndroid] |
+Android| [Tampermonkey][tampermonkeyForAndroid]
 
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
