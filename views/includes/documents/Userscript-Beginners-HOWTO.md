@@ -36,6 +36,7 @@ Web browser | Installation Method
 [Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
 [SeaMonkey][seamonkey] | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
 [Tampermonkey for Android][tampermonkeyForAndroid] |
+[QupZilla][qupzilla] | *(native support)*
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
@@ -51,3 +52,4 @@ Web browser | Installation Method
 [firefox]: Firefox
 [opera]: Opera
 [seamonkey]: SeaMonkey
+[qupzilla]: QupZilla
