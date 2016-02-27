@@ -5,21 +5,29 @@
     $(document).ready(function () {
       var editor = ace.edit("editor");
 
-      function hasCalc(aPrefix) {
-        var el = null;
+      function hasRelative(aPrefix) {
+        var hasCalc = null;
+        var hasUnitV = null;
 
         aPrefix = aPrefix || "";
-        el = document.createElement("div");
-        el.style.setProperty(aPrefix + "width", "calc(1px)", "");
-        return !!el.style.length;
+        hasCalc = document.createElement("div");
+        hasCalc.style.setProperty(aPrefix + "width", "calc(1px)", "");
+
+        if (!!hasCalc.style.length) {
+          hasUnitV = document.createElement("div");
+          hasUnitV.style.setProperty(aPrefix + "width", "calc(5vw + 5vw)", "");
+        }
+
+        return !!hasCalc.style.length && !!hasUnitV.style.length;
       }
 
-      function hasAnyCalc() {
-        return hasCalc("-moz-") || hasCalc("-ms-") || hasCalc("-o-") || hasCalc("-webkit-") || hasCalc();
+      function hasOurRelative() {
+        return hasRelative("-moz-") || hasRelative("-ms-") || hasRelative("-o-") ||
+          hasRelative("-webkit-") || hasRelative();
       }
 
       function calcHeight() {
-        return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}};
+        return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}302{{/newScript}};
       }
 
       editor.setTheme("ace/theme/dawn");
@@ -34,12 +42,19 @@
       });
       {{/readOnly}}
 
-      // Older browser JavaScript work-around for #136
-      if (!hasAnyCalc()) {
+      // Some older and newer browser JavaScript work-around for #136
+      if (!hasOurRelative()) {
         $("#editor").height(calcHeight());
-        $(document).on("resize", function () {
+
+        function onresize() {
           $("#editor").height(calcHeight);
-        });
+        }
+
+        if (window.addEventListener) {
+          window.addEventListener('resize', onresize, false);
+        } else if (window.attachEvent) {
+          window.attachEvent('resize', onresize);
+        }
       }
     });
 
