@@ -25,9 +25,11 @@ To reduce security risks, most userscript managers let you control which website
 
 ### How do I get going?
 
-Find your web browser in the table below, and follow the links to find out the options for making userscripts work on your computer.
+Find your web browser in the tables below, and follow the links to find out the options for making userscripts work on your computer.
 
-Web browser | Installation Method
+#### Desktop
+
+Browser | Installation Method
 ---  | ---
 [Chrome][chrome] | [Tampermonkey][tampermonkeyForChrome]
 [Chromium][chromium] | [Tampermonkey][tampermonkeyForChromium]
@@ -36,6 +38,11 @@ Web browser | Installation Method
 [Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
 [QupZilla][qupzilla] | *(native support)*
 [SeaMonkey][seamonkey] | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
+
+#### Portable
+
+Browser | Installation Method
+---  | ---
 Android| [Tampermonkey][tampermonkeyForAndroid]
 
 
