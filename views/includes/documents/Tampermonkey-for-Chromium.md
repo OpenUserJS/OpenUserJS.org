@@ -58,7 +58,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [opera]: Opera
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [gooChromeWebStoreTampermonkey]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
-[tampermonkeyNet]: http://tampermonkey.net/
+[tampermonkeyNet]: https://tampermonkey.net/
 [tampermonkeyGooChromeWebStoreScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr.gif "Tampermonkey in the Chrome Web Store"
 [oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [tampermonkeyChromeScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr4.gif "Installing a script"
