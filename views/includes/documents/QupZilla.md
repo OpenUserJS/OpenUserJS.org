@@ -12,6 +12,6 @@ QupZilla ships with its own port of Greasemonkey as an extension.
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
-[qupzillaBrowser]: http://qupzilla.com/
-[wikipediaQupZilla]: http://www.wikipedia.org/wiki/QupZilla
+[qupzillaBrowser]: https://qupzilla.com/
+[wikipediaQupZilla]: https://www.wikipedia.org/wiki/QupZilla
 [qupzillaHelp]: https://github.com/QupZilla/qupzilla/issues
