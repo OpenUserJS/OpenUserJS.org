@@ -12,7 +12,7 @@ To run userscripts on Chromium, you normally need a manager extension such as Ta
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
-[chromiumBrowser]: http://dev.chromium.org/Home
-[wikipediaChromium]: http://www.wikipedia.org/wiki/Chromium_%28web_browser%29
+[chromiumBrowser]: https://dev.chromium.org/Home
+[wikipediaChromium]: https://www.wikipedia.org/wiki/Chromium_%28web_browser%29
 [chromiumSupport]: https://code.google.com/p/chromium/issues/list
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
