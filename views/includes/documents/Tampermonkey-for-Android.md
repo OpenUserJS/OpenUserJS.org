@@ -70,6 +70,6 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [tampermonkeyAndroidScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an3.png "Install via Tampermonkey"
 [tampermonkeyAndroidScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an4.png "Installing a script"
 [tampermonkeyAndroidScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an5.png "Tampermonkey Options"
-[tampermonkeyNet]: http://tampermonkey.net/
+[tampermonkeyNet]: https://tampermonkey.net/
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
