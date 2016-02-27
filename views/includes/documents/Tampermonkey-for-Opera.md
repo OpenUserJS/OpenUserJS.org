@@ -65,4 +65,4 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [tampermonkeyOperaScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey5.png "Tampermonkey Dashboard"
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
-[tampermonkeyNet]: http://tampermonkey.net/
+[tampermonkeyNet]: https://tampermonkey.net/
