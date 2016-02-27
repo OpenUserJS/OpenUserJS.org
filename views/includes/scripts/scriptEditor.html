@@ -30,6 +30,11 @@
         return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}302{{/newScript}};
       }
 
+      function onresize() {
+        $("#editor").height(calcHeight);
+        editor.resize(true);
+      }
+
       editor.setTheme("ace/theme/dawn");
       editor.getSession().setMode("ace/mode/javascript");
 
@@ -45,10 +50,6 @@
       // Some older and newer browser JavaScript work-around for #136
       if (!hasOurRelative()) {
         $("#editor").height(calcHeight());
-
-        function onresize() {
-          $("#editor").height(calcHeight);
-        }
 
         if (window.addEventListener) {
           window.addEventListener('resize', onresize, false);
