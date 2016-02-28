@@ -387,6 +387,7 @@ The following **may not** be used:
 * `eval()`
 * `Function` constructor (it uses `eval()`)
 * `with()` *(it can be highly inconsistent)*
+* `Promise` *(unpredictable and considered unstable in some browser implementations at this time. Utilize callback structure with some standards of receiving `function optionalName(aArg1, aArg2, ..., aCallback)` and sending `function optionalName(aCallback, aArg1, aArg2, ...)` signatures for use with internal Code styling and async package including possible `aErr` argument parameter)*
 
 Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`. If you're trying to force a server side function to run asynchronously use [`setImmediate`](http://nodejs.org/api/timers.html#timers_setimmediate_callback_arg) *(or [`process.nextTick`](http://nodejs.org/api/process.html#process_process_nexttick_callback) if you really know what you're doing)*.
 
