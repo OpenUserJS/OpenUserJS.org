@@ -72,8 +72,7 @@ module.exports = function (aApp) {
   });
 
   serveModule('/redist/npm/', 'jquery/', {
-    'dist/jquery.js': { maxage: day * 7 },
-    'dist/jquery.min.map': { maxage: day * 7 }
+    'dist/jquery.js': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'marked/', {
