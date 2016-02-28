@@ -38,17 +38,17 @@ Within moderation we understand the occasional necessity to conserve device stor
 
 #### Default Code Licensing
 
-* User Scripts have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) if the `@license` *(including the alternate spelling of `@licence`)* metadata block key is absent.
-* Library Scripts need to include one reference to their [acceptable license(s)](#acceptable-licensing) either via a License Header *([sample MPL header](https://www.mozilla.org/MPL/headers/) if that license is chosen)*, a cross-site compatible metadata block with at least one `@license` or `@licence` key **and** one `@exclude *`, or full License text *(full text is not recommended for storage constraints on portable devices)*. Libraries also have an implied license of [MIT License (Expat)](http://opensource.org/licenses/MIT) in the absence of any licensing *(however this should not happen)*. It may also be useful to indicate in the source that it is a library and not a userscript. If the type of script is unclear the library may be subject to removal.
+* User Scripts have an implied license of [MIT License (Expat)][osiMITLicenseExpat] if the `@license` *(including the alternate spelling of `@licence`)* metadata block key is absent.
+* Library Scripts need to include one reference to their [acceptable license(s)][oujsAcceptableLicensing] either via a License Header *([sample MPL header][mozMPLHeaders] if that license is chosen)*, a cross-site compatible metadata block with at least one `@license` or `@licence` key **and** one `@exclude *`, or full License text *(full text is not recommended for storage constraints on portable devices)*. Libraries also have an implied license of [MIT License (Expat)][osiMITLicenseExpat] in the absence of any licensing *(however this should not happen)*. It may also be useful to indicate in the source that it is a library and not a userscript. If the type of script is unclear the library may be subject to removal.
 
 #### Acceptable Licensing
-* Licensing must be [Open Source Initiative *(OSI)* approved](http://opensource.org/licenses/category) and declared with the name of the License in the Source Code for all published works. e.g. `@license` or `@licence` keys, License Header or full License text *(full text is not recommended for storage constraints on portable devices)*
-* If a Content only license is included then the [Default Code Licensing](#default-code-licensing) will be applied with licensing arbitration, but may not always be visibly indicated on a script home page.
+* Licensing must be [Open Source Initiative *(OSI)* approved][osiApprovedLicenses] and declared with the name of the License in the Source Code for all published works. e.g. `@license` or `@licence` keys, License Header or full License text *(full text is not recommended for storage constraints on portable devices)*
+* If a Content only license is included then the [Default Code Licensing][oujsDefaultCodeLicensing] will be applied with licensing arbitration, but may not always be visibly indicated on a script home page.
 * Any license that prohibits derivatives is eligible for removal.
 * Non-reusable licenses, of course, may not be used.
-* [Public domain type](http://opensource.org/faq#public-domain) licenses may mean different things in different jurisdictions and therefore are not allowed and eligible for removal.
+* [Public domain type][osiPublicDomain] licenses may mean different things in different jurisdictions and therefore are not allowed and eligible for removal.
 * Any attempt to unlicense a published work will be eligible for removal.
-* In the event of any code licensing dispute resolution the [Default Code Licensing](#default-code-licensing) shall prevail if previously undeclared and/or undocumented.
+* In the event of any code licensing dispute resolution the [Default Code Licensing][oujsDefaultCodeLicensing] shall prevail if previously undeclared and/or undocumented.
 
 ### The Fine Print
 
@@ -65,3 +65,10 @@ You agree to defend, indemnify and hold us harmless from any claim, demand, acti
 ### Closing
 
 OpenUserJs.org reserves the right to amend these terms at any time.
+
+[mozMPLHeaders]: https://www.mozilla.org/MPL/headers/
+[oujsDefaultCodeLicensing]: #default-code-licensing
+[oujsAcceptableLicensing]: #acceptable-licensing
+[osiMITLicenseExpat]: http://opensource.org/licenses/MIT
+[osiApprovedLicenses]: http://opensource.org/licenses/category
+[osiPublicDomain]: http://opensource.org/faq#public-domain
