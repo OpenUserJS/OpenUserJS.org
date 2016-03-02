@@ -239,6 +239,7 @@ var minifyErrorHandler = function (aErr, aStage, aAssetType, aMinifyOptions, aBo
 
 if (minify && !isDbg) {
   app.use(minify({
+    cache: './dev/cache/express-minify/release',
     onerror: minifyErrorHandler
   }));
 }
