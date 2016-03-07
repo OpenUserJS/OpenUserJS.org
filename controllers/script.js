@@ -33,6 +33,7 @@ var removeLib = require('../libs/remove');
 var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
 
+var decode = require('../libs/helpers').decode;
 var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
@@ -119,12 +120,14 @@ var getScriptPageTasks = function (aOptions) {
     homepageURL.forEach(function (aElement, aIndex, aArray) {
       htmlStub = '<a href="' + aElement.value + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+
         aOptions.script.homepages.unshift({
           url: aElement.value,
-          text: decodeURI(aElement.value),
+          text: decode(aElement.value),
           hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.
             test(aElement.value)
         });
+
       }
     });
   }

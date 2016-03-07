@@ -24,6 +24,7 @@ var renderMd = require('../libs/markdown').renderMd;
 var getRating = require('../libs/collectiveRating').getRating;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var encode = require('../libs/helpers').encode;
+var decode = require('../libs/helpers').decode;
 
 //--- Configuration inclusions
 var htmlWhitelistLink = require('./htmlWhitelistLink.json');
@@ -241,13 +242,15 @@ var parseScript = function (aScript) {
   if (supportURL) {
     htmlStub = '<a href="' + supportURL + '"></a>';
     if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+
       script.hasSupport = true;
 
       script.support = [{
         url: supportURL,
-        text: decodeURI(supportURL),
+        text: decode(supportURL),
         hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL)
       }];
+
     }
   }
 
