@@ -109,6 +109,16 @@ exports.encode = function (aStr) {
   }
 }
 
+exports.decode = function (aStr) {
+  try {
+    // Check for bad decoding
+    return decodeURIComponent(aStr);
+
+  } catch (aE) {
+    return aStr;
+  }
+}
+
 exports.limitRange = function (aMin, aX, aMax, aDefault) {
   var x = Math.max(Math.min(aX, aMax), aMin);
 
