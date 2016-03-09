@@ -70,6 +70,7 @@ Repository | Reference | Recent Version
 [passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
+[rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
 [sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
@@ -375,6 +376,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [requestDOCUrl]: https://github.com/request/request/blob/master/README.md
 [requestNPMUrl]: https://www.npmjs.com/package/request
 [requestNPMVersionImage]: https://img.shields.io/npm/v/request.svg?style=flat
+
+[rfc2047GHUrl]: https://github.com/One-com/rfc2047
+[rfc2047DOCUrl]: https://github.com/One-com/rfc2047/blob/master/README.md
+[rfc2047NPMUrl]: https://www.npmjs.com/package/rfc2047
+[rfc2047NPMVersionImage]: https://img.shields.io/npm/v/rfc2047.svg?style=flat
 
 [sanitize-htmlGHUrl]: https://github.com/punkave/sanitize-html
 [sanitize-htmlDOCUrl]: https://github.com/punkave/sanitize-html/blob/master/README.md

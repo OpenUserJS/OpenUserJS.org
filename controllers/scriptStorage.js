@@ -12,6 +12,7 @@ var fs = require('fs');
 var PEG = require('pegjs');
 var AWS = require('aws-sdk');
 var UglifyJS = require("uglify-js-harmony");
+var rfc2047 = require('rfc2047');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
@@ -238,6 +239,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
       aStream.on('end', function () {
         var source = chunks.join(''); // NOTE: Watchpoint
+        var msg = null;
 
         try {
           source = UglifyJS.minify(source, {
@@ -260,6 +262,16 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
           ].join('\n'));
 
+          // Set up a `Warning` header with Q encoding under RFC2047
+          msg = [
+            '199 ' + aReq.headers.host + ' MINIFICATION WARNING (harmony):',
+            '  ' + rfc2047.encode(aE.message),
+            '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos
+
+          ].join('\u0020'); // TODO: Watchpoint... *express*/*node* exception thrown with CRLF SPACE spec
+
+
+          aRes.set('Warning', msg);
         }
 
         aRes.write(source);
