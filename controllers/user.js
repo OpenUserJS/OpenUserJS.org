@@ -1664,6 +1664,9 @@ exports.editScript = function (aReq, aRes, aNext) {
         script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
           + scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
             (isLib ? '.js#' : '.user.js#');
+        script.scriptRawPageXUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
+          + scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
+            (isLib ? '.min.js#' : '.min.user.js#');
 
         // Page metadata
         pageMetadata(options);
