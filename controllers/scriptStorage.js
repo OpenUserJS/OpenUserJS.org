@@ -265,8 +265,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
           // Set up a `Warning` header with Q encoding under RFC2047
           msg = [
             '199 ' + aReq.headers.host + ' MINIFICATION WARNING (harmony):',
-            '  ' + rfc2047.encode(aE.message),
-            '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos
+            '  ' + rfc2047.encode(aE.message.replace(/\xAB/g, '`').replace(/\xBB/g, '`')),
+            '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos,
 
           ].join('\u0020'); // TODO: Watchpoint... *express*/*node* exception thrown with CRLF SPACE spec
 
