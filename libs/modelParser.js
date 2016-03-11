@@ -184,6 +184,11 @@ var parseScript = function (aScript) {
   var icon = null;
   var supportURL = null;
 
+  var downloadURL = null;
+  var downloadUtf = null;
+  var rAnySourceUrl = new RegExp('^https?://(?:openuserjs\.org|localhost:' +
+    (process.env.PORT || 8080) + ')/(?:install|scr/scripts)\/(.+?)/(.+?)((?:\.min)?\.user\.js)$');
+
   // Temporaries
   var htmlStub = null;
 
@@ -199,6 +204,7 @@ var parseScript = function (aScript) {
 
   var folders = null;
 
+  var matches = null;
 
   if (!aScript) {
     return;
@@ -360,6 +366,39 @@ var parseScript = function (aScript) {
 
   if (script._since && script.updated && script._since.toString() !== script.updated.toString()) {
     script.isUpdated = true;
+  }
+
+  // Download Url
+  downloadURL = findMeta(script.meta, 'UserScript.downloadURL.0.value');
+  if (downloadURL) {
+    try {
+      downloadUtf = decodeURIComponent(downloadURL);
+
+    } catch (aE) {
+      script.hasInvalidDownloadURL = true;
+      script.showMinficationNotices = true;
+
+    } finally {
+      if (!script.hasInvalidDownloadURL)  {
+        matches = downloadUtf.match(rAnySourceUrl);
+
+        if (matches) {
+          if (matches[1].toLowerCase() === script.authorSlug.toLowerCase() &&
+            matches[2] === script.nameSlug) {
+
+            if (matches[3] === '.user.js') {
+              script.hasAlternateDownloadURL = true;
+            }
+          } else {
+            script.hasAlternateDownloadURL = true;
+            script.showMinficationNotices = true;
+          }
+        } else {
+          script.hasAlternateDownloadURL = true;
+          script.showMinficationNotices = true;
+        }
+      }
+    }
   }
 
   return script;
