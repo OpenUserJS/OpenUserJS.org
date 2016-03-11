@@ -187,7 +187,7 @@ var parseScript = function (aScript) {
   var downloadURL = null;
   var downloadUtf = null;
   var rAnySourceUrl = new RegExp('^https?://(?:openuserjs\.org|localhost:' +
-    (process.env.PORT || 8080) + ')/(?:install|scr/scripts)\/(.+?)/(.+?)((?:\.min)?\.user\.js)$');
+    (process.env.PORT || 8080) + ')/(?:install|src/scripts)\/(.+?)/(.+?)((?:\.min)?\.user\.js)$');
 
   // Temporaries
   var htmlStub = null;
