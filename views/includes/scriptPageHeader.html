@@ -56,11 +56,21 @@
           </div>
           {{#script.showMinficationNotices}}
           <div class="alert alert-warning" role="alert">
+            {{#script.hasInvalidDownloadURL}}
+              <p>
+                <i class="fa fa-fw fa-exclamation"></i> Invalid download target
+              </p>
+            {{/script.hasInvalidDownloadURL}}
             {{#script.hasUnstableMinify}}
               <p>
                 <i class="fa fa-fw fa-exclamation-triangle"></i> The script author suggests that minification of this script may be unstable.
               <p>
             {{/script.hasUnstableMinify}}
+            {{#script.hasAlternateDownloadURL}}
+              <p>
+                <i class="fa fa-fw fa-exclamation-triangle"></i> Alternate download target.
+              </p>
+            {{/script.hasAlternateDownloadURL}}
           </div>
           {{/script.showMinficationNotices}}
         </li>
