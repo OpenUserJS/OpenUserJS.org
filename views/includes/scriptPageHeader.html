@@ -15,23 +15,7 @@
             <a href="{{{script.scriptInstallPageXUrl}}}.min.user.js" class="btn btn-{{#script.showMinficationNotices}}warning{{/script.showMinficationNotices}}{{^script.showMinficationNotices}}primary{{/script.showMinficationNotices}}" title="EXPERIMENTAL INSTALLATION FORKING"><i class="fa fa-fw fa-download"></i> Install {{#script.hasAlternateDownloadURL}}once {{/script.hasAlternateDownloadURL}} with minification</a>
           </div>
           {{#script.showMinficationNotices}}
-          <div class="alert alert-warning" role="alert">
-            {{#script.hasInvalidDownloadURL}}
-              <p>
-                <i class="fa fa-fw fa-exclamation"></i> Invalid download target
-              </p>
-            {{/script.hasInvalidDownloadURL}}
-            {{#script.hasUnstableMinify}}
-              <p>
-                <i class="fa fa-fw fa-exclamation-triangle"></i> The script author suggests that minification of this script may be unstable.
-              <p>
-            {{/script.hasUnstableMinify}}
-            {{#script.hasAlternateDownloadURL}}
-              <p>
-                <i class="fa fa-fw fa-exclamation-triangle"></i> Alternate download target.
-              </p>
-            {{/script.hasAlternateDownloadURL}}
-          </div>
+          {{> includes/scriptPageHeaderMinificationNotices.html }}
           {{/script.showMinficationNotices}}
         </li>
         <li role="separator" class="divider"></li>
@@ -55,23 +39,7 @@
             <a href="{{{script.scriptRawPageXUrl}}}" class="btn btn-{{#script.showMinficationNotices}}warning{{/script.showMinficationNotices}}{{^script.showMinficationNotices}}primary{{/script.showMinficationNotices}}" title="EXPERIMENTAL"><i class="fa fa-file-{{#script.isLib}}excel{{/script.isLib}}{{^script.isLib}}code{{/script.isLib}}-o"></i> Minified Source</a>
           </div>
           {{#script.showMinficationNotices}}
-          <div class="alert alert-warning" role="alert">
-            {{#script.hasInvalidDownloadURL}}
-              <p>
-                <i class="fa fa-fw fa-exclamation"></i> Invalid download target
-              </p>
-            {{/script.hasInvalidDownloadURL}}
-            {{#script.hasUnstableMinify}}
-              <p>
-                <i class="fa fa-fw fa-exclamation-triangle"></i> The script author suggests that minification of this script may be unstable.
-              <p>
-            {{/script.hasUnstableMinify}}
-            {{#script.hasAlternateDownloadURL}}
-              <p>
-                <i class="fa fa-fw fa-exclamation-triangle"></i> Alternate download target.
-              </p>
-            {{/script.hasAlternateDownloadURL}}
-          </div>
+          {{> includes/scriptPageHeaderMinificationNotices.html }}
           {{/script.showMinficationNotices}}
         </li>
       </ul>
