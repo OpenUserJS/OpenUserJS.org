@@ -546,7 +546,16 @@ exports.vote = function (aReq, aRes, aNext) {
           function saveScript() {
             if (!flags) {
               aScript.save(function (aErr, aScript) {
-                aRes.redirect(uri);
+                var script = null;
+
+                if (vote === false) {
+                  script = modelParser.parseScript(aScript);
+
+                  // Gently encourage browsing/creating an issue with a down vote
+                  aRes.redirect(script.scriptIssuesPageUri);
+                } else {
+                  aRes.redirect(uri);
+                }
               });
               return;
             }
