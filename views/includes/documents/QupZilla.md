@@ -8,10 +8,10 @@ QupZilla ships with its own port of Greasemonkey as an extension.
 
 * [Get QupZilla][qupzillaBrowser]
 * [QupZilla on Wikipedia][wikipediaQupZilla]
-* [QupZilla support][qupzillaHelp]
+* [QupZilla Issue Tracker][qupzillaIssueTracker]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
 [qupzillaBrowser]: http://qupzilla.com/
 [wikipediaQupZilla]: https://www.wikipedia.org/wiki/QupZilla
-[qupzillaHelp]: https://github.com/QupZilla/qupzilla/issues
+[qupzillaIssueTracker]: https://github.com/QupZilla/qupzilla/issues
