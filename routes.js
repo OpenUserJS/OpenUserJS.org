@@ -90,7 +90,6 @@ module.exports = function (aApp) {
   aApp.route('/admin').get(admin.adminPage);
   aApp.route('/admin/authas').get(admin.authAsUser);
   aApp.route('/admin/json').get(admin.adminJsonView);
-  aApp.route('/admin/user/:id').get(admin.adminUserView);
   aApp.route('/admin/api').get(admin.adminApiKeysPage);
   aApp.route('/admin/npm/package').get(admin.adminNpmPackageView);
   aApp.route('/admin/npm/list').get(admin.adminNpmListView);

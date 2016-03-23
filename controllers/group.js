@@ -48,7 +48,7 @@ exports.search = function (aReq, aRes) {
   var terms = term.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/);
   var results = null;
 
-  aRes.set('Content-Type', 'application/json');
+  aRes.set('Content-Type', 'application/json; charset=UTF-8');
   if (terms.length === 0) {
     return aRes.end(JSON.stringify([]));
   }
