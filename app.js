@@ -225,7 +225,7 @@ var minifyErrorHandler = function (aErr, aStage, aAssetType, aMinifyOptions, aBo
     '  filename: ' + aErr.filename,
     '  message: ' + aErr.message,
     '  line: ' + aErr.line + ' col: ' + aErr.col + ' pos: ' + aErr.pos,
-    '  body: ' + body.slice(0, 100)
+    '  body: ' + aBody.slice(0, 100)
 
   ].join('\n'));
 
