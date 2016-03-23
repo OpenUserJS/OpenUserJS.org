@@ -50,7 +50,7 @@ exports.removedItemPage = function (aReq, aRes, aNext) {
     return;
   }
 
-  Remove.find({
+  Remove.findOne({
     _id: removedItemId
   }, function (aErr, aRemovedItem) {
     if (aErr || !aRemovedItem) {
@@ -58,7 +58,13 @@ exports.removedItemPage = function (aReq, aRes, aNext) {
       return;
     }
 
-    aRes.json(aRemovedItem);
+    aRes.set('Content-Type', 'application/json; charset=UTF-8');
+    aRes.write(JSON.stringify(
+      aRemovedItem.toObject ? aRemovedItem.toObject({ virtuals: true }) : aRemovedItem,
+      null,
+      isPro ? '' : ' ')
+    );
+    aRes.end();
   });
 };
 

@@ -68,33 +68,6 @@ function getOAuthStrategies(aStored) {
   return oAuthStrats;
 }
 
-// View everything about a particular user
-// This is mostly for debugging in production
-exports.adminUserView = function (aReq, aRes, aNext) {
-  var id = aReq.params.id;
-  var authedUser = aReq.session.user;
-
-  if (!userIsAdmin(aReq)) {
-    aNext();
-    return;
-  }
-
-  // Nothing fancy, just the stringified user object
-  User.findOne({ '_id': id, role: { $gt: authedUser.role } },
-    function (aErr, aUser) {
-      if (aErr || !aUser) {
-        aNext();
-        return;
-      }
-
-      aRes.render('userAdmin', {
-        user: {
-          info: JSON.stringify(aUser.toObject(), null, ' ')
-        }
-      });
-    });
-};
-
 var jsonModelMap = {
   'User': User,
   'Script': Script,
@@ -104,8 +77,8 @@ var jsonModelMap = {
   'Vote': Vote,
   'Flag': Flag
 };
-// View everything about a particular user
-// This is mostly for debugging in production
+
+// View everything about a particular model
 exports.adminJsonView = function (aReq, aRes, aNext) {
   //
   var authedUser = aReq.session.user;
@@ -113,13 +86,19 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
   var id = aReq.query.id;
 
   if (!userIsAdmin(aReq)) {
-    aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.',
+    });
     return;
   }
 
   var model = jsonModelMap[modelname];
   if (!model) {
-    aRes.status(400).send({ status: 400, message: 'Invalid model.' });
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 400,
+      statusMessage: 'Invalid model.',
+    });
     return;
   }
 
@@ -127,11 +106,20 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
     _id: id
   }, function (aErr, aObj) {
     if (aErr || !aObj) {
-      aRes.status(404).send({ status: 404, message: 'Id doesn\'t exist.' });
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 404,
+      statusMessage: 'Id doesn\'t exist.',
+    });
       return;
     }
 
-    aRes.json(aObj);
+    aRes.set('Content-Type', 'application/json; charset=UTF-8');
+    aRes.write(JSON.stringify(
+      aObj.toObject ? aObj.toObject({ virtuals: true }) : aObj,
+      null,
+      isPro ? '' : ' ')
+    );
+    aRes.end();
   });
 };
 
@@ -161,7 +149,7 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
     if (!options.isAdmin) {
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
-        statusMessage: 'This page is only accessible by admins',
+        statusMessage: 'This page is only accessible by admins.',
       });
       return;
     }
@@ -233,7 +221,7 @@ exports.adminPage = function (aReq, aRes, aNext) {
   if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'This page is only accessible by admins',
+      statusMessage: 'This page is only accessible by admins.',
     });
     return;
   }
@@ -277,7 +265,7 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
   if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'This page is only accessible by admins',
+      statusMessage: 'This page is only accessible by admins.',
     });
     return;
   }
@@ -313,54 +301,77 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
 };
 
 // View everything about current deployed `./package.json`
-// This is mostly for debugging in production
 exports.adminNpmPackageView = function (aReq, aRes, aNext) {
   //
 
   if (!userIsAdmin(aReq)) {
-    aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.',
+    });
     return;
   }
 
-  aRes.json(pkg);
+  aRes.set('Content-Type', 'application/json; charset=UTF-8');
+  aRes.write(JSON.stringify(pkg, null, isPro ? '' : ' '));
+  aRes.end();
 };
 
 // View everything about current modules for the server
-// This is mostly for debugging in production
 exports.adminNpmListView = function (aReq, aRes, aNext) {
   //
 
   if (!userIsAdmin(aReq)) {
-    aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.',
+    });
     return;
   }
 
   exec('npm ls --json', function (aErr, aStdout, aStderr) {
+    var stdout = null;
+
     if (aErr) {
       console.warn(aErr);
     }
 
     try {
-      aRes.json(JSON.parse(aStdout));
+      stdout = JSON.parse(aStdout);
+
     } catch (aE) {
-      aRes.status(520).send({ status: 520, message: 'Unknown error.' });
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 520,
+        statusMessage: 'Unknown error.',
+      });
+      return;
     }
+
+    aRes.set('Content-Type', 'application/json; charset=UTF-8');
+    aRes.write(JSON.stringify(stdout, null, isPro ? '' : ' '));
+    aRes.end();
+
   });
 };
 
 // View current version of npm
-// This is mostly for debugging in production
 exports.adminNpmVersionView = function (aReq, aRes, aNext) {
   //
 
   if (!userIsAdmin(aReq)) {
-    aRes.status(403).send({ status: 403, message: 'Not an admin.' });
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.',
+    });
     return;
   }
 
   exec('npm --version', function (aErr, aStdout, aStderr) {
     if (aErr) {
-      aRes.status(501).send({ status: 501, message: 'Not implemented.' });
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 501,
+        statusMessage: 'Not implemented.',
+      });
       return;
     }
 
@@ -456,7 +467,7 @@ exports.authAsUser = function (aReq, aRes, aNext) {
   if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'This page is only accessible by admins',
+      statusMessage: 'This page is only accessible by admins.',
     });
     return;
   }

@@ -651,8 +651,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
             // Don't save a script if storing failed
             if (aErr) {
               console.error(aUser.name, '-', installName);
-              console.error(JSON.stringify(aErr));
-              console.error(JSON.stringify(aScript.toObject()));
+              console.error(JSON.stringify(aErr, null, ' '));
+              console.error(JSON.stringify(
+                aScript.toObject ? aScript.toObject({ virtuals: true }) : aScript, null, ' ')
+              );
               aCallback(null);
               return;
             }
