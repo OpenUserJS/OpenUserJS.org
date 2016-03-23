@@ -106,10 +106,10 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
     _id: id
   }, function (aErr, aObj) {
     if (aErr || !aObj) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 404,
-      statusMessage: 'Id doesn\'t exist.',
-    });
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 404,
+        statusMessage: 'Id doesn\'t exist.',
+      });
       return;
     }
 
