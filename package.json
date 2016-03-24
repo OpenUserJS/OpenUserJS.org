@@ -6,7 +6,7 @@
   "dependencies": {
     "ace-builds": "git://github.com/ajaxorg/ace-builds#4c15514",
     "async": "1.5.2",
-    "aws-sdk": "2.2.45",
+    "aws-sdk": "2.2.46",
     "body-parser": "1.15.0",
     "bootstrap": "3.3.6",
     "bootstrap-markdown": "2.10.0",
@@ -29,7 +29,7 @@
     "marked": "0.3.5",
     "method-override": "2.3.5",
     "moment": "2.12.0",
-    "mongoose": "4.4.8",
+    "mongoose": "4.4.9",
     "morgan": "1.7.0",
     "mu2": "0.5.20",
     "octicons": "3.5.0",
