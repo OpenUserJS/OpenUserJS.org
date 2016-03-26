@@ -561,7 +561,7 @@ exports.vote = function (aReq, aRes, aNext) {
             }
 
             flagLib.getAuthor(aScript, function (aAuthor) {
-              flagLib.saveContent(Script, aScript, aAuthor, flags,
+              flagLib.saveContent(Script, aScript, aAuthor, flags, false,
                 function (aFlagged) {
                   aRes.redirect(uri);
                 });
