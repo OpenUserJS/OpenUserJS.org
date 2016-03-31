@@ -26,7 +26,7 @@ Violent Monkey will display a screen showing you the source code of the userscri
 
 Installing userscripts from other sources is a similar process. You just need to find the installation link for the script. This will be a button or link to a file with a name that ends ".user.js"
 
-NB After installing a userscript, you won't normally notice any further changes until you visit a website that it runs on.
+After installing a userscript, you won't normally notice any further changes until you visit a website that it runs on.
 
 ### Managing Userscripts
 
