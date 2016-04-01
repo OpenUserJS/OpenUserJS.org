@@ -42,7 +42,7 @@ Clicking on the GreaseMonkey icon at any time will pop up a dialog that shows yo
 
 If you think a userscript is causing problems, the easiest way to check is to switch off GreaseMonkey, reload the web page, and see if the symptoms go away. You can do this by opening Preferences &rarr; Extensions menu item and select GreaseMonkey and then untick the checkbox, then the "OK" button. If it looks like a script problem and you have more than one script running on a web page, you can disable them all in GreaseMonkey's dialog "Settings" button, or the status bar icon, then re-enable them one by one, until you find the culprit. Remember to reload the web page each time - userscripts normally only run when a web page loads.
 
-Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order by renaming the .user.js files manually by clicking the Open scripts directory button.
+Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order by renaming the .user.js files and references there-in manually by clicking the Open scripts directory button.
 
 Curently to enable the remote debugging feature in QupZilla with <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>i</kbd> an environment variable with a name of `QTWEBENGINE_REMOTE_DEBUGGING` needs to be set with an available numeric TCP port such as `12345`. This applies to all platforms.
 
