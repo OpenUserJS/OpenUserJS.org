@@ -227,7 +227,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
     aStream.setEncoding('utf8');
 
     // Only minify for response that doesn't contain `.min.` extension
-    if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)) {
+    if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname) ||
+      process.env.DISABLE_SCRIPT_MINIFICATION === 'true') {
+      //
       aStream.pipe(aRes);
     } else {
       // Otherwise set some defaults per script request via *UglifyJS2*
