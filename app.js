@@ -17,6 +17,9 @@ if (isPro) {
 var path = require('path');
 
 var express = require('express');
+var toobusy = require('toobusy-js');
+var statusCodePage = require('./libs/templateHelpers').statusCodePage;
+
 var methodOverride = require('method-override');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
@@ -111,13 +114,40 @@ db.on('reconnected', function () {
 });
 
 process.on('SIGINT', function () {
-  db.close(function () {
-    console.log(chalk.green('MongoDB connection disconnected gracefully with app termination'));
-    process.exit(0);
-  });
+  console.log(chalk.green('Capturing app termination for an attempt at cleanup'));
+
+  /**
+   * Attempt to get everything closed before process exit
+   */
+
+  // Close the db connection
+  db.close(); // NOTE: Current asynchronous but auth may prevent callback until completed
+
+  // Stop serving new http connections
+  server.close(); // NOTE: Currently asynchronous but auth may prevent callback until completed
+
+  // Shutdown timer in toobusy
+  toobusy.shutdown(); // NOTE: Currently synchronous
+
+  // Terminate the app
+  process.exit(0);
 });
 
 var sessionStore = new MongoStore({ mongooseConnection: db });
+
+// See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
+toobusy.maxLag(100);
+app.use(function (aReq, aRes, aNext) {
+  // check if we're toobusy
+  if (toobusy()) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 503,
+      statusMessage: 'We\'re busy right now. Try again later.'
+    });
+  } else {
+    aNext();
+  }
+});
 
 // Force HTTPS
 if (app.get('securePort')) {
