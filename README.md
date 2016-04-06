@@ -75,6 +75,7 @@ Repository | Reference | Recent Version
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
 [serve-favicon][serve-faviconGHUrl] | [Documentation][serve-faviconDOCUrl] | [![NPM version][serve-faviconNPMVersionImage]][serve-faviconNPMUrl]
+[toobusy-js][toobusy-jsGHUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
 [uglifyJS2][uglifyJS2GHUrl] [&#x00b9;][uglifyJS2GHHarmonyUrl] [&#x00b2;][uglifyJS2GHHarmony2Url] | [Documentation][uglifyJS2DOCUrl][&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 
@@ -402,6 +403,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [serve-faviconDOCUrl]: https://github.com/expressjs/serve-favicon/blob/master/README.md
 [serve-faviconNPMUrl]: https://www.npmjs.com/package/serve-favicon
 [serve-faviconNPMVersionImage]: https://img.shields.io/npm/v/serve-favicon.svg?style=flat
+
+[toobusy-jsGHUrl]: https://github.com/STRML/node-toobusy
+[toobusy-jsDOCUrl]: https://github.com/STRML/node-toobusy/blob/master/README.md
+[toobusy-jsNPMUrl]: https://npmjs.com/package/toobusy-js
+[toobusy-jsNPMVersionImage]: https://img.shields.io/npm/v/toobusy-js.svg?style=flat
 
 [uglifyJS2GHUrl]: https://github.com/mishoo/UglifyJS2
 [uglifyJS2GHHarmonyUrl]: https://github.com/mishoo/UglifyJS2/tree/harmony
