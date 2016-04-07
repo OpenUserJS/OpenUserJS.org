@@ -136,13 +136,36 @@ process.on('SIGINT', function () {
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-toobusy.maxLag(100);
+toobusy.maxLag(process.env.BUSY_LAG || 100);
 app.use(function (aReq, aRes, aNext) {
-  // check if we're toobusy
-  if (toobusy()) {
+  var pathname = null;
+
+  if (process.env.FORCE_BUSY_ABSOLUTE === 'true') { // check for absolute forced busy
+    aRes.status(503).send(); // NOTE: No UI period just response header
+
+  } else if (process.env.FORCE_BUSY === 'true') { // check for graceful forced busy
+    pathname = aReq._parsedUrl.pathname;
+
+    if (
+      /^\/favicon\.ico$/.test(pathname) ||
+        /^\/redist\//.test(pathname) ||
+          /^\/less\//.test(pathname) ||
+            /^\/css\//.test(pathname) ||
+              /^\/images\//.test(pathname) ||
+                /^\/fonts\//.test(pathname)
+    ) {
+      aNext(); // NOTE: Allow styling pass through on these routes
+    } else {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 503,
+        statusMessage:
+          'We are experiencing technical difficulties right now. Please try again later.'
+      });
+    }
+  } else if (toobusy()) { // check if we're toobusy
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 503,
-      statusMessage: 'We\'re busy right now. Try again later.'
+      statusMessage: 'We are busy right now. Please try again later.'
     });
   } else {
     aNext();
