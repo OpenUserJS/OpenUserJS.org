@@ -333,3 +333,21 @@ ul.flaggedList {
     display: block;
 }
 
+.shield {
+  font-size: 11.475px;
+  letter-spacing: 0.75px;
+  color: white;
+  background-color: #5b5b5b;
+  padding: 4px 0 3.5px 4px;
+  border-radius: 3px;
+  text-shadow: 0 1px #333;
+}
+
+.shield a {
+  font-size: 11.25px;
+  color: white;
+  background-color: #0f81c2;
+  padding: 4px 4px 3px 4px;
+  border-radius: 0 3px 3px 0;
+  text-shadow: 0 1px #045481;
+}

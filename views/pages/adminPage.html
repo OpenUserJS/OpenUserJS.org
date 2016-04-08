@@ -10,17 +10,26 @@
     <div class="row">
       <div class="col-xs-12">
         <div class="list-group">
-          <a href="/admin/api" class="list-group-item">
-            <i class="octicon octicon-fw octicon-key"></i> API Keys
+          <a href="/admin/npm/version" class="list-group-item">
+            <i class="fa fa-fw fa-database"></i> Show <code>npm --version</code> semver
+          </a>
+          <a href="/admin/git/short" class="list-group-item">
+            <i class="fa fa-fw fa-database"></i> Show <code>git rev-parse --short HEAD</code> tree
+          </a>
+          <a href="/admin/git/branch" class="list-group-item">
+            <i class="fa fa-fw fa-database"></i> Show <code>git rev-parse --abbrev-ref HEAD</code> branch
+          </a>
+          <a href="/admin/process/clone" class="list-group-item">
+            <i class="fa fa-fw fa-database"></i> Show clone
           </a>
           <a href="/admin/npm/package" class="list-group-item">
-            <i class="fa fa-fw fa-database"></i> Raw <code>./package.json</code> JSON Data
+            <i class="fa fa-fw fa-database"></i> Raw <code>./package.json</code> JSON data
           </a>
           <a href="/admin/npm/list" class="list-group-item">
-            <i class="fa fa-fw fa-database"></i> Raw <code>npm ls --json</code> JSON Data
+            <i class="fa fa-fw fa-database"></i> Raw <code>npm ls --json</code> JSON data
           </a>
-          <a href="/admin/npm/version" class="list-group-item">
-            <i class="fa fa-fw fa-database"></i> Raw <code>npm --version</code> Shell Session Data
+          <a href="/admin/api" class="list-group-item">
+            <i class="octicon octicon-fw octicon-key"></i> Edit Auth Strategy API Keys
           </a>
         </div>
       </div>
