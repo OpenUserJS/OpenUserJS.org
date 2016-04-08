@@ -140,6 +140,8 @@ exports.view = function (aReq, aRes, aNext) {
     if (options.isAdmin) {
       options.process = {};
       options.process.version = process.version;
+
+
     }
 
     // Denote if storage is in RO mode
@@ -166,23 +168,25 @@ exports.view = function (aReq, aRes, aNext) {
 
     //--- Tasks
 
-    // Read git short hash HEAD for current tree
-    tasks.push(function (aCallback) {
-      git.short(function (aStr) {
-        options.git.short = aStr;
+    if (options.isAdmin) {
+      // Read git short hash HEAD for current tree
+      tasks.push(function (aCallback) {
+        git.short(function (aStr) {
+          options.git.short = aStr;
 
-        aCallback(null);
+          aCallback(null);
+        });
       });
-    });
 
-    // Read git branch name of current tree
-    tasks.push(function (aCallback) {
-      git.branch(function (aStr) {
-        options.git.branch = aStr;
+      // Read git branch name of current tree
+      tasks.push(function (aCallback) {
+        git.branch(function (aStr) {
+          options.git.branch = aStr;
 
-        aCallback(null);
+          aCallback(null);
+        });
       });
-    });
+    }
   }
 
   //---
