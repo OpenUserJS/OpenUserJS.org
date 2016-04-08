@@ -230,7 +230,19 @@ exports.sendScript = function (aReq, aRes, aNext) {
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname) ||
       process.env.DISABLE_SCRIPT_MINIFICATION === 'true') {
       //
-      aStream.pipe(aRes);
+//       aStream.pipe(aRes);
+
+      aStream.on('data', function (aData) {
+        chunks.push(aData);
+      });
+
+      aStream.on('end', function () {
+        var source = chunks.join(''); // NOTE: Watchpoint
+
+        aRes.write(source);
+        aRes.end();
+      });
+
     } else {
       // Otherwise set some defaults per script request via *UglifyJS2*
       // and try minifying output
