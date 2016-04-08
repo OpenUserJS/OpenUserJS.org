@@ -10,7 +10,6 @@ var isDbg = require('../libs/debug').isDbg;
 //--- Dependency inclusions
 var fs = require('fs');
 var async = require('async');
-var git = require('git-rev');
 
 //--- Model inclusions
 
@@ -140,8 +139,6 @@ exports.view = function (aReq, aRes, aNext) {
     if (options.isAdmin) {
       options.process = {};
       options.process.version = process.version;
-
-
     }
 
     // Denote if storage is in RO mode
@@ -157,36 +154,7 @@ exports.view = function (aReq, aRes, aNext) {
     options.pkg.name = pkg.name;
     options.pkg.version = pkg.version.replace(/\+.*$/, '');
 
-    // Find active clone
-    matches = /.*\/.*(\d)$/.exec(process.cwd());
-    if (matches && options.isAdmin) {
-      options.pkg.clone = matches[1];
-    }
-
-    // Find git branch and version of current clone
-    options.git = {};
-
     //--- Tasks
-
-    if (options.isAdmin) {
-      // Read git short hash HEAD for current tree
-      tasks.push(function (aCallback) {
-        git.short(function (aStr) {
-          options.git.short = aStr;
-
-          aCallback(null);
-        });
-      });
-
-      // Read git branch name of current tree
-      tasks.push(function (aCallback) {
-        git.branch(function (aStr) {
-          options.git.branch = aStr;
-
-          aCallback(null);
-        });
-      });
-    }
   }
 
   //---

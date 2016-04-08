@@ -10,6 +10,7 @@ var isDbg = require('../libs/debug').isDbg;
 //--- Dependency inclusions
 var async = require('async');
 var exec = require('child_process').exec;
+var git = require('git-rev');
 
 //--- Model inclusions
 var Comment = require('../models/comment').Comment;
@@ -88,7 +89,7 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
   if (!userIsAdmin(aReq)) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'This page is only accessible by admins.',
+      statusMessage: 'This page is only accessible by admins.'
     });
     return;
   }
@@ -97,7 +98,7 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
   if (!model) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 400,
-      statusMessage: 'Invalid model.',
+      statusMessage: 'Invalid model.'
     });
     return;
   }
@@ -108,7 +109,7 @@ exports.adminJsonView = function (aReq, aRes, aNext) {
     if (aErr || !aObj) {
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 404,
-        statusMessage: 'Id doesn\'t exist.',
+        statusMessage: 'Id doesn\'t exist.'
       });
       return;
     }
@@ -149,7 +150,7 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
     if (!options.isAdmin) {
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
-        statusMessage: 'This page is only accessible by admins.',
+        statusMessage: 'This page is only accessible by admins.'
       });
       return;
     }
@@ -165,7 +166,7 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
       if (role <= authedUser.role) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 403,
-          statusMessage: 'Cannot set a role equal to or higher than yourself.',
+          statusMessage: 'Cannot set a role equal to or higher than yourself.'
         });
         return;
       }
@@ -176,7 +177,7 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
     aUser.save(function (aErr) {
       if (aErr) {
         statusCodePage(aReq, aRes, aNext, {
-          statusMessage: aErr,
+          statusMessage: aErr
         });
         return;
       }
@@ -221,7 +222,7 @@ exports.adminPage = function (aReq, aRes, aNext) {
   if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'This page is only accessible by admins.',
+      statusMessage: 'This page is only accessible by admins.'
     });
     return;
   }
@@ -231,6 +232,170 @@ exports.adminPage = function (aReq, aRes, aNext) {
 
   //---
   async.parallel(tasks, asyncComplete);
+};
+
+// View current version of npm
+exports.adminNpmVersionView = function (aReq, aRes, aNext) {
+  //
+
+  if (!userIsAdmin(aReq)) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.'
+    });
+    return;
+  }
+
+  exec('npm --version', function (aErr, aStdout, aStderr) {
+    if (aErr) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 501,
+        statusMessage: 'Not implemented.'
+      });
+      return;
+    }
+
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 200,
+      statusMessage: 'npm v' + aStdout,
+      isCustomView: true,
+      statusData: {
+        isAdminNpmVersionView: true,
+        version: aStdout
+      }
+    });
+  });
+};
+
+// View the current deployed git commit hash
+exports.adminGitShortView = function (aReq, aRes, aNext) {
+  if (!userIsAdmin(aReq)) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.'
+    });
+    return;
+  }
+
+  git.short(function (aStr) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 200,
+      statusMessage: 'Tree: ' + aStr,
+      isCustomView: true,
+      statusData: {
+        isAdminGitShortView: true,
+        shortHash: aStr
+      }
+    });
+  });
+}
+
+// View the current deployed git commit hash
+exports.adminGitBranchView = function (aReq, aRes, aNext) {
+  if (!userIsAdmin(aReq)) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.'
+    });
+    return;
+  }
+
+  git.branch(function (aStr) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 200,
+      statusMessage: 'Branch: ' + aStr,
+      isCustomView: true,
+      statusData: {
+        isAdminGitBranchView: true,
+        branch: aStr
+      }
+    });
+  });
+}
+
+// View the current deployed git commit hash
+exports.adminProcessCloneView = function (aReq, aRes, aNext) {
+  var matches = null;
+  var clone = 'n/a';
+
+  if (!userIsAdmin(aReq)) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.'
+    });
+    return;
+  }
+
+  // Find active clone
+  matches = /.*\/.*(\d)$/.exec(process.cwd());
+  if (matches) {
+    clone = matches[1];
+  }
+
+  statusCodePage(aReq, aRes, aNext, {
+    statusCode: 200,
+    statusMessage: 'Clone: ' + clone,
+    isCustomView: true,
+    statusData: {
+      isAdminProcessCloneView: true,
+      clone: clone
+    }
+
+  });
+}
+
+// View everything about current deployed `./package.json`
+exports.adminNpmPackageView = function (aReq, aRes, aNext) {
+  //
+
+  if (!userIsAdmin(aReq)) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.'
+    });
+    return;
+  }
+
+  aRes.set('Content-Type', 'application/json; charset=UTF-8');
+  aRes.write(JSON.stringify(pkg, null, isPro ? '' : ' '));
+  aRes.end();
+};
+
+// View everything about current modules for the server
+exports.adminNpmListView = function (aReq, aRes, aNext) {
+  //
+
+  if (!userIsAdmin(aReq)) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.'
+    });
+    return;
+  }
+
+  exec('npm ls --json', function (aErr, aStdout, aStderr) {
+    var stdout = null;
+
+    if (aErr) {
+      console.warn(aErr);
+    }
+
+    try {
+      stdout = JSON.parse(aStdout);
+
+    } catch (aE) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 520,
+        statusMessage: 'Unknown error.'
+      });
+      return;
+    }
+
+    aRes.set('Content-Type', 'application/json; charset=UTF-8');
+    aRes.write(JSON.stringify(stdout, null, isPro ? '' : ' '));
+    aRes.end();
+
+  });
 };
 
 // This page allows admins to set oAuth keys for the available authenticators
@@ -265,7 +430,7 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
   if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'This page is only accessible by admins.',
+      statusMessage: 'This page is only accessible by admins.'
     });
     return;
   }
@@ -300,87 +465,8 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
   async.parallel(tasks, asyncComplete);
 };
 
-// View everything about current deployed `./package.json`
-exports.adminNpmPackageView = function (aReq, aRes, aNext) {
-  //
-
-  if (!userIsAdmin(aReq)) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 403,
-      statusMessage: 'This page is only accessible by admins.',
-    });
-    return;
-  }
-
-  aRes.set('Content-Type', 'application/json; charset=UTF-8');
-  aRes.write(JSON.stringify(pkg, null, isPro ? '' : ' '));
-  aRes.end();
-};
-
-// View everything about current modules for the server
-exports.adminNpmListView = function (aReq, aRes, aNext) {
-  //
-
-  if (!userIsAdmin(aReq)) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 403,
-      statusMessage: 'This page is only accessible by admins.',
-    });
-    return;
-  }
-
-  exec('npm ls --json', function (aErr, aStdout, aStderr) {
-    var stdout = null;
-
-    if (aErr) {
-      console.warn(aErr);
-    }
-
-    try {
-      stdout = JSON.parse(aStdout);
-
-    } catch (aE) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 520,
-        statusMessage: 'Unknown error.',
-      });
-      return;
-    }
-
-    aRes.set('Content-Type', 'application/json; charset=UTF-8');
-    aRes.write(JSON.stringify(stdout, null, isPro ? '' : ' '));
-    aRes.end();
-
-  });
-};
-
-// View current version of npm
-exports.adminNpmVersionView = function (aReq, aRes, aNext) {
-  //
-
-  if (!userIsAdmin(aReq)) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 403,
-      statusMessage: 'This page is only accessible by admins.',
-    });
-    return;
-  }
-
-  exec('npm --version', function (aErr, aStdout, aStderr) {
-    if (aErr) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 501,
-        statusMessage: 'Not implemented.',
-      });
-      return;
-    }
-
-    aRes.set('Content-Type', 'text/plain; charset=UTF-8');
-    aRes.write(aStdout + '\n');
-    aRes.end();
-  });
-};
-
+// Script homepage panel item for admins
+//
 // Manage oAuth strategies without having to restart the server
 // When new keys are added, we load the new strategy
 // When keys are removed, we remove the strategy
@@ -452,7 +538,7 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
   });
 };
 
-// Landing Page for admins
+// Script homepage panel item for admins
 exports.authAsUser = function (aReq, aRes, aNext) {
   //
   var options = {};
@@ -467,7 +553,7 @@ exports.authAsUser = function (aReq, aRes, aNext) {
   if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'This page is only accessible by admins.',
+      statusMessage: 'This page is only accessible by admins.'
     });
     return;
   }
@@ -477,7 +563,7 @@ exports.authAsUser = function (aReq, aRes, aNext) {
   if (!username) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 400,
-      statusMessage: '<code>username</code> must be set.',
+      statusMessage: '<code>username</code> must be set.'
     });
     return;
   }
@@ -501,7 +587,7 @@ exports.authAsUser = function (aReq, aRes, aNext) {
         statusCode: 403,
         statusMessage: authedUser.role == user.role
           ? 'Cannot auth as a user with the same rank.'
-          : 'Cannot auth as a user with a higher rank.',
+          : 'Cannot auth as a user with a higher rank.'
       });
       return;
     }

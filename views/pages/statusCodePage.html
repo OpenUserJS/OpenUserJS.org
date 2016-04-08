@@ -17,7 +17,36 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <h1 class="status-code text-center">{{statusCode}}</h1>
-            <p class="text-center">{{{statusMessage}}}</p>
+            <p class="text-center">
+            {{#isCustomView}}
+              {{#statusData}}
+                {{#isAdminNpmVersionView}}
+                  <span class="shield">
+                    host <a href="https://github.com/npm/npm/tree/v{{version}}">v{{version}}</a>
+                  </span>
+                  <a href="https://www.npmjs.com/package/npm">
+                    <img src="https://img.shields.io/npm/v/npm.svg?style=flat" />
+                  </a>
+                {{/isAdminNpmVersionView}}
+                {{#isAdminGitShortView}}
+                  <a href="https://github.com/OpenUserJS/OpenUserJS.org/tree/{{shortHash}}">
+                    Tree: <strong><code>{{shortHash}}</code></strong>
+                  </a>
+                {{/isAdminGitShortView}}
+                {{#isAdminGitBranchView}}
+                  <a href="https://github.com/OpenUserJS/OpenUserJS.org/tree/{{branch}}">
+                    Branch: <strong>{{branch}}</strong>
+                  </a>
+                {{/isAdminGitBranchView}}
+                {{#isAdminProcessCloneView}}
+                  Clone: <strong>{{clone}}</strong>
+                {{/isAdminProcessCloneView}}
+              {{/statusData}}
+            {{/isCustomView}}
+            {{^isCustomView}}
+              {{{statusMessage}}}
+            {{/isCustomView}}
+            </p>
             <p class="text-center"> <a href="javascript: void(0);" onclick="history.go(-1);"><i class="fa fa-arrow-circle-left"></i>Go Back</a>.</p>
           </div>
         </div>

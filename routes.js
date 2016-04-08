@@ -88,12 +88,16 @@ module.exports = function (aApp) {
 
   // Admin routes
   aApp.route('/admin').get(admin.adminPage);
-  aApp.route('/admin/authas').get(admin.authAsUser);
-  aApp.route('/admin/json').get(admin.adminJsonView);
-  aApp.route('/admin/api').get(admin.adminApiKeysPage);
+  aApp.route('/admin/npm/version').get(admin.adminNpmVersionView);
+  aApp.route('/admin/git/short').get(admin.adminGitShortView);
+  aApp.route('/admin/git/branch').get(admin.adminGitBranchView);
+  aApp.route('/admin/process/clone').get(admin.adminProcessCloneView);
   aApp.route('/admin/npm/package').get(admin.adminNpmPackageView);
   aApp.route('/admin/npm/list').get(admin.adminNpmListView);
-  aApp.route('/admin/npm/version').get(admin.adminNpmVersionView);
+  aApp.route('/admin/api').get(admin.adminApiKeysPage);
+  aApp.route('/admin/authas').get(admin.authAsUser);
+  aApp.route('/admin/json').get(admin.adminJsonView);
+
   aApp.route('/admin/api/update').post(admin.apiAdminUpdate);
 
   // Moderation routes
