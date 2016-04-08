@@ -136,7 +136,16 @@ process.on('SIGINT', function () {
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-toobusy.maxLag(process.env.BUSY_LAG || 100);
+var maxLag = process.env.BUSY_LAG;
+if (typeof maxLag !== 'number') {
+  maxLag = parseInt(maxLag);
+
+  if (maxLag !== maxLag) {
+    maxLag = null;
+  }
+}
+
+toobusy.maxLag(maxLag || 100);
 app.use(function (aReq, aRes, aNext) {
   var pathname = null;
 
@@ -163,10 +172,19 @@ app.use(function (aReq, aRes, aNext) {
       });
     }
   } else if (toobusy()) { // check if we're toobusy
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 503,
-      statusMessage: 'We are busy right now. Please try again later.'
-    });
+    pathname = aReq._parsedUrl.pathname;
+
+    if (
+      /^\/(?:install|src)/.test(pathname) ||
+        /^\/scripts\/.*\/source\/?$/.test(pathname)
+    ) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 503,
+        statusMessage: 'We are busy right now. Please try again later.'
+      });
+    } else {
+      aNext(); // NOTE: Try to serve pages as much as possible as compared to source
+    }
   } else {
     aNext();
   }
