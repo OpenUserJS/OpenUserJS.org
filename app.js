@@ -136,18 +136,19 @@ process.on('SIGINT', function () {
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-var maxLag = process.env.BUSY_LAG;
-if (typeof maxLag !== 'number') {
-  maxLag = parseInt(maxLag);
-
-  if (maxLag !== maxLag) {
-    maxLag = null;
-  }
-}
-
-toobusy.maxLag(maxLag || 100);
 app.use(function (aReq, aRes, aNext) {
   var pathname = null;
+  var maxLag = process.env.BUSY_LAG;
+
+  if (typeof maxLag !== 'number') {
+    maxLag = parseInt(maxLag);
+
+    if (maxLag !== maxLag) {
+      maxLag = null;
+    }
+  }
+
+  toobusy.maxLag(maxLag || 70);
 
   if (process.env.FORCE_BUSY_ABSOLUTE === 'true') { // check for absolute forced busy
     aRes.status(503).send(); // NOTE: No UI period just response header
