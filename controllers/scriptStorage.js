@@ -9,6 +9,7 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var fs = require('fs');
+var URL = require('url');
 var PEG = require('pegjs');
 var AWS = require('aws-sdk');
 var UglifyJS = require("uglify-js-harmony");
@@ -216,10 +217,35 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
   exports.getSource(aReq, function (aScript, aStream) {
     let chunks = [];
+    let updateURL = null;
 
     if (!aScript) {
       aNext();
       return;
+    }
+
+    if (process.env.BUSY_INVALID_UPDATEURL_CHECK === 'true') {
+      updateURL = findMeta(aScript.meta, 'UserScript.updateURL.0.value');
+      if (updateURL) {
+        updateURL = URL.parse(updateURL);
+        if (/^(?:localhost|openuserjs|oujs)\.org$/.test(updateURL.host) &&
+          /^\/(?:install|src)/.test(updateURL.pathname) &&
+            /\.js$/.test(updateURL.pathname))
+        {
+          // NOTE: Don't serve the script anywhere in this mode
+          aRes.set('Warning', '199 ' + aReq.headers.host + ' Invalid @updateURL');
+          aRes.status(444).send();
+          return;
+        }
+      } else {
+        if (!aScript.isLib) {
+          // NOTE: Don't serve the script anywhere in this mode and if absent
+
+          aRes.set('Warning', rfc2047.encode('199 ' + aReq.headers.host + 'Missing @updateURL'));
+          aRes.status(444).send();
+          return;
+        }
+      }
     }
 
     // Send the script
