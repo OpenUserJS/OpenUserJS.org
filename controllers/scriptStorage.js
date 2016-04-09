@@ -209,10 +209,24 @@ exports.sendScript = function (aReq, aRes, aNext) {
   }
 
   let accept = aReq.headers.accept;
+  let url = URL.parse(aReq.url);
 
-  if (0 !== aReq.url.indexOf('/libs/') && accept === 'text/x-userscript-meta') {
-    exports.sendMeta(aReq, aRes, aNext);
-    return;
+  let isLib = aReq.params.isLib || /^\/libs\//.test(url.pathname);
+  let rUserJS = /\.user\.js$/;
+  let rMetaJS = /\.meta\.js$/;
+
+  if (!isLib) {
+    if (accept === 'text/x-userscript-meta' && rUserJS.test(url.pathname) ||
+      rMetaJS.test(url.pathname)) { // NOTE: This one is for some legacy .user.js engines
+      //
+      exports.sendMeta(aReq, aRes, aNext);
+      return;
+    }
+  } else {
+    if (rMetaJS.test(url.pathname)) {
+      aNext();
+      return;
+    }
   }
 
   exports.getSource(aReq, function (aScript, aStream) {
@@ -256,8 +270,6 @@ exports.sendScript = function (aReq, aRes, aNext) {
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname) ||
       process.env.DISABLE_SCRIPT_MINIFICATION === 'true') {
       //
-//       aStream.pipe(aRes);
-
       aStream.on('data', function (aData) {
         chunks.push(aData);
       });
@@ -267,6 +279,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
         aRes.write(source);
         aRes.end();
+
+        // NOTE: Try and force a GC
+        source = null;
+        chunks = null;
       });
 
     } else {
@@ -316,6 +332,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
         aRes.write(source);
         aRes.end();
+
+        // NOTE: Try and force a GC
+        source = null;
+        chunks = null;
       });
     }
 
