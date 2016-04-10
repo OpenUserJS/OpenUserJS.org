@@ -136,9 +136,28 @@ process.on('SIGINT', function () {
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
+
+// Helper function to ensure value is type `number` or `null`
+// Usually this should be in `./libs/helpers.js` but keeping local
+//   for extra caution against editing
+function ensureNumberOrNull(aEnvVar) {
+  if (typeof aEnvVar !== 'number') {
+    aEnvVar = parseInt(aEnvVar);
+
+    if (aEnvVar !== aEnvVar) { // NOTE: ES6 `Number.isNaN`
+      aEnvVar = null;
+    }
+  }
+
+  return aEnvVar;
+}
+
 app.use(function (aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
-  var maxLag = null
+  var maxLag = null;
+  var hostMaxMem = process.env.HOST_MAXMEM_BYTES || 1073741824; // NOTE: Default 1GiB
+  var hostMem = null;
+  var usedMem = null;
 
   if (
     /^\/favicon\.ico$/.test(pathname) ||
@@ -174,12 +193,14 @@ app.use(function (aReq, aRes, aNext) {
       maxLag = process.env.BUSY_MAXLAG_VIEWS;
     }
 
-    if (typeof maxLag !== 'number') {
-      maxLag = parseInt(maxLag);
+    maxLag = ensureNumberOrNull(maxLag);
 
-      if (maxLag !== maxLag) { // NOTE: ES6 `Number.isNaN`
-        maxLag = null;
-      }
+    // Calculate current whole percentage of RSS memory used
+    usedMem = parseInt(process.memoryUsage().rss / hostMaxMem) * 100;
+
+    // Compare current RSS memory used to maximum
+    if (usedMem > (ensureNumberOrNull(process.env.BUSY_MAXMEM) || 75)) {
+      maxLag = ensureNumberOrNull(process.env.BUSY_MAXLAG_MAXMEM) || 10; // Automatic low serving
     }
 
     toobusy.maxLag(maxLag || 70);
