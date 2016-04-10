@@ -196,7 +196,7 @@ app.use(function (aReq, aRes, aNext) {
     maxLag = ensureNumberOrNull(maxLag);
 
     // Calculate current whole percentage of RSS memory used
-    usedMem = parseInt(process.memoryUsage().rss / hostMaxMem) * 100;
+    usedMem = parseInt(process.memoryUsage().rss / hostMaxMem * 100);
 
     // Compare current RSS memory used to maximum
     if (usedMem > (ensureNumberOrNull(process.env.BUSY_MAXMEM) || 75)) {
