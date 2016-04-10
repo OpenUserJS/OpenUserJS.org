@@ -201,7 +201,9 @@ app.use(function (aReq, aRes, aNext) {
 
     // Compare current RSS memory used to maximum
     maxMem = ensureNumberOrNull(process.env.BUSY_MAXMEM);
-    if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75))) {
+    if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75)) ||
+      isSources && /\,\s\*\.\*$/.test(aReq.headers.accept)) // Temp cap TM
+    {
       maxLag = ensureNumberOrNull(process.env.BUSY_MAXLAG_MAXMEM) || 10; // Automatic low serving
     }
 
