@@ -209,6 +209,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
   }
 
   let accept = aReq.headers.accept;
+  let accepts = null;
+  let hasAcceptUserScriptMeta = false;
   let url = URL.parse(aReq.url);
 
   let isLib = aReq.params.isLib || /^\/libs\//.test(url.pathname);
@@ -216,7 +218,14 @@ exports.sendScript = function (aReq, aRes, aNext) {
   let rMetaJS = /\.meta\.js$/;
 
   if (!isLib) {
-    if (accept === 'text/x-userscript-meta' && rUserJS.test(url.pathname) ||
+    accepts = accept.split(',');
+    accepts.forEach(function (aElement, aIndex, aArray) {
+      if (/^text\/x\-userscript\-meta/.test(aElement.trim())) {
+        hasAcceptUserScriptMeta = true;
+      }
+    });
+
+    if (hasAcceptUserScriptMeta && rUserJS.test(url.pathname) ||
       rMetaJS.test(url.pathname)) { // NOTE: This one is for some legacy .user.js engines
       //
       exports.sendMeta(aReq, aRes, aNext);
