@@ -93,7 +93,7 @@ Multiple forms exist for various purposes:
 1. `.meta.js` - This is the traditional `// @` delimited usage that outputs **some** of the metadata blocks items from a userscript for updating in userscript engines such as [Greasemonkey][greasemonkeyForFirefox].
     * [https://openuserjs.org/**meta**/username/scriptname.meta.js][metaJSExample]
         * This is the preferred route and goes directly to the necessary items needed for updating. This route is currently unmanaged. If you want your update checks faster most of the time this is the route to choose.
-    * [https://openuserjs.org/**install**/username/scriptname.meta.js][metaJSExample]
+    * [https://openuserjs.org/**install**/username/scriptname.meta.js][metaJSExample2]
         * This is the legacy route and indirectly goes to the necessary items needed for updating. This route is currently managed. If you want your script update checks to potentially not come during high traffic times this is the route to choose.
     * You must choose. But choose wisely, for as the true .meta.js will bring you life, a false one will take it from you.
 2. `.meta.json` - This is the modern [JSON][JSONHomepage] usage that outputs the information we collect from the metadata blocks.
@@ -119,6 +119,7 @@ A: Yes, use the raw source route like this in the UserScript metadata block:
 
 [greasemonkeyForFirefox]: Greasemonkey-for-Firefox
 [metaJSExample]: https://openuserjs.org/meta/Marti/oujs_-_Meta_View.meta.js
+[metaJSExample2]: https://openuserjs.org/install/Marti/oujs_-_Meta_View.meta.js
 [metaJSONExample]: https://openuserjs.org/meta/Marti/oujs_-_Meta_View.meta.json
 [userJSExampleBrokenAsIntended]: https://openuserjs.org/install/Marti/.user.js
 [oujsMetaViewExample]: https://openuserjs.org/scripts/Marti/oujs_-_Meta_View
