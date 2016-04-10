@@ -158,6 +158,8 @@ app.use(function (aReq, aRes, aNext) {
   var hostMaxMem = process.env.HOST_MAXMEM_BYTES || 1073741824; // NOTE: Default 1GiB
   var hostMem = null;
   var usedMem = null;
+  var maxMem = null;
+  var isSources = null;
 
   if (
     /^\/favicon\.ico$/.test(pathname) ||
@@ -184,10 +186,9 @@ app.use(function (aReq, aRes, aNext) {
     return;
 
   } else { // Weighted busy
-    if (
-      /^\/(?:install|src)/.test(pathname) ||
-        /^\/scripts\/.*\/source\/?$/.test(pathname)
-    ) {
+    isSources = /^\/(?:install|src|scripts\/.*\/source\/?$)/.test(pathname);
+
+    if (isSources) {
       maxLag = process.env.BUSY_MAXLAG_SOURCES;
     } else {
       maxLag = process.env.BUSY_MAXLAG_VIEWS;
@@ -199,7 +200,8 @@ app.use(function (aReq, aRes, aNext) {
     usedMem = parseInt(process.memoryUsage().rss / hostMaxMem * 100);
 
     // Compare current RSS memory used to maximum
-    if (usedMem > (ensureNumberOrNull(process.env.BUSY_MAXMEM) || 75)) {
+    maxMem = ensureNumberOrNull(process.env.BUSY_MAXMEM);
+    if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75))) {
       maxLag = ensureNumberOrNull(process.env.BUSY_MAXLAG_MAXMEM) || 10; // Automatic low serving
     }
 
