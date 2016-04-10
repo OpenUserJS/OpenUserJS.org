@@ -137,57 +137,61 @@ var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
 app.use(function (aReq, aRes, aNext) {
-  var pathname = null;
-  var maxLag = process.env.BUSY_LAG;
+  var pathname = aReq._parsedUrl.pathname;
+  var maxLag = null
 
-  if (typeof maxLag !== 'number') {
-    maxLag = parseInt(maxLag);
-
-    if (maxLag !== maxLag) {
-      maxLag = null;
-    }
+  if (
+    /^\/favicon\.ico$/.test(pathname) ||
+      /^\/redist\//.test(pathname) ||
+        /^\/less\//.test(pathname) ||
+          /^\/css\//.test(pathname) ||
+            /^\/images\//.test(pathname) ||
+              /^\/fonts\//.test(pathname)
+  ) {
+    aNext(); // NOTE: Allow styling to pass through on these routes
+    return;
   }
 
-  toobusy.maxLag(maxLag || 70);
-
-  if (process.env.FORCE_BUSY_ABSOLUTE === 'true') { // check for absolute forced busy
+  if (process.env.FORCE_BUSY_ABSOLUTE === 'true') { // Always busy
     aRes.status(503).send(); // NOTE: No UI period just response header
+    return;
 
-  } else if (process.env.FORCE_BUSY === 'true') { // check for graceful forced busy
-    pathname = aReq._parsedUrl.pathname;
+  } else if (process.env.FORCE_BUSY === 'true') { // Graceful busy
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 503,
+      statusMessage:
+        'We are experiencing technical difficulties right now. Please try again later.'
+    });
+    return;
 
-    if (
-      /^\/favicon\.ico$/.test(pathname) ||
-        /^\/redist\//.test(pathname) ||
-          /^\/less\//.test(pathname) ||
-            /^\/css\//.test(pathname) ||
-              /^\/images\//.test(pathname) ||
-                /^\/fonts\//.test(pathname)
-    ) {
-      aNext(); // NOTE: Allow styling pass through on these routes
-    } else {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 503,
-        statusMessage:
-          'We are experiencing technical difficulties right now. Please try again later.'
-      });
-    }
-  } else if (toobusy()) { // check if we're toobusy
-    pathname = aReq._parsedUrl.pathname;
-
+  } else { // Weighted busy
     if (
       /^\/(?:install|src)/.test(pathname) ||
         /^\/scripts\/.*\/source\/?$/.test(pathname)
     ) {
+      maxLag = process.env.BUSY_MAXLAG_SOURCES;
+    } else {
+      maxLag = process.env.BUSY_MAXLAG_VIEWS;
+    }
+
+    if (typeof maxLag !== 'number') {
+      maxLag = parseInt(maxLag);
+
+      if (maxLag !== maxLag) { // NOTE: ES6 `Number.isNaN`
+        maxLag = null;
+      }
+    }
+
+    toobusy.maxLag(maxLag || 70);
+
+    if (toobusy()) { // check if we're toobusy
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 503,
-        statusMessage: 'We are busy right now. Please try again later.'
+        statusMessage: 'We are very busy right now. Please try again later.'
       });
     } else {
-      aNext(); // NOTE: Try to serve pages as much as possible as compared to source
+      aNext(); // not toobusy
     }
-  } else {
-    aNext();
   }
 });
 

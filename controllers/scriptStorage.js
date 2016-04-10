@@ -238,7 +238,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
       return;
     }
 
-    if (process.env.BUSY_INVALID_UPDATEURL_CHECK === 'true') {
+    if (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true') {
       updateURL = findMeta(aScript.meta, 'UserScript.updateURL.0.value');
       if (updateURL) {
         updateURL = URL.parse(updateURL);
