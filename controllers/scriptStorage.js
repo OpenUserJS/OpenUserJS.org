@@ -566,6 +566,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var name = null;
   var thisName = null;
   var scriptName = null;
+  var updateURL = null;
   var author = null;
   var collaborators = null;
   var installName = aUser.name + '/';
@@ -608,6 +609,23 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
     // Can't install a userscript name ending in a reserved extension
     if (/\.min$/.test(scriptName)) {
+      aCallback(null);
+      return;
+    }
+
+    // Can't install a userscript without an updateURL
+    updateURL = findMeta(aMeta, 'UserScript.updateURL.0.value');
+    if (!updateURL) {
+      aCallback(null);
+      return;
+    }
+
+    // Can't install a userscript with an updateURL of .user.js
+    updateURL = URL.parse(updateURL);
+    if (/^(?:localhost|openuserjs|oujs)\.org$/.test(updateURL.host) &&
+      /^\/(?:install|src)/.test(updateURL.pathname) &&
+        /\.js$/.test(updateURL.pathname))
+    {
       aCallback(null);
       return;
     }
