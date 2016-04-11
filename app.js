@@ -166,7 +166,13 @@ app.use(function (aReq, aRes, aNext) {
         /^\/less\//.test(pathname) ||
           /^\/css\//.test(pathname) ||
             /^\/images\//.test(pathname) ||
-              /^\/fonts\//.test(pathname)
+              /^\/fonts\//.test(pathname) ||
+                /^\/meta\//.test(pathname) ||
+                  /^\/github\//.test(pathname) ||
+                    /^\/logout\/?/.test(pathname) ||
+                      /^\/auth\//.test(pathname) ||
+                        /^\/(?:admin|mod)/.test(pathname)
+
   ) {
     aNext(); // NOTE: Allow styling to pass through on these routes
     return;

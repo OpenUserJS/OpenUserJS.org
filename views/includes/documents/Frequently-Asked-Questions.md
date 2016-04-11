@@ -90,11 +90,12 @@ A: Yes, use the meta routine.
 
 Multiple forms exist for various purposes:
 
-1. `.meta.js` - This is the traditional `// @` delimited usage that outputs **some** of the metadata blocks items from a userscript for updating in userscript engines such as [Greasemonkey][greasemonkeyForFirefox].
+1. `.meta.js` - This is the traditional `// @` delimited usage that outputs **some** of the metadata blocks items from a userscript for updating in userscript engines such as [Greasemonkey][greasemonkeyForFirefox] and is used with `@updateURL`.
     * [https://openuserjs.org/**meta**/username/scriptname.meta.js][metaJSExample]
         * This is the preferred route and goes directly to the necessary items needed for updating. This route is currently unmanaged. If you want your update checks faster most of the time this is the route to choose.
     * [https://openuserjs.org/**install**/username/scriptname.meta.js][metaJSExample2]
         * This is the legacy route and indirectly goes to the necessary items needed for updating. This route is currently managed. If you want your script update checks to potentially not come during high traffic times this is the route to choose.
+    * One of these is currently required. If any script points to an OUJS .user.js url it will be rejected. If it is absent it will be rejected.
     * You must choose. But choose wisely, for as the true .meta.js will bring you life, a false one will take it from you.
 2. `.meta.json` - This is the modern [JSON][JSONHomepage] usage that outputs the information we collect from the metadata blocks.
     * [https://openuserjs.org/**meta**/username/scriptname.meta.json][metaJSONExample]
