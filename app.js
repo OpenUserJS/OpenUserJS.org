@@ -152,6 +152,7 @@ function ensureNumberOrNull(aEnvVar) {
   return aEnvVar;
 }
 
+var maxLag = ensureNumberOrNull(process.env.BUSY_MAXLAG) || 70;
 app.use(function (aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
   var maxLag = null;
@@ -185,29 +186,25 @@ app.use(function (aReq, aRes, aNext) {
     });
     return;
 
-  } else { // Weighted busy
+  } else {
     isSources = /^\/(?:install|src|scripts\/.*\/source\/?$)/.test(pathname);
 
     if (isSources) {
-      maxLag = process.env.BUSY_MAXLAG_SOURCES;
-    } else {
-      maxLag = process.env.BUSY_MAXLAG_VIEWS;
+      // Calculate current whole percentage of RSS memory used
+      usedMem = parseInt(process.memoryUsage().rss / hostMaxMem * 100);
+
+      // Compare current RSS memory used to maximum
+      maxMem = ensureNumberOrNull(process.env.BUSY_MAXMEM);
+      if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75)) ||
+        isSources && /\,\s\*\.\*$/.test(aReq.headers.accept)) // Temp cap TM
+      {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 503,
+          statusMessage: 'We are very busy right now. Please try again later.'
+        });
+        return;
+      }
     }
-
-    maxLag = ensureNumberOrNull(maxLag);
-
-    // Calculate current whole percentage of RSS memory used
-    usedMem = parseInt(process.memoryUsage().rss / hostMaxMem * 100);
-
-    // Compare current RSS memory used to maximum
-    maxMem = ensureNumberOrNull(process.env.BUSY_MAXMEM);
-    if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75)) ||
-      isSources && /\,\s\*\.\*$/.test(aReq.headers.accept)) // Temp cap TM
-    {
-      maxLag = ensureNumberOrNull(process.env.BUSY_MAXLAG_MAXMEM) || 10; // Automatic low serving
-    }
-
-    toobusy.maxLag(maxLag || 70);
 
     if (toobusy()) { // check if we're toobusy
       statusCodePage(aReq, aRes, aNext, {
