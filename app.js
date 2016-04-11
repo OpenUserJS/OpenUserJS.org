@@ -155,9 +155,7 @@ function ensureNumberOrNull(aEnvVar) {
 var maxLag = ensureNumberOrNull(process.env.BUSY_MAXLAG) || 70;
 app.use(function (aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
-  var maxLag = null;
   var hostMaxMem = process.env.HOST_MAXMEM_BYTES || 1073741824; // NOTE: Default 1GiB
-  var hostMem = null;
   var usedMem = null;
   var maxMem = null;
   var isSources = null;
@@ -195,9 +193,7 @@ app.use(function (aReq, aRes, aNext) {
 
       // Compare current RSS memory used to maximum
       maxMem = ensureNumberOrNull(process.env.BUSY_MAXMEM);
-      if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75)) ||
-        isSources && /\,\s\*\.\*$/.test(aReq.headers.accept)) // Temp cap TM
-      {
+      if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75))) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 503,
           statusMessage: 'We are very busy right now. Please try again later.'

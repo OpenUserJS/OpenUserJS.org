@@ -221,7 +221,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     if (accept) {
       accepts = accept.split(',');
       accepts.forEach(function (aElement, aIndex, aArray) {
-        if (/^text\/x\-userscript\-meta/.test(aElement.trim())) {
+        if (/^text\/x\-userscript/.test(aElement.trim())) { // TODO: put `\-meta` back into re later
           hasAcceptUserScriptMeta = true;
         }
       });
