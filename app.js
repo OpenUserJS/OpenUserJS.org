@@ -136,21 +136,7 @@ process.on('SIGINT', function () {
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-
-// Helper function to ensure value is type `number` or `null`
-// Usually this should be in `./libs/helpers.js` but keeping local
-//   for extra caution against editing
-function ensureNumberOrNull(aEnvVar) {
-  if (typeof aEnvVar !== 'number') {
-    aEnvVar = parseInt(aEnvVar);
-
-    if (aEnvVar !== aEnvVar) { // NOTE: ES6 `Number.isNaN`
-      aEnvVar = null;
-    }
-  }
-
-  return aEnvVar;
-}
+var ensureNumberOrNull = require('./libs/helpers').ensureNumberOrNull;
 
 var maxLag = ensureNumberOrNull(process.env.BUSY_MAXLAG) || 70;
 app.use(function (aReq, aRes, aNext) {
