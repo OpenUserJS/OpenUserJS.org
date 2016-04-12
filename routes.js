@@ -21,6 +21,37 @@ var scriptStorage = require('./controllers/scriptStorage');
 var document = require('./controllers/document');
 
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
+var ensureNumberOrNull = require('./libs/helpers').ensureNumberOrNull;
+
+var MongoClient = require('mongodb').MongoClient;
+var ExpressBrute = require('express-brute');
+var MongoStore = require('express-brute-mongo');
+
+// var store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
+var store = new MongoStore(function (ready) {
+  MongoClient.connect('mongodb://127.0.0.1:27017/test', function(aErr, aDb) {
+    if (aErr) {
+      throw aErr;
+    }
+    ready(aDb.collection('bruteforce-store'));
+  });
+});
+
+var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
+  var secondUntilNextRequest = Math.ceil((aNextValidRequestDate.getTime() - Date.now())/1000);
+  statusCodePage(aReq, aRes, aNext, {
+    statusCode: 429,
+    statusMessage: 'Too Many Requests. Try again in ' + secondUntilNextRequest + ' seconds'
+  });
+}
+
+var bruteforce = new ExpressBrute(store, {
+  freeRetries: ensureNumberOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  minWait: ensureNumberOrNull(process.env.BRUTE_MINWAIT) || (1000 * 5), // seconds
+  maxWait: ensureNumberOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 60), // minutes
+  lifetime: ensureNumberOrNull(process.env.BRUTE_LIFETIME) || (10), // seconds TODO:
+  failCallback: tooManyRequests
+});
 
 module.exports = function (aApp) {
   //--- Middleware
@@ -64,7 +95,7 @@ module.exports = function (aApp) {
     aRes.redirect('/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').get(bruteforce.prevent, scriptStorage.sendScript);
   aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
   // Github hook routes
@@ -78,7 +109,7 @@ module.exports = function (aApp) {
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(scriptStorage.sendScript);
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(bruteforce.prevent, scriptStorage.sendScript);
 
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(issue.list);

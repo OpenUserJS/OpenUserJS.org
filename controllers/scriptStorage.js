@@ -221,7 +221,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     if (accept) {
       accepts = accept.split(',');
       accepts.forEach(function (aElement, aIndex, aArray) {
-        if (/^text\/x\-userscript/.test(aElement.trim())) { // TODO: put `\-meta` back into re later
+        if (/^text\/x\-userscript\-meta/.test(aElement.trim())) { // NOTE: toggle `\-meta` in re
           hasAcceptUserScriptMeta = true;
         }
       });
@@ -613,21 +613,23 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       return;
     }
 
-    // Can't install a userscript without an updateURL
-    updateURL = findMeta(aMeta, 'UserScript.updateURL.0.value');
-    if (!updateURL) {
-      aCallback(null);
-      return;
-    }
+    if (process.env.FORCE_STORE_UPDATEURL_CHECK === 'true') {
+      // Conditional can't install a userscript without an updateURL
+      updateURL = findMeta(aMeta, 'UserScript.updateURL.0.value');
+      if (!updateURL) {
+        aCallback(null);
+        return;
+      }
 
-    // Can't install a userscript with an updateURL of .user.js
-    updateURL = URL.parse(updateURL);
-    if (/^(?:localhost|openuserjs|oujs)\.org$/.test(updateURL.host) &&
-      /^\/(?:install|src)/.test(updateURL.pathname) &&
-        /\.js$/.test(updateURL.pathname))
-    {
-      aCallback(null);
-      return;
+      // Can't install a userscript with an updateURL of .user.js
+      updateURL = URL.parse(updateURL);
+      if (/^(?:localhost|openuserjs|oujs)\.org$/.test(updateURL.host) &&
+        /^\/(?:install|src)/.test(updateURL.pathname) &&
+          /\.js$/.test(updateURL.pathname))
+      {
+        aCallback(null);
+        return;
+      }
     }
 
     author = findMeta(aMeta, 'OpenUserJS.author.0.value');
