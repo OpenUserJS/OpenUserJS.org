@@ -142,8 +142,9 @@ exports.view = function (aReq, aRes, aNext) {
     }
 
     // Denote if storage is in RO mode
-    options.readonly = {};
-    options.readonly.scriptStorage = process.env.READ_ONLY_SCRIPT_STORAGE === 'true';
+    options.lockdown = {};
+    options.lockdown.scriptStorageRO = process.env.READ_ONLY_SCRIPT_STORAGE === 'true';
+    options.lockdown.updateURLCheck = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
     // Calculate when the server was last restarted
     then = new Date(Date.now() - parseInt(process.uptime() * 1000, 10));
