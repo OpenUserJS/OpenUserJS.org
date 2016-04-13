@@ -95,13 +95,13 @@ Multiple forms exist for various purposes:
         * This is the preferred route and goes directly to the necessary items needed for updating. This route is currently unmanaged. If you want your update checks faster most of the time this is the route to choose.
     * [https://openuserjs.org/**install**/username/scriptname.meta.js][metaJSExample2]
         * This is the legacy route and indirectly goes to the necessary items needed for updating. This route is currently managed. If you want your script update checks to potentially not come during high traffic times this is the route to choose.
-    * One of these is currently required. If any script points to an OUJS .user.js url it will be rejected. If it is absent it will be rejected.
+    * One of these is currently required when OpenUserJS is in lockdown mode. If any script points to an OUJS .user.js url it will be rejected. If it is absent it will be rejected. Occasionally a script and/or .user.js engine might put out a bugged version and in order to ensure minimal site disruption OUJS may optionally toggle into lockdown mode. Hopefully these instances will be few but there is existing precedence for this use case. Please see [About][oujsAbout] for current site status.
     * You must choose. But choose wisely, for as the true .meta.js will bring you life, a false one will take it from you.
 2. `.meta.json` - This is the modern [JSON][JSONHomepage] usage that outputs the information we collect from the metadata blocks.
     * [https://openuserjs.org/**meta**/username/scriptname.meta.json][metaJSONExample]
 3. `.user.js` + `text/x-userscript-meta` - Modern Userscript engines **sometimes** may send a special header out in order to retrieve just the meta.
     * [https://openuserjs.org/**install**/username/scriptname.user.js][userJSExampleBrokenAsIntended] plus the Userscript engine sending out the request header.
-         * Use of the url form... with `updateURL` in the UserScript metadata block... is **highly discouraged**. The reason why is while your browser is open, and if your internet goes offline *(or the target site is offline)* for any reason this could toggle the userscript engine into a `FAIL` status and then update checks pull full script source. This is considered bad etiquette for Authors and your users. Some portable devices may incur additional charges for extra bandwidth used so please be considerate. Usually this is a permanent state unless the configuration file in the engine is modified by hand.
+         * Use of the url form... with `updateURL` in the UserScript metadata block... is **highly discouraged**. The reason why is while your browser is open, and if your internet goes offline *(or the target site is offline)* for any reason this could toggle the userscript engine into a `FAIL` status and then update checks may pull full script source. This is considered bad etiquette for Authors and your users. Some portable devices may incur additional charges for extra bandwidth used so please be considerate. Usually this can be a permanent state unless the configuration file in the engine is modified by hand.
 
 The `username` and `scriptname` "folders" are usually specially formattted and can be URIComponent encoded depending on the Unicode usage with `name` in the UserScript metadata block. This formatting can sometimes be referred to as a "slug" but usually those types of urls are **not** URI or URIComponent encoded and are strict ANSI. See the `href` attribute *(usually copy link, or similar, in a right click context menu)* on the blue Install button for the current encoding for the values on a Userscripts home page.
 
@@ -124,4 +124,5 @@ A: Yes, use the raw source route like this in the UserScript metadata block:
 [metaJSONExample]: https://openuserjs.org/meta/Marti/oujs_-_Meta_View.meta.json
 [userJSExampleBrokenAsIntended]: https://openuserjs.org/install/Marti/.user.js
 [oujsMetaViewExample]: https://openuserjs.org/scripts/Marti/oujs_-_Meta_View
+[oujsAbout]: https://openuserjs.org/about
 [JSONHomepage]: http://json.org/
