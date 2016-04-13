@@ -39,6 +39,7 @@ var store = new MongoStore(function (ready) {
 
 var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
   var secondUntilNextRequest = Math.ceil((aNextValidRequestDate.getTime() - Date.now())/1000);
+  aRes.header('Retry-After', secondUntilNextRequest);
   statusCodePage(aReq, aRes, aNext, {
     statusCode: 429,
     statusMessage: 'Too Many Requests. Try again in ' + secondUntilNextRequest + ' seconds'
@@ -47,9 +48,8 @@ var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
 
 var bruteforce = new ExpressBrute(store, {
   freeRetries: ensureNumberOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureNumberOrNull(process.env.BRUTE_MINWAIT) || (1000 * 5), // seconds
-  maxWait: ensureNumberOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 60), // minutes
-  lifetime: ensureNumberOrNull(process.env.BRUTE_LIFETIME) || (10), // seconds TODO:
+  minWait: ensureNumberOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60), // seconds
+  maxWait: ensureNumberOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15), // minutes
   failCallback: tooManyRequests
 });
 
