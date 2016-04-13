@@ -211,6 +211,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
   let accept = aReq.headers.accept;
   let accepts = null;
   let hasAcceptUserScriptMeta = false;
+  let hasAcceptNotAcceptable = false;
   let url = URL.parse(aReq.url);
 
   let isLib = aReq.params.isLib || /^\/libs\//.test(url.pathname);
@@ -221,10 +222,32 @@ exports.sendScript = function (aReq, aRes, aNext) {
     if (accept) {
       accepts = accept.split(',');
       accepts.forEach(function (aElement, aIndex, aArray) {
-        if (/^text\/x\-userscript\-meta/.test(aElement.trim())) { // TODO: toggle `\-meta` in re
+        let acceptItem = aElement.trim();
+
+        if (/^text\/x\-userscript\-meta/.test(acceptItem)) { // TODO: toggle `\-meta` in re
           hasAcceptUserScriptMeta = true;
         }
+
+        // Find 406 (not acceptables)
+        if (/^image\//.test(acceptItem)) {
+          hasAcceptNotAcceptable = true;
+        }
+
       });
+    } else {
+      console.warn([
+        'WARNING:',
+        ' ' + aReq.connection.remoteAddress,
+        ' ' + aReq.headers.accept,
+        ' ' + aReq._parsedUrl.pathname,
+        ' ' + aReq.headers['user-agent']
+      ].join('\n'));
+    }
+
+    // Test for 406 (not acceptables)
+    if (hasAcceptNotAcceptable && rUserJS.test(url.pathname)) {
+      aRes.status(406).send();
+      return;
     }
 
     if (hasAcceptUserScriptMeta && rUserJS.test(url.pathname) ||
