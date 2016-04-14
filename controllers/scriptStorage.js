@@ -234,14 +234,6 @@ exports.sendScript = function (aReq, aRes, aNext) {
         }
 
       });
-    } else {
-      console.warn([
-        'WARNING:',
-        ' ' + aReq.connection.remoteAddress,
-        ' ' + aReq.headers.accept,
-        ' ' + aReq._parsedUrl.pathname,
-        ' ' + aReq.headers['user-agent']
-      ].join('\n'));
     }
 
     // Test for 406 (not acceptables)
@@ -251,7 +243,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     }
 
     if (hasAcceptUserScriptMeta && rUserJS.test(url.pathname) ||
-      rMetaJS.test(url.pathname)) { // NOTE: This one is for some legacy .user.js engines
+      rMetaJS.test(url.pathname)) {
       //
       exports.sendMeta(aReq, aRes, aNext);
       return;
