@@ -9,6 +9,14 @@
       <li><a rel="nofollow" href="{{{script.scriptEditSourcePageUrl}}}"><i class="fa fa-file-text"></i> Edit Script</a></li>
     </ul>
     {{^script.isLib}}
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-{{#lockdown.updateURLCheck}}info{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}default{{/lockdown.updateURLCheck}}" id="updateurl-raw" data-clipboard-text="// @updateURL {{{script.scriptPermalinkMetaPageUrl}}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @updateURL</button>
+        </span>
+        <input type="text" class="form-control" id="updateurl" value="{{{script.scriptPermalinkMetaPageUrl}}}" readonly="readonly">
+      </div>
+    </div>
     <hr>
     <h4>Installs per Version <small>effective <time title='Tue Sep 2 2014'>Sep '14</time></small></h4>
     <p><code>{{script.meta.version}}{{^script.meta.version}}Current{{/script.meta.version}}</code> <span class="label label-default">{{script.installsSinceUpdate}} installs</span></p>
