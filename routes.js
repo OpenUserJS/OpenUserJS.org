@@ -27,15 +27,19 @@ var MongoClient = require('mongodb').MongoClient;
 var ExpressBrute = require('express-brute');
 var MongoStore = require('express-brute-mongo');
 
-// var store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
-var store = new MongoStore(function (ready) {
-  MongoClient.connect('mongodb://127.0.0.1:27017/test', function(aErr, aDb) {
-    if (aErr) {
-      throw aErr;
-    }
-    ready(aDb.collection('bruteforce-store'));
+var store = null;
+if (isPro) {
+  store = new MongoStore(function (ready) {
+    MongoClient.connect('mongodb://127.0.0.1:27017/test', function(aErr, aDb) {
+      if (aErr) {
+        throw aErr;
+      }
+      ready(aDb.collection('bruteforce-store'));
+    });
   });
-});
+} else {
+  store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
+}
 
 var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
   var secondUntilNextRequest = Math.ceil((aNextValidRequestDate.getTime() - Date.now())/1000);
@@ -46,12 +50,18 @@ var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
   });
 }
 
-var bruteforce = new ExpressBrute(store, {
+var sourcesBruteforce = new ExpressBrute(store, {
   freeRetries: ensureNumberOrNull(process.env.BRUTE_FREERETRIES) || (0),
   minWait: ensureNumberOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60), // seconds
   maxWait: ensureNumberOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15), // minutes
+  lifetime: ensureNumberOrNull(process.env.BRUTE_LIFETIME) || undefined, //
   failCallback: tooManyRequests
 });
+
+var fnKeySources = function (aReq, aRes, aNext) {
+  // Prevent too many attempts from the same source `pathname`
+  aNext(aReq._parsedUrl.pathname);
+};
 
 module.exports = function (aApp) {
   //--- Middleware
@@ -95,7 +105,7 @@ module.exports = function (aApp) {
     aRes.redirect('/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(bruteforce.prevent, scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').get(sourcesBruteforce.getMiddleware({key : fnKeySources}), scriptStorage.sendScript);
   aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
   // Github hook routes
@@ -109,7 +119,7 @@ module.exports = function (aApp) {
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(bruteforce.prevent, scriptStorage.sendScript);
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(sourcesBruteforce.getMiddleware({key : fnKeySources}), scriptStorage.sendScript);
 
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(issue.list);
