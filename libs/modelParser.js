@@ -139,6 +139,15 @@ var getScriptInstallPageUrl = function (aScriptData) {
           (isLib ? '.js' : '.user.js')
 };
 
+var getScriptMetaPageUrl = function (aScriptData) {
+  var isLib = aScriptData.isLib || false;
+
+  return (isLib ? null : '/meta/') +
+    aScriptData.authorSlugUrl +
+      '/' +
+        aScriptData.nameSlugUrl +
+          '.meta.js'
+};
 
 
 // Uris
@@ -173,6 +182,15 @@ var getScriptInstallPageUri = function (aScriptData) {
           (isLib ? '.js' : '.user.js')
 };
 
+var getScriptMetaPageUri = function (aScriptData) {
+  var isLib = aScriptData.isLib || false;
+
+  return (isLib ? null : '/meta/') +
+    aScriptData.authorSlugUri +
+      '/' +
+        aScriptData.nameSlugUri +
+          '.meta.js'
+};
 
 
 //
@@ -312,6 +330,7 @@ var parseScript = function (aScript) {
   script.scriptPageUrl = getScriptPageUrl(script);
   script.scriptInstallPageUrl = getScriptInstallPageUrl(script);
   script.scriptInstallPageXUrl = script.scriptInstallPageUrl.replace(/(\.user)?\.js/, '');
+  script.scriptMetaPageUrl = getScriptMetaPageUrl(script);
   script.scriptViewSourcePageUrl = getScriptViewSourcePageUrl(script);
 
   // Urls: Issues
@@ -338,6 +357,7 @@ var parseScript = function (aScript) {
   script.scriptPageUri = getScriptPageUri(script);
   script.scriptInstallPageUri = getScriptInstallPageUri(script);
   script.scriptInstallPageXUri = script.scriptInstallPageUri.replace(/(\.user)?\.js/, '');
+  script.scriptMetaPageUri = getScriptMetaPageUri(script);
   script.scriptViewSourcePageUri = getScriptViewSourcePageUri(script);
 
   // Uris: Issues

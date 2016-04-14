@@ -376,6 +376,11 @@ exports.view = function (aReq, aRes, aNext) {
       options.isMod = authedUser && authedUser.isMod;
       options.isAdmin = authedUser && authedUser.isAdmin;
 
+      // Lockdown
+      options.lockdown = {};
+      options.lockdown.scriptStorageRO = process.env.READ_ONLY_SCRIPT_STORAGE === 'true';
+      options.lockdown.updateURLCheck = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
+
       // Script
       options.script = script = modelParser.parseScript(aScript);
       options.isOwner = authedUser && authedUser._id == script._authorId;
@@ -385,6 +390,8 @@ exports.view = function (aReq, aRes, aNext) {
         script.scriptInstallPageUrl;
       script.scriptPermalinkInstallPageXUrl = 'https://' + aReq.get('host') +
         script.scriptInstallPageXUrl;
+      script.scriptPermalinkMetaPageUrl = 'https://' + aReq.get('host') +
+        script.scriptMetaPageUrl;
 
       // Page metadata
       pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
