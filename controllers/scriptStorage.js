@@ -203,57 +203,80 @@ exports.getSource = function (aReq, aCallback) {
     });
 };
 
+exports.keyScript = function (aReq, aRes, aNext) {
+  let pathname = aReq._parsedUrl.pathname;
+  let isLib = /^\/src\/libs\//.test(pathname);
+
+  let installName = pathname.replace(/^\/(?:install|src\/(?:scripts|libs))\//, '');
+
+  let rUserJS = /\.user\.js$/;
+  let rMetaJS = /\.meta\.js$/;
+  let rJS = /\.js$/;
+
+  let accept = aReq.headers.accept || '*/*';
+  let accepts = null;
+
+  let hasAcceptUserScriptMeta = false;
+  let hasAcceptNotAcceptable = false;
+
+  let parts = installName.split('/');
+  let userName = parts[0].toLowerCase();
+  let scriptName = parts[1];
+
+  if (!isLib) {
+    accepts = accept.split(',');
+
+    if (rUserJS.test(scriptName)) {
+      accepts.forEach(function (aElement, aIndex, aArray) {
+        let acceptItem = aElement.trim();
+
+        // Find not acceptables
+        if (/^image\//.test(acceptItem)) {
+          hasAcceptNotAcceptable = true;
+        }
+
+        // Find acceptables
+        if (/^text\/x\-userscript\-meta/.test(acceptItem)) {
+          hasAcceptUserScriptMeta = true;
+        }
+      });
+
+      // Test acceptables
+      if (hasAcceptNotAcceptable) {
+        aRes.status(406).send();
+        return;
+      }
+
+      if (hasAcceptUserScriptMeta) {
+        exports.sendMeta(aReq, aRes, aNext);
+        return;
+      }
+
+      aNext(userName + '/' + scriptName.replace(/(\.min)?\.user\.js/, '.user.js'));
+      return;
+
+    } else if (rMetaJS.test(scriptName)) {
+      if (!/\.min\.meta\.js$/.test(scriptName)) {
+        exports.sendMeta(aReq, aRes, aNext);
+        return;
+      }
+    }
+  } else if (rJS.test(scriptName)) {
+      aNext(userName + '/' + scriptName.replace(/(\.min)?\.js/, '.js'));
+      return;
+  }
+
+  // No matches so return a bad request
+  aRes.status(400).send();
+}
+
 exports.sendScript = function (aReq, aRes, aNext) {
   if (aReq.params.type === 'libs') {
     aReq.params.isLib = true;
   }
 
-  let accept = aReq.headers.accept;
-  let accepts = null;
-  let hasAcceptUserScriptMeta = false;
-  let hasAcceptNotAcceptable = false;
-  let url = URL.parse(aReq.url);
-
-  let isLib = aReq.params.isLib || /^\/libs\//.test(url.pathname);
-  let rUserJS = /\.user\.js$/;
-  let rMetaJS = /\.meta\.js$/;
-
-  if (!isLib) {
-    if (accept) {
-      accepts = accept.split(',');
-      accepts.forEach(function (aElement, aIndex, aArray) {
-        let acceptItem = aElement.trim();
-
-        if (/^text\/x\-userscript\-meta/.test(acceptItem)) { // TODO: toggle `\-meta` in re
-          hasAcceptUserScriptMeta = true;
-        }
-
-        // Find 406 (not acceptables)
-        if (/^image\//.test(acceptItem)) {
-          hasAcceptNotAcceptable = true;
-        }
-
-      });
-    }
-
-    // Test for 406 (not acceptables)
-    if (hasAcceptNotAcceptable && rUserJS.test(url.pathname)) {
-      aRes.status(406).send();
-      return;
-    }
-
-    if (hasAcceptUserScriptMeta && rUserJS.test(url.pathname) ||
-      rMetaJS.test(url.pathname)) {
-      //
-      exports.sendMeta(aReq, aRes, aNext);
-      return;
-    }
-  } else {
-    if (rMetaJS.test(url.pathname)) {
-      aNext();
-      return;
-    }
-  }
+  let pathname = aReq._parsedUrl.pathname;
+  let isLib = aReq.params.isLib || /^\/src\/libs\//.test(pathname);
 
   exports.getSource(aReq, function (aScript, aStream) {
     let chunks = [];
@@ -581,7 +604,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var name = null;
   var thisName = null;
   var scriptName = null;
-  var updateURL = null;
   var author = null;
   var collaborators = null;
   var installName = aUser.name + '/';
