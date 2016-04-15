@@ -58,10 +58,6 @@ var sourcesBruteforce = new ExpressBrute(store, {
   failCallback: tooManyRequests
 });
 
-var fnKeySources = function (aReq, aRes, aNext) {
-  // Prevent too many attempts from the same source `pathname`
-  aNext(aReq._parsedUrl.pathname);
-};
 
 module.exports = function (aApp) {
   //--- Middleware
@@ -105,7 +101,7 @@ module.exports = function (aApp) {
     aRes.redirect('/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(sourcesBruteforce.getMiddleware({key : fnKeySources}), scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').get(sourcesBruteforce.getMiddleware({key : scriptStorage.keyScript}), scriptStorage.sendScript);
   aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
   // Github hook routes
@@ -119,7 +115,7 @@ module.exports = function (aApp) {
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(sourcesBruteforce.getMiddleware({key : fnKeySources}), scriptStorage.sendScript);
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(sourcesBruteforce.getMiddleware({key : scriptStorage.keyScript}), scriptStorage.sendScript);
 
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(issue.list);
@@ -185,7 +181,7 @@ module.exports = function (aApp) {
   aApp.use(function (aReq, aRes, aNext) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 404,
-      statusMessage: 'This is not the page you\'re are looking for.',
+      statusMessage: 'This is not the page you\'re are looking for.'
     });
   });
 };
