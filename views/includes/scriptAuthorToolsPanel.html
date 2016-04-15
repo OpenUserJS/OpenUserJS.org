@@ -15,6 +15,13 @@
           <button class="btn btn-{{#lockdown.updateURLCheck}}info{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}default{{/lockdown.updateURLCheck}}" id="updateurl-raw" data-clipboard-text="// @updateURL {{{script.scriptPermalinkMetaPageUrl}}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @updateURL</button>
         </span>
         <input type="text" class="form-control" id="updateurl" value="{{{script.scriptPermalinkMetaPageUrl}}}" readonly="readonly">
+        <span class="input-group-btn">
+          <a class="btn btn-{{#lockdown.updateURLCheck}}info{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}default{{/lockdown.updateURLCheck}}"
+            title="How do I use this?"
+            href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">
+              <i class="fa fa-{{#lockdown.updateURLCheck}}exclamation{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}question{{/lockdown.updateURLCheck}}"></i>
+          </a>
+        </span>
       </div>
     </div>
     <h4>Installs per Version <small>effective <time title='Tue Sep 2 2014'>Sep '14</time></small></h4>
