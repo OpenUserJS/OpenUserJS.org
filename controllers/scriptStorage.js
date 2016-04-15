@@ -628,25 +628,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       return;
     }
 
-    if (process.env.FORCE_STORE_UPDATEURL_CHECK === 'true') {
-      // Conditional can't install a userscript without an updateURL
-      updateURL = findMeta(aMeta, 'UserScript.updateURL.0.value');
-      if (!updateURL) {
-        aCallback(null);
-        return;
-      }
-
-      // Can't install a userscript with an updateURL of .user.js
-      updateURL = URL.parse(updateURL);
-      if (/^(?:localhost|openuserjs|oujs)\.org$/.test(updateURL.host) &&
-        /^\/(?:install|src)/.test(updateURL.pathname) &&
-          /\.js$/.test(updateURL.pathname))
-      {
-        aCallback(null);
-        return;
-      }
-    }
-
     author = findMeta(aMeta, 'OpenUserJS.author.0.value');
     collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');
 
