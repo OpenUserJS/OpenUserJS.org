@@ -139,16 +139,16 @@ exports.view = function (aReq, aRes, aNext) {
     if (options.isAdmin) {
       options.process = {};
       options.process.version = process.version;
+
+      // Calculate when the server was last restarted
+      then = new Date(Date.now() - parseInt(process.uptime() * 1000, 10));
+      options.lastRestart = then.toLocaleString();
     }
 
     // Denote if storage is in RO mode
     options.lockdown = {};
     options.lockdown.scriptStorageRO = process.env.READ_ONLY_SCRIPT_STORAGE === 'true';
     options.lockdown.updateURLCheck = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
-
-    // Calculate when the server was last restarted
-    then = new Date(Date.now() - parseInt(process.uptime() * 1000, 10));
-    options.lastRestart = then.toLocaleString();
 
     // Output some package.json details to the view
     options.pkg = {};
