@@ -14,6 +14,7 @@ var PEG = require('pegjs');
 var AWS = require('aws-sdk');
 var UglifyJS = require("uglify-js-harmony");
 var rfc2047 = require('rfc2047');
+var mediaType = require('media-type');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
@@ -213,10 +214,12 @@ exports.keyScript = function (aReq, aRes, aNext) {
   let rMetaJS = /\.meta\.js$/;
   let rJS = /\.js$/;
 
-  let accept = aReq.headers.accept || '*/*';
+  let acceptHeader = aReq.headers.accept || '*/*';
   let accepts = null;
+  let accept = null;
 
   let hasAcceptUserScriptMeta = false;
+  let hasAcceptUserScript = false;
   let hasAcceptNotAcceptable = false;
 
   let parts = installName.split('/');
@@ -224,22 +227,35 @@ exports.keyScript = function (aReq, aRes, aNext) {
   let scriptName = parts[1];
 
   if (!isLib) {
-    accepts = accept.split(',');
+    accepts = acceptHeader.split(',').map(function (aEl) {
+      return aEl.trim();
+    });
 
+     // NOTE: Lazy find
     if (rUserJS.test(scriptName)) {
-      accepts.forEach(function (aElement, aIndex, aArray) {
-        let acceptItem = aElement.trim();
+      for (accept of accepts) {
+        let media = mediaType.fromString(accept);
+        if (media.isValid() && /^(?:\*|text|application)$/.test(media.type)) {
 
-        // Find not acceptables
-        if (/^image\//.test(acceptItem)) {
+          // Find acceptables
+          if (media.type === 'text') {
+            if (media.subtype === 'x-userscript' && !media.hasSuffix()) {
+              hasAcceptUserScript = true;
+            }
+            if (media.subtype === 'x-userscript-meta' && !media.hasSuffix()) {
+              hasAcceptUserScriptMeta = true;
+            }
+          }
+
+          if (media.type === '*' && media.subtype !== '*') {
+            hasAcceptNotAcceptable = true;
+          }
+
+        } else {
           hasAcceptNotAcceptable = true;
+          break;
         }
-
-        // Find acceptables
-        if (/^text\/x\-userscript\-meta/.test(acceptItem)) {
-          hasAcceptUserScriptMeta = true;
-        }
-      });
+      }
 
       // Test acceptables
       if (hasAcceptNotAcceptable) {
