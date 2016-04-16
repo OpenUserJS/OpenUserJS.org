@@ -42,11 +42,15 @@ if (isPro) {
 }
 
 var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
-  var secondUntilNextRequest = Math.ceil((aNextValidRequestDate.getTime() - Date.now())/1000);
-  aRes.header('Retry-After', secondUntilNextRequest);
+  var secondUntilNextRequest = null;
+
+  if (isDev) {
+    secondUntilNextRequest = Math.ceil((aNextValidRequestDate.getTime() - Date.now())/1000);
+    aRes.header('Retry-After', secondUntilNextRequest);
+  }
   statusCodePage(aReq, aRes, aNext, {
     statusCode: 429,
-    statusMessage: 'Too Many Requests. Try again in ' + secondUntilNextRequest + ' seconds'
+    statusMessage: 'Too Many Requests. Try again in ' +  (secondUntilNextRequest ? secondUntilNextRequest + ' seconds' : 'a few.')
   });
 }
 
