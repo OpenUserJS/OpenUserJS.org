@@ -238,6 +238,7 @@ exports.keyScript = function (aReq, aRes, aNext) {
 
   let rUserJS = /\.user\.js$/;
   let rMetaJS = /\.meta\.js$/;
+  let rUserMetaMinJS = /\.(?:min\.)?(?:user|meta)\.js$/;
   let rJS = /\.js$/;
 
   let acceptHeader = aReq.headers.accept || '*/*';
@@ -254,103 +255,109 @@ exports.keyScript = function (aReq, aRes, aNext) {
   let scriptName = parts[1];
 
   if (!isLib) {
-    accepts = acceptHeader.split(',').map(function (aEl) {
-      return aEl.trim();
-    }).reverse();
+    if (scriptName.replace(rUserMetaMinJS, '')) {
 
-    // NOTE: Lazy find
-    if (rUserJS.test(scriptName)) {
-      for (let accept of accepts) {
+      accepts = acceptHeader.split(',').map(function (aEl) {
+        return aEl.trim();
+      }).reverse();
 
-        let media = mediaType.fromString(accept);
-        if (media.isValid()) {
+      // NOTE: Lazy find
+      if (rUserJS.test(scriptName)) {
+        for (let accept of accepts) {
 
-          // Check for unacceptables
-          let mediaTypeSubtypeSuffix = media.type + '/' + media.subtype + (media.hasSuffix() ? '+' + media.suffix : '');
+          let media = mediaType.fromString(accept);
+          if (media.isValid()) {
 
-          if (!mediaDB[mediaTypeSubtypeSuffix]) {
-            if (isDev) {
-              console.warn('- unacceptable := ', mediaTypeSubtypeSuffix);
+            // Check for unacceptables
+            let mediaTypeSubtypeSuffix = media.type + '/' + media.subtype + (media.hasSuffix() ? '+' + media.suffix : '');
+
+            if (!mediaDB[mediaTypeSubtypeSuffix]) {
+              if (isDev) {
+                console.warn('- unacceptable := ', mediaTypeSubtypeSuffix);
+              }
+              hasUnacceptable = true;
+              break;
             }
+
+            // Check for just anything
+            if (mediaTypeSubtypeSuffix === '*/*' && accepts.length === 1) {
+              wantsJustAnything = true;
+              break;
+            }
+
+            // Check for acceptables
+            for (let acceptable of
+              [
+                'text/x-userscript-meta',
+                'text/x-userscript',
+
+                'text/javascript',
+                'text/ecmascript',
+                'application/javascript',
+                'application/x-javascript',
+
+                'text/html',
+                'text/xml',
+                'application/xhtml+xml',
+                'application/xml'
+
+                , '*/*'
+              ]
+            ) {
+
+              if (mediaTypeSubtypeSuffix === acceptable) {
+                if (mediaTypeSubtypeSuffix === 'text/x-userscript-meta') {
+                  wantsUserScriptMeta = true;
+                }
+
+                if (mediaTypeSubtypeSuffix === 'text/x-userscript') {
+                  wantsUserscript = true;
+                }
+
+                if (mediaTypeSubtypeSuffix !== '*/*') {
+                  hasAcceptable = true;
+                }
+              }
+
+            }
+          } else {
             hasUnacceptable = true;
             break;
           }
+        }
 
-          // Check for just anything
-          if (mediaTypeSubtypeSuffix === '*/*' && accepts.length === 1) {
-            wantsJustAnything = true;
-            break;
-          }
+        // Test accepts
+        if (hasUnacceptable) {
+          aRes.status(406).send();
+          return;
+        }
 
-          // Check for acceptables
-          for (let acceptable of
-            [
-              'text/x-userscript-meta',
-              'text/x-userscript',
+        if (wantsUserScriptMeta) {
+          exports.sendMeta(aReq, aRes, aNext);
+          return;
+        }
 
-              'text/javascript',
-              'text/ecmascript',
-              'application/javascript',
-              'application/x-javascript',
+        if (!wantsJustAnything && !hasAcceptable) {
+          aRes.status(406).send();
+          return;
+        }
 
-              'text/html',
-              'text/xml',
-              'application/xhtml+xml',
-              'application/xml'
+        aNext(userName + '/' + scriptName.replace(/(\.min)?\.user\.js/, '.user.js'));
+        return;
 
-              , '*/*'
-            ]
-          ) {
-
-            if (mediaTypeSubtypeSuffix === acceptable) {
-              if (mediaTypeSubtypeSuffix === 'text/x-userscript-meta') {
-                wantsUserScriptMeta = true;
-              }
-
-              if (mediaTypeSubtypeSuffix === 'text/x-userscript') {
-                wantsUserscript = true;
-              }
-
-              if (mediaTypeSubtypeSuffix !== '*/*') {
-                hasAcceptable = true;
-              }
-            }
-
-          }
-        } else {
-          hasUnacceptable = true;
-          break;
+      } else if (rMetaJS.test(scriptName)) {
+        if (!/\.min\.meta\.js$/.test(scriptName)) {
+          exports.sendMeta(aReq, aRes, aNext);
+          return;
         }
       }
 
-      // Test accepts
-      if (hasUnacceptable) {
-        aRes.status(406).send();
-        return;
-      }
-
-      if (wantsUserScriptMeta) {
-        exports.sendMeta(aReq, aRes, aNext);
-        return;
-      }
-
-      if (!wantsJustAnything && !hasAcceptable) {
-        aRes.status(406).send();
-        return;
-      }
-
-      aNext(userName + '/' + scriptName.replace(/(\.min)?\.user\.js/, '.user.js'));
-      return;
-
-    } else if (rMetaJS.test(scriptName)) {
-      if (!/\.min\.meta\.js$/.test(scriptName)) {
-        exports.sendMeta(aReq, aRes, aNext);
-        return;
-      }
     }
   } else if (rJS.test(scriptName)) {
+    if (scriptName.replace(rJS, '')) {
       aNext(userName + '/' + scriptName.replace(/(\.min)?\.js/, '.js'));
       return;
+    }
   }
 
   // No matches so return a bad request
