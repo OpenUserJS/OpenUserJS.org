@@ -9,12 +9,14 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var fs = require('fs');
+var _ = require('underscore');
 var URL = require('url');
 var PEG = require('pegjs');
 var AWS = require('aws-sdk');
 var UglifyJS = require("uglify-js-harmony");
 var rfc2047 = require('rfc2047');
 var mediaType = require('media-type');
+var mediaDB = require('mime-db');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
@@ -33,6 +35,30 @@ var encode = require('../libs/helpers').encode;
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
+
+if (!mediaDB['text/x-userscript-meta']) {
+  mediaDB = _.extend(mediaDB, {
+    'text/x-userscript-meta' : {
+      source: 'greasemonkey',
+      compressible: true,
+      extensions: [ 'meta.js' ]
+    }
+  });
+}
+
+if (!mediaDB['text/x-userscript']) {
+  mediaDB = _.extend(mediaDB, {
+    'text/x-userscript' : {
+      source: 'tampermonkey',
+      compressible: true,
+      extensions: [ 'user.js' ]
+    }
+  });
+}
+
+if (!mediaDB['*/*']) {
+  mediaDB = _.extend(mediaDB, {'*/*' : { source: 'iana'}});
+}
 
 //---
 
@@ -216,11 +242,12 @@ exports.keyScript = function (aReq, aRes, aNext) {
 
   let acceptHeader = aReq.headers.accept || '*/*';
   let accepts = null;
-  let accept = null;
 
-  let hasAcceptUserScriptMeta = false;
-  let hasAcceptUserScript = false;
-  let hasAcceptNotAcceptable = false;
+  let wantsJustAnything = false;
+  let wantsUserScriptMeta = false;
+  let wantsUserscript = false;
+  let hasUnacceptable = false;
+  let hasAcceptable = false;
 
   let parts = installName.split('/');
   let userName = parts[0].toLowerCase();
@@ -229,42 +256,85 @@ exports.keyScript = function (aReq, aRes, aNext) {
   if (!isLib) {
     accepts = acceptHeader.split(',').map(function (aEl) {
       return aEl.trim();
-    });
+    }).reverse();
 
-     // NOTE: Lazy find
+    // NOTE: Lazy find
     if (rUserJS.test(scriptName)) {
-      for (accept of accepts) {
+      for (let accept of accepts) {
         let media = mediaType.fromString(accept);
-        if (media.isValid() && /^(?:\*|text|application)$/.test(media.type)) {
+        if (media.isValid()) {
 
-          // Find acceptables
-          if (media.type === 'text') {
-            if (media.subtype === 'x-userscript' && !media.hasSuffix()) {
-              hasAcceptUserScript = true;
+          // Check for unacceptables
+          let mediaTypeSubtypeSuffix = media.type + '/' + media.subtype + (media.hasSuffix() ? '+' + media.suffix : '');
+
+          if (!mediaDB[mediaTypeSubtypeSuffix]) {
+            if (isDev) {
+              console.warn('- unacceptable := ', mediaTypeSubtypeSuffix);
             }
-            if (media.subtype === 'x-userscript-meta' && !media.hasSuffix()) {
-              hasAcceptUserScriptMeta = true;
-            }
+            hasUnacceptable = true;
+            break;
           }
 
-          if (media.type === '*' && media.subtype !== '*') {
-            hasAcceptNotAcceptable = true;
+          // Check for just anything
+          if (mediaTypeSubtypeSuffix === '*/*' && accepts.length === 1) {
+            wantsJustAnything = true;
+            break;
           }
 
+          // Check for acceptables
+          for (let acceptable of
+            [
+              'text/x-userscript-meta',
+              'text/x-userscript',
+
+              'text/javascript',
+              'text/ecmascript',
+              'application/javascript',
+              'application/x-javascript',
+
+              'text/html',
+              'text/xml',
+              'application/xhtml+xml',
+              'application/xml'
+
+              , '*/*'
+            ]
+          ) {
+
+            if (mediaTypeSubtypeSuffix === acceptable) {
+              if (mediaTypeSubtypeSuffix === 'text/x-userscript-meta') {
+                wantsUserScriptMeta = true;
+              }
+
+              if (mediaTypeSubtypeSuffix === 'text/x-userscript') {
+                wantsUserscript = true;
+              }
+
+              if (mediaTypeSubtypeSuffix !== '*/*') {
+                hasAcceptable = true;
+              }
+            }
+
+          }
         } else {
-          hasAcceptNotAcceptable = true;
+          hasUnacceptable = true;
           break;
         }
       }
 
-      // Test acceptables
-      if (hasAcceptNotAcceptable) {
+      // Test accepts
+      if (hasUnacceptable) {
         aRes.status(406).send();
         return;
       }
 
-      if (hasAcceptUserScriptMeta) {
+      if (wantsUserScriptMeta || wantsJustAnything) {
         exports.sendMeta(aReq, aRes, aNext);
+        return;
+      }
+
+      if (!hasAcceptable) {
+        aRes.status(406).send();
         return;
       }
 
