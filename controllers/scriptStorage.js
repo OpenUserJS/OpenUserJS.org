@@ -243,7 +243,6 @@ exports.keyScript = function (aReq, aRes, aNext) {
   let acceptHeader = aReq.headers.accept || '*/*';
   let accepts = null;
 
-  let wantsJustAnything = false;
   let wantsUserScriptMeta = false;
   let wantsUserscript = false;
   let hasUnacceptable = false;
@@ -261,6 +260,7 @@ exports.keyScript = function (aReq, aRes, aNext) {
     // NOTE: Lazy find
     if (rUserJS.test(scriptName)) {
       for (let accept of accepts) {
+
         let media = mediaType.fromString(accept);
         if (media.isValid()) {
 
@@ -272,12 +272,6 @@ exports.keyScript = function (aReq, aRes, aNext) {
               console.warn('- unacceptable := ', mediaTypeSubtypeSuffix);
             }
             hasUnacceptable = true;
-            break;
-          }
-
-          // Check for just anything
-          if (mediaTypeSubtypeSuffix === '*/*' && accepts.length === 1) {
-            wantsJustAnything = true;
             break;
           }
 
@@ -310,9 +304,7 @@ exports.keyScript = function (aReq, aRes, aNext) {
                 wantsUserscript = true;
               }
 
-              if (mediaTypeSubtypeSuffix !== '*/*') {
-                hasAcceptable = true;
-              }
+              hasAcceptable = true;
             }
 
           }
@@ -328,7 +320,7 @@ exports.keyScript = function (aReq, aRes, aNext) {
         return;
       }
 
-      if (wantsUserScriptMeta || wantsJustAnything) {
+      if (wantsUserScriptMeta) {
         exports.sendMeta(aReq, aRes, aNext);
         return;
       }
