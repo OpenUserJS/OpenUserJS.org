@@ -243,6 +243,7 @@ exports.keyScript = function (aReq, aRes, aNext) {
   let acceptHeader = aReq.headers.accept || '*/*';
   let accepts = null;
 
+  let wantsJustAnything = false;
   let wantsUserScriptMeta = false;
   let wantsUserscript = false;
   let hasUnacceptable = false;
@@ -275,6 +276,12 @@ exports.keyScript = function (aReq, aRes, aNext) {
             break;
           }
 
+          // Check for just anything
+          if (mediaTypeSubtypeSuffix === '*/*' && accepts.length === 1) {
+            wantsJustAnything = true;
+            break;
+          }
+
           // Check for acceptables
           for (let acceptable of
             [
@@ -304,7 +311,9 @@ exports.keyScript = function (aReq, aRes, aNext) {
                 wantsUserscript = true;
               }
 
-              hasAcceptable = true;
+              if (mediaTypeSubtypeSuffix !== '*/*') {
+                hasAcceptable = true;
+              }
             }
 
           }
@@ -325,7 +334,7 @@ exports.keyScript = function (aReq, aRes, aNext) {
         return;
       }
 
-      if (!hasAcceptable) {
+      if (!wantsJustAnything && !hasAcceptable) {
         aRes.status(406).send();
         return;
       }
