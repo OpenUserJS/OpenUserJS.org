@@ -31,7 +31,7 @@
     "marked": "0.3.5",
     "media-type": "0.3.0",
     "method-override": "2.3.5",
-    "mime-db": "1.22.0",
+    "mime-db": "https://github.com/jshttp/mime-db/archive/v1.22.0.tar.gz",
     "moment": "2.12.0",
     "mongodb": "2.1.16",
     "mongoose": "4.4.11",

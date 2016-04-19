@@ -21,7 +21,7 @@ These also may use [shields.io][shieldsHomepage] where applicable for more expli
 ##### Dynamic
 Repository | Reference | Recent Version
 --- | --- | ---
-[ace-builds][ace-buildsGHUrl][&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl][&#x00b9;][aceDOCUrl] | [1.2.3 hash][ace-buildsGHHASHUrl]
+[ace-builds][ace-buildsGHUrl] [&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl] [&#x00b9;][aceDOCUrl] | [1.2.3 hash][ace-buildsGHHASHUrl] [RELEASES][ace-buildsGHRELEASESUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
@@ -33,6 +33,8 @@ Repository | Reference | Recent Version
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
+[express-brute][express-bruteGHUrl] | [Documentation][express-bruteDOCUrl] | [![NPM version][express-bruteNPMVersionImage]][express-bruteNPMUrl]
+[express-brute-mongo][express-brute-mongoGHUrl] [&#x00b9;][express-brute-mongoGHMongoDBv2.xUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
 [express-minify][express-minifyGHUrl] | [Documentation][express-minifyDOCUrl] | [![NPM version][express-minifyNPMVersionImage]][express-minifyNPMUrl]
 [express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
 [fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
@@ -44,10 +46,13 @@ Repository | Reference | Recent Version
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
 [jwt-simple][jwt-simpleGHUrl] | [Documentation][jwt-simpleDOCUrl] | [![NPM version][jwt-simpleNPMVersionImage]][jwt-simpleNPMUrl]
 [kerberos][kerberosGHUrl] | [Documentation][kerberosDOCUrl] | [![NPM version][kerberosNPMVersionImage]][kerberosNPMUrl]
-[less-middleware][less-middlewareGHUrl][&#x00b9;][lessGHUrl] | [Documentation][less-middlewareDOCUrl][&#x00b9;][lessDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
+[less-middleware][less-middlewareGHUrl] [&#x00b9;][lessGHUrl] | [Documentation][less-middlewareDOCUrl] [&#x00b9;][lessDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
+[media-type][media-typeGHUrl] | [Documentation][media-typeDOCUrl] | [![NPM version][media-typeNPMVersionImage]][media-typeNPMUrl]
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
+[mime-db][mime-dbGHUrl] | [Documentation][mime-dbDOCUrl] | [![NPM version][mime-dbNPMVersionImage]][mime-dbNPMUrl] [1.22.0 hash][mime-dbGHHASHUrl] [RELEASES][mime-dbGHRELEASESUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
+[mongodb][mongodbGHUrl] | [Documentation][mongodbDOCUrl] | [![NPM version][mongodbNPMVersionImage]][mongodbNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [morgan][morganGHUrl] | [Documentation][morganDOCUrl] | [![NPM version][morganNPMVersionImage]][morganNPMUrl]
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
@@ -75,8 +80,8 @@ Repository | Reference | Recent Version
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
 [serve-favicon][serve-faviconGHUrl] | [Documentation][serve-faviconDOCUrl] | [![NPM version][serve-faviconNPMVersionImage]][serve-faviconNPMUrl]
-[toobusy-js][toobusy-jsGHUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
-[uglifyJS2][uglifyJS2GHUrl] [&#x00b9;][uglifyJS2GHHarmonyUrl] [&#x00b2;][uglifyJS2GHHarmony2Url] | [Documentation][uglifyJS2DOCUrl][&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl]
+[toobusy-js][toobusy-jsGHUrl] [&#x00b9;][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
+[uglifyJS2][uglifyJS2GHUrl] [&#x00b9;][uglifyJS2GHHarmonyUrl] [&#x00b2;][uglifyJS2GHHarmony2Url] | [Documentation][uglifyJS2DOCUrl] [&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 
 
@@ -85,7 +90,7 @@ Repository | Reference | Recent Version
 Repository | Reference | Recent Version | Stored
 --- | --- | ---| ---
 [bootswatch][bootswatchGHUrl] | [Documentation][bootswatchDOCUrl] | [![NPM version][bootswatchNPMVersionImage]][bootswatchNPMUrl] | 3.1.1+1 *(includes [normalize.css][normalizeGHUrl] 3.0.0 and some of our CSS)*
-[SquadaOne-Regular][squadaOneGHUrl][&#x00b9;][squadaOneREPOUrl] | [Documentation][squadaOneDOCUrl] | [SquadaOne-Regular.ttf][squadaOneGHUrlRecent] | SHA256 7fb11ce5541246c83ebc3640543c9f53de186964bcbbf184c1a00cb9ec6cc457
+[SquadaOne-Regular][squadaOneGHUrl] [&#x00b9;][squadaOneREPOUrl] | [Documentation][squadaOneDOCUrl] | [SquadaOne-Regular.ttf][squadaOneGHUrlRecent] | SHA256 7fb11ce5541246c83ebc3640543c9f53de186964bcbbf184c1a00cb9ec6cc457
 
 ##### CDN
 
@@ -120,8 +125,9 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [shieldsHomepage]: http://shields.io/
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
-[ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 [ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/4c15514
+[ace-buildsGHRELEASESUrl]: https://github.com/ajaxorg/ace-builds/releases
+[ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
 [aceDOCUrl]: http://ace.c9.io/#nav=api "ace"
 
@@ -187,6 +193,17 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [expressDOCUrl]: http://expressjs.com/
 [expressNPMUrl]: https://www.npmjs.com/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
+
+[express-bruteGHUrl]: https://github.com/AdamPflug/express-brute
+[express-bruteDOCUrl]: https://github.com/AdamPflug/express-brute/blob/master/README.md
+[express-bruteNPMUrl]: https://www.npmjs.com/package/express-brute
+[express-bruteNPMVersionImage]: https://img.shields.io/npm/v/express-brute.svg?style=flat
+
+[express-brute-mongoGHUrl]: https://github.com/auth0/express-brute-mongo
+[express-brute-mongoGHMongoDBv2.xUrl]: https://github.com/OpenUserJs/express-brute-mongo/tree/MongoDBv2.x
+[express-brute-mongoDOCUrl]: https://github.com/auth0/express-brute-mongo/blob/master/README.md
+[express-brute-mongoNPMUrl]: https://www.npmjs.com/package/express-brute-mongo
+[express-brute-mongoNPMVersionImage]: https://img.shields.io/npm/v/express-brute-mongo.svg?style=flat
 
 [express-minifyGHUrl]: https://github.com/breeswish/express-minify
 [express-minifyDOCUrl]: https://github.com/breeswish/express-minify/blob/master/README.md
@@ -257,15 +274,32 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [markedNPMUrl]: https://www.npmjs.com/package/marked
 [markedNPMVersionImage]: https://img.shields.io/npm/v/marked.svg?style=flat
 
+[media-typeGHUrl]: https://github.com/lovell/media-type
+[media-typeDOCUrl]: https://github.com/lovell/media-type/blob/master/README.md
+[media-typeNPMUrl]: https://www.npmjs.com/package/media-type
+[media-typeNPMVersionImage]: https://img.shields.io/npm/v/media-type.svg?style=flat
+
 [method-overrideGHUrl]: https://github.com/expressjs/method-override
 [method-overrideDOCUrl]: https://github.com/expressjs/method-override/blob/master/README.md
 [method-overrideNPMUrl]: https://www.npmjs.com/package/method-override
 [method-overrideNPMVersionImage]: https://img.shields.io/npm/v/method-override.svg?style=flat
 
+[mime-dbGHUrl]: https://github.com/jshttp/mime-db
+[mime-dbGHHASHUrl]: https://github.com/jshttp/mime-db/tree/ed88d32
+[mime-dbGHRELEASESUrl]: https://github.com/jshttp/mime-db/releases
+[mime-dbDOCUrl]: https://github.com/jshttp/mime-db/blob/master/README.md
+[mime-dbNPMUrl]: https://www.npmjs.com/package/mime-db
+[mime-dbNPMVersionImage]: https://img.shields.io/npm/v/mime-db.svg?style=flat
+
 [momentGHUrl]: https://github.com/moment/moment
 [momentDOCUrl]: http://momentjs.com/docs/
 [momentNPMUrl]: https://www.npmjs.com/package/moment
 [momentNPMVersionImage]: https://img.shields.io/npm/v/moment.svg?style=flat
+
+[mongodbGHUrl]: https://github.com/mongodb/node-mongodb-native
+[mongodbDOCUrl]: https://github.com/mongodb/node-mongodb-native/blob/2.1/README.md
+[mongodbNPMUrl]: https://www.npmjs.com/package/mongodb
+[mongodbNPMVersionImage]: https://img.shields.io/npm/v/mongodb.svg?style=flat
 
 [mongooseGHUrl]: https://github.com/LearnBoost/mongoose
 [mongooseDOCUrl]: http://mongoosejs.com
@@ -405,6 +439,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [serve-faviconNPMVersionImage]: https://img.shields.io/npm/v/serve-favicon.svg?style=flat
 
 [toobusy-jsGHUrl]: https://github.com/STRML/node-toobusy
+[toobusy-jsGHUrlHarmonyUrl]: https://github.com/OpenUserJs/node-toobusy/tree/harmony
 [toobusy-jsDOCUrl]: https://github.com/STRML/node-toobusy/blob/master/README.md
 [toobusy-jsNPMUrl]: https://npmjs.com/package/toobusy-js
 [toobusy-jsNPMVersionImage]: https://img.shields.io/npm/v/toobusy-js.svg?style=flat
