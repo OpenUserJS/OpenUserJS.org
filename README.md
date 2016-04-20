@@ -131,6 +131,10 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
 [aceDOCUrl]: http://ace.c9.io/#nav=api "ace"
 
+[ansi-colorsGHUrl]: https://github.com/doowb/ansi-colors
+[ansi-colorsDOCUrl]: https://github.com/doowb/ansi-colors/blob/master/README.md
+[ansi-colorsNPMUrl]: https://www.npmjs.com/package/ansi-colors
+[ansi-colorsNPMVersionImage]: https://img.shields.io/npm/v/ansi-colors.svg?style=flat
 
 [asyncGHUrl]: https://github.com/caolan/async
 [asyncDOCUrl]: https://github.com/caolan/async/blob/master/README.md
@@ -168,11 +172,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [clipboardDOCUrl]: https://github.com/zenorocha/clipboard.js/blob/master/readme.md
 [clipboardNPMUrl]: https://www.npmjs.com/package/clipboard
 [clipboardNPMVersionImage]: https://img.shields.io/npm/v/clipboard.svg?style=flat
-
-[ansi-colorsGHUrl]: https://github.com/Marak/ansi-colors.js
-[ansi-colorsDOCUrl]: https://github.com/Marak/ansi-colors.js/blob/master/ReadMe.md
-[ansi-colorsNPMUrl]: https://www.npmjs.com/package/ansi-colors
-[ansi-colorsNPMVersionImage]: https://img.shields.io/npm/v/ansi-colors.svg?style=flat
 
 [compressionGHUrl]: https://github.com/expressjs/compression
 [compressionDOCUrl]: https://github.com/expressjs/compression/blob/master/README.md
