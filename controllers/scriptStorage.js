@@ -60,7 +60,7 @@ if (!mediaDB['text/x-userscript']) {
 // Allow Microsoft Edge browsers to test
 if (!mediaDB['image/jxr']) {
   mediaDB = _.extend(mediaDB, {
-    'iamge/jxr' : {
+    'image/jxr' : {
       source: 'iana_psmtr',
       extensions: ['jxr']
     }
