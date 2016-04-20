@@ -17,7 +17,7 @@ if (isPro) {
 var path = require('path');
 
 var express = require('express');
-var toobusy = require('toobusy-js');
+var toobusy = require('toobusy-js-harmony');
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
 var methodOverride = require('method-override');
