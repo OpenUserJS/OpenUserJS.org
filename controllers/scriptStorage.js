@@ -36,12 +36,13 @@ var encode = require('../libs/helpers').encode;
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
 
+// Add greasemonkey support for Media Type
 if (!mediaDB['text/x-userscript-meta']) {
   mediaDB = _.extend(mediaDB, {
     'text/x-userscript-meta' : {
       source: 'greasemonkey',
       compressible: true,
-      extensions: [ 'meta.js' ]
+      extensions: ['meta.js']
     }
   });
 }
@@ -49,12 +50,23 @@ if (!mediaDB['text/x-userscript-meta']) {
 if (!mediaDB['text/x-userscript']) {
   mediaDB = _.extend(mediaDB, {
     'text/x-userscript' : {
-      source: 'tampermonkey',
+      source: 'greasemonkey_peer',
       compressible: true,
-      extensions: [ 'user.js' ]
+      extensions: ['user.js']
     }
   });
 }
+
+// Allow Microsoft Edge browsers to test
+if (!mediaDB['image/jxr']) {
+  mediaDB = _.extend(mediaDB, {
+    'iamge/jxr' : {
+      source: 'iana_psmtr',
+      extensions: ['jxr']
+    }
+  });
+}
+
 
 if (!mediaDB['*/*']) {
   mediaDB = _.extend(mediaDB, {'*/*' : { source: 'iana'}});
@@ -297,11 +309,9 @@ exports.keyScript = function (aReq, aRes, aNext) {
                 'application/x-javascript',
 
                 'text/html',
-                'text/xml',
                 'application/xhtml+xml',
-                'application/xml'
 
-                , '*/*'
+                '*/*'
               ]
             ) {
 
