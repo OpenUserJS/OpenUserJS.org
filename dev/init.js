@@ -1,6 +1,6 @@
 'use strict';
 
-var colors = require('colors');
+var colors = require('ansi-colors');
 
 // Define some pseudo module globals
 var isPro = require('../libs/debug').isPro;

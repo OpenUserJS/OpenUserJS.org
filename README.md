@@ -22,13 +22,13 @@ These also may use [shields.io][shieldsHomepage] where applicable for more expli
 Repository | Reference | Recent Version
 --- | --- | ---
 [ace-builds][ace-buildsGHUrl] [&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl] [&#x00b9;][aceDOCUrl] | [1.2.3 hash][ace-buildsGHHASHUrl] [RELEASES][ace-buildsGHRELEASESUrl]
+[ansi-colors][ansi-colorsGHUrl] | [Documentation][ansi-colorsDOCUrl] | [![NPM version][ansi-colorsNPMVersionImage]][ansi-colorsNPMUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
 [bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl]
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl]
 [clipboard][clipboardGHUrl] | [Documentation][clipboardDOCUrl] | [![NPM version][clipboardNPMVersionImage]][clipboardNPMUrl]
-[colors][colorsGHUrl] | [Documentation][colorsDOCUrl] | [![NPM version][colorsNPMVersionImage]][colorsNPMUrl]
 [compression][compressionGHUrl] | [Documentation][compressionDOCUrl] | [![NPM version][compressionNPMVersionImage]][compressionNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
@@ -169,10 +169,10 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [clipboardNPMUrl]: https://www.npmjs.com/package/clipboard
 [clipboardNPMVersionImage]: https://img.shields.io/npm/v/clipboard.svg?style=flat
 
-[colorsGHUrl]: https://github.com/Marak/colors.js
-[colorsDOCUrl]: https://github.com/Marak/colors.js/blob/master/ReadMe.md
-[colorsNPMUrl]: https://www.npmjs.com/package/colors
-[colorsNPMVersionImage]: https://img.shields.io/npm/v/colors.svg?style=flat
+[ansi-colorsGHUrl]: https://github.com/Marak/ansi-colors.js
+[ansi-colorsDOCUrl]: https://github.com/Marak/ansi-colors.js/blob/master/ReadMe.md
+[ansi-colorsNPMUrl]: https://www.npmjs.com/package/ansi-colors
+[ansi-colorsNPMVersionImage]: https://img.shields.io/npm/v/ansi-colors.svg?style=flat
 
 [compressionGHUrl]: https://github.com/expressjs/compression
 [compressionDOCUrl]: https://github.com/expressjs/compression/blob/master/README.md

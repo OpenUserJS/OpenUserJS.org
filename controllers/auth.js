@@ -11,7 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var passport = require('passport');
 var jwt = require('jwt-simple');
 var url = require('url');
-var colors = require('colors');
+var colors = require('ansi-colors');
 
 //--- Model inclusions
 var Strategy = require('../models/strategy.js').Strategy;
