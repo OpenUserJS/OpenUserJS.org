@@ -27,8 +27,8 @@ Repository | Reference | Recent Version
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
 [bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl]
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl]
-[chalk][chalkGHUrl] | [Documentation][chalkDOCUrl] | [![NPM version][chalkNPMVersionImage]][chalkNPMUrl]
 [clipboard][clipboardGHUrl] | [Documentation][clipboardDOCUrl] | [![NPM version][clipboardNPMVersionImage]][clipboardNPMUrl]
+[colors][colorsGHUrl] | [Documentation][colorsDOCUrl] | [![NPM version][colorsNPMVersionImage]][colorsNPMUrl]
 [compression][compressionGHUrl] | [Documentation][compressionDOCUrl] | [![NPM version][compressionNPMVersionImage]][compressionNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
@@ -164,15 +164,15 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [bundlerGEMVersionImage]: http://img.shields.io/gem/v/bundler.svg?style=flat
 [bundlerGHReleasesUrl]: https://github.com/bundler/bundler/blob/master/CHANGELOG.md
 
-[chalkGHUrl]: https://github.com/chalk/chalk
-[chalkDOCUrl]: https://github.com/chalk/chalk/blob/master/readme.md
-[chalkNPMUrl]: https://www.npmjs.com/package/chalk
-[chalkNPMVersionImage]: https://img.shields.io/npm/v/chalk.svg?style=flat
-
 [clipboardGHUrl]: https://github.com/zenorocha/clipboard.js
 [clipboardDOCUrl]: https://github.com/zenorocha/clipboard.js/blob/master/readme.md
 [clipboardNPMUrl]: https://www.npmjs.com/package/clipboard
 [clipboardNPMVersionImage]: https://img.shields.io/npm/v/clipboard.svg?style=flat
+
+[colorsGHUrl]: https://github.com/Marak/colors.js
+[colorsDOCUrl]: https://github.com/Marak/colors.js/blob/master/ReadMe.md
+[colorsNPMUrl]: https://www.npmjs.com/package/colors
+[colorsNPMVersionImage]: https://img.shields.io/npm/v/colors.svg?style=flat
 
 [compressionGHUrl]: https://github.com/expressjs/compression
 [compressionDOCUrl]: https://github.com/expressjs/compression/blob/master/README.md
