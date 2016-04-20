@@ -11,7 +11,7 @@ var _ = require("underscore");
 var async = require('async');
 var util = require('util');
 var request = require('request');
-var chalk = require('chalk');
+var colors = require('colors');
 
 // Client
 var github = new GitHubApi({
@@ -31,9 +31,9 @@ Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
       key: aStrat.id,
       secret: aStrat.key,
     });
-    console.log(chalk.green('GitHub client authenticated'));
+    console.log(colors.green('GitHub client authenticated'));
   } else {
-    console.warn(chalk.yellow('GitHub client NOT authenticated. Will have a lower Rate Limit.'));
+    console.warn(colors.yellow('GitHub client NOT authenticated. Will have a lower Rate Limit.'));
   }
 
 });

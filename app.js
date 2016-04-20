@@ -37,7 +37,7 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
 var passport = require('passport');
-var chalk = require('chalk');
+var colors = require('colors');
 
 var app = express();
 
@@ -91,30 +91,30 @@ mongoose.connect(connectStr, dbOptions);
 
 // Trap a few events for MongoDB
 db.on('error', function () {
-  console.error(chalk.red('MongoDB connection error'));
+  console.error(colors.red('MongoDB connection error'));
 });
 
 db.once('open', function () {
-  console.log(chalk.green('MongoDB connection is opened'));
+  console.log(colors.green('MongoDB connection is opened'));
 });
 
 db.on('connected', function () {
   var admin = new mongoose.mongo.Admin(mongoose.connection.db);
   admin.buildInfo(function (aErr, aInfo) {
-    console.log(chalk.green('Connected to MongoDB v' + aInfo.version));
+    console.log(colors.green('Connected to MongoDB v' + aInfo.version));
   });
 });
 
 db.on('disconnected', function () {
-  console.error(chalk.yellow('\nMongoDB connection is disconnected'));
+  console.error(colors.yellow('\nMongoDB connection is disconnected'));
 });
 
 db.on('reconnected', function () {
-  console.error(chalk.yellow('MongoDB connection is reconnected'));
+  console.error(colors.yellow('MongoDB connection is reconnected'));
 });
 
 process.on('SIGINT', function () {
-  console.log(chalk.green('Capturing app termination for an attempt at cleanup'));
+  console.log(colors.green('Capturing app termination for an attempt at cleanup'));
 
   /**
    * Attempt to get everything closed before process exit
