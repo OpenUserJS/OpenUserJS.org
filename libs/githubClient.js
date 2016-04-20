@@ -11,7 +11,7 @@ var _ = require("underscore");
 var async = require('async');
 var util = require('util');
 var request = require('request');
-var colors = require('colors');
+var colors = require('ansi-colors');
 
 // Client
 var github = new GitHubApi({
