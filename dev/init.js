@@ -1,6 +1,6 @@
 'use strict';
 
-var chalk = require('chalk');
+var colors = require('colors');
 
 // Define some pseudo module globals
 var isPro = require('../libs/debug').isPro;
@@ -11,7 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var exec = require('child_process').exec;
 var async = require('async');
 
-console.log(chalk.yellow('Checking project dependencies. Please wait...'));
+console.log(colors.yellow('Checking project dependencies. Please wait...'));
 
 var tasks = [
   function (aCallback) {
@@ -23,7 +23,7 @@ var tasks = [
         return;
       }
 
-      aCallback(null, ['$ ' + cmd + '\n' + chalk.gray(aStdout)]);
+      aCallback(null, ['$ ' + cmd + '\n' + colors.gray(aStdout)]);
     });
   },
   function (aStdouts, aCallback) {
@@ -35,7 +35,7 @@ var tasks = [
         return;
       }
 
-      aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, aStdouts);
     });
   },
@@ -45,7 +45,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         if (aErr.code === 127) {
-//           aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//           aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
           aCallback(null, false, aStdouts);
           return;
         } else {
@@ -54,7 +54,7 @@ var tasks = [
         }
       }
 
-//       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//       aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, true, aStdouts);
     });
   },
@@ -66,7 +66,7 @@ var tasks = [
       return;
     }
 
-    console.log(chalk.cyan('Installing *bundler* gem as global...'));
+    console.log(colors.cyan('Installing *bundler* gem as global...'));
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
@@ -74,7 +74,7 @@ var tasks = [
         return;
       }
 
-//       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//       aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, aStdouts);
     });
   },
@@ -84,7 +84,7 @@ var tasks = [
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
         if (aErr.code === 7) {
-//           aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//           aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
           aCallback(null, false, aStdouts);
           return;
         } else {
@@ -93,7 +93,7 @@ var tasks = [
         }
       }
 
-//       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//       aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, true, aStdouts);
     });
   },
@@ -105,7 +105,7 @@ var tasks = [
       return;
     }
 
-    console.log(chalk.cyan('Installing bundled gem(s) as global...'));
+    console.log(colors.cyan('Installing bundled gem(s) as global...'));
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
@@ -113,7 +113,7 @@ var tasks = [
         return;
       }
 
-//       aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+//       aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, aStdouts);
     });
   },
@@ -126,7 +126,7 @@ var tasks = [
         return;
       }
 
-      aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, aStdouts);
     });
   },
@@ -139,7 +139,7 @@ var tasks = [
         return;
       }
 
-      aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, aStdouts);
     });
   },
@@ -152,7 +152,7 @@ var tasks = [
         return;
       }
 
-      aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, aStdouts);
     });
   },
@@ -165,7 +165,7 @@ var tasks = [
         return;
       }
 
-      aStdouts.push('$ ' + cmd + '\n' + chalk.gray(aStdout));
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
       aCallback(null, aStdouts);
     });
   }
@@ -175,14 +175,14 @@ var tasks = [
 async.waterfall(tasks, function (aErr, aResults) {
   if (aErr) {
     console.error(
-      chalk.red.inverse('Project dependency error!\n\n'),
+      colors.red.inverse('Project dependency error!\n\n'),
       'Code ' + aErr.code + '\n',
       aErr.message
     );
     return;
   }
 
-  aResults.push(chalk.cyan('Completed checking project dependencies'));
+  aResults.push(colors.cyan('Completed checking project dependencies'));
 
   console.log(aResults.join('\n'));
 });
