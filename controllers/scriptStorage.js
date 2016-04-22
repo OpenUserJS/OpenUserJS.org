@@ -385,6 +385,16 @@ exports.sendScript = function (aReq, aRes, aNext) {
   exports.getSource(aReq, function (aScript, aStream) {
     let chunks = [];
     let updateURL = null;
+    let updateUtf = null;
+
+    let matches = null;
+    let rAnyLocalMetaUrl = new RegExp('^https?://(?:openuserjs\.org|oujs\.org' +
+      (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') +
+        ')/(?:meta|install|src/scripts)/(.+?)/(.+?)\.meta\.js$');
+    let hasAlternateLocalUpdateURL = false;
+
+    let rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
+      (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
 
     if (!aScript) {
       aNext();
@@ -392,26 +402,51 @@ exports.sendScript = function (aReq, aRes, aNext) {
     }
 
     if (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true') {
+      // `@updateURL` must be exact here for OUJS hosted checks
+      //   e.g. no `search`, no `hash`
+
       updateURL = findMeta(aScript.meta, 'UserScript.updateURL.0.value');
       if (updateURL) {
-        updateURL = URL.parse(updateURL);
-        if (/^(?:localhost|openuserjs|oujs)\.org$/.test(updateURL.host) &&
-          /^\/(?:install|src)/.test(updateURL.pathname) &&
-            /\.js$/.test(updateURL.pathname))
-        {
-          // NOTE: Don't serve the script anywhere in this mode
-          aRes.set('Warning', '199 ' + aReq.headers.host + ' Invalid @updateURL');
+
+        // Check for decoding error
+        try {
+          updateUtf = decodeURIComponent(updateURL);
+        } catch (aE) {
+          aRes.set('Warning', '199 ' + aReq.headers.host +
+            rfc2047.encode(' Invalid @updateURL'));
           aRes.status(444).send();
           return;
+        }
+
+        // Validate `author` and `name` (installNameBase) to this scripts meta only
+        let matches = updateUtf.match(rAnyLocalMetaUrl);
+        if (matches) {
+          if (cleanFilename(aScript.author, '').toLowerCase() +
+            '/' + cleanFilename(aScript.name, '') === matches[1].toLowerCase() + '/' + matches[2])
+          {
+            // Same script
+          } else {
+            hasAlternateLocalUpdateURL = true;
+          }
+        } else {
+          // Allow offsite checks
+          updateURL = URL.parse(updateURL);
+          if (rAnyLocalHost.test(updateURL.host)) {
+            hasAlternateLocalUpdateURL = true;
+          }
         }
       } else {
         if (!aScript.isLib) {
-          // NOTE: Don't serve the script anywhere in this mode and if absent
-
-          aRes.set('Warning', rfc2047.encode('199 ' + aReq.headers.host + 'Missing @updateURL'));
-          aRes.status(444).send();
-          return;
+          // Don't serve the script anywhere in this mode and if absent
+          hasAlternateLocalUpdateURL = true;
         }
+      }
+
+      if (hasAlternateLocalUpdateURL) {
+        aRes.set('Warning', '199 ' + aReq.headers.host +
+          rfc2047.encode(' Invalid @updateURL in lockdown'));
+        aRes.status(444).send();
+        return;
       }
     }
 

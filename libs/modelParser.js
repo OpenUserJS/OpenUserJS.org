@@ -204,8 +204,9 @@ var parseScript = function (aScript) {
 
   var downloadURL = null;
   var downloadUtf = null;
-  var rAnySourceUrl = new RegExp('^https?://(?:openuserjs\.org|localhost:' +
-    (process.env.PORT || 8080) + ')/(?:install|src/scripts)\/(.+?)/(.+?)((?:\.min)?\.user\.js)$');
+  var rAnyLocalScriptUrl = new RegExp('^https?://(?:openuserjs\.org|oujs\.org' +
+    (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') +
+      ')/(?:install|src/scripts)/(.+?)/(.+?)((?:\.min)?(?:\.user)?\.js)$');
 
   // Temporaries
   var htmlStub = null;
@@ -400,14 +401,15 @@ var parseScript = function (aScript) {
 
     } finally {
       if (!script.hasInvalidDownloadURL)  {
-        matches = downloadUtf.match(rAnySourceUrl);
-
+        matches = downloadUtf.match(rAnyLocalScriptUrl);
         if (matches) {
           if (matches[1].toLowerCase() === script.authorSlug.toLowerCase() &&
             matches[2] === script.nameSlug) {
-
-            if (matches[3] === '.user.js') {
+            if (/(?:\.min)?\.user\.js$/.test(matches[3])) {
+              // Same script
+            } else {
               script.hasAlternateDownloadURL = true;
+              script.showMinficationNotices = true;
             }
           } else {
             script.hasAlternateDownloadURL = true;
