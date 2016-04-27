@@ -224,7 +224,10 @@ exports.register = function (aReq, aRes) {
   }
 
   function render() {
-    aRes.header('Cache-Control', 'no-cache, no-store');
+    aRes.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    aRes.header('Pragma', 'no-cache');
+    aRes.header('Expires', '0');
+
     aRes.render('pages/loginPage', options);
   }
 
