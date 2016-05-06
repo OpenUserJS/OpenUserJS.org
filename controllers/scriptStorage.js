@@ -743,6 +743,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var name = null;
   var thisName = null;
   var scriptName = null;
+  var rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
+    (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
+  var downloadURL = null;
   var author = null;
   var collaborators = null;
   var installName = aUser.name + '/';
@@ -784,7 +787,29 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     }
 
     // Can't install a userscript name ending in a reserved extension
-    if (/\.min$/.test(scriptName)) {
+    if (/\.(?:min|user|user\.js|meta)$/.test(scriptName)) {
+      aCallback(null);
+      return;
+    }
+
+
+    // `downloadURL` validations
+    downloadURL = URL.parse(findMeta(aMeta, 'UserScript.downloadURL.0.value'));
+
+    // Shouldn't install a userscript with a downloadURL of meta .user.js
+    if (rAnyLocalHost.test(downloadURL.host) &&
+      /^\/meta/.test(downloadURL.pathname) &&
+        /\.user\.js$/.test(downloadURL.pathname))
+    {
+      aCallback(null);
+      return;
+    }
+
+    // Shouldn't install a userscript with a downloadURL of source .meta.js
+    if (rAnyLocalHost.test(downloadURL.host) &&
+      /^\/(?:install|src\/scripts)/.test(downloadURL.pathname) &&
+        /\.meta\.js$/.test(downloadURL.pathname))
+    {
       aCallback(null);
       return;
     }
@@ -817,14 +842,14 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       });
     }
   } else {
-    scriptName = cleanFilename(aMeta.replace(/^\s+|\s+$/g, ''), '');
+    scriptName = cleanFilename(aMeta.trim(), '');
     if (!scriptName) {
       aCallback(null);
       return;
     }
 
-    // Can't install a library name ending in a reserved extension
-    if (/\.(min|user|meta)$/.test(scriptName)) {
+    // Can't reference a library name ending in a reserved extension
+    if (/\.(min|user|user\.js|meta)$/.test(scriptName)) {
       aCallback(null);
       return;
     }
@@ -843,7 +868,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       } else if (!aScript) {
         // New script
         aScript = new Script({
-          name: isLibrary ? aMeta : thisName,
+          name: isLibrary ? aMeta.trim() : thisName,
           author: aUser.name,
           installs: 0,
           rating: 0,
@@ -853,7 +878,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           flags: { critical: 0, absolute: 0 },
           installName: installName,
           fork: null,
-          meta: isLibrary ? { name: aMeta } : aMeta,
+          meta: isLibrary ? { name: aMeta.trim() } : aMeta,
           isLib: isLibrary,
           uses: isLibrary ? null : libraries,
           _authorId: aUser._id
