@@ -794,24 +794,28 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
 
     // `downloadURL` validations
-    downloadURL = URL.parse(findMeta(aMeta, 'UserScript.downloadURL.0.value'));
+    downloadURL = findMeta(aMeta, 'UserScript.downloadURL.0.value');
+    
+    if (downloadURL) {
+      downloadURL = URL.parse(downloadURL);
 
-    // Shouldn't install a userscript with a downloadURL of meta .user.js
-    if (rAnyLocalHost.test(downloadURL.host) &&
-      /^\/meta/.test(downloadURL.pathname) &&
-        /\.user\.js$/.test(downloadURL.pathname))
-    {
-      aCallback(null);
-      return;
-    }
+      // Shouldn't install a userscript with a downloadURL of meta .user.js
+      if (rAnyLocalHost.test(downloadURL.host) &&
+        /^\/meta/.test(downloadURL.pathname) &&
+          /\.user\.js$/.test(downloadURL.pathname))
+      {
+        aCallback(null);
+        return;
+     }
 
-    // Shouldn't install a userscript with a downloadURL of source .meta.js
-    if (rAnyLocalHost.test(downloadURL.host) &&
-      /^\/(?:install|src\/scripts)/.test(downloadURL.pathname) &&
-        /\.meta\.js$/.test(downloadURL.pathname))
-    {
-      aCallback(null);
-      return;
+     // Shouldn't install a userscript with a downloadURL of source .meta.js
+      if (rAnyLocalHost.test(downloadURL.host) &&
+        /^\/(?:install|src\/scripts)/.test(downloadURL.pathname) &&
+          /\.meta\.js$/.test(downloadURL.pathname))
+      {
+        aCallback(null);
+        return;
+      }
     }
 
     author = findMeta(aMeta, 'OpenUserJS.author.0.value');
