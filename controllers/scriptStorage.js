@@ -806,7 +806,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       {
         aCallback(null);
         return;
-     }
+      }
 
      // Shouldn't install a userscript with a downloadURL of source .meta.js
       if (rAnyLocalHost.test(downloadURL.host) &&
