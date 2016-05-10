@@ -7,8 +7,8 @@
     "ace-builds": "git://github.com/ajaxorg/ace-builds#4c15514",
     "ansi-colors": "0.1.0",
     "async": "1.5.2",
-    "aws-sdk": "2.3.5",
-    "body-parser": "1.15.0",
+    "aws-sdk": "2.3.9",
+    "body-parser": "1.15.1",
     "bootstrap": "3.3.6",
     "bootstrap-markdown": "2.10.0",
     "clipboard": "1.5.10",
@@ -31,10 +31,10 @@
     "marked": "0.3.5",
     "media-type": "0.3.0",
     "method-override": "2.3.5",
-    "mime-db": "https://github.com/jshttp/mime-db/archive/v1.22.0.tar.gz",
+    "mime-db": "https://github.com/jshttp/mime-db/archive/v1.23.0.tar.gz",
     "moment": "2.13.0",
-    "mongodb": "2.1.17",
-    "mongoose": "4.4.13",
+    "mongodb": "2.1.18",
+    "mongoose": "4.4.16",
     "morgan": "1.7.0",
     "mu2": "0.5.20",
     "octicons": "3.5.0",
@@ -49,7 +49,7 @@
     "passport-instagram": "1.0.0",
     "passport-linkedin": "1.0.0",
     "passport-reddit": "0.2.4",
-    "passport-steam": "1.0.1",
+    "passport-steam": "1.0.2",
     "passport-tumblr": "0.1.2",
     "passport-twitter": "1.0.4",
     "passport-windowslive": "1.0.2",
@@ -66,7 +66,7 @@
     "underscore": "1.8.3"
   },
   "optionalDependencies": {
-    "kerberos": "0.0.19"
+    "kerberos": "0.0.21"
   },
   "repository": {
     "type": "git",
