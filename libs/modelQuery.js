@@ -240,6 +240,7 @@ var applyModelListQueryFlaggedFilter = function (aModelListQuery, aOptions, aFla
 exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
 
 var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDefaultOptions) {
+  var orders = null;
 
   // Search
   if (aReq.query.q) {
@@ -261,6 +262,49 @@ var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDe
   // Sort
   parseModelListSort(aModelListQuery, aReq.query.orderBy, aReq.query.orderDir, function () {
     aModelListQuery.sort(aDefaultOptions.defaultSort);
+  });
+
+  // View options to indicate what orderBy(s) are used for sorting
+  orders = aReq.query.orderBy || aDefaultOptions.defaultSort;
+  orders.split(' ').map(function (aEl) {
+    switch (aEl.match(/[+-]?(.*)$/)[1]) {
+      case 'name':
+        aOptions.orderedByName = true;
+        break;
+      case 'installs':
+        aOptions.orderedByInstalls = true;
+        break;
+      case 'rating':
+        aOptions.orderedByRating = true;
+        break;
+      case 'updated':
+        aOptions.orderedByUpdated = true;
+        break;
+      case 'role':
+        aOptions.orderedByRole = true;
+        break;
+      case 'removed':
+        aOptions.orderedByRemoved = true;
+        break;
+      case 'model':
+        aOptions.orderedByModel = true;
+        break;
+      case 'removerName':
+        aOptions.orderedByRemoverName = true;
+        break;
+      case 'topic':
+        aOptions.orderedByTopic = true;
+        break;
+      case 'comments':
+        aOptions.orderedByComments = true;
+        break;
+      case 'created':
+        aOptions.orderedByCreated = true;
+        break;
+      case 'size':
+        aOptions.orderedBySize = true;
+        // fallthrough
+    }
   });
 
   // Pagination

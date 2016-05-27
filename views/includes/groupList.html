@@ -1,9 +1,9 @@
 <table class="table table-hover table-condensed">
   <thead>
     <tr>
-      <th><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Name</a></th>
-      <th class="text-center"><a href="?orderBy=size&orderDir={{orderDir.size}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Size</a></th>
-      <th class="text-center"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Rating</a></th>
+      <th class="{{#orderedByName}}active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Name</a></th>
+      <th class="text-center{{#orderedBySize}} active{{/orderedBySize}}"><a href="?orderBy=size&orderDir={{orderDir.size}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Size</a></th>
+      <th class="text-center{{#orderedByRating}} active{{/orderedByRating}}"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Rating</a></th>
     </tr>
   </thead>
   <tbody>
