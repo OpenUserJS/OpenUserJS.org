@@ -17,10 +17,12 @@ var UglifyJS = require("uglify-js-harmony");
 var rfc2047 = require('rfc2047');
 var mediaType = require('media-type');
 var mediaDB = require('mime-db');
+var async = require('async');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
+var Discussion = require('../models/discussion').Discussion;
 
 //--- Controller inclusions
 
@@ -32,6 +34,8 @@ var RepoManager = require('../libs/repoManager');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var encode = require('../libs/helpers').encode;
+var countTask = require('../libs/tasks').countTask;
+var modelParser = require('../libs/modelParser');
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
@@ -545,24 +549,65 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
 // Send user script metadata block
 exports.sendMeta = function (aReq, aRes, aNext) {
+  function preRender() {
+  }
+
+  function render() {
+    aRes.set('Content-Type', 'application/json; charset=UTF-8');
+
+    aRes.end(JSON.stringify(meta, null, isPro ? '' : ' '));
+  }
+
+  function asyncComplete(aErr) {
+    if (aErr) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: aErr.statusCode,
+        statusMessage: aErr.statusMessage
+      });
+      return;
+    }
+
+    preRender();
+    render();
+  }
+
   var installNameBase = getInstallNameBase(aReq, { hasExtension: true });
+  var meta = null;
 
   Script.findOne({ installName: caseSensitive(installNameBase + '.user.js') },
     function (aErr, aScript) {
-      var meta = null;
+      var script = null;
+      var scriptOpenIssueCountQuery = null;
       var whitespace = '\u0020\u0020\u0020\u0020';
+      var tasks = [];
 
       if (!aScript) {
         aNext();
         return;
       }
 
-      meta = aScript.meta; // NOTE: Watchpoint
+      script = modelParser.parseScript(aScript);
+      meta = script.meta; // NOTE: Watchpoint
 
       if (/\.json$/.test(aReq.params.scriptname)) {
-        aRes.set('Content-Type', 'application/json; charset=UTF-8');
 
-        aRes.end(JSON.stringify(meta, null, isPro ? '' : ' '));
+        // Check for existance of OUJS metadata block
+        if (!meta.OpenUserJS) {
+          meta.OpenUserJS = {};
+        }
+
+        // Overwrite any keys found with `installs` and `issues`
+        meta.OpenUserJS.installs = [{ value: script.installs }];
+        meta.OpenUserJS.issues =  [{ value: 'n/a' }];
+
+        // Get the number of open issues
+        scriptOpenIssueCountQuery = Discussion.find({ category: exports
+          .caseSensitive(decodeURIComponent(script.issuesCategorySlug), true), open: {$ne: false} });
+
+        tasks.push(countTask(scriptOpenIssueCountQuery, meta.OpenUserJS.issues[0], 'value'));
+
+        async.parallel(tasks, asyncComplete);
+
       } else {
         aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
 

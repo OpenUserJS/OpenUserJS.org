@@ -535,6 +535,34 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
             return;
           }
           getFlaggedListForContent('Script', options, aCallback);
+        },
+        function (aCallback) {
+          var scriptList = options.scriptList;
+          var scriptKeyMax = scriptList.length - 1;
+
+          async.forEachOfSeries(options.scriptList, function (aScript, aScriptKey, aEachCallback) {
+            var script = modelParser.parseScript(aScript);
+
+            // Find if script has at least one open issue
+            Discussion.findOne({ category: scriptStorage
+              .caseSensitive(decodeURIComponent(script.issuesCategorySlug), true), open: {$ne: false} },
+                function (aErr, aDiscussion) {
+                  if (!aErr) {
+                    // Create a psuedo-virtual for the view
+                    script._hasIssues = !!aDiscussion;
+                  }
+
+                  scriptList[aScriptKey] = script;
+
+                  if (aScriptKey === scriptKeyMax) {
+                    options.scriptList = scriptList;
+                    aEachCallback(); // NOTE: In for follow-through logic
+                    aCallback();
+                  } else {
+                    aEachCallback();
+                  }
+              });
+          });
         }
       ], function (aErr) {
         preRender();
