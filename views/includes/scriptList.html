@@ -14,6 +14,7 @@
     {{#scriptList}}
     <tr class="tr-link">
       <td>
+        {{#_hasIssues}}<a href="{{{scriptIssuesPageUri}}}/open"><i class="fa fa-fw fa-commenting pull-right"></i></a>{{/_hasIssues}}
         <span class="script-icon hidden-xs" {{#icon16Url}}data-icon-src="{{{icon16Url}}}" data-icon-size="16"{{/icon16Url}}>
           {{#isLib}}<i class="fa fa-fw fa-file-excel-o"></i>{{/isLib}}{{^isLib}}<i class="fa fa-fw fa-file-code-o"></i>{{/isLib}}
         </span>
