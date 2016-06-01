@@ -540,17 +540,17 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
           var scriptList = options.scriptList;
           var scriptKeyMax = scriptList.length - 1;
 
-          if (scriptKeyMax >= 0) {
+          if (scriptKeyMax >= 0) { // TODO: && options.isYou
             async.forEachOfSeries(options.scriptList, function (aScript, aScriptKey, aEachCallback) {
               var script = modelParser.parseScript(aScript);
 
-              // Find if script has at least one open issue
-              Discussion.findOne({ category: scriptStorage
+              // Find if script has any open issues
+              Discussion.find({ category: scriptStorage
                 .caseSensitive(decodeURIComponent(script.issuesCategorySlug), true), open: {$ne: false} },
-                  function (aErr, aDiscussion) {
+                  function (aErr, aDiscussions) {
                     if (!aErr) {
                       // Create a psuedo-virtual for the view
-                      script._hasIssues = !!aDiscussion;
+                      script._issueCount = aDiscussions.length;
                     }
 
                     scriptList[aScriptKey] = script;
