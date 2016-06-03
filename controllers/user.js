@@ -540,7 +540,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
           var scriptList = options.scriptList;
           var scriptKeyMax = scriptList.length - 1;
 
-          if (scriptKeyMax >= 0) { // TODO: && options.isYou
+          if (scriptKeyMax >= 0 && options.isYou) {
             async.forEachOfSeries(options.scriptList, function (aScript, aScriptKey, aEachCallback) {
               var script = modelParser.parseScript(aScript);
 
