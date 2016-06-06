@@ -80,12 +80,12 @@ module.exports = function (aApp) {
   });
 
   serveModule('/redist/npm/', 'octicons/', {
-    'octicons/octicons.css': { maxage: day * 1 },
-    'octicons/octicons-local.ttf': { maxage: day * 7 },
-    'octicons/octicons.eot': { maxage: day * 7 },
-    'octicons/octicons.svg': { maxage: day * 7 },
-    'octicons/octicons.ttf': { maxage: day * 7 },
-    'octicons/octicons.woff': { maxage: day * 7 }
+    'build/font/octicons.css': { maxage: day * 1 },
+    'build/font/octicons.eot': { maxage: day * 7 },
+    'build/font/octicons.svg': { maxage: day * 7 },
+    'build/font/octicons.ttf': { maxage: day * 7 },
+    'build/font/octicons.woff': { maxage: day * 7 },
+    'build/font/octicons.woff2': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'select2/', {
