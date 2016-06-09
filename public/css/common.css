@@ -24,6 +24,7 @@ html, body {
   color: #333333;
 }*/
 .rating .progress {
+  margin-bottom: 0;
   height: 4px;
 }
 .progress-bar-good {
