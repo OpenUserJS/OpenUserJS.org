@@ -50,7 +50,7 @@ Repository | Reference | Recent Version
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
 [media-type][media-typeGHUrl] | [Documentation][media-typeDOCUrl] | [![NPM version][media-typeNPMVersionImage]][media-typeNPMUrl]
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
-[mime-db][mime-dbGHUrl] | [Documentation][mime-dbDOCUrl] | [![NPM version][mime-dbNPMVersionImage]][mime-dbNPMUrl] [1.22.0 hash][mime-dbGHHASHUrl] [RELEASES][mime-dbGHRELEASESUrl]
+[mime-db][mime-dbGHUrl] | [Documentation][mime-dbDOCUrl] | [![NPM version][mime-dbNPMVersionImage]][mime-dbNPMUrl] [1.23.0 hash][mime-dbGHHASHUrl] [RELEASES][mime-dbGHRELEASESUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
 [mongodb][mongodbGHUrl] | [Documentation][mongodbDOCUrl] | [![NPM version][mongodbNPMVersionImage]][mongodbNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
@@ -284,7 +284,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [method-overrideNPMVersionImage]: https://img.shields.io/npm/v/method-override.svg?style=flat
 
 [mime-dbGHUrl]: https://github.com/jshttp/mime-db
-[mime-dbGHHASHUrl]: https://github.com/jshttp/mime-db/tree/ed88d32
+[mime-dbGHHASHUrl]: https://github.com/jshttp/mime-db/tree/ba0d99f
 [mime-dbGHRELEASESUrl]: https://github.com/jshttp/mime-db/releases
 [mime-dbDOCUrl]: https://github.com/jshttp/mime-db/blob/master/README.md
 [mime-dbNPMUrl]: https://www.npmjs.com/package/mime-db
