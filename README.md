@@ -445,7 +445,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [uglifyJS2GHUrl]: https://github.com/mishoo/UglifyJS2
 [uglifyJS2GHHarmonyUrl]: https://github.com/mishoo/UglifyJS2/tree/harmony
-[uglifyJS2GHHarmony2Url]: https://github.com/OpenUserJs/UglifyJS2/tree/harmony-named
+[uglifyJS2GHHarmony2Url]: https://github.com/OpenUserJs/UglifyJS2/tree/harmony%2brenamed
 [uglifyJS2DOCUrl]: https://github.com/mishoo/UglifyJS2/blob/master/README.md
 [uglifyJS2DOC1Url]: http://lisperator.net/uglifyjs/
 [uglifyJS2NPMUrl]: https://www.npmjs.com/package/uglify-js
