@@ -147,15 +147,17 @@ exports.updateUrlQueryString = function (aBaseUrl, aDict) {
   return url;
 };
 
-// Helper function to ensure value is type `number` or `null`
+// Helper function to ensure value is type Integer `number` or `null`
 // Please be very careful if this is edited
-exports.ensureNumberOrNull = function (aEnvVar) {
+exports.ensureIntegerOrNull = function (aEnvVar) {
   if (typeof aEnvVar !== 'number') {
     aEnvVar = parseInt(aEnvVar);
 
     if (aEnvVar !== aEnvVar) { // NOTE: ES6 `Number.isNaN`
       aEnvVar = null;
     }
+  } else {
+    aEnvVar = parseInt(aEnvVar);
   }
 
   return aEnvVar;
