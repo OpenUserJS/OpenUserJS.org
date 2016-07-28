@@ -136,9 +136,9 @@ process.on('SIGINT', function () {
 var sessionStore = new MongoStore({ mongooseConnection: db });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-var ensureNumberOrNull = require('./libs/helpers').ensureNumberOrNull;
+var ensureIntegerOrNull = require('./libs/helpers').ensureIntegerOrNull;
 
-var maxLag = ensureNumberOrNull(process.env.BUSY_MAXLAG) || 70;
+var maxLag = ensureIntegerOrNull(process.env.BUSY_MAXLAG) || 70;
 app.use(function (aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
   var hostMaxMem = process.env.HOST_MAXMEM_BYTES || 1073741824; // NOTE: Default 1GiB
@@ -184,7 +184,7 @@ app.use(function (aReq, aRes, aNext) {
       usedMem = parseInt(process.memoryUsage().rss / hostMaxMem * 100);
 
       // Compare current RSS memory used to maximum
-      maxMem = ensureNumberOrNull(process.env.BUSY_MAXMEM);
+      maxMem = ensureIntegerOrNull(process.env.BUSY_MAXMEM);
       if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75))) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 503,

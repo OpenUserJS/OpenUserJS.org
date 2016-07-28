@@ -21,7 +21,7 @@ var scriptStorage = require('./controllers/scriptStorage');
 var document = require('./controllers/document');
 
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
-var ensureNumberOrNull = require('./libs/helpers').ensureNumberOrNull;
+var ensureIntegerOrNull = require('./libs/helpers').ensureIntegerOrNull;
 
 var MongoClient = require('mongodb').MongoClient;
 var ExpressBrute = require('express-brute');
@@ -54,11 +54,21 @@ var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
   });
 }
 
+var sweetFactor = ensureIntegerOrNull(process.env.BRUTE_SWEETFACTOR) || (2);
+
+var installsBruteforce = new ExpressBrute(store, {
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60 * sweetFactor), // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15 * sweetFactor), // min
+  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
+  failCallback: tooManyRequests
+});
+
 var sourcesBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureNumberOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureNumberOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60), // seconds
-  maxWait: ensureNumberOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15), // minutes
-  lifetime: ensureNumberOrNull(process.env.BRUTE_LIFETIME) || undefined, //
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) || (1000 * 60), // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) || (1000 * 60 * 15), // min
+  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
   failCallback: tooManyRequests
 });
 
@@ -105,7 +115,7 @@ module.exports = function (aApp) {
     aRes.redirect('/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(sourcesBruteforce.getMiddleware({key : scriptStorage.keyScript}), scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').get(installsBruteforce.getMiddleware({key : scriptStorage.keyScript}), scriptStorage.sendScript);
   aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
   // Github hook routes
