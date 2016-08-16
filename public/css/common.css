@@ -352,3 +352,20 @@ ul.flaggedList {
   border-radius: 0 3px 3px 0;
   text-shadow: 0 1px #045481;
 }
+
+
+.translucent-icon {
+  opacity: 0;
+}
+
+.hide-icon {
+  display: none;
+}
+
+.opaque-icon {
+  opacity: 1;
+}
+
+.fade-icon {
+  transition: opacity 0.33s ease-in-out;
+}
