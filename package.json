@@ -54,7 +54,7 @@
     "passport-twitter": "1.0.4",
     "passport-windowslive": "1.0.2",
     "passport-yahoo": "0.3.0",
-    "pegjs": "0.9.0",
+    "pegjs": "0.10.0",
     "request": "2.75.0",
     "rfc2047": "2.0.0",
     "sanitize-html": "1.13.0",
