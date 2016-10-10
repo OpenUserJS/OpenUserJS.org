@@ -272,7 +272,7 @@ app.use(bodyParser.json({
 app.use(compression());
 app.use(methodOverride('X-HTTP-Method-Override'));
 
-// Add absent from server MIME Content Type for PEG Grammar files
+// Add absent from server MIME Content Type for peg grammar files
 express.static.mime.define({
   'text/x-pegjs':  ['pegjs']
 });

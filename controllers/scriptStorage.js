@@ -11,7 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var fs = require('fs');
 var _ = require('underscore');
 var URL = require('url');
-var PEG = require('pegjs');
+var peg = require('pegjs');
 var AWS = require('aws-sdk');
 var UglifyJS = require("uglify-js-harmony");
 var rfc2047 = require('rfc2047');
@@ -82,9 +82,9 @@ if (!mediaDB['*/*']) {
 // NOTE: These aren't JSON so not included in configuration inclusions but nearby
 var parsers = (function () {
   return {
-    UserScript: PEG.buildParser(fs.readFileSync('./public/pegjs/blockUserScript.pegjs', 'utf8'),
+    UserScript: peg.generate(fs.readFileSync('./public/pegjs/blockUserScript.pegjs', 'utf8'),
       { allowedStartRules: ['line'] }),
-    OpenUserJS: PEG.buildParser(fs.readFileSync('./public/pegjs/blockOpenUserJS.pegjs', 'utf8'),
+    OpenUserJS: peg.generate(fs.readFileSync('./public/pegjs/blockOpenUserJS.pegjs', 'utf8'),
       { allowedStartRules: ['line'] })
   };
 })();
