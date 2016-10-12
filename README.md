@@ -58,21 +58,21 @@ Repository | Reference | Recent Version
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
 [octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
-[passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl]
-[passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl]
-[passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl]
-[passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl]
-[passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl]
-[passport-google-oauth][passport-google-oauthGHUrl] | [Documentation][passport-google-oauthDOCUrl] | [![NPM version][passport-google-oauthNPMVersionImage]][passport-google-oauthNPMUrl]
-[passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl]
-[passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl]
-[passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl]
-[passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl]
-[passport-steam][passport-steamGHUrl] | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl]
-[passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl]
-[passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl]
-[passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl]
-[passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl]
+[passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl] ![OpenID][openidLogo]
+[passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] ![OAuth2][oauth2Logo]
+[passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl] ![oauth][oauthLogo]
+[passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl] ![OAuth2][oauth2Logo]
+[passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl] ![OAuth2][oauth2Logo]
+[passport-google-oauth][passport-google-oauthGHUrl] | [Documentation][passport-google-oauthDOCUrl] | [![NPM version][passport-google-oauthNPMVersionImage]][passport-google-oauthNPMUrl] ![oauth1][oauth1Logo] ![OAuth2][oauth2Logo]
+[passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] ![oauth][oauthLogo]
+[passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl] ![OAuth2][oauth2Logo]
+[passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl] ![oauth1][oauth1Logo]
+[passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo]
+[passport-steam][passport-steamGHUrl] | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo]
+[passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl] ![oauth][oauthLogo]
+[passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
+[passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] ![OAuth2][oauth2Logo]
+[passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
@@ -480,3 +480,8 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [gaCFGUrl]: https://www.google.com/analytics/
 [gaDOCUrl]: https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced
 [gaCDNUrl]: //www.google-analytics.com/analytics.js
+
+[oauthLogo]:  https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/oauth.png "OAuth"
+[oauth1Logo]:  https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/oauth1.png "OAuth1"
+[oauth2Logo]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/oauth2.png "OAuth2"
+[openidLogo]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openid.png "OpenID"
