@@ -34,7 +34,7 @@ Repository | Reference | Recent Version
 [cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
 [express-brute][express-bruteGHUrl] | [Documentation][express-bruteDOCUrl] | [![NPM version][express-bruteNPMVersionImage]][express-bruteNPMUrl]
-[express-brute-mongo][express-brute-mongoGHUrl] [&#x00b9;][express-brute-mongoGHMongoDBv2.xUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
+[express-brute-mongo][express-brute-mongoGHUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
 [express-minify][express-minifyGHUrl] | [Documentation][express-minifyDOCUrl] | [![NPM version][express-minifyNPMVersionImage]][express-minifyNPMUrl]
 [express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
 [fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
@@ -50,7 +50,7 @@ Repository | Reference | Recent Version
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
 [media-type][media-typeGHUrl] | [Documentation][media-typeDOCUrl] | [![NPM version][media-typeNPMVersionImage]][media-typeNPMUrl]
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
-[mime-db][mime-dbGHUrl] | [Documentation][mime-dbDOCUrl] | [![NPM version][mime-dbNPMVersionImage]][mime-dbNPMUrl] [1.23.0 hash][mime-dbGHHASHUrl] [RELEASES][mime-dbGHRELEASESUrl]
+[mime-db][mime-dbGHUrl] | [Documentation][mime-dbDOCUrl] | [![NPM version][mime-dbNPMVersionImage]][mime-dbNPMUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
 [mongodb][mongodbGHUrl] | [Documentation][mongodbDOCUrl] | [![NPM version][mongodbNPMVersionImage]][mongodbNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
@@ -199,7 +199,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [express-bruteNPMVersionImage]: https://img.shields.io/npm/v/express-brute.svg?style=flat
 
 [express-brute-mongoGHUrl]: https://github.com/auth0/express-brute-mongo
-[express-brute-mongoGHMongoDBv2.xUrl]: https://github.com/OpenUserJs/express-brute-mongo/tree/MongoDBv2.x
 [express-brute-mongoDOCUrl]: https://github.com/auth0/express-brute-mongo/blob/master/README.md
 [express-brute-mongoNPMUrl]: https://www.npmjs.com/package/express-brute-mongo
 [express-brute-mongoNPMVersionImage]: https://img.shields.io/npm/v/express-brute-mongo.svg?style=flat
@@ -284,8 +283,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [method-overrideNPMVersionImage]: https://img.shields.io/npm/v/method-override.svg?style=flat
 
 [mime-dbGHUrl]: https://github.com/jshttp/mime-db
-[mime-dbGHHASHUrl]: https://github.com/jshttp/mime-db/tree/ba0d99f
-[mime-dbGHRELEASESUrl]: https://github.com/jshttp/mime-db/releases
 [mime-dbDOCUrl]: https://github.com/jshttp/mime-db/blob/master/README.md
 [mime-dbNPMUrl]: https://www.npmjs.com/package/mime-db
 [mime-dbNPMVersionImage]: https://img.shields.io/npm/v/mime-db.svg?style=flat
