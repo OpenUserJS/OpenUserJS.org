@@ -58,7 +58,7 @@ Repository | Reference | Recent Version
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
 [octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
-[passport-aol][passport-aolGHUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl] ![OpenID][openidLogo]
+[passport-aol][passport-aolGHUrl] [&#x00b9;][passport-aolGHOpenIDUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl] ![OpenID][openidLogo] [&#x00b9;][passport-openid]
 [passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] ![OAuth2][oauth2Logo]
 [passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl] ![oauth][oauthLogo]
 [passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl] ![OAuth2][oauth2Logo]
@@ -72,7 +72,7 @@ Repository | Reference | Recent Version
 [passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl] ![oauth][oauthLogo]
 [passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
 [passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] ![OAuth2][oauth2Logo]
-[passport-yahoo][passport-yahooGHUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo]
+[passport-yahoo][passport-yahooGHUrl] [&#x00b9;][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x00b9;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
@@ -313,8 +313,8 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [mu2NPMVersionImage]: https://img.shields.io/npm/v/mu2.svg?style=flat
 
 [octiconsUrl]: https://octicons.github.com/
-[octiconsGHUrl]: https://github.com/github/octicons
-[octiconsDOCUrl]: https://octicons.github.com/usage/
+[octiconsGHUrl]: https://github.com/primer/octicons
+[octiconsDOCUrl]: https://github.com/primer/octicons#install
 [octiconsNPMUrl]: https://www.npmjs.com/package/octicons
 [octiconsNPMVersionImage]: https://img.shields.io/npm/v/octicons.svg?style=flat
 
@@ -323,7 +323,10 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passportNPMUrl]: https://www.npmjs.com/package/passport
 [passportNPMVersionImage]: https://img.shields.io/npm/v/passport.svg?style=flat
 
+[passport-openid]: https://github.com/OpenUserJs/passport-openid/tree/OpenID2
+
 [passport-aolGHUrl]: http://github.com/jaredhanson/passport-aol
+[passport-aolGHOpenIDUrl]: https://github.com/OpenUserJs/passport-aol/tree/OpenID2
 [passport-aolDOCUrl]: https://github.com/jaredhanson/passport-aol/blob/master/README.md
 [passport-aolNPMUrl]: https://www.npmjs.com/package/passport-aol
 [passport-aolNPMVersionImage]: https://img.shields.io/npm/v/passport-aol.svg?style=flat
@@ -394,6 +397,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-windowsliveNPMVersionImage]: https://img.shields.io/npm/v/passport-windowslive.svg?style=flat
 
 [passport-yahooGHUrl]: https://github.com/jaredhanson/passport-yahoo
+[passport-yahooGHOpenIDUrl]: https://github.com/OpenUserJs/passport-yahoo/tree/OpenID2
 [passport-yahooDOCUrl]: https://github.com/jaredhanson/passport-yahoo/blob/master/README.md
 [passport-yahooNPMUrl]: https://www.npmjs.com/package/passport-yahoo
 [passport-yahooNPMVersionImage]: https://img.shields.io/npm/v/passport-yahoo.svg?style=flat
