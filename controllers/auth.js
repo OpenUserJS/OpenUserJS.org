@@ -185,7 +185,7 @@ exports.callback = function (aReq, aRes, aNext) {
 
   // Hijack the private verify method so we can mess stuff up freely
   // We use this library for things it was never intended to do
-  if (openIdStrategies[strategy]) {
+  if (openIdStrategies[strategy] && strategy !== 'steam') {
     strategyInstance._verify = function (aId, aDone) {
       verifyPassport(aId, strategy, username, aReq.session.user, aDone);
     };
