@@ -185,10 +185,16 @@ exports.callback = function (aReq, aRes, aNext) {
 
   // Hijack the private verify method so we can mess stuff up freely
   // We use this library for things it was never intended to do
-  if (openIdStrategies[strategy] && strategy !== 'steam') {
-    strategyInstance._verify = function (aId, aDone) {
-      verifyPassport(aId, strategy, username, aReq.session.user, aDone);
-    };
+  if (openIdStrategies[strategy]) {
+    if (strategy === 'steam') {
+      strategyInstance._verify = function (aIgnore, aId, aDone) {
+        verifyPassport(aId, strategy, username, aReq.session.user, aDone);
+      };
+    } else {
+      strategyInstance._verify = function (aId, aDone) {
+        verifyPassport(aId, strategy, username, aReq.session.user, aDone);
+      };
+    }
   } else if (strategy === 'google') { // OpenID to OAuth2 migration
     strategyInstance._verify =
       function(aAccessToken, aRefreshToken, aParams, aProfile, aDone) {
