@@ -1031,10 +1031,9 @@ exports.webhook = function (aReq, aRes) {
   var repos = {};
   var repo = null;
 
-  aRes.end(); // Close connection
-
   // Return if script storage is in read-only mode
   if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
+    aRes.status(423).send(); // Locked
     return;
   }
 
@@ -1042,6 +1041,7 @@ exports.webhook = function (aReq, aRes) {
   if (!aReq.body.payload ||
     !/192\.30\.25[2-5]\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
       .test(aReq.connection.remoteAddress)) {
+    aRes.status(401).send(); // Unauthorized: No challenge and silent iterations
     return;
   }
 
@@ -1049,6 +1049,7 @@ exports.webhook = function (aReq, aRes) {
 
   // Only accept commits to the master branch
   if (!payload || payload.ref !== 'refs/heads/master') {
+    aRes.status(403).send(); // Forbidden
     return;
   }
 
@@ -1062,11 +1063,17 @@ exports.webhook = function (aReq, aRes) {
   User.findOne({ ghUsername: username }, function (aErr, aUser) {
     var repoManager = null;
 
-    // WARNING: Partial error handling at this stage
-
-    if (!aUser) {
+    if (aErr) {
+      aRes.status(500).send(); // Internal server error: Possibly 502 Bad gateway to DB or bad dep.
       return;
     }
+
+    if (!aUser) {
+      aRes.status(400).send(); // Bad request: Possibly 410 Gone from DB but not GH
+      return;
+    }
+
+    aRes.end(); // Close connection
 
     // Gather the modified user scripts
     payload.commits.forEach(function (aCommit) {
