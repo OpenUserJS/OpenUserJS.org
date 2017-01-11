@@ -106,8 +106,10 @@ marked.setOptions({
         // Transform list of auto-detected language highlights
         case 'dust':
         case '1c':
+        case 'qml':
           // Narrow auto-detection to something that is more likely
           return hljs.highlightAuto(aCode, ['css', 'html', 'js', 'json']).value;
+          break;
         // Any other detected go ahead and return
         default:
           return obj.value;
