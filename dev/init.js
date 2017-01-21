@@ -175,7 +175,7 @@ var tasks = [
 async.waterfall(tasks, function (aErr, aResults) {
   if (aErr) {
     console.error(
-      colors.red.inverse('Project dependency error!\n\n'),
+      colors.inverse(colors.red('Project dependency error!\n\n')),
       'Code ' + aErr.code + '\n',
       aErr.message
     );
