@@ -2,7 +2,7 @@
 
 ![Tampermonkey icon][tampermonkeyIcon]
 
-Tampermonkey is a userscript manager for [Chromium][chromium] and other similar web browsers, written by Jan Biniok. There are also versions for [Opera][opera] and [Android][tampermonkeyForAndroid].
+Tampermonkey is a userscript manager extension for [Android][Android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Opera][Opera], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chrome][tampermonkeyForChrome], [Edge][tampermonkeyForEdge], and [Opera][tampermonkeyForOpera].
 
 ### Installing Tampermonkey
 
@@ -45,24 +45,40 @@ Sometimes, when you use more than one userscript on the same web page, they need
 ### More
 
 * [Get Tampermonkey from the Chrome Web Store][gooChromeWebStoreTampermonkey]
-* [Tampermonkey for Chrome][tampermonkeyForChrome]
-* [Tampermonkey for Opera][tampermonkeyForOpera]
-* [Tampermonkey for Android][tampermonkeyForAndroid]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
+* [Tampermonkey for Android][tampermonkeyForAndroid]
+* [Tampermonkey for Chrome][tampermonkeyForChrome]
+* [Tampermonkey for Edge][tampermonkeyForEdge]
+* [Tampermonkey for Opera][tampermonkeyForOpera]
+
+<!-- # References -->
+
+<!-- ## Statics -->
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
 [oujs]: https://openuserjs.org/
-[tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
+
+<!-- ## Browser pages -->
+[android]: Android
+[chrome]: Chrome
 [chromium]: Chromium
+[edge]: Edge
 [opera]: Opera
-[tampermonkeyForAndroid]: Tampermonkey-for-Android
-[gooChromeWebStoreTampermonkey]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
+
+<!-- ## .user.js engine external linkage -->
+[tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
 [tampermonkeyNet]: http://tampermonkey.net/
+[gooChromeWebStoreTampermonkey]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
+
+<!-- ## Screenshots -->
 [tampermonkeyGooChromeWebStoreScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr.gif "Tampermonkey in the Chrome Web Store"
 [oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [tampermonkeyChromeScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr4.gif "Installing a script"
 [tampermonkeyChromeScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr5.png "Tampermonkey Dashboard"
-[tampermonkeyForChrome]: Tampermonkey-for-Chrome
-[tampermonkeyForOpera]: Tampermonkey-for-Opera
+
+<!-- ## Other related .user.js engine internal pages -->
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
+[tampermonkeyForChrome]: Tampermonkey-for-Chrome
+[tampermonkeyForEdge]: Tampermonkey-for-Edge
+[tampermonkeyForOpera]: Tampermonkey-for-Opera

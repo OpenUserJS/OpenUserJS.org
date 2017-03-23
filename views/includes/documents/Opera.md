@@ -19,5 +19,5 @@ To run userscripts on Opera, you normally need a manager extension such as Tampe
 [wikipediaOpera]: https://www.wikipedia.org/wiki/Opera_%28web_browser%29
 [operaHelp]: http://www.opera.com/help
 [tamperMonkeyForOpera]: Tampermonkey-for-Opera
-[violentmonkeyForOpera]: Violentmonkey-for-Opera
+[violentmonkeyForOpera]: Violent-monkey-for-Opera
 [chrome]: Chrome
