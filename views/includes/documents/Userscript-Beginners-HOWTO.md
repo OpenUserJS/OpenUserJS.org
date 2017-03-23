@@ -33,6 +33,7 @@ Browser | Installation Method
 ---  | ---
 [Chrome][chrome] | [Tampermonkey][tampermonkeyForChrome]
 [Chromium][chromium] | [Tampermonkey][tampermonkeyForChromium]
+[Edge][edge] | [Tampermonkey][tampermonkeyForEdge]
 [Firefox][firefox] | [Greasemonkey][greasemonkeyForFirefox]
 [Opera][opera] | [Violent monkey][violentmonkeyForOpera]
 [Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
@@ -53,10 +54,12 @@ Android| [Tampermonkey][tampermonkeyForAndroid]
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
+[tampermonkeyForEdge]: Tampermonkey-for-Edge
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [violentmonkeyForOpera]: Violent-monkey-for-Opera
 [chrome]: Chrome
 [chromium]: Chromium
+[edge]: Edge
 [firefox]: Firefox
 [opera]: Opera
 [qupzilla]: QupZilla
