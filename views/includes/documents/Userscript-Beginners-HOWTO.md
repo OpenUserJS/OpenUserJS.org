@@ -44,7 +44,7 @@ Browser | Installation Method
 
 Browser | Installation Method
 ---  | ---
-Android| [Tampermonkey][tampermonkeyForAndroid]
+[Android][android]| [Tampermonkey][tampermonkeyForAndroid]
 
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
@@ -57,6 +57,7 @@ Android| [Tampermonkey][tampermonkeyForAndroid]
 [tampermonkeyForEdge]: Tampermonkey-for-Edge
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [violentmonkeyForOpera]: Violent-monkey-for-Opera
+[android]: Android
 [chrome]: Chrome
 [chromium]: Chromium
 [edge]: Edge
