@@ -2,20 +2,20 @@
 
 ![Tampermonkey icon][tampermonkeyIcon]
 
-Tampermonkey is a userscript manager for Edge and other similar web browsers, written by Jan Biniok. There are also versions for [Chrome][tampermonkeyForChrome] and [Android][tampermonkeyForAndroid].
+Tampermonkey is a userscript manager extension for [Android][Android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Opera][Opera], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], and [Opera][tampermonkeyForOpera].
 
 ### Installing Tampermonkey
 
-To get userscripts going with the Edge version of Tampermonkey, first you have to install it from the [Windows 10 Store][edgeAddons]. It works with recent versions of Windows 10 (*14342.0 or higher required*). 
+To get userscripts going with the Edge version of Tampermonkey, first you have to install it from the [Windows 10 Store][edgeAddons]. It works with recent versions of Windows 10 *(14342.0 or higher required)*.
 
 ![Screenshot of Tampermonkey page in Windows Store website][edgeAddonsScreenshot1]
 
-From the Tampermonkey page in the Windows Store, click the blue "Get the App" button to launch the Windows Store app. In the Store click "Install" to start downloading and installing the Extension. Once Tampermonkey has finished installing, the Store button should change to a blue "Launch". 
+From the Tampermonkey page in the Windows Store, click the blue "Get the App" button to launch the Windows Store app. In the Store click "Install" to start downloading and installing the Extension. Once Tampermonkey has finished installing, the Store button should change to a blue "Launch".
 
 ![Screenshot of Tampermonkey installation][tampermonkeyEdgeScreenshot1]
 
 #### Configure Tampermonkey in Edge ###
-When you first launch Edge with Tampermonkey installed, Edge will prompt you to turn on the Extension. 
+When you first launch Edge with Tampermonkey installed, Edge will prompt you to turn on the Extension.
 
 ![Screenshot of Tampermonkey activation][tampermonkeyEdgeScreenshot3]
 
@@ -53,20 +53,34 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 ### More
 
-* [Get Tampermonkey from the Windows 10 Store website][edgeAddons]
-* [Tampermonkey for Chrome][tampermonkeyForChrome]
-* [Tampermonkey for Android][tampermonkeyForAndroid]
+* [Get Tampermonkey from the Windows 10 Store][edgeAddons]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
+* [Tampermonkey for Android][tampermonkeyForAndroid]
+* [Tampermonkey for Chrome][tampermonkeyForChrome]
+* [Tampermonkey for Chromium][tampermonkeyForChromium]
+* [Tampermonkey for Opera][tampermonkeyForOpera]
+
+<!-- # References -->
+
+<!-- ## Statics -->
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
 [oujs]: https://openuserjs.org/
-[tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
+
+<!-- ## Browser pages -->
+[android]: Android
 [chrome]: Chrome
-[tampermonkeyForChrome]: Tampermonkey-for-Chrome
-[tampermonkeyForAndroid]: Tampermonkey-for-Android
+[chromium]: Chromium
+[edge]: Edge
+[opera]: Opera
+
+<!-- ## .user.js engine external linkage -->
+[tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
+[tampermonkeyNet]: http://tampermonkey.net/
 [edgeAddons]: https://www.microsoft.com/store/apps/9NBLGGH5162S
-[violentMonkeyForOpera]: Violentmonkey-for-Opera
+
+<!-- ## Screenshots -->
 [edgeAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge1.png "Tampermonkey in the Windows Store website"
 [tampermonkeyEdgeScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge2.png "Tampermonkey ready to launch"
 [tampermonkeyEdgeScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge3.png "Edge Extension prompt for Tampermonkey"
@@ -75,6 +89,9 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [tampermonkeyEdgeScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge7.png "Installing a script in Edge"
 [tampermonkeyEdgeScreenshot5]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge5.png "Tampermonkey Dashboard"
+
+<!-- ## Other related .user.js engine internal pages -->
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
-[tampermonkeyNet]: http://tampermonkey.net/
+[tampermonkeyForChromium]: Tampermonkey-for-Chromium
+[tampermonkeyForOpera]: Tampermonkey-for-Opera
