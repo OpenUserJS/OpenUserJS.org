@@ -6,22 +6,15 @@ Tampermonkey is a userscript manager extension for [Android][Android], [Chrome][
 
 ### Installing Tampermonkey
 
-To get userscripts going with the Edge version of Tampermonkey, first you have to install it from the [Windows 10 Store][edgeAddons]. It works with recent versions of Windows 10 *(14342.0 or higher required)*.
+To get userscripts going with the Edge version of Tampermonkey, first you have to install it from the [Windows Store][edgeAddons]. It works with recent versions of Windows 10 *(14342.0 or higher required)*.
 
-![Screenshot of Tampermonkey page in Windows Store website][edgeAddonsScreenshot1]
+![Screenshot of Tampermonkey page in Windows Store website][tampermonkeyMSWebStoreScreenshot]
 
-From the Tampermonkey page in the Windows Store, click the blue "Get the App" button to launch the Windows Store app. In the Store click "Install" to start downloading and installing the Extension. Once Tampermonkey has finished installing, the Store button should change to a blue "Launch".
+From the Tampermonkey page in the Windows Store, click the blue "Get the App" button to launch the Windows Store app. In the Store click "Get" to start downloading and installing the Extension. Once Tampermonkey has finished installing, the Store button should change to a blue "Launch".
 
-![Screenshot of Tampermonkey installation][tampermonkeyEdgeScreenshot1]
-
-#### Configure Tampermonkey in Edge ###
 When you first launch Edge with Tampermonkey installed, Edge will prompt you to turn on the Extension.
 
-![Screenshot of Tampermonkey activation][tampermonkeyEdgeScreenshot3]
-
-Clicking the ... at the top right of Edge will show the Tampermonkey extension, or you can go to Extensions > Tampermonkey and set the option to Show the button next to the address bar.
-
-![Screenshot of Tampermonkey options][tampermonkeyEdgeScreenshot5]
+Clicking the ... at the top right of Edge will show the Tampermonkey extension, or you can go to Extensions &rarr; Tampermonkey and set the option to Show the button next to the address bar.
 
 ### Installing Userscripts
 
@@ -31,7 +24,7 @@ Once Tampermonkey is installed, installing userscripts from [OpenUserJS.org][ouj
 
 Tampermonkey will display a screen showing you where the userscript has come from, what websites it can access, its source code, and a warning to only install scripts from sources that you trust. If you do want to install the script, click the "Install" button, otherwise click "Cancel".
 
-![Screenshot of Tampermonkey script installation][tampermonkeyEdgeScreenshot4]
+![Screenshot of Tampermonkey script installation][tampermonkeyEdgeScreenshot3]
 
 Installing userscripts from other sources is a similar process. You just need to find the installation link for the script. This will be a button or link to a file with a name that ends ".user.js"
 
@@ -41,7 +34,7 @@ After installing a userscript, you won't normally notice any further changes unt
 
 Clicking on the Tampermonkey icon at any time will pop up a menu that shows you what userscripts are running on the website you are looking at. It also lets you check for updated scripts *(it does daily automatic checks by default)*, and open the Tampermonkey Dashboard.
 
-![Screenshot of Tampermonkey dashboard][tampermonkeyEdgeScreenshot5]
+![Screenshot of Tampermonkey dashboard][tampermonkeyEdgeScreenshot4]
 
 In the Dashboard, the "Installed scripts" tab is the main place to manage your userscripts. The numbered circle to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(red)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, or check for new updates *(click the "last updated" date)*.
 
@@ -81,14 +74,10 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [edgeAddons]: https://www.microsoft.com/store/apps/9NBLGGH5162S
 
 <!-- ## Screenshots -->
-[edgeAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge1.png "Tampermonkey in the Windows Store website"
-[tampermonkeyEdgeScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge2.png "Tampermonkey ready to launch"
-[tampermonkeyEdgeScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge3.png "Edge Extension prompt for Tampermonkey"
-[tampermonkeyEdgeScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge4.png "Tampermonkey installed in Edge"
-[tampermonkeyEdgeScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge5.png "Tampermonkey options in Edge"
-[oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
-[tampermonkeyEdgeScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge7.png "Installing a script in Edge"
-[tampermonkeyEdgeScreenshot5]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge5.png "Tampermonkey Dashboard"
+[tampermonkeyMSWebStoreScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge.gif "Tampermonkey in the Windows Store"
+[oujsScriptPageScreenshot1]:        https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
+[tampermonkeyEdgeScreenshot3]:      https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge4.gif "Installing a script"
+[tampermonkeyEdgeScreenshot4]:      https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge5.png "Tampermonkey dashboard"
 
 <!-- ## Other related .user.js engine internal pages -->
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
