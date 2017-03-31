@@ -24,6 +24,11 @@
         return;
       }
 
+      // Check if desktop keyboard modifier(s) present
+      if (aEv.ctrlKey || aEv.shiftKey || aEv.altKey || aEv.metaKey) {
+        return;
+      }
+
       // Stop propagation as soon as possible
       aEv.stopPropagation();
 
