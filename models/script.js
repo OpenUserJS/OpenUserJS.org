@@ -18,6 +18,7 @@ var scriptSchema = new Schema({
   rating: Number,
   about: String,
   updated: Date,
+  hash: String,
 
   // Moderation
   votes: Number, // upvotes negate flags.critical
