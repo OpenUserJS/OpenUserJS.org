@@ -11,6 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var fs = require('fs');
 var _ = require('underscore');
 var URL = require('url');
+var crypto = require('crypto');
 var peg = require('pegjs');
 var AWS = require('aws-sdk');
 var UglifyJS = require("uglify-js-harmony");
@@ -596,9 +597,10 @@ exports.sendMeta = function (aReq, aRes, aNext) {
           meta.OpenUserJS = {};
         }
 
-        // Overwrite any keys found with `installs` and `issues`
+        // Overwrite any keys found with the following...
         meta.OpenUserJS.installs = [{ value: script.installs }];
         meta.OpenUserJS.issues =  [{ value: 'n/a' }];
+        meta.OpenUserJS.hash = aScript.hash ? [{ value: aScript.hash }] : undefined;
 
         // Get the number of open issues
         scriptOpenIssueCountQuery = Discussion.find({ category: exports
@@ -922,6 +924,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           rating: 0,
           about: '',
           updated: new Date(),
+          hash: crypto.createHash('sha512').update(aBuf).digest('hex'),
           votes: 0,
           flags: { critical: 0, absolute: 0 },
           installName: installName,
@@ -952,7 +955,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           aScript.meta = aMeta;
           aScript.uses = libraries;
         }
+
+        // Okay to update
+        aScript.hash = crypto.createHash('sha512').update(aBuf).digest('hex');
+
         aScript.updated = new Date();
+
         if (findMeta(script.meta, 'UserScript.version.0.value') !==
           findMeta(aMeta, 'UserScript.version.0.value')) {
 
