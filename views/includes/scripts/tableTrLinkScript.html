@@ -24,15 +24,20 @@
         return;
       }
 
-      // Check if desktop keyboard modifier(s) present
-      if (aEv.ctrlKey || aEv.shiftKey || aEv.altKey || aEv.metaKey) {
-        return;
-      }
-
       // Stop propagation as soon as possible
       aEv.stopPropagation();
 
       // Redirect to the anchor href
+      if (aEv.ctrlKey && aEv.shiftKey) {
+        window.open(url, '_blank').focus();
+        return;
+      }
+
+      if (aEv.ctrlKey) {
+        window.open(url, '_blank').blur();
+        return;
+      }
+
       window.location = url;
     }
 
