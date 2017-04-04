@@ -627,16 +627,16 @@ exports.sendMeta = function (aReq, aRes, aNext) {
   var installNameBase = getInstallNameBase(aReq, { hasExtension: true });
   var meta = null;
 
-  var eTag = null;
-  var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
-  var lastModified = null;
-
   Script.findOne({ installName: caseSensitive(installNameBase + '.user.js') },
     function (aErr, aScript) {
       var script = null;
       var scriptOpenIssueCountQuery = null;
       var whitespace = '\u0020\u0020\u0020\u0020';
       var tasks = [];
+
+      var eTag = null;
+      var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
+      var lastModified = null;
 
       if (!aScript) {
         aNext();
