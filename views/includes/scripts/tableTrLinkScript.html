@@ -5,6 +5,8 @@
       var anchor = null;
       var url = null;
 
+      aEv.preventDefault();
+
       // Traverse up the DOM to find the container tr tag
       while (!container.classList.contains('tr-link')) {
         if (!(container = container.parentNode)) {
