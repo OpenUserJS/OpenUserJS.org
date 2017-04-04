@@ -28,12 +28,12 @@
       aEv.stopPropagation();
 
       // Redirect to the anchor href
-      if (aEv.ctrlKey && aEv.shiftKey) {
+      if ((aEv.ctrlKey || aEv.metaKey) && aEv.shiftKey) {
         window.open(url, '_blank').focus();
         return;
       }
 
-      if (aEv.ctrlKey) {
+      if (aEv.ctrlKey || aEv.metaKey) {
         window.open(url, '_blank').blur();
         return;
       }
