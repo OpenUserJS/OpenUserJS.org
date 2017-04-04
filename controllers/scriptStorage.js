@@ -608,8 +608,6 @@ exports.sendMeta = function (aReq, aRes, aNext) {
   }
 
   function render() {
-    aRes.set('Content-Type', 'application/json; charset=UTF-8');
-
     aRes.end(JSON.stringify(meta, null, isPro ? '' : ' '));
   }
 
@@ -636,15 +634,45 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       var whitespace = '\u0020\u0020\u0020\u0020';
       var tasks = [];
 
+      var eTag = null;
+      var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
+      var lastModified = null;
+
       if (!aScript) {
         aNext();
         return;
       }
 
+      lastModified = aScript.updated;
+
+      // Create a base 36 representation of the hex sha512sum
+      eTag = '"'  + parseInt('0x' + aScript.hash, 16).toString(36) + '"';
+
       script = modelParser.parseScript(aScript);
       meta = script.meta; // NOTE: Watchpoint
 
+      // NOTE: HTTP/1.1 Caching
+      aRes.set('Cache-Control', 'public, max-age=' + maxAge +
+        ', no-cache, no-transform, must-revalidate');
+
+      // NOTE: HTTP/1.0 Caching
+      aRes.set('Last-Modified', lastModified);
+
+      // If already client-side... NOTE: HTTP/1.0 and/or HTTP/1.1 Caching
+      if (aReq.get('if-modified-since') === lastModified || aReq.get('if-none-match') === eTag) {
+        aRes.status(304).send({ status: 304, message: 'Not Modified' });
+        return;
+      }
+
       if (/\.json$/.test(aReq.params.scriptname)) {
+        aRes.set('Content-Type', 'application/json; charset=UTF-8');
+
+        // NOTE: HTTP/1.0 Caching
+        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
+          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+
+        // NOTE: HTTP/1.1 Caching
+        aRes.set('Etag', eTag);
 
         // Check for existance of OUJS metadata block
         if (!meta.OpenUserJS) {
@@ -666,6 +694,13 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
       } else {
         aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+
+        // NOTE: HTTP/1.0 Caching
+        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
+          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+
+        // NOTE: HTTP/1.1 Caching
+        aRes.set('Etag', eTag);
 
         aRes.write('// ==UserScript==\n');
 
