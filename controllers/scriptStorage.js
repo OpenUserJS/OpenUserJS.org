@@ -9,6 +9,7 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var fs = require('fs');
+var util = require('util');
 var _ = require('underscore');
 var URL = require('url');
 var crypto = require('crypto');
@@ -19,6 +20,7 @@ var rfc2047 = require('rfc2047');
 var mediaType = require('media-type');
 var mediaDB = require('mime-db');
 var async = require('async');
+var moment = require('moment');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
@@ -112,6 +114,15 @@ if (isPro) {
     }
   });
 }
+
+//
+// Get UglifyJS2 installation datestamp once
+//
+// When the harmony branch is incorporated into master the cache date of the file
+// would be more accurate and the eTag could be that hash as well
+//
+var stats = fs.statSync("./node_modules/uglify-js-harmony/package.json");
+var mtimeUglifyJS2 = new Date(util.inspect(stats.mtime));
 
 function getInstallNameBase(aReq, aOptions) {
   //
@@ -401,6 +412,11 @@ exports.sendScript = function (aReq, aRes, aNext) {
     let rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
       (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
 
+    var lastModified = null;
+    var eTag = null;
+    var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
+    var now = null;
+
     if (!aScript) {
       aNext();
       return;
@@ -455,9 +471,37 @@ exports.sendScript = function (aReq, aRes, aNext) {
       }
     }
 
+    // Set up server to client caching
+    lastModified = moment(
+        (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)
+          ? aScript.updated
+          : mtimeUglifyJS2 > aScript.updated ? mtimeUglifyJS2 : aScript.updated)
+      ).utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
+
+    // Create a base 36 representation of the hex sha512sum
+    eTag = '"'  + parseInt('0x' + aScript.hash, 16).toString(36) + '"';
+
+    // NOTE: HTTP/1.1 Caching
+    aRes.set('Cache-Control', 'public, max-age=' + maxAge +
+      ', no-cache, no-transform, must-revalidate');
+
+    // NOTE: HTTP/1.0 Caching
+    aRes.set('Last-Modified', lastModified);
+
+    // If already client-side... NOTE: HTTP/1.0 and/or HTTP/1.1 Caching
+    if (aReq.get('if-modified-since') === lastModified || aReq.get('if-none-match') === eTag) {
+      aRes.status(304).send({ status: 304, message: 'Not Modified' });
+      return;
+    }
+
+    // NOTE: HTTP/1.0 Caching
+    aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
+      .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+
     // Send the script
     aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
     aStream.setEncoding('utf8');
+
 
     // Only minify for response that doesn't contain `.min.` extension
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname) ||
@@ -469,6 +513,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
       aStream.on('end', function () {
         let source = chunks.join(''); // NOTE: Watchpoint
+
+        // NOTE: HTTP/1.1 Caching
+        aRes.set('Etag', eTag);
 
         aRes.write(source);
         aRes.end();
@@ -502,6 +549,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
             }
           }).code;
 
+          // Create a base 36 representation of the hex sha512sum
+          eTag = '"' + parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)
+            .toString(36) + '"';
+
         } catch (aE) { // On any failure default to unminified
           console.warn([
             'MINIFICATION WARNING (harmony):',
@@ -522,6 +573,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
           aRes.set('Warning', msg);
         }
+
+        // NOTE: HTTP/1.1 Caching
+        aRes.set('Etag', eTag);
 
         aRes.write(source);
         aRes.end();
