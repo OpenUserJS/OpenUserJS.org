@@ -5,8 +5,6 @@
       var anchor = null;
       var url = null;
 
-      aEv.preventDefault();
-
       // Traverse up the DOM to find the container tr tag
       while (!container.classList.contains('tr-link')) {
         if (!(container = container.parentNode)) {
@@ -26,8 +24,9 @@
         return;
       }
 
-      // Stop propagation as soon as possible
+      // Stop everything as soon as possible
       aEv.stopPropagation();
+      aEv.preventDefault();
 
       // Redirect to the anchor href
       if ((aEv.ctrlKey || aEv.metaKey) && aEv.shiftKey) {
