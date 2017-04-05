@@ -5,9 +5,16 @@
       var anchor = null;
       var url = null;
 
-      // Traverse up the DOM to find the container tr tag
+      switch (container.nodeName) {
+        case 'A':
+          // fallthrough
+        case 'INPUT':
+          return;
+      }
+
+      // Traverse up the DOM to find the container tr tag or a tag
       while (!container.classList.contains('tr-link')) {
-        if (!(container = container.parentNode)) {
+        if (!(container = container.parentNode) || container.nodeName === 'A') {
           return;
         }
       }
