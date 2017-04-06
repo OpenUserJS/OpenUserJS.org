@@ -21,6 +21,7 @@ var mediaType = require('media-type');
 var mediaDB = require('mime-db');
 var async = require('async');
 var moment = require('moment');
+var Base62 = require('base62');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
@@ -478,8 +479,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
           : mtimeUglifyJS2 > aScript.updated ? mtimeUglifyJS2 : aScript.updated)
       ).utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
 
-    // Create a base 36 representation of the hex sha512sum
-    eTag = '"'  + parseInt('0x' + aScript.hash, 16).toString(36) + '"';
+    // Create a based representation of the hex sha512sum
+    eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + '"';
 
     // NOTE: HTTP/1.1 Caching
     aRes.set('Cache-Control', 'public, max-age=' + maxAge +
@@ -549,9 +550,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
             }
           }).code;
 
-          // Create a base 36 representation of the hex sha512sum
-          eTag = '"' + parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)
-            .toString(36) + '"';
+          // Create a based representation of the hex sha512sum
+          eTag = '"'  + Base62.encode(
+            parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)) + '"';
 
         } catch (aE) { // On any failure default to unminified
           console.warn([
@@ -645,8 +646,8 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
       lastModified = aScript.updated;
 
-      // Create a base 36 representation of the hex sha512sum
-      eTag = '"'  + parseInt('0x' + aScript.hash, 16).toString(36) + '"';
+      // Create a based representation of the hex sha512sum
+      eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + '"';
 
       script = modelParser.parseScript(aScript);
       meta = script.meta; // NOTE: Watchpoint
