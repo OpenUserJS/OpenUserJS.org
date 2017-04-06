@@ -25,6 +25,7 @@ Repository | Reference | Recent Version
 [ansi-colors][ansi-colorsGHUrl] | [Documentation][ansi-colorsDOCUrl] | [![NPM version][ansi-colorsNPMVersionImage]][ansi-colorsNPMUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
+[base62][base62GHUrl] | [Documentation][base62DOCUrl] | [![NPM version][base62NPMVersionImage]][base62NPMUrl]
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
 [bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl]
 [bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl]
@@ -145,6 +146,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [aws-sdkDOCUrl]: https://github.com/aws/aws-sdk-js/blob/master/README.md
 [aws-sdkNPMUrl]: https://www.npmjs.com/package/aws-sdk
 [aws-sdkNPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
+
+[base62GHUrl]: https://github.com/andrew/base62.js
+[base62DOCUrl]: https://github.com/andrew/base62.js/blob/master/Readme.md
+[base62NPMUrl]: https://www.npmjs.com/package/base62
+[base62NPMVersionImage]: https://img.shields.io/npm/v/base62.svg?style=flat
 
 [body-parserGHUrl]: https://github.com/expressjs/body-parser
 [body-parserDOCUrl]: https://github.com/expressjs/body-parser/blob/master/README.md

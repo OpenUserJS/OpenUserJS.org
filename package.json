@@ -8,6 +8,7 @@
     "ansi-colors": "0.2.0",
     "async": "1.5.2",
     "aws-sdk": "2.23.0",
+    "base62": "1.1.2",
     "body-parser": "1.17.1",
     "bootstrap": "3.3.7",
     "bootstrap-markdown": "2.10.0",
