@@ -21,7 +21,7 @@ var mediaType = require('media-type');
 var mediaDB = require('mime-db');
 var async = require('async');
 var moment = require('moment');
-var Base62 = require('base62')
+var Base62 = require('base62');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
