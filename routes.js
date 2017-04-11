@@ -21,57 +21,6 @@ var scriptStorage = require('./controllers/scriptStorage');
 var document = require('./controllers/document');
 
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
-var ensureIntegerOrNull = require('./libs/helpers').ensureIntegerOrNull;
-
-var MongoClient = require('mongodb').MongoClient;
-var ExpressBrute = require('express-brute');
-var MongoStore = require('express-brute-mongo');
-
-var store = null;
-if (isPro) {
-  store = new MongoStore(function (ready) {
-    MongoClient.connect('mongodb://127.0.0.1:27017/test', function(aErr, aDb) {
-      if (aErr) {
-        throw aErr;
-      }
-      ready(aDb.collection('bruteforce-store'));
-    });
-  });
-} else {
-  store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
-}
-
-var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
-  var secondUntilNextRequest = null;
-
-  if (isDev) {
-    secondUntilNextRequest = Math.ceil((aNextValidRequestDate.getTime() - Date.now())/1000);
-    aRes.header('Retry-After', secondUntilNextRequest);
-  }
-  statusCodePage(aReq, aRes, aNext, {
-    statusCode: 429,
-    statusMessage: 'Too Many Requests. Try again in ' +  (secondUntilNextRequest ? secondUntilNextRequest + ' seconds' : 'a few.')
-  });
-}
-
-var sweetFactor = ensureIntegerOrNull(process.env.BRUTE_SWEETFACTOR) || (2);
-
-var installsBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60 * sweetFactor), // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15 * sweetFactor), // min
-  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
-  failCallback: tooManyRequests
-});
-
-var sourcesBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) || (1000 * 60), // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) || (1000 * 60 * 15), // min
-  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
-  failCallback: tooManyRequests
-});
-
 
 module.exports = function (aApp) {
   //--- Middleware
@@ -115,7 +64,8 @@ module.exports = function (aApp) {
     aRes.redirect('/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(installsBruteforce.getMiddleware({key : scriptStorage.keyScript}), scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').get(scriptStorage.unlockScript, scriptStorage.sendScript);
+
   aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
   // Github hook routes
@@ -129,7 +79,7 @@ module.exports = function (aApp) {
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(sourcesBruteforce.getMiddleware({key : scriptStorage.keyScript}), scriptStorage.sendScript);
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(scriptStorage.unlockScript, scriptStorage.sendScript);
 
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(issue.list);

@@ -23,6 +23,10 @@ var async = require('async');
 var moment = require('moment');
 var Base62 = require('base62');
 
+var MongoClient = require('mongodb').MongoClient;
+var ExpressBrute = require('express-brute');
+var MongoStore = require('express-brute-mongo');
+
 //--- Model inclusions
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
@@ -33,6 +37,7 @@ var Discussion = require('../models/discussion').Discussion;
 //--- Library inclusions
 // var scriptStorageLib = require('../libs/scriptStorage');
 
+var ensureIntegerOrNull = require('../libs/helpers').ensureIntegerOrNull;
 var RepoManager = require('../libs/repoManager');
 
 var cleanFilename = require('../libs/helpers').cleanFilename;
@@ -125,6 +130,68 @@ if (isPro) {
 var stats = fs.statSync("./node_modules/uglify-js-harmony/package.json");
 var mtimeUglifyJS2 = new Date(util.inspect(stats.mtime));
 
+
+
+// Brute initialization
+var store = null;
+if (isPro) {
+  store = new MongoStore(function (ready) {
+    MongoClient.connect('mongodb://127.0.0.1:27017/test', function(aErr, aDb) {
+      if (aErr) {
+        throw aErr;
+      }
+      ready(aDb.collection('bruteforce-store'));
+    });
+  });
+} else {
+  store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
+}
+
+var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
+  var secondUntilNextRequest = null;
+
+  if (isDev) {
+    secondUntilNextRequest = Math.ceil((aNextValidRequestDate.getTime() - Date.now())/1000);
+    aRes.header('Retry-After', secondUntilNextRequest);
+  }
+  aRes.status(429).send(); // Too Many Requests
+}
+
+var sweetFactor = ensureIntegerOrNull(process.env.BRUTE_SWEETFACTOR) || (2);
+
+var installMaxBruteforce = new ExpressBrute(store, {
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60), // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15), // min
+  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
+  failCallback: tooManyRequests
+});
+
+var installMinBruteforce = new ExpressBrute(store, {
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || (1000 * (60 / 4)), // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || (1000 * (60 / 4)), // min
+  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
+  failCallback: tooManyRequests
+});
+
+var sourceMaxBruteforce = new ExpressBrute(store, {
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) || (1000 * 60) / sweetFactor, // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) || (1000 * 60 * 15) / sweetFactor, // min
+  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
+  failCallback: tooManyRequests
+});
+
+var sourceMinBruteforce = new ExpressBrute(store, {
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) || (1000 * (60 / 4)) / sweetFactor, // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) || (1000 * (60 / 4) * 15) / sweetFactor, // min
+  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
+  failCallback: tooManyRequests
+});
+
+//
 function getInstallNameBase(aReq, aOptions) {
   //
   var base = null;
@@ -259,7 +326,23 @@ exports.getSource = function (aReq, aCallback) {
     });
 };
 
-exports.keyScript = function (aReq, aRes, aNext) {
+var cacheableScript = function (aReq) {
+  var pragma = aReq.get('pragma') || null;
+  var cacheControl = aReq.get('cache-control') || null;
+
+  if (pragma && pragma.indexOf('no-cache') !== -1 ||
+    (cacheControl &&
+      cacheControl.indexOf('no-cache') !== -1 &&
+        cacheControl.indexOf('no-store') !== -1 &&
+          cacheControl.indexOf('no-transform') !== -1)) {
+  } else {
+    return true;
+  }
+
+  return false; // Always ensure default is `false`
+}
+
+var keyScript = function (aReq, aRes, aNext) {
   let pathname = aReq._parsedUrl.pathname;
   let isLib = /^\/src\/libs\//.test(pathname);
 
@@ -355,7 +438,7 @@ exports.keyScript = function (aReq, aRes, aNext) {
 
         // Test accepts
         if (hasUnacceptable) {
-          aRes.status(406).send();
+          aRes.status(406).send(); // Not Acceptable
           return;
         }
 
@@ -365,7 +448,7 @@ exports.keyScript = function (aReq, aRes, aNext) {
         }
 
         if (!wantsJustAnything && !hasAcceptable) {
-          aRes.status(406).send();
+          aRes.status(406).send(); // Not Acceptable
           return;
         }
 
@@ -388,7 +471,26 @@ exports.keyScript = function (aReq, aRes, aNext) {
   }
 
   // No matches so return a bad request
-  aRes.status(400).send();
+  aRes.status(400).send(); // Bad Request
+}
+
+exports.unlockScript = function (aReq, aRes, aNext) {
+  let pathname = aReq._parsedUrl.pathname;
+
+  let isSource = /^\/src\//.test(pathname);
+  if (isSource) {
+    if (cacheableScript(aReq)) {
+      sourceMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+    } else {
+      sourceMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+    }
+  } else {
+    if (cacheableScript(aReq)) {
+      installMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+    } else {
+      installMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+    }
+  }
 }
 
 exports.sendScript = function (aReq, aRes, aNext) {
@@ -436,7 +538,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
         } catch (aE) {
           aRes.set('Warning', '199 ' + aReq.headers.host +
             rfc2047.encode(' Invalid @updateURL'));
-          aRes.status(444).send();
+          aRes.status(444).send(); // No Response
           return;
         }
 
@@ -467,7 +569,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
       if (hasAlternateLocalUpdateURL) {
         aRes.set('Warning', '199 ' + aReq.headers.host +
           rfc2047.encode(' Invalid @updateURL in lockdown'));
-        aRes.status(444).send();
+        aRes.status(444).send(); // No Response
         return;
       }
     }
@@ -491,7 +593,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     // If already client-side... NOTE: HTTP/1.0 and/or HTTP/1.1 Caching
     if (aReq.get('if-modified-since') === lastModified || aReq.get('if-none-match') === eTag) {
-      aRes.status(304).send({ status: 304, message: 'Not Modified' });
+      aRes.status(304).send(); // Not Modified
       return;
     }
 
@@ -614,10 +716,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
   function asyncComplete(aErr) {
     if (aErr) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: aErr.statusCode,
-        statusMessage: aErr.statusMessage
-      });
+      aRes.status(aErr.statusCode).send({status: aErr.statusCode, message: aErr.statusMessage});
       return;
     }
 
@@ -661,7 +760,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
       // If already client-side... NOTE: HTTP/1.0 and/or HTTP/1.1 Caching
       if (aReq.get('if-modified-since') === lastModified || aReq.get('if-none-match') === eTag) {
-        aRes.status(304).send({ status: 304, message: 'Not Modified' });
+        aRes.status(304).send(); // Not Modified
         return;
       }
 
