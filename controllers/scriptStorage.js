@@ -167,30 +167,12 @@ var installMaxBruteforce = new ExpressBrute(store, {
   failCallback: tooManyRequests
 });
 
-var installMinBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || (1000 * (60 / 4)), // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || (1000 * (60 / 4)), // min
-  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
-  failCallback: tooManyRequests
-});
-
 var sourceMaxBruteforce = new ExpressBrute(store, {
   freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
   minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
     ensureIntegerOrNull((1000 * 60) / sweetFactor), // sec
   maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
     ensureIntegerOrNull((1000 * 60 * 15) / sweetFactor), // min
-  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
-  failCallback: tooManyRequests
-});
-
-var sourceMinBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
-    ensureIntegerOrNull((1000 * (60 / 4)) / sweetFactor), // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
-    ensureIntegerOrNull((1000 * (60 / 4) * 15) / sweetFactor), // min
   lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
   failCallback: tooManyRequests
 });
@@ -352,145 +334,107 @@ var keyScript = function (aReq, aRes, aNext) {
 
   let installName = pathname.replace(/^\/(?:install|src\/(?:scripts|libs))\//, '');
 
-  let rUserJS = /\.user\.js$/;
-  let rMetaJS = /\.meta\.js$/;
-  let rUserMetaMinJS = /\.(?:min\.)?(?:user|meta)\.js$/;
-  let rJS = /\.js$/;
-
-  let acceptHeader = aReq.headers.accept || '*/*';
-  let accepts = null;
-
-  let wantsJustAnything = false;
-  let wantsUserScriptMeta = false;
-  let wantsUserscript = false;
-  let hasUnacceptable = false;
-  let hasAcceptable = false;
-
   let parts = installName.split('/');
   let userName = parts[0].toLowerCase();
   let scriptName = parts[1];
 
+  let rJS = /\.js$/;
+
   if (!isLib) {
-    if (scriptName.replace(rUserMetaMinJS, '')) {
-
-      accepts = acceptHeader.split(',').map(function (aEl) {
-        return aEl.trim();
-      }).reverse();
-
-      // NOTE: Lazy find
-      if (rUserJS.test(scriptName)) {
-        for (let accept of accepts) {
-
-          let media = mediaType.fromString(accept);
-          if (media.isValid()) {
-
-            // Check for unacceptables
-            let mediaTypeSubtypeSuffix = media.type + '/' + media.subtype + (media.hasSuffix() ? '+' + media.suffix : '');
-
-            if (!mediaDB[mediaTypeSubtypeSuffix]) {
-              if (isDev) {
-                console.warn('- unacceptable := ', mediaTypeSubtypeSuffix);
-              }
-              hasUnacceptable = true;
-              break;
-            }
-
-            // Check for just anything
-            if (mediaTypeSubtypeSuffix === '*/*' && accepts.length === 1) {
-              wantsJustAnything = true;
-              break;
-            }
-
-            // Check for acceptables
-            for (let acceptable of
-              [
-                'text/x-userscript-meta',
-                'text/x-userscript',
-
-                'text/javascript',
-                'text/ecmascript',
-                'application/javascript',
-                'application/x-javascript',
-
-                'text/html',
-                'application/xhtml+xml',
-
-                '*/*'
-              ]
-            ) {
-
-              if (mediaTypeSubtypeSuffix === acceptable) {
-                if (mediaTypeSubtypeSuffix === 'text/x-userscript-meta') {
-                  wantsUserScriptMeta = true;
-                }
-
-                if (mediaTypeSubtypeSuffix === 'text/x-userscript') {
-                  wantsUserscript = true;
-                }
-
-                if (mediaTypeSubtypeSuffix !== '*/*') {
-                  hasAcceptable = true;
-                }
-              }
-
-            }
-          } else {
-            hasUnacceptable = true;
-            break;
-          }
-        }
-
-        // Test accepts
-        if (hasUnacceptable) {
-          aRes.status(406).send(); // Not Acceptable
-          return;
-        }
-
-        if (wantsUserScriptMeta) {
-          exports.sendMeta(aReq, aRes, aNext);
-          return;
-        }
-
-        if (!wantsJustAnything && !hasAcceptable) {
-          aRes.status(406).send(); // Not Acceptable
-          return;
-        }
-
-        aNext(userName + '/' + scriptName.replace(/(\.min)?\.user\.js/, '.user.js'));
-        return;
-
-      } else if (rMetaJS.test(scriptName)) {
-        if (!/\.min\.meta\.js$/.test(scriptName)) {
-          exports.sendMeta(aReq, aRes, aNext);
-          return;
-        }
-      }
-
-    }
+    aNext(userName + '/' + scriptName.replace(/\.(?:meta|(?:min\.)?user)\.js$/, '.user.js'));
+    return;
   } else if (rJS.test(scriptName)) {
-    if (scriptName.replace(rJS, '')) {
-      aNext(userName + '/' + scriptName.replace(/(\.min)?\.js/, '.js'));
-      return;
-    }
+    aNext(userName + '/' + scriptName.replace(/(\.min)?\.js$/, '.js'));
+    return;
   }
 
-  // No matches so return a bad request
+  // No matches so force to end point
   aRes.status(400).send(); // Bad Request
 }
 
 exports.unlockScript = function (aReq, aRes, aNext) {
   let pathname = aReq._parsedUrl.pathname;
 
+  let acceptHeader = aReq.headers.accept || '*/*';
+  let accepts = null;
+
+  let wantsJustAnything = false;
+  let hasUnacceptable = false;
+  let hasAcceptable = false;
+
   let isSource = /^\/src\//.test(pathname);
+
+  accepts = acceptHeader.split(',').map(function (aEl) {
+    return aEl.trim();
+  }).reverse();
+
+  for (let accept of accepts) {
+
+    let media = mediaType.fromString(accept);
+    if (media.isValid()) {
+
+      // Check for unacceptables
+      let mediaTypeSubtypeSuffix = media.type + '/' + media.subtype + (media.hasSuffix() ? '+' + media.suffix : '');
+
+      if (!mediaDB[mediaTypeSubtypeSuffix]) {
+        if (isDev) {
+          console.warn('- unacceptable := ', mediaTypeSubtypeSuffix);
+        }
+        hasUnacceptable = true;
+        break;
+      }
+
+      // Check for just anything
+      if (mediaTypeSubtypeSuffix === '*/*' && accepts.length === 1) {
+        wantsJustAnything = true;
+        break;
+      }
+
+      // Check for acceptables
+      for (let acceptable of
+        [
+          'text/x-userscript-meta',
+          'text/x-userscript',
+
+          'text/javascript',
+          'text/ecmascript',
+          'application/javascript',
+          'application/x-javascript',
+
+          'text/html',
+          'application/xhtml+xml',
+
+          '*/*'
+        ]
+      ) {
+
+        if (mediaTypeSubtypeSuffix === acceptable && mediaTypeSubtypeSuffix !== '*/*') {
+          hasAcceptable = true;
+        }
+
+      }
+    } else {
+      hasUnacceptable = true;
+      break;
+    }
+  }
+
+  // Test accepts
+  if (hasUnacceptable || (!wantsJustAnything && !hasAcceptable)) {
+    aRes.status(406).send(); // Not Acceptable
+    return;
+  }
+
+  // Test cacheable
   if (isSource) {
     if (cacheableScript(aReq)) {
-      sourceMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      aNext();
     } else {
       sourceMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
     }
   } else {
     if (cacheableScript(aReq)) {
-      installMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      aNext();
     } else {
       installMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
     }
@@ -504,6 +448,11 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
   let pathname = aReq._parsedUrl.pathname;
   let isLib = aReq.params.isLib || /^\/src\/libs\//.test(pathname);
+
+  if (!isLib && (aReq.headers.accept || '*/*').split(',').indexOf('text/x-userscript-meta') > -1) {
+    exports.sendMeta(aReq, aRes, aNext);
+    return;
+  }
 
   exports.getSource(aReq, function (aScript, aStream) {
     let chunks = [];
