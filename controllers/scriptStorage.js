@@ -177,16 +177,20 @@ var installMinBruteforce = new ExpressBrute(store, {
 
 var sourceMaxBruteforce = new ExpressBrute(store, {
   freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) || (1000 * 60) / sweetFactor, // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) || (1000 * 60 * 15) / sweetFactor, // min
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
+    ensureIntegerOrNull((1000 * 60) / sweetFactor), // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
+    ensureIntegerOrNull((1000 * 60 * 15) / sweetFactor), // min
   lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
   failCallback: tooManyRequests
 });
 
 var sourceMinBruteforce = new ExpressBrute(store, {
   freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) || (1000 * (60 / 4)) / sweetFactor, // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) || (1000 * (60 / 4) * 15) / sweetFactor, // min
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
+    ensureIntegerOrNull((1000 * (60 / 4)) / sweetFactor), // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
+    ensureIntegerOrNull((1000 * (60 / 4) * 15) / sweetFactor), // min
   lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
   failCallback: tooManyRequests
 });
