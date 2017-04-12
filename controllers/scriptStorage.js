@@ -177,6 +177,25 @@ var sourceMaxBruteforce = new ExpressBrute(store, {
   failCallback: tooManyRequests
 });
 
+// Enabled in a lockdown mode
+var installMinBruteforce = new ExpressBrute(store, {
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (1),
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || ensureIntegerOrNull(1000 * (60 / 4)), // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || ensureIntegerOrNull(1000 * (60 / 4)), // min
+  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
+  failCallback: tooManyRequests
+});
+
+var sourceMinBruteforce = new ExpressBrute(store, {
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (1),
+  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
+    ensureIntegerOrNull((1000 * (60 / 4)) / sweetFactor), // sec
+  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
+    ensureIntegerOrNull((1000 * (60 / 4) * 15) / sweetFactor), // min
+  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
+  failCallback: tooManyRequests
+});
+
 //
 function getInstallNameBase(aReq, aOptions) {
   //
@@ -428,13 +447,21 @@ exports.unlockScript = function (aReq, aRes, aNext) {
   // Test cacheable
   if (isSource) {
     if (cacheableScript(aReq)) {
-      aNext();
+      if (process.env.FORCE_SCRIPT_NOCACHE !== 'true') {
+        aNext();
+      } else {
+        sourceMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      }
     } else {
       sourceMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
     }
   } else {
     if (cacheableScript(aReq)) {
-      aNext();
+      if (process.env.FORCE_SCRIPT_NOCACHE !== 'true') {
+        aNext();
+      } else {
+        installMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      }
     } else {
       installMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
     }
