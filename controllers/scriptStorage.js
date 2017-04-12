@@ -160,7 +160,7 @@ var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
 var sweetFactor = ensureIntegerOrNull(process.env.BRUTE_SWEETFACTOR) || (2);
 
 var installMaxBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (1),
   minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60), // sec
   maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15), // min
   lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
@@ -168,7 +168,7 @@ var installMaxBruteforce = new ExpressBrute(store, {
 });
 
 var sourceMaxBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (1),
   minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
     ensureIntegerOrNull((1000 * 60) / sweetFactor), // sec
   maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
