@@ -139,10 +139,16 @@ exports.auth = function (aReq, aRes, aNext) {
 
   User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
     function (aErr, aUser) {
+      // WARNING: No error handling at this stage
       var strategies = null;
       var strat = null;
 
       if (aUser) {
+        // Ensure that casing is identical so we still have it, correctly, when they
+        // get back from authentication
+        if (aUser.name !== username) {
+          aReq.session.username = aUser.name;
+        }
         strategies = aUser.strategies;
         strat = strategies.pop();
 
