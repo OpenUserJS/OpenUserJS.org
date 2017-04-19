@@ -299,32 +299,48 @@ exports.getSource = function (aReq, aCallback) {
   var isLib = aReq.params.isLib;
 
   Script.findOne({
-      installName: caseSensitive(installNameBase +
-        (isLib ? '.js' : '.user.js'))
+      installName: caseSensitive(installNameBase + (isLib ? '.js' : '.user.js'))
+
     }, function (aErr, aScript) {
       var s3Object = null;
       var s3 = new AWS.S3();
 
-      // WARNING: Partial error handling at this stage
-
-      if (!aScript) {
-        aCallback(null);
+      if (aErr) {
         if (isDbg) {
-          console.warn('no script found yet' );
+          console.error(
+            'Document lookup failure for',
+              installNameBase + (isLib ? '.js' : '.user.js'),
+                aErr.message
+          );
         }
+
+        aCallback(null);
         return;
       }
 
-      s3Object = s3.getObject({ Bucket: bucketName, Key: installNameBase + (isLib ? '.js' : '.user.js') }).createReadStream().
-        on('error', function () {
-          // TODO: #486
-          if (isDbg) {
-            console.error('S3 Key Not Found ' + installNameBase + (isLib ? '.js' : '.user.js'));
-          }
+      if (!aScript) {
+        if (isDbg) {
+          console.warn(
+            'Document not found for', installNameBase + (isLib ? '.js' : '.user.js')
+          );
+        }
+        aCallback(null);
+        return;
+      }
 
-          aCallback(null);
-          return;
-        });
+      s3Object = s3.getObject({
+        Bucket: bucketName,
+        Key: installNameBase + (isLib ? '.js' : '.user.js')
+
+      }).createReadStream().on('error', function () {
+        // TODO: #486
+        if (isDbg) {
+          console.error('S3 key not found for', installNameBase + (isLib ? '.js' : '.user.js'));
+        }
+
+        aCallback(null);
+        return;
+      });
 
       // Get the script
       aCallback(aScript, s3Object);
