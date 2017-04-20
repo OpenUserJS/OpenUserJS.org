@@ -530,7 +530,6 @@ exports.sendScript = function (aReq, aRes, aNext) {
     let rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
       (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
 
-    var lastModified = null;
     var eTag = null;
     var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
     var now = null;
@@ -590,12 +589,6 @@ exports.sendScript = function (aReq, aRes, aNext) {
     }
 
     // Set up server to client caching
-    lastModified = moment(
-        (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)
-          ? aScript.updated
-          : mtimeUglifyJS2 > aScript.updated ? mtimeUglifyJS2 : aScript.updated)
-      ).utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
-
     // Create a based representation of the hex sha512sum
     eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + '"';
 
@@ -603,11 +596,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
     aRes.set('Cache-Control', 'public, max-age=' + maxAge +
       ', no-cache, no-transform, must-revalidate');
 
-    // NOTE: HTTP/1.0 Caching
-    aRes.set('Last-Modified', lastModified);
-
-    // If already client-side... NOTE: HTTP/1.0 and/or HTTP/1.1 Caching
-    if (aReq.get('if-modified-since') === lastModified || aReq.get('if-none-match') === eTag) {
+    // If already client-side... NOTE: HTTP/1.1 Caching
+    if (aReq.get('if-none-match') === eTag) {
       aRes.status(304).send(); // Not Modified
       return;
     }
@@ -751,35 +741,32 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
       var eTag = null;
       var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
-      var lastModified = null;
+
+      var metadataBlocks = '';
 
       if (!aScript) {
         aNext();
         return;
       }
 
-      lastModified = aScript.updated;
-
-      // Create a based representation of the hex sha512sum
-      eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + '"';
-
-      script = modelParser.parseScript(aScript);
-      meta = script.meta; // NOTE: Watchpoint
-
       // NOTE: HTTP/1.1 Caching
       aRes.set('Cache-Control', 'public, max-age=' + maxAge +
         ', no-cache, no-transform, must-revalidate');
 
-      // NOTE: HTTP/1.0 Caching
-      aRes.set('Last-Modified', lastModified);
-
-      // If already client-side... NOTE: HTTP/1.0 and/or HTTP/1.1 Caching
-      if (aReq.get('if-modified-since') === lastModified || aReq.get('if-none-match') === eTag) {
-        aRes.status(304).send(); // Not Modified
-        return;
-      }
+      script = modelParser.parseScript(aScript);
+      meta = script.meta; // NOTE: Watchpoint
 
       if (/\.json$/.test(aReq.params.scriptname)) {
+        // Create a based representation of the hex sha512sum
+        eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + '"';
+
+        // If already client-side... NOTE: HTTP/1.1 Caching
+        if (aReq.get('if-none-match') === eTag) {
+          aRes.status(304).send(); // Not Modified
+          return;
+        }
+
+        // Okay to send JSON...
         aRes.set('Content-Type', 'application/json; charset=UTF-8');
 
         // NOTE: HTTP/1.0 Caching
@@ -808,6 +795,36 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         async.parallel(tasks, asyncComplete);
 
       } else {
+        metadataBlocks += '// ==UserScript==\n';
+
+        if (meta.UserScript.version) {
+          metadataBlocks += '// @version' + whitespace + meta.UserScript.version[0].value + '\n';
+        }
+
+        Object.keys(meta.UserScript.name).forEach(function (aName) {
+          var key = meta.UserScript.name[aName].key || 'name';
+          var value = meta.UserScript.name[aName].value;
+
+          metadataBlocks += '// @' + key + whitespace + value + '\n';
+        });
+
+        if (meta.UserScript.namespace) {
+          metadataBlocks += '// @namespace' + whitespace + meta.UserScript.namespace[0].value + '\n';
+        }
+
+        metadataBlocks += '// ==/UserScript==\n';
+
+        // Calculate unique eTag here...
+        eTag = '"'  + Base62.encode(
+          parseInt('0x' + crypto.createHash('sha512').update(metadataBlocks).digest('hex'), 16)) + '"';
+
+        // If already client-side... NOTE: HTTP/1.1 Caching
+        if (aReq.get('if-none-match') === eTag) {
+          aRes.status(304).send(); // Not Modified
+          return;
+        }
+
+        // Okay to send metadataBlocks
         aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
 
         // NOTE: HTTP/1.0 Caching
@@ -817,26 +834,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         // NOTE: HTTP/1.1 Caching
         aRes.set('Etag', eTag);
 
-        aRes.write('// ==UserScript==\n');
-
-        if (meta.UserScript.version) {
-          aRes.write('// @version' + whitespace + meta.UserScript.version[0].value + '\n');
-        }
-
-        Object.keys(meta.UserScript.name).forEach(function (aName) {
-          var key = meta.UserScript.name[aName].key || 'name';
-          var value = meta.UserScript.name[aName].value;
-
-          aRes.write('// @' + key + whitespace + value + '\n');
-        });
-
-        if (meta.UserScript.namespace) {
-          aRes.write('// @namespace' + whitespace + meta.UserScript.namespace[0].value + '\n');
-        }
-
-        aRes.write('// ==/UserScript==\n');
-
-        aRes.end();
+        aRes.end(metadataBlocks);
       }
     });
 };
