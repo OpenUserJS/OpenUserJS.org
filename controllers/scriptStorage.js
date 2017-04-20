@@ -328,6 +328,12 @@ exports.getSource = function (aReq, aCallback) {
         return;
       }
 
+      // Ensure casing on username is identical for S3 retrieval
+      if (aReq.params.username !== aScript.author) {
+        aReq.params.username = aScript.author;
+        installNameBase = getInstallNameBase(aReq, { hasExtension: true });
+      }
+
       s3Object = s3.getObject({
         Bucket: bucketName,
         Key: installNameBase + (isLib ? '.js' : '.user.js')
