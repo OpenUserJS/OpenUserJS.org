@@ -394,6 +394,8 @@ var keyScript = function (aReq, aRes, aNext) {
 }
 
 exports.unlockScript = function (aReq, aRes, aNext) {
+  let rMetaMinUserLibJS = /(?:\.(?:meta|(?:min\.)?user|min))?\.js$/;
+
   let pathname = aReq._parsedUrl.pathname;
 
   let acceptHeader = aReq.headers.accept || '*/*';
@@ -405,6 +407,13 @@ exports.unlockScript = function (aReq, aRes, aNext) {
 
   let isSource = /^\/src\//.test(pathname);
 
+  // Test known extensions
+  if (!rMetaMinUserLibJS.test(pathname)) {
+    aRes.status(400).send(); // Bad request
+    return;
+  }
+
+  // Test accepts
   accepts = acceptHeader.split(',').map(function (aEl) {
     return aEl.trim();
   }).reverse();
@@ -460,7 +469,6 @@ exports.unlockScript = function (aReq, aRes, aNext) {
     }
   }
 
-  // Test accepts
   if (hasUnacceptable || (!wantsJustAnything && !hasAcceptable)) {
     aRes.status(406).send(); // Not Acceptable
     return;
@@ -498,7 +506,12 @@ exports.sendScript = function (aReq, aRes, aNext) {
   let pathname = aReq._parsedUrl.pathname;
   let isLib = aReq.params.isLib || /^\/src\/libs\//.test(pathname);
 
-  if (!isLib && (aReq.headers.accept || '*/*').split(',').indexOf('text/x-userscript-meta') > -1) {
+  let rMetaJS = /\.meta\.js$/;
+
+  if (!isLib &&
+    ((aReq.headers.accept || '*/*').split(',').indexOf('text/x-userscript-meta') > -1 ||
+      rMetaJS.test(pathname))) {
+
     exports.sendMeta(aReq, aRes, aNext);
     return;
   }
