@@ -204,7 +204,7 @@ function getInstallNameBase(aReq, aOptions) {
   var username = aReq.params.username;
   var scriptname = aReq.params.scriptname;
 
-  var rKnownExtensions = /\.((min\.)?(user\.)?js|meta\.js(on)?)$/;
+  var rKnownExtensions = /\.(min\.)?((user\.)?js|meta\.js(on)?)$/;
 
   if (!aOptions) {
     aOptions = {};
@@ -382,7 +382,7 @@ var keyScript = function (aReq, aRes, aNext) {
   let rJS = /\.js$/;
 
   if (!isLib) {
-    aNext(userName + '/' + scriptName.replace(/\.(?:meta|(?:min\.)?user)\.js$/, '.user.js'));
+    aNext(userName + '/' + scriptName.replace(/(\.min)?\.(?:user|meta)\.js$/, '.user.js'));
     return;
   } else if (rJS.test(scriptName)) {
     aNext(userName + '/' + scriptName.replace(/(\.min)?\.js$/, '.js'));
@@ -395,7 +395,6 @@ var keyScript = function (aReq, aRes, aNext) {
 
 exports.unlockScript = function (aReq, aRes, aNext) {
   let rMetaMinUserLibJS = /(?:\.(?:meta|(?:min\.)?user|min))?\.js$/;
-
   let pathname = aReq._parsedUrl.pathname;
 
   let acceptHeader = aReq.headers.accept || '*/*';
@@ -530,6 +529,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     let rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
       (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
 
+    var lastModified = null;
     var eTag = null;
     var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
     var now = null;
@@ -589,6 +589,12 @@ exports.sendScript = function (aReq, aRes, aNext) {
     }
 
     // Set up server to client caching
+    lastModified = moment(
+      (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)
+        ? aScript.updated
+        : mtimeUglifyJS2 > aScript.updated ? mtimeUglifyJS2 : aScript.updated)
+      ).utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
+
     // Create a based representation of the hex sha512sum
     eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + '"';
 
@@ -596,8 +602,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
     aRes.set('Cache-Control', 'public, max-age=' + maxAge +
       ', no-cache, no-transform, must-revalidate');
 
+    aRes.set('Last-Modified', lastModified);
+
     // If already client-side... NOTE: HTTP/1.1 Caching
-    if (aReq.get('if-none-match') === eTag) {
+    if (aReq.get('if-none-match') === eTag || aReq.get('if-modified-since') === lastModified) {
       aRes.status(304).send(); // Not Modified
       return;
     }
