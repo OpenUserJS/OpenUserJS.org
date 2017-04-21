@@ -9,7 +9,6 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var fs = require('fs');
-var util = require('util');
 var _ = require('underscore');
 var URL = require('url');
 var crypto = require('crypto');
@@ -120,17 +119,6 @@ if (isPro) {
     }
   });
 }
-
-//
-// Get UglifyJS2 installation datestamp once
-//
-// When the harmony branch is incorporated into master the cache date of the file
-// would be more accurate and the eTag could be that hash as well
-//
-var stats = fs.statSync("./node_modules/uglify-js-harmony/package.json");
-var mtimeUglifyJS2 = new Date(util.inspect(stats.mtime));
-
-
 
 // Brute initialization
 var store = null;
