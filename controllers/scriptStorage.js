@@ -531,7 +531,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     var lastModified = null;
     var eTag = null;
-    var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
+    var maxAge = 7 * 60 * 60 * 24; // nth day(s) in seconds
     var now = null;
 
     if (!aScript) {
@@ -588,40 +588,23 @@ exports.sendScript = function (aReq, aRes, aNext) {
       }
     }
 
-    // Set up server to client caching
-    lastModified = moment(
-      (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname)
-        ? aScript.updated
-        : mtimeUglifyJS2 > aScript.updated ? mtimeUglifyJS2 : aScript.updated)
-      ).utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
-
-    // Create a based representation of the hex sha512sum
-    eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + '"';
-
-    // NOTE: HTTP/1.1 Caching
+    // HTTP/1.1 Caching
     aRes.set('Cache-Control', 'public, max-age=' + maxAge +
       ', no-cache, no-transform, must-revalidate');
-
-    aRes.set('Last-Modified', lastModified);
-
-    // If already client-side... NOTE: HTTP/1.1 Caching
-    if (aReq.get('if-none-match') === eTag || aReq.get('if-modified-since') === lastModified) {
-      aRes.status(304).send(); // Not Modified
-      return;
-    }
-
-    // NOTE: HTTP/1.0 Caching
-    aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
-      .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
-
-    // Send the script
-    aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-    aStream.setEncoding('utf8');
-
 
     // Only minify for response that doesn't contain `.min.` extension
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname) ||
       process.env.DISABLE_SCRIPT_MINIFICATION === 'true') {
+
+      // Create a based representation of the hex sha512sum
+      eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .user.js"';
+
+      // If already client-side... HTTP/1.1 Caching
+      if (aReq.get('if-none-match') === eTag) {
+        aRes.status(304).send(); // Not Modified
+        return;
+      }
+
       //
       aStream.on('data', function (aData) {
         chunks.push(aData);
@@ -630,7 +613,15 @@ exports.sendScript = function (aReq, aRes, aNext) {
       aStream.on('end', function () {
         let source = chunks.join(''); // NOTE: Watchpoint
 
-        // NOTE: HTTP/1.1 Caching
+        // Send the script
+        aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+        aStream.setEncoding('utf8');
+
+        // HTTP/1.0 Caching
+        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
+          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+
+        // HTTP/1.1 Caching
         aRes.set('Etag', eTag);
 
         aRes.write(source);
@@ -667,7 +658,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
           // Create a based representation of the hex sha512sum
           eTag = '"'  + Base62.encode(
-            parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)) + '"';
+            parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)) +
+              ' .min.user.js"';
 
         } catch (aE) { // On any failure default to unminified
           console.warn([
@@ -688,9 +680,26 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
 
           aRes.set('Warning', msg);
+
+          // Create a based representation of the hex sha512sum
+          eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .user.js"';
         }
 
-        // NOTE: HTTP/1.1 Caching
+        // If already client-side... HTTP/1.1 Caching
+        if (aReq.get('if-none-match') === eTag) {
+          aRes.status(304).send(); // Not Modified
+          return;
+        }
+
+        // Send the script
+        aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+        aStream.setEncoding('utf8');
+
+        // HTTP/1.0 Caching
+        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
+          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+
+        // HTTP/1.1 Caching
         aRes.set('Etag', eTag);
 
         aRes.write(source);
@@ -748,16 +757,14 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       var tasks = [];
 
       var eTag = null;
-      var maxAge = 1 * 60 * 60 * 24; // nth day(s) in seconds
-
-      var metadataBlocks = '';
+      var maxAge = 7 * 60 * 60 * 24; // nth day(s) in seconds
 
       if (!aScript) {
         aNext();
         return;
       }
 
-      // NOTE: HTTP/1.1 Caching
+      // HTTP/1.1 Caching
       aRes.set('Cache-Control', 'public, max-age=' + maxAge +
         ', no-cache, no-transform, must-revalidate');
 
@@ -766,22 +773,22 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
       if (/\.json$/.test(aReq.params.scriptname)) {
         // Create a based representation of the hex sha512sum
-        eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + '"';
+        eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .meta.json"';
 
-        // If already client-side... NOTE: HTTP/1.1 Caching
+        // If already client-side... HTTP/1.1 Caching
         if (aReq.get('if-none-match') === eTag) {
           aRes.status(304).send(); // Not Modified
           return;
         }
 
-        // Okay to send JSON...
+        // Okay to send .meta.json...
         aRes.set('Content-Type', 'application/json; charset=UTF-8');
 
-        // NOTE: HTTP/1.0 Caching
+        // HTTP/1.0 Caching
         aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
           .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
 
-        // NOTE: HTTP/1.1 Caching
+        // HTTP/1.1 Caching
         aRes.set('Etag', eTag);
 
         // Check for existance of OUJS metadata block
@@ -803,46 +810,45 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         async.parallel(tasks, asyncComplete);
 
       } else {
-        metadataBlocks += '// ==UserScript==\n';
+        // Create a based representation of the hex sha512sum
+        eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .meta.js"';
+
+        // If already client-side... HTTP/1.1 Caching
+        if (aReq.get('if-none-match') === eTag) {
+          aRes.status(304).send(); // Not Modified
+          return;
+        }
+
+        // Okay to send .meta.js...
+        aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+
+        // HTTP/1.0 Caching
+        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
+          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+
+        // HTTP/1.1 Caching
+        aRes.set('Etag', eTag);
+
+        aRes.write('// ==UserScript==\n');
 
         if (meta.UserScript.version) {
-          metadataBlocks += '// @version' + whitespace + meta.UserScript.version[0].value + '\n';
+          aRes.write('// @version' + whitespace + meta.UserScript.version[0].value + '\n');
         }
 
         Object.keys(meta.UserScript.name).forEach(function (aName) {
           var key = meta.UserScript.name[aName].key || 'name';
           var value = meta.UserScript.name[aName].value;
 
-          metadataBlocks += '// @' + key + whitespace + value + '\n';
+          aRes.write('// @' + key + whitespace + value + '\n');
         });
 
         if (meta.UserScript.namespace) {
-          metadataBlocks += '// @namespace' + whitespace + meta.UserScript.namespace[0].value + '\n';
+          aRes.write('// @namespace' + whitespace + meta.UserScript.namespace[0].value + '\n');
         }
 
-        metadataBlocks += '// ==/UserScript==\n';
+        aRes.write('// ==/UserScript==\n');
 
-        // Calculate unique eTag here...
-        eTag = '"'  + Base62.encode(
-          parseInt('0x' + crypto.createHash('sha512').update(metadataBlocks).digest('hex'), 16)) + '"';
-
-        // If already client-side... NOTE: HTTP/1.1 Caching
-        if (aReq.get('if-none-match') === eTag) {
-          aRes.status(304).send(); // Not Modified
-          return;
-        }
-
-        // Okay to send metadataBlocks
-        aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-
-        // NOTE: HTTP/1.0 Caching
-        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
-          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
-
-        // NOTE: HTTP/1.1 Caching
-        aRes.set('Etag', eTag);
-
-        aRes.end(metadataBlocks);
+        aRes.end();
       }
     });
 };
