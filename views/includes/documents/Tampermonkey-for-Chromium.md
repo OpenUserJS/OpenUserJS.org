@@ -45,6 +45,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 ### More
 
 * [Get Tampermonkey from the Chrome Web Store][gooChromeWebStoreTampermonkey]
+* [Get Tampermonkey Beta from the Chrome Web Store][gooChromeWebStoreTampermonkeyBeta]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
 * [Tampermonkey for Android][tampermonkeyForAndroid]
@@ -70,6 +71,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
 [tampermonkeyNet]: http://tampermonkey.net/
 [gooChromeWebStoreTampermonkey]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
+[gooChromeWebStoreTampermonkeyBeta]: https://chrome.google.com/webstore/detail/tampermonkey-beta/gcalenpjmijncebpfijmoaglllgpjagf
 
 <!-- ## Screenshots -->
 [tampermonkeyGooChromeWebStoreScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr.gif "Tampermonkey in the Chrome Web Store"
