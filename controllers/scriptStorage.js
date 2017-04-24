@@ -331,10 +331,15 @@ exports.getSource = function (aReq, aCallback) {
         Bucket: bucketName,
         Key: installNameBase + (isLib ? '.js' : '.user.js')
 
-      }).createReadStream().on('error', function () {
-        // TODO: #486
-        if (isDbg) {
-          console.error('S3 key not found for', installNameBase + (isLib ? '.js' : '.user.js'));
+      }).createReadStream().on('error', function (aE) {
+        // Possible #486 modification
+        if (isDbg || process.env.MONITOR_S3_READ_ERR === 'true') {
+          console.error(
+            'S3 GET',
+              aE.code,
+                'for', installNameBase + (isLib ? '.js' : '.user.js'),
+                  'in the', bucketName, 'bucket'
+          );
         }
 
         aCallback(null);
