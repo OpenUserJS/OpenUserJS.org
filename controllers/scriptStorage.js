@@ -9,6 +9,7 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var fs = require('fs');
+var util = require('util');
 var _ = require('underscore');
 var URL = require('url');
 var crypto = require('crypto');
@@ -119,6 +120,10 @@ if (isPro) {
     }
   });
 }
+
+// Get UglifyJS2 installation datestamp once
+var stats = fs.statSync("./node_modules/uglify-js-harmony/package.json");
+var mtimeUglifyJS2 = new Date(util.inspect(stats.mtime));
 
 // Brute initialization
 var store = null;
@@ -583,12 +588,15 @@ exports.sendScript = function (aReq, aRes, aNext) {
     // Only minify for response that doesn't contain `.min.` extension
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname) ||
       process.env.DISABLE_SCRIPT_MINIFICATION === 'true') {
+      //
+      lastModified = moment(aScript.updated)
+        .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
 
-      // Create a based representation of the hex sha512sum
+      // Convert a based representation of the hex sha512sum
       eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .user.js"';
 
       // If already client-side... HTTP/1.1 Caching
-      if (aReq.get('if-none-match') === eTag) {
+      if (aReq.get('if-none-match') === eTag || aReq.get('if-modified-since') === lastModified) {
         aRes.status(304).send(); // Not Modified
         return;
       }
@@ -610,6 +618,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
           .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
 
         // HTTP/1.1 Caching
+        aRes.set('Last-modified', lastModified);
         aRes.set('Etag', eTag);
 
         aRes.write(source);
@@ -620,9 +629,16 @@ exports.sendScript = function (aReq, aRes, aNext) {
         chunks = null;
       });
 
-    } else {
-      // Otherwise set some defaults per script request via *UglifyJS2*
-      // and try minifying output
+    } else { // Wants to try minified
+      //
+      lastModified = moment(mtimeUglifyJS2 > aScript.updated ? mtimeUglifyJS2 : aScript.updated)
+        .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
+
+      // If already client-side... partial HTTP/1.1 Caching
+      if (isPro && aReq.get('if-modified-since') === lastModified) {
+        aRes.status(304).send(); // Not Modified
+        return;
+      }
 
       aStream.on('data', function (aData) {
         chunks.push(aData);
@@ -644,7 +660,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
             }
           }).code;
 
-          // Create a based representation of the hex sha512sum
+          // Calculate a based representation of the hex sha512sum
           eTag = '"'  + Base62.encode(
             parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)) +
               ' .min.user.js"';
@@ -669,11 +685,15 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
           aRes.set('Warning', msg);
 
-          // Create a based representation of the hex sha512sum
+          // Reset to unminified last modified date stamp
+          lastModified = moment(aScript.updated)
+            .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
+
+          // Reset to convert a based representation of the hex sha512sum
           eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .user.js"';
         }
 
-        // If already client-side... HTTP/1.1 Caching
+        // If already client-side... partial HTTP/1.1 Caching
         if (aReq.get('if-none-match') === eTag) {
           aRes.status(304).send(); // Not Modified
           return;
@@ -684,10 +704,11 @@ exports.sendScript = function (aReq, aRes, aNext) {
         aStream.setEncoding('utf8');
 
         // HTTP/1.0 Caching
-        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
-          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+        aRes.set('Expires', moment(moment() + maxAge * 1000)
+          .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
 
         // HTTP/1.1 Caching
+        aRes.set('Last-Modified', lastModified);
         aRes.set('Etag', eTag);
 
         aRes.write(source);
