@@ -153,7 +153,7 @@ var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
 var sweetFactor = ensureIntegerOrNull(process.env.BRUTE_SWEETFACTOR) || (2);
 
 var installMaxBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (1),
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
   minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60), // sec
   maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15), // min
   lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
@@ -161,7 +161,7 @@ var installMaxBruteforce = new ExpressBrute(store, {
 });
 
 var sourceMaxBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (1),
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
   minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
     ensureIntegerOrNull((1000 * 60) / sweetFactor), // sec
   maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
@@ -170,9 +170,9 @@ var sourceMaxBruteforce = new ExpressBrute(store, {
   failCallback: tooManyRequests
 });
 
-// Enabled in a lockdown mode
+// Enabled with meta requests
 var installMinBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (1),
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
   minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || ensureIntegerOrNull(1000 * (60 / 4)), // sec
   maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || ensureIntegerOrNull(1000 * (60 / 4)), // min
   lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
@@ -180,7 +180,7 @@ var installMinBruteforce = new ExpressBrute(store, {
 });
 
 var sourceMinBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (1),
+  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
   minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
     ensureIntegerOrNull((1000 * (60 / 4)) / sweetFactor), // sec
   maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
@@ -402,6 +402,9 @@ exports.unlockScript = function (aReq, aRes, aNext) {
   let hasUnacceptable = false;
   let hasAcceptable = false;
 
+  let rMetaJS = /\.meta\.js$/;
+  let wantsUserScriptMeta = null;
+
   let isSource = /^\/src\//.test(pathname);
 
   // Test known extensions
@@ -471,26 +474,31 @@ exports.unlockScript = function (aReq, aRes, aNext) {
     return;
   }
 
+  // Determine if .meta.js is wanted
+  wantsUserScriptMeta =
+    (aReq.headers.accept || '*/*').split(',').indexOf('text/x-userscript-meta') > -1 ||
+      rMetaJS.test(pathname);
+
   // Test cacheable
   if (isSource) {
-    if (cacheableScript(aReq)) {
-      if (process.env.FORCE_SCRIPT_NOCACHE !== 'true') {
+    if (cacheableScript(aReq) && process.env.FORCE_SCRIPT_NOCACHE !== 'true') {
         aNext();
-      } else {
-        sourceMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
-      }
     } else {
-      sourceMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      if (wantsUserScriptMeta) {
+        sourceMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      } else {
+        sourceMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      }
     }
   } else {
-    if (cacheableScript(aReq)) {
-      if (process.env.FORCE_SCRIPT_NOCACHE !== 'true') {
+    if (cacheableScript(aReq) && process.env.FORCE_SCRIPT_NOCACHE !== 'true') {
         aNext();
-      } else {
-        installMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
-      }
     } else {
-      installMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      if (wantsUserScriptMeta) {
+        installMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      } else {
+        installMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
+      }
     }
   }
 }
