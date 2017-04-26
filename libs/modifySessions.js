@@ -43,8 +43,11 @@ exports.add = function (aReq, aUser, aCallback) {
   // Remove invalid session ids from user model
   if (aUser.sessionIds && aUser.sessionIds.length > 0) {
     async.filter(aUser.sessionIds, function (aId, aCb) {
-      store.get(aId, function (aErr, aSess) { aCb(!aErr && aSess); });
-    }, function (aSessionIds) {
+      store.get(aId, function (aErr, aSess) {
+        aCb(null, !aErr && aSess);
+      });
+
+    }, function (aErr, aSessionIds) {
       // No duplicates
       if (aSessionIds.indexOf(aReq.sessionID) === -1) {
         aSessionIds.push(aReq.sessionID);
@@ -84,7 +87,9 @@ exports.update = function (aReq, aUser, aCallback) {
   async.each(aUser.sessionIds, function (aId, aCb) {
     store.get(aId, function (aErr, aSess) {
       // Invalid session, will be removed on login
-      if (aErr || !aSess) { return aCb(null); }
+      if (aErr || !aSess) {
+        return aCb(null);
+      }
 
       aSess.user = userObj;
       store.set(aId, aSess, aCb);
