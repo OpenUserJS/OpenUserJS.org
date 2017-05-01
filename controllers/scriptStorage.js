@@ -1206,40 +1206,65 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         }
       }
 
-      aScript.save(function (aErr, aScript) {
-        var s3 = new AWS.S3();
+      // Attempt to write out data to externals...
+      var s3 = new AWS.S3();
+      s3.putObject({
+        Bucket: bucketName,
+        Key: installName,
+        Body: aBuf
 
-        // WARNING: No error handling at this stage
+      }, function (aErr, aData) {
+        if (aErr) {
+          // Forward the error
+          aScript.invalidate('_id', aErr);
 
-        s3.putObject({ Bucket: bucketName, Key: installName, Body: aBuf },
-          function (aErr, aData) {
-            var userDoc = null;
+          // Localize the error
+          console.error(
+            'S3 putObject critical error\n' +
+              installName + '\n' +
+                JSON.stringify(aErr, null, ' ')
+          );
 
-            // Don't save a script if storing failed
-            if (aErr) {
-              console.error(aUser.name, '-', installName);
-              console.error(JSON.stringify(aErr, null, ' '));
-              console.error(JSON.stringify(
-                aScript.toObject ? aScript.toObject({ virtuals: true }) : aScript, null, ' ')
-              );
-              aCallback(null);
-              return;
+          aCallback(null);
+          return;
+        }
+
+        aScript.save(function (aErr, aScript) {
+          var userDoc = null;
+
+          // Localize the error
+          if (aErr) {
+            console.error(
+              'MongoDB Script save critical error\n' +
+                installName + '\n' +
+                  JSON.stringify(aErr, null, ' ')
+            );
+
+            aCallback(null);
+            return;
+          }
+
+          // Check for role change and modify accordingly
+          if (aUser.role === userRoles.length - 1) {
+            userDoc = aUser;
+            if (!userDoc.save) {
+              // Probably using req.session.user which may have gotten serialized.
+              userDoc = new User(userDoc);
             }
-
-            if (aUser.role === userRoles.length - 1) {
-              userDoc = aUser;
-              if (!userDoc.save) {
-                // We're probably using req.session.user which may have gotten serialized.
-                userDoc = new User(userDoc);
+            --userDoc.role;
+            userDoc.save(function (aErr, aUser) {
+              if (aErr) {
+                console.warning('MongoDB User save warning error\n' +
+                  aUser.name + ' was NOT role elevated from User to Author'
+                );
+                // fallthrough
               }
-              --userDoc.role;
-              userDoc.save(function (aErr, aUser) {
-                aCallback(aScript);
-              });
-            } else {
               aCallback(aScript);
-            }
-          });
+            });
+          } else {
+            aCallback(aScript);
+          }
+        });
       });
     });
 };
