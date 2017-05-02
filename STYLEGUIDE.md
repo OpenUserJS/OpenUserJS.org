@@ -398,10 +398,10 @@ var i = parseInt(num, 10); // base 10 - decimal system
 
 Read more on the [awful parts of JavaScript][awfulparts].
 
-[nodejsProcessProcessnextTick]: https://nodejs.org/api/process.html#process_process_nexttick_callback_arg
-[nodejsTimersSetImmediate]: http://nodejs.org/api/timers.html#timers_setimmediate_callback_arg
+[nodejsProcessProcessnextTick]: https://nodejs.org/api/process.html#process_process_nexttick_callback_args
+[nodejsTimersSetImmediate]: https://nodejs.org/api/timers.html#timers_setimmediate_callback_args
 [wikipediaBOM]: https://www.wikipedia.org/wiki/Byte_order_mark
-[IETFRFC3629S4]: http://tools.ietf.org/html/rfc3629#section-4
+[IETFRFC3629S4]: https://tools.ietf.org/html/rfc3629#section-4
 [awfulparts]: http://archive.oreilly.com/pub/a/javascript/excerpts/javascript-good-parts/awful-parts.html
 [camelcase]: https://www.wikipedia.org/wiki/CamelCase
 [codeconventions]: http://javascript.crockford.com/code.html
