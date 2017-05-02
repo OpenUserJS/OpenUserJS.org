@@ -708,6 +708,12 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
         // If already client-side... partial HTTP/1.1 Caching
         if (aReq.get('if-none-match') === eTag) {
+
+          // Conditionally send lastModified
+          if (aReq.get('if-modified-since') !== lastModified) {
+            aRes.set('Last-Modified', lastModified);
+          }
+
           aRes.status(304).send(); // Not Modified
           return;
         }
