@@ -139,11 +139,26 @@ var sessionStore = new MongoStore({ mongooseConnection: db });
 var ensureIntegerOrNull = require('./libs/helpers').ensureIntegerOrNull;
 
 var maxLag = ensureIntegerOrNull(process.env.BUSY_MAXLAG) || 70;
+var pollInterval = ensureIntegerOrNull(process.env.BUSY_INTERVAL) || 500;
+
+toobusy.maxLag(maxLag);
+toobusy.interval(pollInterval);
+
+if (isDbg) {
+  toobusy.onLag(function(aCurrentLag) {
+    console.warn('Event loop lag detected! Latency:', aCurrentLag + 'ms');
+  });
+}
+
+var hostMaxMem = ensureIntegerOrNull(process.env.HOST_MAXMEM_BYTES) || 1073741824; // 1GiB default
+var maxMem = ensureIntegerOrNull(process.env.BUSY_MAXMEM) || 50; // 50% default
+
+var forceBusyAbsolute = process.env.FORCE_BUSY_ABSOLUTE === 'true';
+var forceBusy = process.env.FORCE_BUSY === 'true';
+
 app.use(function (aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
-  var hostMaxMem = process.env.HOST_MAXMEM_BYTES || 1073741824; // NOTE: Default 1GiB
   var usedMem = null;
-  var maxMem = null;
   var isSources = null;
 
   if (
@@ -160,15 +175,15 @@ app.use(function (aReq, aRes, aNext) {
                         /^\/(?:admin|mod)/.test(pathname)
 
   ) {
-    aNext(); // NOTE: Allow styling to pass through on these routes
+    aNext(); // NOTE: Allow to pass through on these routes
     return;
   }
 
-  if (process.env.FORCE_BUSY_ABSOLUTE === 'true') { // Always busy
+  if (forceBusyAbsolute) { // Always busy
     aRes.status(503).send(); // NOTE: No UI period just response header
     return;
 
-  } else if (process.env.FORCE_BUSY === 'true') { // Graceful busy
+  } else if (forceBusy) { // Graceful busy
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 503,
       statusMessage:
@@ -183,24 +198,25 @@ app.use(function (aReq, aRes, aNext) {
       // Calculate current whole percentage of RSS memory used
       usedMem = parseInt(process.memoryUsage().rss / hostMaxMem * 100);
 
-      // Compare current RSS memory used to maximum
-      maxMem = ensureIntegerOrNull(process.env.BUSY_MAXMEM);
-      if (usedMem > (isSources ? (parseInt(maxMem / 3 * 2) || 50) : (maxMem || 75))) {
+      // Compare current RSS memory percentage used to maximum percentage
+      if (usedMem > maxMem) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 503,
-          statusMessage: 'We are very busy right now. Please try again later.'
+          statusMessage: 'We are very busy right now\u2026 Please try again later.'
         });
         return;
       }
     }
 
-    if (toobusy()) { // check if we're toobusy
+    if (toobusy()) { // check if toobusy
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 503,
         statusMessage: 'We are very busy right now. Please try again later.'
       });
+      return;
     } else {
       aNext(); // not toobusy
+      // fallthrough
     }
   }
 });
