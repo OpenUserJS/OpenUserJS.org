@@ -670,6 +670,9 @@ var parseComment = function (aComment) {
 
   // Dates
   parseDateProperty(comment, 'created');
+  parseDateProperty(comment, 'updated');
+
+  comment.isUpdated = comment.updated ? comment.created !== comment.updated : null;
 
   return comment;
 };

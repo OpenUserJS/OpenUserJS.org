@@ -14,6 +14,9 @@
             </span>
           </div>
           <div class="post-info pull-right">
+            {{#isUpdated}}
+              <time datetime="{{updatedISOFormat}}" title="{{updated}}">edited &bull; </time>
+            {{/isUpdated}}
             <a href="#comment-{{id}}" class="post-date">
               <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
             </a>
@@ -26,10 +29,34 @@
           {{^isUserCommentListPage}}
           <section class="post-menu-area">
             <nav class="post-controls text-right">
-              <div class="pull-right" {{^authedUser}} data-toggle="tooltip" data-placement="left" title="You need to be logged in to post!" {{/authedUser}}>
-                <button class="btn btn-sm btn-info btn-comment-reply{{^authedUser}} disabled{{/authedUser}}"{{#authedUser}} title="Begin composing a reply to this post."{{/authedUser}}>
-                  <i class="fa fa-fw fa-reply"></i> Reply
-                </button>
+              <div class="pull-right">
+                {{#authedUser}}
+                  <div class="btn-group" role="administrate">
+                    {{#canRemove}}
+                      <button type="button" class="btn btn-sm btn-danger btn-comment-remove disabled" title="Remove this reply.">
+                        <i class="fa fa-ban"></i><span class="hidden-xs"> Remove</span>
+                      </button>
+                    {{/canRemove}}
+                    {{#canFlag}}
+                      <button type="button" class="btn btn-sm btn-warning btn-comment-flag disabled" title="Flag this reply.">
+                        <i class="fa fa-flag-o"></i><span class="hidden-xs"> Flag</span>
+                      </button>
+                    {{/canFlag}}
+                  </div>
+                  {{#canEdit}}
+                    <div class="btn-group" role="owner">
+                      <button type="button" class="btn btn-sm btn-danger btn-comment-delete disabled" title="Delete this reply.">
+                        <i class="fa fa-remove"></i><span class="hidden-xs"> Delete</span>
+                      </button>
+                      <button type="button" class="btn btn-sm btn-default btn-comment-edit disabled" title="Begin editing this reply.">
+                        <i class="fa fa-edit"></i><span class="hidden-xs"> Edit</span>
+                      </button>
+                    </div>
+                  {{/canEdit}}
+                  <button class="btn btn-sm btn-info btn-comment-reply" title="Begin composing a reply to this post.">
+                    <i class="fa fa-reply"></i><span class="hidden-xs"> Reply</span>
+                  </button>
+                {{/authedUser}}
               </div>
              </nav>
           </section>
