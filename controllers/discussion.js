@@ -20,6 +20,10 @@ var Discussion = require('../models/discussion').Discussion;
 //--- Library inclusions
 // var discussionLib = require('../libs/discussion');
 
+var editLib = require('../libs/edit');
+var flagLib = require('../libs/flag');
+var removeLib = require('../libs/remove');
+
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 

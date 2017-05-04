@@ -15,6 +15,7 @@ var commentSchema = new Schema({
   author: String,
   created: Date,
   rating: Number,
+  updated: Date,
 
   // Moderation
   creator: Boolean,

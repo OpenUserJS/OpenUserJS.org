@@ -30,8 +30,8 @@ var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 
-var modelQuery = require('../libs/modelQuery');
 var modelParser = require('../libs/modelParser');
+var modelQuery = require('../libs/modelQuery');
 
 var decode = require('../libs/helpers').decode;
 var countTask = require('../libs/tasks').countTask;
@@ -246,12 +246,6 @@ var getScriptPageTasks = function (aOptions) {
 
   // Setup the flagging UI
   tasks.push(function (aCallback) {
-    // Can't flag when not logged in or when user owns the script.
-    if (!authedUser || aOptions.isOwner) {
-      aCallback();
-      return;
-    }
-
     flagLib.flaggable(Script, script, authedUser,
       function (aCanFlag, aAuthor, aFlag) {
         if (aFlag) {
@@ -267,12 +261,6 @@ var getScriptPageTasks = function (aOptions) {
 
   // Set up the removal UI
   tasks.push(function (aCallback) {
-    // Can't remove when not logged in or when user owns the script.
-    if (!authedUser || aOptions.isOwner) {
-      aCallback();
-      return;
-    }
-
     removeLib.removeable(Script, script, authedUser, function (aCanRemove, aAuthor) {
       aOptions.canRemove = aCanRemove;
       aOptions.flags = (script.flags ? script.flags.critical : null) || 0;
