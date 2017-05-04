@@ -73,11 +73,6 @@ var setupUserModerationUITask = function (aOptions) {
   aOptions.flags = '\u2013';
 
   return (function (aCallback) {
-    // Can't flag when not logged in or when is authedUser.
-    if (!authedUser || aOptions.isYou) {
-      aCallback();
-      return;
-    }
     flagLib.flaggable(User, user, authedUser, function (aCanFlag, aAuthor, aFlag) {
       if (aFlag) {
         aOptions.flagged = true;
