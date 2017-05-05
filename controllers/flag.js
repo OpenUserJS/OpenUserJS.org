@@ -139,7 +139,7 @@ exports.getFlaggedListForContent = function (aModelName, aOptions, aCallback) {
   var content = aModelName.toLowerCase();
   var contentList = aOptions[content + 'List'] || [aOptions[content]];
 
-  async.forEachOf(contentList, function (aContent, aContentKey, aEachOuterCallback) {
+  async.eachOf(contentList, function (aContent, aContentKey, aEachOuterCallback) {
 
     // NOTE: Directly use indexed parent identifier allowing set of the dynamic, virtual, field
     //       So basically do not use `aContent` anywhere in this function
@@ -167,7 +167,7 @@ exports.getFlaggedListForContent = function (aModelName, aOptions, aCallback) {
 
       aOptions.hasFlagged = true;
 
-      async.forEachOfSeries(aFlagList, function (aFlag, aFlagKey, aEachInnerCallback) {
+      async.eachOfSeries(aFlagList, function (aFlag, aFlagKey, aEachInnerCallback) {
         User.findOne({ _id: aFlag._userId }, function (aErr, aUser) {
           if (aErr || !aUser) {
             // Notify in stdout

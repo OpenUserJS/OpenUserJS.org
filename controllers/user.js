@@ -536,7 +536,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
           var scriptKeyMax = scriptList.length - 1;
 
           if (scriptKeyMax >= 0 && options.isYou) {
-            async.forEachOfSeries(options.scriptList, function (aScript, aScriptKey, aEachCallback) {
+            async.eachOfSeries(options.scriptList, function (aScript, aScriptKey, aEachCallback) {
               var script = modelParser.parseScript(aScript);
 
               // Find if script has any open issues
