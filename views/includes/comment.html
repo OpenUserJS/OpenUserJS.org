@@ -31,27 +31,39 @@
             <nav class="post-controls text-right">
               <div class="pull-right">
                 {{#authedUser}}
-                  <div class="btn-group" role="administrate">
-                    {{#canRemove}}
-                      <button type="button" class="btn btn-sm btn-danger btn-comment-remove disabled" title="Remove this reply.">
+                  {{#canRemove}}
+                    <form class="form-inline" action="{{{comment.commentRemovePageUrl}}}" method="post" enctype="multipart/form-data">
+                      <input type="hidden" name="remove" value="true">
+                      <button type="button" class="btn btn-sm btn-danger btn-comment-remove" title="Remove this reply.">
                         <i class="fa fa-ban"></i><span class="hidden-xs"> Remove</span>
                       </button>
-                    {{/canRemove}}
-                    {{#canFlag}}
-                      <button type="button" class="btn btn-sm btn-warning btn-comment-flag disabled" title="Flag this reply.">
-                        <i class="fa fa-flag-o"></i><span class="hidden-xs"> Flag</span>
-                      </button>
-                    {{/canFlag}}
-                  </div>
+                    </form>
+                  {{/canRemove}}
+                  {{#canFlag}}
+                    {{#flagged}}
+                      <form class="form-inline" action="{{{comment.commentFlagPageUrl}}}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="flag" value="false">
+                        <button class="btn btn-sm btn-warning btn-comment-flag" type="submit" title="Unflag this reply.">
+                          <i class="fa fa-flag"></i><span class="hidden-xs"> Unflag</span>
+                        </button>
+                      </form>
+                    {{/flagged}}
+                    {{^flagged}}
+                      <form class="form-inline" action="{{{comment.commentFlagPageUrl}}}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="flag" value="true">
+                        <button class="btn btn-sm btn-warning btn-comment-flag" type="submit" title="Flag this reply.">
+                          <i class="fa fa-flag-o"></i><span class="hidden-xs"> Flag</span>
+                        </button>
+                      </form>
+                    {{/flagged}}
+                  {{/canFlag}}
                   {{#canEdit}}
-                    <div class="btn-group" role="owner">
-                      <button type="button" class="btn btn-sm btn-danger btn-comment-delete disabled" title="Delete this reply.">
-                        <i class="fa fa-remove"></i><span class="hidden-xs"> Delete</span>
-                      </button>
-                      <button type="button" class="btn btn-sm btn-default btn-comment-edit disabled" title="Begin editing this reply.">
-                        <i class="fa fa-edit"></i><span class="hidden-xs"> Edit</span>
-                      </button>
-                    </div>
+                    <button type="button" class="btn btn-sm btn-danger btn-comment-delete" title="Delete this reply.">
+                      <i class="fa fa-remove"></i><span class="hidden-xs"> Delete</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default btn-comment-edit" title="Begin editing this reply.">
+                      <i class="fa fa-edit"></i><span class="hidden-xs"> Edit</span>
+                    </button>
                   {{/canEdit}}
                   <button class="btn btn-sm btn-info btn-comment-reply" title="Begin composing a reply to this post.">
                     <i class="fa fa-reply"></i><span class="hidden-xs"> Reply</span>
