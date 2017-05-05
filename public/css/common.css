@@ -369,3 +369,7 @@ ul.flaggedList {
 .fade-icon {
   transition: opacity 0.33s ease-in-out;
 }
+
+.form-inline {
+  display: inline;
+}
