@@ -1260,7 +1260,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
             --userDoc.role;
             userDoc.save(function (aErr, aUser) {
               if (aErr) {
-                console.warning('MongoDB User save warning error\n' +
+                console.warn('MongoDB User save warning error\n' +
                   userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
                   JSON.stringify(aErr, null, ' ')
                 );
