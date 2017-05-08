@@ -1245,29 +1245,51 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
                 installName + '\n' +
                   JSON.stringify(aErr, null, ' ')
             );
-
             aCallback(null);
             return;
           }
 
           // Check for role change and modify accordingly
           if (aUser.role === userRoles.length - 1) {
-            userDoc = aUser;
-            if (!userDoc.save) {
+            if (!aUser.save) {
               // Probably using req.session.user which may have gotten serialized.
-              userDoc = new User(userDoc);
+              userDoc = aUser;
+
+              User.findById(aUser._id, function (aErr, aUser) {
+                if (aErr) {
+                  console.error('MongoDB User findById critical error\n' +
+                    userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
+                      JSON.stringify(aErr, null, ' ')
+                  );
+                  aCallback(aScript);
+                  return;
+                }
+
+                --aUser.role;
+                aUser.save(function (aErr, aUser) {
+                  if (aErr) {
+                    console.warn('MongoDB User save warning error\n' +
+                      userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
+                        JSON.stringify(aErr, null, ' ')
+                    );
+                    // fallthrough
+                  }
+                  aCallback(aScript);
+                });
+              });
+            } else {
+              --aUser.role;
+              aUser.save(function (aErr, aUser) {
+                if (aErr) {
+                  console.warn('MongoDB User save warning error\n' +
+                    userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
+                      JSON.stringify(aErr, null, ' ')
+                  );
+                  // fallthrough
+                }
+                aCallback(aScript);
+              });
             }
-            --userDoc.role;
-            userDoc.save(function (aErr, aUser) {
-              if (aErr) {
-                console.warn('MongoDB User save warning error\n' +
-                  userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
-                  JSON.stringify(aErr, null, ' ')
-                );
-                // fallthrough
-              }
-              aCallback(aScript);
-            });
           } else {
             aCallback(aScript);
           }
