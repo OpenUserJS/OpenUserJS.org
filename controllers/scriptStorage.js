@@ -331,7 +331,18 @@ exports.getSource = function (aReq, aCallback) {
         Bucket: bucketName,
         Key: installNameBase + (isLib ? '.js' : '.user.js')
 
-      }).createReadStream().on('error', function (aE) {
+      })
+      .on('httpHeaders', function (aStatusCode, aHeaders) {
+        if ((isDbg || process.env.MONITOR_S3_READ_ERR === 'true') && aStatusCode !== 200) {
+          console.warn(
+            'S3 GET statusCode := ' +
+              aStatusCode + '\n' +
+                JSON.stringify(aHeaders, null, ' ')
+          );
+        }
+      })
+      .createReadStream()
+      .on('error', function (aE) {
         // Possible #486 modification
         if (isDbg || process.env.MONITOR_S3_READ_ERR === 'true') {
           console.error(
