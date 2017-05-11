@@ -15,7 +15,7 @@ var URL = require('url');
 var crypto = require('crypto');
 var peg = require('pegjs');
 var AWS = require('aws-sdk');
-var UglifyJS = require("uglify-js-harmony");
+var UglifyJS = require("uglify-es");
 var rfc2047 = require('rfc2047');
 var mediaType = require('media-type');
 var mediaDB = require('mime-db');
@@ -121,9 +121,9 @@ if (isPro) {
   });
 }
 
-// Get UglifyJS2 installation datestamp once
-var stats = fs.statSync("./node_modules/uglify-js-harmony/package.json");
-var mtimeUglifyJS2 = new Date(util.inspect(stats.mtime));
+// Get UglifyJS harmony installation datestamp once
+var stats = fs.statSync("./node_modules/uglify-es/package.json");
+var mtimeUglifyJS = new Date(util.inspect(stats.mtime));
 
 // Brute initialization
 var store = null;
@@ -655,7 +655,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     } else { // Wants to try minified
       //
-      lastModified = moment(mtimeUglifyJS2 > aScript.updated ? mtimeUglifyJS2 : aScript.updated)
+      lastModified = moment(mtimeUglifyJS > aScript.updated ? mtimeUglifyJS : aScript.updated)
         .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
 
       // If already client-side... partial HTTP/1.1 Caching
@@ -674,13 +674,12 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
         try {
           source = UglifyJS.minify(source, {
-            fromString: true,
+            parse: {
+              bare_returns: true
+            },
             mangle: false,
             output: {
               comments: true
-            },
-            parse: {
-              bare_returns: true
             }
           }).code;
 
