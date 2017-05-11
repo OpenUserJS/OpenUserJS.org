@@ -59,7 +59,7 @@ Repository | Reference | Recent Version
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
 [octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
-[passport-aol][passport-aolGHUrl] [&#x00b9;][passport-aolGHOpenIDUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl] ![OpenID][openidLogo] [&#x00b9;][passport-openid]
+[passport-aol][passport-aolGHUrl]<br />&#x22D4; [`OpenID2`][passport-aolGHOpenIDUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] ![OAuth2][oauth2Logo]
 [passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl] ![oauth][oauthLogo]
 [passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl] ![OAuth2][oauth2Logo]
@@ -73,7 +73,7 @@ Repository | Reference | Recent Version
 [passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl] ![oauth][oauthLogo]
 [passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
 [passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] ![OAuth2][oauth2Logo]
-[passport-yahoo][passport-yahooGHUrl] [&#x00b9;][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x00b9;][passport-openid]
+[passport-yahoo][passport-yahooGHUrl] <br />&#x22D4; [`OpenID2`][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
@@ -81,8 +81,8 @@ Repository | Reference | Recent Version
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
 [serve-favicon][serve-faviconGHUrl] | [Documentation][serve-faviconDOCUrl] | [![NPM version][serve-faviconNPMVersionImage]][serve-faviconNPMUrl]
-[toobusy-js][toobusy-jsGHUrl] [&#x00b9;][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
-[uglifyJS2][uglifyJS2GHUrl] [&#x00b9;][uglifyJS2GHHarmonyUrl] [&#x00b2;][uglifyJS2GHHarmony2Url] | [Documentation][uglifyJS2DOCUrl] [&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl]
+[toobusy-js][toobusy-jsGHUrl] <br />&#x22D4; [`harmony`][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
+[uglifyJS][uglifyJS2GHUrl] <br />&#x21B3; [`harmony`][uglifyJS2GHHarmonyUrl] | [Documentation][uglifyJS2DOCUrl] [&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl] <br />&#x21B3; [![NPM Harmony version][uglifyJS2NPMHarmonyVersionImage]][uglifyJS2NPMHarmonyUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 
 
@@ -452,11 +452,12 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [uglifyJS2GHUrl]: https://github.com/mishoo/UglifyJS2
 [uglifyJS2GHHarmonyUrl]: https://github.com/mishoo/UglifyJS2/tree/harmony
-[uglifyJS2GHHarmony2Url]: https://github.com/OpenUserJs/UglifyJS2/tree/harmony%2brenamed
 [uglifyJS2DOCUrl]: https://github.com/mishoo/UglifyJS2/blob/master/README.md
 [uglifyJS2DOC1Url]: http://lisperator.net/uglifyjs/
 [uglifyJS2NPMUrl]: https://www.npmjs.com/package/uglify-js
+[uglifyJS2NPMHarmonyUrl]: https://www.npmjs.com/package/uglify-es
 [uglifyJS2NPMVersionImage]: https://img.shields.io/npm/v/uglify-js.svg?style=flat
+[uglifyJS2NPMHarmonyVersionImage]: https://img.shields.io/npm/v/uglify-es.svg?style=flat
 
 [underscoreGHUrl]: https://github.com/jashkenas/underscore
 [underscoreDOCUrl]: http://underscorejs.org/
