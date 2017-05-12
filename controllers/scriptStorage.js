@@ -352,10 +352,12 @@ exports.getSource = function (aReq, aCallback) {
                   'in the', bucketName, 'bucket'
           );
         }
+      });
 
+      if (!s3Object) {
         aCallback(null);
         return;
-      });
+      }
 
       // Get the script
       aCallback(aScript, s3Object);
