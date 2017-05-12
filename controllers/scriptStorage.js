@@ -333,35 +333,44 @@ exports.getSource = function (aReq, aCallback) {
 
       })
       .on('httpHeaders', function (aStatusCode, aHeaders) {
-        if ((isDbg || process.env.MONITOR_S3_READ_ERR === 'true') && aStatusCode !== 200) {
+        // These cover lookup successes and failures
+        if (aStatusCode === 200) {
+          // Get the script
+          aCallback(aScript, s3Object);
+          // fallthrough
+        } else {
           console.warn(
             'S3 GET statusCode := ' +
               aStatusCode + '\n' +
                 JSON.stringify(aHeaders, null, ' ')
           );
+
+          // Abort
+          try {
+            aCallback(null);
+          } catch (aE) {
+            // ignore... usually if callback was already called
+          }
+
+          // fallthrough
         }
       })
       .createReadStream()
       .on('error', function (aE) {
-        // Possible #486 modification
-        if (isDbg || process.env.MONITOR_S3_READ_ERR === 'true') {
-          console.error(
-            'S3 GET',
-              aE.code,
-                'for', installNameBase + (isLib ? '.js' : '.user.js'),
-                  'in the', bucketName, 'bucket'
-          );
-          s3Object = null; // TODO: Mitigate
+        // This covers network errors in addition to lookup successes and failures
+        console.error(
+          'S3 GET',
+            aE.code,
+              'for', installNameBase + (isLib ? '.js' : '.user.js'),
+                'in the', bucketName, 'bucket'
+        );
+
+        try {
+          aCallback(null);
+        } catch (aE) {
+          // ignore... usually if callback was already called
         }
       });
-
-      if (!s3Object) {
-        aCallback(null);
-        return;
-      }
-
-      // Get the script
-      aCallback(aScript, s3Object);
     });
 };
 
