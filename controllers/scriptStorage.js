@@ -15,7 +15,7 @@ var URL = require('url');
 var crypto = require('crypto');
 var peg = require('pegjs');
 var AWS = require('aws-sdk');
-var UglifyJS = require("uglify-es");
+var UglifyJS = require("uglify-js-harmony");
 var rfc2047 = require('rfc2047');
 var mediaType = require('media-type');
 var mediaDB = require('mime-db');
@@ -122,7 +122,7 @@ if (isPro) {
 }
 
 // Get UglifyJS harmony installation datestamp once
-var stats = fs.statSync("./node_modules/uglify-es/package.json");
+var stats = fs.statSync('./node_modules/uglify-js-harmony/package.json');
 var mtimeUglifyJS = new Date(util.inspect(stats.mtime));
 
 // Brute initialization
@@ -680,7 +680,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
             mangle: false,
             output: {
               comments: true
-            }
+            },
+            fromString: true
           }).code;
 
           // Calculate a based representation of the hex sha512sum
