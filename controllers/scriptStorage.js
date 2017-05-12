@@ -351,6 +351,7 @@ exports.getSource = function (aReq, aCallback) {
                 'for', installNameBase + (isLib ? '.js' : '.user.js'),
                   'in the', bucketName, 'bucket'
           );
+          s3Object = null; // TODO: Mitigate
         }
       });
 
