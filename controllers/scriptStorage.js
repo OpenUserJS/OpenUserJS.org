@@ -297,6 +297,7 @@ exports.getSource = function (aReq, aCallback) {
     }, function (aErr, aScript) {
       var s3Object = null;
       var s3 = new AWS.S3();
+      var blocking = false;
 
       if (aErr) {
         if (isDbg) {
@@ -346,18 +347,16 @@ exports.getSource = function (aReq, aCallback) {
           );
 
           // Abort
-          try {
+          if (!blocking) {
+            blocking = true;
             aCallback(null);
-          } catch (aE) {
-            // ignore... usually if callback was already called
           }
-
           // fallthrough
         }
       })
       .createReadStream()
       .on('error', function (aE) {
-        // This covers network errors in addition to lookup successes and failures
+        // This covers network errors and lookup failures
         console.error(
           'S3 GET',
             aE.code,
@@ -365,11 +364,12 @@ exports.getSource = function (aReq, aCallback) {
                 'in the', bucketName, 'bucket'
         );
 
-        try {
+        // Abort
+        if (!blocking) {
+          blocking = true;
           aCallback(null);
-        } catch (aE) {
-          // ignore... usually if callback was already called
         }
+        // fallthrough
       });
     });
 };
