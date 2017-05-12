@@ -7,7 +7,7 @@
     "ace-builds": "git://github.com/ajaxorg/ace-builds#9a9e786",
     "ansi-colors": "0.2.0",
     "async": "2.4.0",
-    "aws-sdk": "2.49.0",
+    "aws-sdk": "2.50.0",
     "base62": "1.1.2",
     "body-parser": "1.17.1",
     "bootstrap": "3.3.7",
@@ -63,7 +63,7 @@
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.4.2",
     "toobusy-js-harmony": "git://github.com/OpenUserJs/node-toobusy#harmony",
-    "uglify-es": "3.0.3",
+    "uglify-es": "3.0.4",
     "underscore": "1.8.3"
   },
   "optionalDependencies": {
