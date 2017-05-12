@@ -361,7 +361,8 @@ exports.getSource = function (aReq, aCallback) {
           'S3 GET',
             aE.code,
               'for', installNameBase + (isLib ? '.js' : '.user.js'),
-                'in the', bucketName, 'bucket'
+                'in the', bucketName, 'bucket\n' +
+                  JSON.stringify(aE, null, ' ')
         );
 
         // Abort
