@@ -356,9 +356,9 @@ exports.getSource = function (aReq, aCallback) {
       })
       .createReadStream()
       .on('error', function (aE) {
-        // This covers network errors and lookup failures
+        // This covers initial network errors and lookup failures
         console.error(
-          'S3 GET',
+          'S3 GET (establishing) ',
             aE.code,
               'for', installNameBase + (isLib ? '.js' : '.user.js'),
                 'in the', bucketName, 'bucket\n' +
