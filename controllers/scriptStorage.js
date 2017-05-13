@@ -297,7 +297,7 @@ exports.getSource = function (aReq, aCallback) {
     }, function (aErr, aScript) {
       var s3Object = null;
       var s3 = new AWS.S3();
-      var blocking = false;
+      var continuation = true;
 
       if (aErr) {
         if (isDbg) {
@@ -347,8 +347,8 @@ exports.getSource = function (aReq, aCallback) {
           );
 
           // Abort
-          if (!blocking) {
-            blocking = true;
+          if (continuation) {
+            continuation = false;
             aCallback(null);
           }
           // fallthrough
@@ -366,8 +366,8 @@ exports.getSource = function (aReq, aCallback) {
         );
 
         // Abort
-        if (!blocking) {
-          blocking = true;
+        if (continuation) {
+          continuation = false;
           aCallback(null);
         }
         // fallthrough

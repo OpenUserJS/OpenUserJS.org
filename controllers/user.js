@@ -1588,6 +1588,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
     scriptStorage.getSource(aReq, function (aScript, aStream) {
       var collaborators = null;
       var bufs = [];
+      var continuation = true;
 
       if (!aScript || !aStream) {
         aCallback(null);
@@ -1609,7 +1610,10 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
                 'in the', bucketName, 'bucket\n' +
                   JSON.stringify(aE, null, ' ')
         );
-        aCallback(null);
+        if (continuation) {
+          continuation = false;
+          aCallback(null);
+        }
         // fallthrough
       });
       aStream.on('data', function (aData) { bufs.push(aData); });
@@ -1627,7 +1631,10 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         aOptions.scriptName = aScript.name;
         aOptions.readOnly = !aAuthedUser;
 
-        aCallback(aOptions);
+        if (continuation) {
+          continuation = false;
+          aCallback(aOptions);
+        }
       });
     });
   }
