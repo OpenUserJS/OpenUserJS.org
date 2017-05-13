@@ -1589,7 +1589,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
       var collaborators = null;
       var bufs = [];
 
-      if (!aScript) {
+      if (!aScript || !aStream) {
         aCallback(null);
         return;
       }
@@ -1599,6 +1599,19 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         collaborators = []; // NOTE: Watchpoint
       }
 
+      // NOTE: WATCHPOINT
+      aStream.on('error', function (aE) {
+        // This covers errors during connection
+        console.error(
+          'S3 GET (chunking) ',
+            aE.code,
+              'for', installNameBase + (isLib ? '.js' : '.user.js'),
+                'in the', bucketName, 'bucket\n' +
+                  JSON.stringify(aE, null, ' ')
+        );
+        aCallback(null);
+        // fallthrough
+      });
       aStream.on('data', function (aData) { bufs.push(aData); });
       aStream.on('end', function () {
         // Page metadata
