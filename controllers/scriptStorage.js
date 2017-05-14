@@ -763,7 +763,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
             if (result.error) {
               throw(result.error); // Passthrough the error to our handler if present
-            } else if(!result.source) {
+            } else if(!result.code) {
               throw new TypeError('UglifyJS error of `source` being `undefined`');
             } else {
               source = result.code;
