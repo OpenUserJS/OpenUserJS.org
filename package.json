@@ -63,7 +63,7 @@
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.4.2",
     "toobusy-js-harmony": "git://github.com/OpenUserJs/node-toobusy#harmony",
-    "uglify-js-harmony": "git://github.com/OpenUserJs/UglifyJS2#harmony+renamed",
+    "uglify-es": "git://github.com/mishoo/UglifyJS2#harmony",
     "underscore": "1.8.3"
   },
   "optionalDependencies": {
