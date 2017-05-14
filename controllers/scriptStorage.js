@@ -354,15 +354,14 @@ exports.getSource = function (aReq, aCallback) {
           // fallthrough
         }
       })
-      .createReadStream()
+      .createReadStream() // NOTE: Exec equivalent
       .on('error', function (aE) {
         // This covers initial network errors and lookup failures
         console.error(
           'S3 GET (establishing) ',
             aE.code,
-              'for', installNameBase + (isLib ? '.js' : '.user.js'),
-                'in the', bucketName, 'bucket\n' +
-                  JSON.stringify(aE, null, ' ')
+              'for', installNameBase + (isLib ? '.js' : '.user.js') + '\n' +
+                JSON.stringify(aE, null, ' ')
         );
 
         // Abort
@@ -563,6 +562,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     var eTag = null;
     var maxAge = 7 * 60 * 60 * 24; // nth day(s) in seconds
     var now = null;
+    var continuation = true;
 
     if (!aScript) {
       aNext();
@@ -639,31 +639,70 @@ exports.sendScript = function (aReq, aRes, aNext) {
       }
 
       //
+      aStream.on('error', function (aE) {
+        // This covers errors during connection in direct view
+        console.error(
+          'S3 GET (chunking native) ',
+            aE.code,
+              'for', aScript.installName + '\n' +
+                JSON.stringify(aE, null, ' ')
+        );
+
+        // Abort
+        if (continuation) {
+          continuation = false;
+          aNext();
+          // fallthrough
+        }
+      });
+
       aStream.on('data', function (aData) {
-        chunks.push(aData);
+        if (continuation) {
+          chunks.push(aData);
+        }
       });
 
       aStream.on('end', function () {
-        let source = chunks.join(''); // NOTE: Watchpoint
+        let source = null;
 
-        // Send the script
-        aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-        aStream.setEncoding('utf8');
+        if (continuation) {
+          continuation = false;
 
-        // HTTP/1.0 Caching
-        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
-          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+          source = chunks.join(''); // NOTE: Watchpoint
 
-        // HTTP/1.1 Caching
-        aRes.set('Last-modified', lastModified);
-        aRes.set('Etag', eTag);
+          // Send the script
+          aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+          aStream.setEncoding('utf8');
 
-        aRes.write(source);
-        aRes.end();
+          // HTTP/1.0 Caching
+          aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
+            .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
 
-        // NOTE: Try and force a GC
-        source = null;
-        chunks = null;
+          // HTTP/1.1 Caching
+          aRes.set('Last-modified', lastModified);
+          aRes.set('Etag', eTag);
+
+          aRes.write(source);
+          aRes.end();
+
+          // NOTE: Try and force a GC
+          source = null;
+          chunks = null;
+
+          // Don't count installs on raw source route
+          if (aScript.isLib || aReq.params.type) {
+            return;
+          }
+
+          // Update the install count
+          ++aScript.installs;
+          ++aScript.installsSinceUpdate;
+
+          // Resave affected properties
+          aScript.save(function (aErr, aScript) {
+            // WARNING: No error handling at this stage
+          });
+        }
       });
 
     } else { // Wants to try minified
@@ -677,105 +716,131 @@ exports.sendScript = function (aReq, aRes, aNext) {
         return;
       }
 
+      aStream.on('error', function (aE) {
+        // This covers errors during connection in direct view
+        console.error(
+          'S3 GET (chunking minified) ',
+            aE.code,
+              'for', aScript.installName + '\n' +
+                JSON.stringify(aE, null, ' ')
+        );
+
+        // Abort
+        if (continuation) {
+          continuation = false;
+          aNext();
+          // fallthrough
+        }
+      });
+
       aStream.on('data', function (aData) {
-        chunks.push(aData);
+        if (continuation) {
+          chunks.push(aData);
+        }
       });
 
       aStream.on('end', function () {
-        let source = chunks.join(''); // NOTE: Watchpoint
+        let source = null;
         let msg = null;
 
-        try {
-          source = UglifyJS.minify(source, {
-            parse: {
-              bare_returns: true
-            },
-            mangle: false,
-            output: {
-              comments: true
-            },
-            fromString: true
-          }).code;
+        if (continuation) {
+          continuation = false;
 
-          // Calculate a based representation of the hex sha512sum
-          eTag = '"'  + Base62.encode(
-            parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)) +
-              ' .min.user.js"';
+          source = chunks.join(''); // NOTE: Watchpoint
+          msg = null;
 
-        } catch (aE) { // On any failure default to unminified
-          console.warn([
-            'MINIFICATION WARNING (harmony):',
-            '  message: ' + aE.message,
-            '  installName: ' + aScript.installName,
-            '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos
+          try {
+            source = UglifyJS.minify(source, {
+              parse: {
+                bare_returns: true
+              },
+              mangle: false,
+              output: {
+                comments: true
+              },
+              fromString: true
+            }).code;
 
-          ].join('\n'));
+            // Calculate a based representation of the hex sha512sum
+            eTag = '"'  + Base62.encode(
+              parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)) +
+                ' .min.user.js"';
 
-          // Set up a `Warning` header with Q encoding under RFC2047
-          msg = [
-            '199 ' + aReq.headers.host + ' MINIFICATION WARNING (harmony):',
-            '  ' + rfc2047.encode(aE.message.replace(/\xAB/g, '`').replace(/\xBB/g, '`')),
-            '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos,
+          } catch (aE) { // On any failure default to unminified
+            console.warn([
+              'MINIFICATION WARNING (harmony):',
+              '  message: ' + aE.message,
+              '  installName: ' + aScript.installName,
+              '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos
 
-          ].join('\u0020'); // TODO: Watchpoint... *express*/*node* exception thrown with CRLF SPACE spec
+            ].join('\n'));
+
+            // Set up a `Warning` header with Q encoding under RFC2047
+            msg = [
+              '199 ' + aReq.headers.host + ' MINIFICATION WARNING (harmony):',
+              '  ' + rfc2047.encode(aE.message.replace(/\xAB/g, '`').replace(/\xBB/g, '`')),
+              '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos,
+
+            ].join('\u0020'); // TODO: Watchpoint... *express*/*node* exception thrown with CRLF SPACE spec
 
 
-          aRes.set('Warning', msg);
+            aRes.set('Warning', msg);
 
-          // Reset to unminified last modified date stamp
-          lastModified = moment(aScript.updated)
-            .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
+            // Reset to unminified last modified date stamp
+            lastModified = moment(aScript.updated)
+              .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
 
-          // Reset to convert a based representation of the hex sha512sum
-          eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .user.js"';
-        }
-
-        // If already client-side... partial HTTP/1.1 Caching
-        if (aReq.get('if-none-match') === eTag) {
-
-          // Conditionally send lastModified
-          if (aReq.get('if-modified-since') !== lastModified) {
-            aRes.set('Last-Modified', lastModified);
+            // Reset to convert a based representation of the hex sha512sum
+            eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .user.js"';
           }
 
-          aRes.status(304).send(); // Not Modified
-          return;
+          // If already client-side... partial HTTP/1.1 Caching
+          if (aReq.get('if-none-match') === eTag) {
+
+            // Conditionally send lastModified
+            if (aReq.get('if-modified-since') !== lastModified) {
+              aRes.set('Last-Modified', lastModified);
+            }
+
+            aRes.status(304).send(); // Not Modified
+            return;
+          }
+
+          // Send the script
+          aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
+          aStream.setEncoding('utf8');
+
+          // HTTP/1.0 Caching
+          aRes.set('Expires', moment(moment() + maxAge * 1000)
+            .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+
+          // HTTP/1.1 Caching
+          aRes.set('Last-Modified', lastModified);
+          aRes.set('Etag', eTag);
+
+          aRes.write(source);
+          aRes.end();
+
+          // NOTE: Try and force a GC
+          source = null;
+          chunks = null;
+
+          // Don't count installs on raw source route
+          if (aScript.isLib || aReq.params.type) {
+            return;
+          }
+
+          // Update the install count
+          ++aScript.installs;
+          ++aScript.installsSinceUpdate;
+
+          // Resave affected properties
+          aScript.save(function (aErr, aScript) {
+            // WARNING: No error handling at this stage
+          });
         }
-
-        // Send the script
-        aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
-        aStream.setEncoding('utf8');
-
-        // HTTP/1.0 Caching
-        aRes.set('Expires', moment(moment() + maxAge * 1000)
-          .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
-
-        // HTTP/1.1 Caching
-        aRes.set('Last-Modified', lastModified);
-        aRes.set('Etag', eTag);
-
-        aRes.write(source);
-        aRes.end();
-
-        // NOTE: Try and force a GC
-        source = null;
-        chunks = null;
       });
     }
-
-    // Don't count installs on raw source route
-    if (aScript.isLib || aReq.params.type) {
-      return;
-    }
-
-    // Update the install count
-    ++aScript.installs;
-    ++aScript.installsSinceUpdate;
-
-    // Resave affected properties
-    aScript.save(function (aErr, aScript) {
-      // WARNING: No error handling at this stage
-    });
   });
 };
 

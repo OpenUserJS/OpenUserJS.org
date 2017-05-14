@@ -1600,11 +1600,10 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         collaborators = []; // NOTE: Watchpoint
       }
 
-      // NOTE: WATCHPOINT
       aStream.on('error', function (aE) {
-        // This covers errors during connection
+        // This covers errors during connection in source view
         console.error(
-          'S3 GET (chunking) ',
+          'S3 GET (chunking indirect) ',
             aE.code,
               'for', installNameBase + (isLib ? '.js' : '.user.js'),
                 'in the', bucketName, 'bucket\n' +
@@ -1616,23 +1615,28 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
         }
         // fallthrough
       });
-      aStream.on('data', function (aData) { bufs.push(aData); });
+      aStream.on('data', function (aData) {
+        if (continuation) {
+          bufs.push(aData);
+        }
+      });
       aStream.on('end', function () {
-        // Page metadata
-        pageMetadata(aOptions, 'Edit ' + aScript.name);
-
-        aOptions.source = Buffer.concat(bufs).toString('utf8');
-        aOptions.original = aScript.installName;
-        aOptions.url = aReq.url;
-        aOptions.owner = aAuthedUser && (aScript._authorId == aAuthedUser._id
-          || collaborators.indexOf(aAuthedUser.name) > -1);
-        aOptions.username = aAuthedUser ? aAuthedUser.name : null;
-        aOptions.isLib = aScript.isLib;
-        aOptions.scriptName = aScript.name;
-        aOptions.readOnly = !aAuthedUser;
-
         if (continuation) {
           continuation = false;
+
+          // Page metadata
+          pageMetadata(aOptions, 'Edit ' + aScript.name);
+
+          aOptions.source = Buffer.concat(bufs).toString('utf8');
+          aOptions.original = aScript.installName;
+          aOptions.url = aReq.url;
+          aOptions.owner = aAuthedUser && (aScript._authorId == aAuthedUser._id
+            || collaborators.indexOf(aAuthedUser.name) > -1);
+          aOptions.username = aAuthedUser ? aAuthedUser.name : null;
+          aOptions.isLib = aScript.isLib;
+          aOptions.scriptName = aScript.name;
+          aOptions.readOnly = !aAuthedUser;
+
           aCallback(aOptions);
         }
       });
