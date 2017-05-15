@@ -762,7 +762,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
             });
 
             if (result.error) {
-              throw(result.error); // Passthrough the error to our handler if present
+              throw result.error; // Passthrough the error if present to our handler
             } else if(!result.code) {
               throw new TypeError('UglifyJS error of `code` being absent');
             } else {
