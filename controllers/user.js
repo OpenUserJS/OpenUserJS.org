@@ -1601,19 +1601,21 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
       }
 
       aStream.on('error', function (aE) {
-        // This covers errors during connection in source view
-        console.error(
-          'S3 GET (chunking indirect) ',
-            aE.code,
-              'for', installNameBase + (isLib ? '.js' : '.user.js'),
-                'in the', bucketName, 'bucket\n' +
-                  JSON.stringify(aE, null, ' ')
-        );
         if (continuation) {
           continuation = false;
+
+          // This covers errors during connection in source view
+          console.error(
+            'S3 GET (chunking indirect) ',
+              aE.code,
+                'for', installNameBase + (isLib ? '.js' : '.user.js'),
+                  'in the', bucketName, 'bucket\n' +
+                    JSON.stringify(aE, null, ' ')
+          );
+
           aCallback(null);
+          // fallthrough
         }
-        // fallthrough
       });
       aStream.on('data', function (aData) {
         if (continuation) {
