@@ -334,24 +334,26 @@ exports.getSource = function (aReq, aCallback) {
 
       })
       .on('httpHeaders', function (aStatusCode, aHeaders) {
-        // These cover lookup successes and failures
-        if (aStatusCode === 200) {
-          // Get the script
-          aCallback(aScript, s3Object);
-          // fallthrough
-        } else {
-          console.warn(
-            'S3 GET statusCode := ' +
-              aStatusCode + '\n' +
-                JSON.stringify(aHeaders, null, ' ')
-          );
+        if (continuation) {
+          // These cover lookup successes and failures
+          if (aStatusCode === 200) {
+            // Get the script
+            aCallback(aScript, s3Object);
+            // fallthrough
+          } else {
+            console.warn(
+              'S3 GET statusCode := ' +
+                aStatusCode + '\n' +
+                  JSON.stringify(aHeaders, null, ' ')
+            );
 
-          // Abort
-          if (continuation) {
-            continuation = false;
-            aCallback(null);
+            // Abort
+            if (continuation) {
+              continuation = false;
+              aCallback(null);
+            }
+            // fallthrough
           }
-          // fallthrough
         }
       })
       .createReadStream() // NOTE: Exec equivalent
