@@ -335,12 +335,10 @@ exports.getSource = function (aReq, aCallback) {
       })
       .on('httpHeaders', function (aStatusCode, aHeaders) {
         if (continuation) {
+          continuation = false;
+
           // These cover lookup successes and failures
-          if (aStatusCode === 200) {
-            // Get the script
-            aCallback(aScript, s3Object);
-            // fallthrough
-          } else {
+          if (aStatusCode !== 200) {
             console.warn(
               'S3 GET statusCode := ' +
                 aStatusCode + '\n' +
@@ -348,30 +346,32 @@ exports.getSource = function (aReq, aCallback) {
             );
 
             // Abort
-            if (continuation) {
-              continuation = false;
-              aCallback(null);
-            }
+            aCallback(null);
+            // fallthrough
+          } else {
+            // Get the script
+            aCallback(aScript, s3Object);
             // fallthrough
           }
         }
       })
       .createReadStream() // NOTE: Exec equivalent
       .on('error', function (aE) {
-        // This covers initial network errors and lookup failures
-        console.error(
-          'S3 GET (establishing) ',
-            aE.code,
-              'for', installNameBase + (isLib ? '.js' : '.user.js') + '\n' +
-                JSON.stringify(aE, null, ' ')
-        );
-
-        // Abort
         if (continuation) {
           continuation = false;
+
+          // This covers initial network errors and lookup failures
+          console.error(
+            'S3 GET (establishing) ',
+              aE.code,
+                'for', installNameBase + (isLib ? '.js' : '.user.js') + '\n' +
+                  JSON.stringify(aE, null, ' ')
+          );
+
+          // Abort
           aCallback(null);
+          // fallthrough
         }
-        // fallthrough
       });
     });
 };
@@ -642,17 +642,18 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
       //
       aStream.on('error', function (aE) {
-        // This covers errors during connection in direct view
-        console.error(
-          'S3 GET (chunking native) ',
-            aE.code,
-              'for', aScript.installName + '\n' +
-                JSON.stringify(aE, null, ' ')
-        );
-
-        // Abort
         if (continuation) {
           continuation = false;
+
+          // This covers errors during connection in direct view
+          console.error(
+            'S3 GET (chunking native) ',
+              aE.code,
+                'for', aScript.installName + '\n' +
+                  JSON.stringify(aE, null, ' ')
+          );
+
+          // Abort
           aNext();
           // fallthrough
         }
@@ -719,17 +720,18 @@ exports.sendScript = function (aReq, aRes, aNext) {
       }
 
       aStream.on('error', function (aE) {
-        // This covers errors during connection in direct view
-        console.error(
-          'S3 GET (chunking minified) ',
-            aE.code,
-              'for', aScript.installName + '\n' +
-                JSON.stringify(aE, null, ' ')
-        );
-
-        // Abort
         if (continuation) {
           continuation = false;
+
+          // This covers errors during connection in direct view
+          console.error(
+            'S3 GET (chunking minified) ',
+              aE.code,
+                'for', aScript.installName + '\n' +
+                  JSON.stringify(aE, null, ' ')
+          );
+
+          // Abort
           aNext();
           // fallthrough
         }
