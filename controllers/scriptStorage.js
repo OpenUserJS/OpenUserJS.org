@@ -1337,7 +1337,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           }
 
           // Check for role change and modify accordingly
-          if (aUser.role === userRoles.length - 1) {
+          if (aUser.role === 5) {
             if (!aUser.save) {
               // Probably using req.session.user which may have gotten serialized.
               userDoc = aUser;
@@ -1352,7 +1352,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
                   return;
                 }
 
-                --aUser.role;
+                aUser.role = 4;
                 aUser.save(function (aErr, aUser) {
                   if (aErr) {
                     console.warn('MongoDB User save warning error\n' +
@@ -1365,7 +1365,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
                 });
               });
             } else {
-              --aUser.role;
+              aUser.role = 4;
               aUser.save(function (aErr, aUser) {
                 if (aErr) {
                   console.warn('MongoDB User save warning error\n' +
