@@ -13,6 +13,7 @@ var util = require('util');
 var _ = require('underscore');
 var URL = require('url');
 var crypto = require('crypto');
+var stream = require('stream');
 var peg = require('pegjs');
 var AWS = require('aws-sdk');
 var UglifyJS = require("uglify-es");
@@ -297,7 +298,6 @@ exports.getSource = function (aReq, aCallback) {
     }, function (aErr, aScript) {
       var s3Object = null;
       var s3 = new AWS.S3();
-      var continuation = true;
 
       if (aErr) {
         if (isDbg) {
@@ -332,47 +332,31 @@ exports.getSource = function (aReq, aCallback) {
         Bucket: bucketName,
         Key: installNameBase + (isLib ? '.js' : '.user.js')
 
-      })
-      .on('httpHeaders', function (aStatusCode, aHeaders) {
-        if (continuation) {
-          continuation = false;
+      }, function(aErr, aData) {
+        var bufferStream = null;
 
-          // These cover lookup successes and failures
-          if (aStatusCode !== 200) {
-            console.warn(
-              'S3 GET statusCode := ' +
-                aStatusCode + '\n' +
-                  JSON.stringify(aHeaders, null, ' ')
-            );
-
-            // Abort
-            aCallback(null);
-            // fallthrough
-          } else {
-            // Get the script
-            aCallback(aScript, s3Object);
-            // fallthrough
-          }
-        }
-      })
-      .createReadStream() // NOTE: Exec equivalent
-      .on('error', function (aE) {
-        if (continuation) {
-          continuation = false;
-
-          // This covers initial network errors and lookup failures
+        if (aErr) {
           console.error(
             'S3 GET (establishing) ',
-              aE.code,
+              aErr.code,
                 'for', installNameBase + (isLib ? '.js' : '.user.js') + '\n' +
-                  JSON.stringify(aE, null, ' ')
+                  JSON.stringify(aErr, null, ' ') + '\n' +
+                    aErr.stack
           );
 
           // Abort
           aCallback(null);
           // fallthrough
+        } else {
+          bufferStream = new stream.PassThrough();
+
+          bufferStream.end(new Buffer(aData.Body));
+
+          // Get the script
+          aCallback(aScript, bufferStream);
+
         }
-      });
+      })
     });
 };
 
@@ -641,17 +625,18 @@ exports.sendScript = function (aReq, aRes, aNext) {
       }
 
       //
-      aStream.on('error', function (aE) {
+      aStream.on('error', function (aErr) {
+        // This covers errors during connection in direct view
+        console.error(
+          'S3 GET (chunking native) ',
+            aErr.code,
+              'for', aScript.installName + '\n' +
+                JSON.stringify(aErr, null, ' ') + '\n' +
+                  aErr.stack
+        );
+
         if (continuation) {
           continuation = false;
-
-          // This covers errors during connection in direct view
-          console.error(
-            'S3 GET (chunking native) ',
-              aE.code,
-                'for', aScript.installName + '\n' +
-                  JSON.stringify(aE, null, ' ')
-          );
 
           // Abort
           aNext();
@@ -719,17 +704,18 @@ exports.sendScript = function (aReq, aRes, aNext) {
         return;
       }
 
-      aStream.on('error', function (aE) {
+      aStream.on('error', function (aErr) {
+        // This covers errors during connection in direct view
+        console.error(
+          'S3 GET (chunking minified) ',
+            aErr.code,
+              'for', aScript.installName + '\n' +
+                JSON.stringify(aErr, null, ' ') + '\n' +
+                  aErr.stack
+        );
+
         if (continuation) {
           continuation = false;
-
-          // This covers errors during connection in direct view
-          console.error(
-            'S3 GET (chunking minified) ',
-              aE.code,
-                'for', aScript.installName + '\n' +
-                  JSON.stringify(aE, null, ' ')
-          );
 
           // Abort
           aNext();
@@ -1328,7 +1314,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           console.error(
             'S3 putObject critical error\n' +
               installName + '\n' +
-                JSON.stringify(aErr, null, ' ')
+                JSON.stringify(aErr, null, ' ') + '\n' +
+                  aErr.stack
           );
 
           aCallback(null);
