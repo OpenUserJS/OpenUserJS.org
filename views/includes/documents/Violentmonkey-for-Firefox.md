@@ -32,7 +32,7 @@ Clicking on the Violentmonkey icon at any time will pop up a menu that shows you
 
 ![Screenshot of Violentmonkey Dashboard][violentmonkeyFirefoxScreenshot3]
 
-Clicking "Manage scripts" in the Violentmonkey menu takes you a dashboard screen that lists all your installed scripts. Each one can be temporarily disabled or removed totally using the buttons provided. You can also manually check for updated userscripts.
+Clicking "Open Dashboard" in the Violentmonkey menu takes you a dashboard screen that lists all your installed scripts. Each one can be temporarily disabled or removed totally using the buttons provided. You can also manually check for updated userscripts.
 
 ### Trouble shooting
 
