@@ -2,7 +2,7 @@
 
 ![Violentmonkey icon][violentmonkeyIcon]
 
-Violentmonkey is a userscript manager for the [Opera][opera] web browser, written by [gera2ld][gera2ld].
+Violentmonkey is a userscript manager for the [Opera][opera], [Chrome][chrome], [Firefox][firefox] web browser, written by [gera2ld][gera2ld].
 
 ### Installing Violentmonkey
 
@@ -51,6 +51,8 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [oujs]: https://openuserjs.org/
 [violentmonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_icon.png "Violentmonkey"
 [opera]: Opera
+[chrome]: Chrome
+[Firefox]: Firefox
 [gera2ld]: https://github.com/gera2ld
 [operaAddons]: https://addons.opera.com/extensions/details/violent-monkey/
 [violentmonkeyOexWiki]: https://github.com/gera2ld/Violentmonkey-oex/wiki
