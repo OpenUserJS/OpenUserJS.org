@@ -2,7 +2,7 @@
 
 ![Violentmonkey icon][violentmonkeyIcon]
 
-Violentmonkey is a userscript manager for the [Firefox][firefox], [Chrome][chrome], [Opera][opera] web browser, written by [gera2ld][gera2ld].
+Violentmonkey is a userscript manager for the [Firefox 52+][firefox], [Chrome][chrome], [Opera][opera] web browser, written by [gera2ld][gera2ld].
 
 ### Installing Violentmonkey
 
