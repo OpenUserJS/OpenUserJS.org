@@ -10,6 +10,7 @@ SeaMonkey and Firefox were the first web browsers to support userscripts, thanks
 * [Mozilla on Wikipedia][wikipediaMozilla]
 * [Firefox on Wikipedia][wikipediaFirefox]
 * [Greasemonkey for Firefox][greasemonkeyForFirefox]
+* [Violentmonkey for Firefox][violentmonkeyForFirefox]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
@@ -19,3 +20,4 @@ SeaMonkey and Firefox were the first web browsers to support userscripts, thanks
 [wikipediaMozilla]: https://www.wikipedia.org/wiki/Mozilla
 [wikipediaFirefox]: https://www.wikipedia.org/wiki/Firefox
 [greasemonkeyForFirefox]: Greasemonkey-for-Firefox
+[violentmonkeyForFirefox]: Violentmonkey-for-Firefox
