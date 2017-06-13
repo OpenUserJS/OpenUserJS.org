@@ -31,11 +31,11 @@ Find your web browser in the tables below, and follow the links to find out the 
 
 Browser | Installation Method
 ---  | ---
-[Chrome][chrome] | [Tampermonkey][tampermonkeyForChrome]
+[Chrome][chrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
 [Chromium][chromium] | [Tampermonkey][tampermonkeyForChromium]
 [Edge][edge] | [Tampermonkey][tampermonkeyForEdge]
-[Firefox][firefox] | [Greasemonkey][greasemonkeyForFirefox]
-[Opera][opera] | [Violent monkey][violentmonkeyForOpera]
+[Firefox][firefox] | [Greasemonkey][greasemonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox]
+[Opera][opera] | [Violentmonkey][violentmonkeyForOpera]
 [Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
 [QupZilla][qupzilla] | *(native support)*
 [SeaMonkey][seamonkey] | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
@@ -56,7 +56,9 @@ Browser | Installation Method
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForEdge]: Tampermonkey-for-Edge
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
-[violentmonkeyForOpera]: Violent-monkey-for-Opera
+[violentmonkeyForChrome]: Violentmonkey-for-Chrome
+[violentmonkeyForFirefox]: Violentmonkey-for-Firefox
+[violentmonkeyForOpera]: Violentmonkey-for-Opera
 [android]: Android
 [chrome]: Chrome
 [chromium]: Chromium
