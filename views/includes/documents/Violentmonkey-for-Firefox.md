@@ -42,20 +42,20 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 ### More
 
-* [Get Violent monkey from the Firefox Add-ons website][firefoxAddons]
-* [Violent monkey IO][violentmonkeyIO] - some documentation for Violentmonkey.
+* [Get Violentmonkey from the Firefox Add-ons website][firefoxAddons]
+* [Violentmonkey IO][violentmonkeyIO] - some documentation for Violentmonkey.
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/favicon16.png
 [oujs]: https://openuserjs.org/
-[violentmonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_icon.png "Violent monkey"
+[violentmonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_icon.png "Violentmonkey"
 [opera]: Opera
 [chrome]: Chrome
 [firefox]: Firefox
 [gera2ld]: https://github.com/gera2ld
 [firefoxAddons]: https://addons.mozilla.org/firefox/addon/violentmonkey/
-[firefoxAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey1.gif "Violent monkey in the Opera Add-ons website"
+[firefoxAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_fi1.gif "Violentmonkey in the Opera Add-ons website"
 [oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
-[violentmonkeyFirefoxScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey3.gif "Installing a script"
-[violentmonkeyFirefoxScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey4.png "Violent monkey Dashboard"
+[violentmonkeyFirefoxScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_fi3.gif "Installing a script"
+[violentmonkeyFirefoxScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_fi4.png "Violentmonkey Dashboard"
 [violentmonkeyIO]: https://violentmonkey.github.io/
