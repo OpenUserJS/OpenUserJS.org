@@ -746,6 +746,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
                 bare_returns: true
               },
               compress: {
+                inline: false
               },
               mangle: {
               },
