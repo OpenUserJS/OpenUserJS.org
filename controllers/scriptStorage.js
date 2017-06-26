@@ -745,7 +745,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
               parse: {
                 bare_returns: true
               },
-              mangle: false,
+              compress: {
+              },
+              mangle: {
+              },
               output: {
                 comments: true
               }
