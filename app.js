@@ -51,26 +51,15 @@ var db = mongoose.connection;
 
 var dbOptions = {};
 if (isPro) {
-  dbOptions.replset = {
+  dbOptions = {
+    useMongoClient: true,
     secondaryAcceptableLatencyMS: 15,
-    poolSize: 5,
-    socketOptions: {
-      noDelay: true,
-      keepAlive: 1,  // NOTE: Unclear why this was non-zero early on
-      connectTimeoutMS: 60 * 1000,
-      socketTimeoutMS: 0
-    }
+    poolSize: 5
   }
 } else {
-  dbOptions.server = {
+  dbOptions = {
+    useMongoClient: true,
     poolSize: 5,
-    socketOptions: {
-      autoReconnect: false,
-      noDelay: true,
-      keepAlive: 1,  // NOTE: Unclear why this was non-zero early on
-      connectTimeoutMS: 60 * 1000,
-      socketTimeoutMS: 0
-    },
     reconnectTries: 30,
     reconnectInterval: 1000
   }
