@@ -69,7 +69,7 @@ Repository | Reference | Recent Version
 [passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl] ![OAuth2][oauth2Logo]
 [passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl] ![oauth1][oauth1Logo]
 [passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo]
-[passport-steam][passport-steamGHUrl] | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo]
+[passport-steam][passport-steamGHUrl] <br />&#x22D4; [`OpenID2`][passport-steamGHOpenIDUrl]  | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl] ![oauth][oauthLogo]
 [passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
 [passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] ![OAuth2][oauth2Logo]
@@ -383,6 +383,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-redditNPMVersionImage]: https://img.shields.io/npm/v/passport-reddit.svg?style=flat
 
 [passport-steamGHUrl]: https://github.com/liamcurry/passport-steam
+[passport-steamGHOpenIDUrl]: https://github.com/OpenUserJs/passport-steam/tree/OpenID2
 [passport-steamDOCUrl]: https://github.com/liamcurry/passport-steam/blob/master/README.md
 [passport-steamNPMUrl]: https://www.npmjs.com/package/passport-steam
 [passport-steamNPMVersionImage]: https://img.shields.io/npm/v/passport-steam.svg?style=flat
