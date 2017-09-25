@@ -19,7 +19,7 @@
     "express": "4.15.5",
     "express-brute": "1.0.1",
     "express-brute-mongo": "1.0.0",
-    "express-minify": "1.0.0",
+    "express-minify": "0.2.0",
     "express-session": "1.15.5",
     "font-awesome": "4.7.0",
     "formidable": "1.1.1",
