@@ -19,7 +19,7 @@
     "express": "4.15.5",
     "express-brute": "1.0.1",
     "express-brute-mongo": "1.0.0",
-    "express-minify": "0.2.0",
+    "express-minify": "1.0.0",
     "express-session": "1.15.5",
     "font-awesome": "4.7.0",
     "formidable": "1.1.1",
@@ -63,6 +63,7 @@
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.4.4",
     "toobusy-js-harmony": "git://github.com/OpenUserJs/node-toobusy#harmony",
+    "uglify-js": "3.1.2",
     "uglify-es": "3.1.2",
     "underscore": "1.8.3"
   },

@@ -26,10 +26,8 @@ var bodyParser = require('body-parser');
 var compression = require('compression');
 var favicon = require('serve-favicon');
 
-var minify = null;
-try {
-  minify = require('express-minify');
-} catch (e) {}
+var minify = require('express-minify');
+var uglifyjs = require('uglify-js');
 
 var lessMiddleware = require('less-middleware');
 
@@ -312,30 +310,30 @@ app.set('views', __dirname + '/views');
 
 // Setup minification
 // Order is important here as Ace will fail with an invalid content encoding issue
-var minifyErrorHandler = function (aErr, aStage, aAssetType, aMinifyOptions, aBody, aCallback) {
+var minifyErrorHandler = function (aErr, aCallback) {
   console.warn([ // NOTE: Pushing this to stderr instead of default stdout
     'MINIFICATION WARNING (release):',
     '  filename: ' + aErr.filename,
     '  message: ' + aErr.message,
     '  line: ' + aErr.line + ' col: ' + aErr.col + ' pos: ' + aErr.pos,
-    '  body: ' + aBody.slice(0, 100)
+    '  body: ' + aErr.body.slice(0, 200)
 
   ].join('\n'));
 
-  if (aStage === 'compile') {
-    aCallback(aErr, JSON.stringify(aErr));
+  if (aErr && aErr.stage === 'compile') {
+    aCallback(aErr.error, JSON.stringify(aErr.error));
     return;
   }
 
-  aCallback(aErr, aBody);
+  aCallback(aErr.error, aErr.body);
+
 };
 
-if (minify && !isDbg) {
-  app.use(minify({
-    cache: './dev/cache/express-minify/release',
-    onerror: minifyErrorHandler
-  }));
-}
+app.use(minify({
+  uglifyJsModule: uglifyjs,
+  cache: './dev/cache/express-minify/release',
+  onerror: minifyErrorHandler
+}));
 
 app.use(function(aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
@@ -346,7 +344,8 @@ app.use(function(aReq, aRes, aNext) {
       /^\/admin\/(npm|json)/.test(pathname) ||
         /^\/mod\/removed\//.test(pathname)
   ) {
-    aRes._skip = true; // ... skip using release minification
+    aRes.minifyOptions = aRes.minifyOptions || {}; // Ensure object exists on response
+    aRes.minifyOptions.minify = false; // Skip using release minification because we control this with *uglify-es*
   }
   aNext();
 });
