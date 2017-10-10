@@ -60,9 +60,25 @@ function sanitize(aHtml) {
 // Sanitize the output from the block level renderers
 blockRenderers.forEach(function (aType) {
   renderer[aType] = function () {
-    return sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments)
-      .replace(/(^|\s|(?:[^c][^o][^d][^e])>)@([^\s\\\/:*?\'\"<>|#;@=&]+)/gm,
-      '$1<a href="/users/$2">@$2</a>'));
+    // Sanitize first to close any tags
+    var sanitized = sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments));
+
+    // Autolink most usernames
+    return sanitized.replace(/(^|\s|>)@([^\s\\\/:*?\'\"<>|#;@=&,]+)/gm,
+      function (aMatch, aP1, aP2, aOffset, aString) {
+
+        // Look behind anywhere in chunk
+        if (aString.indexOf('<code>') !== -1 && aString.indexOf('<code>') <= aOffset) {
+          return  aP1 + '@' + aP2; // NOTE: Return as early as possible
+        }
+
+        // Look behind anywhere in chunk
+        if (aString.indexOf('<pre>') !== -1 && aString.indexOf('<pre>') <= aOffset) {
+          return  aP1 + '@' + aP2; // NOTE: Return as early as possible
+        }
+
+        return aP1 + '<a href="/users/' + aP2 + '">@' + aP2 + '</a>';
+      });
   };
 });
 
