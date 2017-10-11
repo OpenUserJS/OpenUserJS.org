@@ -12,6 +12,7 @@ var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');
 var sanitizeHtml = require('sanitize-html');
+var useragent = require('useragent');
 
 //--- Model inclusions
 var Script = require('../models/script').Script;
@@ -662,11 +663,20 @@ exports.parseIssue = parseIssue;
 //
 var parseComment = function (aComment) {
   var comment = null;
+  var ua = null;
 
   if (!aComment) {
     return;
   }
   comment = aComment.toObject ? aComment.toObject() : aComment;
+
+  comment.ua = {};
+  comment.ua.raw = comment.userAgent;
+  ua = useragent.parse(comment.userAgent).family.toLowerCase().replace(/\s+/g, '-');
+  if (ua !== 'other') {
+    comment.ua.class = 'ua ua-' + useragent.parse(comment.userAgent).family.toLowerCase()
+      .replace(/\s+/g, '-')
+  }
 
   // Dates
   parseDateProperty(comment, 'created');
