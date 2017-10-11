@@ -345,6 +345,7 @@ exports.open = function (aReq, aRes, aNext) {
       var category = null;
       var topic = aReq.body['discussion-topic'];
       var content = aReq.body['comment-content'];
+      var userAgent = aReq.headers['user-agent'];
       var tasks = [];
 
       // Session
@@ -377,7 +378,7 @@ exports.open = function (aReq, aRes, aNext) {
         }
 
         // Issue Submission
-        discussionLib.postTopic(authedUser, category.slug, topic, content, true,
+        discussionLib.postTopic(authedUser, category.slug, topic, content, true, userAgent,
           function (aDiscussion) {
             if (!aDiscussion) {
               aRes.redirect('/' + category.slugUri + '/open');
@@ -407,6 +408,7 @@ exports.comment = function (aReq, aRes, aNext) {
   //
   var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var type = aReq.params.type;
+  var userAgent = aReq.headers['user-agent'];
 
   Script.findOne({
     installName: scriptStorage.caseSensitive(installNameBase +
@@ -439,7 +441,7 @@ exports.comment = function (aReq, aRes, aNext) {
           return;
         }
 
-        discussionLib.postComment(authedUser, aIssue, content, false,
+        discussionLib.postComment(authedUser, aIssue, content, false, userAgent,
           function (aErr, aDiscussion) {
             aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
               return encodeURIComponent(aStr);

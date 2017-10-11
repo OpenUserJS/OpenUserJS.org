@@ -410,13 +410,14 @@ exports.newTopic = function (aReq, aRes, aNext) {
 };
 
 // Does all the work of submitting a new comment and updating the discussion
-function postComment(aUser, aDiscussion, aContent, aCreator, aCallback) {
+function postComment(aUser, aDiscussion, aContent, aCreator, aUserAgent, aCallback) {
   var created = new Date();
   var comment = new Comment({
     content: aContent,
     author: aUser.name,
     created: created,
     rating: 0,
+    userAgent: aUserAgent,
     creator: aCreator,
     flags: { critical: 0, absolute: 0 },
     flagged: false,
@@ -436,7 +437,7 @@ exports.postComment = postComment;
 
 // Does all the work of submitting a new topic and
 // resolving topic url collisions
-function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aCallback) {
+function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aUserAgent, aCallback) {
   var urlTopic = cleanFilename(aTopic, '').replace(/_\d+$/, '');
   var path = '/' + aCategory + '/' + urlTopic;
   var params = { sort: {} };
@@ -479,7 +480,7 @@ function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aCallback) {
 
     newDiscussion.save(function (aErr, aDiscussion) {
       // Now post the first comment
-      postComment(aUser, aDiscussion, aContent, true, function (aErr, aDiscussion) {
+      postComment(aUser, aDiscussion, aContent, true, aUserAgent, function (aErr, aDiscussion) {
         aCallback(aDiscussion);
       });
     });
@@ -496,6 +497,7 @@ exports.createTopic = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var topic = aReq.body['discussion-topic'];
   var content = aReq.body['comment-content'];
+  var userAgent = aReq.headers['user-agent'];
 
   if (!category) {
     aNext();
@@ -523,7 +525,7 @@ exports.createTopic = function (aReq, aRes, aNext) {
     return;
   }
 
-  postTopic(authedUser, category.slug, topic, content, false, function (aDiscussion) {
+  postTopic(authedUser, category.slug, topic, content, false, userAgent, function (aDiscussion) {
     if (!aDiscussion) {
       exports.newTopic(aReq, aRes, aNext);
       return;
@@ -551,6 +553,7 @@ exports.createComment = function (aReq, aRes, aNext) {
   findDiscussion(category, topic, function (aDiscussion) {
     //
     var content = aReq.body['comment-content'];
+    var userAgent = aReq.headers['user-agent'];
 
     if (!aDiscussion) {
       aNext();
@@ -565,7 +568,9 @@ exports.createComment = function (aReq, aRes, aNext) {
       return;
     }
 
-    postComment(authedUser, aDiscussion, content, false, function (aErr, aDiscussion) {
+
+
+    postComment(authedUser, aDiscussion, content, false, userAgent, function (aErr, aDiscussion) {
       aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
         return encodeURIComponent(aStr);
       }).join('/') +

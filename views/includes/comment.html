@@ -15,8 +15,9 @@
           </div>
           <div class="post-info pull-right">
             {{#isUpdated}}
-              <time datetime="{{updatedISOFormat}}" title="{{updated}}">edited &bull; </time>
+              <time datetime="{{updatedISOFormat}}" title="{{updated}}">edited</time>
             {{/isUpdated}}
+            <i class="fa fa-globe user-agent" title="{{#userAgent}}{{userAgent}}{{/userAgent}}{{^userAgent}}n/a{{/userAgent}}"></i>
             <a href="#comment-{{id}}" class="post-date">
               <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
             </a>
