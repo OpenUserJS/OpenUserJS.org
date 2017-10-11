@@ -373,3 +373,9 @@ ul.flaggedList {
 .form-inline {
   display: inline;
 }
+
+.user-agent {
+  cursor: default;
+  width: 16px;
+  height: 16px;
+}
