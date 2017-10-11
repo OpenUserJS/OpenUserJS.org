@@ -17,7 +17,7 @@
             {{#isUpdated}}
               <time datetime="{{updatedISOFormat}}" title="{{updated}}">edited</time>
             {{/isUpdated}}
-            <i class="fa fa-globe user-agent" title="{{#userAgent}}{{userAgent}}{{/userAgent}}{{^userAgent}}n/a{{/userAgent}}"></i>
+            <i class="fa fa-globe user-agent {{ua.class}}" title="{{#ua.raw}}{{ua.raw}}{{/ua.raw}}{{^ua.raw}}n/a{{/ua.raw}}"></i>
             <a href="#comment-{{id}}" class="post-date">
               <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
             </a>

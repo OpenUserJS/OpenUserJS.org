@@ -379,3 +379,45 @@ ul.flaggedList {
   width: 16px;
   height: 16px;
 }
+
+.ua {
+  color: transparent;
+  background-image: url("/images/ua/miss16.png");
+}
+
+.ua-chrome, .ua-chrome-mobile {
+  background-image: url("/images/ua/chrome16.png");
+}
+.ua-edge {
+  background-image: url("/images/ua/edge16.png");
+}
+.ua-firefox {
+  background-image: url("/images/ua/firefox16.png");
+}
+.ua-ie {
+  background-image: url("/images/ua/iexplorer16.png");
+}
+.ua-maxthon {
+  background-image: url("/images/ua/maxthon16.png");
+}
+.ua-opera {
+  background-image: url("/images/ua/opera16.png");
+}
+.ua-otter {
+  background-image: url("/images/ua/otter16.png");
+}
+.ua-pale-moon {
+  background-image: url("/images/ua/palemoon16.png");
+}
+.ua-qupzilla {
+  background-image: url("/images/ua/qupzilla16.png");
+}
+.ua-safari {
+  background-image: url("/images/ua/safari16.png");
+}
+.ua-seamonkey {
+  background-image: url("/images/ua/seamonkey16.png");
+}
+.ua-yandex-browser {
+  background-image: url("/images/ua/yandex16.png");
+}
