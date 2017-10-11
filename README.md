@@ -45,6 +45,7 @@ Repository | Reference | Recent Version
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl][ᴸᴬᴺᴳ][highlight.jsLANGUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
+[jsdom][jsdomGHUrl] | [Documentation][jsdomDOCUrl] | [![NPM version][jsdomNPMVersionImage]][jsdomNPMUrl]
 [jwt-simple][jwt-simpleGHUrl] | [Documentation][jwt-simpleDOCUrl] | [![NPM version][jwt-simpleNPMVersionImage]][jwt-simpleNPMUrl]
 [kerberos][kerberosGHUrl] | [Documentation][kerberosDOCUrl] | [![NPM version][kerberosNPMVersionImage]][kerberosNPMUrl]
 [less-middleware][less-middlewareGHUrl] [&#x00b9;][lessGHUrl] | [Documentation][less-middlewareDOCUrl] [&#x00b9;][lessDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
@@ -255,6 +256,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [jQueryGHUrl]: https://github.com/jquery/jquery
 [jQueryUrl]: http://jquery.com/
 [jQueryDOCUrl]: http://api.jquery.com/
+
+[jsdomNPMUrl]: https://www.npmjs.com/package/jsdom
+[jsdomNPMVersionImage]: https://img.shields.io/npm/v/jsdom.svg?style=flat
+[jsdomGHUrl]: https://github.com/tmpvar/jsdom
+[jsdomDOCUrl]: https://github.com/tmpvar/jsdom/blob/master/README.md
 
 [jwt-simpleNPMUrl]: https://www.npmjs.com/package/jwt-simple
 [jwt-simpleNPMVersionImage]: https://img.shields.io/npm/v/jwt-simple.svg?style=flat
