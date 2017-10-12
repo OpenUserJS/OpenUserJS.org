@@ -385,22 +385,25 @@ ul.flaggedList {
   background-image: url("/images/ua/miss16.png");
 }
 
-.ua-chrome, .ua-chrome-mobile {
+.ua-chrome, .ua-chrome-mobile, .ua-chrome-mobile-webview {
   background-image: url("/images/ua/chrome16.png");
 }
 .ua-edge {
   background-image: url("/images/ua/edge16.png");
 }
-.ua-firefox {
+.ua-firefox, .ua-firefox-mobile {
   background-image: url("/images/ua/firefox16.png");
 }
 .ua-ie {
   background-image: url("/images/ua/iexplorer16.png");
 }
+.ua-konqueror {
+  background-image: url("/images/ua/konqueror16.png");
+}
 .ua-maxthon {
   background-image: url("/images/ua/maxthon16.png");
 }
-.ua-opera {
+.ua-opera, .ua-opera-mobile {
   background-image: url("/images/ua/opera16.png");
 }
 .ua-otter {
@@ -412,11 +415,20 @@ ul.flaggedList {
 .ua-qupzilla {
   background-image: url("/images/ua/qupzilla16.png");
 }
+.ua-rekonq {
+  background-image: url("/images/ua/rekonq16.png");
+}
 .ua-safari {
   background-image: url("/images/ua/safari16.png");
 }
+.ua-samsung-internet {
+  background-image: url("/images/ua/samsunginternet16.png");
+}
 .ua-seamonkey {
   background-image: url("/images/ua/seamonkey16.png");
+}
+.ua-uc-browser {
+  background-image: url("/images/ua/uc16.png");
 }
 .ua-yandex-browser {
   background-image: url("/images/ua/yandex16.png");
