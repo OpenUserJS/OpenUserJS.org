@@ -380,66 +380,66 @@ ul.flaggedList {
   height: 16px;
 }
 .ua-chrome, .ua-chrome-mobile, .ua-chrome-mobile-webview {
-  background-image: url("/images/ua/chrome16.png");
+  background: transparent url("/images/ua/chrome16.png") no-repeat left top;
   color: transparent;
 }
 .ua-edge {
-  background-image: url("/images/ua/edge16.png");
+  background: transparent url("/images/ua/edge16.png") no-repeat left top;
   color: transparent;
 }
 .ua-firefox, .ua-firefox-mobile {
-  background-image: url("/images/ua/firefox16.png");
+  background: transparent url("/images/ua/firefox16.png") no-repeat left top;
   color: transparent;
 }
 .ua-ie {
-  background-image: url("/images/ua/iexplorer16.png");
+  background: transparent url("/images/ua/iexplorer16.png") no-repeat left top;
   color: transparent;
 }
 .ua-konqueror {
-  background-image: url("/images/ua/konqueror16.png");
+  background: transparent url("/images/ua/konqueror16.png") no-repeat left top;
   color: transparent;
 }
 .ua-maxthon {
-  background-image: url("/images/ua/maxthon16.png");
+  background: transparent url("/images/ua/maxthon16.png") no-repeat left top;
   color: transparent;
 }
 .ua-opera, .ua-opera-mobile {
-  background-image: url("/images/ua/opera16.png");
+  background: transparent url("/images/ua/opera16.png") no-repeat left top;
   color: transparent;
 }
 .ua-otter {
-  background-image: url("/images/ua/otter16.png");
+  background: transparent url("/images/ua/otter16.png") no-repeat left top;
   color: transparent;
 }
 .ua-pale-moon {
-  background-image: url("/images/ua/palemoon16.png");
+  background: transparent url("/images/ua/palemoon16.png") no-repeat left top;
   color: transparent;
 }
 .ua-qupzilla {
-  background-image: url("/images/ua/qupzilla16.png");
+  background: transparent url("/images/ua/qupzilla16.png") no-repeat left top;
   color: transparent;
 }
 .ua-rekonq {
-  background-image: url("/images/ua/rekonq16.png");
+  background: transparent url("/images/ua/rekonq16.png") no-repeat left top;
   color: transparent;
 }
 .ua-safari {
-  background-image: url("/images/ua/safari16.png");
+  background: transparent url("/images/ua/safari16.png") no-repeat left top;
   color: transparent;
 }
 .ua-samsung-internet {
-  background-image: url("/images/ua/samsunginternet16.png");
+  background: transparent url("/images/ua/samsunginternet16.png") no-repeat left top;
   color: transparent;
 }
 .ua-seamonkey {
-  background-image: url("/images/ua/seamonkey16.png");
+  background: transparent url("/images/ua/seamonkey16.png") no-repeat left top;
   color: transparent;
 }
 .ua-uc-browser {
-  background-image: url("/images/ua/uc16.png");
+  background: transparent url("/images/ua/uc16.png") no-repeat left top;
   color: transparent;
 }
 .ua-yandex-browser {
-  background-image: url("/images/ua/yandex16.png");
+  background: transparent url("/images/ua/yandex16.png") no-repeat left top;
   color: transparent;
 }
