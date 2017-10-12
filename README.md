@@ -85,6 +85,7 @@ Repository | Reference | Recent Version
 [toobusy-js][toobusy-jsGHUrl] <br />&#x22D4; [`harmony`][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
 [uglifyJS][uglifyJS2GHUrl] <br />&#x21B3; [`harmony`][uglifyJS2GHHarmonyUrl] | [Documentation][uglifyJS2DOCUrl] [&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl] <br />&#x21B3; [![NPM Harmony version][uglifyJS2NPMHarmonyVersionImage]][uglifyJS2NPMHarmonyUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
+[useragent][useragentGHUrl] | [Documentation][useragentDOCUrl] | [![NPM version][useragentNPMVersionImage]][useragentNPMUrl]
 
 
 ##### Static
@@ -470,6 +471,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [underscoreDOCUrl]: http://underscorejs.org/
 [underscoreNPMUrl]: https://www.npmjs.com/package/underscore
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
+
+[useragentGHUrl]: https://github.com/3rd-Eden/useragent
+[useragentDOCUrl]: https://github.com/3rd-Eden/useragent/blob/master/README.md
+[useragentNPMUrl]: https://www.npmjs.com/package/useragent
+[useragentNPMVersionImage]: https://img.shields.io/npm/v/useragent.svg?style=flat
 
 
 [bootswatchGHUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/custom/bootstrap.css
