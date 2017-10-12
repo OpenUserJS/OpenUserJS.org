@@ -674,7 +674,7 @@ var parseComment = function (aComment) {
   comment.ua.raw = comment.userAgent;
   ua = useragent.parse(comment.userAgent).family.toLowerCase().replace(/\s+/g, '-');
   if (ua !== 'other') {
-    comment.ua.class = 'ua ua-' + useragent.parse(comment.userAgent).family.toLowerCase()
+    comment.ua.class = 'fa-lg ua-' + useragent.parse(comment.userAgent).family.toLowerCase()
       .replace(/\s+/g, '-')
   }
 
