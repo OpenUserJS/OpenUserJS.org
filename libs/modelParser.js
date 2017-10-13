@@ -674,8 +674,9 @@ var parseComment = function (aComment) {
   comment.ua.raw = comment.userAgent;
   ua = useragent.parse(comment.userAgent).family.toLowerCase().replace(/\s+/g, '-');
   if (ua !== 'other') {
-    comment.ua.class = 'fa-lg ua-' + useragent.parse(comment.userAgent).family.toLowerCase()
-      .replace(/\s+/g, '-')
+    comment.ua.class = 'fa-lg ua-' + ua;
+  } else if (comment.userAgent) {
+    comment.ua.class = 'fa-lg ua-' + ua;
   }
 
   // Dates
