@@ -7,6 +7,7 @@
 <body>
   {{> includes/header.html }}
   <div class="container-fluid">
+    {{^wantname}}
     <div class="row">
       <form action="/auth/" method="post" class="form-signin">
         <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
@@ -23,12 +24,14 @@
         </div>
       </form>
     </div>
+    {{/wantname}}
+    {{#wantname}}
     <div class="row">
       <form action="/auth/" method="post" class="form-register">
         <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
         <h3>
           Register
-          <span class="help-block small">Sign up with a <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>
+          <span class="help-block small">Attach a preferred <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>
         </h3>
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
@@ -45,10 +48,11 @@
           </span>
         </div>
         <div class="alert alert-warning small" role="alert">
-          <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The unique Username that you choose to sign up with here will be displayed to everyone. It is strongly recommended to <strong>not</strong> use an email address.
+          <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The unique Username that you choose to attach here will be displayed to everyone as shown above. It is strongly recommended to <strong>not</strong> use an email address.<br><br>Additional changes to the Username above may include additional sanitizing for web friendly urls and Userscript engine compatibility. If you wish to see the sanitization changes please reload this page and start over.
         </div>
       </form>
     </div>
+    {{/wantname}}
   </div>
   {{> includes/footer.html }}
 </body>
