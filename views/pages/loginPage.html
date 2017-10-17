@@ -7,7 +7,6 @@
 <body>
   {{> includes/header.html }}
   <div class="container-fluid">
-    {{^wantname}}
     <div class="row">
       <form action="/auth/" method="post" class="form-signin">
         <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
@@ -17,34 +16,32 @@
         </h3>
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username">
+          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username"{{#wantname}} disabled="disabled"{{/wantname}}>
           <span class="input-group-btn">
-            <button class="btn btn-info" type="submit">Next <i class="fa fa-sign-in fa-fw"></i></button>
+            <button class="btn btn-info" type="submit"{{#wantname}} disabled="disabled"{{/wantname}}>Next <i class="fa fa-sign-in fa-fw"></i></button>
           </span>
         </div>
       </form>
     </div>
-    {{/wantname}}
-    {{#wantname}}
     <div class="row">
       <form action="/auth/" method="post" class="form-register">
         <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
         <h3>
           Register
-          <span class="help-block small">Attach a preferred <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service to your sanitized unique name.</span>
+          <span class="help-block small">Attach your preferred <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service to your sanitized unique name.</span>
         </h3>
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username">
+          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username"{{^wantname}} disabled="disabled"{{/wantname}}>
           <span class="input-group-btn">
             <select name="auth" class="btn btn-addon-default" style="border-radius: 0px;">
               {{#strategies}}
-              <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}>{{display}}</option>
+              <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}{{^wantname}} disabled="disabled"{{/wantname}}>{{display}}</option>
               {{/strategies}}
             </select>
           </span>
           <span class="input-group-btn">
-            <button class="btn btn-info" type="submit">Register <i class="fa fa-sign-in fa-fw"></i></button>
+            <button class="btn btn-info" type="submit"{{^wantname}} disabled="disabled"{{/wantname}}>Register <i class="fa fa-sign-in fa-fw"></i></button>
           </span>
         </div>
         <div class="alert alert-warning small" role="alert">
@@ -52,7 +49,6 @@
         </div>
       </form>
     </div>
-    {{/wantname}}
   </div>
   {{> includes/footer.html }}
 </body>
