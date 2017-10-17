@@ -36,7 +36,7 @@ module.exports = function (aApp) {
 
   // User routes
   aApp.route('/users').get(user.userListPage);
-  aApp.route('/users/:username').get(user.view);
+  aApp.route('/users/:username').get(user.view).head(user.exist);
   aApp.route('/users/:username/comments').get(user.userCommentListPage);
   aApp.route('/users/:username/scripts').get(user.userScriptListPage);
   aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);

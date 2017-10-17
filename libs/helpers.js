@@ -86,6 +86,7 @@ exports.forIn = function (aObj, aForProp) {
 
 // Clean filenames but leave them readable
 // Based on Greasemonkey modules/remoteScript.js
+// NOTE: Keep in sync with client side JavaScript
 exports.cleanFilename = function (aFilename, aDefaultName) {
   // Blacklist problem characters (slashes, colons, etc.).
   var cleanName = (aFilename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')

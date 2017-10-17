@@ -358,7 +358,7 @@ ul.flaggedList {
   opacity: 0;
 }
 
-.hide-icon {
+.hide-icon, .hide-alert, .hide-reload {
   display: none;
 }
 
