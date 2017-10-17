@@ -1,0 +1,64 @@
+<script type="text/javascript">
+  (function () {
+
+    // NOTE: Keep in sync with helper
+    function cleanFilename(aFilename, aDefaultName) {
+      // Blacklist problem characters (slashes, colons, etc.).
+      var cleanName = (aFilename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
+
+      // Make whitespace readable.
+      .replace(/(\s|%20)+/g, '_');
+
+      return cleanName || aDefaultName;
+    };
+
+    function onDOMContentLoaded(aEv) {
+      var nodes = document.querySelectorAll('input[name="username"]');
+      var alert = document.querySelector('div#exists');
+      var login = null;
+      var register = null;
+
+      function onInput(aEv) {
+        var req = new XMLHttpRequest();
+        var username = cleanFilename(aEv.target.value, '');
+
+        if (username) {
+          req.open('HEAD', '/users/' + username );
+          req.onreadystatechange = function () {
+            if (this.readyState == this.DONE) {
+              switch (this.status) {
+                case 200:
+                  //  Show the visibility of the alert box
+                  alert.classList.remove('hide-alert');
+                  break;
+                default:
+                  alert.classList.add('hide-alert');
+              }
+            }
+          };
+          req.send();
+        }
+
+        if (register.value !== username) {
+          register.value = username;
+        }
+      }
+
+      if (nodes.length === 2 && alert) {
+        login = nodes[0];
+        register = nodes[1];
+
+        login.addEventListener('input', onInput);
+        register.addEventListener('input', onInput);
+      }
+
+      reload = document.querySelector('p.hide-reload');
+      if (reload) {
+        reload.classList.remove('hide-reload');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+  })();
+</script>

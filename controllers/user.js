@@ -62,6 +62,39 @@ function caseInsensitive (aStr) {
   return new RegExp('^' + (aStr || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '$', 'i');
 }
 
+// Simple exist check usually used with HEAD requests
+exports.exist = function (aReq, aRes) {
+  var username = aReq.params.username;
+
+  if (!username) {
+    aRes.status(400).send();
+    return;
+  }
+
+  username = helpers.cleanFilename(username);
+
+  if (!username) {
+    aRes.status(400).send();
+    return;
+  }
+
+  User.findOne({
+    name: caseInsensitive(username)
+  }, function (aErr, aUser) {
+    if (aErr) {
+      aRes.status(400).send();
+      return;
+    }
+
+    if (!aUser) {
+      aRes.status(404).send();
+      return;
+    }
+
+    aRes.status(200).send();
+  });
+};
+
 var setupUserModerationUITask = function (aOptions) {
   var user = aOptions.user;
   var authedUser = aOptions.authedUser;

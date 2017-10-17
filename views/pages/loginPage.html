@@ -44,12 +44,17 @@
             <button class="btn btn-info" type="submit"{{^wantname}} disabled="disabled"{{/wantname}}>Register <i class="fa fa-sign-in fa-fw"></i></button>
           </span>
         </div>
-        <div class="alert alert-warning small" role="alert">
-          <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The unique Username that you choose to attach here will be displayed to everyone as shown above. It is strongly recommended to <strong>not</strong> use an email address.<br><br>Additional changes to the registering Username above may include additional sanitizing for web friendly URLs and Userscript engine compatibility. If you wish to see the sanitization changes please <a href="javascript:void(0);" onclick="history.go(0)">reload this page</a> and start over.
+        <div class="alert alert-info small hide-alert" role="alert" id="exists">
+          <i class="fa fa-exclamation-triangle"></i> <strong>NOTICE</strong>: The unique Username you are choosing already exists.
         </div>
+        <div class="alert alert-warning small" role="alert">
+          <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The unique Username that you choose to attach here will be displayed to everyone as shown above. It is strongly recommended to <strong>not</strong> attempt to use an email address.<noscript><br><br>Additional changes to the registering Username above may include additional sanitizing for web friendly URLs and Userscript engine compatibility. If you wish to see the sanitization changes please <a href="/register">reload this page</a> and start over.</noscript>
+        </div>
+        <p class="text-center hide-reload"><a href="javascript: void(0);" onclick="history.go(0);"><i class="fa fa-refresh"></i> Reload this page</a>.</p>
       </form>
     </div>
   </div>
   {{> includes/footer.html }}
+  {{> includes/scripts/loginEcho.html }}
 </body>
 </html>
