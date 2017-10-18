@@ -23,7 +23,7 @@
         var username = cleanFilename(aEv.target.value, '');
 
         if (username) {
-          req.open('HEAD', '/users/' + username );
+          req.open('HEAD', '/api/user/exist/' + username);
           req.onreadystatechange = function () {
             if (this.readyState == this.DONE) {
               switch (this.status) {
