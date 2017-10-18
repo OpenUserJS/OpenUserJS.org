@@ -36,7 +36,7 @@ module.exports = function (aApp) {
 
   // User routes
   aApp.route('/users').get(user.userListPage);
-  aApp.route('/users/:username').get(user.view).head(user.exist);
+  aApp.route('/users/:username').get(user.view);
   aApp.route('/users/:username/comments').get(user.userCommentListPage);
   aApp.route('/users/:username/scripts').get(user.userScriptListPage);
   aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);
@@ -46,6 +46,7 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/update').post(admin.adminUserUpdate);
   aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
   aApp.route('/user').get(function (aReq, aRes) { aRes.redirect('/users'); });
+  aApp.route('/api/user/exist/:username').head(user.exist);
 
   // Adding script/library routes
   aApp.route('/user/add/scripts').get(authentication.validateUser, user.newScriptPage);
