@@ -78,15 +78,15 @@ exports.exist = function (aReq, aRes) {
     return;
   }
 
-  User.findOne({
+  User.count({
     name: caseInsensitive(username)
-  }, function (aErr, aUser) {
+  }, function (aErr, aCount) {
     if (aErr) {
       aRes.status(400).send();
       return;
     }
 
-    if (!aUser) {
+    if (aCount === 0) {
       aRes.status(404).send();
       return;
     }
