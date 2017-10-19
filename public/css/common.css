@@ -251,6 +251,10 @@ h6:hover a.anchor {
   margin-top: 0;
 }
 
+.user-data {
+  margin: 1px 0;
+}
+
 .user-data pre,
 .user-content pre,
 .document-content pre {
