@@ -748,10 +748,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
               compress: {
                 inline: false
               },
-              mangle: {
-              },
+              mangle: false,
               output: {
-                comments: true
+                comments: true,
+                quote_style: 3
               }
             });
 
