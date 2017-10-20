@@ -362,8 +362,12 @@ ul.flaggedList {
   opacity: 0;
 }
 
-.hide-icon, .hide-alert, .hide-reload {
+.hide-icon, .hide-alert {
   display: none;
+}
+
+.hide-reload {
+  display: none !important;
 }
 
 .opaque-icon {
