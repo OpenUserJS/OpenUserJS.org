@@ -366,10 +366,6 @@ ul.flaggedList {
   display: none;
 }
 
-.hide-reload {
-  display: none !important;
-}
-
 .opaque-icon {
   opacity: 1;
 }

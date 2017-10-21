@@ -13,10 +13,9 @@
     };
 
     function onDOMContentLoaded(aEv) {
-      var nodes = document.querySelectorAll('input[name="username"]');
-      var alert = document.querySelector('div#exists');
-      var login = null;
-      var register = null;
+      var username = document.querySelector('input[name="username"]');
+      var auth = document.querySelector('select[name="auth"]');
+      var action = document.querySelector('button#action');
 
       function onInput(aEv) {
         var req = new XMLHttpRequest();
@@ -28,33 +27,32 @@
             if (this.readyState == this.DONE) {
               switch (this.status) {
                 case 200:
-                  //  Show the visibility of the alert box
-                  alert.classList.remove('hide-alert');
+                  //  Show exists
+                  action.innerHTML = action.innerHTML.replace(/Sign Up/, 'Sign In');
+                  action.classList.add('btn-success');
+                  action.classList.remove('btn-info');
+                  auth.value = '';
                   break;
                 default:
-                  alert.classList.add('hide-alert');
+                  action.innerHTML = action.innerHTML.replace(/Sign In/, 'Sign Up');
+                  action.classList.remove('btn-success');
+                  action.classList.add('btn-info');
+                  auth.value = 'github';
               }
             }
           };
           req.send();
         }
 
-        if (register.value !== username) {
-          register.value = username;
+        if (username.value !== username) {
+          username.value = username;
         }
       }
 
-      if (nodes.length === 2 && alert) {
-        login = nodes[0];
-        register = nodes[1];
+      if (username && auth && action) {
+        action.innerHTML = action.innerHTML.replace(/Next/, 'Sign Up');
 
-        login.addEventListener('input', onInput);
-        register.addEventListener('input', onInput);
-      }
-
-      reload = document.querySelector('.hide-reload');
-      if (reload) {
-        reload.classList.remove('hide-reload');
+        username.addEventListener('input', onInput);
       }
     }
 
