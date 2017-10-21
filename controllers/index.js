@@ -210,17 +210,10 @@ function getRedirect(aReq) {
 // UI for user registration
 exports.register = function (aReq, aRes) {
   function preRender() {
-    var githubStrategy = null;
-
     // Sort the strategies
     options.strategies = _.sortBy(options.strategies, function (aStrategy) {
       return aStrategy.display;
     });
-
-    // Prefer GitHub
-    githubStrategy = _.findWhere(options.strategies, { strat: 'github' });
-    if (githubStrategy)
-      githubStrategy.selected = true;
   }
 
   function render() {
@@ -250,7 +243,7 @@ exports.register = function (aReq, aRes) {
   options.redirectTo = getRedirect(aReq);
 
   // Page metadata
-  pageMetadata(options, 'Login / Register');
+  pageMetadata(options, 'Register');
 
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
@@ -298,7 +291,7 @@ exports.register = function (aReq, aRes) {
   tasks.push(function (aCallback) {
     // Insert an empty default strategy at the beginning
     // NOTE: Safari always autoselects an option when disabled
-    options.strategies.unshift({'strat': '', 'display': '(default)'});
+    options.strategies.unshift({'strat': '', 'display': '(default preferred authentication)'});
     aCallback();
   });
 

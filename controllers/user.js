@@ -879,6 +879,11 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
           }
         }
 
+        // Sort the strategies
+        options.openStrategies = _.sortBy(options.openStrategies, function (aStrategy) {
+          return aStrategy.display;
+        });
+
         options.defaultStrategy = strategies[defaultStrategy].name;
         options.defaultStrat = defaultStrategy;
         options.haveOtherStrategies = options.usedStrategies.length > 0;
