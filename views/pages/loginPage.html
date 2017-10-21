@@ -33,9 +33,9 @@
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
           <input class="form-control" type="text" name="username" value="{{wantname}}"{{#wantname}} placeholder="Username"{{/wantname}}{{^wantname}} disabled="disabled"{{/wantname}}>
-            <select name="auth" class="form-control strat">
+            <select name="auth" class="form-control">
               {{#strategies}}
-              <option value="{{strat}}" {{#wantname}}{{#selected}}selected="selected"{{/selected}}{{/wantname}}{{^wantname}} disabled="disabled"{{/wantname}} style="background-image: url('/images/strat/{{strat}}16.png');">{{display}}</option>
+              <option value="{{strat}}" {{#wantname}}{{#selected}}selected="selected"{{/selected}}{{/wantname}}{{^wantname}} disabled="disabled"{{/wantname}}>{{display}}</option>
               {{/strategies}}
             </select>
           <span class="input-group-addon">
