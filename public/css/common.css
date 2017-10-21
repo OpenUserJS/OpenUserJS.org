@@ -451,3 +451,9 @@ ul.flaggedList {
   background: transparent url("/images/ua/yandex16.png") no-repeat left top;
   color: transparent;
 }
+
+select.strat option {
+  margin-left: 0.5em;
+  padding: 0.125em 0 0.125em 1.5em;
+  background: transparent url("") no-repeat left 1px;
+}
