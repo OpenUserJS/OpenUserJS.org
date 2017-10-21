@@ -880,6 +880,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
         }
 
         options.defaultStrategy = strategies[defaultStrategy].name;
+        options.defaultStrat = defaultStrategy;
         options.haveOtherStrategies = options.usedStrategies.length > 0;
 
         aCallback();

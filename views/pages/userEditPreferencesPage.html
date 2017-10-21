@@ -16,7 +16,7 @@
               <div class="panel-body">
                 <div class="edit-authentication-box">
                   <h2 class="edit-authentication">Authentication</h2>
-                  <p><strong>{{defaultStrategy}}</strong> is your current form of authentication.</p>
+                  <p><img src="/images/strat/{{defaultStrat}}16.png"> <strong>{{defaultStrategy}}</strong> is your current preferred form of authentication.</p>
                   {{#haveOtherStrategies}}
                   <p>Other verified forms of authentication:</p>
                   {{#usedStrategies}}
@@ -24,15 +24,15 @@
                   {{/usedStrategies}}
                   {{/haveOtherStrategies}}
                   <form id="register" method="post" action="/auth/">
-                    <p>Add another form of authentication:</p>
+                    <p>Attach another form of authentication:</p>
                     <div class="input-group col-xs-12">
-                      <select name="auth" class="form-control">
+                      <select name="auth" class="form-control strat">
                         {{#openStrategies}}
-                        <option value="{{strat}}">{{display}}</option>
+                        <option value="{{strat}}" style="background-image: url('/images/strat/{{strat}}16.png')">{{display}}</option>
                         {{/openStrategies}}
                       </select>
                       <div class="input-group-btn">
-                        <button class="btn btn-success" type="submit">Authenticate</button>
+                        <button class="btn btn-success" type="submit"><i class="fa fa-sign-in fa-fw"></i> Attach</button>
                       </div>
                     </div>
                   </form>

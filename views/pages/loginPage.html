@@ -12,7 +12,7 @@
         <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
         <h3>
           Login
-          <span class="help-block small">Enter your unique name for this site.</span>
+          <span class="help-block small">Enter your unique name for our site.</span>
         </h3>
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
@@ -28,20 +28,18 @@
         <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
         <h3>
           Register
-          <span class="help-block small">Attach your preferred <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service to your sanitized unique name.</span>
+          <span class="help-block small">Attach your sanitized unique name for our site to your preferred <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>
         </h3>
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
           <input class="form-control" type="text" name="username" value="{{wantname}}"{{#wantname}} placeholder="Username"{{/wantname}}{{^wantname}} disabled="disabled"{{/wantname}}>
-          <span class="input-group-btn">
-            <select name="auth" class="btn btn-addon-default" style="border-radius: 0px;">
+            <select name="auth" class="form-control strat">
               {{#strategies}}
-              <option value="{{strat}}" {{#wantname}}{{#selected}}selected="selected"{{/selected}}{{/wantname}}{{^wantname}} disabled="disabled"{{/wantname}}>{{display}}</option>
+              <option value="{{strat}}" {{#wantname}}{{#selected}}selected="selected"{{/selected}}{{/wantname}}{{^wantname}} disabled="disabled"{{/wantname}} style="background-image: url('/images/strat/{{strat}}16.png');">{{display}}</option>
               {{/strategies}}
             </select>
-          </span>
-          <span class="input-group-btn">
-            <button class="btn btn-info" type="submit"{{^wantname}} disabled="disabled"{{/wantname}}>Register <i class="fa fa-sign-in fa-fw"></i></button>
+          <span class="input-group-addon">
+            <button class="btn btn-info" type="submit"{{^wantname}} disabled="disabled"{{/wantname}}>Attach <i class="fa fa-sign-in fa-fw"></i></button>
           </span>
         </div>
         <div class="alert alert-info small hide-alert" role="alert" id="exists">
