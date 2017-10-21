@@ -26,9 +26,9 @@
                   <form id="register" method="post" action="/auth/">
                     <p>Attach another form of authentication:</p>
                     <div class="input-group col-xs-12">
-                      <select name="auth" class="form-control strat">
+                      <select name="auth" class="form-control">
                         {{#openStrategies}}
-                        <option value="{{strat}}" style="background-image: url('/images/strat/{{strat}}16.png')">{{display}}</option>
+                        <option value="{{strat}}">{{display}}</option>
                         {{/openStrategies}}
                       </select>
                       <div class="input-group-btn">
