@@ -295,6 +295,13 @@ exports.register = function (aReq, aRes) {
     });
   });
 
+  tasks.push(function (aCallback) {
+    // Insert an empty default strategy at the beginning
+    // NOTE: Safari always autoselects an option when disabled
+    options.strategies.unshift({'strat': '', 'display': '(default)'});
+    aCallback();
+  });
+
   //---
   async.parallel(tasks, asyncComplete);
 };
