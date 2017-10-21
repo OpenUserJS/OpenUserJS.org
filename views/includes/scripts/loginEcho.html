@@ -19,10 +19,10 @@
 
       function onInput(aEv) {
         var req = new XMLHttpRequest();
-        var username = cleanFilename(aEv.target.value, '');
+        var wantname = cleanFilename(aEv.target.value, '');
 
-        if (username) {
-          req.open('HEAD', '/api/user/exist/' + username);
+        if (wantname) {
+          req.open('HEAD', '/api/user/exist/' + wantname);
           req.onreadystatechange = function () {
             if (this.readyState == this.DONE) {
               switch (this.status) {
@@ -44,8 +44,8 @@
           req.send();
         }
 
-        if (username.value !== username) {
-          username.value = username;
+        if (username.value !== wantname) {
+          username.value = wantname;
         }
       }
 
