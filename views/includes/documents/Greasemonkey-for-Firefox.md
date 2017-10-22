@@ -54,7 +54,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [amoGreasemonkey]: https://addons.mozilla.org/firefox/addon/greasemonkey/
 [aboutAddons]: about:addons
 [aomUserScriptsScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey5.png "Userscript management in Firefox"
-[greasespot]: http://www.greasespot.net/
+[greasespot]: https://www.greasespot.net/
 [greasemonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey-icon.png "Greasemonkey"
 [greasemonkeyAMOscreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey1.gif "Greasemonkey at Mozilla Add-Ons"
 [oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"

@@ -1,7 +1,7 @@
 // peg grammar for parsing the UserScript metadata block
 
 /*
-Test the generated parser with some input for peg.js site at http://pegjs.org/online:
+Test the generated parser with some input for peg.js site at https://pegjs.org/online:
 
 // ==UserScript==
 // @name            RFC 2606§3 - Hello, World!
@@ -13,7 +13,7 @@ Test the generated parser with some input for peg.js site at http://pegjs.org/on
 // @description:fr  Valeurs d'essai avec des clés de métadonnées UserScript connues.
 // @copyright     2013+, OpenUserJS Group (https://github.com/orgs/OpenUserJs/people)
 // @license       GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
-// @licence       (CC); http://creativecommons.org/licenses/by-nc-sa/3.0/
+// @licence       (CC); https://creativecommons.org/licenses/by-nc-sa/3.0/
 // @version       1.2.3
 // @icon      http://example.com/favicon.ico
 // @iconURL   http://example.com/faviconURL.ico
