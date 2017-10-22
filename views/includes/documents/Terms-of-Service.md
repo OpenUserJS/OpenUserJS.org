@@ -69,6 +69,6 @@ OpenUserJs.org reserves the right to amend these terms at any time.
 [mozMPLHeaders]: https://www.mozilla.org/MPL/headers/
 [oujsDefaultCodeLicensing]: #default-code-licensing
 [oujsAcceptableLicensing]: #acceptable-licensing
-[osiMITLicenseExpat]: http://opensource.org/licenses/MIT
-[osiApprovedLicenses]: http://opensource.org/licenses/category
-[osiPublicDomain]: http://opensource.org/faq#public-domain
+[osiMITLicenseExpat]: https://opensource.org/licenses/MIT
+[osiApprovedLicenses]: https://opensource.org/licenses/category
+[osiPublicDomain]: https://opensource.org/faq#public-domain

@@ -135,7 +135,7 @@ var setUrlQueryValue = function (aBaseUrl, aQueryVarKey, aQueryVarValue) {
   var parseQueryString = true;
   var u = url.parse(aBaseUrl, parseQueryString);
   u.query[aQueryVarKey] = aQueryVarValue;
-  delete u.search; // http://stackoverflow.com/a/7517673/947742
+  delete u.search; // https://stackoverflow.com/a/7517673/947742
   return url.format(u);
 };
 exports.setUrlQueryValue = setUrlQueryValue;
