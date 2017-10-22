@@ -21,7 +21,7 @@
         </noscript>
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username">
+          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
             <select name="auth" class="form-control">
               {{#strategies}}
               <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}>{{display}}</option>
