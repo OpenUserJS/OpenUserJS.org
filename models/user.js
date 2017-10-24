@@ -24,7 +24,6 @@ var userSchema = new Schema({
   // Store their GitHub username when they import scripts
   ghUsername: String,
 
-
   // Moderation
   role: Number,
   flags: {
