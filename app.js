@@ -158,10 +158,11 @@ app.use(function (aReq, aRes, aNext) {
             /^\/images\//.test(pathname) ||
               /^\/fonts\//.test(pathname) ||
                 /^\/meta\//.test(pathname) ||
-                  /^\/logout\/?/.test(pathname) ||
-                    /^\/auth\//.test(pathname) ||
-                      /^\/(?:admin|mod)/.test(pathname) ||
-                        /^\/api\/user\/exist\//.test(pathname)
+                  /^\/github\//.test(pathname) ||
+                    /^\/logout\/?/.test(pathname) ||
+                      /^\/auth\//.test(pathname) ||
+                        /^\/(?:admin|mod)/.test(pathname) ||
+                          /^\/api\/user\/exist\//.test(pathname)
 
   ) {
     aNext(); // NOTE: Allow to pass through on these routes

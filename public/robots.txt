@@ -4,6 +4,7 @@ Disallow: /mod/
 Disallow: /flag/
 Disallow: /vote/
 Disallow: /auth/
+Disallow: /github/
 Disallow: /css/
 Disallow: /dist/
 Disallow: /fonts/
