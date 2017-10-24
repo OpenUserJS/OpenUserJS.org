@@ -46,9 +46,10 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
   aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
   aApp.route('/users/:username/update').post(admin.adminUserUpdate);
+  // NOTE: Some below inconsistent with priors
   aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
   aApp.route('/user').get(function (aReq, aRes) {
-    aRes.redirect(301, '/users');
+    aRes.redirect(302, '/users');
   });
   aApp.route('/api/user/exist/:username').head(user.exist);
 
