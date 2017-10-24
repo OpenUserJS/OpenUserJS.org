@@ -7,6 +7,8 @@ var isDbg = require('../libs/debug').isDbg;
 
 //
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
 var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
@@ -17,15 +19,23 @@ var userSchema = new Schema({
   // A user can link multiple accounts to their OpenUserJS account
   auths: Array,
   strategies: Array,
+  authed: Date, // last logged in
 
   // Store their GitHub username when they import scripts
   ghUsername: String,
 
   // Moderation
   role: Number,
-  flags: Number,
+  flags: {
+    critical: Number,
+    absolute: Number
+  },
   flagged: Boolean,
   sessionIds: [String]
+});
+
+userSchema.virtual('_since').get(function () {
+  return this._id.getTimestamp();
 });
 
 var User = mongoose.model('User', userSchema);

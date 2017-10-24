@@ -24,6 +24,7 @@ html, body {
   color: #333333;
 }*/
 .rating .progress {
+  margin-bottom: 0;
   height: 4px;
 }
 .progress-bar-good {
@@ -250,6 +251,17 @@ h6:hover a.anchor {
   margin-top: 0;
 }
 
+.user-data {
+  margin: 1px 0;
+}
+
+.user-data pre,
+.user-content pre,
+.document-content pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
 .user-data code,
 .user-content code,
 .document-content code {
@@ -290,4 +302,148 @@ a.panel-heading {
 .octicon-fw {
   text-align: center;
   width: 1.28571429em;
+}
+
+.reason-automated {
+  opacity: 0.25;
+}
+
+ul.flaggedList {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+/* A *bootstrap* fix for drop-down menus on buttons */
+.navbar {
+  position: static;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.shield {
+  font-size: 11.475px;
+  letter-spacing: 0.75px;
+  color: white;
+  background-color: #5b5b5b;
+  padding: 4px 0 3.5px 4px;
+  border-radius: 3px;
+  text-shadow: 0 1px #333;
+}
+
+.shield a {
+  font-size: 11.25px;
+  color: white;
+  background-color: #0f81c2;
+  padding: 4px 4px 3px 4px;
+  border-radius: 0 3px 3px 0;
+  text-shadow: 0 1px #045481;
+}
+
+
+.translucent-icon {
+  opacity: 0;
+}
+
+.hide-icon, .hide-alert {
+  display: none;
+}
+
+.opaque-icon {
+  opacity: 1;
+}
+
+.fade-icon {
+  transition: opacity 0.33s ease-in-out;
+}
+
+.form-inline {
+  display: inline;
+}
+
+.ua {
+  cursor: default;
+  width: 16px;
+  height: 16px;
+}
+.ua-chrome, .ua-chrome-mobile, .ua-chrome-mobile-webview {
+  background: transparent url("/images/ua/chrome16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-edge {
+  background: transparent url("/images/ua/edge16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-firefox, .ua-firefox-mobile {
+  background: transparent url("/images/ua/firefox16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-ie {
+  background: transparent url("/images/ua/iexplorer16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-konqueror {
+  background: transparent url("/images/ua/konqueror16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-maxthon {
+  background: transparent url("/images/ua/maxthon16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-opera, .ua-opera-mobile {
+  background: transparent url("/images/ua/opera16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-otter {
+  background: transparent url("/images/ua/otter16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-pale-moon {
+  background: transparent url("/images/ua/palemoon16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-qupzilla {
+  background: transparent url("/images/ua/qupzilla16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-rekonq {
+  background: transparent url("/images/ua/rekonq16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-safari {
+  background: transparent url("/images/ua/safari16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-samsung-internet {
+  background: transparent url("/images/ua/samsunginternet16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-seamonkey {
+  background: transparent url("/images/ua/seamonkey16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-uc-browser {
+  background: transparent url("/images/ua/uc16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-yandex-browser {
+  background: transparent url("/images/ua/yandex16.png") no-repeat left top;
+  color: transparent;
 }

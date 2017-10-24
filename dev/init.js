@@ -1,5 +1,7 @@
 'use strict';
 
+var colors = require('ansi-colors');
+
 // Define some pseudo module globals
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
@@ -9,139 +11,178 @@ var isDbg = require('../libs/debug').isDbg;
 var exec = require('child_process').exec;
 var async = require('async');
 
-if (isDev || isDbg) {
+console.log(colors.yellow('Checking project dependencies. Please wait...'));
 
-  var tasks = [];
-  var no = {};
-
-  tasks.push(function (aCallback) {
+var tasks = [
+  function (aCallback) {
     var cmd = 'node -v';
-    console.log('>> ' + cmd);
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
-        console.error(aStderr);
-      } else {
-        console.log(aStdout);
+        aCallback(aErr);
+        return;
       }
 
-      aCallback();
+      aCallback(null, ['$ ' + cmd + '\n' + colors.gray(aStdout)]);
     });
-  });
-
-  tasks.push(function (aCallback) {
-    var cmd = 'npm -v';
-    console.log('>> ' + cmd);
-
-    exec(cmd, function (aErr, aStdout, aStderr) {
-      if (aErr) {
-        console.error(aStderr);
-      } else {
-        console.log(aStdout);
-      }
-
-      aCallback();
-    });
-  });
-
-  tasks.push(function (aCallback) {
+  },
+  function (aStdouts, aCallback) {
     var cmd = 'ruby -v';
-    console.log('>> ' + cmd);
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
-        no.ruby = true;
-        console.error(aStderr);
-      } else {
-        console.log(aStdout);
+        aCallback(aErr);
+        return;
       }
 
-      aCallback();
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, aStdouts);
     });
-  });
-
-  tasks.push(function (aCallback) {
+  },
+  function (aStdouts, aCallback) {
     var cmd = 'bundler -v';
 
-    if (!no.ruby) {
-      console.log('>> ' + cmd);
-
-      exec(cmd, function (aErr, aStdout, aStderr) {
-        if (aErr) {
-          no.bundler = true;
-          console.error(aStderr);
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        if (aErr.code === 127) {
+//           aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+          aCallback(null, false, aStdouts);
+          return;
         } else {
-          console.log(aStdout);
+          aCallback(aErr);
+          return;
         }
+      }
 
-        aCallback();
-      });
-    } else {
-      aCallback();
+//       aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, true, aStdouts);
+    });
+  },
+  function (aSkip, aStdouts, aCallback) {
+    var cmd = 'sudo gem install bundler -v 1.10.6';
+
+    if (aSkip) {
+      aCallback(null, aStdouts);
+      return;
     }
-  });
 
-  tasks.push(function (aCallback) {
-    var cmd = 'bundler outdated';
-
-    if (!no.bundler) {
-      console.log('>> ' + cmd);
-
-      exec(cmd, function (aErr, aStdout, aStderr) {
-        if (aErr) {
-          no.bundle = true;
-          console.error(aStderr);
-        } else {
-          console.log(aStdout);
-        }
-
-        aCallback();
-      });
-    } else {
-      aCallback();
-    }
-  });
-
-  tasks.push(function (aCallback) {
-    var cmd = 'bundler install';
-
-    if (no.bundle) {
-      console.log('>> ' + cmd);
-
-      exec(cmd, function (aErr, aStdout, aStderr) {
-        if (aErr) {
-          console.error(aStderr);
-        } else {
-          console.log(aStdout);
-        }
-
-        aCallback();
-      });
-    } else {
-      aCallback();
-    }
-  });
-
-  tasks.push(function (aCallback) {
-    var cmd = 'npm --depth 0 outdated';
-    console.log('>> ' + cmd);
+    console.log(colors.cyan('Installing *bundler* gem as global...'));
 
     exec(cmd, function (aErr, aStdout, aStderr) {
       if (aErr) {
-        console.error(aStderr);
-      } else {
-        console.log(aStdout);
+        aCallback(aErr);
+        return;
       }
 
-      aCallback();
+//       aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, aStdouts);
     });
-  });
+  },
+  function (aStdouts, aCallback) {
+    var cmd = 'bundler outdated';
 
-  async.series(tasks, function (aErr) {
-    if (aErr) {
-      console.error('There was an unexpected error.');
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        if (aErr.code === 7) {
+//           aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+          aCallback(null, false, aStdouts);
+          return;
+        } else {
+          aCallback(aErr);
+          return;
+        }
+      }
+
+//       aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, true, aStdouts);
+    });
+  },
+  function (aSkip, aStdouts, aCallback) {
+    var cmd = 'bundler install';
+
+    if (aSkip) {
+      aCallback(null, aStdouts);
+      return;
     }
 
-    console.log('>\n');
-  });
-}
+    console.log(colors.cyan('Installing bundled gem(s) as global...'));
+
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
+
+//       aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, aStdouts);
+    });
+  },
+  function (aStdouts, aCallback) {
+    var cmd = 'gem list';
+
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
+
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, aStdouts);
+    });
+  },
+  function (aStdouts, aCallback) {
+    var cmd = 'gem outdated';
+
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
+
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, aStdouts);
+    });
+  },
+  function (aStdouts, aCallback) {
+    var cmd = 'npm -v';
+
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
+
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, aStdouts);
+    });
+  },
+  function (aStdouts, aCallback) {
+    var cmd = 'npm --depth 0 outdated';
+
+    exec(cmd, function (aErr, aStdout, aStderr) {
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
+
+      aStdouts.push('$ ' + cmd + '\n' + colors.gray(aStdout));
+      aCallback(null, aStdouts);
+    });
+  }
+
+];
+
+async.waterfall(tasks, function (aErr, aResults) {
+  if (aErr) {
+    console.error(
+      colors.inverse(colors.red('Project dependency error!\n\n')),
+      'Code ' + aErr.code + '\n',
+      aErr.message
+    );
+    return;
+  }
+
+  aResults.push(colors.cyan('Completed checking project dependencies'));
+
+  console.log(aResults.join('\n'));
+});

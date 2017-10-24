@@ -7,6 +7,8 @@ var isDbg = require('../libs/debug').isDbg;
 
 //
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
 var Schema = mongoose.Schema;
 
 var removeSchema = new Schema({
@@ -16,6 +18,7 @@ var removeSchema = new Schema({
   reason: String,
   removerName: String,
   removerRole: Number,
+  removerAutomated: Boolean,
   _removerId: Schema.Types.ObjectId
 });
 

@@ -9,6 +9,10 @@ var isDbg = require('../libs/debug').isDbg;
 var marked = require('marked');
 var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');
+
+var jsdom = require("jsdom");
+var { JSDOM } = jsdom;
+
 var htmlWhitelistPost = require('./htmlWhitelistPost.json');
 var renderer = new marked.Renderer();
 var blockRenderers = [
@@ -18,20 +22,6 @@ var blockRenderers = [
   'paragraph',
   'table'
 ];
-var allWhitelistAttrs = htmlWhitelistPost.allowedAttributes.all;
-
-// Whitelist a bunch of attributes for all tags
-// Doing this until we have an upstream fix
-htmlWhitelistPost.allowedTags.forEach(function (aTag) {
-  var otherAttrs = htmlWhitelistPost.allowedAttributes[aTag];
-
-  htmlWhitelistPost.allowedAttributes[aTag] = allWhitelistAttrs;
-  if (otherAttrs) {
-    htmlWhitelistPost.allowedAttributes[aTag] = htmlWhitelistPost
-      .allowedAttributes[aTag].concat(otherAttrs);
-  }
-});
-delete htmlWhitelistPost.allowedAttributes.all;
 
 // Transform exact Github Flavored Markdown generated style tags to bootstrap custom classes
 // to allow the sanitizer to whitelist on th and td tags for table alignment
@@ -74,7 +64,65 @@ function sanitize(aHtml) {
 // Sanitize the output from the block level renderers
 blockRenderers.forEach(function (aType) {
   renderer[aType] = function () {
-    return sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments));
+    // Sanitize first to close any tags
+    var sanitized = sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments));
+
+    // Autolink most usernames
+
+    var dom = new JSDOM('<div id="sandbox"></div>');
+    var win = dom.window;
+    var doc = win.document;
+
+    var hookNode = doc.querySelector('#sandbox');
+
+    var xpr = null;
+    var i = null;
+
+    var textNode = null;
+    var textChunk = null;
+
+    var htmlContainer = null;
+    var thisNode = null;
+
+    hookNode.innerHTML = sanitized;
+
+    xpr = doc.evaluate(
+      './/text()',
+      hookNode,
+      null,
+      win.XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+      null
+    );
+
+    if (xpr) {
+      for (i = 0; textNode = xpr.snapshotItem(i++);) {
+        switch(textNode.parentNode.tagName) {
+          case 'PRE':
+          case 'CODE':
+          case 'A':
+            break;
+          default:
+            // replace all instance of @whatever with autolinked
+            textChunk = textNode.textContent.replace(/(^|\s)@([^\s\\\/:*?\'\"<>|#;@=&,]+)/gm,
+              '$1<a href="/users/$2">@$2</a>');
+
+            // Import to virtual DOM element
+            htmlContainer = doc.createElement('span');
+            htmlContainer.classList.add('autolink');
+            htmlContainer.innerHTML = textChunk;
+
+            // Clone everything to remove span element
+            for (thisNode = htmlContainer.firstChild; thisNode; thisNode = thisNode.nextSibling) {
+              textNode.parentNode.insertBefore(thisNode.cloneNode(true), textNode);
+            }
+            textNode.parentNode.removeChild(textNode);
+        }
+      }
+
+      sanitized = hookNode.innerHTML
+    }
+
+    return sanitized;
   };
 });
 
@@ -92,6 +140,10 @@ renderer.heading = function (aText, aLevel) {
   html += '</a>';
   html += '</h' + aLevel + '>';
   return html;
+};
+
+renderer.link = function (aHref, aTitle, aText) {
+  return marked.Renderer.prototype.link.call(renderer, aHref, aTitle, aText);
 };
 
 // Set the options to use for rendering markdown
@@ -114,8 +166,10 @@ marked.setOptions({
         // Transform list of auto-detected language highlights
         case 'dust':
         case '1c':
+        case 'qml':
           // Narrow auto-detection to something that is more likely
           return hljs.highlightAuto(aCode, ['css', 'html', 'js', 'json']).value;
+          break;
         // Any other detected go ahead and return
         default:
           return obj.value;

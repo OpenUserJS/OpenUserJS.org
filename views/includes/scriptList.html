@@ -1,25 +1,29 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th class="text-center"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Name</a></th>
-      {{^librariesOnly}}<th class="text-center td-fit"><a href="?orderBy=installs&orderDir={{orderDir.install}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Installs</a></th>{{/librariesOnly}}
-      <th class="text-center td-fit"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Rating</a></th>
-      <th class="text-center td-fit"><a href="?orderBy=updated&orderDir={{orderDir.updated}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Last Updated</a></th>
+      <th class="text-center{{#orderedByName}} active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
+      {{^librariesOnly}}<th class="text-center td-fit{{#orderedByInstalls}} active{{/orderedByInstalls}}"><a href="?orderBy=installs&orderDir={{orderDir.install}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Installs</a></th>{{/librariesOnly}}
+      <th class="text-center td-fit{{#orderedByRating}} active{{/orderedByRating}}"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Rating</a></th>
+      <th class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}"><a href="?orderBy=updated&orderDir={{orderDir.updated}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Last Updated</a></th>
+      {{#hasFlagged}}
+      <th>Flagged</th>
+      {{/hasFlagged}}
     </tr>
   </thead>
   <tbody>
     {{#scriptList}}
     <tr class="tr-link">
       <td>
+        {{#_issueCount}}<span class="pull-right"><a href="{{{scriptIssuesPageUri}}}/open" title="Open issue discussions"><i class="fa fa-fw fa-commenting"></i>{{_issueCount}}</a></span>{{/_issueCount}}
         <span class="script-icon hidden-xs" {{#icon16Url}}data-icon-src="{{{icon16Url}}}" data-icon-size="16"{{/icon16Url}}>
           {{#isLib}}<i class="fa fa-fw fa-file-excel-o"></i>{{/isLib}}{{^isLib}}<i class="fa fa-fw fa-file-code-o"></i>{{/isLib}}
         </span>
         <a href="{{{scriptPageUrl}}}" class="tr-link-a"><b>{{name}}</b></a>
-        {{#meta.version}}
-        <span class="script-version label label-default">{{meta.version}}</span>
-        {{/meta.version}}
+        {{#meta.UserScript.version}}
+        <span class="script-version label label-default">{{value}}</span>
+        {{/meta.UserScript.version}}
         <span class="inline-block">by <a href="{{{author.userPageUrl}}}">{{author.name}}</a></span>
-        <p>{{meta.description}}</p>
+        {{#description}}<p>{{description}}</p>{{/description}}
       </td>
       {{^librariesOnly}}
       <td class="text-center td-fit">
@@ -36,6 +40,18 @@
       <td class="text-center td-fit">
         <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
       </td>
+      {{#hasFlagged}}
+      <td>
+        <ul class="flaggedList">
+        {{#flaggedList}}
+          <li>
+            {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+            <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+          </li>
+        {{/flaggedList}}
+        </ul>
+      </td>
+      {{/hasFlagged}}
     </tr>
     {{/scriptList}}
     {{^scriptList}}

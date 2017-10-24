@@ -22,6 +22,7 @@ fakeS3
 dev/fakeS3
 
 cert
+keys
 aws.json
 prod.sh
 

@@ -8,46 +8,40 @@
   {{> includes/header.html }}
   <div class="container-fluid">
     <div class="row">
-      <form action="/auth/" method="post" class="form-signin">
+      <form action="/auth/" method="post" class="form-register">
+        <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
         <h3>
           Login
-          <span class="help-block small">Login with your preferred <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>
+          <span class="help-block small">Enter your username for our site to use with your preferred <a href="https://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="https://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>
         </h3>
+        <noscript>
+          <div class="alert alert-danger small" role="alert">
+            <i class="fa fa-exclamation-triangle"></i> <strong>WARNING</strong>: The username entered may include additional sanitizing for web friendly URLs and Userscript engine compatibility. If you wish to see the sanitization changes please enable JavaScript and <a href="/login">start over</a>.
+          </div>
+        </noscript>
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username">
-          <span class="input-group-btn">
-            <button class="btn btn-info" type="submit">Sign In <i class="fa fa-sign-in fa-fw"></i></button>
-          </span>
-        </div>
-      </form>
-    </div>
-    <div class="row">
-      <form action="/auth/" method="post" class="form-register">
-        <h3>
-          Register
-          <span class="help-block small">Sign up with a <a href="http://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="http://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>
-        </h3>
-        <div class="input-group">
-          <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username">
-          <span class="input-group-btn">
-            <select name="auth" class="btn btn-addon-default" style="border-radius: 0px;">
+          <input class="form-control" type="text" name="username" value="{{wantname}}" placeholder="Username" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
+            <select name="auth" class="form-control">
               {{#strategies}}
               <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}>{{display}}</option>
               {{/strategies}}
             </select>
-          </span>
-          <span class="input-group-btn">
-            <button class="btn btn-info" type="submit">Register <i class="fa fa-sign-in fa-fw"></i></button>
+          <span class="input-group-addon">
+            <button class="btn btn-info" type="submit" id="action">Next <i class="fa fa-sign-in fa-fw"></i></button>
           </span>
         </div>
         <div class="alert alert-warning small" role="alert">
-          <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The unique Username that you choose to sign up with here will be displayed to everyone. It is strongly recommended to <strong>not</strong> use an email address.
+          <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The username that you choose to login with will be displayed to everyone. It is strongly recommended to <strong>not</strong> attempt to use an email address.
         </div>
+        <ul class="nav nav-pills nav-justified">
+          <li><a href="/about/Privacy-Policy"><i class="fa fa-user-secret"></i> Privacy Policy</a></li>
+          <li><a href="/about/Terms-of-Service"><i class="fa fa-legal"></i> Terms of Service</a></li>
+        </ul>
       </form>
     </div>
   </div>
   {{> includes/footer.html }}
+  {{> includes/scripts/loginEcho.html }}
 </body>
 </html>

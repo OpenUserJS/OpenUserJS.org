@@ -16,10 +16,13 @@ Please note: The DMCA provides that you may be liable for damages *(including co
 
 ### Send the written document to the designated address at:
 
-  [sizzlemctwizzle@gmail.com](mailto:sizzlemctwizzle@gmail.com?subject=DMCA "By submitting an email regarding a DMCA notice you agree to the terms set forth provided in this document and the Terms of Service. Failure to provide the required information will be reason for immediate dismissal of any claim.")
+  [DMCA Contact][DMCAcontact]
 
 ### Counter Notification
 
 A counter notification may be issued in the event there is a need for dispute resolution.
 
-For additional information please visit [www.copyright.gov](http://www.copyright.gov/)
+For additional information please visit [www.copyright.gov][copyrightGov]
+
+[copyrightGov]: https://www.copyright.gov/
+[DMCAcontact]: mailto:sizzlemctwizzle@gmail.com?subject=DMCA "By submitting an email regarding a DMCA notice you agree to the terms set forth provided in this document and the Terms of Service. Failure to provide the required information will be reason for immediate dismissal of any claim."

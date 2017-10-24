@@ -6,25 +6,43 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+
+//--- Dependency inclusions
 var async = require('async');
 var _ = require('underscore');
 var sanitizeHtml = require('sanitize-html');
-var htmlWhitelistLink = require('../libs/htmlWhitelistLink.json');
 
+//--- Model inclusions
 var Discussion = require('../models/discussion').Discussion;
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
 var Vote = require('../models/vote').Vote;
 
+//--- Controller inclusions
 var scriptStorage = require('./scriptStorage');
+
 var addScriptToGroups = require('./group').addScriptToGroups;
+var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
+
+//--- Library inclusions
+// var scriptLib = require('../libs/script');
+
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
-var modelQuery = require('../libs/modelQuery');
+
 var modelParser = require('../libs/modelParser');
+var modelQuery = require('../libs/modelQuery');
+
+var decode = require('../libs/helpers').decode;
 var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
+
+//--- Configuration inclusions
+var htmlWhitelistLink = require('../libs/htmlWhitelistLink.json');
+
 var removeReasons = require('../views/includes/scriptModals.json').removeReasons;
+
+//---
 
 // Let controllers know this is a `new` route
 exports.new = function (aController) {
@@ -43,11 +61,19 @@ exports.lib = function (aController) {
 };
 
 var getScriptPageTasks = function (aOptions) {
+  var scriptOpenIssueCountQuery = null;
   var tasks = [];
 
   // Shortcuts
   var script = aOptions.script;
   var authedUser = aOptions.authedUser;
+
+  // Intermediates
+  var homepageURL = null;
+  var copyright = null;
+  var license = null;
+  var author = null;
+  var collaborator = null;
 
   // Temporaries
   var htmlStub = null;
@@ -61,8 +87,8 @@ var getScriptPageTasks = function (aOptions) {
   //--- Tasks
 
   // Show the number of open issues
-  var scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
-      .caseInsensitive(script.issuesCategorySlug), open: {$ne: false} });
+  scriptOpenIssueCountQuery = Discussion.find({ category: scriptStorage
+    .caseSensitive(decodeURIComponent(script.issuesCategorySlug), true), open: {$ne: false} });
   tasks.push(countTask(scriptOpenIssueCountQuery, aOptions, 'issueCount'));
 
   // Show the groups the script belongs to
@@ -73,7 +99,10 @@ var getScriptPageTasks = function (aOptions) {
     Group.find({
       _scriptIds: script._id
     }, function (aErr, aScriptGroupList) {
-      if (aErr) return aCallback(aErr);
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
 
       aScriptGroupList = _.map(aScriptGroupList, modelParser.parseGroup);
 
@@ -85,68 +114,57 @@ var getScriptPageTasks = function (aOptions) {
   });
 
   // Show homepages of the script
-  if (script.meta.homepageURL) {
-    if (typeof script.meta.homepageURL === 'string') {
-      htmlStub = '<a href="' + script.meta.homepageURL + '"></a>';
+  homepageURL = scriptStorage.findMeta(script.meta, 'UserScript.homepageURL');
+  if (homepageURL) {
+    aOptions.script.homepages = [];
+    homepageURL.forEach(function (aElement, aIndex, aArray) {
+      htmlStub = '<a href="' + aElement.value + '"></a>';
       if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-        aOptions.script.homepages = [{
-          url: script.meta.homepageURL,
-          text: decodeURI(script.meta.homepageURL),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.test(script.meta.homepageURL)
-        }];
+
+        aOptions.script.homepages.unshift({
+          url: aElement.value,
+          text: decode(aElement.value),
+          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.
+            test(aElement.value)
+        });
+
       }
-    } else {
-      aOptions.script.homepages = [];
-      script.meta.homepageURL.forEach(function (aHomepage) {
-        htmlStub = '<a href="' + aHomepage + '"></a>';
-        if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
-          aOptions.script.homepages.unshift({
-            url: aHomepage,
-            text: decodeURI(aHomepage),
-            hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(aHomepage)
-          });
-        }
-      });
-    }
+    });
   }
 
   // Show copyrights of the script
-  if (script.meta.copyright) {
-    if (typeof script.meta.copyright === 'string') {
-      aOptions.script.copyrights = [{ name: script.meta.copyright }];
-    } else {
-      aOptions.script.copyrights = [];
-      script.meta.copyright.forEach(function (aCopyright) {
-        aOptions.script.copyrights.unshift({ name: aCopyright });
-      });
-    }
+  copyright = scriptStorage.findMeta(script.meta, 'UserScript.copyright');
+  if (copyright) {
+    aOptions.script.copyrights = [];
+    copyright.forEach(function (aElement, aIndex, aArray) {
+      aOptions.script.copyrights.unshift({ name: aElement.value });
+    });
   }
 
   // Show licensings of the script
-  if (script.meta.license) {
-    if (typeof script.meta.license === 'string') {
-      aOptions.script.licenses = [{ name: script.meta.license }];
-    } else {
-      aOptions.script.licenses = [];
-      script.meta.license.forEach(function (aLicense) {
-        aOptions.script.licenses.unshift({ name: aLicense });
-      });
-    }
+  license = scriptStorage.findMeta(script.meta, 'UserScript.license');
+  if (license) {
+    aOptions.script.licenses = [];
+    license.forEach(function (aElement, aIndex, aArray) {
+      aOptions.script.licenses.unshift({ name: aElement.value });
+    });
   } else if (!script.isLib) {
     aOptions.script.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
   // Show collaborators of the script
-  if (script.meta.oujs && script.meta.oujs.author && script.meta.oujs.collaborator) {
+  author = scriptStorage.findMeta(script.meta, 'OpenUserJS.author.0.value');
+  collaborator = scriptStorage.findMeta(script.meta, 'OpenUserJS.collaborator');
+  if (author && collaborator) {
     aOptions.hasCollab = true;
-    if (typeof script.meta.oujs.collaborator === 'string') {
-      aOptions.script.collaborators = [{ url: encodeURIComponent(script.meta.oujs.collaborator), text: script.meta.oujs.collaborator }];
-    } else {
-      aOptions.script.collaborators = [];
-      script.meta.oujs.collaborator.forEach(function (aCollaborator) {
-        aOptions.script.collaborators.unshift({ url: encodeURIComponent(aCollaborator), text: aCollaborator });
+
+    aOptions.script.collaborators = [];
+    collaborator.forEach(function (aElement, aIndex, aArray) {
+      aOptions.script.collaborators.unshift({
+        url: encodeURIComponent(aElement.value),
+        text: aElement.value
       });
-    }
+    });
   }
 
   // Show which libraries hosted on the site a script uses
@@ -156,7 +174,10 @@ var getScriptPageTasks = function (aOptions) {
       Script.find({
         installName: { $in: script.uses }
       }, function (aErr, aScriptLibraryList) {
-        if (aErr) return aCallback(aErr);
+        if (aErr) {
+          aCallback(aErr);
+          return;
+        }
 
         script.libs = aScriptLibraryList;
         script.libs = _.map(script.libs, modelParser.parseScript);
@@ -174,7 +195,10 @@ var getScriptPageTasks = function (aOptions) {
       Script.find({
         uses: script.installName
       }, function (aErr, aLibraryScriptList) {
-        if (aErr) return aCallback(aErr);
+        if (aErr) {
+          aCallback(aErr);
+          return;
+        }
 
         script.isUsed = aLibraryScriptList.length > 0;
         script.usedBy = aLibraryScriptList;
@@ -222,24 +246,14 @@ var getScriptPageTasks = function (aOptions) {
 
   // Setup the flagging UI
   tasks.push(function (aCallback) {
-    var flagUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
-
-    // Can't flag when not logged in or when user owns the script.
-    if (!authedUser || aOptions.isOwner) {
-      aCallback();
-      return;
-    }
-
     flagLib.flaggable(Script, script, authedUser,
       function (aCanFlag, aAuthor, aFlag) {
         if (aFlag) {
-          flagUrl += '/unflag';
           aOptions.flagged = true;
           aOptions.canFlag = true;
         } else {
           aOptions.canFlag = aCanFlag;
         }
-        aOptions.flagUrl = flagUrl;
 
         aCallback();
       });
@@ -247,19 +261,14 @@ var getScriptPageTasks = function (aOptions) {
 
   // Set up the removal UI
   tasks.push(function (aCallback) {
-    // Can't remove when not logged in or when user owns the script.
-    if (!authedUser || aOptions.isOwner) {
-      aCallback();
-      return;
-    }
-
     removeLib.removeable(Script, script, authedUser, function (aCanRemove, aAuthor) {
       aOptions.canRemove = aCanRemove;
-      aOptions.flags = script.flags || 0;
+      aOptions.flags = (script.flags ? script.flags.critical : null) || 0;
       aOptions.removeUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') + script.installNameSlug;
 
       if (!aCanRemove) {
-        return aCallback();
+        aCallback();
+        return;
       }
 
       flagLib.getThreshold(Script, script, aAuthor, function (aThreshold) {
@@ -283,7 +292,6 @@ var setupScriptSidePanel = function (aOptions) {
 
   // Mod
   if (authedUser && authedUser.isMod) {
-    //aOptions.authorTools = {}; // TODO: Support moderator edits on scripts?
     aOptions.modTools = {};
 
     if (removeReasons) {
@@ -304,158 +312,201 @@ var setupScriptSidePanel = function (aOptions) {
 // View a detailed description of a script
 // This is the most intensive page to render on the site
 exports.view = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
-  var installNameSlug = scriptStorage.getInstallName(aReq);
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var isLib = aReq.params.isLib;
 
   Script.findOne({
-    installName: scriptStorage
-      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
-  }, function (aErr, aScriptData) {
-    function preRender() {
-      if (script.groups) {
-        pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-          script.meta.description, _.pluck(script.groups, 'name'));
+    installName: scriptStorage.caseSensitive(installNameBase +
+      (isLib ? '.js' : '.user.js'))
+    }, function (aErr, aScript) {
+      function preRender() {
+        if (script.groups) {
+          pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
+            script.description, _.pluck(script.groups, 'name'));
+        }
       }
-    }
-    function render() { aRes.render('pages/scriptPage', options); }
-    function asyncComplete() { preRender(); render(); }
 
-    //---
-    if (aErr || !aScriptData) { return aNext(); }
+      function render() {
+        aRes.render('pages/scriptPage', options);
+      }
 
-    var options = {};
-    var tasks = [];
+      function asyncComplete() {
 
-    // Session
-    authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.isMod;
-    options.isAdmin = authedUser && authedUser.isAdmin;
+        async.parallel([
+          function (aCallback) {
+            if (!options.isAdmin) {  // NOTE: Watchpoint
+              aCallback();
+              return;
+            }
+            getFlaggedListForContent('Script', options, aCallback);
+          }
+        ], function (aErr) {
+          preRender();
+          render();
+        });
 
-    // Script
-    var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
-    modelParser.renderScript(script);
-    script.installNameSlug = installNameSlug;
-    script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
-      script.scriptInstallPageUrl;
+      }
 
-    // Page metadata
-    pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-      script.meta.description);
-    options.isScriptPage = true;
+      //
+      var options = {};
+      var authedUser = aReq.session.user;
+      var script = null;
+      var tasks = [];
 
-    // SearchBar
-    options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
-    options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
+      //---
+      if (aErr || !aScript) {
+        aNext();
+        return;
+      }
 
-    // SideBar
-    setupScriptSidePanel(options);
+      // Session
+      options.authedUser = authedUser = modelParser.parseUser(authedUser);
+      options.isMod = authedUser && authedUser.isMod;
+      options.isAdmin = authedUser && authedUser.isAdmin;
 
-    //--- Tasks
-    tasks = tasks.concat(getScriptPageTasks(options));
+      // Lockdown
+      options.lockdown = {};
+      options.lockdown.scriptStorageRO = process.env.READ_ONLY_SCRIPT_STORAGE === 'true';
+      options.lockdown.updateURLCheck = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
-    //---
-    async.parallel(tasks, asyncComplete);
-  });
+      // Script
+      options.script = script = modelParser.parseScript(aScript);
+      options.isOwner = authedUser && authedUser._id == script._authorId;
+      modelParser.renderScript(script);
+      script.installNameSlug = installNameBase;
+      script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
+        script.scriptInstallPageUrl;
+      script.scriptPermalinkInstallPageXUrl = 'https://' + aReq.get('host') +
+        script.scriptInstallPageXUrl;
+      script.scriptPermalinkMetaPageUrl = 'https://' + aReq.get('host') +
+        script.scriptMetaPageUrl;
+
+      // Page metadata
+      pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
+        script.description);
+      options.isScriptPage = true;
+
+      // SearchBar
+      options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
+      options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
+
+      // SideBar
+      setupScriptSidePanel(options);
+
+      //--- Tasks
+      tasks = tasks.concat(getScriptPageTasks(options));
+
+      //---
+      async.parallel(tasks, asyncComplete);
+    });
 };
 
 // route to edit a script
 exports.edit = function (aReq, aRes, aNext) {
-  var authedUser = aReq.session.user;
-
-  // Support routes lacking the :username. TODO: Remove this functionality.
-  aReq.params.username = authedUser.name.toLowerCase();
-
-  var installNameSlug = scriptStorage.getInstallName(aReq);
+  //
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
   var isLib = aReq.params.isLib;
 
+  //---
   Script.findOne({
-    installName: scriptStorage
-      .caseInsensitive(installNameSlug + (isLib ? '.js' : '.user.js'))
-  }, function (aErr, aScriptData) {
-    function preRender() {
-      var groupNameList = (options.script.groups || []).map(function (aGroup) {
-        return aGroup.name;
-      });
-      options.groupNameListJSON = JSON.stringify(groupNameList);
+    installName: scriptStorage.caseSensitive(installNameBase +
+      (isLib ? '.js' : '.user.js'))
+    }, function (aErr, aScript) {
+      function preRender() {
+        var groupNameList = (options.script.groups || []).map(function (aGroup) {
+          return aGroup.name;
+        });
+        options.groupNameListJSON = JSON.stringify(groupNameList);
+      }
 
-    }
-    function render() { aRes.render('pages/scriptEditMetadataPage', options); }
-    function asyncComplete() { preRender(); render(); }
+      function render() {
+        aRes.render('pages/scriptEditMetadataPage', options);
+      }
 
-    // ---
-    if (aErr || !aScriptData) { return aNext(); }
+      function asyncComplete() {
+        preRender();
+        render();
+      }
 
-    //
-    var options = {};
-    var tasks = [];
+      //
+      var options = {};
+      var authedUser = aReq.session.user;
+      var script = null;
+      var scriptGroups = null;
+      var tasks = [];
 
-    // Session
-    authedUser = options.authedUser = modelParser.parseUser(authedUser);
-    options.isMod = authedUser && authedUser.isMod;
-    options.isAdmin = authedUser && authedUser.isAdmin;
+      // ---
+      if (aErr || !aScript) {
+        aNext();
+        return;
+      }
 
-    // Page metadata
-    var script = options.script = modelParser.parseScript(aScriptData);
-    options.isOwner = authedUser && authedUser._id == script._authorId;
-    pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Scripts')],
-      script.name);
+      // Session
+      options.authedUser = authedUser = modelParser.parseUser(authedUser);
+      options.isMod = authedUser && authedUser.isMod;
+      options.isAdmin = authedUser && authedUser.isAdmin;
 
-    // If authed user is not the script author.
-    if (!options.isOwner) { return aNext(); }
+      // Page metadata
+      options.script = script = modelParser.parseScript(aScript);
+      options.isOwner = authedUser && authedUser._id == script._authorId;
+      pageMetadata(options, ['Edit', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
+        script.name);
 
-    // SearchBar
-    options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
-    options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
+      // If authed user is not the script author.
+      if (!options.isOwner) {
+        aNext();
+        return;
+      }
 
-    if (aReq.body.remove) {
-      // POST
-      scriptStorage.deleteScript(aScriptData.installName, function () {
-        aRes.redirect(authedUser.userScriptListPageUrl);
-      });
-    } else if (typeof aReq.body.about !== 'undefined') {
-      // POST
-      aScriptData.about = aReq.body.about;
-      var scriptGroups = (aReq.body.groups || "");
-      scriptGroups = scriptGroups.split(/,/);
-      addScriptToGroups(aScriptData, scriptGroups, function () {
-        aRes.redirect(script.scriptPageUrl);
-      });
-    } else {
-      // GET
+      // SearchBar
+      options.searchBarPlaceholder = modelQuery.scriptListQueryDefaults.searchBarPlaceholder;
+      options.searchBarFormAction = modelQuery.scriptListQueryDefaults.searchBarFormAction;
 
-      options.script = script;
+      if (aReq.body.remove) {
+        // POST
+        scriptStorage.deleteScript(aScript.installName, function () {
+          aRes.redirect(authedUser.userScriptListPageUri);
+        });
+      } else if (typeof aReq.body.about !== 'undefined') {
+        // POST
+        aScript.about = aReq.body.about;
+        scriptGroups = (aReq.body.groups || '');
+        scriptGroups = scriptGroups.split(/,/);
+        addScriptToGroups(aScript, scriptGroups, function () {
+          aRes.redirect(script.scriptPageUri);
+        });
+      } else {
+        // GET
 
-      tasks = tasks.concat(getScriptPageTasks(options));
+        options.script = script;
 
-      tasks.push(function (aCallback) {
-        aCallback();
-      });
+        tasks = tasks.concat(getScriptPageTasks(options));
 
-      // Groups
-      options.canCreateGroup = (!script._groupId).toString();
+        // Groups
+        options.canCreateGroup = (!script._groupId).toString();
 
-      async.parallel(tasks, asyncComplete);
-    }
-  });
+        async.parallel(tasks, asyncComplete);
+      }
+    });
 };
 
 // Script voting
 exports.vote = function (aReq, aRes, aNext) {
-  var isLib = aReq.params.isLib;
-  var installName = scriptStorage.getInstallName(aReq)
-    + (isLib ? '.js' : '.user.js');
+  //
+  var uri = aReq._parsedUrl.pathname.split('/');
   var vote = aReq.params.vote;
-  var authedUser = aReq.session.user;
-  var url = aReq._parsedUrl.pathname.split('/');
   var unvote = false;
 
-  if (url.length > 5) { url.pop(); }
-  url.shift();
-  url.shift();
-  url = '/' + url.join('/');
+  var isLib = aReq.params.isLib;
+  var installNameBase = scriptStorage.getInstallNameBase(aReq);
+
+  // ---
+  if (uri.length > 5) {
+    uri.pop();
+  }
+  uri.shift();
+  uri.shift();
+  uri = '/' + uri.join('/');
 
   if (vote === 'up') {
     vote = true;
@@ -464,37 +515,65 @@ exports.vote = function (aReq, aRes, aNext) {
   } else if (vote === 'unvote') {
     unvote = true;
   } else {
-    return aRes.redirect(url);
+    aRes.redirect(uri);
+    return;
   }
 
-  Script.findOne({ installName: scriptStorage.caseInsensitive(installName) },
-    function (aErr, aScript) {
-      if (aErr || !aScript) { return aRes.redirect(url); }
+  Script.findOne({
+    installName: scriptStorage.caseSensitive(installNameBase +
+      (isLib ? '.js' : '.user.js'))
+    }, function (aErr, aScript) {
+      //
+      var authedUser = aReq.session.user;
+
+      // ---
+      if (aErr || !aScript) {
+        aRes.redirect(uri);
+        return;
+      }
 
       Vote.findOne({ _scriptId: aScript._id, _userId: authedUser._id },
         function (aErr, aVoteModel) {
-          var oldVote = null;
           var votes = aScript.votes || 0;
           var flags = 0;
+          var oldVote = null;
 
           function saveScript() {
             if (!flags) {
-              return aScript.save(function (aErr, aScript) { aRes.redirect(url); });
+              aScript.save(function (aErr, aScript) {
+                var script = null;
+
+                if (vote === false) {
+                  script = modelParser.parseScript(aScript);
+
+                  // Gently encourage browsing/creating an issue with a down vote
+                  aRes.redirect(script.scriptIssuesPageUri);
+                } else {
+                  aRes.redirect(uri);
+                }
+              });
+              return;
             }
 
             flagLib.getAuthor(aScript, function (aAuthor) {
-              flagLib.saveContent(Script, aScript, aAuthor, flags,
+              flagLib.saveContent(Script, aScript, aAuthor, flags, false,
                 function (aFlagged) {
-                  aRes.redirect(url);
+                  aRes.redirect(uri);
                 });
             });
           }
 
-          if (!aScript.rating) { aScript.rating = 0; }
-          if (!aScript.votes) { aScript.votes = 0; }
+          if (!aScript.rating) {
+            aScript.rating = 0;
+          }
+
+          if (!aScript.votes) {
+            aScript.votes = 0;
+          }
 
           if (authedUser._id == aScript._authorId || (!aVoteModel && unvote)) {
-            return aRes.redirect(url);
+            aRes.redirect(uri);
+            return;
           } else if (!aVoteModel) {
             aVoteModel = new Vote({
               vote: vote,
@@ -503,15 +582,20 @@ exports.vote = function (aReq, aRes, aNext) {
             });
             aScript.rating += vote ? 1 : -1;
             aScript.votes = votes + 1;
-            if (vote) { flags = -1; }
+            if (vote) {
+              flags = -1;
+            }
           } else if (unvote) {
             oldVote = aVoteModel.vote;
-            return aVoteModel.remove(function () {
+            aVoteModel.remove(function () {
               aScript.rating += oldVote ? -1 : 1;
               aScript.votes = votes <= 0 ? 0 : votes - 1;
-              if (oldVote) { flags = 1; }
+              if (oldVote) {
+                flags = 1;
+              }
               saveScript();
             });
+            return;
           } else if (aVoteModel.vote !== vote) {
             aVoteModel.vote = vote;
             aScript.rating += vote ? 2 : -2;
@@ -521,25 +605,5 @@ exports.vote = function (aReq, aRes, aNext) {
           aVoteModel.save(saveScript);
         }
       );
-    }
-  );
-};
-
-// Script flagging
-exports.flag = function (aReq, aRes, aNext) {
-  var isLib = aReq.params.isLib;
-  var installName = scriptStorage.getInstallName(aReq);
-  var unflag = aReq.params.unflag;
-
-  Script.findOne({ installName:  scriptStorage
-      .caseInsensitive(installName + (isLib ? '.js' : '.user.js')) },
-    function (aErr, aScript) {
-      var fn = flagLib[unflag && unflag === 'unflag' ? 'unflag' : 'flag'];
-      if (aErr || !aScript) { return aNext(); }
-
-      fn(Script, aScript, aReq.session.user, function (aFlagged) { // NOTE: Inline function here
-        aRes.redirect((isLib ? '/libs/' : '/scripts/') + encodeURI(installName));
-      });
-    }
-  );
+    });
 };

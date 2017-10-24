@@ -7,6 +7,23 @@
     </div>
   </div>
   <div class="panel-body">
+    {{#hasFlagged}}
+    <div class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Flagged</label>
+        <div class="col-sm-8">
+          <ul class="flaggedList">
+          {{#script.flaggedList}}
+            <li>
+              {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+              <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+            </li>
+          {{/script.flaggedList}}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {{/hasFlagged}}
     <a rel="nofollow" href="/admin/json?model=Script&id={{{script._id}}}" class="btn btn-link col-xs-12"><i class="fa fa-database"></i> Raw JSON Data</a>
   </div>
 </div>

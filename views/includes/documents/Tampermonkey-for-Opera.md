@@ -2,7 +2,7 @@
 
 ![Tampermonkey icon][tampermonkeyIcon]
 
-Tampermonkey is a userscript manager for Opera and other similar web browsers, written by Jan Biniok. There are also versions for [Chrome][tampermonkeyForChrome] and [Android][tampermonkeyForAndroid].
+Tampermonkey is a userscript manager extension for [Android][Android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Opera][Opera], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], and [Edge][tampermonkeyForEdge].
 
 ### Installing Tampermonkey
 
@@ -26,7 +26,7 @@ Tampermonkey will display a screen showing you where the userscript has come fro
 
 Installing userscripts from other sources is a similar process. You just need to find the installation link for the script. This will be a button or link to a file with a name that ends ".user.js"
 
-NB After installing a userscript, you won't normally notice any further changes until you visit a website that it runs on.
+After installing a userscript, you won't normally notice any further changes until you visit a website that it runs on.
 
 ### Managing Userscripts
 
@@ -45,24 +45,43 @@ Sometimes, when you use more than one userscript on the same web page, they need
 ### More
 
 * [Get Tampermonkey from the Opera Add-ons website][operaAddons]
-* [Tampermonkey for Chrome][tampermonkeyForChrome]
-* [Tampermonkey for Android][tampermonkeyForAndroid]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
+* [Tampermonkey for Android][tampermonkeyForAndroid]
+* [Tampermonkey for Chrome][tampermonkeyForChrome]
+* [Tampermonkey for Chromium][tampermonkeyForChromium]
+* [Tampermonkey for Edge][tampermonkeyForEdge]
+
+<!-- # References -->
+
+<!-- ## Statics -->
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
 [oujs]: https://openuserjs.org/
-[tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
+
+<!-- ## Browser pages -->
+[android]: Android
 [chrome]: Chrome
-[tampermonkeyForChrome]: Tampermonkey-for-Chrome
-[tampermonkeyForAndroid]: Tampermonkey-for-Android
+[chromium]: Chromium
+[edge]: Edge
+[opera]: Opera
+
+<!-- ## .user.js engine external linkage -->
+[tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
+[tampermonkeyNet]: http://tampermonkey.net/
 [operaAddons]: https://addons.opera.com/extensions/details/tampermonkey-beta/
-[violentMonkeyForOpera]: Violentmonkey-for-Opera
+
+<!-- ## Screenshots -->
 [operaAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_op1.png "Tampermonkey in the Opera Add-ons website"
 [tampermonkeyOperaScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_op2.png "Tampermonkey installed"
-[oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.png "Ready to install a script"
+[oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [tampermonkeyOperaScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey4.png "Installing a script"
 [tampermonkeyOperaScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey5.png "Tampermonkey Dashboard"
+
+<!-- ## Other related .user.js engine internal pages -->
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
-[tampermonkeyNet]: http://tampermonkey.net/
+[tampermonkeyForChromium]: Tampermonkey-for-Chromium
+[tampermonkeyForEdge]: Tampermonkey-for-Edge
+
+[violentMonkeyForOpera]: Violent-monkey-for-Opera

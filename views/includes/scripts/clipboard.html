@@ -1,0 +1,32 @@
+<script type="text/javascript" src="/redist/npm/clipboard/dist/clipboard.js"></script>
+<script type="text/javascript">
+  (function () {
+
+    var clipboard = null;
+    var rMin = /\.min\.js$/;
+
+    function unsupported() {
+      $('#require-min').prop('disabled', true);
+      $('#require-raw').prop('disabled', true);
+      $('#updateurl-raw').prop('disabled', true);
+    }
+
+    if (Clipboard.isSupported()) {
+      clipboard = new Clipboard('#require-min, #require-raw, #updateurl-raw');
+
+      clipboard.on('success', function(aE) {
+        if (rMin.test(aE.text)) {
+          // TODO: Flash tooltip saying copied and then restore it
+        } else {
+          // TODO: Flash tooltip saying copied and then restore it
+        }
+      });
+
+      clipboard.on('error', unsupported);
+
+    } else {
+      unsupported();
+    }
+
+  })();
+</script>

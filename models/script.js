@@ -7,6 +7,8 @@ var isDbg = require('../libs/debug').isDbg;
 
 //
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
 var Schema = mongoose.Schema;
 
 var scriptSchema = new Schema({
@@ -18,10 +20,14 @@ var scriptSchema = new Schema({
   rating: Number,
   about: String,
   updated: Date,
+  hash: String,
 
   // Moderation
-  votes: Number, // upvotes negate flags
-  flags: Number,
+  votes: Number, // upvotes negate flags.critical
+  flags: {
+    critical: Number,
+    absolute: Number
+  },
   flagged: Boolean,
   installName: String,
 
@@ -32,6 +38,10 @@ var scriptSchema = new Schema({
   uses: [String],
   _groupId: Schema.Types.ObjectId, // The group is script created
   _authorId: Schema.Types.ObjectId
+});
+
+scriptSchema.virtual('_since').get(function () {
+  return this._id.getTimestamp();
 });
 
 var Script = mongoose.model('Script', scriptSchema);

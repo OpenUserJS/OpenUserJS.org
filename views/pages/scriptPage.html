@@ -16,19 +16,29 @@
             {{#script.isLib}}
             <div class="form-group">
               <div class="input-group col-xs-12">
-                <div class="input-group-addon">// @require </div>
-                <input type="text" class="form-control" value="{{{script.scriptPermalinkInstallPageUrl}}}">
+                <span class="input-group-btn">
+                  <button class="btn btn-info" id="require-raw" data-clipboard-text="// @require {{{script.scriptPermalinkInstallPageUrl}}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @require</button>
+                  <button class="btn btn-warning" id="require-min" data-clipboard-text="// @require {{{script.scriptPermalinkInstallPageXUrl}}}.min.js" title="EXPERIMENTAL: Copy key and minified URL to clipboard"><i class="fa fa-clipboard"></i></button>
+                </span>
+                <input type="text" class="form-control" id="require" value="{{{script.scriptPermalinkInstallPageUrl}}}" readonly="readonly">
               </div>
             </div>
             {{/script.isLib}}
 
             <div class="script-meta">
-              {{#script.meta.version}}<p><i class="fa fa-fw fa-tag"></i> <b>Version:</b> <code>{{script.meta.version}}</code> uploaded <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>{{/script.meta.version}}
-              {{^script.meta.version}}<p><i class="fa fa-fw fa-clock-o"></i> <b>Updated:</b> <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>{{/script.meta.version}}
-              {{#script.meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{script.meta.description}}</p>{{/script.meta.description}}
+              <p><i class="fa fa-fw fa-clock-o"></i> <b>Published:</b> <time datetime="{{script._sinceISOFormat}}" title="{{script._since}}">{{script._sinceHumanized}}</time></p>
+              {{#script.meta.UserScript.version}}
+                <p><i class="fa fa-fw fa-history"></i> <b>Version:</b> <code>{{value}}</code>{{#script.isUpdated}} updated <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time>{{/script.isUpdated}}</p>
+              {{/script.meta.UserScript.version}}
+              {{^script.meta.UserScript.version}}
+                {{#script.isUpdated}}
+                  <p><i class="fa fa-fw fa-history"></i> <b>Updated:</b> <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>
+                {{/script.isUpdated}}
+              {{/script.meta.UserScript.version}}
+              {{#script.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{script.description}}</p>{{/script.description}}
               {{#script.hasGroups}}
                 <span>
-                  <i class="fa fa-fw fa-tags"></i> <b>Groups:</b>
+                  <i class="fa fa-fw fa-tag"></i> <b>Groups:</b>
                   <ul class="list-inline inline-block">
                   {{#script.groups}}
                     <li><a href="{{{groupPageUrl}}}">{{name}}</a></li>
@@ -48,7 +58,7 @@
                 <ul>
                 {{#script.fork}}
                   <li>
-                    <a href="/{{#script.isLib}}libs{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}/{{{url}}">{{url}}</a>
+                    <a href="/{{#script.isLib}}libs{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}/{{{url}}">{{utf}}</a>
                   </li>
                 {{/script.fork}}
                 </ul>
@@ -79,7 +89,7 @@
         {{#script.isUsed}}
         <div class="panel panel-default">
           <div class="panel-body">
-            <h4>Scripts Using This Library</h4>
+            <h4>Userscripts Using This Library</h4>
             <ul>
             {{#script.usedBy}}
               <li>
@@ -107,5 +117,6 @@
   {{> includes/scriptModals.html }}
   {{> includes/footer.html }}
   {{> includes/scripts/lazyIconScript.html }}
+  {{> includes/scripts/clipboard.html }}
 </body>
 </html>

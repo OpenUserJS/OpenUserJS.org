@@ -7,12 +7,19 @@ var isDbg = require('../libs/debug').isDbg;
 
 //
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
 var Schema = mongoose.Schema;
 
 var flagSchema = new Schema({
   model: String,
+  reason: String,
   _contentId: Schema.Types.ObjectId,
   _userId: Schema.Types.ObjectId
+});
+
+flagSchema.virtual('_since').get(function () {
+  return this._id.getTimestamp();
 });
 
 var Flag = mongoose.model('Flag', flagSchema);
