@@ -94,7 +94,7 @@ exports.auth = function (aReq, aRes, aNext) {
   var strategy = aReq.body.auth || aReq.params.strategy;
   var username = aReq.body.username || aReq.session.username ||
     (authedUser ? authedUser.name : null);
-  var authOpts = { failureRedirect: '/register?stratfail' };
+  var authOpts = { failureRedirect: '/login?stratfail' };
   var passportKey = aReq._passport.instance._key;
 
   // Yet another passport hack.
@@ -118,7 +118,7 @@ exports.auth = function (aReq, aRes, aNext) {
   }
 
   if (!username) {
-    aRes.redirect('/register?noname');
+    aRes.redirect('/login?noname');
     return;
   }
   // Clean the username of leading and trailing whitespace,
@@ -127,7 +127,7 @@ exports.auth = function (aReq, aRes, aNext) {
 
   // The username could be empty after the replacements
   if (!username) {
-    aRes.redirect('/register?noname');
+    aRes.redirect('/login?noname');
     return;
   }
 
@@ -164,7 +164,7 @@ exports.auth = function (aReq, aRes, aNext) {
       }
 
       if (!strategy) {
-        aRes.redirect('/register');
+        aRes.redirect('/login');
         return;
       } else {
         auth();
@@ -243,7 +243,7 @@ exports.callback = function (aReq, aRes, aNext) {
         console.error(colors.red('`User` not found'));
       }
 
-      aRes.redirect(doneUri + (doneUri === '/' ? 'register' : '') + '?authfail');
+      aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?authfail');
       return;
     }
 
@@ -296,8 +296,7 @@ exports.callback = function (aReq, aRes, aNext) {
 
 exports.validateUser = function validateUser(aReq, aRes, aNext) {
   if (!aReq.session.user) {
-    aRes.location('/login');
-    aRes.status(302).send();
+    aRes.redirect('/login');
     return;
   }
   aNext();

@@ -243,7 +243,7 @@ exports.register = function (aReq, aRes) {
   options.redirectTo = getRedirect(aReq);
 
   // Page metadata
-  pageMetadata(options, 'Register');
+  pageMetadata(options, 'Login');
 
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
