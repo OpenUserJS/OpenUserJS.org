@@ -31,7 +31,9 @@ module.exports = function (aApp) {
   aApp.route('/auth/:strategy').get(authentication.auth);
   aApp.route('/auth/:strategy/callback/:junk?').get(authentication.callback);
   aApp.route('/login').get(main.register);
-  aApp.route('/register').get(main.register);
+  aApp.route('/register').get(function (aReq, aRes) {
+    aRes.redirect(301, '/login');
+  });
   aApp.route('/logout').get(main.logout);
 
   // User routes
@@ -44,8 +46,11 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
   aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
   aApp.route('/users/:username/update').post(admin.adminUserUpdate);
+  // NOTE: Some below inconsistent with priors
   aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
-  aApp.route('/user').get(function (aReq, aRes) { aRes.redirect('/users'); });
+  aApp.route('/user').get(function (aReq, aRes) {
+    aRes.redirect(302, '/users');
+  });
   aApp.route('/api/user/exist/:username').head(user.exist);
 
   // Adding script/library routes
@@ -55,14 +60,16 @@ module.exports = function (aApp) {
   aApp.route('/user/add/lib').get(authentication.validateUser, user.newLibraryPage);
   aApp.route('/user/add/lib/new').get(script.new(script.lib(user.editScript))).post(authentication.validateUser, script.new(script.lib(user.submitSource)));
   aApp.route('/user/add/lib/upload').post(authentication.validateUser, script.lib(user.uploadScript));
-  aApp.route('/user/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
+  aApp.route('/user/add').get(function (aReq, aRes) {
+    aRes.redirect(301, '/user/add/scripts');
+  });
 
   // Script routes
   aApp.route('/scripts/:username/:scriptname').get(script.view);
   aApp.route('/scripts/:username/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
   aApp.route('/scripts/:username/:scriptname/source').get(user.editScript);
   aApp.route('/scripts/:username').get(function (aReq, aRes) {
-    aRes.redirect('/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
+    aRes.redirect(301, '/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
   aApp.route('/install/:username/:scriptname').get(scriptStorage.unlockScript, scriptStorage.sendScript);
@@ -72,7 +79,6 @@ module.exports = function (aApp) {
   // Github hook routes
   aApp.route('/github/hook').post(scriptStorage.webhook);
   aApp.route('/github/service').post(function (aReq, aRes, aNext) { aNext(); });
-  aApp.route('/github').get(function (aReq, aRes) { aRes.redirect('/'); });
 
   // Library routes
   aApp.route('/libs/:username/:scriptname').get(script.lib(script.view));
