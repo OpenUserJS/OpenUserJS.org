@@ -256,13 +256,16 @@ exports.callback = function (aReq, aRes, aNext) {
         return;
       }
 
-      // Show a console notice that successfully logged in with development and debug modes
+      // Show a console notice that successfully logged in
       if (isDev || isDbg) {
         console.log(colors.green('Logged in'));
       }
 
       // Store the user info in the session
       aReq.session.user = aUser;
+
+      // Save the last date a user sucessfully logged in
+      aUser.authed = new Date();
 
       // Save the session id on the user model
       aUser.sessionId = aReq.sessionID;

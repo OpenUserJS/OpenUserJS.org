@@ -19,6 +19,7 @@ var userSchema = new Schema({
   // A user can link multiple accounts to their OpenUserJS account
   auths: Array,
   strategies: Array,
+  authed: Date, // last logged in
 
   // Store their GitHub username when they import scripts
   ghUsername: String,
