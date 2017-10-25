@@ -32,7 +32,6 @@ Repository | Reference | Recent Version
 [clipboard][clipboardGHUrl] | [Documentation][clipboardDOCUrl] | [![NPM version][clipboardNPMVersionImage]][clipboardNPMUrl]
 [compression][compressionGHUrl] | [Documentation][compressionDOCUrl] | [![NPM version][compressionNPMVersionImage]][compressionNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
-[cookie-parser][cookie-parserGHUrl] | [Documentation][cookie-parserDOCUrl] | [![NPM version][cookie-parserNPMVersionImage]][cookie-parserNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
 [express-brute][express-bruteGHUrl] | [Documentation][express-bruteDOCUrl] | [![NPM version][express-bruteNPMVersionImage]][express-bruteNPMUrl]
 [express-brute-mongo][express-brute-mongoGHUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
@@ -190,11 +189,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/README.md
 [connect-mongoNPMUrl]: https://www.npmjs.com/package/connect-mongo
 [connect-mongoNPMVersionImage]: https://img.shields.io/npm/v/connect-mongo.svg?style=flat
-
-[cookie-parserGHUrl]: https://github.com/expressjs/cookie-parser
-[cookie-parserDOCUrl]: https://github.com/expressjs/cookie-parser/blob/master/README.md
-[cookie-parserNPMUrl]: https://www.npmjs.com/package/cookie-parser
-[cookie-parserNPMVersionImage]: https://img.shields.io/npm/v/cookie-parser.svg?style=flat
 
 [expressGHUrl]: https://github.com/expressjs/express
 [expressDOCUrl]: http://expressjs.com/
