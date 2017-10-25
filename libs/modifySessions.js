@@ -62,12 +62,16 @@ exports.add = function (aReq, aUser, aCallback) {
   }
 };
 
-// Remove a session id from the user model
+// Remove a session id from the user model **and** the session store
 exports.remove = function (aReq, aUser, aCallback) {
   var pos = aUser && aUser.sessionIds ?
     aUser.sessionIds.indexOf(aReq.sessionID) : -1;
 
-  delete aReq.session.user;
+  if (aReq.session.destroy) {
+    aReq.session.destroy();
+  } else { // TODO: Remove conditional and this fallback when satisifed
+    delete aReq.session.user;
+  }
 
   if (pos > -1) {
     aUser.sessionIds.splice(pos, 1);
