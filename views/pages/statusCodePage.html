@@ -41,6 +41,9 @@
                 {{#isAdminProcessCloneView}}
                   Clone: <strong>{{clone}}</strong>
                 {{/isAdminProcessCloneView}}
+                {{#isAdminSessionLengthView}}
+                  Session Length: <strong>{{length}}</strong>
+                {{/isAdminSessionLengthView}}
               {{/statusData}}
             {{/isCustomView}}
             {{^isCustomView}}
