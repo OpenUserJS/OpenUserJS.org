@@ -289,7 +289,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   unset: 'destroy',
-  cookie: { maxAge: null },
+  cookie: {
+    maxAge: 4 * 60 * 60 * 1000 // 4 hours in ms
+  },
   secret: sessionSecret,
   store: sessionStore
 }));
