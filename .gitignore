@@ -17,7 +17,9 @@ node_modules
 
 data
 
+package-lock.json
 Gemfile.lock
+
 fakeS3
 dev/fakeS3
 
