@@ -5,15 +5,6 @@
   {{> includes/head.html }}
   <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/bootstrap-markdown/css/bootstrap-markdown.min.css">
   <link rel="stylesheet" type="text/css" media="all" href="/css/scriptPage.css">
-  <style>
-    #show-reply-form-when-visible {
-      -moz-transition: height 1s ease;
-      -ms-transition: height 1s ease;
-      -o-transition: height 1s ease;
-      -webkit-transition: height 1s ease;
-      transition: height 1s ease;
-    }
-  </style>
 </head>
 <body>
   {{> includes/header.html }}
@@ -53,6 +44,11 @@
                 </div>
                 {{/paginationRendered}}
               </section>
+              {{#authedUser}}
+              <section class="topic-area list-group">
+                  {{> includes/commentForm.html }}
+              </section>
+              {{/authedUser}}
             </div>
           </div>
         </div>
@@ -63,16 +59,14 @@
     </div>
   </div>
 
-  <div id="show-reply-form-when-visible"></div>
-  {{> includes/commentForm.html }}
   {{> includes/footer.html }}
   {{#paginationRendered}}
       {{> includes/scripts/showTopPagination.html }}
   {{/paginationRendered}}
   {{> includes/scripts/lazyIconScript.html }}
   {{#authedUser}}
-  {{> includes/scripts/markdownEditor.html }}
-  {{> includes/scripts/commentReplyScript.html }}
+    {{> includes/scripts/markdownEditor.html }}
+    {{> includes/scripts/commentReplyScript.html }}
   {{/authedUser}}
   {{^authedUser}}
     {{> includes/scripts/commentReplyTooltip.html }}

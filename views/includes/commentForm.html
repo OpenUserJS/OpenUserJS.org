@@ -1,11 +1,37 @@
-<div id="reply-control" class="collapse">
-  <form action="{{{discussion.discussionPageUrl}}}" method="post">
-    <div class="container-fluid row user-content">
-      <div class="submit-panel pull-right btn-toolbar">
-        <button class="btn btn-sm btn-danger" type="button" data-toggle="collapse" data-target="#reply-control"><i class="fa fa-close"></i> Cancel</button>
-        <button class="btn btn-sm btn-success" type="submit"><i class="fa fa-reply"></i> Reply</button>
+<div class="topic-post list-group-item">
+  <article>
+    <div class="row">
+      <div class="topic-avatar col-sm-2">
+        <a href="{{{authedUser.userPageUrl}}}">
+          <i class="fa fa-user"></i>
+        </a>
       </div>
-      <textarea name="comment-content" data-provide="markdown" data-iconlibrary="fa" class="col-xs-12" placeholder="Type here using Markdown."></textarea>
+      <div class="topic-body col-sm-10 container-fluid">
+        <div class="topic-meta-data row">
+          <div class="names pull-left">
+            <span>
+              <a href="{{{authedUser.userPageUrl}}}" class="username">{{authedUser.name}}</a> <span class="label label-default">{{authedUser.roleName}}</span>
+            </span>
+          </div>
+          <div class="post-info pull-right">
+            <a class="post-date">
+              <time datetime="" title=""></time>
+            </a>
+          </div>
+        </div>
+        <div class="topic-post-contents row">
+          <form action="{{{discussion.discussionPageUrl}}}" method="post">
+            <div class="container-fluid row user-content">
+              <textarea name="comment-content" data-provide="markdown" data-iconlibrary="fa" class="col-xs-12" placeholder="Type here using Markdown." required="required"></textarea>
+              <div class="submit-panel btn-toolbar">
+                <a href="/about/Frequently-Asked-Questions"><i class="fa fa-book"></i></a>
+                <a href="https://guides.github.com/features/mastering-markdown/"><i class="octicon octicon-markdown" title="GitHub Flavor Markdown compatible"></i></a>
+                <button class="btn-sm btn btn-success pull-right" type="submit"><i class="fa fa-reply"></i> Reply</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-  </form>
+  </article>
 </div>
