@@ -157,10 +157,10 @@ var tasks = [
     });
   },
   function (aStdouts, aCallback) {
-    var cmd = 'npm --depth 0 outdated';
+    var cmd = 'npm outdated';
 
     exec(cmd, function (aErr, aStdout, aStderr) {
-      if (aErr) {
+      if (aErr && aErr.code !== 1) {
         aCallback(aErr);
         return;
       }
