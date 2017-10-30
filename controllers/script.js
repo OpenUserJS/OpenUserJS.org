@@ -148,8 +148,6 @@ var getScriptPageTasks = function (aOptions) {
     license.forEach(function (aElement, aIndex, aArray) {
       aOptions.script.licenses.unshift({ name: aElement.value });
     });
-  } else if (!script.isLib) {
-    aOptions.script.licenses = [{ name: 'MIT License (Expat)' }];
   }
 
   // Show collaborators of the script
