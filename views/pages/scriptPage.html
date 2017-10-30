@@ -49,7 +49,8 @@
               {{#script.homepages}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.homepages}}
               {{#script.support}}<p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.support}}
               {{#script.copyrights}}<p><i class="fa fa-fw fa-copyright"></i> <b>Copyright:</b> {{name}}</p>{{/script.copyrights}}
-              {{#script.licenses}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{name}}</p>{{/script.licenses}}
+              {{#script.licenses}}<p><i class="fa fa-fw fa-balance-scale"></i> <b>License:</b> {{name}}</p>{{/script.licenses}}
+              {{^script.isLib}}{{^script.licenses}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> MIT License (Expat)</p>{{/script.licenses}}{{/script.isLib}}
               {{#hasCollab}}
               <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>
               {{/hasCollab}}
