@@ -267,8 +267,6 @@ if (isDev || isDbg) {
   app.use(morgan(process.env.FORCE_MORGAN_PREDEF_FORMAT));
 }
 
-
-
 app.use(bodyParser.urlencoded({
   extended: false,
   limit: parseInt(settings.maximum_upload_script_size / 1024, 10) + 'kb'
