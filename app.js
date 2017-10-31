@@ -263,7 +263,11 @@ if (app.get('securePort')) {
 
 if (isDev || isDbg) {
   app.use(morgan('dev'));
+} else if (process.env.FORCE_MORGAN_PREDEF_FORMAT) {
+  app.use(morgan(process.env.FORCE_MORGAN_PREDEF_FORMAT));
 }
+
+
 
 app.use(bodyParser.urlencoded({
   extended: false,
