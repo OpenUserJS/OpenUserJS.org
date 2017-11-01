@@ -447,3 +447,14 @@ ul.flaggedList {
   background: transparent url("/images/ua/yandex16.png") no-repeat left top;
   color: transparent;
 }
+
+// Extend *boostrap*
+input[type="text"]::ms-clear {
+  display: none;
+}
+
+.form-control-clear {
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 15;
+}
