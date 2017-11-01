@@ -30,7 +30,13 @@
       var container = target.closest('div.input-group');
       var inputNode = null;
       var buttonNode = null;
-      var ev = new Event('input');
+      var ev = null;
+      try {
+        ev = new Event('input');
+      } catch (aE) {
+        ev = document.createEvent('Event');
+        ev.initEvent('input', true, true);
+      }
 
       if (container) {
         inputNode = container.querySelector('input[type=text].search');
@@ -52,7 +58,13 @@
       var i = null;
       var thisNode = null;
       var nodes = null;
-      var ev = new Event('input');
+      var ev = null;
+      try {
+        ev = new Event('input');
+      } catch (aE) {
+        ev = document.createEvent('Event');
+        ev.initEvent('input', true, true);
+      }
 
       nodes = document.querySelectorAll('input[type=text].search');
       for (i = 0; thisNode = nodes[i++];) {
