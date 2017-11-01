@@ -450,7 +450,7 @@ ul.flaggedList {
 
 // Extend *boostrap*
 input[type=text]::-ms-clear,
-input[type="search"] {
+input[type="search"]::-ms-clear {
   width: 0;
   height: 0;
   display: none;
