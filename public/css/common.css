@@ -448,7 +448,7 @@ ul.flaggedList {
   color: transparent;
 }
 
-// Disable Microsoft clear button
+/* Disable Microsoft clear button */
 ::-ms-clear {
   width: 0;
   height: 0;
