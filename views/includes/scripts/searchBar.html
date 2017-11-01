@@ -1,0 +1,51 @@
+<script type="text/javascript">
+  (function () {
+    'use strict';
+
+    function onInput(aEv) {
+      var container = aEv.target.parentNode.querySelector('.form-control-clear');
+
+      if (container) {
+        if (aEv.target.value) {
+          container.classList.remove('hidden');
+        } else {
+          container.classList.add('hidden');
+        }
+      }
+    }
+
+    function onClick(aEv) {
+      var container = aEv.target.parentNode.querySelector('.has-clear input[type="text"]');
+      var ev = new Event('input');
+
+      if (container) {
+        aEv.target.classList.add('hidden');
+        container.value = '';
+        container.dispatchEvent(ev);
+        container.focus();
+      }
+    }
+
+    function onDOMContentLoaded(aEv) {
+      var i = null;
+      var thisNode = null;
+      var nodes = null;
+      var ev = new Event('input');
+
+      nodes = document.querySelectorAll('.has-clear input[type="text"]');
+      for (i = 0; thisNode = nodes[i++];) {
+        thisNode.addEventListener('input', onInput);
+        thisNode.dispatchEvent(ev);
+      }
+
+      nodes = document.querySelectorAll('.form-control-clear');
+      for (i = 0; thisNode = nodes[i++];) {
+        thisNode.addEventListener('click', onClick);
+        thisNode.dispatchEvent(ev);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+  })();
+</script>
