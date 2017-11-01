@@ -449,7 +449,7 @@ ul.flaggedList {
 }
 
 // Extend *boostrap*
-input[type="text"]::ms-clear {
+input[type="text"]::-ms-clear {
   display: none;
 }
 
