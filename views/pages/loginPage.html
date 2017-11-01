@@ -20,10 +20,16 @@
           </div>
         </noscript>
         <div class="input-group">
-          <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-          <div class="form-group has-feedback has-clear">
+          <span class="input-group-addon">
+            <i class="fa fa-user fa-fw"></i>
+          </span>
+          <div class="input-group" style="width: 101%;">
             <input class="search form-control" type="text" name="username" value="{{wantname}}" placeholder="Username" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
-            <span class="form-control-feedback form-control-clear fa fa-times hidden"></span>
+            <span class="input-group-btn">
+              <button class="btn btn-default btn-clear hidden" type="button">
+                <i class="fa fa-times"></i>
+              </button>
+            </span>
           </div>
           <select name="auth" class="form-control">
             {{#strategies}}
