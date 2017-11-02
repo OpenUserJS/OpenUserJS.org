@@ -4,7 +4,7 @@
       <th class="text-center{{#orderedByName}} active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
       {{^librariesOnly}}<th class="text-center td-fit{{#orderedByInstalls}} active{{/orderedByInstalls}}"><a href="?orderBy=installs&orderDir={{orderDir.install}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Installs</a></th>{{/librariesOnly}}
       <th class="text-center td-fit{{#orderedByRating}} active{{/orderedByRating}}"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Rating</a></th>
-      <th class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}"><a href="?orderBy=updated&orderDir={{orderDir.updated}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Last Updated</a></th>
+      <th class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}"><a href="?orderBy=updated&orderDir={{orderDir.updated}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#librariesOnly}}&library=true{{/librariesOnly}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Updated</a></th>
       {{#hasFlagged}}
       <th>Flagged</th>
       {{/hasFlagged}}
