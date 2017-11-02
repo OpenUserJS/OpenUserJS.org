@@ -454,3 +454,10 @@ ul.flaggedList {
   height: 0;
   display: none;
 }
+
+/* Extend *bootstrap* */
+.form-control-clear {
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 15;
+}

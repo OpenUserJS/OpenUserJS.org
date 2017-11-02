@@ -6,20 +6,16 @@
 
     function onInput(aEv) {
       var container = aEv.target.closest('div.input-group');
-      var buttonNode = null;
+      var formcontrolNode = null;
 
       if (container) {
-        buttonNode = container.querySelector('button[type=button].btn-clear');
+        formcontrolNode = container.querySelector('.form-control-clear');
 
-        if (buttonNode) {
+        if (formcontrolNode) {
           if (aEv.target.value) {
-            buttonNode.classList.remove('hidden');
-            // NOTE: Correct a potential *bootstrap* CSS issue
-            aEv.target.parentNode.style.width = "100%";
+            formcontrolNode.classList.remove('hidden');
           } else {
-            buttonNode.classList.add('hidden');
-             // NOTE: Correct a potential *bootstrap* CSS issue
-            aEv.target.parentNode.style.width = "101%";
+            formcontrolNode.classList.add('hidden');
           }
         }
       }
@@ -29,7 +25,6 @@
       var target = aEv.target;
       var container = target.closest('div.input-group');
       var inputNode = null;
-      var buttonNode = null;
       var ev = null;
       try {
         ev = new Event('input');
@@ -39,12 +34,12 @@
       }
 
       if (container) {
-        inputNode = container.querySelector('input[type=text].search');
+        inputNode = container.querySelector('.has-clear input[type="text"]');
 
         if (inputNode) {
           if (target.tagName !== 'BUTTON') {
              // NOTE: Correct a weird Chromium/Chrome issue here with icon tag being sometimes hidden instead
-            target = aEv.target.closest('button[type=button].btn-clear');
+            target = aEv.target.closest('.form-control-clear');
           }
           target.classList.add('hidden');
           inputNode.value = '';
@@ -66,13 +61,13 @@
         ev.initEvent('input', true, true);
       }
 
-      nodes = document.querySelectorAll('input[type=text].search');
+      nodes = document.querySelectorAll('.has-clear input[type="text"]');
       for (i = 0; thisNode = nodes[i++];) {
         thisNode.addEventListener('input', onInput);
         thisNode.dispatchEvent(ev);
       }
 
-      nodes = document.querySelectorAll('button[type=button].btn-clear');
+      nodes = document.querySelectorAll('.form-control-clear');
       for (i = 0; thisNode = nodes[i++];) {
         thisNode.addEventListener('click', onClick);
         thisNode.dispatchEvent(ev);
