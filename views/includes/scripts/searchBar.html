@@ -5,6 +5,7 @@
     {{> includes/scripts/polyfillElementClosest.js }}
 
     function onInput(aEv) {
+      var target = aEv.target;
       var container = aEv.target.closest('div.input-group');
       var formcontrolNode = null;
 
@@ -12,7 +13,7 @@
         formcontrolNode = container.querySelector('.form-control-clear');
 
         if (formcontrolNode) {
-          if (aEv.target.value) {
+          if (target.value) {
             formcontrolNode.classList.remove('hidden');
           } else {
             formcontrolNode.classList.add('hidden');
@@ -37,10 +38,6 @@
         inputNode = container.querySelector('.has-clear input[type="text"]');
 
         if (inputNode) {
-          if (target.tagName !== 'BUTTON') {
-             // NOTE: Correct a weird Chromium/Chrome issue here with icon tag being sometimes hidden instead
-            target = aEv.target.closest('.form-control-clear');
-          }
           target.classList.add('hidden');
           inputNode.value = '';
           inputNode.dispatchEvent(ev);
