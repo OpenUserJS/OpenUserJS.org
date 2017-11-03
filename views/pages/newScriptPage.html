@@ -21,54 +21,124 @@
           <h2><i class="octicon octicon-key"></i> Script Metadata</h2>
           <div class="panel panel-default">
             <div class="panel-body">
-              <p>You may read about most UserScript metadata block keys on the <a href="https://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge wiki</a>. Some recommended ones are listed below with their respective metadata block names.</p>
+              <p>You may read about most UserScript metadata block keys on the <a href="https://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge classic wiki</a>. Some samples to click and read <noscript>, with JavaScript enabled,</noscript> are listed below with their respective metadata block names.</p>
             </div>
           </div>
           <h3>UserScript Block</h3>
-          <div class="list-group script-metadata-definitions">
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@name My Script</code></h5>
-              <p class="list-group-item-text"><strong>Default non-localized is required.</strong> Last value is used.</p>
-            </div>
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@updateURL https://openuserjs.org/meta/{{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}/My_Script.meta.js</code></h5>
-              <p class="list-group-item-text"><strong>Required in lockdown mode.</strong> See <a href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">this FAQ item</a> for more. Last value is used.</p>
-            </div>
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@description This script even does the laundry!</code></h5>
-              <p class="list-group-item-text">Specially formatted on the script page. Last value shown.</p>
-            </div>
+          <div class="panel-group" id="accordion-userscript-block">
 
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@copyright Year, Author (Author Website)</code></h5>
-              <p class="list-group-item-text">Specially formatted on the script page. All values shown in reverse order.</p>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-name"><code>@name My Script</code></a>
+                </h5>
+              </div>
+              <div id="collapse-name" class="panel-collapse collapse in">
+                <div class="panel-body"><strong>Default non-localized is required.</strong> Last value is used.</div>
+              </div>
             </div>
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@icon url</code></h5>
-              <p class="list-group-item-text">A url or data url. Resolution should be near 48px by 48px, Used in the script list page at 16px and on the script page at ~45px. Last value is shown.</p>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-description"><code>@description This script even does the laundry!</code></a>
+                </h5>
+              </div>
+              <div id="collapse-description" class="panel-collapse collapse">
+                <div class="panel-body">Specially formatted on the script page. Last value shown.</div>
+              </div>
             </div>
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@license License Type; License Homepage</code></h5>
-              <p class="list-group-item-text">Specially formatted on the script page. All values shown in reverse order. If absent MIT License (Expat) is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</p>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-copyright"><code>@copyright Year, Author (Author Website)</code></a>
+                </h5>
+              </div>
+              <div id="collapse-copyright" class="panel-collapse collapse">
+                <div class="panel-body">Specially formatted on the script page. All values shown in reverse order.</div>
+              </div>
             </div>
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@homepageURL url</code></h5>
-              <p class="list-group-item-text">A url of http, https or mailto protocol. Specially formatted on the script page. All values shown in reverse order.</p>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-license"><code>@license License Type; License Homepage</code></a>
+                </h5>
+              </div>
+              <div id="collapse-license" class="panel-collapse collapse">
+                <div class="panel-body">Specially formatted on the script page. All values shown in reverse order. If absent <a href="https://spdx.org/licenses/MIT.html"><code>MIT</code></a> <a href="https://opensource.org/licenses/MIT">License <em>(Expat)</em></a> is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</div>
+              </div>
             </div>
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@supportURL url</code></h5>
-              <p class="list-group-item-text">A url of http, https or mailto protocol. Specially formatted on the script page. Last value shown.</p>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-icon"><code>@icon url</code></a>
+                </h5>
+              </div>
+              <div id="collapse-icon" class="panel-collapse collapse">
+                <div class="panel-body">A url or data url. Resolution should be near 48px by 48px, Used in the script list page at 16px and on the script page at ~45px. Last value is shown.</div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-homepageurl"><code>@homepageURL url</code></a>
+                </h5>
+              </div>
+              <div id="collapse-homepageurl" class="panel-collapse collapse">
+                <div class="panel-body">A url of http, https or mailto protocol. Specially formatted on the script page. All values shown in reverse order.</div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-supporturl"><code>@supportURL url</code></a>
+                </h5>
+              </div>
+              <div id="collapse-supporturl" class="panel-collapse collapse">
+                <div class="panel-body">A url of http, https or mailto protocol. Specially formatted on the script page. Last value shown.</div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-version"><code>@version 1.0.0</code></a>
+                </h5>
+              </div>
+              <div id="collapse-version" class="panel-collapse collapse">
+                <div class="panel-body">Enables automatic script updates in a .user.js engine. Usually major dot minor dot build <em>(or Patch)</em>. May utilize the <a href="https://developer.mozilla.org/docs/Toolkit_version_format">Toolkit version format</a> or <a href="http://semver.org/">Semantic Versioning <em>(SemVer)</em></a>. Last value shown.</div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-updateurl"><code>@updateURL https://openuserjs.org/meta/{{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}/My_Script.meta.js</code></a>
+                </h5>
+              </div>
+              <div id="collapse-updateurl" class="panel-collapse collapse in">
+                <div class="panel-body"><strong>Required in lockdown mode.</strong> See <a href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">this FAQ item</a> for more. Last value is used.</div>
+              </div>
             </div>
           </div>
           <h3>OpenUserJS Block</h3>
-          <div class="list-group script-metadata-definitions">
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h5>
-              <p class="list-group-item-text">The author of the script. Required to enable <a href="#collaboration">Collaboration</a>. Last value shown.</p>
+          <div class="panel-group" id="accordion-openuserjs-block">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-oujs-author"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></a>
+                </h5>
+              </div>
+              <div id="collapse-oujs-author" class="panel-collapse collapse in">
+                <div class="panel-body">The author of the script. Required to enable <a href="#collaboration">Collaboration</a>. Last value shown.</div>
+              </div>
             </div>
-            <div class="list-group-item">
-              <h5 class="list-group-item-heading"><code>@collaborator username</code></h5>
-              <p class="list-group-item-text">May be defined multiple times. Required for <a href="#collaboration">Collaboration</a>. All values shown in reverse order.</p>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-oujs-collaboration"><code>@collaborator username</code></a>
+                </h5>
+              </div>
+              <div id="collapse-oujs-collaboration" class="panel-collapse collapse">
+                <div class="panel-body">May be defined multiple times. Required for <a href="#collaboration">Collaboration</a>. All values shown in reverse order.</div>
+              </div>
             </div>
           </div>
           {{/newUserJS}}

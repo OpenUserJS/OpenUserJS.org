@@ -38,8 +38,8 @@ Within moderation we understand the occasional necessity to conserve device stor
 
 #### Default Code Licensing
 
-* User Scripts have an implied license of [MIT License (Expat)][osiMITLicenseExpat] if the `@license` *(including the alternate spelling of `@licence`)* metadata block key is absent.
-* Library Scripts need to include one reference to their [acceptable license(s)][oujsAcceptableLicensing] either via a License Header *([sample MPL header][mozMPLHeaders] if that license is chosen)*, a cross-site compatible metadata block with at least one `@license` or `@licence` key **and** one `@exclude *`, or full License text *(full text is not recommended for storage constraints on portable devices)*. Libraries also have an implied license of [MIT License (Expat)][osiMITLicenseExpat] in the absence of any licensing *(however this should not happen)*. It may also be useful to indicate in the source that it is a library and not a userscript. If the type of script is unclear the library may be subject to removal.
+* User Scripts have an implied license of [`MIT`][spdxMITLicense] [License *(Expat)*][osiMITLicenseExpat] if the `@license` *(including the alternate spelling of `@licence`)* metadata block key is absent.
+* Library Scripts need to include one reference to their [acceptable license(s)][oujsAcceptableLicensing] either via a License Header *([sample MPL header][mozMPLHeaders] if that license is chosen)*, a cross-site compatible metadata block with at least one `@license` or `@licence` key **and** one `@exclude *`, or full License text *(full text is not recommended for storage constraints on portable devices)*. Libraries also have an implied license of [`MIT`][spdxMITLicense] [License *(Expat)*][osiMITLicenseExpat] in the absence of any licensing *(however this should not happen)*. It may also be useful to indicate in the source that it is a library and not a userscript. If the type of script is unclear the library may be subject to removal.
 
 #### Acceptable Licensing
 * Licensing must be [Open Source Initiative *(OSI)* approved][osiApprovedLicenses] and declared with the name of the License in the Source Code for all published works. e.g. `@license` or `@licence` keys, License Header or full License text *(full text is not recommended for storage constraints on portable devices)*
@@ -69,6 +69,7 @@ OpenUserJs.org reserves the right to amend these terms at any time.
 [mozMPLHeaders]: https://www.mozilla.org/MPL/headers/
 [oujsDefaultCodeLicensing]: #default-code-licensing
 [oujsAcceptableLicensing]: #acceptable-licensing
+[spdxMITLicense]: https://spdx.org/licenses/MIT.html
 [osiMITLicenseExpat]: https://opensource.org/licenses/MIT
 [osiApprovedLicenses]: https://opensource.org/licenses/category
 [osiPublicDomain]: https://opensource.org/faq#public-domain
