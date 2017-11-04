@@ -62,6 +62,7 @@
     "select2": "3.5.2-browserify",
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.4.5",
+    "spdx-is-osi": "0.1.2",
     "toobusy-js-harmony": "git://github.com/OpenUserJs/node-toobusy#harmony",
     "uglify-js": "3.1.6",
     "uglify-es": "3.1.6",

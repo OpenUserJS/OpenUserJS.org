@@ -23,6 +23,8 @@ var mediaDB = require('mime-db');
 var async = require('async');
 var moment = require('moment');
 var Base62 = require('base62');
+var sanitizeHtml = require('sanitize-html');
+var SPDXOSI = require('spdx-osi');
 
 var MongoClient = require('mongodb').MongoClient;
 var ExpressBrute = require('express-brute');
@@ -49,6 +51,7 @@ var modelParser = require('../libs/modelParser');
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
+var htmlWhitelistWeb = require('../libs/htmlWhitelistWeb.json');
 
 // Add greasemonkey support for Media Type
 if (!mediaDB['text/x-userscript-meta']) {
@@ -1119,6 +1122,28 @@ exports.getMeta = function (aBufs, aCallback) {
   aCallback(null);
 };
 
+function isEqualKeyset(aOpenUserJSKeyset, aUserSriptKeyset) {
+  var aOpenUserJSKey = null;
+  var aUserScriptKey = null;
+  var i = null;
+
+  if (!aUserSriptKeyset || aUserSriptKeyset.length !== aOpenUserJSKeyset.length) {
+    // No UserScript block keyset or not mirrored exactly.
+    return false;
+  } else {
+    for (i = 0; (aOpenUserJSKey = aOpenUserJSKeyset[i]) &&
+      (aUserScriptKey = aUserSriptKeyset[i]); i++) {
+
+      if (aOpenUserJSKey !== aUserScriptKey) {
+        // Keyset must exist exactly positioned in both
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var isLibrary = typeof aMeta === 'string';
   var name = null;
@@ -1127,6 +1152,16 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
     (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
   var downloadURL = null;
+  var userscriptKeyset = null;
+  var userscriptKey = null;
+  var openuserjsKeyset = null;
+  var thisKeyComponents = null;
+  var thisSPDX = null;
+  var thatSPDX = null;
+  var htmlStub = null;
+  var i = null;
+  var j = null;
+  var hasOSI = null;
   var author = null;
   var collaborators = null;
   var installName = aUser.name + '/';
@@ -1197,6 +1232,114 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         return;
       }
     }
+
+
+    // `name` validations including localizations
+    userscriptKeyset = findMeta(aMeta, 'UserScript.name.value');
+    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.name.value');
+
+    if (openuserjsKeyset) {
+      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
+        // Keysets in both blocks do not match exactly... reject
+        aCallback(null);
+        return;
+      }
+    }
+
+
+    // `description` validations including localizations
+    userscriptKeyset = findMeta(aMeta, 'UserScript.description.value');
+    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.description.value');
+
+    if (openuserjsKeyset) {
+      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
+        // Keysets in both blocks do not match exactly... reject
+        aCallback(null);
+        return;
+      }
+    }
+
+
+    // `version` validations
+    userscriptKeyset = findMeta(aMeta, 'UserScript.version.0.value');
+    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.version.0.value');
+
+    if (openuserjsKeyset) {
+      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
+        // Keysets in both blocks do not match exactly... reject
+        aCallback(null);
+        return;
+      }
+    }
+
+
+    // `copyright` validations
+    userscriptKeyset = findMeta(aMeta, 'UserScript.copyright.value');
+    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.copyright.value');
+
+    if (openuserjsKeyset) {
+      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
+        // Keysets in both blocks do not match exactly... reject
+        aCallback(null);
+        return;
+      }
+    }
+
+
+    // `license` validations
+    userscriptKeyset = findMeta(aMeta, 'UserScript.license.value');
+    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.license.value');
+
+    if (openuserjsKeyset) {
+      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
+        // Keysets in both block do not match exactly... reject
+        aCallback(null);
+        return;
+      }
+    }
+
+    if (userscriptKeyset) {
+      hasOSI = false;
+
+      for (i = 0; userscriptKey = userscriptKeyset[i]; i++) {
+        thisKeyComponents = userscriptKey.split('; ');
+        if (thisKeyComponents.length > 2) {
+          // Too many parts... reject
+          aCallback(null);
+          return;
+        }
+
+        if (thisKeyComponents.length === 2) {
+          htmlStub = '<a href="' + thisKeyComponents[1] + '"></a>';
+          if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)) {
+            // Not a web url... reject
+            aCallback(null);
+            return;
+          }
+        }
+
+        thisSPDX = null;
+        thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
+
+        for (j = 0; thisSPDX = SPDXOSI[j++];) {
+          if (thisSPDX === thatSPDX) {
+            hasOSI = true && i === userscriptKeyset.length - 1; // NOTE: Must be the primary last key
+          }
+        }
+      }
+
+      if (!hasOSI) {
+        // No valid OSI licensing found... reject
+        aCallback(null);
+        return;
+      }
+    } else {
+      // No licensing... reject
+      // TODO: Enable after a bit of existing Authors getting used to it
+      //aCallback(null);
+      //return;
+    }
+
 
     author = findMeta(aMeta, 'OpenUserJS.author.0.value');
     collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');

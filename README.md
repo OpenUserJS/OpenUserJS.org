@@ -81,6 +81,7 @@ Repository | Reference | Recent Version
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
 [serve-favicon][serve-faviconGHUrl] | [Documentation][serve-faviconDOCUrl] | [![NPM version][serve-faviconNPMVersionImage]][serve-faviconNPMUrl]
+[spdx-is-osi][spdx-is-osiGHUrl] | [Documentation][spdx-is-osiDOCUrl] | [![NPM version][spdx-is-osiNPMVersionImage]][spdx-is-osiNPMUrl]
 [toobusy-js][toobusy-jsGHUrl] <br />&#x22D4; [`harmony`][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
 [uglifyJS][uglifyJS2GHUrl] <br />&#x21B3; [`harmony`][uglifyJS2GHHarmonyUrl] | [Documentation][uglifyJS2DOCUrl] [&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl] <br />&#x21B3; [![NPM Harmony version][uglifyJS2NPMHarmonyVersionImage]][uglifyJS2NPMHarmonyUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
@@ -445,6 +446,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [serve-faviconDOCUrl]: https://github.com/expressjs/serve-favicon/blob/master/README.md
 [serve-faviconNPMUrl]: https://www.npmjs.com/package/serve-favicon
 [serve-faviconNPMVersionImage]: https://img.shields.io/npm/v/serve-favicon.svg?style=flat
+
+[spdx-is-osiGHUrl]: https://github.com/jslicense/spdx-is-osi.js
+[spdx-is-osiDOCUrl]: https://github.com/jslicense/spdx-is-osi.js/blob/master/README.md
+[spdx-is-osiNPMUrl]: https://www.npmjs.com/package/spdx-is-osi
+[spdx-is-osiNPMVersionImage]: https://img.shields.io/npm/v/spdx-is-osi.svg?style=flat
 
 [toobusy-jsGHUrl]: https://github.com/STRML/node-toobusy
 [toobusy-jsGHUrlHarmonyUrl]: https://github.com/OpenUserJs/node-toobusy/tree/harmony
