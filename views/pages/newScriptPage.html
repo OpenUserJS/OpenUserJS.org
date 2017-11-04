@@ -30,7 +30,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-name"><code>@name My Script</code></a>
+                  <a class="small"  data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-name"><code>@name My Script</code></a>
                 </h5>
               </div>
               <div id="collapse-name" class="panel-collapse collapse in">
@@ -40,7 +40,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-description"><code>@description This script even does the laundry!</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-description"><code>@description This script even does the laundry!</code></a>
                 </h5>
               </div>
               <div id="collapse-description" class="panel-collapse collapse">
@@ -50,7 +50,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-copyright"><code>@copyright Year, Author (Author Website)</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-copyright"><code>@copyright Year, Author (Author Website)</code></a>
                 </h5>
               </div>
               <div id="collapse-copyright" class="panel-collapse collapse">
@@ -60,17 +60,17 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-license"><code>@license License Type; License Homepage</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-license"><code>@license License Type; License Homepage</code></a>
                 </h5>
               </div>
-              <div id="collapse-license" class="panel-collapse collapse">
-                <div class="panel-body">Specially formatted on the script page. All values shown in reverse order. If absent <a href="https://spdx.org/licenses/MIT.html"><code>MIT</code></a> <a href="https://opensource.org/licenses/MIT">License <em>(Expat)</em></a> is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</div>
+              <div id="collapse-license" class="panel-collapse collapse in">
+                <div class="panel-body"><p>Specially formatted on the script page. All values shown in reverse order. If absent <a href="https://spdx.org/licenses/MIT.html"><code>MIT</code></a> <a href="https://opensource.org/licenses/MIT">License <em>(Expat)</em></a> is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</p><p><strong><code>License Type</code> component is required</strong> using at least one <a href="https://opensource.org/licenses/category">OSI approved</a> <a href="https://spdx.org/licenses/">SPDX short identifier</a> and must the primary, last, <code>@license</code> key. Single short ids are accepted only per license key. e.g. No conjunctions like <code>AND</code> or <code>OR</code>. These are handled by multiple <code>@license</code> keys.</p><p><strong><code>; License Homepage</code> component is currently optional</strong></p><p>Single Licensed Example <em>(No specific document license web reference)</em>:<pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br /><code>// @license MIT</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code></pre></p><p>Dual Licensed Example <em>(Specific document license web references)</em>:<pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br /><code>// @license CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode</code><br /><code>// @license GPL-3.0+; http://www.gnu.org/licenses/gpl-3.0.txt</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code></pre></p></div>
               </div>
             </div>
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-icon"><code>@icon url</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-icon"><code>@icon url</code></a>
                 </h5>
               </div>
               <div id="collapse-icon" class="panel-collapse collapse">
@@ -80,7 +80,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-homepageurl"><code>@homepageURL url</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-homepageurl"><code>@homepageURL url</code></a>
                 </h5>
               </div>
               <div id="collapse-homepageurl" class="panel-collapse collapse">
@@ -90,7 +90,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-supporturl"><code>@supportURL url</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-supporturl"><code>@supportURL url</code></a>
                 </h5>
               </div>
               <div id="collapse-supporturl" class="panel-collapse collapse">
@@ -100,7 +100,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-version"><code>@version 1.0.0</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-version"><code>@version 1.0.0</code></a>
                 </h5>
               </div>
               <div id="collapse-version" class="panel-collapse collapse">
@@ -110,7 +110,7 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-updateurl"><code>@updateURL https://openuserjs.org/meta/{{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}/My_Script.meta.js</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-updateurl"><code>@updateURL https://openuserjs.org/meta/{{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}/My_Script.meta.js</code></a>
                 </h5>
               </div>
               <div id="collapse-updateurl" class="panel-collapse collapse in">
@@ -123,17 +123,17 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-oujs-author"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-oujs-author"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></a>
                 </h5>
               </div>
               <div id="collapse-oujs-author" class="panel-collapse collapse in">
-                <div class="panel-body">The author of the script. Required to enable <a href="#collaboration">Collaboration</a>. Last value shown.</div>
+                <div class="panel-body">The author of the script. <strong>Required to enable <a href="#collaboration">Collaboration</a></strong>. Last value shown.</div>
               </div>
             </div>
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-oujs-collaboration"><code>@collaborator username</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-oujs-collaboration"><code>@collaborator username</code></a>
                 </h5>
               </div>
               <div id="collapse-oujs-collaboration" class="panel-collapse collapse">
@@ -239,7 +239,7 @@
           <h3>Collaboration</h3>
           <div class="panel panel-default">
             <div class="panel-body">
-              <p>To allow other users to upload modified versions of your script to your account from this site create an OpenUserJS metadata block and add the necessary keys... one for you yourself and for every existing user you wish to give write access as demonstrated here:<pre><code>// ==OpenUserJS==</code><br /><code>// @author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code><br /><code>// @collaborator username</code><br /><code>// ==/OpenUserJS==</code></pre> Only the real author of the script may modify these metadata keys.</p>
+              <p>To allow other users to upload modified versions of your script to your account from this site create an OpenUserJS metadata block and add the necessary keys... one for you yourself and for every existing user you wish to give write access as demonstrated here:<pre class="small"><code>// ==OpenUserJS==</code><br /><code>// @author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code><br /><code>// @collaborator username</code><br /><code>// ==/OpenUserJS==</code></pre> Only the real author of the script may modify these metadata keys.</p>
               <p>Collaborators on this site may not use GitHub integration to update the script. Add them as collaborators to the GitHub repository instead.</p>
               <p>If the webhook is enabled on the GitHub repository it will clobber any changes here on this site.</p>
             </div>
