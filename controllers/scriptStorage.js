@@ -1157,13 +1157,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var userscriptKey = null;
   var openuserjsKeyset = null;
   var thisKeyComponents = null;
-  var thisSPDX = null;
   var thatSPDX = null;
   var htmlStub = null;
   var i = null;
-  var j = null;
-  var hasOSI = null;
-  var countSPDX = null;
   var author = null;
   var collaborators = null;
   var installName = aUser.name + '/';
@@ -1301,22 +1297,14 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     }
 
     if (userscriptKeyset) {
-      hasOSI = false;
       thatSPDX = userscriptKeyset[userscriptKeyset.length - 1].split('; ')[0].replace(/\+$/, '');
-      for (i = 0; thisSPDX = SPDXOSI[i++];) {
-        if (thisSPDX === thatSPDX) {
-          hasOSI = true;
-        }
-      }
-
-      if (!hasOSI) {
+      if (SPDXOSI.indexOf(thatSPDX) === -1) {
         // No valid OSI primary e.g. last key... reject
         aCallback(null);
         return;
       }
 
-      countSPDX = 0;
-      for (i = 0; userscriptKey = userscriptKeyset[i]; i++) {
+      for (i = 0; userscriptKey = userscriptKeyset[i++];) {
         thisKeyComponents = userscriptKey.split('; ');
         if (thisKeyComponents.length > 2) {
           // Too many parts... reject
@@ -1334,17 +1322,11 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         }
 
         thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
-        for (j = 0; thisSPDX = SPDX[j++];) {
-          if (thisSPDX === thatSPDX) {
-            countSPDX++;
-          }
+        if (SPDX.indexOf(thatSPDX) === -1) {
+          // Absent SPDX short code... reject
+          aCallback(null);
+          return;
         }
-      }
-
-      if (countSPDX !== userscriptKeyset.length) {
-        // Absent SPDX short code... reject
-        aCallback(null);
-        return;
       }
     } else {
       // No licensing... reject
