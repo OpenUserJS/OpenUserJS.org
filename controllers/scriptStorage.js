@@ -25,6 +25,7 @@ var moment = require('moment');
 var Base62 = require('base62');
 var sanitizeHtml = require('sanitize-html');
 var SPDXOSI = require('spdx-osi');
+var SPDX = require('spdx-license-ids');
 
 var MongoClient = require('mongodb').MongoClient;
 var ExpressBrute = require('express-brute');
@@ -1162,6 +1163,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var i = null;
   var j = null;
   var hasOSI = null;
+  var countSPDX = null;
   var author = null;
   var collaborators = null;
   var installName = aUser.name + '/';
@@ -1300,6 +1302,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
     if (userscriptKeyset) {
       hasOSI = false;
+      countSPDX = 0;
 
       for (i = 0; userscriptKey = userscriptKeyset[i]; i++) {
         thisKeyComponents = userscriptKey.split('; ');
@@ -1326,10 +1329,16 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
             hasOSI = true && i === userscriptKeyset.length - 1; // NOTE: Must be the primary last key
           }
         }
+
+        for (j = 0; thisSPDX = SPDX[j++];) {
+          if (thisSPDX === thatSPDX) {
+            countSPDX++;
+          }
+        }
       }
 
-      if (!hasOSI) {
-        // No valid OSI licensing found... reject
+      if (!hasOSI || countSPDX !== userscriptKeyset.length) {
+        // No valid OSI primary or invalid licensing found... reject
         aCallback(null);
         return;
       }
