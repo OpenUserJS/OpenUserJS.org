@@ -11,6 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var async = require('async');
 var _ = require('underscore');
 var sanitizeHtml = require('sanitize-html');
+var SPDX = require('spdx-license-ids');
 
 //--- Model inclusions
 var Discussion = require('../models/discussion').Discussion;
@@ -146,7 +147,20 @@ var getScriptPageTasks = function (aOptions) {
   if (license) {
     aOptions.script.licenses = [];
     license.forEach(function (aElement, aIndex, aArray) {
-      aOptions.script.licenses.unshift({ name: aElement.value });
+      var keyComponents = aElement.value.split('; ');
+      var thatSPDX = keyComponents[0];
+      var thatURL = keyComponents[1];
+
+      if (SPDX.indexOf(thatSPDX.replace(/\+$/, '')) > -1) {
+        aOptions.script.licenses.unshift({
+          spdx: thatSPDX,
+          url: thatURL
+        });
+      } else {
+        aOptions.script.licenses.unshift({
+          name: aElement.value
+        });
+      }
     });
   }
 
