@@ -24,7 +24,7 @@ var async = require('async');
 var moment = require('moment');
 var Base62 = require('base62');
 var sanitizeHtml = require('sanitize-html');
-var SPDXOSI = require('spdx-osi');
+var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 var SPDX = require('spdx-license-ids');
 
 var MongoClient = require('mongodb').MongoClient;
@@ -1302,8 +1302,20 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
     if (userscriptKeyset) {
       hasOSI = false;
-      countSPDX = 0;
+      thatSPDX = userscriptKeyset[userscriptKeyset.length - 1].split('; ')[0].replace(/\+$/, '');
+      for (i = 0; thisSPDX = SPDXOSI[i++];) {
+        if (thisSPDX === thatSPDX) {
+          hasOSI = true;
+        }
+      }
 
+      if (!hasOSI) {
+        // No valid OSI primary e.g. last key... reject
+        aCallback(null);
+        return;
+      }
+
+      countSPDX = 0;
       for (i = 0; userscriptKey = userscriptKeyset[i]; i++) {
         thisKeyComponents = userscriptKey.split('; ');
         if (thisKeyComponents.length > 2) {
@@ -1321,15 +1333,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           }
         }
 
-        thisSPDX = null;
         thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
-
-        for (j = 0; thisSPDX = SPDXOSI[j++];) {
-          if (thisSPDX === thatSPDX) {
-            hasOSI = true && i === userscriptKeyset.length - 1; // NOTE: Must be the primary last key
-          }
-        }
-
         for (j = 0; thisSPDX = SPDX[j++];) {
           if (thisSPDX === thatSPDX) {
             countSPDX++;
@@ -1337,8 +1341,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         }
       }
 
-      if (!hasOSI || countSPDX !== userscriptKeyset.length) {
-        // No valid OSI primary or invalid licensing found... reject
+      if (countSPDX !== userscriptKeyset.length) {
+        // Absent SPDX short code... reject
         aCallback(null);
         return;
       }
