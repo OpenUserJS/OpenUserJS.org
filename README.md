@@ -82,6 +82,7 @@ Repository | Reference | Recent Version
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
 [serve-favicon][serve-faviconGHUrl] | [Documentation][serve-faviconDOCUrl] | [![NPM version][serve-faviconNPMVersionImage]][serve-faviconNPMUrl]
 [spdx-is-osi][spdx-is-osiGHUrl] | [Documentation][spdx-is-osiDOCUrl] | [![NPM version][spdx-is-osiNPMVersionImage]][spdx-is-osiNPMUrl]
+[spdx-license-ids][spdx-license-idsGHUrl] | [Documentation][spdx-license-idsDOCUrl] | [![NPM version][spdx-license-idsNPMVersionImage]][spdx-license-idsNPMUrl]
 [toobusy-js][toobusy-jsGHUrl] <br />&#x22D4; [`harmony`][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
 [uglifyJS][uglifyJS2GHUrl] <br />&#x21B3; [`harmony`][uglifyJS2GHHarmonyUrl] | [Documentation][uglifyJS2DOCUrl] [&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl] <br />&#x21B3; [![NPM Harmony version][uglifyJS2NPMHarmonyVersionImage]][uglifyJS2NPMHarmonyUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
@@ -451,6 +452,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [spdx-is-osiDOCUrl]: https://github.com/jslicense/spdx-is-osi.js/blob/master/README.md
 [spdx-is-osiNPMUrl]: https://www.npmjs.com/package/spdx-is-osi
 [spdx-is-osiNPMVersionImage]: https://img.shields.io/npm/v/spdx-is-osi.svg?style=flat
+
+[spdx-license-idsGHUrl]: https://github.com/shinnn/spdx-license-ids
+[spdx-license-idsDOCUrl]: https://github.com/shinnn/spdx-license-ids/blob/master/README.md
+[spdx-license-idsNPMUrl]: https://www.npmjs.com/package/spdx-license-ids
+[spdx-license-idsNPMVersionImage]: https://img.shields.io/npm/v/spdx-license-ids.svg?style=flat
 
 [toobusy-jsGHUrl]: https://github.com/STRML/node-toobusy
 [toobusy-jsGHUrlHarmonyUrl]: https://github.com/OpenUserJs/node-toobusy/tree/harmony
