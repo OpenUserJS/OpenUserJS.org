@@ -73,6 +73,7 @@ var getScriptPageTasks = function (aOptions) {
   var homepageURL = null;
   var copyright = null;
   var license = null;
+  var licenseConflict = false;
   var author = null;
   var collaborator = null;
 
@@ -157,11 +158,17 @@ var getScriptPageTasks = function (aOptions) {
           url: thatURL
         });
       } else {
+        if (aElement.value.indexOf('GPL') > -1) { // NOTE: The one and only exception.
+          aOptions.script.licenseParadox = true;
+        }
+        aOptions.script.licenseConflict = true;
         aOptions.script.licenses.unshift({
           name: aElement.value
         });
       }
     });
+  } else {
+    aOptions.script.licenseConflict = true;
   }
 
   // Show collaborators of the script
