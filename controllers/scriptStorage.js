@@ -53,6 +53,7 @@ var modelParser = require('../libs/modelParser');
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
 var htmlWhitelistWeb = require('../libs/htmlWhitelistWeb.json');
+var blockSPDX = require('./blockSPDX');
 
 // Add greasemonkey support for Media Type
 if (!mediaDB['text/x-userscript-meta']) {
@@ -1322,8 +1323,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         }
 
         thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
-        if (SPDX.indexOf(thatSPDX) === -1) {
-          // Absent SPDX short code... reject
+        if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
+          // Absent SPDX short code or blocked SPDX... reject
           aCallback(null);
           return;
         }
