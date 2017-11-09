@@ -305,6 +305,15 @@ app.use(function (aReq, aRes, aNext) {
   aNext();
 });
 app.use(modifySessions.init(sessionStore));
+
+// Rolling user session
+app.use(function (aReq, aRes, aNext) {
+  if (aReq.session.user) {
+    aReq.session.user._touched = new Date();
+  }
+  aNext();
+});
+
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
 // Set up the views
