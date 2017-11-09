@@ -1331,9 +1331,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       }
     } else {
       // No licensing... reject
-      // TODO: Enable after a bit of existing Authors getting used to it
-      //aCallback(null);
-      //return;
+      aCallback(null);
+      return;
     }
 
 
