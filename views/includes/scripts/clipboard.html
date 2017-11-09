@@ -5,14 +5,26 @@
     var clipboard = null;
     var rMin = /\.min\.js$/;
 
+    var allowedIds = [
+      '#groupid-raw',
+      '#groupid-urn',
+      '#require-min',
+      '#require-raw',
+      '#scriptid-raw',
+      '#scriptid-urn',
+      '#updateurl-raw',
+      '#userid-raw',
+      '#userid-urn'
+    ];
+
     function unsupported() {
-      $('#require-min').prop('disabled', true);
-      $('#require-raw').prop('disabled', true);
-      $('#updateurl-raw').prop('disabled', true);
+      allowedIds.forEach(function (aElement, aIndex, aArray) {
+        $(aElement).prop('disabled', true);
+      });
     }
 
     if (Clipboard.isSupported()) {
-      clipboard = new Clipboard('#require-min, #require-raw, #updateurl-raw');
+      clipboard = new Clipboard(allowedIds.join(', '));
 
       clipboard.on('success', function(aE) {
         if (rMin.test(aE.text)) {

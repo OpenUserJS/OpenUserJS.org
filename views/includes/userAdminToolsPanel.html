@@ -40,15 +40,15 @@
     <div class="form-group">
       <div class="input-group col-xs-12">
         <span class="input-group-btn">
-          <button class="btn btn-default" id="updateurl-raw" data-clipboard-text="{{{user._id}}}" title="Copy _id to clipboard"><i class="octicon octicon-clippy"></i> _id</button>
+          <button class="btn btn-default" id="userid-raw" data-clipboard-text="{{{user._id}}}" title="Copy _id to clipboard"><i class="octicon octicon-clippy"></i> _id</button>
         </span>
+        <input class="form-control" id="userid" value="{{{user._id}}}" readonly="readonly" type="text">
         <span class="input-group-btn">
-          <button class="btn btn-default" id="updateurl-raw" data-clipboard-text="/admin/json?model=User&id={{{user._id}}}" title="Copy relative URL to clipboard"><i class="octicon octicon-clippy"></i> URL</button>
+          <button class="btn btn-default" id="userid-urn" data-clipboard-text="/admin/json?model=User&id={{{user._id}}}" title="Copy relative URL to clipboard"><i class="octicon octicon-clippy"></i> URN</button>
         </span>
-        <input class="form-control" id="updateurl" value="/admin/json?model=User&id={{{user._id}}}" readonly="readonly" type="text">
         <span class="input-group-btn">
           <a class="btn btn-default btn-" title="Raw JSON Data" href="/admin/json?model=User&id={{{user._id}}}">
-              <i class="fa fa-database"></i> Raw JSON Data
+              <i class="fa fa-user"></i> Raw JSON Data
           </a>
         </span>
       </div>
