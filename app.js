@@ -294,6 +294,7 @@ app.use(session({
   cookie: {
     maxAge: 4 * 60 * 60 * 1000 // 4 hours in ms
   },
+  rolling: true,
   secret: sessionSecret,
   store: sessionStore
 }));
@@ -305,14 +306,6 @@ app.use(function (aReq, aRes, aNext) {
   aNext();
 });
 app.use(modifySessions.init(sessionStore));
-
-// Rolling user session
-app.use(function (aReq, aRes, aNext) {
-  if (aReq.session.user) {
-    aReq.session.user._touched = new Date();
-  }
-  aNext();
-});
 
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
