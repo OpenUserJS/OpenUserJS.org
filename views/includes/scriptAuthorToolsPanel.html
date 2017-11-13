@@ -24,6 +24,25 @@
         </span>
       </div>
     </div>
+    <div class="input-group">
+      <div class="input-group-btn">
+        <button class="btn btn-info" id="license-raw" data-clipboard-text="// @license MIT" title="Copy key and raw SPDX to clipboard"><i class="octicon octicon-clippy"></i> // @license</button>
+      </div>
+      <input id="spdx-short-id" type="text" class="form-control" aria-label="..." value="MIT" readonly="readonly">
+      <span class="input-group-btn">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="/images/license/osi16.png"> <span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
+        <ul class="dropdown-menu scrollable-menu dropdown-menu-right" id="osi-spdx">
+          {{#script.scriptAcceptableOSILicense}}<li><a href="#">{{shortIdSPDX}}</a></li>{{/script.scriptAcceptableOSILicense}}
+        </ul>
+      </span>
+      <span class="input-group-btn">
+        <a class="btn btn-info"
+          title="How do I use this?"
+          href="/user/add/scripts#user-block-license">
+            <i class="fa fa-exclamation-triangle"></i>
+        </a>
+      </span>
+    </div>
     <h4>Installs per Version <small>effective <time title='Tue Sep 2 2014'>Sep '14</time></small></h4>
     <p><code>{{script.meta.version}}{{^script.meta.version}}Current{{/script.meta.version}}</code> <span class="label label-default">{{script.installsSinceUpdate}} installs</span></p>
     {{/script.isLib}}
