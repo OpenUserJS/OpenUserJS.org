@@ -1124,28 +1124,6 @@ exports.getMeta = function (aBufs, aCallback) {
   aCallback(null);
 };
 
-function isEqualKeyset(aOpenUserJSKeyset, aUserSriptKeyset) {
-  var aOpenUserJSKey = null;
-  var aUserScriptKey = null;
-  var i = null;
-
-  if (!aUserSriptKeyset || aUserSriptKeyset.length !== aOpenUserJSKeyset.length) {
-    // No UserScript block keyset or not mirrored exactly.
-    return false;
-  } else {
-    for (i = 0; (aOpenUserJSKey = aOpenUserJSKeyset[i]) &&
-      (aUserScriptKey = aUserSriptKeyset[i]); i++) {
-
-      if (aOpenUserJSKey !== aUserScriptKey) {
-        // Keyset must exist exactly positioned in both
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
 exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var isLibrary = typeof aMeta === 'string';
   var name = null;
@@ -1156,7 +1134,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var downloadURL = null;
   var userscriptKeyset = null;
   var userscriptKey = null;
-  var openuserjsKeyset = null;
   var thisKeyComponents = null;
   var thatSPDX = null;
   var htmlStub = null;
@@ -1233,69 +1210,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     }
 
 
-    // `name` validations including localizations
-    userscriptKeyset = findMeta(aMeta, 'UserScript.name.value');
-    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.name.value');
-
-    if (openuserjsKeyset) {
-      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
-        // Keysets in both blocks do not match exactly... reject
-        aCallback(null);
-        return;
-      }
-    }
-
-
-    // `description` validations including localizations
-    userscriptKeyset = findMeta(aMeta, 'UserScript.description.value');
-    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.description.value');
-
-    if (openuserjsKeyset) {
-      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
-        // Keysets in both blocks do not match exactly... reject
-        aCallback(null);
-        return;
-      }
-    }
-
-
-    // `version` validations
-    userscriptKeyset = findMeta(aMeta, 'UserScript.version.0.value');
-    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.version.0.value');
-
-    if (openuserjsKeyset) {
-      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
-        // Keysets in both blocks do not match exactly... reject
-        aCallback(null);
-        return;
-      }
-    }
-
-
-    // `copyright` validations
-    userscriptKeyset = findMeta(aMeta, 'UserScript.copyright.value');
-    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.copyright.value');
-
-    if (openuserjsKeyset) {
-      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
-        // Keysets in both blocks do not match exactly... reject
-        aCallback(null);
-        return;
-      }
-    }
-
-
     // `license` validations
     userscriptKeyset = findMeta(aMeta, 'UserScript.license.value');
-    openuserjsKeyset = findMeta(aMeta, 'OpenUserJS.license.value');
-
-    if (openuserjsKeyset) {
-      if (!isEqualKeyset(openuserjsKeyset, userscriptKeyset)) {
-        // Keysets in both block do not match exactly... reject
-        aCallback(null);
-        return;
-      }
-    }
 
     if (userscriptKeyset) {
       thatSPDX = userscriptKeyset[userscriptKeyset.length - 1].split('; ')[0].replace(/\+$/, '');

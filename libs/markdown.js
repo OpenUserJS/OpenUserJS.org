@@ -131,11 +131,11 @@ renderer.heading = function (aText, aLevel) {
   var escapedText = aText.toLowerCase().replace(/<\/?[^>]+?>/g, '')
     .replace(/[^\w]+/g, '-');
 
-  var name = escapedText;
+  var id = escapedText;
   var html = '<h' + aLevel + '>';
-  html += '<a name="' + name + '"></a>';
+  html += '<a id="' + id + '" rel="bookmark"></a>';
   html += sanitize(aText);
-  html += '<a href="#' + name + '" class="anchor">';
+  html += '<a href="#' + id + '" class="anchor">';
   html += '<i class="fa fa-link"></i>';
   html += '</a>';
   html += '</h' + aLevel + '>';
