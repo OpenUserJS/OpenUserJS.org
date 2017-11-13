@@ -1,0 +1,50 @@
+<script type="text/javascript">
+  (function () {
+
+    {{> includes/scripts/polyfillElementClosest.js }}
+
+    function onClick(aEv) {
+      aEv.preventDefault();
+
+      var containerNode = aEv.target.closest('li');
+      var listOSISPDX = document.querySelectorAll('#osi-spdx li');
+      var inputSPDX = document.querySelector('#spdx-short-id');
+      var copyLicenseSPDXbutton = document.querySelector('#license-raw');
+      var i = null;
+      var thisOSISPDX = null;
+
+      if (containerNode && listOSISPDX && inputSPDX && copyLicenseSPDXbutton) {
+        inputSPDX.value = aEv.target.textContent;
+        copyLicenseSPDXbutton.setAttribute(
+          'data-clipboard-text',
+          '// @license ' + aEv.target.textContent
+        );
+
+        for (i = 0; thisOSISPDX = listOSISPDX[i++];) {
+          if (thisOSISPDX.classList.contains('active')) {
+            thisOSISPDX.classList.remove('active');
+          }
+        }
+
+        containerNode.classList.add('active');
+      }
+    }
+
+    function onDOMContentLoaded(aEv) {
+      var listOSISPDX = document.querySelectorAll('#osi-spdx li');
+      var thisOSISPDX = null;
+      var i = null;
+
+      for (i = 0; thisOSISPDX = listOSISPDX[i++];) {
+        thisOSISPDX.addEventListener('click', onClick);
+        if (thisOSISPDX.textContent === 'MIT') {
+          // NOTE: Site default
+          thisOSISPDX.classList.add('active');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+  })();
+</script>

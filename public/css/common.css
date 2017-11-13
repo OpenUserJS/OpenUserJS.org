@@ -461,3 +461,9 @@ ul.flaggedList {
   pointer-events: auto;
   z-index: 15;
 }
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
