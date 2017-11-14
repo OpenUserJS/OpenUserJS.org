@@ -292,7 +292,7 @@ app.use(session({
   saveUninitialized: false,
   unset: 'destroy',
   cookie: {
-    maxAge: 4 * 60 * 60 * 1000 // 4 hours in ms
+    maxAge: 6 * 60 * 60 * 1000 // hours in ms
   },
   rolling: true,
   secret: sessionSecret,
