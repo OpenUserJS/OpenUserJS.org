@@ -12,8 +12,8 @@ Test the generated parser with some input for peg.js site at https://pegjs.org/o
 // @description:es  Prueba de valores con UserScript metadatos llaves conocidas.
 // @description:fr  Valeurs d'essai avec des clés de métadonnées UserScript connues.
 // @copyright     2013+, OpenUserJS Group (https://github.com/orgs/OpenUserJs/people)
-// @license       GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
-// @licence       (CC); https://creativecommons.org/licenses/by-nc-sa/3.0/
+// @license       CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+// @license       GPL-3.0; http://www.gnu.org/licenses/gpl-3.0.txt
 // @version       1.2.3
 // @icon      http://example.com/favicon.ico
 // @iconURL   http://example.com/faviconURL.ico

@@ -99,6 +99,8 @@ var parsers = (function () {
   return {
     UserScript: peg.generate(fs.readFileSync('./public/pegjs/blockUserScript.pegjs', 'utf8'),
       { allowedStartRules: ['line'] }),
+    UserLibrary: peg.generate(fs.readFileSync('./public/pegjs/blockUserLibrary.pegjs', 'utf8'),
+      { allowedStartRules: ['line'] }),
     OpenUserJS: peg.generate(fs.readFileSync('./public/pegjs/blockOpenUserJS.pegjs', 'utf8'),
       { allowedStartRules: ['line'] })
   };
@@ -1124,21 +1126,47 @@ exports.getMeta = function (aBufs, aCallback) {
   aCallback(null);
 };
 
+function isEqualKeyset(aSlaveKeyset, aMasterKeyset) {
+  var slaveKey = null;
+  var masterKey = null;
+  var i = null;
+
+  if (aSlaveKeyset !== aMasterKeyset) {
+    if (!aMasterKeyset || !aSlaveKeyset || aMasterKeyset.length !== aSlaveKeyset.length) {
+      // No master block keyset or not mirrored exactly.
+      return false;
+    } else {
+      for (i = 0; (slaveKey = aSlaveKeyset[i]) && (masterKey = aMasterKeyset[i]); i++) {
+        if (slaveKey !== masterKey) {
+          // Keyset must exist exactly positioned in both
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
 exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
-  var isLibrary = typeof aMeta === 'string';
+  var isLibrary = !!findMeta(aMeta, 'UserLibrary');
   var name = null;
   var thisName = null;
   var scriptName = null;
   var rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
     (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
   var downloadURL = null;
-  var userscriptKeyset = null;
-  var userscriptKey = null;
+  var userKeyset = null;
+  var userKey = null;
+  var masterKeyset = null;
+  var slaveKeyset = null;
   var thisKeyComponents = null;
   var thatSPDX = null;
   var htmlStub = null;
   var i = null;
   var author = null;
+  var excludes = null;
+  var missingExcludeAll = true;
   var collaborators = null;
   var installName = aUser.name + '/';
   var collaboration = false;
@@ -1156,34 +1184,140 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     return;
   }
 
+
+  // `@name` validations
   if (!isLibrary) {
     name = findMeta(aMeta, 'UserScript.name');
+  } else {
+    name = findMeta(aMeta, 'UserLibrary.name');
+  }
 
-    // Can't install a script without a @name (maybe replace with random value)
-    if (!name) {
+  // Can't install a script without a @name (maybe replace with random value)
+  if (!name) {
+    aCallback(null);
+    return;
+  }
+
+  name.forEach(function (aElement, aIndex, aArray) {
+    if (!name[aIndex].key) {
+      thisName = aElement.value;
+      scriptName = cleanFilename(thisName, '');
+    }
+  });
+
+  // Can't install a script without a cleaned @name (maybe replace with random value)
+  if (!scriptName) {
+    aCallback(null);
+    return;
+  }
+
+  // Can't install a script name ending in a reserved extension
+  if (/\.(?:min|user|user\.js|meta)$/.test(scriptName)) {
+    aCallback(null);
+    return;
+  }
+
+
+  // `@name` validations including localizations
+  masterKeyset = findMeta(aMeta, 'UserScript.name.value');
+  slaveKeyset = findMeta(aMeta, 'UserLibrary.name.value');
+
+  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+    // Keysets do not match exactly... reject
+    aCallback(null);
+    return;
+  }
+
+
+  // `@description` validations including localizations
+  masterKeyset = findMeta(aMeta, 'UserScript.description.value');
+  slaveKeyset = findMeta(aMeta, 'UserLibrary.description.value');
+
+  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+    // Keysets do not match exactly... reject
+    aCallback(null);
+    return;
+  }
+
+
+  // `@copyright` validations
+  masterKeyset = findMeta(aMeta, 'UserScript.copyright.value');
+  slaveKeyset = findMeta(aMeta, 'UserLibrary.copyright.value');
+
+  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+    // Keysets do not match exactly... reject
+    aCallback(null);
+    return;
+  }
+
+
+  // `@license` validations
+  masterKeyset = findMeta(aMeta, 'UserScript.license.value');
+  slaveKeyset = findMeta(aMeta, 'UserLibrary.license.value');
+
+  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+    // Keysets do not match exactly... reject
+    aCallback(null);
+    return;
+  }
+
+  if (!isLibrary) {
+    userKeyset = masterKeyset;
+  } else {
+    userKeyset = slaveKeyset;
+  }
+
+  if (userKeyset) {
+    thatSPDX = userKeyset[userKeyset.length - 1].split('; ')[0].replace(/\+$/, '');
+    if (SPDXOSI.indexOf(thatSPDX) === -1) {
+      // No valid OSI primary e.g. last key... reject
       aCallback(null);
       return;
     }
 
-    name.forEach(function (aElement, aIndex, aArray) {
-      if (!name[aIndex].key) {
-        thisName = aElement.value;
-        scriptName = cleanFilename(thisName, '');
+    for (i = 0; userKey = userKeyset[i++];) {
+      thisKeyComponents = userKey.split('; ');
+      if (thisKeyComponents.length > 2) {
+        // Too many parts... reject
+        aCallback(null);
+        return;
       }
-    });
 
-    // Can't install a script without a cleaned @name (maybe replace with random value)
-    if (!scriptName) {
-      aCallback(null);
-      return;
+      if (thisKeyComponents.length === 2) {
+        htmlStub = '<a href="' + thisKeyComponents[1] + '"></a>';
+        if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)) {
+          // Not a web url... reject
+          aCallback(null);
+          return;
+        }
+      }
+
+      thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
+      if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
+        // Absent SPDX short code or blocked SPDX... reject
+        aCallback(null);
+        return;
+      }
     }
+  } else {
+    // No licensing... reject
+    aCallback(null);
+    return;
+  }
 
-    // Can't install a userscript name ending in a reserved extension
-    if (/\.(?:min|user|user\.js|meta)$/.test(scriptName)) {
-      aCallback(null);
-      return;
-    }
 
+  // `@version` validations
+  masterKeyset = findMeta(aMeta, 'UserScript.version.0.value');
+  slaveKeyset = findMeta(aMeta, 'UserLibrary.version.0.value');
+
+  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+    // Keysets do not match exactly... reject
+    aCallback(null);
+    return;
+  }
+
+
+  if (!isLibrary) {
 
     // `downloadURL` validations
     downloadURL = findMeta(aMeta, 'UserScript.downloadURL.0.value');
@@ -1208,62 +1342,41 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         return;
       }
     }
+  } else {
 
-
-    // `license` validations
-    userscriptKeyset = findMeta(aMeta, 'UserScript.license.value');
-
-    if (userscriptKeyset) {
-      thatSPDX = userscriptKeyset[userscriptKeyset.length - 1].split('; ')[0].replace(/\+$/, '');
-      if (SPDXOSI.indexOf(thatSPDX) === -1) {
-        // No valid OSI primary e.g. last key... reject
-        aCallback(null);
-        return;
-      }
-
-      for (i = 0; userscriptKey = userscriptKeyset[i++];) {
-        thisKeyComponents = userscriptKey.split('; ');
-        if (thisKeyComponents.length > 2) {
-          // Too many parts... reject
-          aCallback(null);
-          return;
+    // `@exclude` validations
+    excludes = findMeta(aMeta, 'UserScript.exclude.value');
+    if (excludes) {
+      excludes.forEach(function (aElement, aIndex, aArray) {
+        if (aElement === '*') {
+          missingExcludeAll = false;
         }
+      });
+    }
 
-        if (thisKeyComponents.length === 2) {
-          htmlStub = '<a href="' + thisKeyComponents[1] + '"></a>';
-          if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)) {
-            // Not a web url... reject
-            aCallback(null);
-            return;
-          }
-        }
-
-        thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
-        if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
-          // Absent SPDX short code or blocked SPDX... reject
-          aCallback(null);
-          return;
-        }
-      }
-    } else {
-      // No licensing... reject
+    if (missingExcludeAll) {
       aCallback(null);
       return;
     }
+  }
 
 
-    author = findMeta(aMeta, 'OpenUserJS.author.0.value');
-    collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');
+  // `@author` linkage for OpenUserJS block
+  author = findMeta(aMeta, 'OpenUserJS.author.0.value');
+  collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');
 
-    if (!isLibrary && author !== aUser.name &&
-      collaborators && collaborators.indexOf(aUser.name) > -1) {
+  if (author !== aUser.name &&
+    collaborators && collaborators.indexOf(aUser.name) > -1) {
 
-      installName = author + '/';
-      collaboration = true;
-    }
+    installName = author + '/';
+    collaboration = true;
+  }
 
+
+  if (!isLibrary) {
     installName += scriptName + '.user.js';
 
+    // `@require` linkage for UserScript block
     requires = findMeta(aMeta, 'UserScript.require.value');
     if (requires) {
       requires.forEach(function (aRequire) {
@@ -1280,20 +1393,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       });
     }
   } else {
-    scriptName = cleanFilename(aMeta.trim(), '');
-    if (!scriptName) {
-      aCallback(null);
-      return;
-    }
-
-    // Can't reference a library name ending in a reserved extension
-    if (/\.(min|user|user\.js|meta)$/.test(scriptName)) {
-      aCallback(null);
-      return;
-    }
-
     installName += scriptName + '.js';
   }
+
 
   // Prevent a removed script from being reuploaded
   findDeadorAlive(Script, { installName: caseSensitive(installName) }, true,
@@ -1306,7 +1408,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       } else if (!aScript) {
         // New script
         aScript = new Script({
-          name: isLibrary ? aMeta.trim() : thisName,
+          name: thisName,
           author: aUser.name,
           installs: 0,
           rating: 0,
@@ -1317,7 +1419,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
           flags: { critical: 0, absolute: 0 },
           installName: installName,
           fork: null,
-          meta: isLibrary ? { name: aMeta.trim() } : aMeta,
+          meta: aMeta,
           isLib: isLibrary,
           uses: isLibrary ? null : libraries,
           _authorId: aUser._id
@@ -1330,19 +1432,17 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
         script = aScript.toObject ? aScript.toObject({ virtuals: true }) : aScript;
 
         // Script already exists.
-        if (!aScript.isLib) {
-          if (collaboration &&
-            (findMeta(script.meta, 'OpenUserJS.author.0.value') !==
-              findMeta(aMeta, 'OpenUserJS.author.0.value') ||
-                JSON.stringify(findMeta(script.meta, 'OpenUserJS.collaborator.value')) !==
-                  JSON.stringify(collaborators))) {
+        if (collaboration &&
+          (findMeta(script.meta, 'OpenUserJS.author.0.value') !==
+            findMeta(aMeta, 'OpenUserJS.author.0.value') ||
+              JSON.stringify(findMeta(script.meta, 'OpenUserJS.collaborator.value')) !==
+                JSON.stringify(collaborators))) {
 
-            aCallback(null);
-            return;
-          }
-          aScript.meta = aMeta;
-          aScript.uses = libraries;
+          aCallback(null);
+          return;
         }
+        aScript.meta = aMeta;
+        aScript.uses = libraries;
 
         // Okay to update
         aScript.hash = crypto.createHash('sha512').update(aBuf).digest('hex');

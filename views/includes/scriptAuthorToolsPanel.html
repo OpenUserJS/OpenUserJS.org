@@ -24,6 +24,7 @@
         </span>
       </div>
     </div>
+    {{/script.isLib}}
     <div class="input-group">
       <div class="input-group-btn">
         <button class="btn btn-info" id="license-raw" data-clipboard-text="// @license MIT" title="Copy key and raw SPDX to clipboard"><i class="octicon octicon-clippy"></i> // @license</button>
@@ -43,6 +44,7 @@
         </a>
       </span>
     </div>
+    {{^script.isLib}}
     <h4>Installs per Version <small>effective <time title='Tue Sep 2 2014'>Sep '14</time></small></h4>
     <p><code>{{script.meta.version}}{{^script.meta.version}}Current{{/script.meta.version}}</code> <span class="label label-default">{{script.installsSinceUpdate}} installs</span></p>
     {{/script.isLib}}
