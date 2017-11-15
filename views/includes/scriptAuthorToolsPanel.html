@@ -39,7 +39,7 @@
       <span class="input-group-btn">
         <a class="btn btn-info"
           title="How do I use this?"
-          href="/user/add/scripts#user-block-license">
+          href="/user/add/{{#script.isLib}}lib{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}#user-block-license">
             <i class="fa fa-exclamation-triangle"></i>
         </a>
       </span>
