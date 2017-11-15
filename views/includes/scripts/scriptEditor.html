@@ -84,18 +84,35 @@
         isLib
           ? [
             '// ==UserScript==',
+            '// @namespace     https://openuserjs.org/users/' + username,
             '// @exclude       *',
+            '',
+            '// ==UserLibrary==',
+            '// @name          Getting Started with a User Library',
+            '// @description   ' +
+              'Showing the current basic and recommended format for a Library script.',
+            '// @copyright     ' + year + ', ' +  username
+              + ' (https://openuserjs.org/users/' + username + ')',
+            '// @license       OSI-SPDX-Short-Identifier',
+            '// @version       0.0.0',
+            '',
             '// ==/UserScript==',
+            '',
+            '// ==/UserLibrary==',
+            '',
+            '// ==OpenUserJS==',
+            '// @author ' + username,
+            '// ==/OpenUserJS==',
             '',
             '/**',
             '  *',
-            '  * Please begin typing or paste your Library now.',
+            '  * Please begin typing or paste your User Library now.',
             '  *',
             '  */'
           ] : [
             '// ==UserScript==',
             '// @namespace     https://openuserjs.org/users/' + username,
-            '// @name          Getting Started with a Userscript',
+            '// @name          Getting Started with a User Script',
             '// @description   ' +
               'Showing the current basic and recommended format for a User script.',
             '// @copyright     ' + year + ', ' +  username
@@ -112,7 +129,7 @@
             '',
             '/**',
             '  *',
-            '  * Please begin typing or paste your Userscript now.',
+            '  * Please begin typing or paste your User script now.',
             '  *',
             '  */'
           ]

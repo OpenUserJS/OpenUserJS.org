@@ -984,35 +984,6 @@ exports.newLibraryPage = function (aReq, aRes, aNext) {
   async.parallel(tasks, asyncComplete);
 };
 
-
-// TODO: Enhance by #723
-var hasMissingExcludeAll = function (aSource) {
-  var block = {};
-  var exclude = null;
-  var missingExcludeAll = true;
-
-  var rHeaderContent = new RegExp(
-    '^(?:\\uFEFF)?\/\/ ==UserScript==([\\s\\S]*?)^\/\/ ==\/UserScript==', 'm'
-  );
-  var headerContent = rHeaderContent.exec(aSource);
-  if (headerContent && headerContent[1]) {
-    block = scriptStorage.parseMeta(scriptStorage.parsers['UserScript'], headerContent[1]);
-
-    exclude = scriptStorage.findMeta(block, 'exclude.value');
-    if (exclude) {
-      exclude.forEach(function (aElement, aIndex, aArray) {
-        if (aElement === '*') {
-          missingExcludeAll = false;
-        }
-      });
-    }
-  } else {
-    missingExcludeAll = false;
-  }
-
-  return missingExcludeAll;
-}
-
 exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   function preRender() {
     // Pagination
@@ -1181,6 +1152,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       var rHeaderContent = null;
       var headerContent = null;
       var hasUserScriptHeaderContent = false;
+      var hasUserLibraryHeaderContent = false;
       var blocksContent = {};
       var blocks = {};
 
@@ -1206,6 +1178,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       };
 
       if (options.javascriptBlob.isUserJS) {
+
         for (parser in scriptStorage.parsers) {
           rHeaderContent = new RegExp(
             '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
@@ -1214,13 +1187,15 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           if (headerContent && headerContent[1]) {
             if (parser === 'UserScript') {
               hasUserScriptHeaderContent = true;
+            } else if (parser === 'UserLibrary') {
+              hasUserLibraryHeaderContent = true;
             }
 
             blocksContent[parser] = headerContent[1];
           }
         }
 
-        if (hasUserScriptHeaderContent) {
+        if (hasUserScriptHeaderContent && !hasUserLibraryHeaderContent) {
           for (parser in scriptStorage.parsers) {
             if (blocksContent[parser]) {
               blocks[parser] = scriptStorage.parseMeta(
@@ -1230,16 +1205,41 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           }
           scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, onScriptStored);
         } else {
-          aCallback('Specified file does not contain a userscript header.');
+          aCallback('Specified file does not contain the proper metadata blocks.');
         }
+
       } else if (options.javascriptBlob.isJSLibrary) {
-        if (!hasMissingExcludeAll(aBlobUtf8)) {
-          scriptName = options.javascriptBlob.path.name;
-          jsLibraryMeta = scriptName;
-          scriptStorage.storeScript(authedUser, jsLibraryMeta, aBlobUtf8, onScriptStored);
-        } else {
-          aCallback('Invalid library header.');
+
+        for (parser in scriptStorage.parsers) {
+          rHeaderContent = new RegExp(
+            '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+          );
+          headerContent = rHeaderContent.exec(aBlobUtf8);
+          if (headerContent && headerContent[1]) {
+            if (parser === 'UserScript') {
+              hasUserScriptHeaderContent = true;
+            } else if (parser === 'UserLibrary') {
+              hasUserLibraryHeaderContent = true;
+            }
+
+            blocksContent[parser] = headerContent[1];
+          }
         }
+
+        if (hasUserScriptHeaderContent && hasUserLibraryHeaderContent) {
+          for (parser in scriptStorage.parsers) {
+            if (blocksContent[parser]) {
+              blocks[parser] = scriptStorage.parseMeta(
+                scriptStorage.parsers[parser], blocksContent[parser]
+              );
+            }
+          }
+          scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, onScriptStored);
+        } else {
+          aCallback('Specified file does not contain the proper metadata blocks.');
+        }
+
+
 
       } else {
         aCallback('Invalid filetype.');
@@ -1443,50 +1443,32 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
     stream.on('end', function () {
       User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
-        var scriptName = aFields.script_name;
+
         var bufferConcat = Buffer.concat(bufs);
-        var rJS = /\.js$/;
-        var rUserJS = /\.user\.js$/;
 
-        if (isLib) {
-          if (!hasMissingExcludeAll(bufferConcat)) {
-            scriptStorage.storeScript(aUser, scriptName, bufferConcat,
-              function (aScript) {
-                if (!aScript) {
-                  aRes.redirect(failUri);
-                  return;
-                }
-
-                aRes.redirect(
-                  '/libs/' +
-                    encodeURIComponent(helpers.cleanFilename(aScript.author)) +
-                      '/' +
-                        encodeURIComponent(helpers.cleanFilename(aScript.name))
-                );
-              });
-          } else {
+        scriptStorage.getMeta(bufs, function (aMeta) {
+          if (!isLib && !!scriptStorage.findMeta(aMeta, 'UserLibrary')) {
+            aRes.redirect(failUri);
+            return;
+          } else if (isLib && !!!scriptStorage.findMeta(aMeta, 'UserLibrary')) {
             aRes.redirect(failUri);
             return;
           }
 
-        } else {
-          scriptStorage.getMeta(bufs, function (aMeta) {
-            scriptStorage.storeScript(aUser, aMeta, bufferConcat,
-              function (aScript) {
-                if (!aScript) {
-                  aRes.redirect(failUri);
-                  return;
-                }
+          scriptStorage.storeScript(aUser, aMeta, bufferConcat, function (aScript) {
+            if (!aScript) {
+              aRes.redirect(failUri);
+              return;
+            }
 
-                aRes.redirect(
-                  '/scripts/' +
-                    encodeURIComponent(helpers.cleanFilename(aScript.author)) +
-                      '/' +
-                        encodeURIComponent(helpers.cleanFilename(aScript.name))
-                );
-              });
+            aRes.redirect(
+              '/' + (isLib ? 'libs' : 'scripts') + '/' +
+                encodeURIComponent(helpers.cleanFilename(aScript.author)) +
+                  '/' +
+                    encodeURIComponent(helpers.cleanFilename(aScript.name))
+            );
           });
-        }
+        });
       });
     });
   });
@@ -1518,8 +1500,6 @@ exports.submitSource = function (aReq, aRes, aNext) {
   var uri = null;
 
   function storeScript(aMeta, aSource) {
-    var rUserJS = /\.user\.js$/;
-    var rJS = /\.js$/;
 
     User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
       scriptStorage.storeScript(aUser, aMeta, aSource, function (aScript) {
@@ -1568,16 +1548,46 @@ exports.submitSource = function (aReq, aRes, aNext) {
   uri = aReq.body.url;
 
   if (isLib) {
-    if (hasMissingExcludeAll(source)) {
-      aRes.redirect(uri);
-      return;
-    }
+    scriptStorage.getMeta([source], function (aMeta) {
+      var name = null;
+      var hasName = false;
 
-    storeScript(aReq.body.script_name, source);
+      if (!!!scriptStorage.findMeta(aMeta, 'UserScript')) {
+        aRes.redirect(uri);
+        return;
+      }
+
+
+      name = scriptStorage.findMeta(aMeta, 'UserLibrary.name');
+
+      if (!name) {
+        aRes.redirect(uri);
+        return;
+      }
+
+      name.forEach(function (aElement, aIndex, aArray) {
+        if (!name[aIndex].key) {
+          hasName = true;
+        }
+      });
+
+      if (!hasName) {
+        aRes.redirect(uri);
+        return;
+      }
+
+      storeScript(aMeta, source);
+    });
   } else {
     scriptStorage.getMeta([source], function (aMeta) {
       var name = null;
       var hasName = false;
+
+      if (!!scriptStorage.findMeta(aMeta, 'UserLibrary')) {
+        aRes.redirect(uri);
+        return;
+      }
+
 
       name = scriptStorage.findMeta(aMeta, 'UserScript.name');
 

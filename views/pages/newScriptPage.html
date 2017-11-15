@@ -17,21 +17,39 @@
     <div class="row">
       <div class="col-xs-12">
         <div class="col-md-4">
-          {{#newUserJS}}
+
           <h2><a id="script-metadata"></a><i class="octicon octicon-key"></i> Script Metadata<a href="#script-metadata" class="anchor"><i class="fa fa-link"></i></a></h2>
           <div class="panel panel-default">
             <div class="panel-body">
               <p>You may read about most UserScript metadata block keys on the <a href="https://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge classic wiki</a>. Some samples to click and read <noscript>, with JavaScript enabled,</noscript> are listed below with their respective metadata block names.</p>
             </div>
           </div>
+
+          {{#newJSLibrary}}
           <h3><a id="userscript-block"></a>UserScript Block<a href="#userscript-block" class="anchor"><i class="fa fa-link"></i></a></h3>
           <div class="panel-group" id="accordion-userscript-block">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="user-block-exclude" rel="bookmark"></a>
+                  <a class="small"  data-toggle="collapse" data-parent="#accordion-userscript-exclude" href="#collapse-exclude"><code>@exclude *</code></a>
+                </h5>
+              </div>
+              <div id="collapse-exclude" class="panel-collapse collapse in">
+                <div class="panel-body"><strong>This is required.</strong></div>
+              </div>
+            </div>
+          </div>
+          {{/newJSLibrary}}
+
+          <h3><a id="userscript{{#newJSLibrary}}-and-userlibrary{{/newJSLibrary}}-block"></a>UserScript{{#newJSLibrary}} and UserLibrary{{/newJSLibrary}} Block<a href="#userscript{{#newJSLibrary}}-and-userlibrary{{/newJSLibrary}}-block" class="anchor"><i class="fa fa-link"></i></a></h3>
+          <div class="panel-group" id="accordion-user{{#newUserJS}}script{{/newUserJS}}-block">
 
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
                   <a id="user-block-name" rel="bookmark"></a>
-                  <a class="small"  data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-name"><code>@name My Script</code></a>
+                  <a class="small"  data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-name"><code>@name My Script</code></a>
                 </h5>
               </div>
               <div id="collapse-name" class="panel-collapse collapse in">
@@ -42,7 +60,7 @@
               <div class="panel-heading">
                 <h5 class="panel-title">
                   <a id="user-block-description" rel="bookmark"></a>
-                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-description"><code>@description This script even does the laundry!</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-description"><code>@description This script even does the laundry!</code></a>
                 </h5>
               </div>
               <div id="collapse-description" class="panel-collapse collapse">
@@ -53,7 +71,7 @@
               <div class="panel-heading">
                 <h5 class="panel-title">
                   <a id="user-block-copyright" rel="bookmark"></a>
-                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-copyright"><code>@copyright Year, Author (Author Website)</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-copyright"><code>@copyright Year, Author (Author Website)</code></a>
                 </h5>
               </div>
               <div id="collapse-copyright" class="panel-collapse collapse">
@@ -64,13 +82,14 @@
               <div class="panel-heading">
                 <h5 class="panel-title">
                   <a id="user-block-license" rel="bookmark"></a>
-                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-license"><code>@license License Type; License Homepage</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-license"><code>@license License Type; License Homepage</code></a>
                 </h5>
               </div>
               <div id="collapse-license" class="panel-collapse collapse in">
                 <div class="panel-body"><p>Specially formatted on the script page. All values shown in reverse order. If absent <a href="https://spdx.org/licenses/MIT.html"><code>MIT</code></a> <a href="https://opensource.org/licenses/MIT">License <em>(Expat)</em></a> is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</p><p><strong><code>License Type</code> component is required</strong> using at least one <a href="https://opensource.org/licenses/category">OSI approved</a> <a href="https://spdx.org/licenses/">SPDX short identifier</a> and must be the primary, last, <code>@license</code> key. Single short ids are accepted only per license key. e.g. No conjunctions like <code>AND</code> or <code>OR</code>. These are handled by multiple <code>@license</code> keys.</p><p><strong><code>; License Homepage</code> component is currently optional</strong></p><p>Single Licensed Example <em>(No specific document license web reference)</em>:<pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br /><code>// @license MIT</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code></pre></p><p>Dual Licensed Example <em>(Specific document license web references)</em>:<pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br /><code>// @license CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode</code><br /><code>// @license GPL-3.0+; http://www.gnu.org/licenses/gpl-3.0.txt</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code></pre></p><p>When in doubt it may be a wise choice to go with the site default of <code>MIT</code> or some other popular license such as <code>GPL-3.0</code>. If you don't understand a less popular license then please don't use it when authoring or consult your legal counsel. Licensing is both protective and permissive for both parties. Figure out what balance you need and make your decision.</p></div>
               </div>
             </div>
+            {{#newUserJS}}
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
@@ -104,17 +123,19 @@
                 <div class="panel-body">A url of http, https or mailto protocol. Specially formatted on the script page. Last value shown.</div>
               </div>
             </div>
+            {{/newUserJS}}
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
                   <a id="user-block-version" rel="bookmark"></a>
-                  <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-version"><code>@version 1.0.0</code></a>
+                  <a class="small" data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-version"><code>@version 1.0.0</code></a>
                 </h5>
               </div>
               <div id="collapse-version" class="panel-collapse collapse">
                 <div class="panel-body">Enables automatic script updates in a .user.js engine. Usually major dot minor dot build <em>(or Patch)</em>. May utilize the <a href="https://developer.mozilla.org/docs/Toolkit_version_format">Toolkit version format</a> or <a href="http://semver.org/">Semantic Versioning <em>(SemVer)</em></a>. Last value shown.</div>
               </div>
             </div>
+            {{#newUserJS}}
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
@@ -122,10 +143,11 @@
                   <a class="small" data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-updateurl"><code>@updateURL https://openuserjs.org/meta/{{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}/My_Script.meta.js</code></a>
                 </h5>
               </div>
-              <div id="collapse-updateurl" class="panel-collapse collapse in">
+              <div id="collapse-updateurl" class="panel-collapse collapse">
                 <div class="panel-body"><strong>Required in lockdown mode.</strong> See <a href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">this FAQ item</a> for more. Last value is used.</div>
               </div>
             </div>
+            {{/newUserJS}}
           </div>
           <h3><a id="oujs-block"></a>OpenUserJS Block<a href="#oujs-block" class="anchor"><i class="fa fa-link"></i></a></h3>
           <div class="panel-group" id="accordion-oujs-block">
@@ -152,16 +174,8 @@
               </div>
             </div>
           </div>
-          {{/newUserJS}}
-          {{#newJSLibrary}}
-          <h2><i class="fa fa-question"></i> Library Docs</h2>
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <h3>OpenUserJS.org Supported</h3>
-              <p>Any UserScript on OpenUserJS.org that <code>// @require</code>'s libraries from OpenUserJS.org will link to the library on the UserScript page.</p>
-            </div>
-          </div>
-          {{/newJSLibrary}}
+
+
         </div>
         <div class="col-md-4">
           <h2><a id="new-script"></a><i class="fa fa-plus-square"></i> New Script<a href="#new-script" class="anchor"><i class="fa fa-link"></i></a></h2>
@@ -183,17 +197,12 @@
               <p class="list-group-item-text">
                 <form action="{{{uploadNewScriptPageUrl}}}" method="post" enctype="multipart/form-data" class="form-horizontal">
                   <input type="hidden" name="uploadScript" value="true">
-                  {{#newJSLibrary}}
-                  <div class="form-group">
-                    <input type="text" class="form-control" name="script_name" placeholder="Script Name" required="required" />
-                  </div>
-                  {{/newJSLibrary}}
                   <div class="form-group">
                     <div class="input-group">
                       <span class="input-group-btn">
                         <span class="btn btn-primary btn-file">
                           Browse...
-                          <input type="file" name="script" required="required" />
+                          <input type="file" accept="{{#newUserJS}}.user{{/newUserJS}}.js" name="script" required="required" />
                         </span>
                       </span>
                       <input type="text" readonly="readonly" class="form-control" />
@@ -244,9 +253,6 @@
               <p>After adding the webhook, push a change to GitHub to make sure it's working.</p>
             </div>
           </div>
-
-          {{#newUserJS}}
-
           <h3><a id="collaboration"></a>Collaboration<a href="#collaboration" class="anchor"><i class="fa fa-link"></i></a></h3>
           <div class="panel panel-default">
             <div class="panel-body">
@@ -255,8 +261,6 @@
               <p>If the webhook is enabled on the GitHub repository it will clobber any changes here on this site.</p>
             </div>
           </div>
-          {{/newUserJS}}
-
         </div>
       </div>
     </div>
