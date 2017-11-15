@@ -33,9 +33,9 @@ Test the generated parser with some input for peg.js site at https://pegjs.org/o
 }
 
 block =
-  '// ==UserScript==\n'
+  '// ==UserLibrary==\n'
   lines:line*
-  '// ==/UserScript==' ('\n'?)
+  '// ==/UserLibrary==' ('\n'?)
   {
     return lines;
   }
