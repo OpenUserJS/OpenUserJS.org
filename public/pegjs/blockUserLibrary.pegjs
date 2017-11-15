@@ -3,7 +3,7 @@
 /*
 Test the generated parser with some input for peg.js site at https://pegjs.org/online:
 
-// ==UserScript==
+// ==UserLibrary==
 // @name            RFC 2606§3 - Hello, World!
 // @name:es         ¡Hola mundo!
 // @name:fr         Salut tout le monde!
@@ -13,9 +13,9 @@ Test the generated parser with some input for peg.js site at https://pegjs.org/o
 // @description:fr  Valeurs d'essai avec des clés de métadonnées UserScript connues.
 // @copyright     2013+, OpenUserJS Group (https://github.com/orgs/OpenUserJs/people)
 // @license       CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
-// @license       GPL-3.0; http://www.gnu.org/licenses/gpl-3.0.txt
+// @licence       GPL-3.0; http://www.gnu.org/licenses/gpl-3.0.txt
 // @version       1.2.3
-// ==/UserScript==
+// ==/UserLibrary==
 
 */
 
