@@ -86,6 +86,7 @@ exports.forIn = function (aObj, aForProp) {
 
 // Clean filenames but leave them readable
 // Based on Greasemonkey modules/remoteScript.js
+// NOTE: Keep in sync with client side JavaScript
 exports.cleanFilename = function (aFilename, aDefaultName) {
   // Blacklist problem characters (slashes, colons, etc.).
   var cleanName = (aFilename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
@@ -95,6 +96,29 @@ exports.cleanFilename = function (aFilename, aDefaultName) {
 
   return cleanName || aDefaultName;
 };
+
+// Smarter encoder
+exports.encode = function (aStr) {
+  try {
+    // Check for bad decoding
+    decodeURIComponent(aStr);
+
+    return aStr;
+
+  } catch (aE) {
+    return encodeURIComponent(aStr);
+  }
+}
+
+exports.decode = function (aStr) {
+  try {
+    // Check for bad decoding
+    return decodeURIComponent(aStr);
+
+  } catch (aE) {
+    return aStr;
+  }
+}
 
 exports.limitRange = function (aMin, aX, aMax, aDefault) {
   var x = Math.max(Math.min(aX, aMax), aMin);
@@ -111,7 +135,7 @@ var setUrlQueryValue = function (aBaseUrl, aQueryVarKey, aQueryVarValue) {
   var parseQueryString = true;
   var u = url.parse(aBaseUrl, parseQueryString);
   u.query[aQueryVarKey] = aQueryVarValue;
-  delete u.search; // http://stackoverflow.com/a/7517673/947742
+  delete u.search; // https://stackoverflow.com/a/7517673/947742
   return url.format(u);
 };
 exports.setUrlQueryValue = setUrlQueryValue;
@@ -123,3 +147,19 @@ exports.updateUrlQueryString = function (aBaseUrl, aDict) {
   });
   return url;
 };
+
+// Helper function to ensure value is type Integer `number` or `null`
+// Please be very careful if this is edited
+exports.ensureIntegerOrNull = function (aEnvVar) {
+  if (typeof aEnvVar !== 'number') {
+    aEnvVar = parseInt(aEnvVar);
+
+    if (aEnvVar !== aEnvVar) { // NOTE: ES6 `Number.isNaN`
+      aEnvVar = null;
+    }
+  } else {
+    aEnvVar = parseInt(aEnvVar);
+  }
+
+  return aEnvVar;
+}

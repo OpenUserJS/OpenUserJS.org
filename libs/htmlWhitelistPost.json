@@ -76,7 +76,7 @@
       "itemscope",
       "itemtype"
     ],
-    "all": [
+    "*": [
       "abbr",
       "accept",
       "accept-charset",

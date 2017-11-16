@@ -1,8 +1,4 @@
 {
-  "amazon": {
-    "name": "Amazon",
-    "oauth": true
-  },
   "aol": {
     "name": "AOL",
     "oauth": false
@@ -38,10 +34,6 @@
   "linkedin": {
     "name": "LinkedIn",
     "oauth": true
-  },
-  "persona": {
-    "name": "Mozilla Persona",
-    "oauth": false
   },
   "reddit": {
     "name": "Reddit",

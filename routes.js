@@ -11,6 +11,7 @@ var authentication = require('./controllers/auth');
 var admin = require('./controllers/admin');
 var user = require('./controllers/user');
 var script = require('./controllers/script');
+var flag = require('./controllers/flag');
 var remove = require('./controllers/remove');
 var moderation = require('./controllers/moderation');
 var group = require('./controllers/group');
@@ -28,9 +29,11 @@ module.exports = function (aApp) {
   // Authentication routes
   aApp.route('/auth/').post(authentication.auth);
   aApp.route('/auth/:strategy').get(authentication.auth);
-  aApp.route('/auth/:strategy/callback/').get(authentication.callback);
+  aApp.route('/auth/:strategy/callback/:junk?').get(authentication.callback);
   aApp.route('/login').get(main.register);
-  aApp.route('/register').get(main.register);
+  aApp.route('/register').get(function (aReq, aRes) {
+    aRes.redirect(301, '/login');
+  });
   aApp.route('/logout').get(main.logout);
 
   // User routes
@@ -43,8 +46,12 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
   aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
   aApp.route('/users/:username/update').post(admin.adminUserUpdate);
+  // NOTE: Some below inconsistent with priors
   aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
-  aApp.route('/user').get(function (aReq, aRes) { aRes.redirect('/users'); });
+  aApp.route('/user').get(function (aReq, aRes) {
+    aRes.redirect(302, '/users');
+  });
+  aApp.route('/api/user/exist/:username').head(user.exist);
 
   // Adding script/library routes
   aApp.route('/user/add/scripts').get(authentication.validateUser, user.newScriptPage);
@@ -53,50 +60,53 @@ module.exports = function (aApp) {
   aApp.route('/user/add/lib').get(authentication.validateUser, user.newLibraryPage);
   aApp.route('/user/add/lib/new').get(script.new(script.lib(user.editScript))).post(authentication.validateUser, script.new(script.lib(user.submitSource)));
   aApp.route('/user/add/lib/upload').post(authentication.validateUser, script.lib(user.uploadScript));
-  aApp.route('/user/add').get(function (aReq, aRes) { aRes.redirect('/user/add/scripts'); });
+  aApp.route('/user/add').get(function (aReq, aRes) {
+    aRes.redirect(301, '/user/add/scripts');
+  });
 
   // Script routes
-  aApp.route('/scripts/:username/:namespace?/:scriptname').get(script.view);
-  aApp.route('/script/:username/:namespace?/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
-  aApp.route('/script/:namespace?/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
-  aApp.route('/scripts/:username/:namespace?/:scriptname/source').get(user.editScript);
+  aApp.route('/scripts/:username/:scriptname').get(script.view);
+  aApp.route('/scripts/:username/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
+  aApp.route('/scripts/:username/:scriptname/source').get(user.editScript);
   aApp.route('/scripts/:username').get(function (aReq, aRes) {
-    aRes.redirect('/users/' + aReq.params.username + '/scripts');
+    aRes.redirect(301, '/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
-  aApp.route('/install/:username/:namespace?/:scriptname').get(scriptStorage.sendScript);
-  aApp.route('/meta/:username/:namespace?/:scriptname').get(scriptStorage.sendMeta);
+
+  aApp.route('/install/:username/:scriptname').get(scriptStorage.unlockScript, scriptStorage.sendScript);
+
+  aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
   // Github hook routes
   aApp.route('/github/hook').post(scriptStorage.webhook);
   aApp.route('/github/service').post(function (aReq, aRes, aNext) { aNext(); });
-  aApp.route('/github').get(function (aReq, aRes) { aRes.redirect('/'); });
 
   // Library routes
   aApp.route('/libs/:username/:scriptname').get(script.lib(script.view));
-  aApp.route('/lib/:scriptname/edit').get(authentication.validateUser, script.lib(script.edit));
-  aApp.route('/lib/:scriptname/edit').post(authentication.validateUser, script.lib(script.edit));
+  aApp.route('/libs/:username/:scriptname/edit').get(authentication.validateUser, script.lib(script.edit)).post(authentication.validateUser, script.lib(script.edit));
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
-  aApp.route('/libs/src/:username/:scriptname').get(scriptStorage.sendScript);
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(scriptStorage.sendScript);
-  aApp.route('/libs/src/:username/:scriptname').get(scriptStorage.sendScript); // Legacy
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(scriptStorage.unlockScript, scriptStorage.sendScript);
 
   // Issues routes
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:open(closed)?').get(issue.list);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic').get(issue.view).post(authentication.validateUser, issue.comment);
-  aApp.route('/:type(scripts|libs)/:username/:namespace?/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(issue.list);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(issue.view).post(authentication.validateUser, issue.comment);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
 
   // Admin routes
   aApp.route('/admin').get(admin.adminPage);
-  aApp.route('/admin/authas').get(admin.authAsUser);
-  aApp.route('/admin/json').get(admin.adminJsonView);
-  aApp.route('/admin/user/:id').get(admin.adminUserView);
-  aApp.route('/admin/api').get(admin.adminApiKeysPage);
+  aApp.route('/admin/npm/version').get(admin.adminNpmVersionView);
+  aApp.route('/admin/git/short').get(admin.adminGitShortView);
+  aApp.route('/admin/git/branch').get(admin.adminGitBranchView);
+  aApp.route('/admin/process/clone').get(admin.adminProcessCloneView);
+  aApp.route('/admin/session/length').get(admin.adminSessionLengthView);
   aApp.route('/admin/npm/package').get(admin.adminNpmPackageView);
   aApp.route('/admin/npm/list').get(admin.adminNpmListView);
-  aApp.route('/admin/npm/version').get(admin.adminNpmVersionView);
+  aApp.route('/admin/api').get(admin.adminApiKeysPage);
+  aApp.route('/admin/authas').get(admin.authAsUser);
+  aApp.route('/admin/json').get(admin.adminJsonView);
+
   aApp.route('/admin/api/update').post(admin.apiAdminUpdate);
 
   // Moderation routes
@@ -106,17 +116,14 @@ module.exports = function (aApp) {
 
   // Vote routes
   // TODO: Single vote route + POST
-  aApp.route('/vote/scripts/:username/:namespace?/:scriptname/:vote').get(authentication.validateUser, script.vote);
+  aApp.route('/vote/scripts/:username/:scriptname/:vote').get(authentication.validateUser, script.vote);
   aApp.route('/vote/libs/:username/:scriptname/:vote').get(authentication.validateUser, script.lib(script.vote));
 
   // Flag routes
-  // TODO: Single flag route + POST
-  aApp.route('/flag/users/:username/:unflag?').get(user.flag);
-  aApp.route('/flag/scripts/:username/:scriptname/:unflag?').get(script.flag);
-  aApp.route('/flag/libs/:username/:scriptname/:unflag?').get(script.lib(script.flag));
+  aApp.route(/^\/flag\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(flag.flag);
 
   // Remove route
-  aApp.route(/^\/remove\/(.+?)\/(.+)$/).post(remove.rm);
+  aApp.route(/^\/remove\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(remove.rm);
 
   // Group routes
   aApp.route('/groups').get(group.list);
@@ -146,7 +153,7 @@ module.exports = function (aApp) {
   aApp.use(function (aReq, aRes, aNext) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 404,
-      statusMessage: 'This is not the page you\'re are looking for.',
+      statusMessage: 'This is not the page you\'re are looking for.'
     });
   });
 };

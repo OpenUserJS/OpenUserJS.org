@@ -1,25 +1,60 @@
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/ace-builds/src/ace.js"></script>
 <script type="text/javascript">
   (function () {
+    'use strict';
 
     $(document).ready(function () {
-      var editor = ace.edit("editor");
 
-      function hasCalc(aPrefix) {
-        var el = null;
+      var editor = ace.edit("editor");
+      var placeholder = null;
+      var username = '{{authedUser.name}}' || 'username';
+      var isLib = !!'{{isLib}}';
+      var now = new Date();
+      var year = now.getFullYear();
+
+      function hasRelative(aPrefix) {
+        var hasCalc = null;
+        var hasUnitV = null;
 
         aPrefix = aPrefix || "";
-        el = document.createElement("div");
-        el.style.setProperty(aPrefix + "width", "calc(1px)", "");
-        return !!el.style.length;
+        hasCalc = document.createElement("div");
+        hasCalc.style.setProperty(aPrefix + "width", "calc(1px)", "");
+
+        if (!!hasCalc.style.length) {
+          hasUnitV = document.createElement("div");
+          hasUnitV.style.setProperty(aPrefix + "width", "calc(5vw + 5vw)", "");
+        }
+
+        return !!hasCalc.style.length && !!hasUnitV.style.length;
       }
 
-      function hasAnyCalc() {
-        return hasCalc("-moz-") || hasCalc("-ms-") || hasCalc("-o-") || hasCalc("-webkit-") || hasCalc();
+      function hasOurRelative() {
+        return hasRelative("-moz-") || hasRelative("-ms-") || hasRelative("-o-") ||
+          hasRelative("-webkit-") || hasRelative();
       }
 
       function calcHeight() {
-        return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}};
+        return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}302{{/newScript}};
+      }
+
+      function onresize() {
+        $("#editor").height(calcHeight);
+        editor.resize(true);
+      }
+
+      function oninput() {
+        var shouldShow = !editor.session.getValue().length;
+        var node = editor.renderer.emptyMessageNode;
+        if (!shouldShow && node) {
+          editor.renderer.scroller.removeChild(editor.renderer.emptyMessageNode);
+          editor.renderer.emptyMessageNode = null;
+        } else if (shouldShow && !node) {
+          node = editor.renderer.emptyMessageNode = document.createElement("div");
+          node.textContent = placeholder;
+          node.className = "ace_invisible ace_emptyMessage";
+          node.style.padding = "0 0.75em";
+          editor.renderer.scroller.appendChild(node);
+        }
       }
 
       editor.setTheme("ace/theme/dawn");
@@ -34,13 +69,74 @@
       });
       {{/readOnly}}
 
-      // Older browser JavaScript work-around for #136
-      if (!hasAnyCalc()) {
+      // Some older and newer browser JavaScript work-around for #136
+      if (!hasOurRelative()) {
         $("#editor").height(calcHeight());
-        $(document).on("resize", function () {
-          $("#editor").height(calcHeight);
-        });
+
+        if (window.addEventListener) {
+          window.addEventListener('resize', onresize, false);
+        } else if (window.attachEvent) {
+          window.attachEvent('resize', onresize);
+        }
       }
+
+      placeholder = (
+        isLib
+          ? [
+            '// ==UserScript==',
+            '// @namespace     https://openuserjs.org/users/' + username,
+            '// @exclude       *',
+            '',
+            '// ==UserLibrary==',
+            '// @name          Getting Started with a User Library',
+            '// @description   ' +
+              'Showing the current basic and recommended format for a Library script.',
+            '// @copyright     ' + year + ', ' +  username
+              + ' (https://openuserjs.org/users/' + username + ')',
+            '// @license       OSI-SPDX-Short-Identifier',
+            '// @version       0.0.0',
+            '',
+            '// ==/UserScript==',
+            '',
+            '// ==/UserLibrary==',
+            '',
+            '// ==OpenUserJS==',
+            '// @author ' + username,
+            '// ==/OpenUserJS==',
+            '',
+            '/**',
+            '  *',
+            '  * Please begin typing or paste your User Library now.',
+            '  *',
+            '  */'
+          ] : [
+            '// ==UserScript==',
+            '// @namespace     https://openuserjs.org/users/' + username,
+            '// @name          Getting Started with a User Script',
+            '// @description   ' +
+              'Showing the current basic and recommended format for a User script.',
+            '// @copyright     ' + year + ', ' +  username
+              + ' (https://openuserjs.org/users/' + username + ')',
+            '// @license       OSI-SPDX-Short-Identifier',
+            '// @version       0.0.0',
+            '// @include       https://www.example.com/*',
+            '// @grant none',
+            '// ==/UserScript==',
+            '',
+            '// ==OpenUserJS==',
+            '// @author ' + username,
+            '// ==/OpenUserJS==',
+            '',
+            '/**',
+            '  *',
+            '  * Please begin typing or paste your User script now.',
+            '  *',
+            '  */'
+          ]
+      ).join('\n');
+
+      editor.on("input", oninput);
+      setTimeout(oninput, 250);
     });
 
   })();

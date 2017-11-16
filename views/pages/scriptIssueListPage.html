@@ -48,8 +48,9 @@
         <div class="panel">
           <div class="panel-body">
             <ul class="nav nav-pills nav-justified">
-              <li class="{{#openIssuesOnly}}active{{/openIssuesOnly}}"><a href="{{{category.categoryPageUrl}}}">Open</a></li>
-              <li class="{{^openIssuesOnly}}active{{/openIssuesOnly}}"><a href="{{{category.categoryPageUrl}}}/closed">Closed</a></li>
+              <li class="{{^allIssues}}{{#openIssuesOnly}}active{{/openIssuesOnly}}{{/allIssues}}"><a href="{{{category.categoryPageUrl}}}/open">Open</a></li>
+              <li class="{{^allIssues}}{{^openIssuesOnly}}active{{/openIssuesOnly}}{{/allIssues}}"><a href="{{{category.categoryPageUrl}}}/closed">Closed</a></li>
+              <li class="{{#allIssues}}active{{/allIssues}}"><a href="{{{category.categoryPageUrl}}}/all">All</a></li>
             </ul>
           </div>
         </div>
@@ -62,5 +63,6 @@
     {{> includes/scripts/showTopPagination.html }}
   {{/paginationRendered}}
   {{> includes/scripts/lazyIconScript.html }}
+  {{> includes/scripts/formControlClear.html }}
 </body>
 </html>

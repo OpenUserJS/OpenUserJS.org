@@ -7,6 +7,8 @@ var isDbg = require('../libs/debug').isDbg;
 
 //
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
 var Schema = mongoose.Schema;
 
 var commentSchema = new Schema({
@@ -15,10 +17,15 @@ var commentSchema = new Schema({
   author: String,
   created: Date,
   rating: Number,
+  updated: Date,
+  userAgent: String,
 
   // Moderation
   creator: Boolean,
-  flags: Number,
+  flags: {
+    critical: Number,
+    absolute: Number
+  },
   flagged: Boolean,
 
   // Extra info

@@ -16,19 +16,29 @@
             {{#script.isLib}}
             <div class="form-group">
               <div class="input-group col-xs-12">
-                <div class="input-group-addon">// @require </div>
-                <input type="text" class="form-control" value="{{{script.scriptPermalinkInstallPageUrl}}}">
+                <span class="input-group-btn">
+                  <button class="btn btn-info" id="require-raw" data-clipboard-text="// @require {{{script.scriptPermalinkInstallPageUrl}}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @require</button>
+                  <button class="btn btn-warning" id="require-min" data-clipboard-text="// @require {{{script.scriptPermalinkInstallPageXUrl}}}.min.js" title="EXPERIMENTAL: Copy key and minified URL to clipboard"><i class="octicon octicon-clippy"></i></button>
+                </span>
+                <input type="text" class="form-control" id="require" value="{{{script.scriptPermalinkInstallPageUrl}}}" readonly="readonly">
               </div>
             </div>
             {{/script.isLib}}
 
             <div class="script-meta">
-              {{#script.meta.version}}<p><i class="fa fa-fw fa-tag"></i> <b>Version:</b> <code>{{script.meta.version}}</code> uploaded <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>{{/script.meta.version}}
-              {{^script.meta.version}}<p><i class="fa fa-fw fa-clock-o"></i> <b>Updated:</b> <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>{{/script.meta.version}}
-              {{#script.meta.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{script.meta.description}}</p>{{/script.meta.description}}
+              <p><i class="fa fa-fw fa-clock-o"></i> <b>Published:</b> <time datetime="{{script._sinceISOFormat}}" title="{{script._since}}">{{script._sinceHumanized}}</time></p>
+              {{#script.meta.UserScript.version}}
+                <p><i class="fa fa-fw fa-history"></i> <b>Version:</b> <code>{{value}}</code>{{#script.isUpdated}} updated <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time>{{/script.isUpdated}}</p>
+              {{/script.meta.UserScript.version}}
+              {{^script.meta.UserScript.version}}
+                {{#script.isUpdated}}
+                  <p><i class="fa fa-fw fa-history"></i> <b>Updated:</b> <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time></p>
+                {{/script.isUpdated}}
+              {{/script.meta.UserScript.version}}
+              {{#script.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{script.description}}</p>{{/script.description}}
               {{#script.hasGroups}}
                 <span>
-                  <i class="fa fa-fw fa-tags"></i> <b>Groups:</b>
+                  <i class="fa fa-fw fa-tag"></i> <b>Groups:</b>
                   <ul class="list-inline inline-block">
                   {{#script.groups}}
                     <li><a href="{{{groupPageUrl}}}">{{name}}</a></li>
@@ -39,7 +49,8 @@
               {{#script.homepages}}<p><i class="fa fa-fw fa-home"></i> <b>Homepage:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.homepages}}
               {{#script.support}}<p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.support}}
               {{#script.copyrights}}<p><i class="fa fa-fw fa-copyright"></i> <b>Copyright:</b> {{name}}</p>{{/script.copyrights}}
-              {{#script.licenses}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{name}}</p>{{/script.licenses}}
+              {{#script.licenseConflict}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{#script.licenseParadox}}<s>{{/script.licenseParadox}}<a rel="nofollow" href="https://spdx.org/licenses/MIT.html">MIT</a>; <a rel="nofollow" href="https://opensource.org/licenses/MIT">https://opensource.org/licenses/MIT</a>{{#script.licenseParadox}}</s>{{/script.licenseParadox}}</p>{{/script.licenseConflict}}
+              {{#script.licenses}}<p><i class="fa fa-fw fa-balance-scale"></i> <b>License:</b> {{#name}}{{name}}{{/name}}{{^name}}<a rel="nofollow" href="https://spdx.org/licenses/{{spdx}}.html">{{spdx}}</a>{{#url}}; <a rel="nofollow" href="{{url}}">{{url}}</a>{{/url}}{{/name}}</p>{{/script.licenses}}
               {{#hasCollab}}
               <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>
               {{/hasCollab}}
@@ -48,7 +59,7 @@
                 <ul>
                 {{#script.fork}}
                   <li>
-                    <a href="/{{#script.isLib}}libs{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}/{{{url}}">{{url}}</a>
+                    <a href="/{{#script.isLib}}libs{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}/{{{url}}">{{utf}}</a>
                   </li>
                 {{/script.fork}}
                 </ul>
@@ -79,7 +90,7 @@
         {{#script.isUsed}}
         <div class="panel panel-default">
           <div class="panel-body">
-            <h4>Scripts Using This Library</h4>
+            <h4>Userscripts Using This Library</h4>
             <ul>
             {{#script.usedBy}}
               <li>
@@ -107,5 +118,9 @@
   {{> includes/scriptModals.html }}
   {{> includes/footer.html }}
   {{> includes/scripts/lazyIconScript.html }}
+  {{> includes/scripts/clipboard.html }}
+  {{#authorTools}}
+    {{ > includes/scripts/selectSPDX.html}}
+  {{/authorTools}}
 </body>
 </html>

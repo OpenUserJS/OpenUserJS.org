@@ -1,31 +1,66 @@
 <script type="text/javascript">
   (function () {
+    function onClick(aEv) {
+      var container = aEv.target;
+      var anchor = null;
+      var url = null;
 
-    $(document).ready(function () {
-      // https://stackoverflow.com/questions/4904938/link-entire-table-row
+      switch (container.nodeName) {
+        case 'A':
+          // fallthrough
+        case 'INPUT':
+          return;
+      }
 
-      $('.tr-link').click(function (aE) {
-        var anchor = null;
-        var url = null;
-
-        if ($(aE.target).is('a,input,a *')) { // anything else you don't want to trigger the click
+      // Traverse up the DOM to find the container tr tag or a tag
+      while (!container.classList.contains('tr-link')) {
+        if (!(container = container.parentNode) || container.nodeName === 'A') {
           return;
         }
+      }
 
-        anchor = $(this).find('a.tr-link-a').first();
-        if (!anchor) {
-          return;
-        }
+      // Find the anchor tag for redirection
+      anchor = container.querySelector('a.tr-link-a');
+      if (!anchor) {
+        return;
+      }
 
-        url = anchor.attr('href');
-        if (!url) {
-          return;
-        }
+      // Check to see if the href tag exists
+      url = anchor.getAttribute('href');
+      if (!url) {
+        return;
+      }
 
-        window.location = url;
-        aE.stopPropagation();
-      })
-    });
+      // Stop everything as soon as possible
+      aEv.stopPropagation();
+      aEv.preventDefault();
+
+      // Redirect to the anchor href
+      if ((aEv.ctrlKey || aEv.metaKey) && aEv.shiftKey) {
+        window.open(url, '_blank').focus();
+        return;
+      }
+
+      if (aEv.ctrlKey || aEv.metaKey) {
+        window.open(url, '_blank').blur();
+        return;
+      }
+
+      window.location = url;
+    }
+
+    function onDOMContentLoaded(aEv) {
+      var i = undefined;
+      var el = undefined;
+      var els = document.querySelectorAll('tr.tr-link');
+
+      // Place handler on everything within the tr.tr-link
+      for (i = 0, el; el = els[i++];) {
+        el.addEventListener('click', onClick);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
 
   })();
 </script>

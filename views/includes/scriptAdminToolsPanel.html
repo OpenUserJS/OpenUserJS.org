@@ -7,7 +7,39 @@
     </div>
   </div>
   <div class="panel-body">
-    <a rel="nofollow" href="/admin/json?model=Script&id={{{script._id}}}" class="btn btn-link col-xs-12"><i class="fa fa-database"></i> Raw JSON Data</a>
+    {{#hasFlagged}}
+    <div class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Flagged</label>
+        <div class="col-sm-8">
+          <ul class="flaggedList">
+          {{#script.flaggedList}}
+            <li>
+              {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+              <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+            </li>
+          {{/script.flaggedList}}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {{/hasFlagged}}
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="scriptid-raw" data-clipboard-text="{{{script._id}}}" title="Copy _id to clipboard"><i class="octicon octicon-clippy"></i> _id</button>
+        </span>
+        <input class="form-control" id="scriptid" value="{{{script._id}}}" readonly="readonly" type="text">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="scriptid-urn" data-clipboard-text="/admin/json?model=Script&id={{{script._id}}}" title="Copy URN to clipboard"><i class="octicon octicon-clippy"></i> URN</button>
+        </span>
+        <span class="input-group-btn">
+          <a class="btn btn-default btn-" title="Raw JSON Data" href="/admin/json?model=Script&id={{{script._id}}}">
+              <i class="fa fa-file"></i> Raw JSON Data
+          </a>
+        </span>
+      </div>
+    </div>
   </div>
 </div>
 {{/adminTools}}

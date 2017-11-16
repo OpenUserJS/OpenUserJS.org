@@ -8,7 +8,9 @@
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal">
-      <dt>Number of scripts</dt>
+      <dt>Member since</dt>
+      <dd><time datetime="{{user._sinceISOFormat}}" title="{{user._since}}">{{user._sinceHumanized}}</time></dd>
+      <dt>Number of userscripts</dt>
       <dd>{{stats.totalScripts}}</dd>
       <dt>Number of libraries</dt>
       <dd>{{stats.totalLibs}}</dd>

@@ -10,3 +10,4 @@ Disallow: /dist/
 Disallow: /fonts/
 Disallow: /js/
 Disallow: /redist/
+Disallow: /install/

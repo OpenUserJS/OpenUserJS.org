@@ -7,6 +7,23 @@
     </div>
   </div>
   <div class="panel-body">
+    {{#hasFlagged}}
+    <div class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Flagged</label>
+        <div class="col-sm-8">
+          <ul class="flaggedList">
+          {{#user.flaggedList}}
+            <li>
+              {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+              <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+            </li>
+          {{/user.flaggedList}}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {{/hasFlagged}}
     <form class="form-horizontal" role="form" method="post" action="{{{user.userUpdatePageUrl}}}">
       <div class="form-group container-fluid">
         <label class="col-sm-2 control-label">Role</label>
@@ -20,7 +37,22 @@
         <input type="submit" class="col-sm-2 btn btn-default" value="Save">
       </div>
     </form>
-    <a rel="nofollow" href="/admin/json?model=User&id={{{user._id}}}" class="btn btn-link col-xs-12"><i class="fa fa-database"></i> Raw JSON Data</a>
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="userid-raw" data-clipboard-text="{{{user._id}}}" title="Copy _id to clipboard"><i class="octicon octicon-clippy"></i> _id</button>
+        </span>
+        <input class="form-control" id="userid" value="{{{user._id}}}" readonly="readonly" type="text">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="userid-urn" data-clipboard-text="/admin/json?model=User&id={{{user._id}}}" title="Copy URN to clipboard"><i class="octicon octicon-clippy"></i> URN</button>
+        </span>
+        <span class="input-group-btn">
+          <a class="btn btn-default btn-" title="Raw JSON Data" href="/admin/json?model=User&id={{{user._id}}}">
+              <i class="fa fa-user"></i> Raw JSON Data
+          </a>
+        </span>
+      </div>
+    </div>
     {{#adminTools.authAsUserUrl}}<a rel="nofollow" href="{{{adminTools.authAsUserUrl}}}" class="btn btn-link col-xs-12"><i class="fa fa-sign-in"></i> Auth As This User</a>{{/adminTools.authAsUserUrl}}
   </div>
 </div>

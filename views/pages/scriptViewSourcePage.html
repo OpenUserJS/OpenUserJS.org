@@ -31,16 +31,6 @@
           <input type="hidden" id="source" name="source" value="" />
           <input type="hidden" name="url" value="{{{url}}}" />
           {{^owner}}<input type="hidden" name="original" value="{{original}}" />{{/owner}}
-          <div class="pull-left">
-            {{#isLib}}
-              {{#newScript}}
-                <strong>Library Name:</strong> <input type="text" name="script_name" value="" required>
-              {{/newScript}}
-              {{^newScript}}
-                <input type="hidden" name="script_name" value="{{scriptName}}" />
-              {{/newScript}}
-            {{/isLib}}
-          </div>
           <button class="btn btn-success pull-right" type="submit" id="submit_code">{{#owner}}<i class="fa fa-fw fa-save"></i>{{/owner}}{{^owner}}<i class="fa fa-fw fa-code-fork"></i>{{/owner}} Submit Code{{^owner}} as Fork{{/owner}}</button>
         </form>
         {{/readOnly}}

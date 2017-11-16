@@ -1,27 +1,64 @@
 <script type="text/javascript">
   (function () {
+    'use strict';
 
-    $(window).load(function () {
-      window.setTimeout(function () {
-        $('[data-icon-src]').each(function () {
-          var container = $(this);
-          var size = container.data('icon-size');
-          var img = new Image();
+    function onShow(aImg) {
+      aImg.classList.remove('translucent-icon');
+      aImg.classList.add('opaque-icon');
+    }
 
-          if (size) {
-            img.width = size;
-            img.height = size;
-          }
+    function onError(aEv) {
+      var img = aEv.target;
+      var container = img.parentNode;
 
-          $(img).load(function () {
-            var that = $(this).hide();
+      container.removeChild(img);
+    }
 
-            container.empty().append(that);
-            that.fadeIn();
-          }).attr('src', container.data('icon-src'));
-        });
-      }, 13);
-    });
+    function onLoad(aEv) {
+      var img = aEv.target;
+      var container = img.parentNode;
+
+      var node = container.querySelector('i');
+
+      container.removeChild(node);
+      img.classList.remove('hide-icon');
+
+      setTimeout(onShow, 250, img);
+    }
+
+    function onTimeout() {
+      var nodes = document.querySelectorAll('[data-icon-src]');
+      var i = null;
+      var container = null;
+      var dataIconSrc = null;
+      var node = null;
+      var img = null;
+
+      for (i = 0; container = nodes[i]; i++) {
+        dataIconSrc = container.getAttribute('data-icon-src');
+
+        node = container.querySelector('i');
+
+        img = new Image();
+
+        img.addEventListener('load', onLoad);
+        img.addEventListener('error', onError);
+
+        img.classList.add('hide-icon');
+        img.classList.add('fade-icon');
+        img.classList.add('translucent-icon');
+
+        img.src = dataIconSrc;
+
+        container.appendChild(img);
+      }
+    }
+
+    function onDOMContentLoaded(aEv) {
+      window.setTimeout(onTimeout, 13);
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
 
   })();
 </script>

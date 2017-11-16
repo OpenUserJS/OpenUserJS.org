@@ -25,16 +25,27 @@ To reduce security risks, most userscript managers let you control which website
 
 ### How do I get going?
 
-Find your web browser in the table below, and follow the links to find out the options for making userscripts work on your computer.
+Find your web browser in the tables below, and follow the links to find out the options for making userscripts work on your computer.
 
-Web browser | Installation Method
+#### Desktop
+
+Browser | Installation Method
 ---  | ---
-[Chrome][chrome] | [Tampermonkey][tampermonkeyForChrome]
-[Firefox][firefox] | [Greasemonkey][greasemonkeyForFirefox]
-[Opera][opera] | [Violentmonkey][violentMonekyForOpera]
+[Chrome][chrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
+[Chromium][chromium] | [Tampermonkey][tampermonkeyForChromium]
+[Edge][edge] | [Tampermonkey][tampermonkeyForEdge]
+[Firefox][firefox] | [Greasemonkey][greasemonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox]
+[Opera][opera] | [Violentmonkey][violentmonkeyForOpera]
 [Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
+[QupZilla][qupzilla] | *(native support)*
 [SeaMonkey][seamonkey] | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
-[Tampermonkey for Android][tampermonkeyForAndroid] |
+
+#### Portable
+
+Browser | Installation Method
+---  | ---
+[Android][android]| [Tampermonkey][tampermonkeyForAndroid]
+
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
@@ -42,9 +53,18 @@ Web browser | Installation Method
 [greasemonkeyPortForSeaMonkey]: Greasemonkey-Port-for-SeaMonkey
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
+[tampermonkeyForChromium]: Tampermonkey-for-Chromium
+[tampermonkeyForEdge]: Tampermonkey-for-Edge
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
-[violentMonekyForOpera]: Violentmonkey-for-Opera
+[violentmonkeyForChrome]: Violentmonkey-for-Chrome
+[violentmonkeyForFirefox]: Violentmonkey-for-Firefox
+[violentmonkeyForOpera]: Violentmonkey-for-Opera
+[android]: Android
 [chrome]: Chrome
+[chromium]: Chromium
+[edge]: Edge
 [firefox]: Firefox
 [opera]: Opera
+[qupzilla]: QupZilla
 [seamonkey]: SeaMonkey
+

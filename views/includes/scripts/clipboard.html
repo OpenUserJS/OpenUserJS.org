@@ -1,0 +1,45 @@
+<script type="text/javascript" src="/redist/npm/clipboard/dist/clipboard.js"></script>
+<script type="text/javascript">
+  (function () {
+
+    var clipboard = null;
+    var rMin = /\.min\.js$/;
+
+    var allowedIds = [
+      '#groupid-raw',
+      '#groupid-urn',
+      '#license-raw',
+      '#require-min',
+      '#require-raw',
+      '#scriptid-raw',
+      '#scriptid-urn',
+      '#updateurl-raw',
+      '#userid-raw',
+      '#userid-urn'
+    ];
+
+    function unsupported() {
+      allowedIds.forEach(function (aElement, aIndex, aArray) {
+        $(aElement).prop('disabled', true);
+      });
+    }
+
+    if (Clipboard.isSupported()) {
+      clipboard = new Clipboard(allowedIds.join(', '));
+
+      clipboard.on('success', function(aE) {
+        if (rMin.test(aE.text)) {
+          // TODO: Flash tooltip saying copied and then restore it
+        } else {
+          // TODO: Flash tooltip saying copied and then restore it
+        }
+      });
+
+      clipboard.on('error', unsupported);
+
+    } else {
+      unsupported();
+    }
+
+  })();
+</script>

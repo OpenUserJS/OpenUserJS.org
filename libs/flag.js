@@ -16,9 +16,12 @@ var maxKarma = 10;
 // This is heavily commented so that my logic and
 // reasoning is documented for myself and others.
 function flaggable(aModel, aContent, aUser, aCallback) {
-  // Not logged in.
-  if (!aUser) { return aCallback(false); }
-
+  // Not logged in or role is above moderator
+  // No one above a moderator is part of the moderation system
+  // since they can just remove content directly
+  if (!aUser || aUser.role < 3) {
+    return aCallback(false);
+  }
 
   // You can't flag yourself
   // Only someone less than an admin can be flagged
@@ -32,13 +35,19 @@ function flaggable(aModel, aContent, aUser, aCallback) {
 
   getAuthor(aContent, function (aAuthor) {
     // Content without an author shouldn't exist
-    if (!aAuthor) { return aCallback(false); }
+    if (!aAuthor) {
+      return aCallback(false);
+    }
 
     // You can't flag your own content
-    if (aAuthor._id == aUser._id) { return aCallback(false); }
+    if (aAuthor._id == aUser._id) {
+      return aCallback(false);
+    }
 
     // Content belonging to an admin or above cannot be flagged
-    if (aAuthor.role < 3) { return aCallback(aAuthor.role > 2, aAuthor); }
+    if (aAuthor.role < 3) {
+      return aCallback(aAuthor.role > 2, aAuthor);
+    }
 
     // You can't flag something twice
     getFlag(aModel, aContent, aUser, function (aFlag) {
@@ -86,58 +95,122 @@ function getThreshold(aModel, aContent, aAuthor, aCallback) {
 }
 exports.getThreshold = getThreshold;
 
-function saveContent(aModel, aContent, aAuthor, aFlags, aCallback) {
-  if (!aContent.flags) { aContent.flags = 0; }
-  aContent.flags += aFlags;
+function saveContent(aModel, aContent, aAuthor, aFlags, aIsFlagging, aCallback) {
+  if (!aContent.flags) {
+    aContent.flags = {};
+  }
 
-  if (aContent.flags >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
+  if (!aContent.flags.critical) {
+    aContent.flags.critical = 0;
+  }
+
+  if (!aContent.flags.absolute) {
+    aContent.flags.absolute = 0;
+  }
+
+  aContent.flags.critical += aFlags;
+
+  if (aIsFlagging) {
+    aContent.flags.absolute +=
+      (aFlags > 0 ? 1 : (aFlags < 0 && aContent.flags.absolute !== 0 ? -1 : 0));
+  }
+
+  if (aContent.flags.critical >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
     return getThreshold(aModel, aContent, aAuthor, function (aThreshold) {
-      aContent.flagged = aContent.flags >= aThreshold;
-      aContent.save(function (aErr, aContent) { aCallback(aContent.flagged); });
+      aContent.flagged = aContent.flags.critical >= aThreshold;
+
+      aContent.save(function (aErr, aContent) {
+        if (aErr) {
+          console.warn('Error flagging content', aErr);
+          aCallback(null);
+          return;
+        }
+        aCallback(aContent.flagged);
+      });
     });
   } else {
     aContent.flagged = false;
   }
 
-  aContent.save(function (aErr, aContent) { aCallback(aContent.flagged); });
+  aContent.save(function (aErr, aContent) {
+    if (aErr) {
+      console.warn('Error unflagging content', aErr);
+      aCallback(null);
+      return;
+    }
+    aCallback(aContent.flagged);
+  });
 }
 exports.saveContent = saveContent;
 
-function flag(aModel, aContent, aUser, aAuthor, aCallback) {
+function flag(aModel, aContent, aUser, aAuthor, aReason, aCallback) {
   var flag = new Flag({
     'model': aModel.modelName,
     '_contentId': aContent._id,
-    '_userId': aUser._id
+    '_userId': aUser._id,
+    'reason': aReason
   });
 
   flag.save(function (aErr, aFlag) {
-    if (!aContent.flags) { aContent.flags = 0; }
-    if (!aContent.flagged) { aContent.flagged = false; }
+    if (!aContent.flags) {
+      aContent.flags = {};
+    }
 
-    saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? 2 : 1, aCallback);
+    if (!aContent.flags.critical) {
+      aContent.flags.critical = 0;
+    }
+
+    if (!aContent.flags.absolute) {
+      aContent.flags.absolute = 0;
+    }
+
+    if (!aContent.flagged) {
+      aContent.flagged = false;
+    }
+
+    saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? 2 : 1, true, aCallback);
   });
 }
 
-exports.flag = function (aModel, aContent, aUser, aCallback) {
+exports.flag = function (aModel, aContent, aUser, aReason, aCallback) {
   flaggable(aModel, aContent, aUser, function (aCanFlag, aAuthor) {
-    if (!aCanFlag) { return aCallback(false); }
+    if (!aCanFlag) {
+      return aCallback(false);
+    }
 
-    flag(aModel, aContent, aUser, aAuthor, aCallback);
+    flag(aModel, aContent, aUser, aAuthor, aReason, aCallback);
   });
 };
 
-exports.unflag = function (aModel, aContent, aUser, aCallback) {
-  if (!aUser) { return aCallback(null); }
+exports.unflag = function (aModel, aContent, aUser, aReason, aCallback) {
+  if (!aUser) {
+    return aCallback(null);
+  }
 
   getFlag(aModel, aContent, aUser, function (aFlag) {
-    if (!aFlag) { return aCallback(null); }
+    if (!aFlag) {
+      return aCallback(null);
+    }
 
-    if (!aContent.flags) { aContent.flags = 0; }
-    if (!aContent.flagged) { aContent.flagged = false; }
+    if (!aContent.flags) {
+      aContent.flags = {};
+    }
+
+    if (!aContent.flags.critical) {
+      aContent.flags.critical = 0;
+    }
+
+    if (!aContent.flags.absolute) {
+      aContent.flags.absolute = 0;
+    }
+
+    if (!aContent.flagged) {
+      aContent.flagged = false;
+    }
 
     function removeFlag(aAuthor) {
       aFlag.remove(function (aErr) {
-        saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? -2 : -1, aCallback);
+        saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? -2 : -1, true, aCallback);
       });
     }
 

@@ -28,6 +28,11 @@
       </div>
       <div class="col-sm-4">
         {{> includes/searchBarPanel.html }}
+        {{#isFlagged}}
+          {{#isAdmin}}
+            {{> includes/flagAdminToolFlaggedFilters.html }}
+          {{/isAdmin}}
+        {{/isFlagged}}
       </div>
     </div>
   </div>
@@ -36,5 +41,6 @@
     {{> includes/scripts/showTopPagination.html }}
   {{/paginationRendered}}
   {{> includes/scripts/tableTrLinkScript.html }}
+  {{> includes/scripts/formControlClear.html }}
 </body>
 </html>

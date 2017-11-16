@@ -45,16 +45,16 @@ module.exports = function (aApp) {
   serveModule('/redist/npm/', 'ace-builds/src/', 7);
 
   serveModule('/redist/npm/', 'bootstrap/', {
-    'dist/js/bootstrap.js': { maxage: day * 1 },
-    'dist/fonts/glyphicons-halflings-regular.eot': { maxage: day * 7 },
-    'dist/fonts/glyphicons-halflings-regular.svg': { maxage: day * 7 },
-    'dist/fonts/glyphicons-halflings-regular.ttf': { maxage: day * 7 },
-    'dist/fonts/glyphicons-halflings-regular.woff': { maxage: day * 7 }
+    'dist/js/bootstrap.js': { maxage: day * 1 }
   });
 
   serveModule('/redist/npm/', 'bootstrap-markdown/', {
     'js/bootstrap-markdown.js': { maxage: day * 1 },
     'css/bootstrap-markdown.min.css': { maxage: day * 1 }
+  });
+
+  serveModule('/redist/npm/', 'clipboard/', {
+    'dist/clipboard.js': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'font-awesome/', {
@@ -67,9 +67,12 @@ module.exports = function (aApp) {
     'fonts/FontAwesome.otf': { maxage: day * 7 }
   });
 
+  serveModule('/redist/npm/', 'highlight.js/', {
+    'styles/github.css': { maxage: day * 1 }
+  });
+
   serveModule('/redist/npm/', 'jquery/', {
-    'dist/jquery.js': { maxage: day * 7 },
-    'dist/jquery.min.map': { maxage: day * 7 }
+    'dist/jquery.js': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'marked/', {
@@ -77,12 +80,12 @@ module.exports = function (aApp) {
   });
 
   serveModule('/redist/npm/', 'octicons/', {
-    'octicons/octicons.css': { maxage: day * 1 },
-    'octicons/octicons-local.ttf': { maxage: day * 7 },
-    'octicons/octicons.eot': { maxage: day * 7 },
-    'octicons/octicons.svg': { maxage: day * 7 },
-    'octicons/octicons.ttf': { maxage: day * 7 },
-    'octicons/octicons.woff': { maxage: day * 7 }
+    'build/font/octicons.css': { maxage: day * 1 },
+    'build/font/octicons.eot': { maxage: day * 7 },
+    'build/font/octicons.svg': { maxage: day * 7 },
+    'build/font/octicons.ttf': { maxage: day * 7 },
+    'build/font/octicons.woff': { maxage: day * 7 },
+    'build/font/octicons.woff2': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'select2/', {

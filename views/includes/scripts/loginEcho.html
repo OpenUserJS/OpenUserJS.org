@@ -1,0 +1,72 @@
+<script type="text/javascript">
+  (function () {
+
+    // NOTE: Keep in sync with helper
+    function cleanFilename(aFilename, aDefaultName) {
+      // Blacklist problem characters (slashes, colons, etc.).
+      var cleanName = (aFilename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
+
+      // Make whitespace readable.
+      .replace(/(\s|%20)+/g, '_');
+
+      return cleanName || aDefaultName;
+    };
+
+    function onDOMContentLoaded(aEv) {
+      var username = document.querySelector('input[name="username"]');
+      var auth = document.querySelector('select[name="auth"]');
+      var action = document.querySelector('button#action');
+
+      function onInput(aEv) {
+        var req = new XMLHttpRequest();
+        var wantname = cleanFilename(aEv.target.value, '');
+
+        function show() {
+          action.innerHTML = action.innerHTML.replace(/Sign Up/, 'Sign In');
+          action.classList.add('btn-success');
+          action.classList.remove('btn-info');
+        }
+
+        function hide() {
+          action.innerHTML = action.innerHTML.replace(/Sign In/, 'Sign Up');
+          action.classList.remove('btn-success');
+          action.classList.add('btn-info');
+        }
+
+        if (wantname) {
+          req.open('HEAD', '/api/user/exist/' + wantname);
+          req.onreadystatechange = function () {
+            if (this.readyState == this.DONE) {
+              switch (this.status) {
+                case 200:
+                  show();
+                  auth.value = '';
+                  break;
+                default:
+                  hide();
+                  auth.value = 'github';
+              }
+            }
+          };
+          req.send();
+        } else {
+          hide();
+          auth.value = '';
+        }
+
+        if (username.value !== wantname) {
+          username.value = wantname;
+        }
+      }
+
+      if (username && auth && action) {
+        action.innerHTML = action.innerHTML.replace(/Next/, 'Sign Up');
+
+        username.addEventListener('input', onInput);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+  })();
+</script>

@@ -20,12 +20,13 @@ function renderFile(aRes, aPath, aOptions) {
     aOptions.isDev = isDev;
   }
 
-  // Hide the Google OAuth migration reminder for logged-in users
-  // that don't use Google for authentication
-  if (aOptions.authedUser && aOptions.authedUser
-      .strategies.indexOf('google') === -1) {
-    aOptions.hideReminder = true;
-  }
+  // Hide task for any reminder... See #484
+  // NOTE: This code structure and CSS is always active for future reminders
+  //   so please do not remove unless refactoring in a new issue as a whole.
+  // Example Code task and sync UI with banner text/link at `./includes/headerReminders`:
+  // if (aOptions.authedUser && aOptions.authedUser.strategies.indexOf('google') === -1) {
+  //   aOptions.hideThisReminder = true;
+  // }
 
   aRes.set('Content-Type', 'text/html; charset=UTF-8');
   mu.compileAndRender(aPath, aOptions).pipe(aRes);

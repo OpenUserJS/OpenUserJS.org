@@ -4,15 +4,6 @@
   <title>{{title}}</title>
   {{> includes/head.html }}
   <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/bootstrap-markdown/css/bootstrap-markdown.min.css">
-  <style>
-    #show-reply-form-when-visible {
-      -moz-transition: height 1s ease;
-      -ms-transition: height 1s ease;
-      -o-transition: height 1s ease;
-      -webkit-transition: height 1s ease;
-      transition: height 1s ease;
-    }
-  </style>
 </head>
 <body>
   {{> includes/header.html }}
@@ -45,21 +36,27 @@
                   </div>
                   {{/paginationRendered}}
                 </section>
+                {{#authedUser}}
+                <section class="topic-area list-group">
+                    {{> includes/commentForm.html }}
+                </section>
+                {{/authedUser}}
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="container-fluid col-sm-4">
+        {{> includes/searchBarPanel.html }}
       </div>
     </div>
   </div>
-  <div id="show-reply-form-when-visible"></div>
-  {{> includes/commentForm.html }}
+
   {{> includes/footer.html }}
   {{#paginationRendered}}
     {{> includes/scripts/showTopPagination.html }}
   {{/paginationRendered}}
+  {{> includes/scripts/formControlClear.html }}
   {{#authedUser}}
     {{> includes/scripts/markdownEditor.html }}
     {{> includes/scripts/commentReplyScript.html }}

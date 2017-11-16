@@ -1,0 +1,77 @@
+<script type="text/javascript">
+  (function () {
+    'use strict';
+
+    {{> includes/scripts/polyfillElementClosest.js }}
+
+    function onInput(aEv) {
+      var target = aEv.target;
+      var container = aEv.target.closest('div.input-group');
+      var formcontrolNode = null;
+
+      if (container) {
+        formcontrolNode = container.querySelector('.form-control-clear');
+
+        if (formcontrolNode) {
+          if (target.value) {
+            formcontrolNode.classList.remove('hidden');
+          } else {
+            formcontrolNode.classList.add('hidden');
+          }
+        }
+      }
+    }
+
+    function onClick(aEv) {
+      var target = aEv.target;
+      var container = target.closest('div.input-group');
+      var inputNode = null;
+      var ev = null;
+      try {
+        ev = new Event('input');
+      } catch (aE) {
+        ev = document.createEvent('Event');
+        ev.initEvent('input', true, true);
+      }
+
+      if (container) {
+        inputNode = container.querySelector('.has-clear input[type="text"]');
+
+        if (inputNode) {
+          target.classList.add('hidden');
+          inputNode.value = '';
+          inputNode.dispatchEvent(ev);
+          inputNode.focus();
+        }
+      }
+    }
+
+    function onDOMContentLoaded(aEv) {
+      var i = null;
+      var thisNode = null;
+      var nodes = null;
+      var ev = null;
+      try {
+        ev = new Event('input');
+      } catch (aE) {
+        ev = document.createEvent('Event');
+        ev.initEvent('input', true, true);
+      }
+
+      nodes = document.querySelectorAll('.has-clear input[type="text"]');
+      for (i = 0; thisNode = nodes[i++];) {
+        thisNode.addEventListener('input', onInput);
+        thisNode.dispatchEvent(ev);
+      }
+
+      nodes = document.querySelectorAll('.form-control-clear');
+      for (i = 0; thisNode = nodes[i++];) {
+        thisNode.addEventListener('click', onClick);
+        thisNode.dispatchEvent(ev);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+  })();
+</script>

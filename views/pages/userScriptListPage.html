@@ -30,6 +30,11 @@
       </div>
       <div class="container-fluid col-sm-4">
         {{> includes/searchBarPanel.html }}
+        {{#isFlagged}}
+          {{#isAdmin}}
+            {{> includes/flagAdminToolFlaggedFilters.html }}
+          {{/isAdmin}}
+        {{/isFlagged}}
         {{> includes/userStatsPanel.html }}
       </div>
     </div>
@@ -40,5 +45,6 @@
   {{/paginationRendered}}
   {{> includes/scripts/tableTrLinkScript.html }}
   {{> includes/scripts/lazyIconScript.html }}
+  {{> includes/scripts/formControlClear.html }}
 </body>
 </html>
