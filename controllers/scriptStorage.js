@@ -1623,7 +1623,7 @@ exports.webhook = function (aReq, aRes) {
     // Gather the modified user scripts
     payload.commits.forEach(function (aCommit) {
       aCommit.modified.forEach(function (aFilename) {
-        if (aFilename.substr(-8) === '.user.js') {
+        if (aFilename.substr(-8) === '.user.js' || aFilename.substr(-3) === '.js') {
           repo[aFilename] = '/' + encodeURI(aFilename); // NOTE: Watchpoint
         }
       });
