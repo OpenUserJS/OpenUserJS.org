@@ -7,7 +7,6 @@ Test the generated parser with some input for peg.js site at https://pegjs.org/o
 // @name            RFC 2606§3 - Hello, World!
 // @name:es         ¡Hola mundo!
 // @name:fr         Salut tout le monde!
-// @namespace       http://localhost.localdomain
 // @description     Test values with known UserScript metadata keys.
 // @description:es  Prueba de valores con UserScript metadatos llaves conocidas.
 // @description:fr  Valeurs d'essai avec des clés de métadonnées UserScript connues.
