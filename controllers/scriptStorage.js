@@ -1401,6 +1401,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   findDeadorAlive(Script, { installName: caseSensitive(installName) }, true,
     function (aAlive, aScript, aRemoved) {
       var script = null;
+      var s3 = null;
 
       if (aRemoved || (!aScript && (aUpdate || collaboration))) {
         aCallback(null);
@@ -1457,59 +1458,73 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       }
 
       // Attempt to write out data to externals...
-      var s3 = new AWS.S3();
-      s3.putObject({
-        Bucket: bucketName,
-        Key: installName,
-        Body: aBuf
+      s3 = new AWS.S3();
+      if (s3) { // NOTE: Should be a noop
+        s3.putObject({
+          Bucket: bucketName,
+          Key: installName,
+          Body: aBuf
 
-      }, function (aErr, aData) {
-        if (aErr) {
-          // Forward the error
-          aScript.invalidate('_id', aErr);
-
-          // Localize the error
-          console.error(
-            'S3 putObject critical error\n' +
-              installName + '\n' +
-                JSON.stringify(aErr, null, ' ') + '\n' +
-                  aErr.stack
-          );
-
-          aCallback(null);
-          return;
-        }
-
-        aScript.save(function (aErr, aScript) {
-          var userDoc = null;
-
-          // Localize the error
+        }, function (aErr, aData) {
           if (aErr) {
+            // Forward the error
+            aScript.invalidate('_id', aErr);
+
+            // Localize the error
             console.error(
-              'MongoDB Script save critical error\n' +
+              'S3 putObject critical error\n' +
                 installName + '\n' +
-                  JSON.stringify(aErr, null, ' ')
+                  JSON.stringify(aErr, null, ' ') + '\n' +
+                    aErr.stack
             );
+
             aCallback(null);
             return;
           }
 
-          // Check for role change and modify accordingly
-          if (aUser.role === 5) {
-            if (!aUser.save) {
-              // Probably using req.session.user which may have gotten serialized.
-              userDoc = aUser;
+          aScript.save(function (aErr, aScript) {
+            var userDoc = null;
 
-              User.findById(aUser._id, function (aErr, aUser) {
-                if (aErr) {
-                  console.error('MongoDB User findById critical error\n' +
-                    userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
-                      JSON.stringify(aErr, null, ' ')
-                  );
-                  aCallback(aScript);
-                  return;
-                }
+            // Localize the error
+            if (aErr) {
+              console.error(
+                'MongoDB Script save critical error\n' +
+                  installName + '\n' +
+                    JSON.stringify(aErr, null, ' ')
+              );
+              aCallback(null);
+              return;
+            }
 
+            // Check for role change and modify accordingly
+            if (aUser.role === 5) {
+              if (!aUser.save) {
+                // Probably using req.session.user which may have gotten serialized.
+                userDoc = aUser;
+
+                User.findById(aUser._id, function (aErr, aUser) {
+                  if (aErr) {
+                    console.error('MongoDB User findById critical error\n' +
+                      userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
+                        JSON.stringify(aErr, null, ' ')
+                    );
+                    aCallback(aScript);
+                    return;
+                  }
+
+                  aUser.role = 4;
+                  aUser.save(function (aErr, aUser) {
+                    if (aErr) {
+                      console.warn('MongoDB User save warning error\n' +
+                        userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
+                          JSON.stringify(aErr, null, ' ')
+                      );
+                      // fallthrough
+                    }
+                    aCallback(aScript);
+                  });
+                });
+              } else {
                 aUser.role = 4;
                 aUser.save(function (aErr, aUser) {
                   if (aErr) {
@@ -1521,25 +1536,18 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
                   }
                   aCallback(aScript);
                 });
-              });
+              }
             } else {
-              aUser.role = 4;
-              aUser.save(function (aErr, aUser) {
-                if (aErr) {
-                  console.warn('MongoDB User save warning error\n' +
-                    userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
-                      JSON.stringify(aErr, null, ' ')
-                  );
-                  // fallthrough
-                }
-                aCallback(aScript);
-              });
+              aCallback(aScript);
             }
-          } else {
-            aCallback(aScript);
-          }
+          });
         });
-      });
+      } else {
+        // NOTE: This shouldn't happen
+        console.warn('S3 `new AWS.S3()` critical error');
+        aCallback(null);
+        return;
+      }
     });
 };
 
