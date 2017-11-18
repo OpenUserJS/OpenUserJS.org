@@ -148,7 +148,7 @@ exports.updateUrlQueryString = function (aBaseUrl, aDict) {
   return url;
 };
 
-exports.isFQUrl = function (aString) {
+exports.isFQUrl = function (aString, aEmail) {
   var URL = url.parse(aString);
 
   var protocol = URL.protocol;
@@ -180,6 +180,8 @@ exports.isFQUrl = function (aString) {
 
       return target === source;
     }
+  } else if (aEmail && /^mailto:\S+@\S+/.test(aString)) {
+    return true;
   }
 
   return false;
