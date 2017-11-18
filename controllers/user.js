@@ -1024,6 +1024,8 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   options.githubUserId = githubUserId =
     aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
+  options.isOwnedRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
+
   // Page metadata
   pageMetadata(options, ['Repositories', 'GitHub']);
 
@@ -1087,6 +1089,114 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   async.parallel(tasks, asyncComplete);
 };
 
+exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
+  function preRender() {
+  }
+
+  function render() {
+    aRes.render('pages/userGitHubRepoPage', options);
+  }
+
+  function asyncComplete(aErr) {
+    if (aErr) {
+      aNext();
+      return;
+    }
+
+    preRender();
+    render();
+  }
+
+  //
+  var options = {};
+  var authedUser = aReq.session.user;
+  var githubUserId = null;
+  var githubRepoName = null;
+  var tasks = [];
+
+  // Session
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  // GitHub
+  options.githubUserId = githubUserId =
+    aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
+
+  options.isOwnedRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
+
+  options.githubRepoName = githubRepoName = aReq.query.repo;
+
+  if (!(githubUserId && githubRepoName)) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 400,
+      statusMessage: 'Require <code>?user=githubUserName&repo=githubRepoName</code>'
+    });
+    return;
+  }
+
+  options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(
+    authedUser.userGitHubRepoListPageUrl,
+    {
+      user: githubUserId,
+    }
+  );
+  options.userGitHubRepoPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoPageUrl, {
+    user: githubUserId,
+    repo: githubRepoName
+  });
+
+  // Page metadata
+  pageMetadata(options, ['Import', 'GitHub']);
+
+  //--- Tasks
+
+  tasks.push(function (aCallback) {
+    async.waterfall([
+      function (aCallback) {
+        github.repos.get({
+          user: encodeURIComponent(githubUserId),
+          repo: encodeURIComponent(githubRepoName)
+        }, aCallback);
+      },
+      function (aRepo, aCallback) {
+        options.repo = aRepo;
+        options.repoAsEncoded = {
+          default_branch: encodeURIComponent(options.repo.default_branch)
+        };
+
+        github.gitdata.getJavascriptBlobs({
+          user: encodeURIComponent(aRepo.owner.login),
+          repo: encodeURIComponent(aRepo.name)
+        }, aCallback);
+      },
+      function (aJavascriptBlobs, aCallback) {
+        options.javascriptBlobs = aJavascriptBlobs;
+        _.each(aJavascriptBlobs, function (javascriptBlob) {
+          // Urls
+          javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(
+            authedUser.userGitHubImportPageUrl,
+            {
+              user: githubUserId,
+              repo: githubRepoName,
+              path: javascriptBlob.path
+            }
+          );
+        });
+        _.each(aJavascriptBlobs, parseJavascriptBlob);
+
+        // If the repo has >1 script, keep the the current page open.
+        options.openImportInNewTab = aJavascriptBlobs.length > 1;
+
+        aCallback(null);
+      },
+    ], aCallback);
+  });
+
+  //---
+  async.parallel(tasks, asyncComplete);
+};
+
 exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   //
   var options = {};
@@ -1103,6 +1213,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   // GitHub
   options.githubUserId = githubUserId =
     aReq.body.user || aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
+
+  options.isOwnedRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
+
   options.githubRepoName = githubRepoName = aReq.body.repo || aReq.query.repo;
   options.githubBlobPath = githubBlobPath = aReq.body.path || aReq.query.path;
 
@@ -1262,111 +1375,6 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
     aRes.redirect(script.scriptPageUri);
   });
-};
-
-exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
-  function preRender() {
-  }
-
-  function render() {
-    aRes.render('pages/userGitHubRepoPage', options);
-  }
-
-  function asyncComplete(aErr) {
-    if (aErr) {
-      aNext();
-      return;
-    }
-
-    preRender();
-    render();
-  }
-
-  //
-  var options = {};
-  var authedUser = aReq.session.user;
-  var githubUserId = null;
-  var githubRepoName = null;
-  var tasks = [];
-
-  // Session
-  options.authedUser = authedUser = modelParser.parseUser(authedUser);
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
-
-  // GitHub
-  options.githubUserId = githubUserId =
-    aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
-  options.githubRepoName = githubRepoName = aReq.query.repo;
-
-  if (!(githubUserId && githubRepoName)) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 400,
-      statusMessage: 'Require <code>?user=githubUserName&repo=githubRepoName</code>'
-    });
-    return;
-  }
-
-  options.userGitHubRepoListPageUrl = helpers.updateUrlQueryString(
-    authedUser.userGitHubRepoListPageUrl,
-    {
-      user: githubUserId,
-    }
-  );
-  options.userGitHubRepoPageUrl = helpers.updateUrlQueryString(authedUser.userGitHubRepoPageUrl, {
-    user: githubUserId,
-    repo: githubRepoName
-  });
-
-  // Page metadata
-  pageMetadata(options, ['Import', 'GitHub']);
-
-  //--- Tasks
-
-  tasks.push(function (aCallback) {
-    async.waterfall([
-      function (aCallback) {
-        github.repos.get({
-          user: encodeURIComponent(githubUserId),
-          repo: encodeURIComponent(githubRepoName)
-        }, aCallback);
-      },
-      function (aRepo, aCallback) {
-        options.repo = aRepo;
-        options.repoAsEncoded = {
-          default_branch: encodeURIComponent(options.repo.default_branch)
-        };
-
-        github.gitdata.getJavascriptBlobs({
-          user: encodeURIComponent(aRepo.owner.login),
-          repo: encodeURIComponent(aRepo.name)
-        }, aCallback);
-      },
-      function (aJavascriptBlobs, aCallback) {
-        options.javascriptBlobs = aJavascriptBlobs;
-        _.each(aJavascriptBlobs, function (javascriptBlob) {
-          // Urls
-          javascriptBlob.userGitHubImportPageUrl = helpers.updateUrlQueryString(
-            authedUser.userGitHubImportPageUrl,
-            {
-              user: githubUserId,
-              repo: githubRepoName,
-              path: javascriptBlob.path
-            }
-          );
-        });
-        _.each(aJavascriptBlobs, parseJavascriptBlob);
-
-        // If the repo has >1 script, keep the the current page open.
-        options.openImportInNewTab = aJavascriptBlobs.length > 1;
-
-        aCallback(null);
-      },
-    ], aCallback);
-  });
-
-  //---
-  async.parallel(tasks, asyncComplete);
 };
 
 var parseJavascriptBlob = function (aJavascriptBlob) {
