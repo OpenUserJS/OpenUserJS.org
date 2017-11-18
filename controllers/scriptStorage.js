@@ -1173,9 +1173,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var installName = aUser.name + '/';
   var collaboration = false;
   var requires = null;
-  var supportUrl = null;
-  var homepageUrls = null;
-  var homepageUrl = null;
+  var supportURL = null;
+  var homepageURLS = null;
+  var homepageURL = null;
   var match = null;
   var rLibrary = new RegExp(
     '^(?:(?:(?:https?:)?\/\/' +
@@ -1291,7 +1291,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       if (thisKeyComponents.length === 2) {
         htmlStub = '<a href="' + thisKeyComponents[1] + '"></a>';
         if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
-          || (thisKeyComponents[1] && !isFQUrl(thisKeyComponents[1]))) {
+          || !isFQUrl(thisKeyComponents[1])) {
 
           // Not a web url... reject
           aCallback(null);
@@ -1325,26 +1325,26 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
 
   // `@supportURL` validations
+  supportURL = findMeta(aMeta, 'UserScript.supportURL.0.value');
+  if (supportURL) {
+    htmlStub = '<a href="' + supportURL + '"></a>';
+    if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistLink)
+      || !isFQUrl(supportURL, true)) {
 
-
-  supportUrl = findMeta(aMeta, 'UserScript.supportURL.0.value');
-  htmlStub = '<a href="' + supportUrl + '"></a>';
-  if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistLink)
-    || (supportUrl && !isFQUrl(supportUrl, true))) {
-
-    // Not a web url... reject
-    aCallback(null);
-    return;
+      // Not a web url... reject
+      aCallback(null);
+      return;
+    }
   }
 
 
   // `@homepageURL` validations
-  homepageUrls = findMeta(aMeta, 'UserScript.homepageURL.value');
-  if (homepageUrls) {
-    for (i = 0; homepageUrl = homepageUrls[i++];) {
-      htmlStub = '<a href="' + homepageUrl + '"></a>';
+  homepageURLS = findMeta(aMeta, 'UserScript.homepageURL.value');
+  if (homepageURLS) {
+    for (i = 0; homepageURL = homepageURLS[i++];) {
+      htmlStub = '<a href="' + homepageURL + '"></a>';
       if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
-        || (homepageUrl && !isFQUrl(homepageUrl))) {
+        || !isFQUrl(homepageURL)) {
 
         // Not a web url... reject
         aCallback(null);
@@ -1356,9 +1356,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
   if (!isLibrary) {
 
-    // `downloadURL` validations
+    // `@downloadURL` validations
     downloadURL = findMeta(aMeta, 'UserScript.downloadURL.0.value');
-
     if (downloadURL) {
       downloadURL = URL.parse(downloadURL);
 
