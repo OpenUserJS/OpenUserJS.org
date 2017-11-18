@@ -47,6 +47,7 @@ var RepoManager = require('../libs/repoManager');
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var encode = require('../libs/helpers').encode;
+var isFQUrl = require('../libs/helpers').isFQUrl;
 var countTask = require('../libs/tasks').countTask;
 var modelParser = require('../libs/modelParser');
 
@@ -1171,6 +1172,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var installName = aUser.name + '/';
   var collaboration = false;
   var requires = null;
+  var supportUrl = null;
+  var homepageUrls = null;
+  var homepageUrl = null;
   var match = null;
   var rLibrary = new RegExp(
     '^(?:(?:(?:https?:)?\/\/' +
@@ -1285,7 +1289,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
       if (thisKeyComponents.length === 2) {
         htmlStub = '<a href="' + thisKeyComponents[1] + '"></a>';
-        if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)) {
+        if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
+          || !isFQUrl(thisKeyComponents[1])) {
+
           // Not a web url... reject
           aCallback(null);
           return;
@@ -1314,6 +1320,32 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
     // Keysets do not match exactly... reject
     aCallback(null);
     return;
+  }
+
+
+  // `@supportURL` validations
+  supportUrl = findMeta(aMeta, 'UserScript.supportURL.0.value');
+  htmlStub = '<a href="' + supportUrl + '"></a>';
+  if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
+    || !isFQUrl(supportUrl)) {
+
+    // Not a web url... reject
+    aCallback(null);
+    return;
+  }
+
+
+  // `@homepageURL` validations
+  homepageUrls = findMeta(aMeta, 'UserScript.homepageURL.value');
+  for (i = 0; homepageUrl = homepageUrls[i++];) {
+    htmlStub = '<a href="' + homepageUrl + '"></a>';
+    if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
+      || !isFQUrl(homepageUrl)) {
+
+      // Not a web url... reject
+      aCallback(null);
+      return;
+    }
   }
 
 

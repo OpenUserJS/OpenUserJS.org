@@ -148,6 +148,43 @@ exports.updateUrlQueryString = function (aBaseUrl, aDict) {
   return url;
 };
 
+exports.isFQUrl = function (aString) {
+  var URL = url.parse(aString);
+
+  var protocol = URL.protocol;
+  var username = URL.username; // NOTE: BUG: in current *node*
+  var password = URL.password; // NOTE: BUG: in current *node*
+  var hostname = URL.hostname;
+  var port = URL.port;
+  var pathname = URL.pathname;
+  var search = URL.search;
+  var hash = URL.hash;
+
+  var source = encodeURIComponent(aString);
+  var target = null;
+
+  if (protocol && /https?/.test(protocol)) {
+    if (hostname) {
+      target = encodeURIComponent(protocol)
+        + encodeURIComponent('//')
+          + encodeURIComponent(username ? username : '')
+            + encodeURIComponent(password ? ':' + password : '')
+
+              + (username || password ? encodeURIComponent('@') : '')
+
+                + encodeURIComponent(hostname)
+                  + encodeURIComponent(port ? ':' + port : '')
+                    + encodeURIComponent(pathname)
+                      + encodeURIComponent(search ? search : '')
+                        + encodeURIComponent(hash ? hash : '');
+
+      return target === source;
+    }
+  }
+
+  return false;
+}
+
 // Helper function to ensure value is type Integer `number` or `null`
 // Please be very careful if this is edited
 exports.ensureIntegerOrNull = function (aEnvVar) {
