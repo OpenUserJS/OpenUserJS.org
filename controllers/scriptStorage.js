@@ -1340,14 +1340,16 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
   // `@homepageURL` validations
   homepageUrls = findMeta(aMeta, 'UserScript.homepageURL.value');
-  for (i = 0; homepageUrl = homepageUrls[i++];) {
-    htmlStub = '<a href="' + homepageUrl + '"></a>';
-    if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
-      || (homepageUrl && !isFQUrl(homepageUrl))) {
+  if (homepageUrls) {
+    for (i = 0; homepageUrl = homepageUrls[i++];) {
+      htmlStub = '<a href="' + homepageUrl + '"></a>';
+      if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
+        || (homepageUrl && !isFQUrl(homepageUrl))) {
 
-      // Not a web url... reject
-      aCallback(null);
-      return;
+        // Not a web url... reject
+        aCallback(null);
+        return;
+      }
     }
   }
 
