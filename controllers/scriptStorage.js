@@ -54,6 +54,7 @@ var modelParser = require('../libs/modelParser');
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
 var htmlWhitelistWeb = require('../libs/htmlWhitelistWeb.json');
+var htmlWhitelistLink = require('../libs/htmlWhitelistLink.json');
 var blockSPDX = require('./blockSPDX');
 
 // Add greasemonkey support for Media Type
@@ -1290,7 +1291,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       if (thisKeyComponents.length === 2) {
         htmlStub = '<a href="' + thisKeyComponents[1] + '"></a>';
         if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
-          || !isFQUrl(thisKeyComponents[1])) {
+          || (thisKeyComponents[1] && !isFQUrl(thisKeyComponents[1]))) {
 
           // Not a web url... reject
           aCallback(null);
@@ -1324,10 +1325,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
 
 
   // `@supportURL` validations
+
+
   supportUrl = findMeta(aMeta, 'UserScript.supportURL.0.value');
   htmlStub = '<a href="' + supportUrl + '"></a>';
-  if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
-    || !isFQUrl(supportUrl)) {
+  if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistLink)
+    || (supportUrl && !isFQUrl(supportUrl, true))) {
 
     // Not a web url... reject
     aCallback(null);
@@ -1340,7 +1343,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   for (i = 0; homepageUrl = homepageUrls[i++];) {
     htmlStub = '<a href="' + homepageUrl + '"></a>';
     if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
-      || !isFQUrl(homepageUrl)) {
+      || (homepageUrl && !isFQUrl(homepageUrl))) {
 
       // Not a web url... reject
       aCallback(null);
