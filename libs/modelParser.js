@@ -11,7 +11,6 @@ var isDbg = require('../libs/debug').isDbg;
 var moment = require('moment');
 var _ = require('underscore');
 var util = require('util');
-var sanitizeHtml = require('sanitize-html');
 var useragent = require('useragent');
 
 //--- Model inclusions
@@ -26,9 +25,9 @@ var getRating = require('../libs/collectiveRating').getRating;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var encode = require('../libs/helpers').encode;
 var decode = require('../libs/helpers').decode;
+var isFQUrl = require('../libs/helpers').isFQUrl;
 
 //--- Configuration inclusions
-var htmlWhitelistLink = require('./htmlWhitelistLink.json');
 var userRoles = require('../models/userRoles.json');
 
 //---
@@ -210,7 +209,6 @@ var parseScript = function (aScript) {
       ')/(?:install|src/scripts)/(.+?)/(.+?)((?:\.min)?(?:\.user)?\.js)$');
 
   // Temporaries
-  var htmlStub = null;
 
   //
   var criticalFlags = null;
@@ -266,8 +264,7 @@ var parseScript = function (aScript) {
   // Support Url
   supportURL = findMeta(script.meta, 'UserScript.supportURL.0.value');
   if (supportURL) {
-    htmlStub = '<a href="' + supportURL + '"></a>';
-    if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+    if (isFQUrl(supportURL)) {
 
       script.hasSupport = true;
 

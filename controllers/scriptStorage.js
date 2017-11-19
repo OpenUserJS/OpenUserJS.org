@@ -23,7 +23,6 @@ var mediaDB = require('mime-db');
 var async = require('async');
 var moment = require('moment');
 var Base62 = require('base62');
-var sanitizeHtml = require('sanitize-html');
 var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 var SPDX = require('spdx-license-ids');
 
@@ -53,8 +52,6 @@ var modelParser = require('../libs/modelParser');
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
-var htmlWhitelistWeb = require('../libs/htmlWhitelistWeb.json');
-var htmlWhitelistLink = require('../libs/htmlWhitelistLink.json');
 var blockSPDX = require('./blockSPDX');
 
 // Add greasemonkey support for Media Type
@@ -1164,7 +1161,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   var slaveKeyset = null;
   var thisKeyComponents = null;
   var thatSPDX = null;
-  var htmlStub = null;
   var i = null;
   var author = null;
   var excludes = null;
@@ -1289,9 +1285,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
       }
 
       if (thisKeyComponents.length === 2) {
-        htmlStub = '<a href="' + thisKeyComponents[1] + '"></a>';
-        if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
-          || !isFQUrl(thisKeyComponents[1])) {
+        if (!isFQUrl(thisKeyComponents[1])) {
 
           // Not a web url... reject
           aCallback(null);
@@ -1327,9 +1321,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   // `@supportURL` validations
   supportURL = findMeta(aMeta, 'UserScript.supportURL.0.value');
   if (supportURL) {
-    htmlStub = '<a href="' + supportURL + '"></a>';
-    if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistLink)
-      || !isFQUrl(supportURL, true)) {
+    if (!isFQUrl(supportURL, true)) {
 
       // Not a web url... reject
       aCallback(null);
@@ -1342,9 +1334,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
   homepageURLS = findMeta(aMeta, 'UserScript.homepageURL.value');
   if (homepageURLS) {
     for (i = 0; homepageURL = homepageURLS[i++];) {
-      htmlStub = '<a href="' + homepageURL + '"></a>';
-      if (htmlStub !== sanitizeHtml(htmlStub, htmlWhitelistWeb)
-        || !isFQUrl(homepageURL)) {
+      if (!isFQUrl(homepageURL)) {
 
         // Not a web url... reject
         aCallback(null);
