@@ -10,7 +10,6 @@ var isDbg = require('../libs/debug').isDbg;
 //--- Dependency inclusions
 var async = require('async');
 var _ = require('underscore');
-var sanitizeHtml = require('sanitize-html');
 var SPDX = require('spdx-license-ids');
 var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 
@@ -36,12 +35,12 @@ var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 
 var decode = require('../libs/helpers').decode;
+var isFQUrl = require('../libs/helpers').isFQUrl;
+
 var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Configuration inclusions
-var htmlWhitelistLink = require('../libs/htmlWhitelistLink.json');
-
 var removeReasons = require('../views/includes/scriptModals.json').removeReasons;
 
 var blockSPDX = require('./blockSPDX');
@@ -81,7 +80,6 @@ var getScriptPageTasks = function (aOptions) {
   var collaborator = null;
 
   // Temporaries
-  var htmlStub = null;
 
   // Default to infinity
   aOptions.threshold = '\u221E';
@@ -123,8 +121,7 @@ var getScriptPageTasks = function (aOptions) {
   if (homepageURL) {
     aOptions.script.homepages = [];
     homepageURL.forEach(function (aElement, aIndex, aArray) {
-      htmlStub = '<a href="' + aElement.value + '"></a>';
-      if (htmlStub === sanitizeHtml(htmlStub, htmlWhitelistLink)) {
+      if (isFQUrl(aElement.value)) {
 
         aOptions.script.homepages.unshift({
           url: aElement.value,
