@@ -16,11 +16,11 @@
           {{{paginationRendered}}}
         </div>
         {{/paginationRendered}}
-        {{^isOwnedRepo}}
+        {{^isOwnRepo}}
         <div class="alert alert-warning small" role="alert">
           <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: You are browsing a repository that is not known to be your own. Scripts imported from here may not automatically sync. If you wish to have this feature with your available repositories please {{^authedUser.githubUserId}}visit <a href="/user/preferences">your preferences</a> and add GitHub as an authentication and then {{/authedUser.githubUserId}}import from {{#authedUser.githubUserId}}<a href="/users/{{authedUser.name}}/github/repos">your available repositories</a>{{/authedUser.githubUserId}}{{^authedUser.githubUserId}} your available repositories{{/authedUser.githubUserId}}.
         </div>
-        {{/isOwnedRepo}}
+        {{/isOwnRepo}}
         <div class="list-group">
           {{#githubRepoList}}
           <a href="{{{userGitHubRepoPageUrl}}}" class="list-group-item">
@@ -28,11 +28,11 @@
           </a>
           {{/githubRepoList}}
         </div>
-        {{^isOwnedRepo}}
+        {{^isOwnRepo}}
         <div class="alert alert-warning small" role="alert">
           <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: You are browsing a repository that is not known to be your own. Scripts imported from here may not automatically sync. If you wish to have this feature with your available repositories please {{^authedUser.githubUserId}}visit <a href="/user/preferences">your preferences</a> and add GitHub as an authentication and then {{/authedUser.githubUserId}}import from {{#authedUser.githubUserId}}<a href="/users/{{authedUser.name}}/github/repos">your available repositories</a>{{/authedUser.githubUserId}}{{^authedUser.githubUserId}} your available repositories{{/authedUser.githubUserId}}.
         </div>
-        {{/isOwnedRepo}}
+        {{/isOwnRepo}}
         {{#paginationRendered}}
         <div class="text-center">
           {{{paginationRendered}}}

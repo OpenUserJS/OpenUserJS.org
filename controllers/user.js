@@ -1024,7 +1024,7 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   options.githubUserId = githubUserId =
     aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
-  options.isOwnedRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
+  options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
 
   // Page metadata
   pageMetadata(options, ['Repositories', 'GitHub']);
@@ -1123,7 +1123,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   options.githubUserId = githubUserId =
     aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
-  options.isOwnedRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
+  options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
 
   options.githubRepoName = githubRepoName = aReq.query.repo;
 
@@ -1214,7 +1214,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   options.githubUserId = githubUserId =
     aReq.body.user || aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
-  options.isOwnedRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
+  options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
 
   options.githubRepoName = githubRepoName = aReq.body.repo || aReq.query.repo;
   options.githubBlobPath = githubBlobPath = aReq.body.path || aReq.query.path;
