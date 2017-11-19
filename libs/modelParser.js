@@ -264,7 +264,7 @@ var parseScript = function (aScript) {
   // Support Url
   supportURL = findMeta(script.meta, 'UserScript.supportURL.0.value');
   if (supportURL) {
-    if (isFQUrl(supportURL)) {
+    if (isFQUrl(supportURL, true)) {
 
       script.hasSupport = true;
 
