@@ -1154,6 +1154,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var scriptName = null;
   var rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
     (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
+  var updateURL = null;
   var downloadURL = null;
   var userKeyset = null;
   var userKey = null;
@@ -1344,31 +1345,50 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   }
 
 
-  if (!isLibrary) {
+  // `@updateURL` validations
+  updateURL = findMeta(aMeta, 'UserScript.updateURL.0.value');
+  if (updateURL) {
+    if (!isFQUrl(updateURL)) {
 
-    // `@downloadURL` validations
-    downloadURL = findMeta(aMeta, 'UserScript.downloadURL.0.value');
-    if (downloadURL) {
-      downloadURL = URL.parse(downloadURL);
-
-      // Shouldn't install a userscript with a downloadURL of non-Userscript-source
-      if (rAnyLocalHost.test(downloadURL.host) &&
-        !/^\/(?:install|src\/scripts)\//.test(downloadURL.pathname))
-      {
-        aCallback(null);
-        return;
-      }
-
-      // Shouldn't install a userscript with a downloadURL of source .meta.js
-      if (rAnyLocalHost.test(downloadURL.host) &&
-        /^\/(?:install|src\/scripts)\//.test(downloadURL.pathname) &&
-          /\.meta\.js$/.test(downloadURL.pathname))
-      {
-        aCallback(null);
-        return;
-      }
+      // Not a web url... reject
+      aCallback(null);
+      return;
     }
-  } else {
+  }
+
+
+  // `@downloadURL` validations
+  downloadURL = findMeta(aMeta, 'UserScript.downloadURL.0.value');
+  if (downloadURL) {
+    if (!isFQUrl(downloadURL)) {
+
+      // Not a web url... reject
+      aCallback(null);
+      return;
+    }
+
+    downloadURL = URL.parse(downloadURL);
+
+    // Shouldn't install a userscript with a downloadURL of non-Userscript-source
+    if (rAnyLocalHost.test(downloadURL.host) &&
+      !/^\/(?:install|src\/scripts)\//.test(downloadURL.pathname))
+    {
+      aCallback(null);
+      return;
+    }
+
+    // Shouldn't install a userscript with a downloadURL of source .meta.js
+    if (rAnyLocalHost.test(downloadURL.host) &&
+      /^\/(?:install|src\/scripts)\//.test(downloadURL.pathname) &&
+        /\.meta\.js$/.test(downloadURL.pathname))
+    {
+      aCallback(null);
+      return;
+    }
+  }
+
+
+  if (isLibrary) {
 
     // `@exclude` validations
     excludes = findMeta(aMeta, 'UserScript.exclude.value');
