@@ -108,21 +108,21 @@ RepoManager.prototype.fetchRecentRepos = function (aCallback) {
 };
 
 // Import scripts on GitHub
-RepoManager.prototype.loadScripts = function (aCallback, aUpdate) {
+RepoManager.prototype.loadScripts = function (aUpdate, aCallback) {
   var scriptStorage = require('../controllers/scriptStorage');
   var arrayOfRepos = this.makeRepoArray();
   var that = this;
 
   // TODO: remove usage of makeRepoArray since it causes redundant looping
   arrayOfRepos.forEach(function (aRepo) {
-    async.each(aRepo.scripts, function (aScript, aCallback) {
+    async.each(aRepo.scripts, function (aScript, aInnerCallback) {
       var url = '/' + encodeURI(aRepo.user) + '/' + encodeURI(aRepo.repo)
         + '/master' + aScript.path;
       fetchRaw('raw.githubusercontent.com', url, function (aBufs) {
         scriptStorage.getMeta(aBufs, function (aMeta) {
           if (aMeta) {
-            scriptStorage.storeScript(that.user, aMeta, Buffer.concat(aBufs),
-              aCallback, aUpdate);
+            scriptStorage.storeScript(that.user, aMeta, Buffer.concat(aBufs), aUpdate,
+              aInnerCallback);
           }
         });
       });
