@@ -1147,7 +1147,7 @@ function isEqualKeyset(aSlaveKeyset, aMasterKeyset) {
   return true;
 }
 
-exports.storeScript = function (aUser, aMeta, aBuf, aCallback, aUpdate) {
+exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var isLibrary = !!findMeta(aMeta, 'UserLibrary');
   var name = null;
   var thisName = null;
@@ -1665,7 +1665,7 @@ exports.webhook = function (aReq, aRes) {
 
     // Update modified scripts
     repoManager = RepoManager.getManager(null, aUser, repos);
-    repoManager.loadScripts(function () {
-    }, true);
+    repoManager.loadScripts(true, function () {
+    });
   });
 };

@@ -1316,7 +1316,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
               );
             }
           }
-          scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, onScriptStored);
+          scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, false, onScriptStored);
         } else {
           aCallback('Specified file does not contain the proper metadata blocks.');
         }
@@ -1347,7 +1347,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
               );
             }
           }
-          scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, onScriptStored);
+          scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, false, onScriptStored);
         } else {
           aCallback('Specified file does not contain the proper metadata blocks.');
         }
@@ -1463,7 +1463,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
             return;
           }
 
-          scriptStorage.storeScript(aUser, aMeta, bufferConcat, function (aScript) {
+          scriptStorage.storeScript(aUser, aMeta, bufferConcat, false, function (aScript) {
             if (!aScript) {
               aRes.redirect(failUri);
               return;
@@ -1510,7 +1510,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
   function storeScript(aMeta, aSource) {
 
     User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
-      scriptStorage.storeScript(aUser, aMeta, aSource, function (aScript) {
+      scriptStorage.storeScript(aUser, aMeta, aSource, false, function (aScript) {
         var redirectUri = aScript
           ? ((aScript.isLib ? '/libs/' : '/scripts/') +
             encodeURIComponent(helpers.cleanFilename(aScript.author)) +
