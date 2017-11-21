@@ -9,7 +9,7 @@
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu dropdown-menu-right">
         <li>
           <div class="btn-group btn-group-justified">
             <a href="{{{script.scriptInstallPageXUrl}}}.min.user.js" class="btn btn-{{#script.showMinficationNotices}}warning{{/script.showMinficationNotices}}{{^script.showMinficationNotices}}primary{{/script.showMinficationNotices}}" title="EXPERIMENTAL INSTALLATION FORKING"><i class="fa fa-fw fa-download"></i> Install {{#script.hasAlternateDownloadURL}}once {{/script.hasAlternateDownloadURL}} with minification</a>
@@ -33,7 +33,7 @@
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu dropdown-menu-right">
         <li>
           <div class="btn-group btn-group-justified">
             <a href="{{{script.scriptRawPageXUrl}}}" class="btn btn-{{#script.showMinficationNotices}}warning{{/script.showMinficationNotices}}{{^script.showMinficationNotices}}primary{{/script.showMinficationNotices}}" title="EXPERIMENTAL"><i class="fa fa-file-{{#script.isLib}}excel{{/script.isLib}}{{^script.isLib}}code{{/script.isLib}}-o"></i> Minified Source</a>
