@@ -4,6 +4,7 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var statusError = require('../libs/debug').statusError;
 
 //
 
@@ -1181,11 +1182,21 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var libraries = [];
 
 
-  if (!aMeta || process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
-    aCallback(null);
+  if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
+    aCallback(new statusError({
+      message: 'Read only script storage. Please try again later.',
+      code: 501 // Not Implemented
+    }), null);
     return;
   }
 
+  if (!aMeta) {
+    aCallback(new statusError({
+      message: 'Metadata block(s) missing.',
+      code: 400
+    }), null);
+    return;
+  }
 
   // `@name` validations
   if (!isLibrary) {
@@ -1196,7 +1207,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
   // Can't install a script without a @name (maybe replace with random value)
   if (!name) {
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@name` missing.',
+      code: 400
+    }), null);
     return;
   }
 
@@ -1207,15 +1221,21 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     }
   });
 
-  // Can't install a script without a cleaned @name (maybe replace with random value)
+  // Check for non-localized presence
   if (!scriptName) {
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@name` non-localized missing.',
+      code: 400
+    }), null);
     return;
   }
 
   // Can't install a script name ending in a reserved extension
   if (/\.(?:min|user|user\.js|meta)$/.test(scriptName)) {
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@name` ends in a reserved extension.',
+      code: 400
+    }), null);
     return;
   }
 
@@ -1226,7 +1246,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
   if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
     // Keysets do not match exactly... reject
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@name` must match in UserScript and UserLibrary metadata blocks.',
+      code: 400
+    }), null);
     return;
   }
 
@@ -1237,7 +1260,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
   if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
     // Keysets do not match exactly... reject
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@description` must match in UserScript and UserLibrary metadata blocks.',
+      code: 400
+    }), null);
     return;
   }
 
@@ -1248,7 +1274,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
   if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
     // Keysets do not match exactly... reject
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@copyright` must match in UserScript and UserLibrary metadata blocks.',
+      code: 400
+    }), null);
     return;
   }
 
@@ -1259,7 +1288,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
   if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
     // Keysets do not match exactly... reject
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@license` must match in UserScript and UserLibrary metadata blocks.',
+      code: 400
+    }), null);
     return;
   }
 
@@ -1273,7 +1305,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     thatSPDX = userKeyset[userKeyset.length - 1].split('; ')[0].replace(/\+$/, '');
     if (SPDXOSI.indexOf(thatSPDX) === -1) {
       // No valid OSI primary e.g. last key... reject
-      aCallback(null);
+      aCallback(new statusError({
+        message: '`@license` is not OSI primary and compatible in the metadata block(s).',
+        code: 400
+      }), null);
       return;
     }
 
@@ -1281,7 +1316,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       thisKeyComponents = userKey.split('; ');
       if (thisKeyComponents.length > 2) {
         // Too many parts... reject
-        aCallback(null);
+        aCallback(new statusError({
+          message: '`@license` has too many parts in the metadata block(s).',
+          code: 400
+        }), null);
         return;
       }
 
@@ -1289,7 +1327,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
         if (!isFQUrl(thisKeyComponents[1])) {
 
           // Not a web url... reject
-          aCallback(null);
+          aCallback(new statusError({
+            message: '`@license` type component not a web url in the metadata block(s).',
+            code: 400
+          }), null);
           return;
         }
       }
@@ -1297,13 +1338,19 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
       if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
         // Absent SPDX short code or blocked SPDX... reject
-        aCallback(null);
+        aCallback(new statusError({
+          message: '`@license` has an incompatible SPDX in the metadata block(s).',
+          code: 400
+        }), null);
         return;
       }
     }
   } else {
     // No licensing... reject
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@license` is absent in the metadata block(s).',
+      code: 400
+    }), null);
     return;
   }
 
@@ -1314,7 +1361,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
   if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
     // Keysets do not match exactly... reject
-    aCallback(null);
+    aCallback(new statusError({
+      message: '`@version` must match in UserScript and UserLibrary metadata blocks.',
+      code: 400
+    }), null);
     return;
   }
 
@@ -1325,7 +1375,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     if (!isFQUrl(supportURL, true)) {
 
       // Not a web url... reject
-      aCallback(null);
+      aCallback(new statusError({
+        message: '`@supportURL` not a web url in the UserScript metadata block.',
+        code: 400
+      }), null);
       return;
     }
   }
@@ -1338,7 +1391,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       if (!isFQUrl(homepageURL)) {
 
         // Not a web url... reject
-        aCallback(null);
+        aCallback(new statusError({
+          message: '`@homepageURL` not a web url',
+          code: 400
+        }), null);
         return;
       }
     }
@@ -1351,7 +1407,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     if (!isFQUrl(updateURL)) {
 
       // Not a web url... reject
-      aCallback(null);
+      aCallback(new statusError({
+        message: '`@updateURL` not a web url',
+        code: 400
+      }), null);
       return;
     }
   }
@@ -1363,7 +1422,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     if (!isFQUrl(downloadURL)) {
 
       // Not a web url... reject
-      aCallback(null);
+      aCallback(new statusError({
+        message: '`@downloadURL` not a web url',
+        code: 400
+      }), null);
       return;
     }
 
@@ -1373,7 +1435,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     if (rAnyLocalHost.test(downloadURL.host) &&
       !/^\/(?:install|src\/scripts)\//.test(downloadURL.pathname))
     {
-      aCallback(null);
+      aCallback(new statusError({
+        message: '`@downloadURL` not .user.js',
+        code: 400
+      }), null);
       return;
     }
 
@@ -1382,7 +1447,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       /^\/(?:install|src\/scripts)\//.test(downloadURL.pathname) &&
         /\.meta\.js$/.test(downloadURL.pathname))
     {
-      aCallback(null);
+      aCallback(new statusError({
+        message: '`@downloadURL` not .user.js',
+        code: 400
+      }), null);
       return;
     }
   }
@@ -1401,7 +1469,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     }
 
     if (missingExcludeAll) {
-      aCallback(null);
+      aCallback(new statusError({
+        message: 'UserScript Metadata Block missing `@exclude *`.',
+        code: 400
+      }), null);
       return;
     }
   }
@@ -1449,8 +1520,17 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       var script = null;
       var s3 = null;
 
-      if (aRemoved || (!aScript && (aUpdate || collaboration))) {
-        aCallback(null);
+      if (aRemoved) {
+        aCallback(new statusError({
+          message: 'Script removed permanently.',
+          code: 403
+        }), null);
+        return;
+      } else if ((!aScript && (aUpdate || collaboration))) {
+        aCallback(new statusError({
+          message: 'Collaboration restricted.',
+          code: 403
+        }), null);
         return;
       } else if (!aScript) {
         // New script
@@ -1485,7 +1565,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               JSON.stringify(findMeta(script.meta, 'OpenUserJS.collaborator.value')) !==
                 JSON.stringify(collaborators))) {
 
-          aCallback(null);
+          aCallback(new statusError({
+            message: 'Forbidden with collaboration',
+            code: 403
+          }), null);
           return;
         }
         aScript.meta = aMeta;
@@ -1524,7 +1607,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
                     aErr.stack
             );
 
-            aCallback(null);
+            aCallback(new statusError({
+              message: 'Remote storage write error',
+              code: 502
+            }), null);
             return;
           }
 
@@ -1538,7 +1624,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
                   installName + '\n' +
                     JSON.stringify(aErr, null, ' ')
               );
-              aCallback(null);
+              aCallback(new statusError({
+                message: 'Database write error',
+                code: 502
+              }), null);
               return;
             }
 
@@ -1554,7 +1643,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
                       userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
                         JSON.stringify(aErr, null, ' ')
                     );
-                    aCallback(aScript);
+                    aCallback(new statusError({
+                      message: 'Database find error',
+                      code: 502
+                    }), aScript);
                     return;
                   }
 
@@ -1567,7 +1659,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
                       );
                       // fallthrough
                     }
-                    aCallback(aScript);
+                    aCallback(null, aScript);
                   });
                 });
               } else {
@@ -1580,18 +1672,21 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
                     );
                     // fallthrough
                   }
-                  aCallback(aScript);
+                  aCallback(null, aScript);
                 });
               }
             } else {
-              aCallback(aScript);
+              aCallback(null, aScript);
             }
           });
         });
       } else {
         // NOTE: This shouldn't happen
         console.warn('S3 `new AWS.S3()` critical error');
-        aCallback(null);
+        aCallback(new statusError({
+          message: 'Storage critical error',
+          code: 500
+        }), null);
         return;
       }
     });

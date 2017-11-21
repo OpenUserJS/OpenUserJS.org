@@ -4,6 +4,7 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var statusError = require('../libs/debug').statusError;
 
 //
 
@@ -1279,15 +1280,25 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
         return;
       }
 
-      onScriptStored = function (aScript) {
-        if (aScript) {
-          options.script = aScript;
-          aCallback(null);
-          return;
-        } else {
-          aCallback('Error while importing script.');
+      onScriptStored = function (aErr, aScript) {
+        if (aErr) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: aErr.status.code,
+            statusMessage: aErr.status.message
+          });
           return;
         }
+
+        if (!aScript) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500, // NOTE: Watchpoint
+            statusMessage: 'Error while importing script.'
+          });
+          return;
+        }
+
+        options.script = aScript;
+        aCallback(null);
       };
 
       if (options.javascriptBlob.isUserJS) {
@@ -1434,13 +1445,33 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     var stream = null;
     var bufs = [];
     var authedUser = aReq.session.user;
-    var failUri = '/user/add/' + (isLib ? 'lib' : 'scripts');
 
-    // Reject missing, non-js, and huge files
-    if (!script ||
-      !(script.type === 'application/javascript' || script.type === 'application/x-javascript') ||
-        script.size > settings.maximum_upload_script_size) {
-      aRes.redirect(failUri);
+    // Reject missing files
+    if (!script) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 400,
+        statusMessage: 'No file selected.'
+      });
+      return;
+    }
+
+    // Reject non-js file
+    if (!(script.type === 'application/javascript'
+      || script.type === 'application/x-javascript')) {
+
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 400,
+        statusMessage: 'Selected file is not JavaScript.'
+      });
+      return;
+    }
+
+    // Reject huge file
+    if (script.size > settings.maximum_upload_script_size) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 400,
+        statusMessage: 'Selected file is too big.'
+      });
       return;
     }
 
@@ -1456,16 +1487,26 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
         scriptStorage.getMeta(bufs, function (aMeta) {
           if (!isLib && !!scriptStorage.findMeta(aMeta, 'UserLibrary')) {
-            aRes.redirect(failUri);
+            statusCodePage(aReq, aRes, aNext, {
+              statusCode: 400,
+              statusMessage:
+                'UserLibrary metadata block found while attempting to upload as a UserScript.'
+            });
             return;
           } else if (isLib && !!!scriptStorage.findMeta(aMeta, 'UserLibrary')) {
-            aRes.redirect(failUri);
+              statusCodePage(aReq, aRes, aNext, {
+                statusCode: 400,
+                statusMessage: 'UserLibrary metadata block missing.'
+              });
             return;
           }
 
-          scriptStorage.storeScript(aUser, aMeta, bufferConcat, false, function (aScript) {
-            if (!aScript) {
-              aRes.redirect(failUri);
+          scriptStorage.storeScript(aUser, aMeta, bufferConcat, false, function (aErr, aScript) {
+            if (aErr || !aScript) {
+              statusCodePage(aReq, aRes, aNext, {
+                statusCode: aErr.status.code,
+                statusMessage: aErr.status.message
+              });
               return;
             }
 
@@ -1510,7 +1551,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
   function storeScript(aMeta, aSource) {
 
     User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
-      scriptStorage.storeScript(aUser, aMeta, aSource, false, function (aScript) {
+      scriptStorage.storeScript(aUser, aMeta, aSource, false, function (aErr, aScript) {
         var redirectUri = aScript
           ? ((aScript.isLib ? '/libs/' : '/scripts/') +
             encodeURIComponent(helpers.cleanFilename(aScript.author)) +
@@ -1518,8 +1559,24 @@ exports.submitSource = function (aReq, aRes, aNext) {
                 encodeURIComponent(helpers.cleanFilename(aScript.name)))
           : aReq.body.url;
 
-        if (!aScript || !aReq.body.original) {
-          aRes.redirect(redirectUri);
+        if (aErr) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: aErr.status.code,
+            statusMessage: aErr.status.message
+          });
+          return;
+        }
+
+        if (!aScript) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500, // NOTE: Watch point
+            statusMessage: 'No script'
+          });
+          return;
+        }
+
+        if (!aReq.body.original) {
+          aRes.redirect(redirectUri); // NOTE: Watchpoint
           return;
         }
 
@@ -1561,7 +1618,10 @@ exports.submitSource = function (aReq, aRes, aNext) {
       var hasName = false;
 
       if (!!!scriptStorage.findMeta(aMeta, 'UserScript')) {
-        aRes.redirect(uri);
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 400,
+          statusMessage: 'UserScript metadata block missing.'
+        });
         return;
       }
 
@@ -1569,7 +1629,10 @@ exports.submitSource = function (aReq, aRes, aNext) {
       name = scriptStorage.findMeta(aMeta, 'UserLibrary.name');
 
       if (!name) {
-        aRes.redirect(uri);
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 400,
+          statusMessage: 'UserLibrary metadata block missing `@name`.'
+        });
         return;
       }
 
@@ -1580,7 +1643,10 @@ exports.submitSource = function (aReq, aRes, aNext) {
       });
 
       if (!hasName) {
-        aRes.redirect(uri);
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 400,
+          statusMessage: 'UserLibrary metadata block missing non-localized `@name`.'
+        });
         return;
       }
 
@@ -1592,7 +1658,11 @@ exports.submitSource = function (aReq, aRes, aNext) {
       var hasName = false;
 
       if (!!scriptStorage.findMeta(aMeta, 'UserLibrary')) {
-        aRes.redirect(uri);
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 400,
+          statusMessage:
+            'UserLibrary metadata block found while attempting to upload as a UserScript.'
+        });
         return;
       }
 
@@ -1600,7 +1670,10 @@ exports.submitSource = function (aReq, aRes, aNext) {
       name = scriptStorage.findMeta(aMeta, 'UserScript.name');
 
       if (!name) {
-        aRes.redirect(uri);
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 400,
+          statusMessage: 'UserScript metadata block missing `@name`.'
+        });
         return;
       }
 
@@ -1611,7 +1684,10 @@ exports.submitSource = function (aReq, aRes, aNext) {
       });
 
       if (!hasName) {
-        aRes.redirect(uri);
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 400,
+          statusMessage: 'UserScript metadata block missing non-localized `@name`.'
+        });
         return;
       }
 
