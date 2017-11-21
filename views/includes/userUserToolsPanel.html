@@ -6,11 +6,11 @@
         {{#flagged}}
           <form action="{{{user.userFlagPageUrl}}}" method="post" enctype="multipart/form-data">
             <input type="hidden" name="flag" value="false">
-            <button class="btn btn-link" type="submit" class="{{^canFlag}} disabled{{/canFlag}}"><i class="fa fa-fw fa-flag"></i> Unflag</button>
+            <button class="btn btn-link" type="submit" class="{{^canFlag}} disabled{{/canFlag}}" title="Unflag from moderation review"><i class="fa fa-fw fa-flag"></i> Unflag</button>
           </form>
         {{/flagged}}
         {{^flagged}}
-          <a rel="nofollow" href="#" data-toggle="modal" data-target="#flagUserModal" class="{{^canFlag}}disabled{{/canFlag}}"><i class="fa fa-flag-o"></i> Flag</a>
+          <a rel="nofollow" href="#" data-toggle="modal" data-target="#flagUserModal" class="{{^canFlag}}disabled{{/canFlag}}" title="Flag for moderation review"><i class="fa fa-flag-o"></i> Flag</a>
         {{/flagged}}
         </div>
       </li>
