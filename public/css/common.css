@@ -407,6 +407,10 @@ ul.flaggedList {
   background: transparent url("/images/ua/iexplorer16.png") no-repeat left top;
   color: transparent;
 }
+.ua-iron {
+  background: transparent url("/images/ua/iron16.png") no-repeat left top;
+  color: transparent;
+}
 .ua-konqueror {
   background: transparent url("/images/ua/konqueror16.png") no-repeat left top;
   color: transparent;
