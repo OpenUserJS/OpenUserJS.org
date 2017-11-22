@@ -1577,7 +1577,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
         // Okay to update
         aScript.hash = crypto.createHash('sha512').update(aBuf).digest('hex');
 
-        aScript.updated = new Date();
+        // Check hash here against old and don't increment Script model date if same.
+        // Allows sync reset for GH and resave/reset to S3 if needed
+        // Covers issue with GitHub cache serving old raw
+        if (script.hash !== aScript.hash) {
+          aScript.updated = new Date();
+        }
 
         if (findMeta(script.meta, 'UserScript.version.0.value') !==
           findMeta(aMeta, 'UserScript.version.0.value')) {
