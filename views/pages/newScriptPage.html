@@ -98,6 +98,7 @@
                   <p>Specially formatted on the script page. All values shown in reverse order. If absent <a href="https://spdx.org/licenses/MIT.html"><code>MIT</code></a> <a href="https://opensource.org/licenses/MIT">License <em>(Expat)</em></a> is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</p>
                   <p><strong><code>License Type</code> component is required</strong> using at least one <a href="https://opensource.org/licenses/category">OSI approved</a> <a href="https://spdx.org/licenses/">SPDX short identifier</a> and must be the primary, last, <code>@license</code> key. Single short ids are accepted only per license key. e.g. No conjunctions like <code>AND</code> or <code>OR</code>. These are handled by multiple <code>@license</code> keys.</p>
                   <p><strong><code>; License Homepage</code> component is currently optional</strong></p>
+                  <p>A url of http or https.</p>
                   <p>Single Licensed Example <em>(No specific document license web reference)</em>:
                     <pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br />{{#newJSLibrary}}<code>// ==UserLibrary==</code><br />{{/newJSLibrary}}<code>// @license MIT</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code>{{#newJSLibrary}}<br /><code>// ==/UserLibrary==</code><br />{{/newJSLibrary}}</pre>
                   </p>
@@ -119,7 +120,7 @@
               </div>
               <div id="collapse-icon" class="panel-collapse collapse">
                 <div class="panel-body">
-                  <p>A url of http, https, or <a href="https://www.wikipedia.org/wiki/Data_URI_scheme">data uri</a>.</p>
+                  <p>A url of http, https, or an image <a href="https://www.wikipedia.org/wiki/Data_URI_scheme">data uri</a>.</p>
                   <p>Resolution should be near 48px by 48px.</p>
                   <p>Used in the script list page at 16px and on the script page at ~45px.</p>
                   <p>Last value is shown.</p>
