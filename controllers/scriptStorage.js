@@ -1174,6 +1174,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var supportURL = null;
   var homepageURLS = null;
   var homepageURL = null;
+  var icon = null;
   var match = null;
   var rLibrary = new RegExp(
     '^(?:(?:(?:https?:)?\/\/' +
@@ -1369,6 +1370,21 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   }
 
 
+  // `@icon` validations
+  icon = findMeta(aMeta, 'UserScript.icon.0.value');
+  if (icon) {
+    if (!isFQUrl(icon, false, true)) {
+
+      // Not a web url... reject
+      aCallback(new statusError({
+        message: '`@icon` not a web url or image data URI in the UserScript metadata block.',
+        code: 400
+      }), null);
+      return;
+    }
+  }
+
+
   // `@supportURL` validations
   supportURL = findMeta(aMeta, 'UserScript.supportURL.0.value');
   if (supportURL) {
@@ -1376,7 +1392,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
       // Not a web url... reject
       aCallback(new statusError({
-        message: '`@supportURL` not a web url in the UserScript metadata block.',
+        message: '`@supportURL` not a web url or mailto in the UserScript metadata block.',
         code: 400
       }), null);
       return;
