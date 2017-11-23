@@ -50,12 +50,41 @@
               {{{statusMessage}}}
             {{/isCustomView}}
             </p>
-            <p class="text-center"> <a href="javascript: void(0);" onclick="history.go(-1);"><i class="fa fa-arrow-circle-left"></i>Go Back</a>.</p>
+            <p class="text-center"> <a id="action" href="#"></a></p>
           </div>
         </div>
       </div>
     </div>
   </div>
   {{> includes/footer.html }}
+  <script type="text/javascript">
+    (function () {
+      'use strict';
+
+      function onClickClose(aEv) {
+        window.close();
+      }
+
+      function onClickGoBack(aEv) {
+        window.history.back();
+      }
+
+      function onDOMContentLoaded(aEv) {
+        var thisNode = document.querySelector('#action');
+        if (thisNode) {
+          if (history.length > 1) {
+            thisNode.innerHTML = '<i class="fa fa-arrow-circle-left"></i> Go Back';
+            thisNode.addEventListener('click', onClickGoBack);
+          } else {
+            thisNode.innerHTML = '<i class="fa fa-window-close"></i> Close window';
+            thisNode.addEventListener('click', onClickClose);
+          }
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+    })();
+  </script>
 </body>
 </html>
