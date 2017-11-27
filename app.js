@@ -116,8 +116,10 @@ function beforeExit() {
    * Attempt to get everything closed before process exit
    */
 
-  // Cancel intervals
-  clearInterval(pingCertTimer);
+  // Cancel any intervals
+  if (pingCertTimer) {
+    clearInterval(pingCertTimer);
+  }
 
   // Close the db connection
   db.close(); // NOTE: Current asynchronous but auth may prevent callback until completed
@@ -459,4 +461,6 @@ function pingCert() {
   });
 };
 
-pingCertTimer = setInterval(pingCert, 60 * 60 * 1000); // NOTE: Check every hour
+if (secured) {
+  pingCertTimer = setInterval(pingCert, 60 * 60 * 1000); // NOTE: Check every hour
+}
