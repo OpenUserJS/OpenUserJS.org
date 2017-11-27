@@ -398,7 +398,28 @@ require('./routes')(app);
 
 // Timers
 function tripServerOnCertExpire(aValidToString) {
-  console.log(colors.cyan('peerCertificate.valid_to:'), colors.cyan(aValidToString));
+  var tlsDate = new Date(aValidToString);
+  var nowDate = new Date();
+
+  var tripDate = new Date(tlsDate.getTime() - (2 * 60 * 60 * 1000)); // ~2 hours before fault
+
+  if (nowDate.getTime() >= tripDate.getTime()) {
+    console.warn(colors.red('Attempting server restart'));
+    try {
+      fs.renameSync(privkey, privkey + '.expired')
+      fs.renameSync(fullchain, fullchain + '.expired');
+      fs.renameSync(chain, chain + '.expired');
+
+      console.warn(colors.red('TLS (SSL) EXPIRING VERY SOON... TRIPPING SERVER TO HTTP!'));
+
+      beforeExit(); // NOTE: Event not triggered for direct `process.exit()`
+
+      process.exit(1);
+
+    } catch (aE) {
+      // noop
+    }
+  }
 }
 
 function pingCert() {
@@ -433,7 +454,7 @@ function pingCert() {
       tripServerOnCertExpire(aRes.req.connection.getPeerCertificate().valid_to);
 
     } else {
-      console.log(colors.cyan('No certificate'));
+      console.log(colors.cyan('No certificates found'));
     }
   });
 };
