@@ -39,6 +39,11 @@ mongoose.Promise = global.Promise;
 var passport = require('passport');
 var colors = require('ansi-colors');
 
+var request = require('request');
+
+//
+var pingCertTimer = null;
+
 var app = express();
 
 var modifySessions = require('./libs/modifySessions');
@@ -71,6 +76,10 @@ var https = require('https');
 var sslOptions = null;
 var server = http.createServer(app);
 var secureServer = null;
+var privkey = './keys/private.key';
+var fullchain = './keys/cert.crt';
+var chain = './keys/intermediate.crt';
+var secured = null;
 
 app.set('port', process.env.PORT || 8080);
 app.set('securePort', process.env.SECURE_PORT || null);
@@ -102,12 +111,13 @@ db.on('reconnected', function () {
   console.error(colors.yellow('MongoDB connection is reconnected'));
 });
 
-process.on('SIGINT', function () {
-  console.log(colors.green('Capturing app termination for an attempt at cleanup'));
-
+function beforeExit() {
   /**
    * Attempt to get everything closed before process exit
    */
+
+  // Cancel intervals
+  clearInterval(pingCertTimer);
 
   // Close the db connection
   db.close(); // NOTE: Current asynchronous but auth may prevent callback until completed
@@ -117,6 +127,12 @@ process.on('SIGINT', function () {
 
   // Shutdown timer in toobusy
   toobusy.shutdown(); // NOTE: Currently synchronous
+}
+
+process.on('SIGINT', function () {
+  console.log(colors.green('\nCaptured app termination'));
+
+  beforeExit(); // NOTE: Event not triggered for direct `process.exit()`
 
   // Terminate the app
   process.exit(0);
@@ -212,11 +228,20 @@ app.use(function (aReq, aRes, aNext) {
 });
 
 // Force HTTPS
-if (app.get('securePort')) {
+secured = true;
+try {
+  fs.accessSync(privkey, fs.constants.F_OK);
+  fs.accessSync(fullchain, fs.constants.F_OK);
+  fs.accessSync(chain, fs.constants.F_OK);
+} catch (aE) {
+  secured = false;
+}
+
+if (app.get('securePort') && secured) {
   sslOptions = {
-    key: fs.readFileSync('./keys/private.key'),
-    cert: fs.readFileSync('./keys/cert.crt'),
-    ca: fs.readFileSync('./keys/intermediate.crt'),
+    key: fs.readFileSync(privkey),
+    cert: fs.readFileSync(fullchain),
+    ca: fs.readFileSync(chain),
     ciphers: [
       'ECDHE-RSA-AES128-GCM-SHA256',
       'ECDHE-ECDSA-AES128-GCM-SHA256',
@@ -249,7 +274,8 @@ if (app.get('securePort')) {
       'max-age=31536000000; includeSubDomains');
 
     if (!aReq.secure) {
-      return aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
+      aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
+      return;
     }
 
     aNext();
@@ -368,3 +394,48 @@ app.use(lessMiddleware(__dirname + '/public', {
 
 // Routes
 require('./routes')(app);
+
+
+// Timers
+function tripServerOnCertExpire(aValidToString) {
+  console.log(colors.cyan('peerCertificate.valid_to:'), colors.cyan(aValidToString));
+}
+
+function pingCert() {
+  request({
+    method: 'HEAD',
+    // NOTE: Use localhost to avoid firewall and unnecessary traffic
+    url: (isPro && app.get('securePort') ? 'https' : 'http') + '://localhost' +
+      (isPro && app.get('securePort')
+        ? ':' + app.get('securePort')
+        : ':' + app.get('port'))
+          + '/api'
+  }, function (aErr, aRes, aBody) {
+    if (aErr) {
+      if (aErr.cert) {
+
+        // Test for time limit of expiration
+        tripServerOnCertExpire(aErr.cert.valid_to);
+
+      } else {
+        console.warn(colors.red(aErr));
+        console.warn(
+          colors.red('Most likely the server is not running on port or port blocked by firewall')
+        );
+      }
+      return;
+    }
+
+    if (aRes.req.connection.getPeerCertificate) {
+      console.warn(colors.red('Firewall pass-through')); // NOTE: server blocks this currently
+
+      // Test for time limit of expiration
+      tripServerOnCertExpire(aRes.req.connection.getPeerCertificate().valid_to);
+
+    } else {
+      console.log(colors.cyan('No certificate'));
+    }
+  });
+};
+
+pingCertTimer = setInterval(pingCert, 60 * 60 * 1000); // NOTE: Check every hour
