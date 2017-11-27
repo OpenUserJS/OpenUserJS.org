@@ -146,6 +146,11 @@ module.exports = function (aApp) {
   // Home route
   aApp.route('/').get(main.home);
 
+  // Misc API
+  aApp.route('/api').head(function (aReq, aRes, aNext) {
+    aRes.status(200).send();
+  });
+
   // Static Routes
   require('./routesStatic')(aApp);
 
