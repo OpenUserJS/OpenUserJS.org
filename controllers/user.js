@@ -1204,6 +1204,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var githubUserId = null;
   var githubRepoName = null;
+  var githubDefaultBranch = null;
+  var githubPathName = null;
+  var githubPathExt = null;
   var githubBlobPath = null;
 
   // Session
@@ -1218,6 +1221,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
 
   options.githubRepoName = githubRepoName = aReq.body.repo || aReq.query.repo;
+  options.githubDefaultBranch = githubDefaultBranch = aReq.body.default_branch || aReq.query.default_branch;
+  options.githubPathName = githubPathName = aReq.body.pathname || aReq.query.pathname;
+  options.githubPathExt = githubPathExt = aReq.body.pathext || aReq.query.pathext;
   options.githubBlobPath = githubBlobPath = aReq.body.path || aReq.query.path;
 
   if (!(githubUserId && githubRepoName && githubBlobPath)) {
@@ -1284,7 +1290,17 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
         if (aErr) {
           statusCodePage(aReq, aRes, aNext, {
             statusCode: aErr.status.code,
-            statusMessage: aErr.status.message
+            statusMessage: aErr.status.message,
+            isCustomView: true,
+            statusData: {
+              isGHImport: true,
+              utf_pathname: githubPathName,
+              utf_pathext: githubPathExt,
+              user: encodeURIComponent(githubUserId),
+              repo: encodeURIComponent(githubRepoName),
+              default_branch: encodeURIComponent(githubDefaultBranch),
+              path: encodeURIComponent(githubBlobPath)
+            }
           });
           return;
         }
@@ -1329,7 +1345,21 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           }
           scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, false, onScriptStored);
         } else {
-          aCallback('Specified file does not contain the proper metadata blocks.');
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 400,
+            statusMessage: 'Specified file does not contain the proper metadata blocks.',
+            isCustomView: true,
+            statusData: {
+              isGHImport: true,
+              utf_pathname: githubPathName,
+              utf_pathext: githubPathExt,
+              user: encodeURIComponent(githubUserId),
+              repo: encodeURIComponent(githubRepoName),
+              default_branch: encodeURIComponent(githubDefaultBranch),
+              path: encodeURIComponent(githubBlobPath)
+            }
+          });
+          return;
         }
 
       } else if (options.javascriptBlob.isJSLibrary) {
@@ -1360,10 +1390,22 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           }
           scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, false, onScriptStored);
         } else {
-          aCallback('Specified file does not contain the proper metadata blocks.');
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 400,
+            statusMessage: 'Specified file does not contain the proper metadata blocks.',
+            isCustomView: true,
+            statusData: {
+              isGHImport: true,
+              utf_pathname: githubPathName,
+              utf_pathext: githubPathExt,
+              user: encodeURIComponent(githubUserId),
+              repo: encodeURIComponent(githubRepoName),
+              default_branch: encodeURIComponent(githubDefaultBranch),
+              path: encodeURIComponent(githubBlobPath)
+            }
+          });
+          return;
         }
-
-
 
       } else {
         aCallback('Invalid filetype.');
@@ -1373,8 +1415,11 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
     var script = null;
 
     if (aErr) {
-      console.error(aErr);
-      console.error(githubUserId, githubRepoName, githubBlobPath);
+      console.error([
+        aErr,
+        authedUser.name + ' ' + githubUserId + ' ' + githubRepoName + ' ' + githubBlobPath
+
+      ].join('\n'));
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 400,
         statusMessage: aErr
