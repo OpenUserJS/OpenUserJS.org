@@ -33,11 +33,13 @@
                   <form action="{{{authedUser.userGitHubImportPageUrl}}}" method="post"{{#openImportInNewTab}} target="_blank"{{/openImportInNewTab}}>
                     <input type="hidden" name="user" value="{{repo.owner.login}}">
                     <input type="hidden" name="repo" value="{{repo.name}}">
+                    <input type="hidden" name="default_branch" value="{{repo.default_branch}}">
                     <input type="hidden" name="path" value="{{path.full}}">
+                    <input type="hidden" name="pathname" value="{{path.name}}">
+                    <input type="hidden" name="pathext" value="{{path.ext}}">
                     <button type="submit" class="btn btn-sm btn-{{^isOwnRepo}}warning{{/isOwnRepo}}{{#isOwnRepo}}success{{/isOwnRepo}} pull-right {{^canUpload}}disabled{{/canUpload}}"><i class="octicon octicon-fw octicon-repo-clone"></i> Import</a>
                   </form>
                 </div>
-
                 <p>
                   <a href="https://github.com/{{repo.owner.login}}/{{repo.name}}/tree/{{repoAsEncoded.default_branch}}/{{pathAsEncoded.full}}" target="_blank">{{path.dir}}<b>{{path.name}}</b>{{path.ext}}</a>
                   <span class="label label-default">{{size}} bytes</span>
