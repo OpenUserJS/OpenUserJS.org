@@ -436,27 +436,34 @@ function pingCert() {
   }, function (aErr, aRes, aBody) {
     if (aErr) {
       if (aErr.cert) {
+        // Encryption available with Error thrown since internal TLS request on localhost
+        // isn't usually a valid registered domain however external requests can be blocked by
+        // browsers as well as false credentials supplied
 
         // Test for time limit of expiration
         tripServerOnCertExpire(aErr.cert.valid_to);
 
       } else {
-        console.warn(colors.red(aErr));
-        console.warn(
-          colors.red('Most likely the server is not running on port or port blocked by firewall')
-        );
+        console.warn([
+          colors.red(aErr),
+          colors.red('Server may not be running on specified port or port blocked by firewall'),
+          colors.red('Encryption not available')
+
+        ].join('\n'));
       }
       return;
     }
 
     if (aRes.req.connection.getPeerCertificate) {
-      console.warn(colors.red('Firewall pass-through')); // NOTE: server blocks this currently
+      // Encryption available
+      // NOTE: Server blocks this currently
+      console.warn(colors.red('Firewall pass-through detected'));
 
       // Test for time limit of expiration
       tripServerOnCertExpire(aRes.req.connection.getPeerCertificate().valid_to);
 
     } else {
-      console.log(colors.cyan('No certificates found'));
+      console.warn(colors.yellow('Encryption not available'));
     }
   });
 };
