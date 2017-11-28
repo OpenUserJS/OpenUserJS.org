@@ -1281,35 +1281,25 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
       // Double check file size.
       if (aBlobUtf8.length > settings.maximum_upload_script_size) {
-        aCallback(util.format('File size is larger than maximum (%s bytes).',
-          settings.maximum_upload_script_size));
+        aCallback(new statusError({
+          message: util.format('File size is larger than maximum (%s bytes).',
+            settings.maximum_upload_script_size),
+          code: 400
+        }));
         return;
       }
 
       onScriptStored = function (aErr, aScript) {
         if (aErr) {
-          statusCodePage(aReq, aRes, aNext, {
-            statusCode: aErr.status.code,
-            statusMessage: aErr.status.message,
-            isCustomView: true,
-            statusData: {
-              isGHImport: true,
-              utf_pathname: githubPathName,
-              utf_pathext: githubPathExt,
-              user: encodeURIComponent(githubUserId),
-              repo: encodeURIComponent(githubRepoName),
-              default_branch: encodeURIComponent(githubDefaultBranch),
-              path: encodeURIComponent(githubBlobPath)
-            }
-          });
+          aCallback(aErr);
           return;
         }
 
         if (!aScript) {
-          statusCodePage(aReq, aRes, aNext, {
-            statusCode: 500, // NOTE: Watchpoint
-            statusMessage: 'Error while importing script.'
-          });
+          aCallback(new statusError({
+            message: 'Error while importing script.',
+            code: 500 // NOTE: Watchpoint.
+          }));
           return;
         }
 
@@ -1345,20 +1335,10 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           }
           scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, false, onScriptStored);
         } else {
-          statusCodePage(aReq, aRes, aNext, {
-            statusCode: 400,
-            statusMessage: 'Specified file does not contain the proper metadata blocks.',
-            isCustomView: true,
-            statusData: {
-              isGHImport: true,
-              utf_pathname: githubPathName,
-              utf_pathext: githubPathExt,
-              user: encodeURIComponent(githubUserId),
-              repo: encodeURIComponent(githubRepoName),
-              default_branch: encodeURIComponent(githubDefaultBranch),
-              path: encodeURIComponent(githubBlobPath)
-            }
-          });
+          aCallback(new statusError({
+            message: 'Specified file does not contain the proper metadata blocks.',
+            code: 400
+          }));
           return;
         }
 
@@ -1390,25 +1370,19 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           }
           scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, false, onScriptStored);
         } else {
-          statusCodePage(aReq, aRes, aNext, {
-            statusCode: 400,
-            statusMessage: 'Specified file does not contain the proper metadata blocks.',
-            isCustomView: true,
-            statusData: {
-              isGHImport: true,
-              utf_pathname: githubPathName,
-              utf_pathext: githubPathExt,
-              user: encodeURIComponent(githubUserId),
-              repo: encodeURIComponent(githubRepoName),
-              default_branch: encodeURIComponent(githubDefaultBranch),
-              path: encodeURIComponent(githubBlobPath)
-            }
-          });
+          aCallback(new statusError({
+            message: 'Specified file does not contain the proper metadata blocks.',
+            code: 400
+          }));
           return;
         }
 
       } else {
-        aCallback('Invalid filetype.');
+        aCallback(new statusError({
+          message: 'Invalid filetype.',
+          code: 400
+        }));
+        return;
       }
     },
   ], function (aErr) {
@@ -1420,10 +1394,28 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
         authedUser.name + ' ' + githubUserId + ' ' + githubRepoName + ' ' + githubBlobPath
 
       ].join('\n'));
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 400,
-        statusMessage: aErr
-      });
+
+      if (!(aErr instanceof String)) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+          statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.message),
+          isCustomView: true,
+          statusData: {
+            isGHImport: true,
+            utf_pathname: githubPathName,
+            utf_pathext: githubPathExt,
+            user: encodeURIComponent(githubUserId),
+            repo: encodeURIComponent(githubRepoName),
+            default_branch: encodeURIComponent(githubDefaultBranch),
+            path: encodeURIComponent(githubBlobPath)
+          }
+        });
+      } else {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500, // NOTE: Watchpoint
+          statusMessage: aErr
+        });
+      }
       return;
     }
 
