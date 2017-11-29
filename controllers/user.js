@@ -15,6 +15,9 @@ var async = require('async');
 var _ = require('underscore');
 var util = require('util');
 
+var SPDX = require('spdx-license-ids');
+var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
+
 //--- Model inclusions
 var Comment = require('../models/comment').Comment;
 var Script = require('../models/script').Script;
@@ -55,6 +58,8 @@ var strategies = require('./strategies.json');
 var settings = require('../models/settings.json');
 
 var removeReasons = require('../views/includes/userModals.json').removeReasons;
+
+var blockSPDX = require('./blockSPDX');
 
 //---
 
@@ -1869,6 +1874,9 @@ exports.editScript = function (aReq, aRes, aNext) {
         //
         var script = null;
         var scriptOpenIssueCountQuery = null;
+        var collaborators = null;
+        var licenses = null;
+        var licensePrimary = null;
 
         //---
         if (aErr || !aScript) {
@@ -1878,7 +1886,22 @@ exports.editScript = function (aReq, aRes, aNext) {
 
         // Script
         options.script = script = modelParser.parseScript(aScript);
-        options.isOwner = authedUser && authedUser._id == script._authorId;
+
+        collaborators = scriptStorage.findMeta(aScript.meta, 'OpenUserJS.collaborator.value');
+        if (!collaborators) {
+          collaborators = []; // NOTE: Watchpoint
+        }
+
+        licenses = scriptStorage.findMeta(aScript.meta, 'UserScript.license.value');
+        if (licenses) {
+          licensePrimary = licenses[licenses.length - 1];
+          script.licensePrimary = licensePrimary.substr(0, (licensePrimary.indexOf(';') > -1
+            ? licensePrimary.indexOf(';')
+            : undefined)).replace(/\+$/, '');
+        }
+
+        options.isOwner = authedUser && (authedUser._id == script._authorId
+          || collaborators.indexOf(authedUser.name) > -1);
         modelParser.renderScript(script);
         script.installNameSlug = installNameBase;
         script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
@@ -1891,6 +1914,22 @@ exports.editScript = function (aReq, aRes, aNext) {
         script.scriptRawPageXUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
           + scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
             (isLib ? '.min.js#' : '.min.user.js#');
+        script.scriptPermalinkMetaPageUrl = 'https://' + aReq.get('host') +
+          script.scriptMetaPageUrl;
+
+        script.scriptAcceptableOSILicense = [];
+        SPDXOSI.forEach(function (aElement, aIndex, aArray) {
+          if (blockSPDX.indexOf(aElement) === -1) {
+            script.scriptAcceptableOSILicense.push({
+              shortIdSPDX: aElement
+            });
+          }
+        });
+
+        // User
+        if (options.isOwner) {
+          options.authorTools = {};
+        }
 
         // Page metadata
         pageMetadata(options);
@@ -1908,6 +1947,20 @@ exports.editScript = function (aReq, aRes, aNext) {
         async.parallel(tasks, asyncComplete);
       });
   } else {
+    options.authorTools = {};
+    options.isScriptViewSourcePage = true;
+
+    options.script = {};
+    options.script.licensePrimary = 'MIT'; // NOTE: Site default
+    options.script.scriptAcceptableOSILicense = [];
+    SPDXOSI.forEach(function (aElement, aIndex, aArray) {
+      if (blockSPDX.indexOf(aElement) === -1) {
+        options.script.scriptAcceptableOSILicense.push({
+          shortIdSPDX: aElement
+        });
+      }
+    });
+
     //---
     async.parallel(tasks, asyncComplete);
   }
