@@ -11,7 +11,6 @@ var isDbg = require('../libs/debug').isDbg;
 var async = require('async');
 var _ = require('underscore');
 var SPDX = require('spdx-license-ids');
-var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 
 //--- Model inclusions
 var Discussion = require('../models/discussion').Discussion;
@@ -42,8 +41,6 @@ var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Configuration inclusions
 var removeReasons = require('../views/includes/scriptModals.json').removeReasons;
-
-var blockSPDX = require('./blockSPDX');
 
 //---
 
@@ -399,15 +396,6 @@ exports.view = function (aReq, aRes, aNext) {
         script.scriptInstallPageXUrl;
       script.scriptPermalinkMetaPageUrl = 'https://' + aReq.get('host') +
         script.scriptMetaPageUrl;
-
-      script.scriptAcceptableOSILicense = [];
-      SPDXOSI.forEach(function (aElement, aIndex, aArray) {
-        if (blockSPDX.indexOf(aElement) === -1) {
-          script.scriptAcceptableOSILicense.push({
-            shortIdSPDX: aElement
-          });
-        }
-      });
 
       // Page metadata
       pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],

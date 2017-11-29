@@ -4,11 +4,15 @@
     <div class="panel-title"><i class="fa fa-fw fa-user"></i> Author Tools</div>
   </div>
   <div class="panel-body">
+    {{^isScriptViewSourcePage}}
     <ul class="nav nav-pills nav-justified">
       <li><a rel="nofollow" href="{{{script.scriptEditMetadataPageUrl}}}"><i class="fa fa-edit"></i> Edit Script Info</a></li>
       <li><a rel="nofollow" href="{{{script.scriptEditSourcePageUrl}}}"><i class="fa fa-file-text"></i> Edit Script</a></li>
     </ul>
+    {{/isScriptViewSourcePage}}
+    {{#isScriptViewSourcePage}}
     {{^script.isLib}}
+    {{^newScript}}
     <div class="form-group">
       <div class="input-group col-xs-12">
         <span class="input-group-btn">
@@ -24,6 +28,7 @@
         </span>
       </div>
     </div>
+    {{/newScript}}
     {{/script.isLib}}
     <div class="input-group">
       <div class="input-group-btn">
@@ -44,12 +49,16 @@
         </a>
       </span>
     </div>
+    {{/isScriptViewSourcePage}}
+    {{^isScriptViewSourcePage}}
     {{^script.isLib}}
     <h4>Installs per Version <small>effective <time title='Tue Sep 2 2014'>Sep '14</time></small></h4>
     <p><code>{{script.meta.version}}{{^script.meta.version}}Current{{/script.meta.version}}</code> <span class="label label-default">{{script.installsSinceUpdate}} installs</span></p>
     {{/script.isLib}}
+    {{/isScriptViewSourcePage}}
   </div>
 </div>
+{{^isScriptViewSourcePage}}
 <div class="panel panel-danger">
   <div class="panel-heading">
     <div class="panel-title"><i class="fa fa-fw fa-bolt"></i> Danger Zone</div>
@@ -60,4 +69,5 @@
     </ul>
   </div>
 </div>
+{{/isScriptViewSourcePage}}
 {{/authorTools}}
