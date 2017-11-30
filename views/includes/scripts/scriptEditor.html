@@ -1,16 +1,23 @@
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/ace-builds/src/ace.js"></script>
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/js-beautify/js/lib/beautify.js"></script>
 <script type="text/javascript">
   (function () {
     'use strict';
 
     $(document).ready(function () {
-
       var editor = ace.edit("editor");
+      var wrap = $('#wrap');
+      var beautify = $('#beautify');
+      var rawSource = editor.getSession().getValue();
+      var isBlocking = null;
+      var hasChanged = false;
       var placeholder = null;
       var username = '{{authedUser.name}}' || 'username';
       var isLib = !!'{{isLib}}';
       var now = new Date();
       var year = now.getFullYear();
+
+      editor.$blockScrolling = Infinity;
 
       function hasRelative(aPrefix) {
         var hasCalc = null;
@@ -55,6 +62,70 @@
           node.style.padding = "0 0.75em";
           editor.renderer.scroller.appendChild(node);
         }
+      }
+
+      function onwrap(aEv) {
+        if (editor.getSession().getUseWrapMode()) {
+          editor.getSession().setUseWrapMode(false);
+          aEv.target.classList.remove('active');
+        } else {
+          editor.getSession().setUseWrapMode(true);
+          aEv.target.classList.add('active');
+        }
+        aEv.target.blur();
+      }
+
+      function onchange(aEv) {
+        if (isBlocking) {
+          return;
+        }
+
+        if (!hasChanged) {
+          hasChanged = true;
+
+          $('button#submit_code').removeClass('btn-success').addClass('btn-warning');
+          $('.ace_gutter-layer').addClass('btn-warning');
+        }
+
+        $('#beautify').removeClass('active');
+      }
+
+      function beautifyThis(aString) {
+        return js_beautify(aString.replace(/[“”]/g, '"').replace(/\t/g, '  '), {
+          indent_size: 2,
+          indent_char: ' ',
+          max_preserve_newlines: 2,
+          brace_style: 'end-expand',
+          unescape_strings: true,
+          space_after_anon_function: true
+        }) + '\n';
+      }
+
+      function onbeautify(aEv) {
+        if (aEv.target.classList.contains('active') && !hasChanged) {
+          isBlocking = true;
+          editor.getSession().setValue(rawSource);
+          aEv.target.classList.remove('active');
+          isBlocking = false;
+
+          $('button#submit_code').addClass('btn-success').removeClass('btn-warning');
+          $('.ace_gutter-layer').removeClass('btn-warning');
+
+        } else {
+          isBlocking = true;
+          if (!hasChanged) {
+            aEv.target.classList.add('active');
+          }
+
+          editor.getSession().setValue(
+            beautifyThis(hasChanged ? editor.getSession().getValue() : rawSource));
+          isBlocking = false;
+
+          $('button#submit_code').removeClass('btn-success').addClass('btn-warning');
+          $('.ace_gutter-layer').addClass('btn-warning');
+        }
+
+        aEv.target.blur();
       }
 
       editor.setTheme("ace/theme/dawn");
@@ -135,7 +206,10 @@
           ]
       ).join('\n');
 
-      editor.on("input", oninput);
+      editor.on('input', oninput);
+      editor.on('change', onchange);
+      wrap.on('click', onwrap);
+      beautify.on('click', onbeautify);
       setTimeout(oninput, 250);
     });
 
