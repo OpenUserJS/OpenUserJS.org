@@ -11,6 +11,11 @@
     </ul>
     {{/isScriptViewSourcePage}}
     {{#isScriptViewSourcePage}}
+
+    {{^script.isLib}}
+    <h4>UserScript Block</h4>
+    {{/script.isLib}}
+
     {{^script.isLib}}
     {{^newScript}}
     <div class="form-group">
@@ -30,12 +35,33 @@
     </div>
     {{/newScript}}
     {{/script.isLib}}
-    <div class="input-group">
-      <div class="input-group-btn">
-        <button class="btn btn-info" id="license-raw" data-clipboard-text="// @license MIT" title="Copy key and raw SPDX to clipboard"><i class="octicon octicon-clippy"></i> // @license</button>
+
+    {{#script.isLib}}
+    <h4>UserScript and OpenUserJS Block</h4>
+    {{/script.isLib}}
+
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="copyright-raw" data-clipboard-text="// @copyright {{script.copyrightPrimary}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @copyright</button>
+        </span>
+        <input type="text" class="form-control" id="copyright" value="{{script.copyrightPrimary}}" readonly="readonly">
+        <span class="input-group-btn">
+          <a class="btn btn-default"
+            title="How do I use this?"
+            href="/user/add/{{#script.isLib}}lib{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}#user-block-copyright">
+              <i class="fa fa-{{#lockdown.updateURLCheck}}exclamation-triangle{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}question-circle{{/lockdown.updateURLCheck}}"></i>
+          </a>
+        </span>
       </div>
-      <input id="spdx-short-id" type="text" class="form-control" aria-label="..." value="MIT" readonly="readonly">
+    </div>
+
+    <div class="input-group">
       <span class="input-group-btn">
+        <button class="btn btn-info" id="license-raw" data-clipboard-text="// @license MIT" title="Copy key and raw SPDX to clipboard"><i class="octicon octicon-clippy"></i> // @license</button>
+      </span>
+      <input id="spdx-short-id" type="text" class="form-control" aria-label="..." value="MIT" readonly="readonly">
+      <span class="input-group-btn dropup">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="/images/license/osi16.png"> <span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
         <ul class="dropdown-menu scrollable-menu dropdown-menu-right" id="osi-spdx">
           {{#script.scriptAcceptableOSILicense}}<li><a href="#">{{shortIdSPDX}}</a></li>{{/script.scriptAcceptableOSILicense}}

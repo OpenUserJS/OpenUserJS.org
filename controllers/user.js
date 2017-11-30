@@ -1847,6 +1847,7 @@ exports.editScript = function (aReq, aRes, aNext) {
   var installNameBase = null;
   var isLib = aReq.params.isLib;
   var tasks = [];
+  var nowDate = null;
 
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
@@ -1877,6 +1878,9 @@ exports.editScript = function (aReq, aRes, aNext) {
         var collaborators = null;
         var licenses = null;
         var licensePrimary = null;
+        var copyrights = null;
+        var copyrightPrimary = null;
+        var sinceDate = null;
 
         //---
         if (aErr || !aScript) {
@@ -1898,6 +1902,16 @@ exports.editScript = function (aReq, aRes, aNext) {
           script.licensePrimary = licensePrimary.substr(0, (licensePrimary.indexOf(';') > -1
             ? licensePrimary.indexOf(';')
             : undefined)).replace(/\+$/, '');
+        }
+
+        copyrights = scriptStorage.findMeta(aScript.meta, 'UserScript.copyright.value');
+        if (copyrights) {
+          copyrightPrimary = copyrights[copyrights.length - 1];
+          script.copyrightPrimary = copyrightPrimary;
+        } else {
+          sinceDate = new Date(script._sinceISOFormat);
+          options.script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name
+            + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
         }
 
         options.isOwner = authedUser && (authedUser._id == script._authorId
@@ -1951,7 +1965,14 @@ exports.editScript = function (aReq, aRes, aNext) {
     options.isScriptViewSourcePage = true;
 
     options.script = {};
+    options.script.isLib = isLib;
+
     options.script.licensePrimary = 'MIT'; // NOTE: Site default
+
+    nowDate = new Date();
+    options.script.copyrightPrimary = nowDate.getFullYear() + ', ' + authedUser.name
+      + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+
     options.script.scriptAcceptableOSILicense = [];
     SPDXOSI.forEach(function (aElement, aIndex, aArray) {
       if (blockSPDX.indexOf(aElement) === -1) {
