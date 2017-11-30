@@ -1910,7 +1910,7 @@ exports.editScript = function (aReq, aRes, aNext) {
           script.copyrightPrimary = copyrightPrimary;
         } else {
           sinceDate = new Date(script._sinceISOFormat);
-          options.script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name
+          script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name
             + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
         }
 
