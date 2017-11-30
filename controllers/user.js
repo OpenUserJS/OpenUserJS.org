@@ -1910,8 +1910,10 @@ exports.editScript = function (aReq, aRes, aNext) {
           script.copyrightPrimary = copyrightPrimary;
         } else {
           sinceDate = new Date(script._sinceISOFormat);
-          script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name
-            + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+          if (authedUser) {
+            script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name
+              + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+          }
         }
 
         options.isOwner = authedUser && (authedUser._id == script._authorId
@@ -1969,9 +1971,11 @@ exports.editScript = function (aReq, aRes, aNext) {
 
     options.script.licensePrimary = 'MIT'; // NOTE: Site default
 
-    nowDate = new Date();
-    options.script.copyrightPrimary = nowDate.getFullYear() + ', ' + authedUser.name
-      + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+    if (authedUser) {
+      nowDate = new Date();
+      options.script.copyrightPrimary = nowDate.getFullYear() + ', ' + authedUser.name
+        + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+    }
 
     options.script.scriptAcceptableOSILicense = [];
     SPDXOSI.forEach(function (aElement, aIndex, aArray) {
