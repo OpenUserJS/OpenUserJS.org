@@ -5,10 +5,10 @@
     'use strict';
 
     $(document).ready(function () {
-      var editor = ace.edit("editor");
+      var editor = null;
       var wrap = $('#wrap');
       var beautify = $('#beautify');
-      var rawSource = editor.getSession().getValue();
+      var rawSource = null;
       var isBlocking = null;
       var hasChanged = false;
       var placeholder = null;
@@ -17,8 +17,7 @@
       var now = new Date();
       var year = now.getFullYear();
 
-      editor.$blockScrolling = Infinity;
-
+      //
       function hasRelative(aPrefix) {
         var hasCalc = null;
         var hasUnitV = null;
@@ -128,89 +127,101 @@
         aEv.target.blur();
       }
 
-      editor.setTheme("ace/theme/dawn");
-      editor.getSession().setMode("ace/mode/javascript");
+      //
+      if (typeof ace !== 'undefined') {
+        placeholder = (
+          isLib
+            ? [
+              '// ==UserScript==',
+              '// @namespace     https://openuserjs.org/users/' + username,
+              '// @exclude       *',
+              '',
+              '// ==UserLibrary==',
+              '// @name          Getting Started with a User Library',
+              '// @description   ' +
+                'Showing the current basic and recommended format for a Library script.',
+              '// @copyright     ' + year + ', ' +  username
+                + ' (https://openuserjs.org/users/' + username + ')',
+              '// @license       OSI-SPDX-Short-Identifier',
+              '// @version       0.0.0',
+              '',
+              '// ==/UserScript==',
+              '',
+              '// ==/UserLibrary==',
+              '',
+              '// ==OpenUserJS==',
+              '// @author ' + username,
+              '// ==/OpenUserJS==',
+              '',
+              '/**',
+              '  *',
+              '  * Please begin typing or paste your User Library now.',
+              '  *',
+              '  */'
+            ] : [
+              '// ==UserScript==',
+              '// @namespace     https://openuserjs.org/users/' + username,
+              '// @name          Getting Started with a User Script',
+              '// @description   ' +
+                'Showing the current basic and recommended format for a User script.',
+              '// @copyright     ' + year + ', ' +  username
+                + ' (https://openuserjs.org/users/' + username + ')',
+              '// @license       OSI-SPDX-Short-Identifier',
+              '// @version       0.0.0',
+              '// @include       https://www.example.com/*',
+              '// @grant none',
+              '// ==/UserScript==',
+              '',
+              '// ==OpenUserJS==',
+              '// @author ' + username,
+              '// ==/OpenUserJS==',
+              '',
+              '/**',
+              '  *',
+              '  * Please begin typing or paste your User script now.',
+              '  *',
+              '  */'
+            ]
+        ).join('\n');
 
-      {{#readOnly}}editor.setReadOnly(true);{{/readOnly}}
-      {{^readOnly}}
-      // TODO: Submit using AJAX
-      $('#submit_code').click(function () {
-        $('#source').val(editor.getValue());
-        $('#code_form').submit();
-      });
-      {{/readOnly}}
+        editor = ace.edit("editor");
+        rawSource = editor.getSession().getValue();
 
-      // Some older and newer browser JavaScript work-around for #136
-      if (!hasOurRelative()) {
-        $("#editor").height(calcHeight());
+        editor.$blockScrolling = Infinity;
+        wrap.removeAttr('disabled');
+        beautify.removeAttr('disabled');
 
-        if (window.addEventListener) {
-          window.addEventListener('resize', onresize, false);
-        } else if (window.attachEvent) {
-          window.attachEvent('resize', onresize);
+        $('#submit_code').removeAttr('disabled');
+
+        editor.setTheme("ace/theme/dawn");
+        editor.getSession().setMode("ace/mode/javascript");
+
+        {{#readOnly}}editor.setReadOnly(true);{{/readOnly}}
+        {{^readOnly}}
+        // TODO: Submit using AJAX
+        $('#submit_code').click(function () {
+          $('#source').val(editor.getValue());
+          $('#code_form').submit();
+        });
+        {{/readOnly}}
+
+        // Some older and newer browser JavaScript work-around for #136
+        if (!hasOurRelative()) {
+          $("#editor").height(calcHeight());
+
+          if (window.addEventListener) {
+            window.addEventListener('resize', onresize, false);
+          } else if (window.attachEvent) {
+            window.attachEvent('resize', onresize);
+          }
         }
+
+        editor.on('input', oninput);
+        editor.on('change', onchange);
+        wrap.on('click', onwrap);
+        beautify.on('click', onbeautify);
+        setTimeout(oninput, 250);
       }
-
-      placeholder = (
-        isLib
-          ? [
-            '// ==UserScript==',
-            '// @namespace     https://openuserjs.org/users/' + username,
-            '// @exclude       *',
-            '',
-            '// ==UserLibrary==',
-            '// @name          Getting Started with a User Library',
-            '// @description   ' +
-              'Showing the current basic and recommended format for a Library script.',
-            '// @copyright     ' + year + ', ' +  username
-              + ' (https://openuserjs.org/users/' + username + ')',
-            '// @license       OSI-SPDX-Short-Identifier',
-            '// @version       0.0.0',
-            '',
-            '// ==/UserScript==',
-            '',
-            '// ==/UserLibrary==',
-            '',
-            '// ==OpenUserJS==',
-            '// @author ' + username,
-            '// ==/OpenUserJS==',
-            '',
-            '/**',
-            '  *',
-            '  * Please begin typing or paste your User Library now.',
-            '  *',
-            '  */'
-          ] : [
-            '// ==UserScript==',
-            '// @namespace     https://openuserjs.org/users/' + username,
-            '// @name          Getting Started with a User Script',
-            '// @description   ' +
-              'Showing the current basic and recommended format for a User script.',
-            '// @copyright     ' + year + ', ' +  username
-              + ' (https://openuserjs.org/users/' + username + ')',
-            '// @license       OSI-SPDX-Short-Identifier',
-            '// @version       0.0.0',
-            '// @include       https://www.example.com/*',
-            '// @grant none',
-            '// ==/UserScript==',
-            '',
-            '// ==OpenUserJS==',
-            '// @author ' + username,
-            '// ==/OpenUserJS==',
-            '',
-            '/**',
-            '  *',
-            '  * Please begin typing or paste your User script now.',
-            '  *',
-            '  */'
-          ]
-      ).join('\n');
-
-      editor.on('input', oninput);
-      editor.on('change', onchange);
-      wrap.on('click', onwrap);
-      beautify.on('click', onbeautify);
-      setTimeout(oninput, 250);
     });
 
   })();
