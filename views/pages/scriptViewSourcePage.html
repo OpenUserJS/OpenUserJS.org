@@ -36,8 +36,18 @@
           <input type="hidden" id="source" name="source" value="" />
           <input type="hidden" name="url" value="{{{url}}}" />
           {{^owner}}<input type="hidden" name="original" value="{{original}}" />{{/owner}}
-          <button class="btn btn-success pull-right" type="submit" id="submit_code">{{#owner}}<i class="fa fa-fw fa-save"></i>{{/owner}}{{^owner}}<i class="fa fa-fw fa-code-fork"></i>{{/owner}} Submit Code{{^owner}} as Fork{{/owner}}</button>
+          <div class="btn-toolbar">
+            <button class="btn btn-success" type="button" id="wrap">Wrap</button>
+            <button class="btn btn-success" type="button" id="beautify">Beautify</button>
+            <button class="btn btn-success pull-right" type="submit" id="submit_code">{{#owner}}<i class="fa fa-fw fa-save"></i>{{/owner}}{{^owner}}<i class="fa fa-fw fa-code-fork"></i>{{/owner}} Submit Code{{^owner}} as Fork{{/owner}}</button>
+          </div>
         </form>
+        {{/readOnly}}
+        {{#readOnly}}
+          <div class="btn-toolbar">
+            <button class="btn btn-success" type="button" id="wrap">Wrap</button>
+            <button class="btn btn-success" type="button" id="beautify">Beautify</button>
+          </div>
         {{/readOnly}}
       </div>
       {{#owner}}
