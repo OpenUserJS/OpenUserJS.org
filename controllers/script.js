@@ -48,6 +48,7 @@ var removeReasons = require('../views/includes/scriptModals.json').removeReasons
 exports.new = function (aController) {
   return (function (aReq, aRes, aNext) {
     aReq.params.isNew = true;
+    aReq.params.isLib = false; // NOTE: Set default .user.js and overridden below
     aController(aReq, aRes, aNext);
   });
 };
