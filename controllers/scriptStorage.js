@@ -1149,528 +1149,598 @@ function isEqualKeyset(aSlaveKeyset, aMasterKeyset) {
 }
 
 exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
-  var isLibrary = !!findMeta(aMeta, 'UserLibrary');
-  var name = null;
-  var thisName = null;
+  var isLib = !!findMeta(aMeta, 'UserLibrary');
   var scriptName = null;
-  var rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
-    (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
-  var updateURL = null;
-  var downloadURL = null;
-  var userKeyset = null;
-  var userKey = null;
-  var masterKeyset = null;
-  var slaveKeyset = null;
-  var thisKeyComponents = null;
-  var thatSPDX = null;
-  var i = null;
-  var author = null;
-  var excludes = null;
-  var missingExcludeAll = true;
-  var collaborators = null;
-  var installName = aUser.name + '/';
-  var collaboration = false;
-  var requires = null;
-  var supportURL = null;
-  var homepageURLS = null;
-  var homepageURL = null;
-  var icon = null;
-  var match = null;
-  var rLibrary = new RegExp(
-    '^(?:(?:(?:https?:)?\/\/' +
-      (isPro ? 'openuserjs\.org' : 'localhost:' + (process.env.PORT || 8080)) +
-        ')?\/(?:libs\/src|src\/libs)\/)?(.*?)([^\/]*\.js)$', '');
-  var libraries = [];
 
+  async.series([
+    function (aInnerCallback) {
+      if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
+        aInnerCallback(new statusError({
+          message: 'Read only script storage. Please try again later.',
+          code: 501 // Not Implemented
+        }), null);
+        return;
+      }
 
-  if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
-    aCallback(new statusError({
-      message: 'Read only script storage. Please try again later.',
-      code: 501 // Not Implemented
-    }), null);
-    return;
-  }
-
-  if (!aMeta) {
-    aCallback(new statusError({
-      message: 'Metadata block(s) missing.',
-      code: 400
-    }), null);
-    return;
-  }
-
-  // `@name` validations
-  if (!isLibrary) {
-    name = findMeta(aMeta, 'UserScript.name');
-  } else {
-    name = findMeta(aMeta, 'UserLibrary.name');
-  }
-
-  // Can't install a script without a @name (maybe replace with random value)
-  if (!name) {
-    aCallback(new statusError({
-      message: '`@name` missing.',
-      code: 400
-    }), null);
-    return;
-  }
-
-  name.forEach(function (aElement, aIndex, aArray) {
-    if (!name[aIndex].key) {
-      thisName = aElement.value;
-      scriptName = cleanFilename(thisName, '');
-    }
-  });
-
-  // Check for non-localized presence
-  if (!scriptName) {
-    aCallback(new statusError({
-      message: '`@name` non-localized missing.',
-      code: 400
-    }), null);
-    return;
-  }
-
-  // Can't install a script name ending in a reserved extension
-  if (/\.(?:min|user|user\.js|meta)$/.test(scriptName)) {
-    aCallback(new statusError({
-      message: '`@name` ends in a reserved extension.',
-      code: 400
-    }), null);
-    return;
-  }
-
-
-  // `@name` validations including localizations
-  masterKeyset = findMeta(aMeta, 'UserScript.name.value');
-  slaveKeyset = findMeta(aMeta, 'UserLibrary.name.value');
-
-  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
-    // Keysets do not match exactly... reject
-    aCallback(new statusError({
-      message: '`@name` must match in UserScript and UserLibrary metadata blocks.',
-      code: 400
-    }), null);
-    return;
-  }
-
-
-  // `@description` validations including localizations
-  masterKeyset = findMeta(aMeta, 'UserScript.description.value');
-  slaveKeyset = findMeta(aMeta, 'UserLibrary.description.value');
-
-  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
-    // Keysets do not match exactly... reject
-    aCallback(new statusError({
-      message: '`@description` must match in UserScript and UserLibrary metadata blocks.',
-      code: 400
-    }), null);
-    return;
-  }
-
-
-  // `@copyright` validations
-  masterKeyset = findMeta(aMeta, 'UserScript.copyright.value');
-  slaveKeyset = findMeta(aMeta, 'UserLibrary.copyright.value');
-
-  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
-    // Keysets do not match exactly... reject
-    aCallback(new statusError({
-      message: '`@copyright` must match in UserScript and UserLibrary metadata blocks.',
-      code: 400
-    }), null);
-    return;
-  }
-
-
-  // `@license` validations
-  masterKeyset = findMeta(aMeta, 'UserScript.license.value');
-  slaveKeyset = findMeta(aMeta, 'UserLibrary.license.value');
-
-  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
-    // Keysets do not match exactly... reject
-    aCallback(new statusError({
-      message: '`@license` must match in UserScript and UserLibrary metadata blocks.',
-      code: 400
-    }), null);
-    return;
-  }
-
-  if (!isLibrary) {
-    userKeyset = masterKeyset;
-  } else {
-    userKeyset = slaveKeyset;
-  }
-
-  if (userKeyset) {
-    thatSPDX = userKeyset[userKeyset.length - 1].split('; ')[0].replace(/\+$/, '');
-    if (SPDXOSI.indexOf(thatSPDX) === -1) {
-      // No valid OSI primary e.g. last key... reject
-      aCallback(new statusError({
-        message: '`@license` is not OSI primary and compatible in the metadata block(s).',
-        code: 400
-      }), null);
-      return;
-    }
-
-    for (i = 0; userKey = userKeyset[i++];) {
-      thisKeyComponents = userKey.split('; ');
-      if (thisKeyComponents.length > 2) {
-        // Too many parts... reject
-        aCallback(new statusError({
-          message: '`@license` has too many parts in the metadata block(s).',
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      if (!aMeta) {
+        aInnerCallback(new statusError({
+          message: 'Metadata block(s) missing.',
           code: 400
         }), null);
         return;
       }
 
-      if (thisKeyComponents.length === 2) {
-        if (!isFQUrl(thisKeyComponents[1])) {
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@name` validations
+      var name = null;
+      var thisName = null;
+      var masterKeyset = null;
+      var slaveKeyset = null;
+
+
+      if (!isLib) {
+        name = findMeta(aMeta, 'UserScript.name');
+      } else {
+        name = findMeta(aMeta, 'UserLibrary.name');
+      }
+
+      // Can't install a script without a @name (maybe replace with random value)
+      if (!name) {
+        aInnerCallback(new statusError({
+          message: '`@name` missing.',
+          code: 400
+        }), null);
+        return;
+      }
+
+      // Check for non-localized presence
+      name.forEach(function (aElement, aIndex, aArray) {
+        if (!name[aIndex].key) {
+          thisName = aElement.value;
+          scriptName = cleanFilename(thisName, '');
+        }
+      });
+
+      if (!scriptName) {
+        aInnerCallback(new statusError({
+          message: '`@name` non-localized missing.',
+          code: 400
+        }), null);
+        return;
+      }
+
+      // Can't install a script name ending in a reserved extension
+      if (/\.(?:min|user|user\.js|meta)$/.test(scriptName)) {
+        aInnerCallback(new statusError({
+          message: '`@name` ends in a reserved extension.',
+          code: 400
+        }), null);
+        return;
+      }
+
+      // `@name` validations including localizations
+      masterKeyset = findMeta(aMeta, 'UserScript.name.value');
+      slaveKeyset = findMeta(aMeta, 'UserLibrary.name.value');
+
+      if (isLib && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+        // Keysets do not match exactly... reject
+        aInnerCallback(new statusError({
+          message: '`@name` must match in UserScript and UserLibrary metadata blocks.',
+          code: 400
+        }), null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@description` validations including localizations
+      var masterKeyset = null;
+      var slaveKeyset = null;
+
+      masterKeyset = findMeta(aMeta, 'UserScript.description.value');
+      slaveKeyset = findMeta(aMeta, 'UserLibrary.description.value');
+
+      if (isLib && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+        // Keysets do not match exactly... reject
+        aInnerCallback(new statusError({
+          message: '`@description` must match in UserScript and UserLibrary metadata blocks.',
+          code: 400
+        }), null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@copyright` validations
+      var masterKeyset = null;
+      var slaveKeyset = null;
+
+      masterKeyset = findMeta(aMeta, 'UserScript.copyright.value');
+      slaveKeyset = findMeta(aMeta, 'UserLibrary.copyright.value');
+
+      if (isLib && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+        // Keysets do not match exactly... reject
+        aInnerCallback(new statusError({
+          message: '`@copyright` must match in UserScript and UserLibrary metadata blocks.',
+          code: 400
+        }), null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@license` validations
+      var thisKeyComponents = null;
+      var thatSPDX = null;
+      var userKeyset = null;
+      var userKey = null;
+      var masterKeyset = null;
+      var slaveKeyset = null;
+      var i = null;
+
+      masterKeyset = findMeta(aMeta, 'UserScript.license.value');
+      slaveKeyset = findMeta(aMeta, 'UserLibrary.license.value');
+
+      if (isLib && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+        // Keysets do not match exactly... reject
+        aInnerCallback(new statusError({
+          message: '`@license` must match in UserScript and UserLibrary metadata blocks.',
+          code: 400
+        }), null);
+        return;
+      }
+
+      if (!isLib) {
+        userKeyset = masterKeyset;
+      } else {
+        userKeyset = slaveKeyset;
+      }
+
+      if (userKeyset) {
+        thatSPDX = userKeyset[userKeyset.length - 1].split('; ')[0].replace(/\+$/, '');
+        if (SPDXOSI.indexOf(thatSPDX) === -1) {
+          // No valid OSI primary e.g. last key... reject
+          aInnerCallback(new statusError({
+            message: '`@license` is not OSI primary and compatible in the metadata block(s).',
+            code: 400
+          }), null);
+          return;
+        }
+
+        for (i = 0; userKey = userKeyset[i++];) {
+          thisKeyComponents = userKey.split('; ');
+          if (thisKeyComponents.length > 2) {
+            // Too many parts... reject
+            aInnerCallback(new statusError({
+              message: '`@license` has too many parts in the metadata block(s).',
+              code: 400
+            }), null);
+            return;
+          }
+
+          if (thisKeyComponents.length === 2) {
+            if (!isFQUrl(thisKeyComponents[1])) {
+
+              // Not a web url... reject
+              aInnerCallback(new statusError({
+                message: '`@license` type component not a web url in the metadata block(s).',
+                code: 400
+              }), null);
+              return;
+            }
+          }
+
+          thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
+          if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
+            // Absent SPDX short code or blocked SPDX... reject
+            aInnerCallback(new statusError({
+              message: '`@license` has an incompatible SPDX in the metadata block(s).',
+              code: 400
+            }), null);
+            return;
+          }
+        }
+      } else {
+        // No licensing... reject
+        aInnerCallback(new statusError({
+          message: '`@license` is absent in the metadata block(s).',
+          code: 400
+        }), null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@version` validations
+      var masterKeyset = null;
+      var slaveKeyset = null;
+
+      masterKeyset = findMeta(aMeta, 'UserScript.version.0.value');
+      slaveKeyset = findMeta(aMeta, 'UserLibrary.version.0.value');
+
+      if (isLib && !isEqualKeyset(slaveKeyset, masterKeyset)) {
+        // Keysets do not match exactly... reject
+        aInnerCallback(new statusError({
+          message: '`@version` must match in UserScript and UserLibrary metadata blocks.',
+          code: 400
+        }), null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@icon` validations
+      var icon = null;
+
+      icon = findMeta(aMeta, 'UserScript.icon.0.value');
+      if (icon) {
+        if (!isFQUrl(icon, false, true)) {
 
           // Not a web url... reject
-          aCallback(new statusError({
-            message: '`@license` type component not a web url in the metadata block(s).',
+          aInnerCallback(new statusError({
+            message: '`@icon` not a web url or image data URI in the UserScript metadata block.',
             code: 400
           }), null);
           return;
         }
       }
 
-      thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
-      if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
-        // Absent SPDX short code or blocked SPDX... reject
-        aCallback(new statusError({
-          message: '`@license` has an incompatible SPDX in the metadata block(s).',
-          code: 400
-        }), null);
-        return;
-      }
-    }
-  } else {
-    // No licensing... reject
-    aCallback(new statusError({
-      message: '`@license` is absent in the metadata block(s).',
-      code: 400
-    }), null);
-    return;
-  }
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@supportURL` validations
+      var supportURL = null;
 
+      supportURL = findMeta(aMeta, 'UserScript.supportURL.0.value');
+      if (supportURL) {
+        if (!isFQUrl(supportURL, true)) {
 
-  // `@version` validations
-  masterKeyset = findMeta(aMeta, 'UserScript.version.0.value');
-  slaveKeyset = findMeta(aMeta, 'UserLibrary.version.0.value');
-
-  if (isLibrary && !isEqualKeyset(slaveKeyset, masterKeyset)) {
-    // Keysets do not match exactly... reject
-    aCallback(new statusError({
-      message: '`@version` must match in UserScript and UserLibrary metadata blocks.',
-      code: 400
-    }), null);
-    return;
-  }
-
-
-  // `@icon` validations
-  icon = findMeta(aMeta, 'UserScript.icon.0.value');
-  if (icon) {
-    if (!isFQUrl(icon, false, true)) {
-
-      // Not a web url... reject
-      aCallback(new statusError({
-        message: '`@icon` not a web url or image data URI in the UserScript metadata block.',
-        code: 400
-      }), null);
-      return;
-    }
-  }
-
-
-  // `@supportURL` validations
-  supportURL = findMeta(aMeta, 'UserScript.supportURL.0.value');
-  if (supportURL) {
-    if (!isFQUrl(supportURL, true)) {
-
-      // Not a web url... reject
-      aCallback(new statusError({
-        message: '`@supportURL` not a web url or mailto in the UserScript metadata block.',
-        code: 400
-      }), null);
-      return;
-    }
-  }
-
-
-  // `@homepageURL` validations
-  homepageURLS = findMeta(aMeta, 'UserScript.homepageURL.value');
-  if (homepageURLS) {
-    for (i = 0; homepageURL = homepageURLS[i++];) {
-      if (!isFQUrl(homepageURL)) {
-
-        // Not a web url... reject
-        aCallback(new statusError({
-          message: '`@homepageURL` not a web url',
-          code: 400
-        }), null);
-        return;
-      }
-    }
-  }
-
-
-  // `@updateURL` validations
-  updateURL = findMeta(aMeta, 'UserScript.updateURL.0.value');
-  if (updateURL) {
-    if (!isFQUrl(updateURL)) {
-
-      // Not a web url... reject
-      aCallback(new statusError({
-        message: '`@updateURL` not a web url',
-        code: 400
-      }), null);
-      return;
-    }
-  }
-
-
-  // `@downloadURL` validations
-  downloadURL = findMeta(aMeta, 'UserScript.downloadURL.0.value');
-  if (downloadURL) {
-    if (!isFQUrl(downloadURL)) {
-
-      // Not a web url... reject
-      aCallback(new statusError({
-        message: '`@downloadURL` not a web url',
-        code: 400
-      }), null);
-      return;
-    }
-
-    downloadURL = URL.parse(downloadURL);
-
-    // Shouldn't install a userscript with a downloadURL of non-Userscript-source
-    if (rAnyLocalHost.test(downloadURL.host) &&
-      !/^\/(?:install|src\/scripts)\//.test(downloadURL.pathname))
-    {
-      aCallback(new statusError({
-        message: '`@downloadURL` not .user.js',
-        code: 400
-      }), null);
-      return;
-    }
-
-    // Shouldn't install a userscript with a downloadURL of source .meta.js
-    if (rAnyLocalHost.test(downloadURL.host) &&
-      /^\/(?:install|src\/scripts)\//.test(downloadURL.pathname) &&
-        /\.meta\.js$/.test(downloadURL.pathname))
-    {
-      aCallback(new statusError({
-        message: '`@downloadURL` not .user.js',
-        code: 400
-      }), null);
-      return;
-    }
-  }
-
-
-  if (isLibrary) {
-
-    // `@exclude` validations
-    excludes = findMeta(aMeta, 'UserScript.exclude.value');
-    if (excludes) {
-      excludes.forEach(function (aElement, aIndex, aArray) {
-        if (aElement === '*') {
-          missingExcludeAll = false;
-        }
-      });
-    }
-
-    if (missingExcludeAll) {
-      aCallback(new statusError({
-        message: 'UserScript Metadata Block missing `@exclude *`.',
-        code: 400
-      }), null);
-      return;
-    }
-  }
-
-
-  // `@author` linkage for OpenUserJS block
-  author = findMeta(aMeta, 'OpenUserJS.author.0.value');
-  collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');
-
-  if (author !== aUser.name &&
-    collaborators && collaborators.indexOf(aUser.name) > -1) {
-
-    installName = author + '/';
-    collaboration = true;
-  }
-
-
-  if (!isLibrary) {
-    installName += scriptName + '.user.js';
-
-    // `@require` linkage for UserScript block
-    requires = findMeta(aMeta, 'UserScript.require.value');
-    if (requires) {
-      requires.forEach(function (aRequire) {
-        match = rLibrary.exec(aRequire);
-        if (match) {
-          if (!match[1]) {
-            match[1] = aUser.name + '/';
-          }
-
-          if (!/\.user\.js$/.test(match[2])) {
-            libraries.push(match[1] + match[2].replace(/\.min\.js$/, '.js'));
-          }
-        }
-      });
-    }
-  } else {
-    installName += scriptName + '.js';
-  }
-
-
-  // Prevent a removed script from being reuploaded
-  findDeadorAlive(Script, { installName: caseSensitive(installName) }, true,
-    function (aAlive, aScript, aRemoved) {
-      var script = null;
-      var s3 = null;
-
-      if (aRemoved) {
-        aCallback(new statusError({
-          message: 'Script removed permanently.',
-          code: 403
-        }), null);
-        return;
-      } else if ((!aScript && (aUpdate || collaboration))) {
-        aCallback(new statusError({
-          message: 'Collaboration restricted.',
-          code: 403
-        }), null);
-        return;
-      } else if (!aScript) {
-        // New script
-        aScript = new Script({
-          name: thisName,
-          author: aUser.name,
-          installs: 0,
-          rating: 0,
-          about: '',
-          updated: new Date(),
-          hash: crypto.createHash('sha512').update(aBuf).digest('hex'),
-          votes: 0,
-          flags: { critical: 0, absolute: 0 },
-          installName: installName,
-          fork: null,
-          meta: aMeta,
-          isLib: isLibrary,
-          uses: isLibrary ? null : libraries,
-          _authorId: aUser._id
-        });
-      } else {
-        // WARNING: Work-around what appears to be like a race condition
-        // Grab an early copy of the live *mongoose* script object to test against
-        // This should provide more true values to test against and should alleviate a detected
-        // security issue... unless if `toObject` is not present then it will probably fail
-        script = aScript.toObject ? aScript.toObject({ virtuals: true }) : aScript;
-
-        // Script already exists.
-        if (collaboration &&
-          (findMeta(script.meta, 'OpenUserJS.author.0.value') !==
-            findMeta(aMeta, 'OpenUserJS.author.0.value') ||
-              JSON.stringify(findMeta(script.meta, 'OpenUserJS.collaborator.value')) !==
-                JSON.stringify(collaborators))) {
-
-          aCallback(new statusError({
-            message: 'Forbidden with collaboration',
-            code: 403
+          // Not a web url... reject
+          aInnerCallback(new statusError({
+            message: '`@supportURL` not a web url or mailto in the UserScript metadata block.',
+            code: 400
           }), null);
           return;
         }
-        aScript.meta = aMeta;
-        aScript.uses = libraries;
-
-        // Okay to update
-        aScript.hash = crypto.createHash('sha512').update(aBuf).digest('hex');
-
-        // Check hash here against old and don't increment Script model date if same.
-        // Allows sync reset for GH and resave/reset to S3 if needed
-        // Covers issue with GitHub cache serving old raw
-        if (script.hash !== aScript.hash) {
-          aScript.updated = new Date();
-        }
-
-        if (findMeta(script.meta, 'UserScript.version.0.value') !==
-          findMeta(aMeta, 'UserScript.version.0.value')) {
-
-          aScript.installsSinceUpdate = 0;
-        }
       }
 
-      // Attempt to write out data to externals...
-      s3 = new AWS.S3();
-      if (s3) { // NOTE: Should be a noop
-        s3.putObject({
-          Bucket: bucketName,
-          Key: installName,
-          Body: aBuf
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@homepageURL` validations
+      var homepageURLS = null;
+      var homepageURL = null;
+      var i = null;
 
-        }, function (aErr, aData) {
-          if (aErr) {
-            // Forward the error
-            aScript.invalidate('_id', aErr);
+      homepageURLS = findMeta(aMeta, 'UserScript.homepageURL.value');
+      if (homepageURLS) {
+        for (i = 0; homepageURL = homepageURLS[i++];) {
+          if (!isFQUrl(homepageURL)) {
 
-            // Localize the error
-            console.error(
-              'S3 putObject critical error\n' +
-                installName + '\n' +
-                  JSON.stringify(aErr, null, ' ') + '\n' +
-                    aErr.stack
-            );
-
-            aCallback(new statusError({
-              message: 'Remote storage write error',
-              code: 502
+            // Not a web url... reject
+            aInnerCallback(new statusError({
+              message: '`@homepageURL` not a web url',
+              code: 400
             }), null);
             return;
           }
+        }
+      }
 
-          aScript.save(function (aErr, aScript) {
-            var userDoc = null;
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@updateURL` validations
+      var updateURL = null;
 
-            // Localize the error
+      updateURL = findMeta(aMeta, 'UserScript.updateURL.0.value');
+      if (updateURL) {
+        if (!isFQUrl(updateURL)) {
+
+          // Not a web url... reject
+          aInnerCallback(new statusError({
+            message: '`@updateURL` not a web url',
+            code: 400
+          }), null);
+          return;
+        }
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@downloadURL` validations
+      var downloadURL = null;
+      var rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
+        (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
+
+      downloadURL = findMeta(aMeta, 'UserScript.downloadURL.0.value');
+      if (downloadURL) {
+        if (!isFQUrl(downloadURL)) {
+
+          // Not a web url... reject
+          aInnerCallback(new statusError({
+            message: '`@downloadURL` not a web url',
+            code: 400
+          }), null);
+          return;
+        }
+
+        downloadURL = URL.parse(downloadURL);
+
+        // Shouldn't install a userscript with a downloadURL of non-Userscript-source
+        if (rAnyLocalHost.test(downloadURL.host) &&
+          !/^\/(?:install|src\/scripts)\//.test(downloadURL.pathname))
+        {
+          aInnerCallback(new statusError({
+            message: '`@downloadURL` not .user.js',
+            code: 400
+          }), null);
+          return;
+        }
+
+        // Shouldn't install a userscript with a downloadURL of source .meta.js
+        if (rAnyLocalHost.test(downloadURL.host) &&
+          /^\/(?:install|src\/scripts)\//.test(downloadURL.pathname) &&
+            /\.meta\.js$/.test(downloadURL.pathname))
+        {
+          aInnerCallback(new statusError({
+            message: '`@downloadURL` not .user.js',
+            code: 400
+          }), null);
+          return;
+        }
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@exclude` validations
+      var excludes = null;
+      var missingExcludeAll = true;
+
+      if (isLib) {
+        excludes = findMeta(aMeta, 'UserScript.exclude.value');
+        if (excludes) {
+          excludes.forEach(function (aElement, aIndex, aArray) {
+            if (aElement === '*') {
+              missingExcludeAll = false;
+            }
+          });
+        }
+
+        if (missingExcludeAll) {
+          aInnerCallback(new statusError({
+            message: 'UserScript Metadata Block missing `@exclude *`.',
+            code: 400
+          }), null);
+          return;
+        }
+      }
+
+      aInnerCallback(null);
+    }
+
+
+  ], function (aErr, aResults) {
+    var author = null;
+    var collaborators = null;
+    var installName = aUser.name + '/';
+    var collaboration = false;
+    var requires = null;
+    var match = null;
+    var rLibrary = new RegExp(
+      '^(?:(?:(?:https?:)?\/\/' +
+        (isPro ? 'openuserjs\.org' : 'localhost:' + (process.env.PORT || 8080)) +
+          ')?\/(?:libs\/src|src\/libs)\/)?(.*?)([^\/]*\.js)$', '');
+    var libraries = [];
+
+
+    if (aErr) {
+      aCallback(aErr, null);
+      return;
+    }
+
+    // `@author` linkage for OpenUserJS block
+    author = findMeta(aMeta, 'OpenUserJS.author.0.value');
+    collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');
+
+    if (author !== aUser.name &&
+      collaborators && collaborators.indexOf(aUser.name) > -1) {
+
+      installName = author + '/';
+      collaboration = true;
+    }
+
+
+    if (!isLib) {
+      installName += scriptName + '.user.js';
+
+      // `@require` linkage for UserScript block
+      requires = findMeta(aMeta, 'UserScript.require.value');
+      if (requires) {
+        requires.forEach(function (aRequire) {
+          match = rLibrary.exec(aRequire);
+          if (match) {
+            if (!match[1]) {
+              match[1] = aUser.name + '/';
+            }
+
+            if (!/\.user\.js$/.test(match[2])) {
+              libraries.push(match[1] + match[2].replace(/\.min\.js$/, '.js'));
+            }
+          }
+        });
+      }
+    } else {
+      installName += scriptName + '.js';
+    }
+
+
+    // Prevent a removed script from being reuploaded
+    findDeadorAlive(Script, { installName: caseSensitive(installName) }, true,
+      function (aAlive, aScript, aRemoved) {
+        var script = null;
+        var s3 = null;
+
+        if (aRemoved) {
+          aCallback(new statusError({
+            message: 'Script removed permanently.',
+            code: 403
+          }), null);
+          return;
+        } else if ((!aScript && (aUpdate || collaboration))) {
+          aCallback(new statusError({
+            message: 'Collaboration restricted.',
+            code: 403
+          }), null);
+          return;
+        } else if (!aScript) {
+          // New script
+          aScript = new Script({
+            name: thisName,
+            author: aUser.name,
+            installs: 0,
+            rating: 0,
+            about: '',
+            updated: new Date(),
+            hash: crypto.createHash('sha512').update(aBuf).digest('hex'),
+            votes: 0,
+            flags: { critical: 0, absolute: 0 },
+            installName: installName,
+            fork: null,
+            meta: aMeta,
+            isLib: isLib,
+            uses: isLib ? null : libraries,
+            _authorId: aUser._id
+          });
+        } else {
+          // WARNING: Work-around what appears to be like a race condition
+          // Grab an early copy of the live *mongoose* script object to test against
+          // This should provide more true values to test against and should alleviate a detected
+          // security issue... unless if `toObject` is not present then it will probably fail
+          script = aScript.toObject ? aScript.toObject({ virtuals: true }) : aScript;
+
+          // Script already exists.
+          if (collaboration &&
+            (findMeta(script.meta, 'OpenUserJS.author.0.value') !==
+              findMeta(aMeta, 'OpenUserJS.author.0.value') ||
+                JSON.stringify(findMeta(script.meta, 'OpenUserJS.collaborator.value')) !==
+                  JSON.stringify(collaborators))) {
+
+            aCallback(new statusError({
+              message: 'Forbidden with collaboration',
+              code: 403
+            }), null);
+            return;
+          }
+          aScript.meta = aMeta;
+          aScript.uses = libraries;
+
+          // Okay to update
+          aScript.hash = crypto.createHash('sha512').update(aBuf).digest('hex');
+
+          // Check hash here against old and don't increment Script model date if same.
+          // Allows sync reset for GH and resave/reset to S3 if needed
+          // Covers issue with GitHub cache serving old raw
+          if (script.hash !== aScript.hash) {
+            aScript.updated = new Date();
+          }
+
+          if (findMeta(script.meta, 'UserScript.version.0.value') !==
+            findMeta(aMeta, 'UserScript.version.0.value')) {
+
+            aScript.installsSinceUpdate = 0;
+          }
+        }
+
+        // Attempt to write out data to externals...
+        s3 = new AWS.S3();
+        if (s3) { // NOTE: Should be a noop
+          s3.putObject({
+            Bucket: bucketName,
+            Key: installName,
+            Body: aBuf
+
+          }, function (aErr, aData) {
             if (aErr) {
+              // Forward the error
+              aScript.invalidate('_id', aErr);
+
+              // Localize the error
               console.error(
-                'MongoDB Script save critical error\n' +
+                'S3 putObject critical error\n' +
                   installName + '\n' +
-                    JSON.stringify(aErr, null, ' ')
+                    JSON.stringify(aErr, null, ' ') + '\n' +
+                      aErr.stack
               );
+
               aCallback(new statusError({
-                message: 'Database write error',
+                message: 'Remote storage write error',
                 code: 502
               }), null);
               return;
             }
 
-            // Check for role change and modify accordingly
-            if (aUser.role === 5) {
-              if (!aUser.save) {
-                // Probably using req.session.user which may have gotten serialized.
-                userDoc = aUser;
+            aScript.save(function (aErr, aScript) {
+              var userDoc = null;
 
-                User.findById(aUser._id, function (aErr, aUser) {
-                  if (aErr) {
-                    console.error('MongoDB User findById critical error\n' +
-                      userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
-                        JSON.stringify(aErr, null, ' ')
-                    );
-                    aCallback(new statusError({
-                      message: 'Database find error',
-                      code: 502
-                    }), aScript);
-                    return;
-                  }
+              // Localize the error
+              if (aErr) {
+                console.error(
+                  'MongoDB Script save critical error\n' +
+                    installName + '\n' +
+                      JSON.stringify(aErr, null, ' ')
+                );
+                aCallback(new statusError({
+                  message: 'Database write error',
+                  code: 502
+                }), null);
+                return;
+              }
 
+              // Check for role change and modify accordingly
+              if (aUser.role === 5) {
+                if (!aUser.save) {
+                  // Probably using req.session.user which may have gotten serialized.
+                  userDoc = aUser;
+
+                  User.findById(aUser._id, function (aErr, aUser) {
+                    if (aErr) {
+                      console.error('MongoDB User findById critical error\n' +
+                        userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
+                          JSON.stringify(aErr, null, ' ')
+                      );
+                      aCallback(new statusError({
+                        message: 'Database find error',
+                        code: 502
+                      }), aScript);
+                      return;
+                    }
+
+                    aUser.role = 4;
+                    aUser.save(function (aErr, aUser) {
+                      if (aErr) {
+                        console.warn('MongoDB User save warning error\n' +
+                          userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
+                            JSON.stringify(aErr, null, ' ')
+                        );
+                        // fallthrough
+                      }
+                      aCallback(null, aScript);
+                    });
+                  });
+                } else {
                   aUser.role = 4;
                   aUser.save(function (aErr, aUser) {
                     if (aErr) {
@@ -1682,35 +1752,25 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
                     }
                     aCallback(null, aScript);
                   });
-                });
+                }
               } else {
-                aUser.role = 4;
-                aUser.save(function (aErr, aUser) {
-                  if (aErr) {
-                    console.warn('MongoDB User save warning error\n' +
-                      userDoc.name + ' was NOT role elevated from User to Author with err of:\n' +
-                        JSON.stringify(aErr, null, ' ')
-                    );
-                    // fallthrough
-                  }
-                  aCallback(null, aScript);
-                });
+                aCallback(null, aScript);
               }
-            } else {
-              aCallback(null, aScript);
-            }
+            });
           });
-        });
-      } else {
-        // NOTE: This shouldn't happen
-        console.warn('S3 `new AWS.S3()` critical error');
-        aCallback(new statusError({
-          message: 'Storage critical error',
-          code: 500
-        }), null);
-        return;
-      }
-    });
+        } else {
+          // NOTE: This shouldn't happen
+          console.warn('S3 `new AWS.S3()` critical error');
+          aCallback(new statusError({
+            message: 'Storage critical error',
+            code: 500
+          }), null);
+          return;
+        }
+      });
+
+  });
+
 };
 
 exports.deleteScript = function (aInstallName, aCallback) {
