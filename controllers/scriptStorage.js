@@ -1384,14 +1384,33 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     function (aInnerCallback) {
       // `@icon` validations
       var icon = null;
-      var maxX = 128; // px
-      var maxY = 128; // px
       var buffer = null;
       var fn = null;
       var dimensions = null;
       var matches = null;
       var data = null;
       var rDataURIbase64 = /^data:image\/.+;base64,(.*)$/;
+
+      function acceptedImage(aDimensions) {
+        var maxX = 256; //px
+        var maxY = 256; //px
+
+        switch (aDimensions.type) {
+          case 'gif':
+            // fallthrough
+          case 'jpeg':
+            // fallthrough
+          case 'png':
+            // fallthrough
+          case 'svg':
+            // fallthrough
+          case 'ico':
+            if (dimensions.width <= maxX && dimensions.height <= maxY) {
+              return true;
+            }
+        }
+        return false;
+      }
 
       icon = findMeta(aMeta, 'UserScript.icon.0.value');
       if (icon) {
@@ -1421,9 +1440,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               return;
             }
 
-            if (dimensions.width > maxX || dimensions.height > maxY) {
+            if (!acceptedImage(dimensions)) {
               aInnerCallback(new statusError({
-                message: '`@icon` dimensions are too large.',
+                message: '`@icon` unsupported file type or dimensions are too large.',
                 code: 400
               }), null);
             } else {
@@ -1453,9 +1472,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
                 return;
               }
 
-              if (dimensions.width > maxX || dimensions.height > maxY) {
+              if (!acceptedImage(dimensions)) {
                 aInnerCallback(new statusError({
-                  message: '`@icon` dimensions are too large.',
+                  message: '`@icon` unsupported file type or dimensions are too large.',
                   code: 400
                 }), null);
               } else {
