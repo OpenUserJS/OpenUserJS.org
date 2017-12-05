@@ -1154,6 +1154,7 @@ function isEqualKeyset(aSlaveKeyset, aMasterKeyset) {
 exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var isLib = !!findMeta(aMeta, 'UserLibrary');
   var scriptName = null;
+  var thisName = null;
 
   async.series([
     function (aInnerCallback) {
@@ -1181,7 +1182,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     function (aInnerCallback) {
       // `@name` validations
       var name = null;
-      var thisName = null;
       var masterKeyset = null;
       var slaveKeyset = null;
 
