@@ -1459,7 +1459,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           fn.get(URL.parse(icon), function (aRes) {
             var chunks = [];
             aRes.on('data', function (aChunk) {
+              var buf = null;
               chunks.push(aChunk);
+              buf = Buffer.concat(chunks);
+              if (buf.length > 3048) { // NOTE: KiB
+                aRes.destroy();
+              }
             }).on('end', function () {
               buffer = Buffer.concat(chunks);
               try {
