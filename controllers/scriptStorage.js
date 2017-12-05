@@ -1384,8 +1384,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     function (aInnerCallback) {
       // `@icon` validations
       var icon = null;
-      var maxX = 64; // px
-      var maxY = 64; // px
+      var maxX = 128; // px
+      var maxY = 128; // px
       var buffer = null;
       var fn = null;
       var dimensions = null;
