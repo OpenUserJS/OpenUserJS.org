@@ -43,6 +43,7 @@ Repository | Reference | Recent Version
 [git-rev][git-revGHUrl] | [Documentation][git-revDOCUrl] | [![NPM version][git-revNPMVersionImage]][git-revNPMUrl]
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl][ᴸᴬᴺᴳ][highlight.jsLANGUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
+[image-size][image-sizeGHUrl] | [Documentation][image-sizeDOCUrl] | [![NPM version][image-sizeNPMVersionImage]][image-sizeNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
 [js-beautify][js-beautifyGHUrl] | [Documentation][js-beautifyDOCUrl] | [![NPM version][js-beautifyNPMVersionImage]][js-beautifyNPMUrl]
 [jsdom][jsdomGHUrl] | [Documentation][jsdomDOCUrl] | [![NPM version][jsdomNPMVersionImage]][jsdomNPMUrl]
@@ -248,6 +249,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [highlight.jsNPMUrl]: https://www.npmjs.com/package/highlight.js
 [highlight.jsNPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
 [highlight.jsLANGUrl]: https://github.com/isagalaev/highlight.js/blob/master/docs/css-classes-reference.rst#language-names-and-aliases
+
+[image-sizeNPMUrl]: https://www.npmjs.com/package/image-size
+[image-sizeNPMVersionImage]: https://img.shields.io/npm/v/image-size?style=flat
+[image-sizeGHUrl]: https://github.com/image-size/image-size
+[image-sizeDOCUrl]: https://github.com/image-size/image-size/blob/master/Readme.md
 
 [jQueryNPMUrl]: https://www.npmjs.com/package/jquery
 [jQueryNPMVersionImage]: https://img.shields.io/npm/v/jquery.svg?style=flat

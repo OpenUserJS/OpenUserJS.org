@@ -163,7 +163,7 @@ exports.isFQUrl = function (aString, aMailto, aDataImg) {
   var source = encodeURIComponent(aString);
   var target = null;
 
-  if (protocol && /^https?/.test(protocol)) {
+  if (protocol && /^https?:$/.test(protocol)) {
     if (hostname) {
       target = encodeURIComponent(protocol)
         + encodeURIComponent('//')
