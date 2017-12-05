@@ -13,6 +13,8 @@ var fs = require('fs');
 var util = require('util');
 var _ = require('underscore');
 var URL = require('url');
+var http = require('http');
+var https = require('https');
 var crypto = require('crypto');
 var stream = require('stream');
 var peg = require('pegjs');
@@ -26,6 +28,7 @@ var moment = require('moment');
 var Base62 = require('base62');
 var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 var SPDX = require('spdx-license-ids');
+var sizeOf = require('image-size');
 
 var MongoClient = require('mongodb').MongoClient;
 var ExpressBrute = require('express-brute');
@@ -1381,6 +1384,14 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     function (aInnerCallback) {
       // `@icon` validations
       var icon = null;
+      var maxX = 64; // px
+      var maxY = 64; // px
+      var buffer = null;
+      var fn = null;
+      var dimensions = null;
+      var matches = null;
+      var data = null;
+      var rDataURIbase64 = /^data:image\/.+;base64,(.*)$/;
 
       icon = findMeta(aMeta, 'UserScript.icon.0.value');
       if (icon) {
@@ -1393,9 +1404,71 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           }), null);
           return;
         }
-      }
 
-      aInnerCallback(null);
+        // Test dimensions
+        if (/^data:/.test(icon)) {
+          matches = icon.match(rDataURIbase64);
+          if (matches) {
+            data = matches[1];
+            buffer = new Buffer(data, 'base64');
+            try {
+              dimensions = sizeOf(buffer);
+            } catch (aE) {
+              aInnerCallback(new statusError({
+                message: '`@icon` ' + aE.message,
+                code: aE.code
+              }));
+              return;
+            }
+
+            if (dimensions.width > maxX || dimensions.height > maxY) {
+              aInnerCallback(new statusError({
+                message: '`@icon` dimensions are too large.',
+                code: 400
+              }), null);
+            } else {
+              aInnerCallback(null);
+            }
+          } else {
+            aInnerCallback(new statusError({
+              message: 'Invalid `@icon`',
+              code: 400
+            }), null);
+          }
+        } else {
+          fn = /^http:/.test(icon) ? http : https;
+          fn.get(URL.parse(icon), function (aRes) {
+            var chunks = [];
+            aRes.on('data', function (aChunk) {
+              chunks.push(aChunk);
+            }).on('end', function () {
+              buffer = Buffer.concat(chunks);
+              try {
+                dimensions = sizeOf(buffer);
+              } catch (aE) {
+                aInnerCallback(new statusError({
+                  message: '`@icon` ' + aE.message,
+                  code: aE.code
+                }));
+                return;
+              }
+
+              if (dimensions.width > maxX || dimensions.height > maxY) {
+                aInnerCallback(new statusError({
+                  message: '`@icon` dimensions are too large.',
+                  code: 400
+                }), null);
+              } else {
+                aInnerCallback(null);
+              }
+            }).on('error', function (aErr) {
+              aInnerCallback(aErr);
+            });
+          });
+        }
+      } else {
+        aInnerCallback(null);
+      }
     },
     function (aInnerCallback) {
       // `@supportURL` validations

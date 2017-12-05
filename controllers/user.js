@@ -1546,8 +1546,8 @@ exports.uploadScript = function (aReq, aRes, aNext) {
           scriptStorage.storeScript(aUser, aMeta, bufferConcat, false, function (aErr, aScript) {
             if (aErr || !aScript) {
               statusCodePage(aReq, aRes, aNext, {
-                statusCode: aErr.status.code,
-                statusMessage: aErr.status.message
+                statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+                statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.code)
               });
               return;
             }
@@ -1603,8 +1603,8 @@ exports.submitSource = function (aReq, aRes, aNext) {
 
         if (aErr) {
           statusCodePage(aReq, aRes, aNext, {
-            statusCode: aErr.status.code,
-            statusMessage: aErr.status.message
+            statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+            statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.message)
           });
           return;
         }
