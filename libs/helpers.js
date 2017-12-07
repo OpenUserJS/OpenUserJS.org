@@ -108,7 +108,7 @@ exports.encode = function (aStr) {
   } catch (aE) {
     return encodeURIComponent(aStr);
   }
-}
+};
 
 exports.decode = function (aStr) {
   try {
@@ -118,7 +118,7 @@ exports.decode = function (aStr) {
   } catch (aE) {
     return aStr;
   }
-}
+};
 
 exports.limitRange = function (aMin, aX, aMax, aDefault) {
   var x = Math.max(Math.min(aX, aMax), aMin);
@@ -163,7 +163,7 @@ exports.isFQUrl = function (aString, aMailto, aDataImg) {
   var source = encodeURIComponent(aString);
   var target = null;
 
-  if (protocol && /^https?/.test(protocol)) {
+  if (protocol && /^https?:$/.test(protocol)) {
     if (hostname) {
       target = encodeURIComponent(protocol)
         + encodeURIComponent('//')
@@ -187,7 +187,7 @@ exports.isFQUrl = function (aString, aMailto, aDataImg) {
   }
 
   return false;
-}
+};
 
 // Helper function to ensure value is type Integer `number` or `null`
 // Please be very careful if this is edited
@@ -203,4 +203,4 @@ exports.ensureIntegerOrNull = function (aEnvVar) {
   }
 
   return aEnvVar;
-}
+};

@@ -43,7 +43,9 @@ Repository | Reference | Recent Version
 [git-rev][git-revGHUrl] | [Documentation][git-revDOCUrl] | [![NPM version][git-revNPMVersionImage]][git-revNPMUrl]
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl][ᴸᴬᴺᴳ][highlight.jsLANGUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
+[image-size][image-sizeGHUrl] | [Documentation][image-sizeDOCUrl] | [![NPM version][image-sizeNPMVersionImage]][image-sizeNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
+[js-beautify][js-beautifyGHUrl] | [Documentation][js-beautifyDOCUrl] | [![NPM version][js-beautifyNPMVersionImage]][js-beautifyNPMUrl]
 [jsdom][jsdomGHUrl] | [Documentation][jsdomDOCUrl] | [![NPM version][jsdomNPMVersionImage]][jsdomNPMUrl]
 [jwt-simple][jwt-simpleGHUrl] | [Documentation][jwt-simpleDOCUrl] | [![NPM version][jwt-simpleNPMVersionImage]][jwt-simpleNPMUrl]
 [kerberos][kerberosGHUrl] | [Documentation][kerberosDOCUrl] | [![NPM version][kerberosNPMVersionImage]][kerberosNPMUrl]
@@ -248,11 +250,21 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [highlight.jsNPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
 [highlight.jsLANGUrl]: https://github.com/isagalaev/highlight.js/blob/master/docs/css-classes-reference.rst#language-names-and-aliases
 
+[image-sizeNPMUrl]: https://www.npmjs.com/package/image-size
+[image-sizeNPMVersionImage]: https://img.shields.io/npm/v/image-size?style=flat
+[image-sizeGHUrl]: https://github.com/image-size/image-size
+[image-sizeDOCUrl]: https://github.com/image-size/image-size/blob/master/Readme.md
+
 [jQueryNPMUrl]: https://www.npmjs.com/package/jquery
 [jQueryNPMVersionImage]: https://img.shields.io/npm/v/jquery.svg?style=flat
 [jQueryGHUrl]: https://github.com/jquery/jquery
 [jQueryUrl]: http://jquery.com/
 [jQueryDOCUrl]: http://api.jquery.com/
+
+[js-beautifyNPMUrl]: https://www.npmjs.com/package/js-beautify
+[js-beautifyNPMVersionImage]: https://img.shields.io/npm/v/js-beautify.svg?style=flat
+[js-beautifyGHUrl]: https://github.com/beautify-web/js-beautify
+[js-beautifyDOCUrl]: https://github.com/beautify-web/js-beautify/blob/master/README.md
 
 [jsdomNPMUrl]: https://www.npmjs.com/package/jsdom
 [jsdomNPMVersionImage]: https://img.shields.io/npm/v/jsdom.svg?style=flat

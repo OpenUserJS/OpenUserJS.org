@@ -23,7 +23,12 @@
   {{> includes/header.html }}
   <div class="container-fluid">
     <div class="row">
+      {{#owner}}
+      <div class="container-fluid col-sm-8">
+      {{/owner}}
+      {{^owner}}
       <div class="col-md-12">
+      {{/owner}}
         {{^newScript}}{{> includes/scriptPageHeader.html }}{{/newScript}}
         <pre id="editor">{{source}}</pre>
         {{^readOnly}}
@@ -31,14 +36,33 @@
           <input type="hidden" id="source" name="source" value="" />
           <input type="hidden" name="url" value="{{{url}}}" />
           {{^owner}}<input type="hidden" name="original" value="{{original}}" />{{/owner}}
-          <button class="btn btn-success pull-right" type="submit" id="submit_code">{{#owner}}<i class="fa fa-fw fa-save"></i>{{/owner}}{{^owner}}<i class="fa fa-fw fa-code-fork"></i>{{/owner}} Submit Code{{^owner}} as Fork{{/owner}}</button>
+          <div class="btn-toolbar">
+            <button class="btn btn-success" type="button" id="wrap" disabled="disabled">Wrap</button>
+            <button class="btn btn-success" type="button" id="beautify" disabled="disabled">Beautify</button>
+            <button class="btn btn-success pull-right" type="submit" id="submit_code" disabled="disabled">{{#owner}}<i class="fa fa-fw fa-save"></i>{{/owner}}{{^owner}}<i class="fa fa-fw fa-code-fork"></i>{{/owner}} Submit Code{{^owner}} as Fork{{/owner}}</button>
+          </div>
         </form>
         {{/readOnly}}
+        {{#readOnly}}
+          <div class="btn-toolbar">
+            <button class="btn btn-success" type="button" id="wrap" disabled="disabled">Wrap</button>
+            <button class="btn btn-success" type="button" id="beautify" disabled="disabled">Beautify</button>
+          </div>
+        {{/readOnly}}
       </div>
+      {{#owner}}
+      <div class="container-fluid col-sm-4">
+        {{> includes/scriptAuthorToolsPanel.html }}
+      </div>
+      {{/owner}}
     </div>
   </div>
   {{> includes/footer.html }}
   {{> includes/scripts/lazyIconScript.html }}
+  {{> includes/scripts/clipboard.html }}
+  {{#authorTools}}
+    {{ > includes/scripts/selectSPDX.html}}
+  {{/authorTools}}
   {{> includes/scripts/scriptEditor.html }}
 </body>
 </html>

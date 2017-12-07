@@ -37,9 +37,9 @@
 
       for (i = 0; thisOSISPDX = listOSISPDX[i++];) {
         thisOSISPDX.addEventListener('click', onClick);
-        if (thisOSISPDX.textContent === 'MIT') {
-          // NOTE: Site default
+        if (thisOSISPDX.textContent === '{{script.licensePrimary}}') {
           thisOSISPDX.classList.add('active');
+          thisOSISPDX.click();
         }
       }
     }

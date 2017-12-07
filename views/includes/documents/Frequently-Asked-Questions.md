@@ -24,7 +24,7 @@ This is my reply
 
 ### Q: How do I ensure the correct syntax highlighting of my code snippets?
 
-A: Use markdown like these:
+A: Use markdown like these with named code fences:
 
 Example 1:
 
@@ -36,6 +36,12 @@ var thisIsJavascript = "yahoo!";
 
 ... which renders as:
 ``` js
+var thisIsJavascript = "yahoo!";
+```
+
+... instead of:
+
+```
 var thisIsJavascript = "yahoo!";
 ```
 
@@ -82,7 +88,34 @@ body {
 </pre>
 
 
-The smaller the code snippet, or having a flawed Code snippet, the more likely it will automatically pick the wrong highlighting with code fences, **or worse no highlighting**... so it is best to recommend coercing a snippet to the correct type.
+The smaller the code snippet, or having a flawed Code snippet, the more likely it will automatically pick the wrong highlighting with unnamed code fences, **or worse no highlighting**... so it is best to recommend coercing a snippet to the correct type.
+
+### Q: What is a good way to present a Code change to an Author?
+
+Presuming there isn't a referenced [SCM][wikipediaSCM], like GitHub in the [`@supportURL`][oujsUserBlockSupportURL],  behind the presentational script here you could utilize `git diff file.original file.changed > change.diff`.
+
+Take for example a simple `RFC 2606§3 - Hello, World!` script. Fixing any changes to the `file.changed` you could present the difference with a snippet in a code fence of type `diff` which renders like this:
+
+Fix typo.
+
+``` diff
+diff --git "a/RFC_2606\302\2473_-_Hello,_World!.user.js.original" "b/RFC_2606\302\2473_-_Hello,_World!.user.js.changed"
+index a8a6dcc..fdf7833 100644
+--- "a/RFC_2606\302\2473_-_Hello,_World!.user.js.original"
++++ "b/RFC_2606\302\2473_-_Hello,_World!.user.js.changed"
+@@ -7,6 +7,6 @@
+ // @version       0.0.0
+ // ==/UserScript==
+
+-  alert('Helo, World!');
++  alert('Hello, World!');
+
+ })();
+```
+
+... plus it automatically shows the starting line number within a few lines of where you are mentioning it. Simply count   up from the starting line in `@@ -7,6 +7,6 @@` to the line affected. In this samples case it is line 10 where the change is to occur, e.g. 7 + 3 = 10.
+
+You should, at the very least, use a pair of markdown back ticks, e.g. <code>`</code>, around the Code change to ensure proper visibility especially if there is HTML present which normally gets sanitized and possibly rendered. Named Code fences allow for greater visual improvement and understanding.
 
 ### Q: Does OpenUserJS.org have meta?
 
@@ -95,7 +128,7 @@ Multiple forms exist for various purposes:
         * This is the preferred route and goes directly to the necessary items needed for updating. This route is currently unmanaged. If you want your update checks faster most of the time this is the route to choose.
     * [https://openuserjs.org/**install**/username/scriptname.meta.js][metaJSExample2]
         * This is the legacy route and indirectly goes to the necessary items needed for updating. This route is currently managed. If you want your script update checks to potentially not come during high traffic times this is the route to choose.
-    * One of these is currently required when OpenUserJS is in lockdown mode. If any script points to an OUJS .user.js url it will not be served. If it is absent it will not be served. Occasionally a script and/or .user.js engine might put out a bugged version and in order to ensure minimal site disruption OUJS may optionally toggle into lockdown mode. Hopefully these instances will be few but there is existing precedence for this use case. Please see [About][oujsAbout] for current site status and your Author Tools panel on each of your scripts.
+    * One of these is currently required when OpenUserJS is in lockdown mode. If any script points to an OUJS .user.js url it will not be served. If it is absent it will not be served. Occasionally a script and/or .user.js engine might put out a bugged version and in order to ensure minimal site disruption OUJS may optionally toggle into lockdown mode. Hopefully these instances will be few but there is existing precedence for this use case. Please see [About][oujsAbout] for current site status and your Author Tools panel on each of your scripts source page.
     * You must choose. But choose wisely, for as the true .meta.js will bring you life, a false one will take it from you.
 2. `.meta.json` - This is the modern [JSON][JSONHomepage] usage that outputs the information we collect from the metadata blocks.
     * [https://openuserjs.org/**meta**/username/scriptname.meta.json][metaJSONExample]
@@ -107,7 +140,7 @@ The `username` and `scriptname` "folders" are usually specially formattted and c
 
 A Userscript Unit Test is available to demonstrate and test these features at [oujs - Meta View][oujsMetaViewExample] for a graphical representation of these meta routines.
 
-### Q: Is there a way to not to count script updates with this sites install counter?
+### Q: Is there a way to not count script updates with this sites install counter?
 
 A: Yes, use the raw source route like this in the UserScript metadata block:
 
@@ -128,3 +161,5 @@ As an added advantage and incentive to utilizing this source route *(URL path)* 
 [oujsMetaViewExample]: https://openuserjs.org/scripts/Marti/oujs_-_Meta_View
 [oujsAbout]: https://openuserjs.org/about
 [JSONHomepage]: http://json.org/
+[wikipediaSCM]: https://www.wikipedia.org/wiki/Version_control
+[oujsUserBlockSupportURL]: http://openuserjs.org/user/add/scripts#user-block-supporturl

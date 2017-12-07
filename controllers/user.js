@@ -15,6 +15,9 @@ var async = require('async');
 var _ = require('underscore');
 var util = require('util');
 
+var SPDX = require('spdx-license-ids');
+var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
+
 //--- Model inclusions
 var Comment = require('../models/comment').Comment;
 var Script = require('../models/script').Script;
@@ -55,6 +58,8 @@ var strategies = require('./strategies.json');
 var settings = require('../models/settings.json');
 
 var removeReasons = require('../views/includes/userModals.json').removeReasons;
+
+var blockSPDX = require('./blockSPDX');
 
 //---
 
@@ -1204,6 +1209,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var githubUserId = null;
   var githubRepoName = null;
+  var githubDefaultBranch = null;
+  var githubPathName = null;
+  var githubPathExt = null;
   var githubBlobPath = null;
 
   // Session
@@ -1218,6 +1226,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
 
   options.githubRepoName = githubRepoName = aReq.body.repo || aReq.query.repo;
+  options.githubDefaultBranch = githubDefaultBranch = aReq.body.default_branch || aReq.query.default_branch;
+  options.githubPathName = githubPathName = aReq.body.pathname || aReq.query.pathname;
+  options.githubPathExt = githubPathExt = aReq.body.pathext || aReq.query.pathext;
   options.githubBlobPath = githubBlobPath = aReq.body.path || aReq.query.path;
 
   if (!(githubUserId && githubRepoName && githubBlobPath)) {
@@ -1275,25 +1286,25 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
       // Double check file size.
       if (aBlobUtf8.length > settings.maximum_upload_script_size) {
-        aCallback(util.format('File size is larger than maximum (%s bytes).',
-          settings.maximum_upload_script_size));
+        aCallback(new statusError({
+          message: util.format('File size is larger than maximum (%s bytes).',
+            settings.maximum_upload_script_size),
+          code: 400
+        }));
         return;
       }
 
       onScriptStored = function (aErr, aScript) {
         if (aErr) {
-          statusCodePage(aReq, aRes, aNext, {
-            statusCode: aErr.status.code,
-            statusMessage: aErr.status.message
-          });
+          aCallback(aErr);
           return;
         }
 
         if (!aScript) {
-          statusCodePage(aReq, aRes, aNext, {
-            statusCode: 500, // NOTE: Watchpoint
-            statusMessage: 'Error while importing script.'
-          });
+          aCallback(new statusError({
+            message: 'Error while importing script.',
+            code: 500 // NOTE: Watchpoint.
+          }));
           return;
         }
 
@@ -1329,7 +1340,11 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           }
           scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, false, onScriptStored);
         } else {
-          aCallback('Specified file does not contain the proper metadata blocks.');
+          aCallback(new statusError({
+            message: 'Specified file does not contain the proper metadata blocks.',
+            code: 400
+          }));
+          return;
         }
 
       } else if (options.javascriptBlob.isJSLibrary) {
@@ -1360,25 +1375,52 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
           }
           scriptStorage.storeScript(authedUser, blocks, aBlobUtf8, false, onScriptStored);
         } else {
-          aCallback('Specified file does not contain the proper metadata blocks.');
+          aCallback(new statusError({
+            message: 'Specified file does not contain the proper metadata blocks.',
+            code: 400
+          }));
+          return;
         }
 
-
-
       } else {
-        aCallback('Invalid filetype.');
+        aCallback(new statusError({
+          message: 'Invalid filetype.',
+          code: 400
+        }));
+        return;
       }
     },
   ], function (aErr) {
     var script = null;
 
     if (aErr) {
-      console.error(aErr);
-      console.error(githubUserId, githubRepoName, githubBlobPath);
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 400,
-        statusMessage: aErr
-      });
+      console.error([
+        aErr,
+        authedUser.name + ' ' + githubUserId + ' ' + githubRepoName + ' ' + githubBlobPath
+
+      ].join('\n'));
+
+      if (!(aErr instanceof String)) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+          statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.message),
+          isCustomView: true,
+          statusData: {
+            isGHImport: true,
+            utf_pathname: githubPathName,
+            utf_pathext: githubPathExt,
+            user: encodeURIComponent(githubUserId),
+            repo: encodeURIComponent(githubRepoName),
+            default_branch: encodeURIComponent(githubDefaultBranch),
+            path: encodeURIComponent(githubBlobPath)
+          }
+        });
+      } else {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500, // NOTE: Watchpoint
+          statusMessage: aErr
+        });
+      }
       return;
     }
 
@@ -1504,8 +1546,8 @@ exports.uploadScript = function (aReq, aRes, aNext) {
           scriptStorage.storeScript(aUser, aMeta, bufferConcat, false, function (aErr, aScript) {
             if (aErr || !aScript) {
               statusCodePage(aReq, aRes, aNext, {
-                statusCode: aErr.status.code,
-                statusMessage: aErr.status.message
+                statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+                statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.code)
               });
               return;
             }
@@ -1561,8 +1603,8 @@ exports.submitSource = function (aReq, aRes, aNext) {
 
         if (aErr) {
           statusCodePage(aReq, aRes, aNext, {
-            statusCode: aErr.status.code,
-            statusMessage: aErr.status.message
+            statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+            statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.message)
           });
           return;
         }
@@ -1805,6 +1847,7 @@ exports.editScript = function (aReq, aRes, aNext) {
   var installNameBase = null;
   var isLib = aReq.params.isLib;
   var tasks = [];
+  var nowDate = null;
 
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
@@ -1832,6 +1875,12 @@ exports.editScript = function (aReq, aRes, aNext) {
         //
         var script = null;
         var scriptOpenIssueCountQuery = null;
+        var collaborators = null;
+        var licenses = null;
+        var licensePrimary = null;
+        var copyrights = null;
+        var copyrightPrimary = null;
+        var sinceDate = null;
 
         //---
         if (aErr || !aScript) {
@@ -1841,7 +1890,34 @@ exports.editScript = function (aReq, aRes, aNext) {
 
         // Script
         options.script = script = modelParser.parseScript(aScript);
-        options.isOwner = authedUser && authedUser._id == script._authorId;
+
+        collaborators = scriptStorage.findMeta(aScript.meta, 'OpenUserJS.collaborator.value');
+        if (!collaborators) {
+          collaborators = []; // NOTE: Watchpoint
+        }
+
+        licenses = scriptStorage.findMeta(aScript.meta, 'UserScript.license.value');
+        if (licenses) {
+          licensePrimary = licenses[licenses.length - 1];
+          script.licensePrimary = licensePrimary.substr(0, (licensePrimary.indexOf(';') > -1
+            ? licensePrimary.indexOf(';')
+            : undefined)).replace(/\+$/, '');
+        }
+
+        copyrights = scriptStorage.findMeta(aScript.meta, 'UserScript.copyright.value');
+        if (copyrights) {
+          copyrightPrimary = copyrights[copyrights.length - 1];
+          script.copyrightPrimary = copyrightPrimary;
+        } else {
+          if (authedUser) {
+            sinceDate = new Date(script._sinceISOFormat);
+            script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name
+              + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+          }
+        }
+
+        options.isOwner = authedUser && (authedUser._id == script._authorId
+          || collaborators.indexOf(authedUser.name) > -1);
         modelParser.renderScript(script);
         script.installNameSlug = installNameBase;
         script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
@@ -1854,6 +1930,22 @@ exports.editScript = function (aReq, aRes, aNext) {
         script.scriptRawPageXUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
           + scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
             (isLib ? '.min.js#' : '.min.user.js#');
+        script.scriptPermalinkMetaPageUrl = 'https://' + aReq.get('host') +
+          script.scriptMetaPageUrl;
+
+        script.scriptAcceptableOSILicense = [];
+        SPDXOSI.forEach(function (aElement, aIndex, aArray) {
+          if (blockSPDX.indexOf(aElement) === -1) {
+            script.scriptAcceptableOSILicense.push({
+              shortIdSPDX: aElement
+            });
+          }
+        });
+
+        // User
+        if (options.isOwner) {
+          options.authorTools = {};
+        }
 
         // Page metadata
         pageMetadata(options);
@@ -1871,6 +1963,29 @@ exports.editScript = function (aReq, aRes, aNext) {
         async.parallel(tasks, asyncComplete);
       });
   } else {
+    options.authorTools = {};
+    options.isScriptViewSourcePage = true;
+
+    options.script = {};
+    options.script.isLib = isLib;
+
+    options.script.licensePrimary = 'MIT'; // NOTE: Site default
+
+    if (authedUser) {
+      nowDate = new Date();
+      options.script.copyrightPrimary = nowDate.getFullYear() + ', ' + authedUser.name
+        + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+    }
+
+    options.script.scriptAcceptableOSILicense = [];
+    SPDXOSI.forEach(function (aElement, aIndex, aArray) {
+      if (blockSPDX.indexOf(aElement) === -1) {
+        options.script.scriptAcceptableOSILicense.push({
+          shortIdSPDX: aElement
+        });
+      }
+    });
+
     //---
     async.parallel(tasks, asyncComplete);
   }

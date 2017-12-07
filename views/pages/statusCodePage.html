@@ -44,13 +44,20 @@
                 {{#isAdminSessionLengthView}}
                   Session Length: <strong>{{length}}</strong>
                 {{/isAdminSessionLengthView}}
+                {{#isGHImport}}
+                  {{{statusMessage}}}<br /><a href="https://github.com/{{user}}/{{repo}}/tree/{{default_branch}}/{{path}}"><b>{{utf_pathname}}</b>{{utf_pathext}}</a>
+                {{/isGHImport}}
               {{/statusData}}
             {{/isCustomView}}
             {{^isCustomView}}
               {{{statusMessage}}}
             {{/isCustomView}}
             </p>
-            <p class="text-center"> <a id="action" href="#"></a></p>
+            <div class="text-center">
+              <ul class="nav navpills">
+                <li><a id="action" href="#"></a></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -60,6 +67,10 @@
   <script type="text/javascript">
     (function () {
       'use strict';
+
+      function onClickReload(aEv) {
+        window.location.reload(false);
+      }
 
       function onClickClose(aEv) {
         window.close();
@@ -76,8 +87,13 @@
             thisNode.innerHTML = '<i class="fa fa-arrow-circle-left"></i> Go Back';
             thisNode.addEventListener('click', onClickGoBack);
           } else {
-            thisNode.innerHTML = '<i class="fa fa-window-close"></i> Close window';
-            thisNode.addEventListener('click', onClickClose);
+            if (window.opener) {
+              thisNode.innerHTML = '<i class="fa fa-window-close"></i> Close window';
+              thisNode.addEventListener('click', onClickClose);
+            } else {
+              thisNode.innerHTML = '<i class="fa fa-refresh"></i> Reload window';
+              thisNode.addEventListener('click', onClickReload);
+            }
           }
         }
       }
