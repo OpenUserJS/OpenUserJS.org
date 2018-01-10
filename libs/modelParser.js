@@ -384,7 +384,7 @@ var parseScript = function (aScript) {
   parseDateProperty(script, '_since'); // Virtual
 
   // Hash
-  script.hashShort = script.hash.substr(0, 7);
+  script.hashShort = script.hash ? script.hash.substr(0, 7) : 'undefined';
 
   if (script._since && script.updated && script._since.toString() !== script.updated.toString()) {
     script.isUpdated = true;
