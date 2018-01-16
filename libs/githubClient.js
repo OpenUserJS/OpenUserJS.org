@@ -81,7 +81,7 @@ var githubUserContentGetBlobAsUtf8 = function (aMsg, aCallback) {
 github.usercontent.getBlobAsUtf8 = githubUserContentGetBlobAsUtf8;
 
 var githubGitDataIsJavascriptBlob = function (aBlob) {
-  return aBlob.path.match(/\.js$/);
+  return (aBlob.path.match(/\.js$/) && !aBlob.path.match(/\.meta\.js$/));
 };
 github.gitdata.isJavascriptBlob = githubGitDataIsJavascriptBlob;
 
