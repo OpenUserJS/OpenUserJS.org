@@ -4,7 +4,7 @@
   "version": "0.2.4",
   "main": "app",
   "dependencies": {
-    "ace-builds": "git://github.com/ajaxorg/ace-builds#ba3b91e",
+    "ace-builds": "git://github.com/ajaxorg/ace-builds#fb2286e",
     "ansi-colors": "1.0.1",
     "async": "2.6.0",
     "aws-sdk": "2.176.0",
