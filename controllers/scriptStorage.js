@@ -1381,119 +1381,121 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
       aInnerCallback(null);
     },
-    function (aInnerCallback) {
-      // `@icon` validations
-      var icon = null;
-      var buffer = null;
-      var fn = null;
-      var dimensions = null;
-      var matches = null;
-      var data = null;
-      var rDataURIbase64 = /^data:image\/.+;base64,(.*)$/;
-
-      function acceptedImage(aDimensions) {
-        var maxX = 256; //px
-        var maxY = 256; //px
-
-        switch (aDimensions.type) {
-          case 'gif':
-            // fallthrough
-          case 'jpeg':
-            // fallthrough
-          case 'png':
-            // fallthrough
-          case 'svg':
-            // fallthrough
-          case 'ico':
-            if (dimensions.width <= maxX && dimensions.height <= maxY) {
-              return true;
-            }
-        }
-        return false;
-      }
-
-      icon = findMeta(aMeta, 'UserScript.icon.0.value');
-      if (icon) {
-        if (!isFQUrl(icon, false, true)) {
-
-          // Not a web url... reject
-          aInnerCallback(new statusError({
-            message: '`@icon` not a web url or image data URI in the UserScript metadata block.',
-            code: 400
-          }), null);
-          return;
-        }
-
-        // Test dimensions
-        if (/^data:/.test(icon)) {
-          matches = icon.match(rDataURIbase64);
-          if (matches) {
-            data = matches[1];
-            buffer = new Buffer(data, 'base64');
-            try {
-              dimensions = sizeOf(buffer);
-            } catch (aE) {
-              aInnerCallback(new statusError({
-                message: '`@icon` ' + aE.message,
-                code: aE.code
-              }));
-              return;
-            }
-
-            if (!acceptedImage(dimensions)) {
-              aInnerCallback(new statusError({
-                message: '`@icon` unsupported file type or dimensions are too large.',
-                code: 400
-              }), null);
-            } else {
-              aInnerCallback(null);
-            }
-          } else {
-            aInnerCallback(new statusError({
-              message: 'Invalid `@icon`',
-              code: 400
-            }), null);
-          }
-        } else {
-          fn = /^http:/.test(icon) ? http : https;
-          fn.get(URL.parse(icon), function (aRes) {
-            var chunks = [];
-            aRes.on('data', function (aChunk) {
-              var buf = null;
-              chunks.push(aChunk);
-              buf = Buffer.concat(chunks);
-              if (buf.length > 3048) { // NOTE: KiB
-                aRes.destroy();
-              }
-            }).on('end', function () {
-              buffer = Buffer.concat(chunks);
-              try {
-                dimensions = sizeOf(buffer);
-              } catch (aE) {
-                aInnerCallback(new statusError({
-                  message: '`@icon` ' + aE.message,
-                  code: aE.code
-                }));
-                return;
-              }
-
-              if (!acceptedImage(dimensions)) {
-                aInnerCallback(new statusError({
-                  message: '`@icon` unsupported file type or dimensions are too large.',
-                  code: 400
-                }), null);
-              } else {
-                aInnerCallback(null);
-              }
-            }).on('error', function (aErr) {
-              aInnerCallback(aErr);
-            });
-          });
-        }
-      } else {
-        aInnerCallback(null);
-      }
-    },
+//
+//  See #1323
+//     function (aInnerCallback) {
+//       // `@icon` validations
+//       var icon = null;
+//       var buffer = null;
+//       var fn = null;
+//       var dimensions = null;
+//       var matches = null;
+//       var data = null;
+//       var rDataURIbase64 = /^data:image\/.+;base64,(.*)$/;
+//
+//       function acceptedImage(aDimensions) {
+//         var maxX = 256; //px
+//         var maxY = 256; //px
+//
+//         switch (aDimensions.type) {
+//           case 'gif':
+//             // fallthrough
+//           case 'jpeg':
+//             // fallthrough
+//           case 'png':
+//             // fallthrough
+//           case 'svg':
+//             // fallthrough
+//           case 'ico':
+//             if (dimensions.width <= maxX && dimensions.height <= maxY) {
+//               return true;
+//             }
+//         }
+//         return false;
+//       }
+//
+//       icon = findMeta(aMeta, 'UserScript.icon.0.value');
+//       if (icon) {
+//         if (!isFQUrl(icon, false, true)) {
+//
+//           // Not a web url... reject
+//           aInnerCallback(new statusError({
+//             message: '`@icon` not a web url or image data URI in the UserScript metadata block.',
+//             code: 400
+//           }), null);
+//           return;
+//         }
+//
+//         // Test dimensions
+//         if (/^data:/.test(icon)) {
+//           matches = icon.match(rDataURIbase64);
+//           if (matches) {
+//             data = matches[1];
+//             buffer = new Buffer(data, 'base64');
+//             try {
+//               dimensions = sizeOf(buffer);
+//             } catch (aE) {
+//               aInnerCallback(new statusError({
+//                 message: '`@icon` ' + aE.message,
+//                 code: aE.code
+//               }));
+//               return;
+//             }
+//
+//             if (!acceptedImage(dimensions)) {
+//               aInnerCallback(new statusError({
+//                 message: '`@icon` unsupported file type or dimensions are too large.',
+//                 code: 400
+//               }), null);
+//             } else {
+//               aInnerCallback(null);
+//             }
+//           } else {
+//             aInnerCallback(new statusError({
+//               message: 'Invalid `@icon`',
+//               code: 400
+//             }), null);
+//           }
+//         } else {
+//           fn = /^http:/.test(icon) ? http : https;
+//           fn.get(URL.parse(icon), function (aRes) {
+//             var chunks = [];
+//             aRes.on('data', function (aChunk) {
+//               var buf = null;
+//               chunks.push(aChunk);
+//               buf = Buffer.concat(chunks);
+//               if (buf.length > 3048) { // NOTE: KiB
+//                 aRes.destroy();
+//               }
+//             }).on('end', function () {
+//               buffer = Buffer.concat(chunks);
+//               try {
+//                 dimensions = sizeOf(buffer);
+//               } catch (aE) {
+//                 aInnerCallback(new statusError({
+//                   message: '`@icon` ' + aE.message,
+//                   code: aE.code
+//                 }));
+//                 return;
+//               }
+//
+//               if (!acceptedImage(dimensions)) {
+//                 aInnerCallback(new statusError({
+//                   message: '`@icon` unsupported file type or dimensions are too large.',
+//                   code: 400
+//                 }), null);
+//               } else {
+//                 aInnerCallback(null);
+//               }
+//             }).on('error', function (aErr) {
+//               aInnerCallback(aErr);
+//             });
+//           });
+//         }
+//       } else {
+//         aInnerCallback(null);
+//       }
+//     },
     function (aInnerCallback) {
       // `@supportURL` validations
       var supportURL = null;
