@@ -1430,6 +1430,14 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           matches = icon.match(rDataURIbase64);
           if (matches) {
             data = matches[1];
+            if (data <= 0) {
+              aInnerCallback(new statusError({
+                message: '`@icon` has no data',
+                code: 400
+              }));
+              return;
+            }
+
             buffer = new Buffer(data, 'base64');
             try {
               dimensions = sizeOf(buffer);
@@ -1441,7 +1449,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               return;
             }
 
-            if (!acceptedImage(dimensions)) {
+            if (!dimensions || !acceptedImage(dimensions)) {
               aInnerCallback(new statusError({
                 message: '`@icon` unsupported file type or dimensions are too large.',
                 code: 400
@@ -1460,7 +1468,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
           // Workaround for #1323
           if (fn === https) {
-            aInnerCallback(null); // NOTE: Suspending further checks
+            aInnerCallback(null); // NOTE: Suspend further checks
             return;
           }
           // /Workaround for #1323
@@ -1476,6 +1484,15 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               }
             }).on('end', function () {
               buffer = Buffer.concat(chunks);
+
+              if (buffer.length <= 0) {
+                aInnerCallback(new statusError({
+                  message: '`@icon` has no data',
+                  code: 400
+                }));
+                return;
+              }
+
               try {
                 dimensions = sizeOf(buffer);
               } catch (aE) {
@@ -1486,7 +1503,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
                 return;
               }
 
-              if (!acceptedImage(dimensions)) {
+              if (!dimensions || !acceptedImage(dimensions)) {
                 aInnerCallback(new statusError({
                   message: '`@icon` unsupported file type or dimensions are too large.',
                   code: 400
