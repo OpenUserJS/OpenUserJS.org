@@ -1467,10 +1467,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           fn = /^http:/.test(icon) ? http : https;
 
           // Workaround for #1323
-          if (fn === https) {
-            aInnerCallback(null); // NOTE: Suspend further checks
-            return;
-          }
+          aInnerCallback(null); // NOTE: Suspend further checks
+          return;
           // /Workaround for #1323
 
           fn.get(URL.parse(icon), function (aRes) {
