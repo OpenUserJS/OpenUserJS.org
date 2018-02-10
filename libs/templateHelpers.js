@@ -126,7 +126,11 @@ exports.statusCodePage = function (aReq, aRes, aNext, aOptions) {
   pageMetadata(aOptions, [aOptions.statusCode, aOptions.statusMessage], aOptions.statusMessage);
 
   //---
-  aRes.status(aOptions.statusCode).render('pages/statusCodePage', aOptions);
+  if (typeof aOptions.statusCode !== 'number') {
+    aRes.status(400).render('pages/statusCodePage', aOptions);
+  } else {
+    aRes.status(aOptions.statusCode).render('pages/statusCodePage', aOptions);
+  }
 };
 
 // Add page metadata, containing title, description and keywords.

@@ -1465,12 +1465,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           }
         } else {
           fn = /^http:/.test(icon) ? http : https;
-
-          // Workaround for #1323
-          aInnerCallback(null); // NOTE: Suspend further checks
-          return;
-          // /Workaround for #1323
-
           fn.get(URL.parse(icon), function (aRes) {
             var chunks = [];
             aRes.on('data', function (aChunk) {
@@ -1509,11 +1503,11 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               } else {
                 aInnerCallback(null);
               }
-            }).on('error', function (aErr) {
+            }).on('error', function (aErr) { // NOTE: response error trap
               aInnerCallback(aErr);
             });
-          }).on('error', function (aErr) {
-            aInnerCallback(aErr); // WARNING: See #1323
+          }).on('error', function (aErr) { // NOTE: request error trap
+            aInnerCallback(aErr);
           });
         }
       } else {
