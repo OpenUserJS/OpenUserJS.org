@@ -13,8 +13,7 @@ var fs = require('fs');
 var util = require('util');
 var _ = require('underscore');
 var URL = require('url');
-var http = require('http');
-var https = require('https');
+var request = require('request');
 var crypto = require('crypto');
 var stream = require('stream');
 var peg = require('pegjs');
@@ -127,7 +126,7 @@ if (isPro) {
     secretAccessKey: 'fakeKey',
     httpOptions: {
       proxy: DEV_AWS_URL,
-      agent: require('http').globalAgent
+      agent: require('http').globalAgent // TODO: Move this up eventually
     }
   });
 }
@@ -1391,6 +1390,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       var matches = null;
       var data = null;
       var rDataURIbase64 = /^data:image\/.+;base64,(.*)$/;
+      var req = null;
+      var chunks = null;
 
       function acceptedImage(aDimensions) {
         var maxX = 256; //px
@@ -1398,6 +1399,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
         switch (aDimensions.type) {
           case 'gif':
+            // fallthrough
+          case 'jpg':
             // fallthrough
           case 'jpeg':
             // fallthrough
@@ -1464,17 +1467,24 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             }), null);
           }
         } else {
-          fn = /^http:/.test(icon) ? http : https;
-          fn.get(URL.parse(icon), function (aRes) {
-            var chunks = [];
-            aRes.on('data', function (aChunk) {
+          chunks = [];
+          req = request.get(icon)
+            .on('response', function (aRes) {
+              // TODO: Probably going to be something here
+            })
+            .on('error', function (aErr) {
+              aInnerCallback(aErr);
+            })
+            .on('data', function (aChunk) {
               var buf = null;
+
               chunks.push(aChunk);
               buf = Buffer.concat(chunks);
               if (buf.length > 3048) {
-                aRes.destroy();
+                req.abort();
               }
-            }).on('end', function () {
+            })
+            .on('end', function () {
               buffer = Buffer.concat(chunks);
 
               if (buffer.length <= 0) {
@@ -1503,12 +1513,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               } else {
                 aInnerCallback(null);
               }
-            }).on('error', function (aErr) { // NOTE: response error trap
-              aInnerCallback(aErr);
             });
-          }).on('error', function (aErr) { // NOTE: request error trap
-            aInnerCallback(aErr);
-          });
         }
       } else {
         aInnerCallback(null);
