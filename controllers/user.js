@@ -1651,7 +1651,7 @@ exports.submitSource = function (aReq, aRes, aNext) {
     });
   }
 
-  source = new Buffer(aReq.body.source);
+  source = Buffer.from(aReq.body.source);
   uri = aReq.body.url;
 
   if (isLib) {

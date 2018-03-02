@@ -359,7 +359,7 @@ exports.getSource = function (aReq, aCallback) {
         } else {
           bufferStream = new stream.PassThrough();
 
-          bufferStream.end(new Buffer(aData.Body));
+          bufferStream.end(Buffer.from(aData.Body));
 
           // Get the script
           aCallback(aScript, bufferStream);
@@ -1441,7 +1441,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               return;
             }
 
-            buffer = new Buffer(data, 'base64');
+            buffer = Buffer.from(data, 'base64');
             try {
               dimensions = sizeOf(buffer);
             } catch (aE) {

@@ -45,7 +45,7 @@ function fetchRaw(aHost, aPath, aCallback) {
       var bufs = [];
       if (aRes.statusCode !== 200) {
         console.warn(aRes.statusCode);
-        return aCallback([new Buffer('')]);
+        return aCallback([Buffer.from('')]);
       }
       else {
         aRes.on('data', function (aData) {

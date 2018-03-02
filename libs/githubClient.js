@@ -49,7 +49,7 @@ var githubGitDataGetBlobAsUtf8 = function (aMsg, aCallback) {
     function (aBlob, aCallback) {
       var content = aBlob.content;
       if (aBlob.encoding === 'base64') {
-        var buf = new Buffer(content, 'base64');
+        var buf = Buffer.from(content, 'base64');
         content = buf.toString('utf8');
       }
       aCallback(null, content);
