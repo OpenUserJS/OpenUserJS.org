@@ -439,7 +439,7 @@ ul.flaggedList {
   background: transparent url("/images/ua/rekonq16.png") no-repeat left top;
   color: transparent;
 }
-.ua-safari {
+.ua-safari, .ua-mobile-safari {
   background: transparent url("/images/ua/safari16.png") no-repeat left top;
   color: transparent;
 }
