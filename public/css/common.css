@@ -455,6 +455,10 @@ ul.flaggedList {
   background: transparent url("/images/ua/uc16.png") no-repeat left top;
   color: transparent;
 }
+.ua-vivaldi {
+  background: transparent url("/images/ua/vivaldi16.png") no-repeat left top;
+  color: transparent;
+}
 .ua-yandex-browser {
   background: transparent url("/images/ua/yandex16.png") no-repeat left top;
   color: transparent;
