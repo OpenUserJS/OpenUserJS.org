@@ -343,6 +343,67 @@ exports.adminProcessCloneView = function (aReq, aRes, aNext) {
   });
 }
 
+exports.adminSessionActiveView = function (aReq, aRes, aNext) {
+  if (!userIsAdmin(aReq)) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'This page is only accessible by admins.'
+    });
+    return;
+  }
+
+  var store = aReq.sessionStore;
+  var sessionColl = store.db.collection('sessions');
+
+  sessionColl.find({
+  }, function (aErr, aUserSessions) {
+    if (aErr) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 520,
+        statusMessage: 'Unknown error with `sessionColl.find`.'
+      });
+      return;
+    }
+
+    if (!aUserSessions) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 200,
+        statusMessage: 'No sessions'
+      });
+      return;
+    }
+
+    aUserSessions.toArray(function (aErr, aSessionsData) {
+      var names = [];
+
+      if (aErr) {
+        // We want to know what the error value is in logging review
+        console.error('Unknown error with `toArray`.\n' + aErr);
+
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 520,
+          statusMessage: 'Unknown error with `toArray`.'
+        });
+        return;
+      }
+
+      aSessionsData.forEach(function (aElement, aIndex) {
+        var data = JSON.parse(aElement.session);
+
+        names.push(data.user.name);
+      });
+
+      // Currently sort and output in simplified JSON
+      aRes.set('Content-Type', 'application/json; charset=UTF-8');
+      aRes.write(JSON.stringify(names.sort(function (aArg1, aArg2) {
+        return aArg1.toLowerCase().localeCompare(aArg2.toLowerCase());
+      }), null, isPro ? '' : ' '));
+      aRes.end();
+
+    });
+  });
+};
+
 exports.adminSessionLengthView = function (aReq, aRes, aNext) {
   if (!userIsAdmin(aReq)) {
     statusCodePage(aReq, aRes, aNext, {
