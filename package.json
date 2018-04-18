@@ -52,7 +52,7 @@
     "passport-instagram": "1.0.0",
     "passport-linkedin": "1.0.0",
     "passport-reddit": "0.2.4",
-    "passport-steam": "git://github.com/OpenUserJs/passport-steam#OpenID2",
+    "passport-steam": "1.0.9",
     "passport-tumblr": "0.1.2",
     "passport-twitter": "1.0.4",
     "passport-windowslive": "1.0.2",
