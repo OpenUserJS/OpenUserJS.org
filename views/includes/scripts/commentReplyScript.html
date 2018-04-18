@@ -24,8 +24,8 @@
       }
 
       value += '[Re](' + url + '): ';
-      value += '@' + authorNode.textContent + ': ';
-      value += '  \n';
+      value += authorNode.textContent ? '@' + authorNode.textContent + ': ' : '';
+      value += '\n';
 
       commentNode.value = value;
       commentNode.focus();
