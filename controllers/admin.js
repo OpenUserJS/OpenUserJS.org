@@ -465,7 +465,7 @@ exports.adminNpmListView = function (aReq, aRes, aNext) {
     return;
   }
 
-  exec('npm ls --json', function (aErr, aStdout, aStderr) {
+  exec('npm ls --json', { maxBuffer: 400 * 1024 }, function (aErr, aStdout, aStderr) {
     var stdout = null;
 
     if (aErr) {
