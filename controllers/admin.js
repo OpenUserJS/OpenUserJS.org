@@ -390,7 +390,9 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
       aSessionsData.forEach(function (aElement, aIndex) {
         var data = JSON.parse(aElement.session);
 
-        names.push(data.user.name);
+        if (data && data.user) {
+          names.push(data.user.name);
+        }
       });
 
       // Currently sort and output in simplified JSON
