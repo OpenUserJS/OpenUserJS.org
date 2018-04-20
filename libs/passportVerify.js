@@ -11,6 +11,9 @@ var User = require('../models/user').User;
 var findDeadorAlive = require('../libs/remove').findDeadorAlive;
 var userRoles = require('../models/userRoles.json');
 
+//--- Configuration inclusions
+var allStrategies = require('../controllers/strategies.json');
+
 // This is a custom verification function used for Passports because
 // we needed something more powerful than what they provided
 exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
@@ -65,49 +68,67 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
       if (!aUser) {
         User.findOne({ 'name': aUsername }, function (aErr, aUser) {
           if (aUser && aLoggedIn) {
-            // Add the new strategy to same account
-            // This allows linking multiple external accounts to one of ours
-            aUser.auths.push(digest);
-            aUser.strategies.push(aStrategy);
-            aUser.save(function (aErr, aUser) {
-              return aDone(aErr, aUser);
-            });
+            if (allStrategies[aStrategy].readonly) {
+              aDone(null, false, 'readonly strategy');
+              return;
+            } else {
+              // Add the new strategy to same account
+              // This allows linking multiple external accounts to one of ours
+              aUser.auths.push(digest);
+              aUser.strategies.push(aStrategy);
+              aUser.save(function (aErr, aUser) {
+                aDone(aErr, aUser);
+                return;
+              });
+            }
           } else if (aUser) {
-            // user was found matching name but not can't be authenticated
-            return aDone(null, false, 'username is taken');
+            // user was found matching name but can't be authenticated
+            aDone(null, false, 'username is taken');
+            return;
           } else {
-            // Create a new user
-            aUser = new User({
-              'name': aUsername,
-              'auths': [digest],
-              'strategies': [aStrategy],
-              'role': userRoles.length - 1,
-              'about': '',
-              'ghUsername': null
-            });
-            aUser.save(function (aErr, aUser) {
-              return aDone(aErr, aUser);
-            });
+            // Check for strategy readonly
+            if (allStrategies[aStrategy].readonly) {
+              aDone(null, false, 'readonly strategy');
+              return;
+            } else {
+              // Create a new user
+              aUser = new User({
+                'name': aUsername,
+                'auths': [digest],
+                'strategies': [aStrategy],
+                'role': userRoles.length - 1,
+                'about': '',
+                'ghUsername': null
+              });
+              aUser.save(function (aErr, aUser) {
+                aDone(aErr, aUser);
+                return;
+              });
+            }
           }
         });
       } else if (pos > -1 && pos < aUser.auths.length - 1) {
-        // Set the default strategy
+        // Toggle to the existing default strategy
         aUser.strategies.splice(pos, 1);
         aUser.auths.splice(pos, 1);
         aUser.strategies.push(aStrategy);
         aUser.auths.push(digest);
         aUser.save(function (aErr, aUser) {
-          return aDone(aErr, aUser);
+          aDone(aErr, aUser);
+          return;
         });
       } else if (openIdIdPos > 0) {
+        // The user was authenticated however...
         // Migrate from OpenID to OAuth
         aUser.auths[openIdIdPos] = digest;
         aUser.save(function (aErr, aUser) {
-          return aDone(aErr, aUser);
+          aDone(aErr, aUser);
+          return;
         });
       } else {
         // The user was authenticated
-        return aDone(null, aUser);
+        aDone(null, aUser);
+        return;
       }
     }
   );

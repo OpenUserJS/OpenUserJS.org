@@ -243,7 +243,11 @@ exports.callback = function (aReq, aRes, aNext) {
         console.error(colors.red('`User` not found'));
       }
 
-      aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?authfail');
+      if (aInfo === 'readonly strategy') {
+        aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?rostrat');
+      } else {
+        aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?authfail');
+      }
       return;
     }
 
