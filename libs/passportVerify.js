@@ -32,6 +32,11 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
   } else if (aStrategy === 'github') {
     // We only keep plaintext ids for GH since that's all we need
     digest = aId;
+  } else if (aStrategy === 'steam') {
+    // Having these forced secure ids would allow us to do things with the user's
+    // account and that is something we DO NOT want to do
+    shasum.update(String(aId).replace(/^http:/, 'https:'));
+    digest = shasum.digest('hex');
   } else {
     // Having these ids would allow us to do things with the user's
     // account and that is something we DO NOT want to do
