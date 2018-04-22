@@ -288,8 +288,8 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [lessGHUrl]: https://github.com/less/less.js
 [lessDOCUrl]: http://lesscss.org/
 
-[markedGHUrl]: https://github.com/chjj/marked
-[markedDOCUrl]: https://github.com/chjj/marked/blob/master/README.md
+[markedGHUrl]: https://github.com/markedjs/marked
+[markedDOCUrl]: https://github.com/markedjs/marked/blob/master/README.md
 [markedNPMUrl]: https://www.npmjs.com/package/marked
 [markedNPMVersionImage]: https://img.shields.io/npm/v/marked.svg?style=flat
 
