@@ -244,7 +244,9 @@ exports.callback = function (aReq, aRes, aNext) {
       }
 
       if (aInfo === 'readonly strategy') {
-        aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?rostrat');
+        aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?roauth');
+      } else if (aInfo === 'username recovered') {
+        aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?retryauth');
       } else {
         aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?authfail');
       }
