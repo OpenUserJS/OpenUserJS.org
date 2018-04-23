@@ -99,19 +99,33 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
                 pos = aUser.auths.indexOf(digestUnsecure);
 
                 if (pos > -1) {
-                  aUser.auths[pos] = digest;
+                  if (aUser.strategies[pos] === 'steam') {
+                    aUser.auths[pos] = digest;
 
-                  aUser.markModified('auths');
-                  aUser.save(function (aErr, aUser) {
-                    if (aErr) {
-                      aDone(null, false, 'username recovery failed');
+                    aUser.markModified('auths');
+                    aUser.save(function (aErr, aUser) {
+                      if (aErr) {
+                        console.error('UNRECOVERED STEAM AUTH WITH ERROR WRITE',
+                          aUser.name, digestUnsecure, '->', digest);
+
+                        aDone(null, false, 'username recovery failed');
+                        return;
+                      }
+
+                      console.log('RECOVERED STEAM AUTH',
+                        aUser.name, digestUnsecure, '->', digest);
+
+                      aDone(null, false, 'username recovered');
                       return;
-                    }
-                    console.log('RECOVERED STEAM AUTH', aUser.name, digestUnsecure, '->', digest);
+                    });
+                  } else {
+                    console.warn('UNRECOVERED STEAM AUTH',
+                      aUser.name, digestUnsecure, '->', digest,
+                        'WARNING TYPE', aUser.strategies[pos]);
 
-                    aDone(null, false, 'username recovered');
+                    aDone(null, false, 'username multi-auth collision');
                     return;
-                  });
+                  }
                 } else {
                   aDone(null, false, 'username is taken');
                   return;
