@@ -57,13 +57,11 @@ var db = mongoose.connection;
 var dbOptions = {};
 if (isPro) {
   dbOptions = {
-    useMongoClient: true,
     secondaryAcceptableLatencyMS: 15,
     poolSize: 5
   }
 } else {
   dbOptions = {
-    useMongoClient: true,
     poolSize: 5,
     reconnectTries: 30,
     reconnectInterval: 1000

@@ -139,11 +139,12 @@ var mtimeUglifyJS = new Date(util.inspect(stats.mtime));
 var store = null;
 if (isPro) {
   store = new MongoStore(function (ready) {
-    MongoClient.connect('mongodb://127.0.0.1:27017/test', function(aErr, aDb) {
+    MongoClient.connect('mongodb://127.0.0.1:27017/test', function(aErr, aClient) {
       if (aErr) {
         throw aErr;
       }
-      ready(aDb.collection('bruteforce-store'));
+
+      ready(aClient.db().collection('bruteforce-store'));
     });
   });
 } else {
