@@ -314,7 +314,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [momentNPMVersionImage]: https://img.shields.io/npm/v/moment.svg?style=flat
 
 [mongodbGHUrl]: https://github.com/mongodb/node-mongodb-native
-[mongodbDOCUrl]: https://github.com/mongodb/node-mongodb-native/blob/2.1/README.md
+[mongodbDOCUrl]: https://github.com/mongodb/node-mongodb-native/blob/3.0/README.md
 [mongodbNPMUrl]: https://www.npmjs.com/package/mongodb
 [mongodbNPMVersionImage]: https://img.shields.io/npm/v/mongodb.svg?style=flat
 
