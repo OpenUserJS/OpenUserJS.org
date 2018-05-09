@@ -52,7 +52,7 @@
   "steam": {
     "name": "Steam",
     "oauth": false,
-    "readonly": true
+    "readonly": false
   },
   "tumblr": {
     "name": "Tumblr",
