@@ -67,6 +67,13 @@ exports.view = function (aReq, aRes, aNext) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   if (document) {
+    //--- Hard redirects
+    switch (document) {
+      case 'QupZilla':
+        aRes.redirect(301, aReq.url.replace(/QupZilla\/?$/, 'Falkon'));
+        return;
+    }
+
     documentPath = 'views/includes/documents';
 
     //--- Tasks
