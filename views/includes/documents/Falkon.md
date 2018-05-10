@@ -4,7 +4,7 @@
 
 Falkon is very fast Qt based browser. It is actively developed and uses open standards *(so it's easier for programmers to work with it)*. It aims to be a lightweight web browser available through most major platforms. Previously it was called QupZilla.
 
-The project was originally started for educational purposes. From the start QupZilla to Falkon has grown into a feature-rich browser. The very first version of QupZilla was released in December 2010 and it was written in Python with PyQt4 bindings. After a few versions QupZilla has been completely rewritten in C++ with the Qt framework. When the migration to Falkon occurred CMake was implemented instead of the traditional QMake from Qt. Additional build environment tools will be needed in addition to Qt *(Usually the Qt Unified Installer)* due to this move.
+The project was originally started for educational purposes. From the start QupZilla to Falkon has grown into a feature-rich browser. The very first version of QupZilla was released in December 2010 and it was written in Python with PyQt4 bindings. After a few versions QupZilla has been completely rewritten in C++ with the Qt framework. When the migration to Falkon occurred CMake was implemented instead of the traditional QMake from Qt. Additional build environment tools will be needed in addition to Qt due to this move.
 
 Falkon ships with its own port of Greasemonkey as an extension.
 
@@ -65,11 +65,11 @@ $ # Switches for cmake do not always work so use native environment variable
 $ export CMAKE_PREFIX_PATH=/opt/Qt/5.10.1/gcc_64/
 $ # Ensure folder exists and change into it
 $ mkdir build && cd build
-$ # Simliar to `qmake` and `./configure`... note the dot dot is required
+$ # Similar to `qmake` and `./configure`... note the dot dot is required
 $ cmake ..
 $ # Typically an alias to `gmake`. Does currently support parallel compiling
 $ make
-$ # If everything goes well install it
+$ # If everything goes well then optionally install it
 $ sudo make install
 ```
 
