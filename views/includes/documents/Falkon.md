@@ -81,7 +81,7 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 ### More
 
 * [Get Falkon][falkonBrowser]
-* [Falkon Mailing List][falkonMailingList]
+* [Falkon Mailing List][falkonMailingList] [*(Subscribe here)*][falkonMailingListSubscribe]
 * [Falkon Issue Tracker *(RO)*][falkonIssueTracker]
 * [KDE Bugs *(RW)*][kdeIssueTracker]
 * [Falkon Source Code HTML View and Checkout strings][falkonSourceCodeHTML]
@@ -101,6 +101,7 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 
 [falkonBrowser]: https://www.falkon.org/
 [falkonMailingList]: mailto:falkon@kde.org
+[falkonMailingListSubscribe]: https://mail.kde.org/mailman/listinfo/falkon
 [falkonIssueTracker]: https://cgit.kde.org/falkon.git/
 [kdeIssueTracker]: https://bugs.kde.org/
 [falkonSourceCodeHTML]: https://cgit.kde.org/falkon.git
