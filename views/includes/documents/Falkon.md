@@ -81,14 +81,15 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 ### More
 
 * [Get Falkon][falkonBrowser]
+* [Falkon HTML Repo][falkonHTMLRepo]
+* [KDE Bugs Issue Tracker][kdeIssueTracker] [*(Falkon Issues)*][kdeIssueTrackerFalkonIssues]
 * [Falkon Mailing List][falkonMailingList] [*(Subscribe here)*][falkonMailingListSubscribe]
-* [Falkon Issue Tracker *(RO)*][falkonIssueTracker]
-* [KDE Bugs *(RW)*][kdeIssueTracker]
-* [Falkon Source Code HTML View and Checkout strings][falkonSourceCodeHTML]
-* [Falkon GitHub Mirror][falkonSourceCodeGH]
+* [Falkon GitHub Mirror][falkonGHMirror]
 * [Falkon on Wikipedia][wikipediaFalkon]
+
+
 * [Get QupZilla *(discontinued)*][qupzillaBrowser]
-* [QupZilla Issue Tracker *(RO)*][qupzillaIssueTracker]
+* [QupZilla Issue Tracker *(archived)*][qupzillaIssueTracker]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
@@ -100,12 +101,12 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 [falkonScreenshot5]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/falkon5.png "Script management"
 
 [falkonBrowser]: https://www.falkon.org/
+[falkonHTMLRepo]: https://cgit.kde.org/falkon.git/
+[kdeIssueTracker]: https://bugs.kde.org/
+[kdeIssueTrackerFalkonIssues]: https://bugs.kde.org/buglist.cgi?product=Falkon
 [falkonMailingList]: mailto:falkon@kde.org
 [falkonMailingListSubscribe]: https://mail.kde.org/mailman/listinfo/falkon
-[falkonIssueTracker]: https://cgit.kde.org/falkon.git/
-[kdeIssueTracker]: https://bugs.kde.org/
-[falkonSourceCodeHTML]: https://cgit.kde.org/falkon.git
-[falkonSourceCodeGH]: https://github.com/KDE/falkon
+[falkonGHMirror]: https://github.com/KDE/falkon
 [wikipediaFalkon]: https://www.wikipedia.org/wiki/Falkon
 
 [qupzillaBrowser]: http://qupzilla.com/
