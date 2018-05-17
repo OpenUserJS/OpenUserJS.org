@@ -257,6 +257,7 @@ h6:hover a.anchor {
 
 .user-data {
   margin: 1px 0;
+  overflow-wrap: break-word;
 }
 
 .user-data pre,
