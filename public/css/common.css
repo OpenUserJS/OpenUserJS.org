@@ -487,3 +487,12 @@ ul.flaggedList {
     max-height: 200px;
     overflow-x: hidden;
 }
+
+/* Extend Ace */
+.ace_gutter-cell:hover {
+  font-weight: bold;
+}
+
+#editor .ace_gutter-cell:hover {
+  cursor: pointer;
+}
