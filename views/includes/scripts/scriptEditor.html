@@ -122,9 +122,42 @@
 
           $('button#submit_code').removeClass('btn-success').addClass('btn-warning');
           $('.ace_gutter-layer').addClass('btn-warning');
+          onhashchange(null);
         }
 
         aEv.target.blur();
+      }
+
+      function onhashchange(aEv) {
+        var hash = null;
+        var line = null;
+        var lines = editor.getSession().getValue().split('\n').length;
+        var matches = window.location.hash.match(/^\#H([0-9a-fA-F]{128})L(\d+)$/);
+
+        // Scroll into
+        if ( !$('#beautify').hasClass('active')) {
+          if (matches) {
+            hash = matches[1];
+            line = parseInt(matches[2]);
+
+            if ('{{script.hash}}' === hash) {
+              if (line > 0 && line <= lines) {
+                editor.resize(true);
+                editor.gotoLine(line, 0, true);
+                editor.scrollToLine(line - 1, false, true, function () {});
+                return;
+              }
+            }
+          }
+        }
+
+        // No matches... reset to defaults
+        if (!$('#beautify').hasClass('active')) {
+          editor.resize(true);
+          editor.gotoLine(1, 0, true);
+          editor.scrollToLine(0, false, true, function () {});
+        }
+        window.location.hash = '';
       }
 
       //
@@ -221,6 +254,20 @@
         wrap.on('click', onwrap);
         beautify.on('click', onbeautify);
         setTimeout(oninput, 250);
+
+        if (window.location.hash) {
+          onhashchange(null);
+        }
+
+        $(window).on('hashchange', onhashchange);
+
+        editor.on("gutterclick", function (aEv) {
+          var gotoLine = aEv.getDocumentPosition().row + 1;
+          if (gotoLine) {
+            window.location.hash = window.location.hash =
+              'H' + '{{script.hash}}' + 'L' + gotoLine;
+          }
+        });
       }
     });
 
