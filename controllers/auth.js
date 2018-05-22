@@ -77,8 +77,9 @@ exports.auth = function (aReq, aRes, aNext) {
     var authenticate = null;
 
     // Just in case someone tries a bad /auth/* url
+    // or an auth has been EOL'd
     if (!strategyInstances[strategy]) {
-      aNext();
+      aRes.redirect('/login?invalidauth');
       return;
     }
 
