@@ -42,7 +42,6 @@
     "mu2": "0.5.21",
     "octicons": "4.4.0",
     "passport": "0.4.0",
-    "passport-aol": "git://github.com/OpenUserJs/passport-aol#OpenID2",
     "passport-facebook": "2.1.1",
     "passport-flickr": "0.2.0",
     "passport-foursquare": "1.0.0",
