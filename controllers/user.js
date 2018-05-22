@@ -890,7 +890,10 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
           return aStrategy.display;
         });
 
-        options.defaultStrategy = strategies[defaultStrategy] ? strategies[defaultStrategy].name : null;
+        options.defaultStrategy = strategies[defaultStrategy]
+          ? strategies[defaultStrategy].name
+          : null;
+
         options.defaultStrat = defaultStrategy;
         options.haveOtherStrategies = options.usedStrategies.length > 0;
 
