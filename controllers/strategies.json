@@ -1,9 +1,4 @@
 {
-  "aol": {
-    "name": "AOL",
-    "oauth": false,
-    "readonly": false
-  },
   "facebook": {
     "name": "Facebook",
     "oauth": true,

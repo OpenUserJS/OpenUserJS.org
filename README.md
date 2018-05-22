@@ -61,7 +61,6 @@ Repository | Reference | Recent Version
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
 [octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
-[passport-aol][passport-aolGHUrl]<br />&#x22D4; [`OpenID2`][passport-aolGHOpenIDUrl] | [Documentation][passport-aolDOCUrl] | [![NPM version][passport-aolNPMVersionImage]][passport-aolNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] ![OAuth2][oauth2Logo]
 [passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl] ![oauth][oauthLogo]
 [passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl] ![OAuth2][oauth2Logo]
@@ -345,12 +344,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passportNPMVersionImage]: https://img.shields.io/npm/v/passport.svg?style=flat
 
 [passport-openid]: https://github.com/OpenUserJs/passport-openid/tree/OpenID2
-
-[passport-aolGHUrl]: http://github.com/jaredhanson/passport-aol
-[passport-aolGHOpenIDUrl]: https://github.com/OpenUserJs/passport-aol/tree/OpenID2
-[passport-aolDOCUrl]: https://github.com/jaredhanson/passport-aol/blob/master/README.md
-[passport-aolNPMUrl]: https://www.npmjs.com/package/passport-aol
-[passport-aolNPMVersionImage]: https://img.shields.io/npm/v/passport-aol.svg?style=flat
 
 [passport-facebookGHUrl]: https://github.com/jaredhanson/passport-facebook
 [passport-facebookDOCUrl]: https://github.com/jaredhanson/passport-facebook/blob/master/README.md
