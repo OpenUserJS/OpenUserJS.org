@@ -26,19 +26,19 @@ var blockRenderers = [
 // Transform exact Github Flavored Markdown generated style tags to bootstrap custom classes
 // to allow the sanitizer to whitelist on th and td tags for table alignment
 function gfmStyleToBootstrapClass(aTagName, aAttribs) {
-  if (aAttribs.style) {
-    switch (aAttribs.style) {
-      case 'text-align:center':
+  if (aAttribs.align) {
+    switch (aAttribs.align) {
+      case 'center':
         return {
           tagName: aTagName,
           attribs: { class: 'text-center' }
         };
-      case 'text-align:left':
+      case 'left':
         return {
           tagName: aTagName,
           attribs: { class: 'text-left' }
         };
-      case 'text-align:right':
+      case 'right':
         return {
           tagName: aTagName,
           attribs: { class: 'text-right' }
