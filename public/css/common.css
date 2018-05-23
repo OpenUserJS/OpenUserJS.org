@@ -247,7 +247,7 @@ h6:hover a.anchor {
 }
 
 .script-meta {
-  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 .user-content > :first-child,
