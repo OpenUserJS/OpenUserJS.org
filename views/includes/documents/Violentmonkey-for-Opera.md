@@ -6,7 +6,7 @@ Violentmonkey is a userscript manager for the [Opera][opera], [Chrome][chrome], 
 
 ### Installing Violentmonkey
 
-To get userscripts going with the desktop version of Violentmonkey, first you have to install it from the [Opera Add-ons website][operaAddons]. This should automatically give you the correct version of Violentmonkey for your version of Opera, but for older versions, you might need to get a compatible extension from [the violentmonkey-oex releases][violentmonkeyOexReleases].
+To get userscripts going with the desktop version of Violentmonkey, first you have to install the [Opera Add-on for Installing Chrome Extensions][operaAddons] and then install the extension from the [Chrome Web Store][gooChromeWebStoreViolentmonkey]. This should automatically give you the correct version of Violentmonkey for your version of Opera, but for older versions, you might need to get a compatible extension from [the violentmonkey-oex releases][violentmonkeyOexReleases].
 
 ![Screenshot of Violentmonkey page in Opera Add-ons website][operaAddonsScreenshot1]
 
@@ -42,7 +42,8 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 ### More
 
-* [Get Violentmonkey from the Opera Add-ons website][operaAddons]
+* [Get Install Chrome Extensions from the Opera Add-ons website][operaAddons]
+* [Get Violentmonkey from the Chrome Web Store][gooChromeWebStoreViolentmonkey]
 * [Violentmonkey IO][violentmonkeyIO] - some documentation for Violentmonkey in recent versions of Opera *(v15+, based on the Blink rendering engine)*.
 * [Violentmonkey-oex wiki][violentmonkeyOexWiki] - documentation for Violentmonkey in Opera v12.x *(based on the Presto rendering engine)*.
 
@@ -54,7 +55,8 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [chrome]: Chrome
 [Firefox]: Firefox
 [gera2ld]: https://github.com/gera2ld
-[operaAddons]: https://addons.opera.com/extensions/details/violent-monkey/
+[operaAddons]: https://addons.opera.com/en/extensions/details/install-chrome-extensions/
+[gooChromeWebStoreViolentmonkey]: https://chrome.google.com/webstore/detail/jinjaccalgkegednnccohejagnlnfdag/
 [violentmonkeyOexWiki]: https://github.com/gera2ld/Violentmonkey-oex/wiki
 [violentmonkeyOexReleases]: https://github.com/gera2ld/Violentmonkey-oex/releases
 [operaAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey1.gif "Violentmonkey in the Opera Add-ons website"
