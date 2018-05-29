@@ -10,7 +10,7 @@ To get userscripts going with the desktop version of Violentmonkey, first you ha
 
 ![Screenshot of Violentmonkey page in Opera Add-ons website][operaAddonsScreenshot1]
 
-From the Violentmonkey page in the Opera Add-ons website, click the green "+ Add to Opera" button to install the extension. Once Violentmonkey has finished installing, you should see a pop-up confirming that Violentmonkey has been added to Opera. This should point to a new Violentmonkey icon at the top of the Opera window, next to the address bar.
+From the Installing Chrome Extensions page in the Opera Add-ons website, click the green "+ Add to Opera" button to install the "middleware". Then on the Violentmonkey page in the Chrome Web Store, click the green "+ ADD TO OPERA" button to install the extension. After a few confirmation boxes appear and Violentmonkey has finished installing, you should see a pop-up confirming that Violentmonkey has been added to Opera. This should point to a new Violentmonkey icon at the top of the Opera window, next to the address bar.
 
 ### Installing Userscripts
 
