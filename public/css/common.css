@@ -277,6 +277,7 @@ h6:hover a.anchor {
 .user-content img,
 .document-content img {
   max-width: 100%;
+  min-width: 16px;
 }
 
 .table-responsive {
