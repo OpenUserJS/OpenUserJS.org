@@ -25,7 +25,7 @@ To reduce security risks, most userscript managers let you control which website
 
 ### How do I get going?
 
-Find your web browser in the table below, and follow the links to find out the options for making userscripts work on your platform.
+Find your web browser in the table below, and follow the links to find out the options for making userscripts work on your platform:
 
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | [Android][android] | [&nbsp;iOS&nbsp;][ios] | [Linux][linux] | [&nbsp;macOS&nbsp;][macos] | [Windows][windows]
 --- | :---: | :---: | :---: | :---: | :---:
