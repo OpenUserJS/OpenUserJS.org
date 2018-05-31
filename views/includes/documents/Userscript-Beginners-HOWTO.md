@@ -25,46 +25,46 @@ To reduce security risks, most userscript managers let you control which website
 
 ### How do I get going?
 
-Find your web browser in the tables below, and follow the links to find out the options for making userscripts work on your computer.
+Find your web browser in the tables below, and follow the links to find out the options for making userscripts work on your platform.
 
-#### Desktop
-
-Browser | Installation Method
----  | ---
-[Chrome][chrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
-[Chromium][chromium] | [Tampermonkey][tampermonkeyForChromium]
-[Edge][edge] | [Tampermonkey][tampermonkeyForEdge]
-[Firefox][firefox] | [Greasemonkey][greasemonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox]
-[Opera][opera] | [Violentmonkey][violentmonkeyForOpera]
-[Opera][opera] *(v15 and above only)* | [Tampermonkey][tampermonkeyForOpera]
-[QupZilla][qupzilla] | *(native support)*
-[SeaMonkey][seamonkey] | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
-
-#### Portable
-
-Browser | Installation Method
----  | ---
-[Android][android]| [Tampermonkey][tampermonkeyForAndroid]
-
+&emsp; | [Android][android] | iOS | Linux | macOS | Windows
+--- | :---: | :---: | :---: | :---: | :---:
+**[Chrome][chrome]** | [Tampermonkey][tampermonkeyForAndroid] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
+**[Chromium][chromium]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium]
+**[Edge][edge]** | &ndash; | &ndash; | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForEdge]
+**[Falkon][falkon]** | &ndash; | &ndash; | [GreaseMonkey][falkon] | &ndash; | [GreaseMonkey][falkon]
+**[Firefox][firefox]** | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox] | &ndash; | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox]
+**[Opera][opera]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera] | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera] | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera]
+**[Safari][safari]** | &ndash; | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForSafari] | &ndash;
+**[SeaMonkey][seamonkey]** | &ndash; | &ndash; | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
+**[Yandex Browser][yandex]** | [Tampermonkey][tampermonkeyForChrome] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
+
 [greasemonkeyForFirefox]: Greasemonkey-for-Firefox
 [greasemonkeyPortForSeaMonkey]: Greasemonkey-Port-for-SeaMonkey
-[tampermonkeyForOpera]: Tampermonkey-for-Opera
+
+[tampermonkeyForAndroid]: Tampermonkey-for-Android
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForEdge]: Tampermonkey-for-Edge
-[tampermonkeyForAndroid]: Tampermonkey-for-Android
+[tampermonkeyForFirefox]: Tampermonkey-for-Firefox
+[tampermonkeyForOpera]: Tampermonkey-for-Opera
+[tampermonkeyForSafari]: Tampermonkey-for-Safari
+
 [violentmonkeyForChrome]: Violentmonkey-for-Chrome
+[violentmonkeyForChromium]: Violentmonkey-for-Chromium
 [violentmonkeyForFirefox]: Violentmonkey-for-Firefox
 [violentmonkeyForOpera]: Violentmonkey-for-Opera
+
 [android]: Android
 [chrome]: Chrome
 [chromium]: Chromium
 [edge]: Edge
+[falkon]: Falkon
 [firefox]: Firefox
 [opera]: Opera
-[qupzilla]: QupZilla
+[safari]: Safari
 [seamonkey]: SeaMonkey
-
+[yandex]: Yandex
