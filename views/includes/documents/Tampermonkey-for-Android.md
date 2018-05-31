@@ -2,7 +2,7 @@
 
 ![Tampermonkey icon][tampermonkeyIcon]
 
-Tampermonkey is a userscript manager extension for [Android][Android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Opera][Opera], and other similar web browsers, written by Jan Biniok. However, it is also available as a standalone, userscript enabled web browser for Android mobile devices. The version currently available is a Beta release and is rather basic as a web browser, so it may not have all the features required to make some websites work, but it is reasonably comprehensive in its support for userscripts. There are also versions for [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], and [Opera][tampermonkeyForOpera].
+Tampermonkey is a userscript manager extension for [Safari][Safari], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Opera][Opera], and other similar web browsers, written by Jan Biniok. However, it is also available as a standalone, userscript enabled web browser for Android mobile devices. The version currently available is a Beta release and is rather basic as a web browser, so it may not have all the features required to make some websites work, but it is reasonably comprehensive in its support for userscripts. There are also versions for [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], [Opera][tampermonkeyForOpera], and [Safari][tampermonkeyForSafari].
 
 
 ## WARNING!
@@ -64,6 +64,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 * [Tampermonkey for Chromium][tampermonkeyForChromium]
 * [Tampermonkey for Edge][tampermonkeyForEdge]
 * [Tampermonkey for Opera][tampermonkeyForOpera]
+* [Tampermonkey for Safari][tampermonkeyForSafari]
 
 <!-- # References -->
 
@@ -78,6 +79,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [chromium]: Chromium
 [edge]: Edge
 [opera]: Opera
+[safari]: Safari
 
 <!-- ## .user.js engine external linkage -->
 [tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
@@ -97,3 +99,4 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForEdge]: Tampermonkey-for-Edge
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
+[tampermonkeyForSafari]: Tampermonkey-for-Safari
