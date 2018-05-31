@@ -35,6 +35,7 @@ Find your web browser in the table below, and follow the links to find out the o
 **[Falkon][falkon]** | &ndash; | &ndash; | [GreaseMonkey][falkon] | &ndash; | [GreaseMonkey][falkon]
 **[Firefox][firefox]** | [Greasemonkey][greasemonkeyForFirefox] | &ndash; | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox]
 **[Opera][opera]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera] | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera] | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera]
+**[Pale Moon][palemoon]** | &ndash; | &ndash; | [Greasemonkey &quot;Fork&quot;][palemoon] | &ndash; | [Greasemonkey &quot;Fork&quot;][palemoon]
 **[Safari][safari]** | &ndash; | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForSafari] | &ndash;
 **[SeaMonkey][seamonkey]** | &ndash; | &ndash; | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
 **[Yandex Browser][yandexbrowser]** | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
@@ -70,6 +71,7 @@ Find your web browser in the table below, and follow the links to find out the o
 [falkon]: Falkon
 [firefox]: Firefox
 [opera]: Opera
+[palemoon]: Pale-Moon
 [safari]: Safari
 [seamonkey]: SeaMonkey
 [yandexbrowser]: Yandex-Browser
