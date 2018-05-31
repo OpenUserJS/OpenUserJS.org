@@ -61,7 +61,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [aomUserScriptsScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport5.png "Userscript management in SeaMonkey"
 [greasespot]: http://www.greasespot.net/
 [greasemonkeyPortWiki]: https://sourceforge.net/p/greasemonkey/wiki/Main_Page/
-[greasemonkeyPortIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey-icon.png "Greasemonkey Port"
+[greasemonkeyPortIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport_icon.png "Greasemonkey Port"
 [greasemonkeyPortSFscreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport1.gif "Greasemonkey Port on SourceForge"
 [oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [greasemonkeyInstallationScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport4.gif "Greasemonkey Port script installation warning"

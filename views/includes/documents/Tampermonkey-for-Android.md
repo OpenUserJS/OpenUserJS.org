@@ -4,6 +4,11 @@
 
 Tampermonkey is a userscript manager extension for [Android][Android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Opera][Opera], and other similar web browsers, written by Jan Biniok. However, it is also available as a standalone, userscript enabled web browser for Android mobile devices. The version currently available is a Beta release and is rather basic as a web browser, so it may not have all the features required to make some websites work, but it is reasonably comprehensive in its support for userscripts. There are also versions for [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], and [Opera][tampermonkeyForOpera].
 
+
+## WARNING!
+
+This is a pilot study and the version of Chrome that has this embedded Tampermonkey is out of date. Use at your own risk!
+
 ### Installing Tampermonkey
 
 To get going with Tampermonkey on Android, first you have to install the app from the [Google Play Store][gooPlayStoreTampermonkey]. You need Android v2.2 *(Froyo)* or higher.
