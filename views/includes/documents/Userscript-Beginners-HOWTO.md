@@ -48,7 +48,7 @@ Find your web browser in the table below, and follow the links to find out the o
 &emsp; |
 **[SeaMonkey][seamonkey]** | &ndash; | &ndash; | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
 &emsp; |
-**[Yandex Browser][yandexbrowser]** | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
+**[Yandex Browser][yandexbrowser]** | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | &ndash; | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png

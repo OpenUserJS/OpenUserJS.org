@@ -1,16 +1,16 @@
-## Violentmonkey for Opera
+## Violentmonkey for Chromium
 
 ![Violentmonkey icon][violentmonkeyIcon]
 
-Violentmonkey is a userscript manager for the [Opera][opera], [Chrome][chrome], [Chromium][chromium], [Firefox][firefox] web browser, written by [gera2ld][gera2ld].
+Violentmonkey is a userscript manager for the [Chrome][chrome], [Chromium][chromium], [Firefox][firefox], [Opera][opera] web browser, written by [gera2ld][gera2ld].
 
 ### Installing Violentmonkey
 
-To get userscripts going with the desktop version of Violentmonkey, first you have to install the [Opera Add-on for Installing Chrome Extensions][operaAddons] and then install the extension from the [Chrome Web Store][gooChromeWebStoreViolentmonkey]. This should automatically give you the correct version of Violentmonkey for your version of Opera, but for older versions, you might need to get a compatible extension from [the violentmonkey-oex releases][violentmonkeyOexReleases].
+To get userscripts going with the desktop version of Violentmonkey, first you have to install it from the [Chrome Add-ons website][chromeAddons].
 
-![Screenshot of Violentmonkey page in Opera Add-ons website][operaAddonsScreenshot1]
+![Screenshot of Violentmonkey page in Chromium Add-ons website][chromeAddonsScreenshot1]
 
-From the Installing Chrome Extensions page in the Opera Add-ons website, click the green "+ Add to Opera" button to install the "middleware". Then on the Violentmonkey page in the Chrome Web Store, click the green "+ ADD TO OPERA" button to install the extension. After a few confirmation boxes appear and Violentmonkey has finished installing, you should see a pop-up confirming that Violentmonkey has been added to Opera. This should point to a new Violentmonkey icon at the top of the Opera window, next to the address bar.
+From the Violentmonkey page in the Chromium Add-ons website, click the green "Add to Chromium" button to install the extension. Once Violentmonkey has finished installing, you should see a pop-up confirming that Violentmonkey has been added to Chromium. This should point to a new Violentmonkey icon at the top of the Chromium window, next to the address bar.
 
 ### Installing Userscripts
 
@@ -20,7 +20,7 @@ Once Violentmonkey is installed, installing userscripts from [OpenUserJS.org][ou
 
 Violentmonkey will display a screen showing you the source code of the userscript. Click the "Confirm installation" button to finish installing the script.
 
-![Screenshot of Violentmonkey script installation][violentmonkeyOperaScreenshot2]
+![Screenshot of Violentmonkey script installation][violentmonkeyChromiumScreenshot2]
 
 Installing userscripts from other sources is a similar process. You just need to find the installation link for the script. This will be a button or link to a file with a name that ends ".user.js"
 
@@ -30,7 +30,7 @@ After installing a userscript, you won't normally notice any further changes unt
 
 Clicking on the Violentmonkey icon at any time will pop up a menu that shows you what userscripts are running on the website you are looking at. You can enable or disable each one by clicking on its name *(ticks mark enabled userscripts)*. The menu also lets you disable userscripts in general, or manage the scripts you have installed.
 
-![Screenshot of Violentmonkey Dashboard][violentmonkeyOperaScreenshot3]
+![Screenshot of Violentmonkey Dashboard][violentmonkeyChromiumScreenshot3]
 
 Clicking "Open Dashboard" in the Violentmonkey menu takes you a dashboard screen that lists all your installed scripts. Each one can be temporarily disabled or removed totally using the buttons provided. You can also manually check for updated userscripts.
 
@@ -42,10 +42,8 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 ### More
 
-* [Get Install Chrome Extensions from the Opera Add-ons website][operaAddons]
-* [Get Violentmonkey from the Chrome Web Store][gooChromeWebStoreViolentmonkey]
-* [Violentmonkey IO][violentmonkeyIO] - some documentation for Violentmonkey in recent versions of Opera *(v15+, based on the Blink rendering engine)*.
-* [Violentmonkey-oex wiki][violentmonkeyOexWiki] - documentation for Violentmonkey in Opera v12.x *(based on the Presto rendering engine)*.
+* [Get Violentmonkey from the Chrome Add-ons website][chromeAddons]
+* [Violentmonkey IO][violentmonkeyIO] - some documentation for Violentmonkey.
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/favicon16.png
@@ -54,14 +52,11 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [opera]: Opera
 [chrome]: Chrome
 [chromium]: Chromium
-[Firefox]: Firefox
+[firefox]: Firefox
 [gera2ld]: https://github.com/gera2ld
-[operaAddons]: https://addons.opera.com/en/extensions/details/install-chrome-extensions/
-[gooChromeWebStoreViolentmonkey]: https://chrome.google.com/webstore/detail/jinjaccalgkegednnccohejagnlnfdag/
-[violentmonkeyOexWiki]: https://github.com/gera2ld/Violentmonkey-oex/wiki
-[violentmonkeyOexReleases]: https://github.com/gera2ld/Violentmonkey-oex/releases
-[operaAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey1.gif "Violentmonkey in the Opera Add-ons website"
+[chromeAddons]: https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag
+[chromeAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_ch1.gif "Violentmonkey in the Opera Add-ons website"
 [oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
-[violentmonkeyOperaScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey3.gif "Installing a script"
-[violentmonkeyOperaScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey4.png "Violentmonkey Dashboard"
+[violentmonkeyChromiumScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_ch3.gif "Installing a script"
+[violentmonkeyChromiumScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_ch4.png "Violentmonkey Dashboard"
 [violentmonkeyIO]: https://violentmonkey.github.io/
