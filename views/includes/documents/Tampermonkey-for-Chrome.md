@@ -2,7 +2,7 @@
 
 ![Tampermonkey icon][tampermonkeyIcon]
 
-Tampermonkey is a userscript manager extension for [Android][Android], [Safari][Safari], [Chromium][Chromium], [Edge][Edge], [Opera][Opera], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], [Opera][tampermonkeyForOpera], and [Safari][tampermonkeyForSafari].
+Tampermonkey is a userscript manager extension for [Android][android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Firefox][firefox], [Opera][Opera], [Safari][Safari], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], [Firefox][tamperMonkeyForFirefox], [Opera][tampermonkeyForOpera], and [Safari][tampermonkeyForSafari].
 
 ### Installing Tampermonkey
 
@@ -70,6 +70,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [chrome]: Chrome
 [chromium]: Chromium
 [edge]: Edge
+[firefox]: Firefox
 [opera]: Opera
 [safari]: Safari
 
@@ -91,5 +92,6 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForEdge]: Tampermonkey-for-Edge
+[tampermonkeyForFirefox]: Tampermonkey-for-Firefox
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
 [tampermonkeyForSafari]: Tampermonkey-for-Safari

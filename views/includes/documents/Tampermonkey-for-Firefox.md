@@ -1,18 +1,15 @@
-## Tampermonkey for Chromium
+## Tampermonkey for Firefox
 
 ![Tampermonkey icon][tampermonkeyIcon]
 
-Tampermonkey is a userscript manager extension for [Android][android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Firefox][firefox], [Opera][Opera], [Safari][Safari], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chrome][tampermonkeyForChrome], [Edge][tampermonkeyForEdge], [Firefox][tamperMonkeyForFirefox], [Opera][tampermonkeyForOpera], and [Safari][tampermonkeyForSafari].
+Tampermonkey is a userscript manager extension for [Android][android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Firefox][firefox], [Opera][Opera], [Safari][Safari], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], [Opera][tampermonkeyForOpera], and [Safari][tamperMonkeyForSafari].
 
 ### Installing Tampermonkey
 
-To get userscripts going with the desktop version of Tampermonkey, first you have to install it from the [Chrome Web Store][gooChromeWebStoreTampermonkey]. The version in the store works with recent versions of Chromium *(v22 or newer, which are based on the Blink rendering engine)*. If you have to use an older version of Chromium, you may be able to get a compatible extension from [Tampermonkey.net][tampermonkeyNet].
+To get userscripts going with the desktop version of Tampermonkey, first you have to install it from...
 
-![Screenshot of Tampermonkey page in Chrome Web Store][tampermonkeyGooChromeWebStoreScreenshot]
 
-From the Tampermonkey page in the Chrome Store, click the blue "ADD TO CHROME" button to install the extension. Chromium will ask you to confirm the extension. Click "Add extension".
-
-Once Tampermonkey has finished installing, you should see a confirmation page from the Tampermonkey website and briefly a pop-up confirming that Tampermonkey has been added to Chromium. This should point to a new Tampermonkey icon at the top of the Chromium window, next to the Omnibox.
+![Screenshot of Tampermonkey page in AMO][tampermonkeyTampermonkeyFirefoxScreenshot]
 
 ### Installing Userscripts
 
@@ -22,7 +19,7 @@ Once Tampermonkey is installed, installing userscripts from [OpenUserJS.org][ouj
 
 Tampermonkey will display a screen showing you where the userscript has come from, what websites it can access, its source code, and a warning to only install scripts from sources that you trust. If you do want to install the script, click the "Install" button, otherwise click "Cancel".
 
-![Screenshot of Tampermonkey script installation][tampermonkeyChromeScreenshot3]
+![Screenshot of Tampermonkey script installation][tampermonkeyFirefoxScreenshot3]
 
 Installing userscripts from other sources is a similar process. You just need to find the installation link for the script. This will be a button or link to a file with a name that ends ".user.js"
 
@@ -32,7 +29,7 @@ After installing a userscript, you won't normally notice any further changes unt
 
 Clicking on the Tampermonkey icon at any time will pop up a menu that shows you what userscripts are running on the website you are looking at. It also lets you check for updated scripts *(it does daily automatic checks by default)*, and open the Tampermonkey Dashboard.
 
-![Screenshot of Tampermonkey Dashboard][tampermonkeyChromeScreenshot4]
+![Screenshot of Tampermonkey Dashboard][tampermonkeyFirefoxScreenshot4]
 
 In the Dashboard, the "Installed scripts" tab is the main place to manage your userscripts. The numbered circle to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(red)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, or check for new updates *(click the "last updated" date)*.
 
@@ -44,12 +41,12 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 ### More
 
-* [Get Tampermonkey from the Chrome Web Store][gooChromeWebStoreTampermonkey]
-* [Get Tampermonkey Beta from the Chrome Web Store][gooChromeWebStoreTampermonkeyBeta]
+* [Get Tampermonkey][tampermonkey]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
 * [Tampermonkey for Android][tampermonkeyForAndroid]
 * [Tampermonkey for Chrome][tampermonkeyForChrome]
+* [Tampermonkey for Chromium][tampermonkeyForChromium]
 * [Tampermonkey for Edge][tampermonkeyForEdge]
 * [Tampermonkey for Opera][tampermonkeyForOpera]
 * [Tampermonkey for Safari][tampermonkeyForSafari]
@@ -72,20 +69,23 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 <!-- ## .user.js engine external linkage -->
 [tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
+[tampermonkey]: https://addons.mozilla.org/firefox/addon/tampermonkey/
 [tampermonkeyNet]: http://tampermonkey.net/
 [gooChromeWebStoreTampermonkey]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
 [gooChromeWebStoreTampermonkeyBeta]: https://chrome.google.com/webstore/detail/tampermonkey-beta/gcalenpjmijncebpfijmoaglllgpjagf
 
 <!-- ## Screenshots -->
-[tampermonkeyGooChromeWebStoreScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr.gif "Tampermonkey in the Chrome Web Store"
+[tampermonkeyTampermonkeyFirefoxScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkeySafari1.png "Tampermonkey in the Chrome Web Store"
+[tampermonkeyFirefoxScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkeySafari2.png "Confirm extension"
+[tampermonkeyFirefoxScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkeySafari3.png "Tampermonkey installed"
 [oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
-[tampermonkeyChromeScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr4.gif "Installing a script"
-[tampermonkeyChromeScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_cr5.png "Tampermonkey Dashboard"
+[tampermonkeyFirefoxScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkeySafari4.png "Installing a script"
+[tampermonkeyFirefoxScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkeySafari5.png "Tampermonkey Dashboard"
 
 <!-- ## Other related .user.js engine internal pages -->
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
+[tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForEdge]: Tampermonkey-for-Edge
-[tampermonkeyForFirefox]: Tampermonkey-for-Firefox
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
 [tampermonkeyForSafari]: Tampermonkey-for-Safari
