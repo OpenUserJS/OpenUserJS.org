@@ -29,15 +29,25 @@ Find your web browser in the table below, and follow the links to find out the o
 
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | [Android][android] | [&nbsp;iOS&nbsp;][ios] | [Linux][linux] | [&nbsp;macOS&nbsp;][macos] | [Windows][windows]
 --- | :---: | :---: | :---: | :---: | :---:
+&emsp; |
 **[Chrome][chrome]** | [Tampermonkey][tampermonkeyForAndroid] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
+&emsp; |
 **[Chromium][chromium]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium]
+&emsp; |
 **[Edge][edge]** | &ndash; | &ndash; | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForEdge]
+&emsp; |
 **[Falkon][falkon]** | &ndash; | &ndash; | [GreaseMonkey][falkon] | &ndash; | [GreaseMonkey][falkon]
+&emsp; |
 **[Firefox][firefox]** | [Greasemonkey][greasemonkeyForFirefox] | &ndash; | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox]
+&emsp; |
 **[Opera][opera]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera] | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera] | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera]
+&emsp; |
 **[Pale Moon][palemoon]** | &ndash; | &ndash; | [Greasemonkey &quot;Fork&quot;][palemoon] | &ndash; | [Greasemonkey &quot;Fork&quot;][palemoon]
+&emsp; |
 **[Safari][safari]** | &ndash; | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForSafari] | &ndash;
+&emsp; |
 **[SeaMonkey][seamonkey]** | &ndash; | &ndash; | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
+&emsp; |
 **[Yandex Browser][yandexbrowser]** | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
