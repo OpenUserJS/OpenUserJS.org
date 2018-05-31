@@ -25,19 +25,19 @@ To reduce security risks, most userscript managers let you control which website
 
 ### How do I get going?
 
-Find your web browser in the tables below, and follow the links to find out the options for making userscripts work on your platform.
+Find your web browser in the table below, and follow the links to find out the options for making userscripts work on your platform.
 
-&emsp; | [Android][android] | iOS | Linux | macOS | Windows
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | [Android][android] | [&nbsp;iOS&nbsp;][ios] | [Linux][linux] | [macOS][macos] | [Windows][windows]
 --- | :---: | :---: | :---: | :---: | :---:
 **[Chrome][chrome]** | [Tampermonkey][tampermonkeyForAndroid] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
 **[Chromium][chromium]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium]
 **[Edge][edge]** | &ndash; | &ndash; | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForEdge]
 **[Falkon][falkon]** | &ndash; | &ndash; | [GreaseMonkey][falkon] | &ndash; | [GreaseMonkey][falkon]
-**[Firefox][firefox]** | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox] | &ndash; | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox]
+**[Firefox][firefox]** | [Greasemonkey][greasemonkeyForFirefox] | &ndash; | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox] | [Greasemonkey][greasemonkeyForFirefox], [Tampermonkey][tampermonkeyForFirefox], [Violentmonkey][violentmonkeyForFirefox]
 **[Opera][opera]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera] | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera] | [Tampermonkey][tampermonkeyForOpera], [Violentmonkey][violentmonkeyForOpera]
 **[Safari][safari]** | &ndash; | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForSafari] | &ndash;
 **[SeaMonkey][seamonkey]** | &ndash; | &ndash; | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
-**[Yandex Browser][yandex]** | [Tampermonkey][tampermonkeyForChrome] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
+**[Yandex Browser][yandexbrowser]** | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
@@ -59,6 +59,11 @@ Find your web browser in the tables below, and follow the links to find out the 
 [violentmonkeyForOpera]: Violentmonkey-for-Opera
 
 [android]: Android
+[ios]: iOS
+[linux]: Linux
+[macos]: macOS
+[windows]: Windows
+
 [chrome]: Chrome
 [chromium]: Chromium
 [edge]: Edge
@@ -67,4 +72,4 @@ Find your web browser in the tables below, and follow the links to find out the 
 [opera]: Opera
 [safari]: Safari
 [seamonkey]: SeaMonkey
-[yandex]: Yandex
+[yandexbrowser]: Yandex-Browser
