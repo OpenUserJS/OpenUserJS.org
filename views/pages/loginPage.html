@@ -27,6 +27,7 @@
           <span class="small pull-left"><input type="checkbox" name="consent" value="true"> I understand and agree to these policies and terms.</span>
         </div>
         <div class="input-group">
+
           <span class="input-group-addon">
             <i class="fa fa-user fa-fw"></i>
           </span>
@@ -39,9 +40,18 @@
             <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}>{{display}}</option>
             {{/strategies}}
           </select>
-          <span class="input-group-addon">
-            <button class="btn btn-info" type="submit" id="action">Next <i class="fa fa-sign-in fa-fw"></i></button>
-          </span>
+          <div>
+            <div class="input-group-addon">
+              <ul class="nav nav-pills nav-justified">
+                <li><a href="/about/Privacy-Policy"><i class="fa fa-user-secret"></i> Privacy Policy</a></li>
+                <li><a href="/about/Terms-of-Service"><i class="fa fa-legal"></i> Terms of Service</a></li>
+              </ul>
+              <span class="small" style="white-space: normal;"><input type="checkbox" name="consent" value="true"> I understand and agree to these policies and terms.</span>
+            </div>
+            <div class="input-group-addon">
+              <button class="btn btn-info" type="submit" id="action" class="pull-left">Next <i class="fa fa-sign-in fa-fw"></i></button>
+            </div>
+          </div>
         </div>
         <div class="alert alert-warning small" role="alert">
           <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The username that you choose to login with will be displayed to everyone. It is strongly recommended to <strong>not</strong> attempt to use an email address.
