@@ -38,6 +38,8 @@
           action.innerHTML = action.innerHTML.replace(/Sign In/, 'Sign Up');
           action.classList.remove('btn-success');
           action.classList.add('btn-info');
+
+          consent.checked = false;
         }
 
         if (wantname) {
@@ -50,7 +52,7 @@
                   auth.value = '';
                   break;
                 default:
-                  hide(true);
+                  hide();
                   auth.value = 'github';
               }
             }
