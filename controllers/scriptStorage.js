@@ -1971,6 +1971,11 @@ exports.webhook = function (aReq, aRes) {
       return;
     }
 
+    if (!aUser.consented) {
+      aRes.status(451).send(); // Reject until consented
+      return;
+    }
+
     aRes.end(); // Close connection
 
     // Gather the modified user scripts
