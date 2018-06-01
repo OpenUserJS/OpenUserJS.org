@@ -17,6 +17,7 @@ var userSchema = new Schema({
   about: String,
 
   // A user can link multiple accounts to their OpenUserJS account
+  consented: Boolean,
   auths: Array,
   strategies: Array,
   authed: Date, // last logged in

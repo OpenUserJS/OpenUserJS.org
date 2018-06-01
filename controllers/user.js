@@ -14,6 +14,7 @@ var formidable = require('formidable');
 var async = require('async');
 var _ = require('underscore');
 var util = require('util');
+var rfc2047 = require('rfc2047');
 
 var SPDX = require('spdx-license-ids');
 var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
@@ -84,21 +85,34 @@ exports.exist = function (aReq, aRes) {
     return;
   }
 
-  User.count({
+  User.findOne({
     name: caseInsensitive(username)
-  }, function (aErr, aCount) {
+  }, function (aErr, aUser) {
+    var msg = null;
+
     if (aErr) {
       aRes.status(400).send();
       return;
     }
 
-    if (aCount === 0) {
+
+    if (!aUser) {
       aRes.status(404).send();
       return;
     }
 
+    if (!aUser.consented) {
+      msg = [
+        '199 ' + aReq.headers.host + ' consent'
+
+      ].join('\u0020');
+      aRes.set('Warning', msg);
+    }
+
     aRes.status(200).send();
-  });
+});
+
+
 };
 
 var setupUserModerationUITask = function (aOptions) {
