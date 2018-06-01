@@ -92,11 +92,17 @@ exports.auth = function (aReq, aRes, aNext) {
   }
 
   var authedUser = aReq.session.user;
+  var consent = aReq.body.consent;
   var strategy = aReq.body.auth || aReq.params.strategy;
   var username = aReq.body.username || aReq.session.username ||
     (authedUser ? authedUser.name : null);
   var authOpts = { failureRedirect: '/login?stratfail' };
   var passportKey = aReq._passport.instance._key;
+
+  if (consent !== 'true') {
+    aRes.redirect('/login?noconsent');
+    return;
+  }
 
   // Yet another passport hack.
   // Initialize the passport session data only when we need it.
