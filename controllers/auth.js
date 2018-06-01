@@ -280,6 +280,9 @@ exports.callback = function (aReq, aRes, aNext) {
       // Save the last date a user sucessfully logged in
       aUser.authed = new Date();
 
+      // Save consent
+      aUser.consented = true;
+
       // Save the session id on the user model
       aUser.sessionId = aReq.sessionID;
 

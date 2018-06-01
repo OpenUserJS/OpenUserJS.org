@@ -15,22 +15,31 @@
     function onDOMContentLoaded(aEv) {
       var username = document.querySelector('input[name="username"]');
       var auth = document.querySelector('select[name="auth"]');
+      var consent = document.querySelector('input[name="consent"]');
       var action = document.querySelector('button#action');
 
       function onInput(aEv) {
         var req = new XMLHttpRequest();
         var wantname = cleanFilename(aEv.target.value, '');
 
-        function show() {
+        function show(aConsent) {
           action.innerHTML = action.innerHTML.replace(/Sign Up/, 'Sign In');
           action.classList.add('btn-success');
           action.classList.remove('btn-info');
+
+          if (aConsent) {
+            consent.checked = false;
+          } else {
+            consent.checked = true;
+          }
         }
 
         function hide() {
           action.innerHTML = action.innerHTML.replace(/Sign In/, 'Sign Up');
           action.classList.remove('btn-success');
           action.classList.add('btn-info');
+
+          consent.checked = false;
         }
 
         if (wantname) {
@@ -39,7 +48,7 @@
             if (this.readyState == this.DONE) {
               switch (this.status) {
                 case 200:
-                  show();
+                  show(/ consent$/.test(this.getResponseHeader('Warning')));
                   auth.value = '';
                   break;
                 default:
