@@ -297,8 +297,6 @@ exports.callback = function (aReq, aRes, aNext) {
         // Modify expiry to end of browser session
         aReq.session.cookie.expires = false;
         aReq.session.save();
-      } else {
-        aUser.remember = false;
       }
 
       // Save the session id on the user model
