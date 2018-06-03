@@ -93,6 +93,7 @@ exports.auth = function (aReq, aRes, aNext) {
 
   var authedUser = aReq.session.user;
   var consent = aReq.body.consent;
+  var remember = aReq.body.remember;
   var strategy = aReq.body.auth || aReq.params.strategy;
   var username = aReq.body.username || aReq.session.username ||
     (authedUser ? authedUser.name : null);
@@ -142,6 +143,12 @@ exports.auth = function (aReq, aRes, aNext) {
   // get back from authentication
   if (!aReq.session.username) {
     aReq.session.username = username;
+  }
+
+  // Store remember in the session so we still have it when they
+  // get back from authentication
+  if (!aReq.session.remember) {
+    aReq.session.remember = remember;
   }
 
   User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
@@ -282,6 +289,17 @@ exports.callback = function (aReq, aRes, aNext) {
 
       // Save consent
       aUser.consented = true;
+
+      // Save remember
+      if (aReq.session.remember) {
+        aUser.remember = true;
+
+        // Modify expiry to end of browser session
+        aReq.session.cookie.expires = false;
+        aReq.session.save();
+      } else {
+        aUser.remember = false;
+      }
 
       // Save the session id on the user model
       aUser.sessionId = aReq.sessionID;
