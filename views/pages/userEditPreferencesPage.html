@@ -37,6 +37,19 @@
                     </div>
                   </form>
                 </div>
+                {{#sessionControl}}
+                <div class="edit-session-box">
+                  <h2 class="edit-session">Session</h2>
+                  <form method="post" action="/api/user/session/extend">
+                    <div class="input-group col-xs-12">
+                      <div class="alert alert-warning small" role="alert">
+                        <button class="btn btn-success" type="submit"><i class="fa fa-fw fa-history"></i> Extend this session</button>
+                        <i class="fa fa-exclamation-triangle"></i> <strong>NOTICE</strong>: Usually the default session timeout is enough but if you need some more time it is available here. Please use responsibly.
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                {{/sessionControl}}
               </div>
             </div>
           </div>
