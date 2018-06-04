@@ -32,8 +32,7 @@ var userSchema = new Schema({
     absolute: Number
   },
   flagged: Boolean,
-  sessionIds: [String],
-  remember: Boolean
+  sessionIds: [String]
 });
 
 userSchema.virtual('_since').get(function () {

@@ -69,7 +69,7 @@ function caseInsensitive (aStr) {
   return new RegExp('^' + (aStr || '').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1") + '$', 'i');
 }
 
-// Simple exist check usually used with HEAD requests
+// API - Simple exist check usually used with HEAD requests
 exports.exist = function (aReq, aRes) {
   var username = aReq.params.username;
 
@@ -110,9 +110,50 @@ exports.exist = function (aReq, aRes) {
     }
 
     aRes.status(200).send();
-});
+  });
+};
 
+// API - Request for extending a logged in user session
+exports.extend = function (aReq, aRes, aNext) {
+  //
+  var authedUser = aReq.session.user;
 
+  if (!authedUser) {
+    aNext();
+    return;
+  }
+
+  User.findOne({
+    _id: authedUser._id,
+    sessionsIds: { "$in": [ aReq.session._id ] }
+  }, function (aErr, aUser) {
+    var options = {};
+    var user = null;
+
+    if (aErr) {
+      console.error(aErr);
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 500,
+        statusMessage: 'Server Error'
+      });
+      return;
+    }
+
+    if (!aUser) {
+      aNext();
+      return;
+    }
+
+    if (aReq.session.cookie.expires) {
+      aReq.session.cookie.expires = false;
+      aReq.session.save();
+
+      aRes.redirect('back');
+    } else {
+      aNext();
+      return;
+    }
+  });
 };
 
 var setupUserModerationUITask = function (aOptions) {
@@ -914,6 +955,16 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
         aCallback();
       });
     });
+
+    // User session control
+    tasks.push(function (aCallback) {
+      if (aReq.session.cookie.expires) {
+        options.sessionControl = true;
+      }
+
+      aCallback();
+    });
+
 
     // UserPage tasks
     tasks = tasks.concat(getUserPageTasks(options));

@@ -52,6 +52,7 @@ module.exports = function (aApp) {
     aRes.redirect(302, '/users');
   });
   aApp.route('/api/user/exist/:username').head(user.exist);
+  aApp.route('/api/user/session/extend').post(user.extend);
 
   // Adding script/library routes
   aApp.route('/user/add/scripts').get(authentication.validateUser, user.newScriptPage);
