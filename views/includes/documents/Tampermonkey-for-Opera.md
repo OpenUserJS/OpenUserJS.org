@@ -6,11 +6,11 @@ Tampermonkey is a userscript manager extension for [Android][android], [Chrome][
 
 ### Installing Tampermonkey
 
-To get userscripts going with the Opera version of Tampermonkey, first you have to install it from the [Opera Add-ons website][operaAddons]. It works with recent versions of Opera *(v15 or newer, which are based on the Blink rendering engine)*. If you have to use an older version of Opera, you probably need to use [Violent Monkey][violentMonkeyForOpera] instead of Tampermonkey.
+To get userscripts going with the Opera version of Tampermonkey, first you have to install the [Opera Add-on for Installing Chrome Extensions][operaAddons] and then install the extension from the [Chrome Web Store][gooChromeWebStoreTampermonkey]. It works with recent versions of Opera *(v15 or newer, which are based on the Blink rendering engine)*. If you have to use an older version of Opera, you probably need to use [Violentmonkey][violentMonkeyForOpera] instead of Tampermonkey.
 
 ![Screenshot of Tampermonkey page in Opera Add-ons][operaAddonsScreenshot1]
 
-From the Tampermonkey page in Opera Add-ons, click the green "+ Add to Opera" button to install the extension. Once Tamperonkey has finished installing, you should see a pop-up confirming that it has been added to Opera. This should point to a new Tampermonkey icon at the top of the Opera window, next to the address bar.
+From the Installing Chrome Extensions page in the Opera Add-ons website, click the green "+ Add to Opera" button to install the "middleware". Then on the Tampermonkey page in the Chrome Web Store, click the green "+ ADD TO OPERA" button to install the extension. After a few confirmation boxes appear and Tampermonkey has finished installing, you should see a pop-up confirming that Tampermonkey has been added to Opera. This should point to a new Tampermonkey icon at the top of the Opera window, next to the address bar.
 
 ![Screenshot of Tampermonkey installation][tampermonkeyOperaScreenshot1]
 
@@ -44,7 +44,8 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 ### More
 
-* [Get Tampermonkey from the Opera Add-ons website][operaAddons]
+* [Get Install Chrome Extensions from the Opera Add-ons website][operaAddons]
+* [Get Tampermonkey from the Chrome Web Store][gooChromeWebStoreTampermonkey]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
 * [Tampermonkey for Android][tampermonkeyForAndroid]
@@ -72,7 +73,8 @@ Sometimes, when you use more than one userscript on the same web page, they need
 <!-- ## .user.js engine external linkage -->
 [tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
 [tampermonkeyNet]: http://tampermonkey.net/
-[operaAddons]: https://addons.opera.com/extensions/details/tampermonkey-beta/
+[operaAddons]: https://addons.opera.com/en/extensions/details/install-chrome-extensions/
+[gooChromeWebStoreTampermonkey]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
 
 <!-- ## Screenshots -->
 [operaAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_op1.png "Tampermonkey in the Opera Add-ons website"
@@ -89,4 +91,4 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [tampermonkeyForFirefox]: Tampermonkey-for-Firefox
 [tampermonkeyForSafari]: Tampermonkey-for-Safari
 
-[violentMonkeyForOpera]: Violent-monkey-for-Opera
+[violentMonkeyForOpera]: Violentmonkey-for-Opera
