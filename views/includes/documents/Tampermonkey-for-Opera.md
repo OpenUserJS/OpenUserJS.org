@@ -32,7 +32,7 @@ Clicking on the Tampermonkey icon at any time will pop up a menu that shows you 
 
 ![Screenshot of Tampermonkey dashboard][tampermonkeyOperaScreenshot3]
 
-In the Dashboard, the "Installed scripts" tab is the main place to manage your userscripts. The numbered circle to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(red)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, or check for new updates *(click the "last updated" date)*.
+In the Dashboard, the "Installed scripts" tab is the main place to manage your userscripts. The number to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(red)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, check for new updates *(click the "last updated" date)*, change the script order *(click and drag the hamburger button under the Sort column)*, and some other icons related to the script management.
 
 ### Trouble shooting
 
