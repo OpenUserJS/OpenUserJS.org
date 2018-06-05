@@ -32,13 +32,13 @@ Clicking on the Tampermonkey icon at any time will pop up a menu that shows you 
 
 ![Screenshot of Tampermonkey dashboard][tampermonkeyOperaScreenshot3]
 
-In the Dashboard, the "Installed scripts" tab is the main place to manage your userscripts. The number to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(gray)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, check for new updates *(click the "last updated" date)*, change the script order *(click and drag the hamburger button under the Sort column)*, and some other icons related to the script management.
+In the Dashboard, the "Installed scripts" tab is the main place to manage your userscripts. The number to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(gray)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, check for new updates *(click the "last updated" date)*, and some other icons related to the script management.
 
 ### Trouble shooting
 
 If you think a userscript is causing problems, the easiest way to check is to switch off Tampermonkey, reload the web page, and see if the symptoms go away. You can do this by clicking on the Tampermonkey icon then clicking "Enabled"; the tick icon should change to a cross. If it looks like a script problem and you have more than one script running on a web page, you can disable them all in Tampermonkey's dashboard then re-enable them one by one, until you find the culprit. Remember to reload the web page each time - userscripts normally only run when a web page loads.
 
-Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order using the Tampermonkey dashboard. In the "Sort order" column, click on the triple-line icon for the script you want to move, move the mouse up or down to change the order, then click again.
+Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order using the Tampermonkey dashboard. In the "Sort" column, click and hold on the triple-line icon for the script you want to move, move the mouse up or down to change the order, then release.
 
 ### More
 
