@@ -8,9 +8,9 @@ Tampermonkey is a userscript manager extension for [Android][android], [Chrome][
 
 To get userscripts going with the desktop version of Tampermonkey, first you have to install it from [the source at tampermonkey.net][tampermonkey].
 
-![Screenshot of Tampermonkey page in tampermonkey.net][tampermonkeyTampermonkeySafariScreenshot]
+![Screenshot of Tampermonkey page in tampermonkey.net][tampermonkeyTampermonkeySafariScreenshot1]
 
-From the Tampermonkey page in the website, click the green "Download" button to install the extension. ***STUB***
+From the Tampermonkey page in the website, click the green "Download" button. Once the extension is fully downloaded, open the Downloads folder and double-click the extension to install. Safari will prompt you to Trust or Cancel the installation. Note this step can **not** currently be done remotely via a VNC remote desktop session due to security restrictions in Safari. Installation must be done directly with the machines keyboard/mouse.
 
 ### Installing Userscripts
 
@@ -32,13 +32,13 @@ Clicking on the Tampermonkey icon at any time will pop up a menu that shows you 
 
 ![Screenshot of Tampermonkey Dashboard][tampermonkeySafariScreenshot3]
 
-In the Dashboard, the "Installed scripts" tab is the main place to manage your userscripts. The numbered circle to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(red)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, or check for new updates *(click the "last updated" date)*.
+In the Dashboard, the "Installed userscripts" tab is the main place to manage your userscripts. The number to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(gray)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, check for new updates *(click the "Last updated" date)*, and some other icons related to the script management.
 
 ### Trouble shooting
 
 If you think a userscript is causing problems, the easiest way to check is to switch off Tampermonkey, reload the web page, and see if the symptoms go away. You can do this by clicking on the Tampermonkey icon then clicking "Enabled"; the tick icon should change to a cross. If it looks like a script problem and you have more than one script running on a web page, you can disable them all in Tampermonkey's dashboard then re-enable them one by one, until you find the culprit. Remember to reload the web page each time - userscripts normally only run when a web page loads.
 
-Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order using the Tampermonkey dashboard. In the "Sort order" column, click on the 'three lines' icon for the script you want to move, move the mouse up or down to change the order, then click again.
+Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order using the Tampermonkey dashboard. In the "Sort" column, click on the 'three lines' icon for the script you want to move, move the mouse up or down to change the order, then release.
 
 ### More
 
@@ -49,8 +49,8 @@ Sometimes, when you use more than one userscript on the same web page, they need
 * [Tampermonkey for Chrome][tampermonkeyForChrome]
 * [Tampermonkey for Chromium][tampermonkeyForChromium]
 * [Tampermonkey for Edge][tampermonkeyForEdge]
+* [Tampermonkey for Firefox][tampermonkeyForFirefox]
 * [Tampermonkey for Opera][tampermonkeyForOpera]
-* [Tampermonkey for Safari][tampermonkeyForSafari]
 
 <!-- # References -->
 
@@ -76,10 +76,9 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [gooChromeWebStoreTampermonkeyBeta]: https://chrome.google.com/webstore/detail/tampermonkey-beta/gcalenpjmijncebpfijmoaglllgpjagf
 
 <!-- ## Screenshots -->
-[tampermonkeyTampermonkeySafariScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkeySafari1.png "Tampermonkey in the Chrome Web Store"
-[tampermonkeySafariScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkeySafari2.png "Confirm extension"
+[tampermonkeyTampermonkeySafariScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_sa1.gif "Tampermonkey in tampermonkey.net"
 [oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
-[tampermonkeySafariScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_sa4.gif "Tampermonkey installed"
+[tampermonkeySafariScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_sa4.gif "Installing a script"
 [tampermonkeySafariScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_sa5.png "Tampermonkey Dashboard"
 
 <!-- ## Other related .user.js engine internal pages -->
