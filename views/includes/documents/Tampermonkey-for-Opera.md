@@ -50,6 +50,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 * [Tampermonkey for Chrome][tampermonkeyForChrome]
 * [Tampermonkey for Chromium][tampermonkeyForChromium]
 * [Tampermonkey for Edge][tampermonkeyForEdge]
+* [Tampermonkey for Firefox][tampermonkeyForFirefox]
 * [Tampermonkey for Safari][tampermonkeyForSafari]
 
 <!-- # References -->
