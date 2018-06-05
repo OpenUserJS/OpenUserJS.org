@@ -78,8 +78,8 @@ Sometimes, when you use more than one userscript on the same web page, they need
 <!-- ## Screenshots -->
 [tampermonkeyOperaScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_op1.gif "Tampermonkey installed"
 [oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
-[tampermonkeyOperaScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey4.gif "Installing a script"
-[tampermonkeyOperaScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey5.png "Tampermonkey Dashboard"
+[tampermonkeyOperaScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_op4.gif "Installing a script"
+[tampermonkeyOperaScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_op5.png "Tampermonkey Dashboard"
 
 <!-- ## Other related .user.js engine internal pages -->
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
