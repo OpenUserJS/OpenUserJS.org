@@ -1951,7 +1951,7 @@ exports.webhook = function (aReq, aRes) {
   }
 
   // Initial setup of the webhook checks... informational
-  if (payload.zen === 'Design for failure.') {
+  if (payload.zen) { // NOTE: This value can be anything and does change
     if (payload.hook && payload.hook.events && payload.hook.config) {
 
       // Events
