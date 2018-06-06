@@ -1935,7 +1935,7 @@ exports.webhook = function (aReq, aRes) {
     return;
   }
 
-  // Test for known GH webhook ips: https://api.github.com/meta
+  // Test for known GH webhook IPs: https://api.github.com/meta
   if (!aReq.body.payload ||
     !/192\.30\.25[2-5]\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
       .test(aReq.connection.remoteAddress)) {
@@ -1945,8 +1945,37 @@ exports.webhook = function (aReq, aRes) {
 
   payload = JSON.parse(aReq.body.payload);
 
-  // Only accept commits to the master branch
-  if (!payload || payload.ref !== 'refs/heads/master') {
+  if (!payload) {
+    aRes.status(400).send(); // Bad request
+    return;
+  }
+
+  // Initial setup of the webhook checks... informational
+  if (payload.zen === 'Design for failure.') {
+    if (payload.hook && payload.hook.events && payload.hook.config) {
+
+      // Events
+      if (payload.hook.events.length !== 1 || payload.hook.events.indexOf('push') !== 0) {
+        aRes.status(413).send(); // Payload (events) too large
+        return;
+      }
+
+      // Type
+      if (payload.hook.config.content_type !== 'form') {
+        aRes.status(415).send(); // Unsupported media type
+        return;
+      }
+
+      aRes.status(200).send(); // Send acknowledgement for GH history
+      return;
+    }
+
+    aRes.status(400).send(); // Bad request
+    return;
+  }
+
+  // Only accept commits from the `master` branch
+  if (payload.ref !== 'refs/heads/master') {
     aRes.status(403).send(); // Forbidden
     return;
   }
@@ -1976,7 +2005,7 @@ exports.webhook = function (aReq, aRes) {
       return;
     }
 
-    aRes.end(); // Close connection
+    aRes.status(202).send(); // Close connection with Accepted but processing
 
     // Gather the modified user scripts
     payload.commits.forEach(function (aCommit) {
