@@ -1943,6 +1943,24 @@ exports.webhook = function (aReq, aRes) {
     return;
   }
 
+  // Initial setup of the webhook checks... informational
+  if (!aReq.is('application/x-www-form-urlencoded')) {
+    aRes.status(415).send(); // Unsupported media type
+    return;
+  }
+
+  switch (aReq.get('X-GitHub-Event')) {
+    case 'ping':
+      aRes.status(200).send(); // Send acknowledgement for GH history
+        return;
+      break;
+    case 'push':
+      break;
+    default:
+      aRes.status(400).send(); // Bad request
+        return;
+  }
+
   payload = JSON.parse(aReq.body.payload);
 
   if (!payload) {
@@ -1950,29 +1968,7 @@ exports.webhook = function (aReq, aRes) {
     return;
   }
 
-  // Initial setup of the webhook checks... informational
-  if (payload.zen) { // NOTE: This value can be anything and does change
-    if (payload.hook && payload.hook.events && payload.hook.config) {
-
-      // Events
-      if (payload.hook.events.length !== 1 || payload.hook.events.indexOf('push') !== 0) {
-        aRes.status(413).send(); // Payload (events) too large
-        return;
-      }
-
-      // Type
-      if (payload.hook.config.content_type !== 'form') {
-        aRes.status(415).send(); // Unsupported media type
-        return;
-      }
-
-      aRes.status(200).send(); // Send acknowledgement for GH history
-      return;
-    }
-
-    aRes.status(400).send(); // Bad request
-    return;
-  }
+  //
 
   // Only accept commits from the `master` branch
   if (payload.ref !== 'refs/heads/master') {
