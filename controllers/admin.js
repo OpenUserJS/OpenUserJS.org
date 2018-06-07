@@ -11,6 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var async = require('async');
 var exec = require('child_process').exec;
 var git = require('git-rev');
+var _ = require('underscore');
 
 //--- Model inclusions
 var Comment = require('../models/comment').Comment;
@@ -374,7 +375,10 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
     }
 
     aUserSessions.toArray(function (aErr, aSessionsData) {
-      var names = [];
+      var options = {};
+      options.namedCount = 0;
+      options.rawCount = 0;
+      options.session = [];
 
       if (aErr) {
         // We want to know what the error value is in logging review
@@ -391,15 +395,32 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
         var data = JSON.parse(aElement.session);
 
         if (data && data.user) {
-          names.push(data.user.name);
+          options.session.push({
+            _id: aElement._id,
+            expires: data.cookie.expires,
+            name: data.user.name
+          });
+
+          options.namedCount++;
+
+        } else if (data && !data.user) {
+          options.session.push({
+            _id: aElement._id,
+            expires: data.cookie.expires,
+            data: data
+          });
         }
+        options.rawCount++;
       });
 
-      // Currently sort and output in simplified JSON
+      // Sort the sessions
+      options.session = _.sortBy(options.session, function (aSession) {
+        return (aSession.name) ? aSession.name.toLowerCase() : aSession.name;
+      });
+
+      // Currently output in simplified JSON
       aRes.set('Content-Type', 'application/json; charset=UTF-8');
-      aRes.write(JSON.stringify(names.sort(function (aArg1, aArg2) {
-        return aArg1.toLowerCase().localeCompare(aArg2.toLowerCase());
-      }), null, isPro ? '' : ' '));
+      aRes.write(JSON.stringify(options, null, isPro ? '' : ' '));
       aRes.end();
 
     });
