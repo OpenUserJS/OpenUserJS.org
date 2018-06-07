@@ -40,6 +40,8 @@ If you think a userscript is causing problems, the easiest way to check is to sw
 
 Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order using the Violentmonkey dashboard.  Click and drag the bounding box of each script in the list to move it up or down in the list.
 
+Sometimes, usually on a portable device, it may look like the userscript manager is not working. Try closing all tabs and load them fresh.
+
 ### More
 
 * [Get Violentmonkey from the Firefox Add-ons website][firefoxAddons]

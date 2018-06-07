@@ -43,6 +43,8 @@ If it looks like you have a script problem and you have more than one script run
 
 Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can also use the Add-ons Manager to achieve this. Click "Execution Order" above the list of scripts to see what order they will run in, then right-click on the individual scripts to make them execute first, last, sooner or later.
 
+Sometimes, usually on a portable device, it may look like the userscript manager is not working. Try closing all tabs and load them fresh.
+
 ### More
 
 * [Get Firefox Greasemonkey from Add-ons.Mozilla.org][amoGreasemonkey]
