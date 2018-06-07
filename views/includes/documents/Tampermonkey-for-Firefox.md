@@ -39,6 +39,8 @@ If you think a userscript is causing problems, the easiest way to check is to sw
 
 Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order using the Tampermonkey dashboard. In the "Sort order" column, click on the 'three lines' icon for the script you want to move, move the mouse up or down to change the order, then click again.
 
+Sometimes, usually on a portable device, it may look like the userscript manager is not working. Try closing all tabs and load them fresh.
+
 ### More
 
 * [Get Tampermonkey][tampermonkey]
