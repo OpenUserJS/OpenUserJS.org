@@ -1938,8 +1938,8 @@ exports.webhook = function (aReq, aRes) {
 
   // Test for known GH webhook IPs: https://api.github.com/meta
   if (!rangeCheck.inRange(
-    aReq.connection.remoteAddress,
-    ['::ffff:192.30.252.0/22', '::ffff:185.199.108.0/22', '::ffff:140.82.112.0/20']
+    aReq.connection.remoteAddress.replace(/^::ffff:/, ''),
+    ['192.30.252.0/22', '185.199.108.0/22', '140.82.112.0/20']
   )) {
     aRes.status(401).send(); // Unauthorized: No challenge and silent iterations
     return;
