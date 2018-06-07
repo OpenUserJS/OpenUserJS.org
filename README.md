@@ -76,6 +76,7 @@ Repository | Reference | Recent Version
 [passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] ![OAuth2][oauth2Logo]
 [passport-yahoo][passport-yahooGHUrl] <br />&#x22D4; [`OpenID2`][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
+[range_check][range_checkGHUrl] | [Documentation][range_checkDOCUrl] | [![NPM version][range_checkNPMVersionImage]][range_checkNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
 [sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
@@ -421,6 +422,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [pegjsDOCUrl]: https://github.com/pegjs/pegjs/blob/master/README.md
 [pegjsNPMUrl]: https://www.npmjs.com/package/pegjs
 [pegjsNPMVersionImage]: https://img.shields.io/npm/v/pegjs.svg?style=flat
+
+[range_checkGHUrl]: https://github.com/request/request
+[range_checkDOCUrl]: https://github.com/request/request/blob/master/README.md
+[range_checkNPMUrl]: https://www.npmjs.com/package/request
+[range_checkNPMVersionImage]: https://img.shields.io/npm/v/range_check.svg?style=flat
 
 [requestGHUrl]: https://github.com/request/request
 [requestDOCUrl]: https://github.com/request/request/blob/master/README.md

@@ -28,6 +28,7 @@ var Base62 = require('base62/lib/ascii');
 var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 var SPDX = require('spdx-license-ids');
 var sizeOf = require('image-size');
+var rangeCheck = require('range_check');
 
 var MongoClient = require('mongodb').MongoClient;
 var ExpressBrute = require('express-brute');
@@ -1935,10 +1936,16 @@ exports.webhook = function (aReq, aRes) {
     return;
   }
 
+  if (!aReq.body.payload) {
+    aRes.status(400).send(); // Bad request
+    return;
+  }
+
   // Test for known GH webhook IPs: https://api.github.com/meta
-  if (!aReq.body.payload ||
-    !/192\.30\.25[2-5]\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/
-      .test(aReq.connection.remoteAddress)) {
+  if (!rangeCheck.inRange(
+    aReq.connection.remoteAddress,
+    ['192.30.252.0/22', '185.199.108.0/22', '140.82.112.0/20']
+  )) {
     aRes.status(401).send(); // Unauthorized: No challenge and silent iterations
     return;
   }
@@ -1959,6 +1966,11 @@ exports.webhook = function (aReq, aRes) {
   switch (aReq.get('X-GitHub-Event')) {
     case 'ping':
       // Initial setup of the webhook checks... informational
+      if (!payload.hook && !payload.hook.events) {
+        aRes.status(502).send(); // Bad gateway e.g. something catastrophic to look into
+          return;
+      }
+
       if (payload.hook.events.length !== 1 || payload.hook.events.indexOf('push') !== 0) {
         aRes.status(413).send(); // Payload (events) too large
           return;
