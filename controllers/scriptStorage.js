@@ -1943,29 +1943,36 @@ exports.webhook = function (aReq, aRes) {
     return;
   }
 
-  // Initial setup of the webhook checks... informational
+  // If media type is not corectly set up in GH webhook then reject
+   // NOTE: Keep in sync with newScriptPage.html view
   if (!aReq.is('application/x-www-form-urlencoded')) {
     aRes.status(415).send(); // Unsupported media type
     return;
   }
 
+  payload = JSON.parse(aReq.body.payload);
+  if (!payload) {
+    aRes.status(400).send(); // Bad request
+    return;
+  }
+
   switch (aReq.get('X-GitHub-Event')) {
     case 'ping':
+      // Initial setup of the webhook checks... informational
+      if (payload.hook.events.length !== 1 || payload.hook.events.indexOf('push') !== 0) {
+        aRes.status(413).send(); // Payload (events) too large
+          return;
+      }
+
       aRes.status(200).send(); // Send acknowledgement for GH history
         return;
       break;
     case 'push':
+      // Pushing a change
       break;
     default:
       aRes.status(400).send(); // Bad request
         return;
-  }
-
-  payload = JSON.parse(aReq.body.payload);
-
-  if (!payload) {
-    aRes.status(400).send(); // Bad request
-    return;
   }
 
   //
