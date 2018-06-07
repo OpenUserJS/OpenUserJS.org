@@ -423,9 +423,9 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [pegjsNPMUrl]: https://www.npmjs.com/package/pegjs
 [pegjsNPMVersionImage]: https://img.shields.io/npm/v/pegjs.svg?style=flat
 
-[range_checkGHUrl]: https://github.com/request/request
-[range_checkDOCUrl]: https://github.com/request/request/blob/master/README.md
-[range_checkNPMUrl]: https://www.npmjs.com/package/request
+[range_checkGHUrl]: https://github.com/keverw/range_check
+[range_checkDOCUrl]: https://github.com/keverw/range_check/blob/master/readme.md
+[range_checkNPMUrl]: https://www.npmjs.com/package/range_check
 [range_checkNPMVersionImage]: https://img.shields.io/npm/v/range_check.svg?style=flat
 
 [requestGHUrl]: https://github.com/request/request
