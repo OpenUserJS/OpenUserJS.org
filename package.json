@@ -57,6 +57,7 @@
     "passport-windowslive": "1.0.2",
     "passport-yahoo": "git://github.com/OpenUserJs/passport-yahoo#OpenID2",
     "pegjs": "0.10.0",
+    "range_check": "1.4.0",
     "request": "2.87.0",
     "rfc2047": "2.0.1",
     "sanitize-html": "1.18.2",
