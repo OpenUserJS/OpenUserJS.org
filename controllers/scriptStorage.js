@@ -28,7 +28,7 @@ var Base62 = require('base62/lib/ascii');
 var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 var SPDX = require('spdx-license-ids');
 var sizeOf = require('image-size');
-var rangeCheck = require('range_check');
+var ipRangeCheck = require("ip-range-check");
 
 var MongoClient = require('mongodb').MongoClient;
 var ExpressBrute = require('express-brute');
@@ -1937,9 +1937,13 @@ exports.webhook = function (aReq, aRes) {
   }
 
   // Test for known GH webhook IPs: https://api.github.com/meta
-  if (!rangeCheck.inRange(
-    aReq.connection.remoteAddress.replace(/^::ffff:/, ''),
-    ['192.30.252.0/22', '185.199.108.0/22', '140.82.112.0/20']
+  // NOTE: Maintaining IPv4 CIDR as IPv4-mapped IPv6 addresses are
+  //   automatically converted back to IPv4 with current dependency
+  //   IPv6 address for caller will return `false` from dep in this
+  //   configuration
+  if (!ipRangeCheck(
+    aReq.connection.remoteAddress,
+      ['192.30.252.0/22', '185.199.108.0/22', '140.82.112.0/20']
   )) {
     aRes.status(401).send(); // Unauthorized: No challenge and silent iterations
     return;

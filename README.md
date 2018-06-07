@@ -44,6 +44,7 @@ Repository | Reference | Recent Version
 [github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl][ᴸᴬᴺᴳ][highlight.jsLANGUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [image-size][image-sizeGHUrl] | [Documentation][image-sizeDOCUrl] | [![NPM version][image-sizeNPMVersionImage]][image-sizeNPMUrl]
+[ip-range-check][ip-range-checkGHUrl] | [Documentation][ip-range-checkDOCUrl] | [![NPM version][ip-range-checkNPMVersionImage]][ip-range-checkNPMUrl]
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
 [js-beautify][js-beautifyGHUrl] | [Documentation][js-beautifyDOCUrl] | [![NPM version][js-beautifyNPMVersionImage]][js-beautifyNPMUrl]
 [jsdom][jsdomGHUrl] | [Documentation][jsdomDOCUrl] | [![NPM version][jsdomNPMVersionImage]][jsdomNPMUrl]
@@ -76,7 +77,6 @@ Repository | Reference | Recent Version
 [passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] ![OAuth2][oauth2Logo]
 [passport-yahoo][passport-yahooGHUrl] <br />&#x22D4; [`OpenID2`][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
-[range_check][range_checkGHUrl] | [Documentation][range_checkDOCUrl] | [![NPM version][range_checkNPMVersionImage]][range_checkNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
 [sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
@@ -255,6 +255,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [image-sizeGHUrl]: https://github.com/image-size/image-size
 [image-sizeDOCUrl]: https://github.com/image-size/image-size/blob/master/Readme.md
 
+[ip-range-checkGHUrl]: https://github.com/danielcompton/ip-range-check
+[ip-range-checkDOCUrl]: https://github.com/danielcompton/ip-range-check/blob/master/README.md
+[ip-range-checkNPMUrl]: https://www.npmjs.com/package/ip-range-check
+[ip-range-checkNPMVersionImage]: https://img.shields.io/npm/v/ip-range-check.svg?style=flat
+
 [jQueryNPMUrl]: https://www.npmjs.com/package/jquery
 [jQueryNPMVersionImage]: https://img.shields.io/npm/v/jquery.svg?style=flat
 [jQueryGHUrl]: https://github.com/jquery/jquery
@@ -422,11 +427,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [pegjsDOCUrl]: https://github.com/pegjs/pegjs/blob/master/README.md
 [pegjsNPMUrl]: https://www.npmjs.com/package/pegjs
 [pegjsNPMVersionImage]: https://img.shields.io/npm/v/pegjs.svg?style=flat
-
-[range_checkGHUrl]: https://github.com/keverw/range_check
-[range_checkDOCUrl]: https://github.com/keverw/range_check/blob/master/readme.md
-[range_checkNPMUrl]: https://www.npmjs.com/package/range_check
-[range_checkNPMVersionImage]: https://img.shields.io/npm/v/range_check.svg?style=flat
 
 [requestGHUrl]: https://github.com/request/request
 [requestDOCUrl]: https://github.com/request/request/blob/master/README.md
