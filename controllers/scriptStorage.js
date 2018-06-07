@@ -1936,11 +1936,6 @@ exports.webhook = function (aReq, aRes) {
     return;
   }
 
-  if (!aReq.body.payload) {
-    aRes.status(400).send(); // Bad request
-    return;
-  }
-
   // Test for known GH webhook IPs: https://api.github.com/meta
   if (!rangeCheck.inRange(
     aReq.connection.remoteAddress,
@@ -1954,6 +1949,11 @@ exports.webhook = function (aReq, aRes) {
    // NOTE: Keep in sync with newScriptPage.html view
   if (!aReq.is('application/x-www-form-urlencoded')) {
     aRes.status(415).send(); // Unsupported media type
+    return;
+  }
+
+  if (!aReq.body.payload) {
+    aRes.status(502).send(); // Bad gateway
     return;
   }
 
