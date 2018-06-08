@@ -53,6 +53,8 @@ var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
 
+var extendSession = require('../libs/modifySessions').extend;
+
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
 var strategies = require('./strategies.json');
@@ -115,7 +117,6 @@ exports.exist = function (aReq, aRes) {
 
 // API - Request for extending a logged in user session
 exports.extend = function (aReq, aRes, aNext) {
-  //
   var authedUser = aReq.session.user;
 
   if (!authedUser) {
@@ -127,32 +128,22 @@ exports.extend = function (aReq, aRes, aNext) {
     _id: authedUser._id,
     sessionsIds: { "$in": [ aReq.session._id ] }
   }, function (aErr, aUser) {
-    var options = {};
-    var user = null;
+    extendSession(aReq, aUser, function (aErr) {
+      if (aErr) {
+        if (aErr === 'Already extended') {
+          aNext();
+          return;
+        }
 
-    if (aErr) {
-      console.error(aErr);
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 500,
-        statusMessage: 'Server Error'
-      });
-      return;
-    }
-
-    if (!aUser) {
-      aNext();
-      return;
-    }
-
-    if (aReq.session.cookie.expires) {
-      aReq.session.cookie.expires = false;
-      aReq.session.save();
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500,
+          statusMessage: aErr
+        });
+        return;
+      }
 
       aRes.redirect('back');
-    } else {
-      aNext();
-      return;
-    }
+    });
   });
 };
 
