@@ -31,7 +31,7 @@ function serializeUser(aUser) {
   return userObj;
 }
 
-// Add a new session id to the user model
+// Add a single new session id to the user model
 exports.add = function (aReq, aUser, aCallback) {
   var store = aReq.sessionStore;
 
@@ -62,7 +62,26 @@ exports.add = function (aReq, aUser, aCallback) {
   }
 };
 
-// Remove a session id from the user model **and** the session store
+// Extend a single session
+exports.extend = function (aReq, aUser, aCallback) {
+  if (!aUser) {
+    aCallback('No User');
+    return;
+  }
+
+  if (!aReq.session.cookie.expires) {
+    aCallback('Already extended');
+    return;
+  }
+
+  // NOTE: Currently allow on any session with
+  //   no additional User restrictions yet
+
+  aReq.session.cookie.expires = false;
+  aReq.session.save(aCallback);
+};
+
+// Remove a single session id from the user model **and** the session store
 exports.remove = function (aReq, aUser, aCallback) {
   var pos = aUser && aUser.sessionIds ?
     aUser.sessionIds.indexOf(aReq.sessionID) : -1;
@@ -86,13 +105,17 @@ exports.update = function (aReq, aUser, aCallback) {
   var store = aReq.sessionStore;
   var userObj = aUser ? serializeUser(aUser) : null;
 
-  if (!aUser || !aUser.sessionIds) { return aCallback('No sessions', null); }
+  if (!aUser || !aUser.sessionIds) {
+    aCallback('No sessions', null);
+    return;
+  }
 
   async.each(aUser.sessionIds, function (aId, aCb) {
     store.get(aId, function (aErr, aSess) {
       // Invalid session, will be removed on login
       if (aErr || !aSess) {
-        return aCb(null);
+        aCb(null);
+        return;
       }
 
       aSess.user = userObj;
@@ -113,7 +136,10 @@ exports.destroy = function (aReq, aUser, aCallback) {
     }
   };
 
-  if (!aUser || !aUser.sessionIds) { return aCallback('No sessions', null); }
+  if (!aUser || !aUser.sessionIds) {
+    aCallback('No sessions', null);
+    return;
+  }
 
   async.each(aUser.sessionIds, function (aId, aCb) {
     store.set(aId, emptySess, aCb);
