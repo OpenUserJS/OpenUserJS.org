@@ -36,6 +36,12 @@ Within moderation we understand the occasional necessity to conserve device stor
 * OpenUserJs.org reserves including but not limited to the implied right to publish, distribute, and terminate access to your published works and code snippets to maintain the integrity of OpenUserJS.org.
 * OpenUserJs.org allows all published works on OpenUserJS.org to be forked via OpenUserJS.org forking capabilities.
 
+#### Fair Use Rationale
+* OpenUserJS.org is considered to be a safe harbor.
+* OpenUserJS.org provides voluntary access for Authors, Users, and other related material relating to User scripts and Library Scripts.
+* The default, minimum, rationale for any publications, including but not limited to User and Library scripts by any Author, is for educational purposes.
+* Any external site may **not** extend their Terms of Service, Terms of Use, Privacy Policy, DMCA, or any other policy for their site to OpenUserJS.org without prior written and signed consent.
+
 #### Default Code Licensing
 
 * User Scripts have an implied license of [`MIT`][spdxMITLicense] [License *(Expat)*][osiMITLicenseExpat] if the `@license` *(including the alternate spelling of `@licence`)* metadata block key is absent.
