@@ -24,7 +24,7 @@
             <i class="fa fa-user fa-fw"></i>
           </span>
           <div class="form-group has-feedback has-clear">
-            <input class="search form-control" type="text" name="username" value="{{wantname}}" placeholder="Username" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
+            <input class="search form-control" type="text" name="username" value="{{wantname}}" placeholder="Username" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" required="required">
             <span class="form-control-feedback form-control-clear fa fa-times hidden"></span>
           </div>
           <select name="auth" class="form-control">
@@ -34,11 +34,15 @@
           </select>
           <div style="width: 100%;">
             <div class="input-group-addon">
-              <ul class="nav nav-pills nav-justified">
-                <li><a href="/about/Terms-of-Service"><i class="fa fa-legal"></i> Terms of Service</a></li>
-                <li><a href="/about/Privacy-Policy"><i class="fa fa-user-secret"></i> Privacy Policy</a></li>
-              </ul>
-              <span class="small" style="white-space: normal;"><input type="checkbox" name="consent" value="true"> I understand and agree to these binding terms and policies.</span>
+              <p>
+                <ul class="nav nav-pills nav-justified">
+                  <li><a href="/about/Terms-of-Service"><i class="fa fa-legal"></i> Terms of Service</a></li>
+                  <li><a href="/about/Privacy-Policy"><i class="fa fa-user-secret"></i> Privacy Policy</a></li>
+                </ul>
+              </p>
+              <p>
+                <span class="small" style="white-space: normal;"><input type="checkbox" name="consent" value="true" required="required"> I understand and agree to these binding terms and policies.</span>
+              </p>
             </div>
             <div class="input-group-addon">
               <button class="btn btn-info" type="submit" id="action" class="pull-left">Next <i class="fa fa-sign-in fa-fw"></i></button>
