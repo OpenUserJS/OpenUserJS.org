@@ -38,7 +38,7 @@ Within moderation we understand the occasional necessity to conserve device stor
 
 #### Fair Use Rationale
 * OpenUserJS.org is considered to be a safe harbor.
-* OpenUserJS.org provides voluntary access for Authors, Users, and other related material relating to User scripts and Library Scripts.
+* OpenUserJS.org provides voluntary access for Authors, Users, Visitors, and other related material relating to User scripts and Library scripts.
 * The default, minimum, rationale for any publications, including but not limited to User and Library scripts by any Author, is for educational purposes.
 * Any external site may **not** extend their Terms of Service, Terms of Use, Privacy Policy, DMCA, or any other policy for their site to OpenUserJS.org without prior written and signed consent.
 

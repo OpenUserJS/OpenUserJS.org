@@ -7,4 +7,9 @@
   </div>
   -->
 {{/hideThisReminder}}
+{{^authedUser}}
+  <div class="alert alert-warning small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>NOTICE:</b> By continued use of this site you understand and agree to the binding <a class= "alert-link" href="/about/Terms-of-Service">Terms of Service</a> and <a class="alert-link" href="/about/Privacy-Policy">Privacy Policy</a>.</p>
+  </div>
+{{/authedUser}}
 </div>
