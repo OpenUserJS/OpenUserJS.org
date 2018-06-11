@@ -86,11 +86,7 @@ exports.remove = function (aReq, aUser, aCallback) {
   var pos = aUser && aUser.sessionIds ?
     aUser.sessionIds.indexOf(aReq.sessionID) : -1;
 
-  if (aReq.session.destroy) {
-    aReq.session.destroy();
-  } else { // TODO: Remove conditional and this fallback when satisifed
-    delete aReq.session.user;
-  }
+  aReq.session.destroy();
 
   if (pos > -1) {
     aUser.sessionIds.splice(pos, 1);
@@ -124,24 +120,16 @@ exports.update = function (aReq, aUser, aCallback) {
   }, aCallback);
 };
 
-// Destory all sessions for a user
+// Destroy all sessions for a user
 exports.destroy = function (aReq, aUser, aCallback) {
   var store = aReq.sessionStore;
-  var emptySess = {
-    cookie: {
-      path: '/',
-      _expires: null,
-      originalMaxAge: null,
-      httpOnly: true
-    }
-  };
 
   if (!aUser || !aUser.sessionIds) {
     aCallback('No sessions', null);
     return;
   }
 
-  async.each(aUser.sessionIds, function (aId, aCb) {
-    store.set(aId, emptySess, aCb);
+  async.each(aUser.sessionIds, function (aId, aInnerCallback) {
+   store.destroy(aId, aInnerCallback);
   }, aCallback);
 };
