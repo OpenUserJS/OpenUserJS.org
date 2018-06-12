@@ -1,15 +1,15 @@
 <div class="reminders">
-{{^hideThisReminder}}
-<!--
-  <div class="alert alert-info alert-dismissible small fade in" role="alert">
-    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>REMINDER:</b> Don't miss out reading the <a class="alert-link" href="/">descriptive</a> announcement.</p>
-  </div>
-  -->
-{{/hideThisReminder}}
 {{^authedUser}}
-  <div class="alert alert-warning small fade in" role="alert">
+  <div class="alert alert-warning alert-dismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
     <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>NOTICE:</b> By continued use of this site you understand and agree to the binding <a class= "alert-link" href="/about/Terms-of-Service">Terms of Service</a> and <a class="alert-link" href="/about/Privacy-Policy">Privacy Policy</a>.</p>
   </div>
 {{/authedUser}}
+{{^hideThisReminder}}
+<!--  <div class="alert alert-info alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>REMINDER:</b> Don't miss out reading the <a class="alert-link" href="/">descriptive</a> announcement.</p>
+  </div>-->
+
+{{/hideThisReminder}}
 </div>
