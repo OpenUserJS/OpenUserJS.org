@@ -303,7 +303,7 @@ exports.callback = function (aReq, aRes, aNext) {
           doneUri = aReq.session.redirectTo;
           delete aReq.session.redirectTo;
 
-          expandSession(aReq, aUser, function () {
+          expandSession(aReq, aUser, function (aErr) {
             aRes.redirect(doneUri);
           });
         }
