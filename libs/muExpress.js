@@ -25,8 +25,12 @@ function renderFile(aRes, aPath, aOptions) {
   //   so please do not remove unless refactoring in a new issue as a whole.
   // Example Code task and sync UI with banner text/link at `./includes/headerReminders`:
   // if (aOptions.authedUser && aOptions.authedUser.strategies.indexOf('google') === -1) {
-  //   aOptions.hideThisReminder = true;
+  //   aOptions.hideReminderThis = true;
   // }
+
+  if (aRes.oujsOptions && aRes.oujsOptions.hideReminderGDPR) {
+    aOptions.hideReminderGDPR = aRes.oujsOptions.hideReminderGDPR;
+  }
 
   aRes.set('Content-Type', 'text/html; charset=UTF-8');
   mu.compileAndRender(aPath, aOptions).pipe(aRes);

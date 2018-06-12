@@ -163,9 +163,18 @@ var forceBusy = process.env.FORCE_BUSY === 'true';
 
 app.use(function (aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
+  var referer = aReq.headers.referer;
   var usedMem = null;
   var isSources = null;
 
+  // Middleware for GDPR Notice
+  if (!aRes.oujsOptions) {
+    aRes.oujsOptions = {};
+  }
+  aRes.oujsOptions.hideReminderGDPR =
+    /^https?:\/\/(?:localhost:8080|openuserjs\.org)/.test(referer);
+
+  //
   if (
     /^\/favicon\.ico$/.test(pathname) ||
       /^\/redist\//.test(pathname) ||
