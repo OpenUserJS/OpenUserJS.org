@@ -163,7 +163,7 @@ var forceBusy = process.env.FORCE_BUSY === 'true';
 
 app.use(function (aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
-  var referer = aReq.headers.referer;
+  var referer = aReq.headers.referer || '';
   var usedMem = null;
   var isSources = null;
 
