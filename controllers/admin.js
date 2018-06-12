@@ -397,9 +397,8 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
         if (data && data.user) {
           options.session.push({
             _id: aElement._id,
-            originalMaxAge: data.cookie.originalMaxAge,
-            expires: data.cookie.expires,
-            name: data.user.name
+            name: data.user.name,
+            cookie: data.cookie
           });
 
           options.namedCount++;
