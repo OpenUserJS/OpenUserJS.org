@@ -318,7 +318,7 @@ app.use(session({
   saveUninitialized: false,
   unset: 'destroy',
   cookie: {
-    maxAge: 6 * 60 * 60 * 1000 // hours in ms
+    maxAge: 5 * 60 * 1000 // minutes in ms NOTE: Expanded after successful auth
   },
   rolling: true,
   secret: sessionSecret,

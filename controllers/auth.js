@@ -27,6 +27,7 @@ var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var addSession = require('../libs/modifySessions').add;
+var expandSession = require('../libs/modifySessions').expand;
 
 //--- Configuration inclusions
 var allStrategies = require('./strategies.json');
@@ -187,9 +188,9 @@ exports.callback = function (aReq, aRes, aNext) {
   var strategyInstance = null;
   var doneUri = aReq.session.user ? '/user/preferences' : '/';
 
-  // The callback was called improperly
+  // The callback was called improperly or sesssion expired
   if (!strategy || !username) {
-    aNext();
+    aRes.redirect(doneUri + (doneUri === '/' ? 'login' : ''));
     return;
   }
 
@@ -295,7 +296,6 @@ exports.callback = function (aReq, aRes, aNext) {
         if (newstrategy && newstrategy !== strategy) {
           // Allow a user to link to another account
           aRes.redirect('/auth/' + newstrategy); // NOTE: Watchpoint... careful with encoding
-          return;
         } else {
           // Delete the username that was temporarily stored
           delete aReq.session.username;
@@ -303,8 +303,9 @@ exports.callback = function (aReq, aRes, aNext) {
           doneUri = aReq.session.redirectTo;
           delete aReq.session.redirectTo;
 
-          aRes.redirect(doneUri);
-          return;
+          expandSession(aReq, aUser, function () {
+            aRes.redirect(doneUri);
+          });
         }
       });
     });

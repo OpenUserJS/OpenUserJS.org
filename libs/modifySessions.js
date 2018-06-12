@@ -5,6 +5,9 @@ var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
+//--- Library inclusions
+var moment = require('moment');
+
 //
 // This library allows for the modifications of user sessions
 var async = require('async');
@@ -62,6 +65,22 @@ exports.add = function (aReq, aUser, aCallback) {
   }
 };
 
+// Expand a single session
+exports.expand = function (aReq, aUser, aCallback) {
+  var expiry = null;
+
+  if (!aUser) {
+    aCallback('No User');
+    return;
+  }
+
+  // NOTE: Expanded minus initial. Keep initial in sync with app.js
+  expiry = moment(aReq.session.cookie.expires).add(6, 'h').subtract(5, 'm');
+
+  aReq.session.cookie.expires = expiry.toDate();
+  aReq.session.save(aCallback);
+};
+
 // Extend a single session
 exports.extend = function (aReq, aUser, aCallback) {
   if (!aUser) {
@@ -75,7 +94,7 @@ exports.extend = function (aReq, aUser, aCallback) {
   }
 
   // NOTE: Currently allow on any session with
-  //   no additional User restrictions yet
+  //   no additional User restrictions yet...
 
   aReq.session.cookie.expires = false;
   aReq.session.save(aCallback);
