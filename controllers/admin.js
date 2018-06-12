@@ -428,36 +428,6 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   });
 };
 
-exports.adminSessionLengthView = function (aReq, aRes, aNext) {
-  if (!userIsAdmin(aReq)) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 403,
-      statusMessage: 'This page is only accessible by admins.'
-    });
-    return;
-  }
-
-  aReq.sessionStore.length(function (aErr, aLength) {
-    if (aErr) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 520,
-        statusMessage: 'Unknown error.'
-      });
-      return;
-    }
-
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 200,
-      statusMessage: 'session length: ' + aLength,
-      isCustomView: true,
-      statusData: {
-        isAdminSessionLengthView: true,
-        length: aLength
-      }
-    });
-  });
-};
-
 // View everything about current deployed `./package.json`
 exports.adminNpmPackageView = function (aReq, aRes, aNext) {
   //

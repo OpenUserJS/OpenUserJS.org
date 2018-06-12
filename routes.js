@@ -101,7 +101,6 @@ module.exports = function (aApp) {
   aApp.route('/admin/git/short').get(admin.adminGitShortView);
   aApp.route('/admin/git/branch').get(admin.adminGitBranchView);
   aApp.route('/admin/process/clone').get(admin.adminProcessCloneView);
-  aApp.route('/admin/session/length').get(admin.adminSessionLengthView);
   aApp.route('/admin/session/active').get(admin.adminSessionActiveView);
   aApp.route('/admin/npm/package').get(admin.adminNpmPackageView);
   aApp.route('/admin/npm/list').get(admin.adminNpmListView);
