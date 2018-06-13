@@ -1492,7 +1492,17 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 var parseJavascriptBlob = function (aJavascriptBlob) {
   // Parsing Script Name & Type from path
   var rBlobPath = /^(.*\/)?(.+?)((\.user)?\.js)$/;
-  var m = rBlobPath.exec(aJavascriptBlob.path);
+  var m = null;
+
+  if (!aJavascriptBlob) { // TODO: Currently unknown error but trap
+    aJavascriptBlob = { path: null, isUserJS: false, isJSLibrary: false, pathAsEncoded: null };
+    aJavascriptBlob.canUpload = false;
+    aJavascriptBlob.errors = ['aJavascriptBlob is `undefined`'];
+
+    return aJavascriptBlob;
+  }
+
+  m = rBlobPath.exec(aJavascriptBlob.path);
   aJavascriptBlob.isUserJS = !!m[4]; // .user exists
   aJavascriptBlob.isJSLibrary = !m[4]; // .user doesn't exist
 
