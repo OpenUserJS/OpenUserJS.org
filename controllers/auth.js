@@ -28,6 +28,7 @@ var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var addSession = require('../libs/modifySessions').add;
 var expandSession = require('../libs/modifySessions').expand;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
 var allStrategies = require('./strategies.json');
@@ -234,7 +235,10 @@ exports.callback = function (aReq, aRes, aNext) {
         console.warn(colors.yellow(aInfo));
       }
 
-      aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?authfail');
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 502,
+        statusMessage: 'External authentication failed.'
+      });
       return;
     }
 
@@ -266,7 +270,10 @@ exports.callback = function (aReq, aRes, aNext) {
         console.error('Not logged in');
         console.error(aErr);
 
-        aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?authfail');
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 502,
+          statusMessage: 'External authentication failed to login.'
+        });
         return;
       }
 
