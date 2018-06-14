@@ -19,7 +19,7 @@
     "oauth": true,
     "readonly": false
   },
-  "gitlab2": {
+  "gitlab": {
     "name": "GitLab",
     "oauth": true,
     "readonly": true
