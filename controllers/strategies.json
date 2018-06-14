@@ -7,17 +7,22 @@
   "flickr": {
     "name": "Flickr",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   },
   "foursquare": {
     "name": "Foursquare",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   },
   "github": {
     "name": "GitHub",
     "oauth": true,
     "readonly": false
+  },
+  "gitlab": {
+    "name": "GitLab",
+    "oauth": true,
+    "readonly": true
   },
   "google": {
     "name": "Google",
@@ -32,12 +37,12 @@
   "instagram": {
     "name": "Instagram",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   },
   "linkedin": {
     "name": "LinkedIn",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   },
   "reddit": {
     "name": "Reddit",
@@ -52,7 +57,7 @@
   "tumblr": {
     "name": "Tumblr",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   },
   "twitter": {
     "name": "Twitter",
@@ -67,6 +72,6 @@
   "windowslive": {
     "name": "Windows Live",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   }
 }
