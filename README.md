@@ -66,6 +66,7 @@ Repository | Reference | Recent Version
 [passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl] ![oauth][oauthLogo]
 [passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl] ![OAuth2][oauth2Logo]
 [passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl] ![OAuth2][oauth2Logo]
+[passport-gitlab2][passport-gitlab2GHUrl] | [Documentation][passport-gitlab2DOCUrl] | [![NPM version][passport-gitlab2NPMVersionImage]][passport-gitlab2NPMUrl] ![OAuth2][oauth2Logo]
 [passport-google-oauth][passport-google-oauthGHUrl] | [Documentation][passport-google-oauthDOCUrl] | [![NPM version][passport-google-oauthNPMVersionImage]][passport-google-oauthNPMUrl] ![oauth1][oauth1Logo] ![OAuth2][oauth2Logo]
 [passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] ![oauth][oauthLogo]
 [passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl] ![OAuth2][oauth2Logo]
@@ -370,6 +371,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-githubDOCUrl]: https://github.com/jaredhanson/passport-github/blob/master/README.md
 [passport-githubNPMUrl]: https://www.npmjs.com/package/passport-github
 [passport-githubNPMVersionImage]: https://img.shields.io/npm/v/passport-github.svg?style=flat
+
+[passport-gitlab2GHUrl]: https://github.com/fh1ch/passport-gitlab2
+[passport-gitlab2DOCUrl]: https://github.com/fh1ch/passport-gitlab2/blob/master/README.md
+[passport-gitlab2NPMUrl]: https://www.npmjs.com/package/passport-gitlab2
+[passport-gitlab2NPMVersionImage]: https://img.shields.io/npm/v/passport-gitlab2.svg?style=flat
 
 [passport-google-oauthGHUrl]: https://github.com/jaredhanson/passport-google-oauth
 [passport-google-oauthDOCUrl]: https://github.com/jaredhanson/passport-google-oauth/blob/master/README.md
