@@ -234,7 +234,7 @@ exports.callback = function (aReq, aRes, aNext) {
         console.warn(colors.yellow(aInfo));
       }
 
-      aNext(aErr);
+      aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?authfail');
       return;
     }
 
@@ -266,7 +266,7 @@ exports.callback = function (aReq, aRes, aNext) {
         console.error('Not logged in');
         console.error(aErr);
 
-        aNext(aErr);
+        aRes.redirect(doneUri + (doneUri === '/' ? 'login' : '') + '?authfail');
         return;
       }
 
