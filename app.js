@@ -167,10 +167,15 @@ app.use(function (aReq, aRes, aNext) {
   var usedMem = null;
   var isSources = null;
 
-  // Middleware for GDPR Notice
+  // Midddlware options
   if (!aRes.oujsOptions) {
     aRes.oujsOptions = {};
   }
+
+  // Middleware for DNT
+  aRes.oujsOptions.DNT = aReq.get('DNT') === '1' || aReq.get('DNT') === 'yes' ? true : false;
+
+  // Middleware for GDPR Notice
   aRes.oujsOptions.hideReminderGDPR =
     /^https?:\/\/(?:localhost:8080|openuserjs\.org)/.test(referer);
 
