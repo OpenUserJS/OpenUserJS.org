@@ -28,7 +28,8 @@ function renderFile(aRes, aPath, aOptions) {
   //   aOptions.hideReminderThis = true;
   // }
 
-  if (aRes.oujsOptions && aRes.oujsOptions.hideReminderGDPR) {
+  if (aRes.oujsOptions) {
+    aOptions.DNT = aRes.oujsOptions.DNT;
     aOptions.hideReminderGDPR = aRes.oujsOptions.hideReminderGDPR;
   }
 
