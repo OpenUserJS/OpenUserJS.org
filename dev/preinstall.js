@@ -15,5 +15,5 @@ console.log('Attempting to delete `package-lock.json`');
 try {
   fs.unlinkSync('./package-lock.json');
 } catch (aE) {
-  console.log('Nothing to delete');
+  console.warn('`package-lock.json` not found');
 }
