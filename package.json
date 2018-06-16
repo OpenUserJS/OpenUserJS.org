@@ -74,7 +74,7 @@
     "useragent": "2.3.0"
   },
   "optionalDependencies": {
-    "kerberos": "0.0.23"
+    "kerberos": "0.0.24"
   },
   "repository": {
     "type": "git",
