@@ -83,8 +83,9 @@
   "license": "(GPL-3.0 AND GFDL-1.3)",
   "scripts": {
     "start": "node app.js",
-    "preinstall": "node dev/preinit.js",
-    "postinstall": "node dev/postinit.js"
+    "preinstall": "node dev/preinstall.js",
+    "postinstall": "node dev/postinstall.js",
+    "clean": "node dev/clean.js"
   },
   "engines": {
     "node": ">=8.9.0 <9.0.0",
