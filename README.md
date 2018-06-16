@@ -41,7 +41,6 @@ Repository | Reference | Recent Version
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
 [git-rev][git-revGHUrl] | [Documentation][git-revDOCUrl] | [![NPM version][git-revNPMVersionImage]][git-revNPMUrl]
-[github][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl][ᴸᴬᴺᴳ][highlight.jsLANGUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [image-size][image-sizeGHUrl] | [Documentation][image-sizeDOCUrl] | [![NPM version][image-sizeNPMVersionImage]][image-sizeNPMUrl]
 [ip-range-check][ip-range-checkGHUrl] | [Documentation][ip-range-checkDOCUrl] | [![NPM version][ip-range-checkNPMVersionImage]][ip-range-checkNPMUrl]
@@ -90,6 +89,7 @@ Repository | Reference | Recent Version
 [uglifyJS][uglifyJS2GHUrl] <br />&#x21B3; [`harmony`][uglifyJS2GHHarmonyUrl] | [Documentation][uglifyJS2DOCUrl] [&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl] <br />&#x21B3; [![NPM Harmony version][uglifyJS2NPMHarmonyVersionImage]][uglifyJS2NPMHarmonyUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 [useragent][useragentGHUrl] | [Documentation][useragentDOCUrl] | [![NPM version][useragentNPMVersionImage]][useragentNPMUrl]
+[@octokit/rest ᶠᵏᵃ ᵍᶦᵗʰᵘᵇ][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
 
 
 ##### Static
@@ -235,10 +235,10 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [formidableNPMUrl]: https://www.npmjs.com/package/formidable
 [formidableNPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
 
-[githubGHUrl]: https://github.com/mikedeboer/node-github
-[githubDOCUrl]: https://github.com/mikedeboer/node-github/blob/master/README.md
-[githubNPMUrl]: https://www.npmjs.com/package/github
-[githubNPMVersionImage]: https://img.shields.io/npm/v/github.svg?style=flat
+[githubGHUrl]: https://github.com/octokit/rest.js
+[githubDOCUrl]: https://github.com/octokit/rest.js/blob/master/README.md
+[githubNPMUrl]: https://www.npmjs.com/package/@octokit/rest
+[githubNPMVersionImage]: https://img.shields.io/npm/v/@octokit/rest.svg?style=flat
 
 [git-revGHUrl]: https://github.com/tblobaum/git-rev
 [git-revDOCUrl]: https://github.com/tblobaum/git-rev/blob/master/README.md
