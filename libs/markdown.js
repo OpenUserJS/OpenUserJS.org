@@ -151,6 +151,15 @@ renderer.link = function (aHref, aTitle, aText) {
 marked.setOptions({
   highlight: function (aCode, aLang) {
     var obj = null;
+    var lang = [ // NOTE: More likely to less likely
+      'javascript', 'xpath', 'xml',
+        'css', 'less', 'scss',
+          'json',
+            'diff',
+              'shell',
+                'bash', 'dos',
+                  'vbscript'
+    ];
 
     if (aLang && hljs.getLanguage(aLang)) {
       try {
@@ -162,17 +171,13 @@ marked.setOptions({
     try {
       obj = hljs.highlightAuto(aCode);
 
-      switch (obj.language) {
-        // Transform list of auto-detected language highlights
-        case 'dust':
-        case '1c':
-        case 'qml':
-          // Narrow auto-detection to something that is more likely
-          return hljs.highlightAuto(aCode, ['css', 'html', 'js', 'json']).value;
-          break;
-        // Any other detected go ahead and return
-        default:
-          return obj.value;
+      if (lang.indexOf(obj.language) > -1) {
+        return obj.value;
+      } else {
+        if (isDev) {
+          console.log('Unusual auto-detected md language code is', '`' + obj.language + '`');
+        }
+        return hljs.highlightAuto(aCode, lang).value;
       }
     } catch (aErr) {
     }

@@ -41,7 +41,7 @@ var thisIsJavascript = "yahoo!";
 
 ... instead of:
 
-```
+``` ebnf
 var thisIsJavascript = "yahoo!";
 ```
 
