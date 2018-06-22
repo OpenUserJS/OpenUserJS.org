@@ -15,6 +15,7 @@ if (isPro) {
 
 //
 var path = require('path');
+var crypto = require('crypto');
 
 var express = require('express');
 var toobusy = require('toobusy-js-harmony');
@@ -279,7 +280,8 @@ if (app.get('securePort') && secured) {
       '!SRP',
       '!CAMELLIA'
     ].join(':'),
-    honorCipherOrder: true
+    honorCipherOrder: true,
+    secureOptions: crypto.constants.SSL_OP_NO_TLSv1
   };
   secureServer = https.createServer(sslOptions, app);
 
