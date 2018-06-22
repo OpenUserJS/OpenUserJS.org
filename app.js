@@ -333,7 +333,8 @@ app.use(session({
   unset: 'destroy',
   cookie: {
     maxAge: 5 * 60 * 1000, // minutes in ms NOTE: Expanded after successful auth
-    secure: (isPro && secured ? true : false)
+    secure: (isPro && secured ? true : false),
+    sameSite: 'lax' // NOTE: OpenID necessity
   },
   rolling: true,
   secret: sessionSecret,
