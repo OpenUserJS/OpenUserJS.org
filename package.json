@@ -17,7 +17,7 @@
     "connect-mongo": "2.0.1",
     "express": "4.16.3",
     "express-brute": "1.0.1",
-    "express-brute-mongo": "1.0.0",
+    "express-brute-mongo": "git://github.com/OpenUserJs/express-brute-mongo#MongoDBv3.x",
     "express-minify": "1.0.0",
     "express-session": "1.15.6",
     "font-awesome": "4.7.0",
