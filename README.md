@@ -34,7 +34,7 @@ Repository | Reference | Recent Version
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
 [express-brute][express-bruteGHUrl] | [Documentation][express-bruteDOCUrl] | [![NPM version][express-bruteNPMVersionImage]][express-bruteNPMUrl]
-[express-brute-mongo][express-brute-mongoGHUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
+[express-brute-mongo][express-brute-mongoGHUrl]  <br />&#x22D4; [`MongoDBv3.x`][express-brute-mongoGHMongoDBv3.xUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
 [express-minify][express-minifyGHUrl] | [Documentation][express-minifyDOCUrl] | [![NPM version][express-minifyNPMVersionImage]][express-minifyNPMUrl]
 [express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
 [fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
@@ -203,6 +203,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [express-bruteNPMVersionImage]: https://img.shields.io/npm/v/express-brute.svg?style=flat
 
 [express-brute-mongoGHUrl]: https://github.com/auth0/express-brute-mongo
+[express-brute-mongoGHMongoDBv3.xUrl]: https://github.com/OpenUserJs/express-brute-mongo/tree/MongoDBv3.x
 [express-brute-mongoDOCUrl]: https://github.com/auth0/express-brute-mongo/blob/master/README.md
 [express-brute-mongoNPMUrl]: https://www.npmjs.com/package/express-brute-mongo
 [express-brute-mongoNPMVersionImage]: https://img.shields.io/npm/v/express-brute-mongo.svg?style=flat
