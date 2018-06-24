@@ -78,6 +78,7 @@ exports.expand = function (aReq, aUser, aCallback) {
   expiry = moment(aReq.session.cookie.expires).add(6, 'h').subtract(5, 'm');
 
   aReq.session.cookie.expires = expiry.toDate();
+  aReq.session.cookie.sameSite = 'strict';
   aReq.session.save(aCallback);
 };
 
