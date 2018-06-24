@@ -13,8 +13,8 @@ var fs = require('fs');
 var util = require('util');
 var _ = require('underscore');
 var URL = require('url');
-var request = require('request');
 var crypto = require('crypto');
+var request = require('request');
 var stream = require('stream');
 var peg = require('pegjs');
 var AWS = require('aws-sdk');
@@ -29,6 +29,7 @@ var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 var SPDX = require('spdx-license-ids');
 var sizeOf = require('image-size');
 var ipRangeCheck = require("ip-range-check");
+var colors = require('ansi-colors');
 
 var MongoClient = require('mongodb').MongoClient;
 var ExpressBrute = require('express-brute');
@@ -199,6 +200,56 @@ var sourceMinBruteforce = new ExpressBrute(store, {
     ensureIntegerOrNull((1000 * (60 / 4) * 15) / sweetFactor), // min
   lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
   failCallback: tooManyRequests
+});
+
+var githubHookAddresses = [];
+request({
+  url: 'https://api.github.com/meta',
+  headers: {
+    'User-Agent': 'OpenUserJS'
+  }
+}, function (aErr, aRes, aBody) {
+  var meta = null;
+
+  if (aErr
+    || aRes.statusCode !== 200
+      || !/^application\/json;/.test(aRes.headers['content-type'])) {
+
+    console.error([
+      colors.red('Error retrieving GitHub `hooks`'),
+      aRes.statusCode,
+      aRes.headers['content-type'],
+      aErr
+    ].join('\n'));
+    return;
+  }
+
+  try {
+    meta = JSON.parse(aBody);
+  } catch (aE) {
+    console.error(colors.red('Error retrieving GitHub `hooks`', aE));
+    return;
+  }
+
+  if (meta && meta.hooks && Array.isArray(meta.hooks)) {
+    meta.hooks.forEach(function (aEl, aIdx, aArr) {
+      if (typeof aEl === 'string' && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,3}$/.test(aEl)) {
+        githubHookAddresses.push(aEl);
+      } else {
+        console.warn(
+          colors.yellow('GitHub `hooks` element', aEl, 'does not match IPv4 CIDR specification')
+        );
+      }
+    });
+    if (githubHookAddresses.length > 0) {
+      console.log(colors.green('Using GitHub `hooks` of', githubHookAddresses));
+    } else {
+      console.error(colors.red('Error retrieving GitHub `hooks`... no compatible elements found'));
+    }
+
+  } else {
+    console.error(colors.red('Error retrieving GitHub `hooks`'));
+  }
 });
 
 //
@@ -1941,10 +1992,12 @@ exports.webhook = function (aReq, aRes) {
   //   automatically converted back to IPv4 with current dependency
   //   IPv6 address for caller will return `false` from dep in this
   //   configuration
-  if (!ipRangeCheck(
-    aReq.connection.remoteAddress,
-      ['192.30.252.0/22', '185.199.108.0/22', '140.82.112.0/20']
-  )) {
+  if (githubHookAddresses.length < 1) {
+    aRes.status(502).send(); // Bad gateway
+    return;
+  }
+
+  if (!ipRangeCheck(aReq.connection.remoteAddress, githubHookAddresses)) {
     aRes.status(401).send(); // Unauthorized: No challenge and silent iterations
     return;
   }
