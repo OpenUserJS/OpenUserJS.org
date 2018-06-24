@@ -233,7 +233,7 @@ request({
 
   if (meta && meta.hooks && Array.isArray(meta.hooks)) {
     meta.hooks.forEach(function (aEl, aIdx, aArr) {
-      if (typeof aEl === 'string' && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,3}$/.test(aEl)) {
+      if (typeof aEl === 'string' && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/.test(aEl)) {
         githubHookAddresses.push(aEl);
       } else {
         console.warn(
