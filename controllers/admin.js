@@ -13,6 +13,7 @@ var exec = require('child_process').exec;
 var async = require('async');
 var _ = require('underscore');
 var git = require('git-rev');
+var useragent = require('useragent');
 
 //--- Model inclusions
 var Comment = require('../models/comment').Comment;
@@ -427,11 +428,16 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
         aSessionsData.forEach(function (aElement, aIndex) {
           var data = JSON.parse(aElement.session);
           var obj = null;
-
           if (data) {
             obj = {
               _id: aElement._id,
               name: (data.user ? data.user.name : data.username),
+              ua: {
+                raw: (data.passport ? data.passport.userAgent : null),
+                class: 'fa-lg ua-' + useragent
+                  .parse((data.passport ? data.passport.userAgent : null))
+                    .family.toLowerCase().replace(/\s+/g, '-')
+              },
               userPageUrl: (data.user ? data.user.userPageUrl : null),
               cookie: {
                 expires: (data.cookie.expires ? new Date(data.cookie.expires) : false),

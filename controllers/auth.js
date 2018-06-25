@@ -140,10 +140,11 @@ exports.auth = function (aReq, aRes, aNext) {
     return;
   }
 
-  // Store the username in the session so we still have it when they
+  // Store the username and useragent in the session so we still have it when they
   // get back from authentication
   if (!aReq.session.username) {
     aReq.session.username = username;
+    aReq.session.useragent = aReq.headers['user-agent'];
   }
 
   User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
@@ -285,6 +286,12 @@ exports.callback = function (aReq, aRes, aNext) {
       // Store the user info in the session
       aReq.session.user = aUser;
 
+      // Store the agent info in the session passport
+      // Currently we do not care to save this info in User
+      if (aReq.session.passport) {
+        aReq.session.passport.userAgent = aReq.session.useragent;
+      }
+
       // Save the last date a user sucessfully logged in
       aUser.authed = new Date();
 
@@ -306,6 +313,7 @@ exports.callback = function (aReq, aRes, aNext) {
         } else {
           // Delete the username that was temporarily stored
           delete aReq.session.username;
+          delete aReq.session.useragent;
           delete aReq.session.newstrategy;
           doneUri = aReq.session.redirectTo;
           delete aReq.session.redirectTo;
