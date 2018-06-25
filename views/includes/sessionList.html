@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th class="text-center">UA</th>
       <th class="text-center">expires</th>
       <th class="text-center">secure</th>
       <th class="text-center">httpOnly</th>
@@ -19,19 +20,22 @@
         </b>
       </td>
       <td class="text-center td-fit">
+        <i class="fa fa-fw fa-globe ua {{ua.class}} " title="{{#ua.raw}}{{ua.raw}}{{/ua.raw}}{{^ua.raw}}{{/ua.raw}}"></i>
+      </td>
+      <td class="text-center td-fit">
         {{#cookie.expires}}<time datetime="{{cookie.expiresISOFormat}}" title="{{cookie.expires}}">{{cookie.expiresHumanized}}</time>{{/cookie.expires}}
         {{^cookie.expires}}&infin;{{/cookie.expires}}
       </td>
       <td class="text-center td-fit">
-        <span class="fa fa-{{^cookie.secure}}un{{/cookie.secure}}lock"></span>
+        <i class="fa fa-{{^cookie.secure}}un{{/cookie.secure}}lock"></i>
       </td>
       <td class="text-center td-fit">
-        <span class="fa fa-{{#cookie.httpOnly}}check{{/cookie.httpOnly}}{{^cookie.httpOnly}}times{{/cookie.httpOnly}}"></span>
+        <i class="fa fa-{{#cookie.httpOnly}}check{{/cookie.httpOnly}}{{^cookie.httpOnly}}times{{/cookie.httpOnly}}"></i>
       </td>
       <td class="text-center td-fit">
-        {{#cookie.sameSiteStrict}}<span class="fa fa-circle"></span>{{/cookie.sameSiteStrict}}
-        {{#cookie.sameSiteLax}}<span class="fa fa-adjust"></span>{{/cookie.sameSiteLax}}
-        {{^cookie.sameSite}}<span class="fa fa-circle-o"></span>{{/cookie.sameSite}}
+        {{#cookie.sameSiteStrict}}<i class="fa fa-circle"></i>{{/cookie.sameSiteStrict}}
+        {{#cookie.sameSiteLax}}<i class="fa fa-adjust"></i>{{/cookie.sameSiteLax}}
+        {{^cookie.sameSite}}<i class="fa fa-circle-o"></i>{{/cookie.sameSite}}
       </td>
       <td class="td-fit">
         <button type="button" class="btn btn-sm btn-success disabled" aria-label="Left Align">
