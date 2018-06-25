@@ -8,10 +8,11 @@ var isDbg = require('../libs/debug').isDbg;
 //
 
 //--- Dependency inclusions
-var async = require('async');
 var exec = require('child_process').exec;
-var git = require('git-rev');
+
+var async = require('async');
 var _ = require('underscore');
+var git = require('git-rev');
 
 //--- Model inclusions
 var Comment = require('../models/comment').Comment;
@@ -345,7 +346,37 @@ exports.adminProcessCloneView = function (aReq, aRes, aNext) {
 }
 
 exports.adminSessionActiveView = function (aReq, aRes, aNext) {
-  if (!userIsAdmin(aReq)) {
+  function preRender() {
+  }
+
+  function render() {
+    aRes.render('pages/adminSessionListPage', options);
+  }
+
+  function asyncComplete(aErr) {
+    if (aErr) {
+      aNext();
+      return;
+    }
+
+    preRender();
+    render();
+  }
+
+  //
+  var options = {};
+  var authedUser = aReq.session.user;
+  var tasks = [];
+
+  var store = aReq.sessionStore;
+  var sessionColl = store.db.collection('sessions');
+
+  // Session
+  options.authedUser = authedUser = modelParser.parseUser(authedUser);
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'This page is only accessible by admins.'
@@ -353,78 +384,82 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
     return;
   }
 
-  var store = aReq.sessionStore;
-  var sessionColl = store.db.collection('sessions');
 
-  sessionColl.find({
-  }, function (aErr, aUserSessions) {
-    if (aErr) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 520,
-        statusMessage: 'Unknown error with `sessionColl.find`.'
-      });
-      return;
-    }
+  // Page metadata
+  pageMetadata(options, ['Sessions', 'Admin']);
 
-    if (!aUserSessions) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 200,
-        statusMessage: 'No sessions'
-      });
-      return;
-    }
+  //--- Tasks
 
-    aUserSessions.toArray(function (aErr, aSessionsData) {
-      var options = {};
-      options.namedCount = 0;
-      options.rawCount = 0;
-      options.session = [];
+  tasks.push(function (aCallback) {
 
+    sessionColl.find({
+    }, function (aErr, aUserSessions) {
       if (aErr) {
-        // We want to know what the error value is in logging review
-        console.error('Unknown error with `toArray`.\n' + aErr);
-
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 520,
-          statusMessage: 'Unknown error with `toArray`.'
+          statusMessage: 'Unknown error with `sessionColl.find`.'
         });
         return;
       }
 
-      aSessionsData.forEach(function (aElement, aIndex) {
-        var data = JSON.parse(aElement.session);
+      if (!aUserSessions) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 200,
+          statusMessage: 'No sessions'
+        });
+        return;
+      }
 
-        if (data && data.user) {
-          options.session.push({
-            _id: aElement._id,
-            name: data.user.name,
-            cookie: data.cookie
+      aUserSessions.toArray(function (aErr, aSessionsData) {
+        options.sessionList = [];
+
+        if (aErr) {
+          // We want to know what the error value is in logging review
+          console.error('Unknown error with `toArray`.\n' + aErr);
+
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 520,
+            statusMessage: 'Unknown error with `toArray`.'
           });
-
-          options.namedCount++;
-
-        } else if (data && !data.user) {
-          options.session.push({
-            _id: aElement._id,
-            expires: data.cookie.expires,
-            data: data
-          });
+          return;
         }
-        options.rawCount++;
+
+        aSessionsData.forEach(function (aElement, aIndex) {
+          var data = JSON.parse(aElement.session);
+          var obj = null;
+
+          if (data) {
+            obj = {
+              _id: aElement._id,
+              name: (data.user ? data.user.name : data.username),
+              userPageUrl: (data.user ? data.user.userPageUrl : null),
+              cookie: {
+                expires: (data.cookie.expires ? new Date(data.cookie.expires) : false),
+                secure: data.cookie.secure,
+                httpOnly: data.cookie.httpOnly,
+                sameSite: data.cookie.sameSite,
+                sameSiteStrict: data.cookie.sameSite === 'strict',
+                sameSiteLax: data.cookie.sameSite === 'lax' ,
+              }
+            };
+            modelParser.parseDateProperty(obj.cookie, 'expires');
+            options.sessionList.push(obj);
+          }
+        });
+
+        // Sort the sessions for now
+        options.sessionList = _.sortBy(options.sessionList, function (aSession) {
+          return (aSession.name) ? aSession.name.toLowerCase() : aSession.name;
+        });
+
+        aCallback();
       });
-
-      // Sort the sessions
-      options.session = _.sortBy(options.session, function (aSession) {
-        return (aSession.name) ? aSession.name.toLowerCase() : aSession.name;
-      });
-
-      // Currently output in simplified JSON
-      aRes.set('Content-Type', 'application/json; charset=UTF-8');
-      aRes.write(JSON.stringify(options, null, isPro ? '' : ' '));
-      aRes.end();
-
     });
+
   });
+
+  //---
+  async.parallel(tasks, asyncComplete);
 };
 
 // View everything about current deployed `./package.json`

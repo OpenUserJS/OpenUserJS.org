@@ -99,6 +99,7 @@ var parseDateProperty = function (aObj, aKey) {
     }
   }
 };
+exports.parseDateProperty = parseDateProperty;
 
 // Parse persisted model data and return a new object
 // with additional generated fields used in view templates.
