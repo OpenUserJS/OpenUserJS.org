@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-8">
+        <h2 class="page-heading">
+          Sessions
+        </h2>
+        {{#paginationRendered}}
+        <div class="text-center collapse">
+          {{{paginationRendered}}}
+        </div>
+        {{/paginationRendered}}
+        <div class="panel panel-default">
+          {{> includes/sessionList.html }}
+        </div>
+        {{#paginationRendered}}
+        <div class="text-center">
+          {{{paginationRendered}}}
+        </div>
+        {{/paginationRendered}}
+      </div>
+      <div class="col-sm-4">
+        {{> includes/searchBarPanel.html }}
+        {{#isFlagged}}
+          {{#isAdmin}}
+            {{> includes/flagAdminToolFlaggedFilters.html }}
+          {{/isAdmin}}
+        {{/isFlagged}}
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  {{#paginationRendered}}
+    {{> includes/scripts/showTopPagination.html }}
+  {{/paginationRendered}}
+  {{> includes/scripts/tableTrLinkScript.html }}
+  {{> includes/scripts/formControlClear.html }}
+</body>
+</html>

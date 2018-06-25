@@ -1,0 +1,44 @@
+<table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th class="text-center">expires</th>
+      <th class="text-center">secure</th>
+      <th class="text-center">httpOnly</th>
+      <th class="text-center">sameSite</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#sessionList}}
+    <tr class="tr-link">
+      <td>
+        <b>
+          {{#userPageUrl}}<a href="{{{userPageUrl}}}" class="tr-link-a">{{name}}</a>{{/userPageUrl}}
+          {{^userPageUrl}}{{name}}{{/userPageUrl}}
+        </b>
+      </td>
+      <td class="text-center td-fit">
+        {{#cookie.expires}}<time datetime="{{cookie.expiresISOFormat}}" title="{{cookie.expires}}">{{cookie.expiresHumanized}}</time>{{/cookie.expires}}
+        {{^cookie.expires}}&infin;{{/cookie.expires}}
+      </td>
+      <td class="text-center td-fit">
+        <span class="fa fa-{{^cookie.secure}}un{{/cookie.secure}}lock"></span>
+      </td>
+      <td class="text-center td-fit">
+        <span class="fa fa-{{#cookie.httpOnly}}check{{/cookie.httpOnly}}{{^cookie.httpOnly}}times{{/cookie.httpOnly}}"></span>
+      </td>
+      <td class="text-center td-fit">
+        {{#cookie.sameSiteStrict}}<span class="fa fa-circle"></span>{{/cookie.sameSiteStrict}}
+        {{#cookie.sameSiteLax}}<span class="fa fa-adjust"></span>{{/cookie.sameSiteLax}}
+        {{^cookie.sameSite}}<span class="fa fa-circle-o"></span>{{/cookie.sameSite}}
+      </td>
+      <td class="td-fit">
+        <button type="button" class="btn btn-sm btn-success disabled" aria-label="Left Align">
+          <span class="fa fa-sign-out" aria-hidden="true"> Sign Out</span>
+        </button>
+      </td>
+    </tr>
+    {{/sessionList}}
+  </tbody>
+</table>
