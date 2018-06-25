@@ -149,9 +149,14 @@ exports.auth = function (aReq, aRes, aNext) {
 
   User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
     function (aErr, aUser) {
-      // WARNING: No error handling at this stage
       var strategies = null;
       var strat = null;
+
+      if (aErr) {
+        console.error('Authfail with no User found of', username, aErr);
+        aRes.redirect('/login?usernamefail');
+        return;
+      }
 
       if (aUser) {
         // Ensure that casing is identical so we still have it, correctly, when they
