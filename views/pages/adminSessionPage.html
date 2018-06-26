@@ -18,7 +18,9 @@
         </div>
         {{/paginationRendered}}
         <div class="panel panel-default">
-          {{> includes/sessionList.html }}
+          {{#sessionList}}
+            {{> includes/session.html }}
+          {{/sessionList}}
         </div>
         {{#paginationRendered}}
         <div class="text-center">
