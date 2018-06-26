@@ -351,7 +351,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   }
 
   function render() {
-    aRes.render('pages/adminSessionListPage', options);
+    aRes.render('pages/adminSessionPage', options);
   }
 
   function asyncComplete(aErr) {
