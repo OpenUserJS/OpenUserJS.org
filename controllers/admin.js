@@ -432,6 +432,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
             obj = {
               _id: aElement._id,
               name: (data.user ? data.user.name : data.username),
+              canDestroyOne: false,
               ua: {
                 raw: (data.passport ? data.passport.userAgent : null),
                 class: 'fa-lg ua-' + useragent
@@ -440,6 +441,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
               },
               userPageUrl: (data.user ? data.user.userPageUrl : null),
               cookie: {
+                since: (data.passport ? data.passport.since : null),
                 expires: (data.cookie.expires ? new Date(data.cookie.expires) : false),
                 secure: data.cookie.secure,
                 httpOnly: data.cookie.httpOnly,
@@ -449,6 +451,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
               }
             };
             modelParser.parseDateProperty(obj.cookie, 'expires');
+            modelParser.parseDateProperty(obj.cookie, 'since');
             options.sessionList.push(obj);
           }
         });
