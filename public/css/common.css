@@ -149,15 +149,18 @@ textarea {
   padding: 6px 4px;
 }
 
-.topic-avatar {
+.topic-avatar,
+.session-avatar {
   width: 60px; /* Avatar (45px) + Gutter Padding (15px) */
 }
 
-.topic-body {
+.topic-body,
+.session-body {
   width: calc(100% - 60px);
 }
 
-.topic-avatar a {
+.topic-avatar a,
+.session-avatar a {
   display: inline-block;
 }
 
@@ -170,12 +173,13 @@ textarea {
   opacity: 1;
 }
 
-.topic-meta-data .names .username {
+.topic-meta-data .names .username,
+.session-meta-data .names .username {
   font-weight: bold;
 }
 
-.topic-post-contents {
-
+.topic-post-contents,
+.session-post-contents {
 }
 
 .btn-addon-default {
@@ -199,7 +203,8 @@ input#discussion-topic {
   width: calc(100% - 18px - 4px);
 }
 
-.topic-avatar i.fa.fa-user {
+.topic-avatar i.fa.fa-user,
+.session-avatar i.fa.fa-user {
   height: 45px;
   width: 45px;
   line-height: 45px;

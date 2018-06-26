@@ -101,7 +101,7 @@ exports.extend = function (aReq, aUser, aCallback) {
   aReq.session.save(aCallback);
 };
 
-// Remove a single session id from the user model **and** the session store
+// Gracefully remove the current session id from the user model **and** the session store
 exports.remove = function (aReq, aUser, aCallback) {
   var pos = aUser && aUser.sessionIds ?
     aUser.sessionIds.indexOf(aReq.sessionID) : -1;
@@ -139,6 +139,23 @@ exports.update = function (aReq, aUser, aCallback) {
     });
   }, aCallback);
 };
+
+// Destroy one session for a user
+exports.destroyOne = function (aReq, aUser, aId, aCallback) {
+  var store = aReq.sessionStore;
+
+  console.log(aId);
+
+  if (!aUser || !aId) {
+    aCallback('No session', null);
+    return;
+  }
+
+  // We want to know who requested what
+  console.log(aReq.session.user.name, 'requested session removal of', aUser.name);
+
+  store.destroy(aId, aCallback);
+}
 
 // Destroy all sessions for a user
 exports.destroy = function (aReq, aUser, aCallback) {

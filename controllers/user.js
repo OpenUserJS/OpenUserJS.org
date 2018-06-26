@@ -54,6 +54,7 @@ var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
 
 var extendSession = require('../libs/modifySessions').extend;
+var destroyOneSession = require('../libs/modifySessions').destroyOne;
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
@@ -126,7 +127,7 @@ exports.extend = function (aReq, aRes, aNext) {
 
   User.findOne({
     _id: authedUser._id,
-    sessionsIds: { "$in": [ aReq.session._id ] }
+    sessionIds: { "$in": [ aReq.sessionID ] }
   }, function (aErr, aUser) {
     extendSession(aReq, aUser, function (aErr) {
       if (aErr) {
@@ -135,6 +136,36 @@ exports.extend = function (aReq, aRes, aNext) {
           return;
         }
 
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500,
+          statusMessage: aErr
+        });
+        return;
+      }
+
+      aRes.redirect('back');
+    });
+  });
+};
+
+// API - Request for destroying a logged in user session
+// TODO: Route is disabled during testing
+exports.destroyOne = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
+  var username = aReq.body.username;
+  var id = aReq.body.id;
+
+  if (!authedUser || !authedUser.isAdmin) {
+    aNext();
+    return;
+  }
+
+  User.findOne({
+    name: username,
+    sessionIds: { "$in" : [ id ] }
+  }, function (aErr, aUser) {
+    destroyOneSession(aReq, aUser, id, function (aErr) {
+      if (aErr) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 500,
           statusMessage: aErr
