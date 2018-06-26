@@ -291,10 +291,11 @@ exports.callback = function (aReq, aRes, aNext) {
       // Store the user info in the session
       aReq.session.user = aUser;
 
-      // Store the agent info in the session passport
+      // Store the info in the session passport
       // Currently we do not care to save this info in User
       if (aReq.session.passport) {
         aReq.session.passport.userAgent = aReq.session.useragent;
+        aReq.session.passport.since = new Date();
       }
 
       // Save the last date a user sucessfully logged in
