@@ -432,6 +432,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
             obj = {
               _id: aElement._id,
               name: (data.user ? data.user.name : data.username),
+              strategy: (data.passport ? data.passport.strategy : null),
               canDestroyOne: false,
               ua: {
                 raw: (data.passport ? data.passport.userAgent : null),
@@ -441,7 +442,9 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
               },
               userPageUrl: (data.user ? data.user.userPageUrl : null),
               cookie: {
-                since: (data.passport ? data.passport.since : null),
+                since: (data.passport
+                  ? (data.passport.since ? new Date(data.passport.since) : data.passport.since)
+                  : null),
                 expires: (data.cookie.expires ? new Date(data.cookie.expires) : false),
                 secure: data.cookie.secure,
                 httpOnly: data.cookie.httpOnly,
