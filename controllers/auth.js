@@ -296,6 +296,7 @@ exports.callback = function (aReq, aRes, aNext) {
       if (aReq.session.passport) {
         aReq.session.passport.userAgent = aReq.session.useragent;
         aReq.session.passport.since = new Date();
+        aReq.session.passport.strategy = strategy;
       }
 
       // Save the last date a user sucessfully logged in
