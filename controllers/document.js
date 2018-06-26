@@ -149,7 +149,8 @@ exports.view = function (aReq, aRes, aNext) {
 
       // Calculate when the server was last restarted
       then = new Date(Date.now() - parseInt(process.uptime() * 1000, 10));
-      options.lastRestart = then.toLocaleString();
+      options.lastRestart = then;
+      modelParser.parseDateProperty(options, 'lastRestart');
     }
 
     // Denote if storage is in RO mode

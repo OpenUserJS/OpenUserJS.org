@@ -17,7 +17,7 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <h3><a id="welcome" rel="bookmark"></a>Welcome<a class="anchor" href="#welcome"><em class="fa fa-link"></em></a></h3>
-            <p>Welcome to {{#pkg.name}}{{pkg.name}} <em>(OUJS)</em>{{#pkg.version}} v{{pkg.version}}{{/pkg.version}}{{/pkg.name}}{{#process.version}} using Node {{process.version}}{{/process.version}}{{#lastRestart}} last restarted on {{lastRestart}}{{/lastRestart}}</p>
+            <p>Welcome to {{#pkg.name}}{{pkg.name}} <em>(OUJS)</em>{{#pkg.version}} v{{pkg.version}}{{/pkg.version}}{{/pkg.name}}{{#process.version}} using Node {{process.version}}{{/process.version}}{{#lastRestart}} last restarted <time datetime="{{lastRestartISOFormat}}" title="{{lastRestart}}">{{lastRestartHumanized}}</time>.{{/lastRestart}}</p>
             <ul>
               {{#lockdown.scriptStorageRO}}<li>Read-Only Script storage mode is in effect.</li>{{/lockdown.scriptStorageRO}}
               {{#lockdown.updateURLCheck}}<li>UserScript metadata block <code>// @updateURL</code> is required.</li>{{/lockdown.updateURLCheck}}
