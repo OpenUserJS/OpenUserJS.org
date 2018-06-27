@@ -161,8 +161,12 @@ exports.destroyOne = function (aReq, aUser, aId, aCallback) {
     return;
   }
 
-  // We want to know who requested what
-  console.log(aReq.session.user.name, 'requested session removal of', aUser.name);
+  // We want to know who deleted someone else
+  if (aReq.session.user.name !== aUser.name) {
+    console.log(
+      '`' + aReq.session.user.name + '`', 'removed a session owned by', '`' + aUser.name + '`'
+    );
+  }
 
   store.destroy(aId, aCallback);
 }

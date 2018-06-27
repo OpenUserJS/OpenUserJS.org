@@ -53,6 +53,7 @@ module.exports = function (aApp) {
   });
   aApp.route('/api/user/exist/:username').head(user.exist);
   aApp.route('/api/user/session/extend').post(user.extend);
+  aApp.route('/api/user/session/destroyOne').post(user.destroyOne);
 
   // Adding script/library routes
   aApp.route('/user/add/scripts').get(authentication.validateUser, user.newScriptPage);
