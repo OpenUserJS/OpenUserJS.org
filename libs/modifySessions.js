@@ -67,15 +67,27 @@ exports.add = function (aReq, aUser, aCallback) {
 
 // Expand a single session
 exports.expand = function (aReq, aUser, aCallback) {
-  var expiry = null;
+  var expiry = moment(aReq.session.cookie.expires);
+  var min = 5; // NOTE: Keep this initial timeout in sync with app.js
 
   if (!aUser) {
     aCallback('No User');
     return;
   }
 
-  // NOTE: Expanded minus initial. Keep initial in sync with app.js
-  expiry = moment(aReq.session.cookie.expires).add(6, 'h').subtract(5, 'm');
+  // NOTE: Now plus initial timeout must always be greater than expiry
+  if (!moment().add(min, 'm').isAfter(expiry)) {
+    // We want to know that...
+    console.warn(aReq.session.user.name, 'has an invalid `expires`');
+
+    // Buh bye
+    aReq.session.destroy();
+    aCallback('Invalid expires');
+    return;
+  }
+
+  // NOTE: Expanded timeout minus initial timeout.
+  expiry = expiry.add(6, 'h').subtract(min, 'm');
 
   aReq.session.cookie.expires = expiry.toDate();
   aReq.session.cookie.sameSite = 'strict';
@@ -143,8 +155,6 @@ exports.update = function (aReq, aUser, aCallback) {
 // Destroy one session for a user
 exports.destroyOne = function (aReq, aUser, aId, aCallback) {
   var store = aReq.sessionStore;
-
-  console.log(aId);
 
   if (!aUser || !aId) {
     aCallback('No session', null);
