@@ -293,10 +293,15 @@ exports.callback = function (aReq, aRes, aNext) {
 
       // Store the info in the session passport
       // Currently we do not care to save this info in User
+      // as it is volatile, absent, and usually session specific
       if (aReq.session.passport) {
-        aReq.session.passport.userAgent = aReq.session.useragent;
-        aReq.session.passport.since = new Date();
-        aReq.session.passport.strategy = strategy;
+        if (!aReq.session.passport.oujsOptions) {
+          aReq.session.passport.oujsOptions = {};
+        }
+        aReq.session.passport.oujsOptions.remoteAddress = aReq.connection.remoteAddress;
+        aReq.session.passport.oujsOptions.userAgent = aReq.session.useragent;
+        aReq.session.passport.oujsOptions.since = new Date();
+        aReq.session.passport.oujsOptions.strategy = strategy;
       }
 
       // Save the last date a user sucessfully logged in

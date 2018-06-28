@@ -428,22 +428,31 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
           var data = JSON.parse(aElement.session);
           var obj = null;
           if (data) {
+            console.log(data.passport.oujsOptions);
             obj = {
               _id: aElement._id,
               name: (data.user ? data.user.name : data.username),
               role: (data.user ? userRoles[data.user.role] : null),
-              strategy: (data.passport ? data.passport.strategy : null),
+              strategy: (data.passport && data.passport.oujsOptions
+                ? data.passport.oujsOptions.strategy
+                : null),
               canDestroyOne: true, // TODO: Perhaps do some further conditionals
               ua: {
-                raw: (data.passport ? data.passport.userAgent : null),
+                raw: (data.passport && data.passport.oujsOptions
+                  ? data.passport.oujsOptions.userAgent
+                  : null),
                 class: 'fa-lg ua-' + useragent
-                  .parse((data.passport ? data.passport.userAgent : null))
-                    .family.toLowerCase().replace(/\s+/g, '-')
+                  .parse((data.passport && data.passport.oujsOptions
+                    ? data.passport.oujsOptions.userAgent
+                    : null))
+                      .family.toLowerCase().replace(/\s+/g, '-')
               },
               userPageUrl: (data.user ? data.user.userPageUrl : null),
               cookie: {
-                since: (data.passport
-                  ? (data.passport.since ? new Date(data.passport.since) : data.passport.since)
+                since: (data.passport && data.passport.oujsOptions
+                  ? (data.passport.oujsOptions.since
+                    ? new Date(data.passport.oujsOptions.since)
+                    : data.passport.oujsOptions.since)
                   : null),
                 expires: (data.cookie.expires ? new Date(data.cookie.expires) : false),
                 secure: data.cookie.secure,
