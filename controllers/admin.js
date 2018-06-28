@@ -431,6 +431,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
             obj = {
               _id: aElement._id,
               name: (data.user ? data.user.name : data.username),
+              role: (data.user ? userRoles[data.user.role] : null),
               strategy: (data.passport ? data.passport.strategy : null),
               canDestroyOne: true, // TODO: Perhaps do some further conditionals
               ua: {
