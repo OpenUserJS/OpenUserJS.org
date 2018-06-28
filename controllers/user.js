@@ -149,22 +149,66 @@ exports.extend = function (aReq, aRes, aNext) {
 };
 
 // API - Request for destroying a logged in user session
-// TODO: Route is disabled during testing
 exports.destroyOne = function (aReq, aRes, aNext) {
+  var options = {};
   var authedUser = aReq.session.user;
-  var username = aReq.body.username;
+  var username = null;
   var id = aReq.body.id;
 
-  if (!authedUser || !authedUser.isAdmin) {
-    aNext();
+  // Session
+  options.authedUser = authedUser;
+  options.isMod = authedUser && authedUser.isMod;
+  options.isAdmin = authedUser && authedUser.isAdmin;
+
+  username = aReq.body.username;
+
+  if (!username) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 400,
+      statusMessage: '<code>username</code> must be set.'
+    });
     return;
   }
 
+  if (aReq.sessionID === id) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'Cannot delete the current session.'
+    });
+    return;
+  }
+
+  // You can only delete a session with a role equal or less than yours
   User.findOne({
-    name: username,
-    sessionIds: { "$in" : [ id ] }
+    name: username
   }, function (aErr, aUser) {
-    destroyOneSession(aReq, aUser, id, function (aErr) {
+    var user = null;
+
+    if (aErr || !aUser) {
+      aNext();
+      return;
+    }
+
+    options.user = user = aUser; // NOTE: We really shouldn't need modelParser here
+
+    if (authedUser.role > user.role) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403,
+        statusMessage: 'Cannot delete a session with a higher rank.'
+      });
+      return;
+    }
+
+    // You can only delete your own other sessions when you are not an admin
+    if (!options.isAdmin && authedUser.name !== user.name) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403,
+        statusMessage: 'Cannot delete a session that is not owned.'
+      });
+      return;
+    }
+
+    destroyOneSession(aReq, user, id, function (aErr) {
       if (aErr) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 500,

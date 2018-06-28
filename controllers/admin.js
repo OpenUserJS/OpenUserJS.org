@@ -385,7 +385,6 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
     return;
   }
 
-
   // Page metadata
   pageMetadata(options, ['Sessions', 'Admin']);
 
@@ -433,7 +432,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
               _id: aElement._id,
               name: (data.user ? data.user.name : data.username),
               strategy: (data.passport ? data.passport.strategy : null),
-              canDestroyOne: false,
+              canDestroyOne: true, // TODO: Perhaps do some further conditionals
               ua: {
                 raw: (data.passport ? data.passport.userAgent : null),
                 class: 'fa-lg ua-' + useragent
