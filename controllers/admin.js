@@ -376,6 +376,8 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
+  options.isFounder = authedUser && authedUser.isFounder;
+  options.isRoot = authedUser && authedUser.isRoot;
 
   if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
@@ -436,6 +438,11 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
                 ? data.passport.oujsOptions.strategy
                 : null),
               canDestroyOne: true, // TODO: Perhaps do some further conditionals
+              remoteAddress: (data.passport && data.passport.oujsOptions
+                ? ((data.user ? data.user.name : data.username) === authedUser.name
+                  ? data.passport.oujsOptions.remoteAddress
+                  : null)
+                : null),
               ua: {
                 raw: (data.passport && data.passport.oujsOptions
                   ? data.passport.oujsOptions.userAgent
