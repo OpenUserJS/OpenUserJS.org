@@ -11,6 +11,7 @@
             <span>
               {{#userPageUrl}}<a href="{{{userPageUrl}}}" class="username">{{name}}</a>{{/userPageUrl}}
               {{^userPageUrl}}<span class="username">{{name}}</span>{{/userPageUrl}}
+              <span class="label label-default">{{#role}}{{role}}{{/role}}{{^role}}<em>waiting</em>{{/role}}</span>
               <span class="label label-{{#cookie.secure}}success{{/cookie.secure}}{{^cookie.secure}}warning{{/cookie.secure}}" title="secure">
                 <i class="fa fa-{{^cookie.secure}}un{{/cookie.secure}}lock"></i>
               </span>
@@ -27,7 +28,7 @@
           <div class="session-info pull-right">
             <img src="/images/strat/{{strategy}}16.png">
             <i class="fa fa-fw fa-globe ua {{ua.class}} " title="{{#ua.raw}}{{ua.raw}}{{/ua.raw}}{{^ua.raw}}{{/ua.raw}}"></i>
-            {{#cookie.since}}<time datetime="{{cookie.sinceISOFormat}}" title="{{cookie.since}}">{{cookie.sinceHumanized}}</time>{{/cookie.since}}{{^cookie.since}}NaN{{/cookie.since}}
+            {{#cookie.since}}<time datetime="{{cookie.sinceISOFormat}}" title="{{cookie.since}}">{{cookie.sinceHumanized}}</time>{{/cookie.since}}{{^cookie.since}}<em>waiting</em>{{/cookie.since}}
           </div>
         </div>
         <div class="session-post-contents row">
