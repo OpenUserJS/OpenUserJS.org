@@ -454,6 +454,8 @@ var parseUser = function (aUser) {
   // Role
   user.isMod = user.role < 4;
   user.isAdmin = user.role < 3;
+  user.isFounder = user.role < 2;
+  user.isRoot = user.role < 1;
   user.roleName = userRoles[user.role];
 
   //
