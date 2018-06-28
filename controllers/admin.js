@@ -428,7 +428,6 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
           var data = JSON.parse(aElement.session);
           var obj = null;
           if (data) {
-            console.log(data.passport.oujsOptions);
             obj = {
               _id: aElement._id,
               name: (data.user ? data.user.name : data.username),
