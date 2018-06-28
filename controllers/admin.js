@@ -428,48 +428,63 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
 
         aSessionsData.forEach(function (aElement, aIndex) {
           var data = JSON.parse(aElement.session);
+
+          var user = null;
+          var username = null;
+          var cookie = null;
+          var oujsOptions = null;
+
           var obj = null;
+
           if (data) {
+            user = data.user;
+            cookie = data.cookie;
+            username = user ? user.name : data.username;
+
+            if (data.passport && data.passport.oujsOptions) {
+              oujsOptions = data.passport.oujsOptions;
+            }
+
             obj = {
               _id: aElement._id,
-              name: (data.user ? data.user.name : data.username),
-              role: (data.user ? userRoles[data.user.role] : null),
-              strategy: (data.passport && data.passport.oujsOptions
-                ? data.passport.oujsOptions.strategy
-                : null),
+              name: username,
+              role: (user ? userRoles[user.role] : null),
+              strategy: (oujsOptions ? data.passport.oujsOptions.strategy : null),
               canDestroyOne: true, // TODO: Perhaps do some further conditionals
-              remoteAddress: (data.passport && data.passport.oujsOptions
-                ? ((data.user ? data.user.name : data.username) === authedUser.name
-                  ? data.passport.oujsOptions.remoteAddress
-                  : null)
+              remoteAddress: (oujsOptions
+                ? (
+                    username === authedUser.name && !oujsOptions.authFrom
+                      ? oujsOptions.remoteAddress
+                      : oujsOptions.authFrom
+                        ? oujsOptions.authFrom
+                        : null
+                  )
                 : null),
               ua: {
-                raw: (data.passport && data.passport.oujsOptions
-                  ? data.passport.oujsOptions.userAgent
+                raw: (oujsOptions
+                  ? oujsOptions.userAgent
                   : null),
                 class: 'fa-lg ua-' + useragent
-                  .parse((data.passport && data.passport.oujsOptions
-                    ? data.passport.oujsOptions.userAgent
-                    : null))
-                      .family.toLowerCase().replace(/\s+/g, '-')
+                  .parse((oujsOptions ? oujsOptions.userAgent : null))
+                    .family.toLowerCase().replace(/\s+/g, '-')
               },
-              userPageUrl: (data.user ? data.user.userPageUrl : null),
+              userPageUrl: (user ? user.userPageUrl : null),
               cookie: {
-                since: (data.passport && data.passport.oujsOptions
-                  ? (data.passport.oujsOptions.since
-                    ? new Date(data.passport.oujsOptions.since)
-                    : data.passport.oujsOptions.since)
+                since: (oujsOptions
+                  ? (oujsOptions.since ? new Date(oujsOptions.since) : oujsOptions.since)
                   : null),
-                expires: (data.cookie.expires ? new Date(data.cookie.expires) : false),
-                secure: data.cookie.secure,
-                httpOnly: data.cookie.httpOnly,
-                sameSite: data.cookie.sameSite,
-                sameSiteStrict: data.cookie.sameSite === 'strict',
-                sameSiteLax: data.cookie.sameSite === 'lax' ,
+                expires: (cookie.expires ? new Date(cookie.expires) : false),
+                secure: cookie.secure,
+                httpOnly: cookie.httpOnly,
+                sameSite: cookie.sameSite,
+                sameSiteStrict: cookie.sameSite === 'strict',
+                sameSiteLax: cookie.sameSite === 'lax' ,
               }
             };
+
             modelParser.parseDateProperty(obj.cookie, 'expires');
             modelParser.parseDateProperty(obj.cookie, 'since');
+
             options.sessionList.push(obj);
           }
         });
@@ -713,7 +728,7 @@ exports.authAsUser = function (aReq, aRes, aNext) {
     return;
   }
 
-  // You can only see users with a role less than yours
+  // You can only be a user with a role less than yours
   User.findOne({
     name: username
   }, function (aErr, aUser) {
@@ -735,6 +750,13 @@ exports.authAsUser = function (aReq, aRes, aNext) {
           : 'Cannot auth as a user with a higher rank.'
       });
       return;
+    }
+
+    if (aReq.session.passport) {
+      if (!aReq.session.passport.oujsOptions) {
+        aReq.session.passport.oujsOptions = {};
+      }
+      aReq.session.passport.oujsOptions.authFrom = aReq.session.user.name;
     }
 
     aReq.session.user = user;
