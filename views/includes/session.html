@@ -23,6 +23,9 @@
                 {{#cookie.sameSiteLax}}<i class="fa fa-adjust"></i>{{/cookie.sameSiteLax}}
                 {{^cookie.sameSite}}<i class="fa fa-circle-o"></i>{{/cookie.sameSite}}
               </span>
+              {{#remoteAddress}}
+              <span class="label label-info" title="remoteAddress">{{remoteAddress}}</span>
+              {{/remoteAddress}}
             </span>
           </div>
           <div class="session-info pull-right">
