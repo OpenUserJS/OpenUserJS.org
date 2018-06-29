@@ -62,7 +62,7 @@ $ cd falkon
 $ # Cleanup build directory if needed for cmake pitfalls
 $ rm -Rf build
 $ # Switches for cmake do not always work so use native environment variable
-$ export CMAKE_PREFIX_PATH=/opt/Qt/5.10.1/gcc_64/
+$ export CMAKE_PREFIX_PATH=/opt/Qt/5.11.1/gcc_64/
 $ # Ensure folder exists and change into it
 $ mkdir build && cd build
 $ # Similar to `qmake` and `./configure`... note the dot dot is required
