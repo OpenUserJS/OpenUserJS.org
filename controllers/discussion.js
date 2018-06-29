@@ -545,11 +545,6 @@ exports.createComment = function (aReq, aRes, aNext) {
   var category = aReq.params.category;
   var topic = aReq.params.topic;
 
-  if (!authedUser) {
-    aNext();
-    return;
-  }
-
   findDiscussion(category, topic, function (aDiscussion) {
     //
     var content = aReq.body['comment-content'];

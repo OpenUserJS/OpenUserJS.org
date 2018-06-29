@@ -57,10 +57,10 @@ module.exports = function (aApp) {
 
   // Adding script/library routes
   aApp.route('/user/add/scripts').get(authentication.validateUser, user.newScriptPage);
-  aApp.route('/user/add/scripts/new').get(script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
+  aApp.route('/user/add/scripts/new').get(authentication.validateUser, script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
   aApp.route('/user/add/scripts/upload').post(authentication.validateUser, user.uploadScript);
   aApp.route('/user/add/lib').get(authentication.validateUser, user.newLibraryPage);
-  aApp.route('/user/add/lib/new').get(script.new(script.lib(user.editScript))).post(authentication.validateUser, script.new(script.lib(user.submitSource)));
+  aApp.route('/user/add/lib/new').get(authentication.validateUser, script.new(script.lib(user.editScript))).post(authentication.validateUser, script.new(script.lib(user.submitSource)));
   aApp.route('/user/add/lib/upload').post(authentication.validateUser, script.lib(user.uploadScript));
   aApp.route('/user/add').get(function (aReq, aRes) {
     aRes.redirect(301, '/user/add/scripts');
@@ -122,10 +122,10 @@ module.exports = function (aApp) {
   aApp.route('/vote/libs/:username/:scriptname/:vote').get(authentication.validateUser, script.lib(script.vote));
 
   // Flag routes
-  aApp.route(/^\/flag\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(flag.flag);
+  aApp.route(/^\/flag\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, flag.flag);
 
   // Remove route
-  aApp.route(/^\/remove\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(remove.rm);
+  aApp.route(/^\/remove\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, remove.rm);
 
   // Group routes
   aApp.route('/groups').get(group.list);
@@ -137,7 +137,7 @@ module.exports = function (aApp) {
   // TODO: Update templates for new discussion routes
   aApp.route('/forum').get(discussion.categoryListPage);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(discussion.list);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(discussion.createComment);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(authentication.validateUser, discussion.createComment);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
   // dupe
   aApp.route('/post/:category(announcements|corner|garage|discuss)').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
