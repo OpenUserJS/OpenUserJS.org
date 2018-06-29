@@ -449,7 +449,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
               _id: aElement._id,
               name: username,
               role: (user ? userRoles[user.role] : null),
-              strategy: (oujsOptions ? data.passport.oujsOptions.strategy : null),
+              strategy: oujsOptions.strategy,
               canDestroyOne: true, // TODO: Perhaps do some further conditionals
               remoteAddress: (oujsOptions
                 ? (
@@ -461,18 +461,13 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
                   )
                 : null),
               ua: {
-                raw: (oujsOptions
-                  ? oujsOptions.userAgent
-                  : null),
-                class: 'fa-lg ua-' + useragent
-                  .parse((oujsOptions ? oujsOptions.userAgent : null))
-                    .family.toLowerCase().replace(/\s+/g, '-')
+                raw: oujsOptions.userAgent,
+                class: 'fa-lg ua-' + useragent.parse(oujsOptions.userAgent)
+                  .family.toLowerCase().replace(/\s+/g, '-')
               },
               userPageUrl: (user ? user.userPageUrl : null),
               cookie: {
-                since: (oujsOptions
-                  ? (oujsOptions.since ? new Date(oujsOptions.since) : oujsOptions.since)
-                  : null),
+                since: oujsOptions.since ? new Date(oujsOptions.since) : oujsOptions.since,
                 expires: (cookie.expires ? new Date(cookie.expires) : false),
                 secure: cookie.secure,
                 httpOnly: cookie.httpOnly,
