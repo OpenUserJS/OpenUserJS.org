@@ -155,6 +155,11 @@ exports.destroyOne = function (aReq, aRes, aNext) {
   var username = null;
   var id = aReq.body.id;
 
+  if (!authedUser) {
+    aRes.redirect('/login');
+    return;
+  }
+
   // Session
   options.authedUser = authedUser;
   options.isMod = authedUser && authedUser.isMod;
