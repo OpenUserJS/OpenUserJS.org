@@ -372,6 +372,11 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   var store = aReq.sessionStore;
   var sessionColl = store.db.collection('sessions');
 
+  if (!authedUser) {
+    aRes.redirect('/login');
+    return;
+  }
+
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
