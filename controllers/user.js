@@ -120,11 +120,6 @@ exports.exist = function (aReq, aRes) {
 exports.extend = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
-  if (!authedUser) {
-    aNext();
-    return;
-  }
-
   User.findOne({
     _id: authedUser._id,
     sessionIds: { "$in": [ aReq.sessionID ] }
@@ -154,11 +149,6 @@ exports.destroyOne = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var username = null;
   var id = aReq.body.id;
-
-  if (!authedUser) {
-    aRes.redirect('/login');
-    return;
-  }
 
   // Session
   options.authedUser = authedUser;

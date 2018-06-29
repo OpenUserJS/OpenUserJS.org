@@ -50,7 +50,7 @@ var strategies = require('./strategies.json');
 // This controller is only for use by users with a role of admin or above
 
 function userIsAdmin(aReq) {
-  return aReq.session.user && aReq.session.user.role < 3;
+  return aReq.session.user && aReq.session.user.role < 3; // TODO: duplicate check on first conditional
 }
 
 function getOAuthStrategies(aStored) {
@@ -371,11 +371,6 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
 
   var store = aReq.sessionStore;
   var sessionColl = store.db.collection('sessions');
-
-  if (!authedUser) {
-    aRes.redirect('/login');
-    return;
-  }
 
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
