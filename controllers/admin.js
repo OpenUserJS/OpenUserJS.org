@@ -432,14 +432,14 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
           var user = null;
           var username = null;
           var cookie = null;
-          var oujsOptions = null;
+          var oujsOptions = {};
 
           var obj = null;
 
           if (data) {
             user = data.user;
-            cookie = data.cookie;
             username = user ? user.name : data.username;
+            cookie = data.cookie;
 
             if (data.passport && data.passport.oujsOptions) {
               oujsOptions = data.passport.oujsOptions;
@@ -451,15 +451,13 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
               role: (user ? userRoles[user.role] : null),
               strategy: oujsOptions.strategy,
               canDestroyOne: true, // TODO: Perhaps do some further conditionals
-              remoteAddress: (oujsOptions
-                ? (
-                    username === authedUser.name && !oujsOptions.authFrom
-                      ? oujsOptions.remoteAddress
-                      : oujsOptions.authFrom
-                        ? oujsOptions.authFrom
-                        : null
-                  )
-                : null),
+              remoteAddress: (
+                username === authedUser.name && !oujsOptions.authFrom
+                  ? oujsOptions.remoteAddress
+                  : oujsOptions.authFrom
+                    ? oujsOptions.authFrom
+                    : null
+              ),
               ua: {
                 raw: oujsOptions.userAgent,
                 class: 'fa-lg ua-' + useragent.parse(oujsOptions.userAgent)
