@@ -45,15 +45,15 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/github/repo').get(authentication.validateUser, user.userGitHubRepoPage);
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
   aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
-  aApp.route('/users/:username/update').post(admin.adminUserUpdate);
+  aApp.route('/users/:username/update').post(authentication.validateUser, admin.adminUserUpdate);
   // NOTE: Some below inconsistent with priors
   aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
   aApp.route('/user').get(function (aReq, aRes) {
     aRes.redirect(302, '/users');
   });
   aApp.route('/api/user/exist/:username').head(user.exist);
-  aApp.route('/api/user/session/extend').post(user.extend);
-  aApp.route('/api/user/session/destroyOne').post(user.destroyOne);
+  aApp.route('/api/user/session/extend').post(authentication.validateUser, user.extend);
+  aApp.route('/api/user/session/destroyOne').post(authentication.validateUser, user.destroyOne);
 
   // Adding script/library routes
   aApp.route('/user/add/scripts').get(authentication.validateUser, user.newScriptPage);
@@ -97,24 +97,24 @@ module.exports = function (aApp) {
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
 
   // Admin routes
-  aApp.route('/admin').get(admin.adminPage);
-  aApp.route('/admin/npm/version').get(admin.adminNpmVersionView);
-  aApp.route('/admin/git/short').get(admin.adminGitShortView);
-  aApp.route('/admin/git/branch').get(admin.adminGitBranchView);
-  aApp.route('/admin/process/clone').get(admin.adminProcessCloneView);
-  aApp.route('/admin/session/active').get(admin.adminSessionActiveView);
-  aApp.route('/admin/npm/package').get(admin.adminNpmPackageView);
-  aApp.route('/admin/npm/list').get(admin.adminNpmListView);
-  aApp.route('/admin/api').get(admin.adminApiKeysPage);
-  aApp.route('/admin/authas').get(admin.authAsUser);
-  aApp.route('/admin/json').get(admin.adminJsonView);
+  aApp.route('/admin').get(authentication.validateUser, admin.adminPage);
+  aApp.route('/admin/npm/version').get(authentication.validateUser, admin.adminNpmVersionView);
+  aApp.route('/admin/git/short').get(authentication.validateUser, admin.adminGitShortView);
+  aApp.route('/admin/git/branch').get(authentication.validateUser, admin.adminGitBranchView);
+  aApp.route('/admin/process/clone').get(authentication.validateUser, admin.adminProcessCloneView);
+  aApp.route('/admin/session/active').get(authentication.validateUser, admin.adminSessionActiveView);
+  aApp.route('/admin/npm/package').get(authentication.validateUser, admin.adminNpmPackageView);
+  aApp.route('/admin/npm/list').get(authentication.validateUser, admin.adminNpmListView);
+  aApp.route('/admin/api').get(authentication.validateUser, admin.adminApiKeysPage);
+  aApp.route('/admin/authas').get(authentication.validateUser, admin.authAsUser);
+  aApp.route('/admin/json').get(authentication.validateUser, admin.adminJsonView);
 
-  aApp.route('/admin/api/update').post(admin.apiAdminUpdate);
+  aApp.route('/admin/api/update').post(authentication.validateUser, admin.apiAdminUpdate);
 
   // Moderation routes
-  aApp.route('/mod').get(moderation.modPage);
-  aApp.route('/mod/removed').get(moderation.removedItemListPage);
-  aApp.route('/mod/removed/:id').get(moderation.removedItemPage);
+  aApp.route('/mod').get(authentication.validateUser, moderation.modPage);
+  aApp.route('/mod/removed').get(authentication.validateUser, moderation.removedItemListPage);
+  aApp.route('/mod/removed/:id').get(authentication.validateUser, moderation.removedItemPage);
 
   // Vote routes
   // TODO: Single vote route + POST
