@@ -147,15 +147,8 @@ exports.extend = function (aReq, aRes, aNext) {
 exports.destroyOne = function (aReq, aRes, aNext) {
   var options = {};
   var authedUser = aReq.session.user;
-  var username = null;
+  var username = aReq.body.username;;
   var id = aReq.body.id;
-
-  // Session
-  options.authedUser = authedUser;
-  options.isMod = authedUser && authedUser.isMod;
-  options.isAdmin = authedUser && authedUser.isAdmin;
-
-  username = aReq.body.username;
 
   if (!username) {
     statusCodePage(aReq, aRes, aNext, {
@@ -177,6 +170,7 @@ exports.destroyOne = function (aReq, aRes, aNext) {
   User.findOne({
     name: username
   }, function (aErr, aUser) {
+    var store = aReq.sessionStore;
     var user = null;
 
     if (aErr || !aUser) {
@@ -184,7 +178,7 @@ exports.destroyOne = function (aReq, aRes, aNext) {
       return;
     }
 
-    options.user = user = aUser; // NOTE: We really shouldn't need modelParser here
+    user = aUser; // NOTE: We really shouldn't need modelParser here
 
     if (authedUser.role > user.role) {
       statusCodePage(aReq, aRes, aNext, {
@@ -195,7 +189,7 @@ exports.destroyOne = function (aReq, aRes, aNext) {
     }
 
     // You can only delete your own other sessions when you are not an admin
-    if (!options.isAdmin && authedUser.name !== user.name) {
+    if (!authedUser.isAdmin && authedUser.name !== user.name) {
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 403,
         statusMessage: 'Cannot delete a session that is not owned.'
@@ -203,7 +197,7 @@ exports.destroyOne = function (aReq, aRes, aNext) {
       return;
     }
 
-    destroyOneSession(aReq, user, id, function (aErr) {
+    store.get(id, function (aErr, aSess) {
       if (aErr) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 500,
@@ -212,7 +206,25 @@ exports.destroyOne = function (aReq, aRes, aNext) {
         return;
       }
 
-      aRes.redirect('back');
+      if (!authedUser.isAdmin && aSess.passport.oujsOptions.authFrom) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 403,
+          statusMessage: 'Cannot delete a session that is being administered.'
+        });
+        return;
+      }
+
+      destroyOneSession(aReq, user, id, function (aErr) {
+        if (aErr) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500,
+            statusMessage: aErr
+          });
+          return;
+        }
+
+        aRes.redirect('back');
+      });
     });
   });
 };
