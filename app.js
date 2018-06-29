@@ -139,7 +139,10 @@ process.on('SIGINT', function () {
   process.exit(0);
 });
 
-var sessionStore = new MongoStore({ mongooseConnection: db });
+var sessionStore = new MongoStore({
+  mongooseConnection: db,
+  ttl: (6 / 2) * 60 * 60 // 14 * 24 * 60 * 60 = 14 days. Default
+});
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
 var ensureIntegerOrNull = require('./libs/helpers').ensureIntegerOrNull;
