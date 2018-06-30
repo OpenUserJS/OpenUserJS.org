@@ -55,6 +55,7 @@ Repository | Reference | Recent Version
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
 [mime-db][mime-dbGHUrl] | [Documentation][mime-dbDOCUrl] | [![NPM version][mime-dbNPMVersionImage]][mime-dbNPMUrl]
 [moment][momentGHUrl] | [Documentation][momentDOCUrl] | [![NPM version][momentNPMVersionImage]][momentNPMUrl]
+[moment-duration-format][moment-duration-formatGHUrl] | [Documentation][moment-duration-formatDOCUrl] | [![NPM version][moment-duration-formatNPMVersionImage]][moment-duration-formatNPMUrl]
 [mongodb][mongodbGHUrl] | [Documentation][mongodbDOCUrl] | [![NPM version][mongodbNPMVersionImage]][mongodbNPMUrl]
 [mongoose][mongooseGHUrl] | [Documentation][mongooseDOCUrl] | [![NPM version][mongooseNPMVersionImage]][mongooseNPMUrl]
 [morgan][morganGHUrl] | [Documentation][morganDOCUrl] | [![NPM version][morganNPMVersionImage]][morganNPMUrl]
@@ -316,6 +317,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [momentDOCUrl]: http://momentjs.com/docs/
 [momentNPMUrl]: https://www.npmjs.com/package/moment
 [momentNPMVersionImage]: https://img.shields.io/npm/v/moment.svg?style=flat
+
+[moment-duration-formatGHUrl]: https://github.com/jsmreese/moment-duration-format
+[moment-duration-formatDOCUrl]: https://github.com/jsmreese/moment-duration-format/blob/master/README.md
+[moment-duration-formatNPMUrl]: https://www.npmjs.com/package/moment-duration-format
+[moment-duration-formatNPMVersionImage]: https://img.shields.io/npm/v/moment-duration-format.svg?style=flat
 
 [mongodbGHUrl]: https://github.com/mongodb/node-mongodb-native
 [mongodbDOCUrl]: https://github.com/mongodb/node-mongodb-native/blob/3.0/README.md

@@ -12,6 +12,8 @@ var exec = require('child_process').exec;
 
 var async = require('async');
 var _ = require('underscore');
+var moment = require('moment');
+var momentDurationFormatSetup = require("moment-duration-format");
 var git = require('git-rev');
 var useragent = require('useragent');
 
@@ -44,6 +46,10 @@ var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var pkg = require('../package.json');
 var userRoles = require('../models/userRoles.json');
 var strategies = require('./strategies.json');
+
+
+// Initializations
+momentDurationFormatSetup(moment);
 
 //---
 
@@ -467,6 +473,10 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
               cookie: {
                 since: oujsOptions.since ? new Date(oujsOptions.since) : oujsOptions.since,
                 expires: (cookie.expires ? new Date(cookie.expires) : false),
+                originalMaxAge: (cookie.originalMaxAge
+                  ? moment.duration(cookie.originalMaxAge, "milliseconds")
+                    .format('YYYY[y]DDD[d]H[h]m[m]', { trim: 'both' })
+                  : false),
                 secure: cookie.secure,
                 httpOnly: cookie.httpOnly,
                 sameSite: cookie.sameSite,
