@@ -24,7 +24,7 @@
                 {{^cookie.sameSite}}<i class="fa fa-circle-o"></i>{{/cookie.sameSite}}
               </span>
               <span class="label label-{{#cookie.originalMaxAge}}success{{/cookie.originalMaxAge}}{{^cookie.originalMaxAge}}warning{{/cookie.originalMaxAge}}" title="originalMaxAge">
-                {{#cookie.originalMaxAge}}{{cookie.originalMaxAge}}{{/cookie.originalMaxAge}}{{^cookie.originalMaxAge}}&infin;{{/cookie.originalMaxAge}}
+                {{#cookie.originalMaxAge}}{{cookie.originalMaxAge}}{{/cookie.originalMaxAge}}{{^cookie.originalMaxAge}}&and;{{/cookie.originalMaxAge}}
               </span>
               {{#remoteAddress}}
               <span class="label label-info" title="remoteAddress">{{remoteAddress}}</span>
@@ -39,7 +39,7 @@
         </div>
         <div class="session-post-contents row">
           <div class="session-data">
-            Expires {{#cookie.expires}}<time datetime="{{cookie.expiresISOFormat}}" title="{{cookie.expires}}">{{cookie.expiresHumanized}}</time>{{/cookie.expires}}{{^cookie.expires}}&infin;{{/cookie.expires}}.
+            Expires {{#cookie.expires}}<time datetime="{{cookie.expiresISOFormat}}" title="{{cookie.expires}}">{{cookie.expiresHumanized}}</time>{{/cookie.expires}}{{^cookie.expires}}&and;{{/cookie.expires}}.
           </div>
           <div class="pull-right">
             <form class="form-inline" action="/api/user/session/destroyOne" method="post">
