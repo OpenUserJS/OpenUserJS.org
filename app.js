@@ -75,7 +75,6 @@ var https = require('https');
 var sslOptions = null;
 var server = http.createServer(app);
 var secureServer = null;
-var tlsSessionStore = {};
 var privkey = './keys/private.key';
 var fullchain = './keys/cert.crt';
 var chain = './keys/intermediate.crt';
@@ -289,14 +288,6 @@ if (app.get('securePort') && secured) {
     secureOptions: crypto.constants.SSL_OP_NO_TLSv1
   };
   secureServer = https.createServer(sslOptions, app);
-
-  secureServer.on('newSession', function (aId, aData, aCallback) {
-    tlsSessionStore[aId.toString('hex')] = aData;
-    aCallback();
-  });
-  secureServer.on('resumeSession', function (aId, aCallback) {
-    aCallback(null, tlsSessionStore[aId.toString('hex')] || null);
-  });
 
   app.use(function (aReq, aRes, aNext) {
     aRes.setHeader('Strict-Transport-Security',
