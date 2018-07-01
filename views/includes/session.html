@@ -32,7 +32,7 @@
             </span>
           </div>
           <div class="session-info pull-right">
-            <img src="/images/strat/{{strategy}}16.png">
+            <img src="/images/strat/{{strategy}}16.png" title="{{#strategy}}{{strategy}}{{/strategy}}{{^strategy}}passport{{/strategy}}" alt="{{#strategy}}{{strategy}}{{/strategy}}{{^strategy}}passport{{/strategy}}">
             <i class="fa fa-fw fa-globe ua {{ua.class}} " title="{{#ua.raw}}{{ua.raw}}{{/ua.raw}}{{^ua.raw}}{{/ua.raw}}"></i>
             {{#cookie.since}}<time datetime="{{cookie.sinceISOFormat}}" title="{{cookie.since}}">{{cookie.sinceHumanized}}</time>{{/cookie.since}}{{^cookie.since}}<em>&hellip;</em>{{/cookie.since}}
           </div>
