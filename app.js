@@ -44,6 +44,7 @@ var request = require('request');
 
 //
 var pingCertTimer = null;
+var ttlSanityTimer = null;
 
 var app = express();
 
@@ -54,6 +55,10 @@ var settings = require('./models/settings.json');
 var connectStr = process.env.CONNECT_STRING || settings.connect;
 var sessionSecret = process.env.SESSION_SECRET || settings.secret;
 var db = mongoose.connection;
+
+var moment = require('moment');
+var _ = require('underscore');
+var listDataSessions = require('./libs/modifySessions').listData;
 
 var dbOptions = {};
 if (isPro) {
@@ -100,14 +105,25 @@ db.on('connected', function () {
   admin.buildInfo(function (aErr, aInfo) {
     console.log(colors.green('Connected to MongoDB v' + aInfo.version));
   });
+
+  ttlSanityTimer = setInterval(ttlSanity, 15 * 60 * 1000); // NOTE: Check every n minutes
 });
 
 db.on('disconnected', function () {
   console.error(colors.yellow('\nMongoDB connection is disconnected'));
+
+  if (ttlSanityTimer) {
+    clearInterval(ttlSanityTimer);
+    ttlSanityTimer = null;
+  }
 });
 
 db.on('reconnected', function () {
   console.error(colors.yellow('MongoDB connection is reconnected'));
+
+  if (!ttlSanityTimer) {
+    ttlSanityTimer = setInterval(ttlSanity, 15 * 60 * 1000); // NOTE: Check every n minutes
+  }
 });
 
 function beforeExit() {
@@ -118,8 +134,13 @@ function beforeExit() {
   // Cancel any intervals
   if (pingCertTimer) {
     clearInterval(pingCertTimer);
+    pingCertTimer = null;
   }
 
+  if (ttlSanityTimer) {
+    clearInterval(ttlSanityTimer);
+    ttlSanityTimer = null;
+  }
   // Close the db connection
   db.close(); // NOTE: Current asynchronous but auth may prevent callback until completed
 
@@ -490,4 +511,27 @@ function pingCert() {
 
 if (secured) {
   pingCertTimer = setInterval(pingCert, 60 * 60 * 1000); // NOTE: Check every hour
+}
+
+function ttlSanity() {
+  var options = {};
+  listDataSessions(sessionStore, options, function (aErr) {
+    if (aErr) {
+      console.error('some error during ttlSanity', aErr);
+      return;
+    }
+
+    options.sessionList = _.map(options.sessionList, function (aSession) {
+      var expiry = moment(aSession.cookie.expires);
+
+      if (expiry.add(15, 'm').isBefore()) {
+        if (aSession.passport && aSession.passport.oujsOptions) {
+          console.warn('Forcibly destroyed a session id of', aSession.passport.oujsOptions.sid);
+          sessionStore.destroy(aSession.passport.oujsOptions.sid);
+        } else {
+          console.error('Session found to be expired but no sid');
+        }
+      }
+    });
+  });
 }
