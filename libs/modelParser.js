@@ -9,6 +9,7 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var moment = require('moment');
+var momentDurationFormatSetup = require("moment-duration-format");
 var _ = require('underscore');
 var util = require('util');
 var useragent = require('useragent');
@@ -29,6 +30,9 @@ var isFQUrl = require('../libs/helpers').isFQUrl;
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
+
+// --- Initializations
+momentDurationFormatSetup(moment);
 
 //---
 
@@ -94,12 +98,22 @@ var parseDateProperty = function (aObj, aKey) {
   if (aObj[aKey]) {
     date = new Date(aObj[aKey]);
     if (date) {
+      aObj[aKey] = date;
       aObj[aKey + 'ISOFormat'] = date.toISOString();
       aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
     }
   }
 };
 exports.parseDateProperty = parseDateProperty;
+
+var parseDurationProperty = function (aObj, aKey, aUnits) {
+  if (aObj[aKey]) {
+    aObj[aKey + 'Humanized'] = moment.duration(aObj[aKey], aUnits || 'milliseconds')
+      .format('YYYY[y]DDD[d]H[h]m[m]', { trim: 'both' });
+  }
+};
+exports.parseDurationProperty = parseDurationProperty;
+
 
 // Parse persisted model data and return a new object
 // with additional generated fields used in view templates.
@@ -880,3 +894,41 @@ var parseRemovedItem = function (aRemovedItem) {
 };
 parseModelFnMap.Remove = parseRemovedItem;
 exports.parseRemovedItem = parseRemovedItem;
+
+
+/**
+ * Session
+ */
+var parseSession = function (aSession) {
+  var session = null;
+
+  var cookie = null;
+  var oujsOptions = null;
+
+  if (!aSession) {
+    return;
+  }
+
+  session = aSession.toObject ? aSession.toObject() : aSession;
+
+  //
+  cookie = session.cookie;
+  oujsOptions = session.passport.oujsOptions;
+
+
+  session.name = session.user ? session.user.name : oujsOptions.username;
+
+  oujsOptions.remoteAddressMask = oujsOptions.remoteAddress;
+  oujsOptions.userAgentFamily = useragent
+    .parse(oujsOptions.userAgent).family.toLowerCase().replace(/\s+/g, '-');
+  parseDateProperty(oujsOptions, 'since');
+
+  cookie.sameSiteStrict = cookie.sameSite === 'strict';
+  cookie.sameSiteLax = cookie.sameSite === 'lax';
+  parseDateProperty(cookie, 'expires');
+  parseDurationProperty(cookie, 'originalMaxAge');
+
+  return session;
+};
+parseModelFnMap.Session = parseSession;
+exports.parseSession = parseSession;

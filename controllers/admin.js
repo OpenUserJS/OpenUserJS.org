@@ -13,7 +13,6 @@ var exec = require('child_process').exec;
 var async = require('async');
 var _ = require('underscore');
 var moment = require('moment');
-var momentDurationFormatSetup = require("moment-duration-format");
 var git = require('git-rev');
 var useragent = require('useragent');
 
@@ -40,6 +39,7 @@ var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var updateSessions = require('../libs/modifySessions').update;
+var listDataSessions = require('../libs/modifySessions').listData;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Configuration inclusions
@@ -47,9 +47,6 @@ var pkg = require('../package.json');
 var userRoles = require('../models/userRoles.json');
 var strategies = require('./strategies.json');
 
-
-// Initializations
-momentDurationFormatSetup(moment);
 
 //---
 
@@ -400,107 +397,32 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
 
   tasks.push(function (aCallback) {
 
-    sessionColl.find({
-    }, function (aErr, aUserSessions) {
+    listDataSessions(store, options, function (aErr) {
       if (aErr) {
         statusCodePage(aReq, aRes, aNext, {
-          statusCode: 520,
-          statusMessage: 'Unknown error with `sessionColl.find`.'
+          statusCode: 500,
+          statusMessage: aErr
         });
         return;
       }
 
-      if (!aUserSessions) {
-        statusCodePage(aReq, aRes, aNext, {
-          statusCode: 200,
-          statusMessage: 'No sessions'
-        });
-        return;
-      }
+      options.sessionList = _.map(options.sessionList, function (aSession) {
+        var session = modelParser.parseSession(aSession);
 
-      aUserSessions.toArray(function (aErr, aSessionsData) {
-        options.sessionList = [];
+        var oujsOptions = session.passport.oujsOptions;
 
-        if (aErr) {
-          // We want to know what the error value is in logging review
-          console.error('Unknown error with `toArray`.\n' + aErr);
+        session.canDestroyOne = true; // TODO: Perhaps do some further conditionals
 
-          statusCodePage(aReq, aRes, aNext, {
-            statusCode: 520,
-            statusMessage: 'Unknown error with `toArray`.'
-          });
-          return;
-        }
-
-        aSessionsData.forEach(function (aElement, aIndex) {
-          var data = JSON.parse(aElement.session);
-
-          var user = null;
-          var username = null;
-          var cookie = null;
-          var oujsOptions = {};
-
-          var obj = null;
-
-          if (data) {
-            user = data.user || {};
-            username = user.name || data.username;
-            cookie = data.cookie || {};
-
-            if (data.passport && data.passport.oujsOptions) {
-              oujsOptions = data.passport.oujsOptions;
-            }
-
-            obj = {
-              _id: aElement._id,
-              name: username,
-              role: userRoles[user.role],
-              strategy: oujsOptions.strategy,
-              canDestroyOne: true, // TODO: Perhaps do some further conditionals
-              remoteAddress: (
-                username === authedUser.name && !oujsOptions.authFrom
-                  ? oujsOptions.remoteAddress
-                  : oujsOptions.authFrom
-                    ? oujsOptions.authFrom
-                    : null
-              ),
-              ua: {
-                raw: oujsOptions.userAgent,
-                class: 'fa-lg ua-' + useragent.parse(oujsOptions.userAgent)
-                  .family.toLowerCase().replace(/\s+/g, '-')
-              },
-              userPageUrl: user.userPageUrl,
-              cookie: {
-                since: oujsOptions.since ? new Date(oujsOptions.since) : oujsOptions.since,
-                expires: (cookie.expires ? new Date(cookie.expires) : false),
-                originalMaxAge: (cookie.originalMaxAge
-                  ? moment.duration(cookie.originalMaxAge, "milliseconds")
-                    .format('YYYY[y]DDD[d]H[h]m[m]', { trim: 'both' })
-                  : false),
-                secure: cookie.secure,
-                httpOnly: cookie.httpOnly,
-                sameSite: cookie.sameSite,
-                sameSiteStrict: cookie.sameSite === 'strict',
-                sameSiteLax: cookie.sameSite === 'lax' ,
-              }
-            };
-
-            modelParser.parseDateProperty(obj.cookie, 'expires');
-            modelParser.parseDateProperty(obj.cookie, 'since');
-
-            options.sessionList.push(obj);
-          }
-        });
-
-        // Sort the sessions for now
-        options.sessionList = _.sortBy(options.sessionList, function (aSession) {
-          return (aSession.name) ? aSession.name.toLowerCase() : aSession.name;
-        });
-
-        aCallback();
+        oujsOptions.remoteAddressMask = session.name === authedUser.name && !oujsOptions.authFrom
+          ? oujsOptions.remoteAddressMask
+          : oujsOptions.authFrom
+            ? oujsOptions.authFrom
+            : null;
+        return session;
       });
-    });
 
+      aCallback();
+    });
   });
 
   //---
