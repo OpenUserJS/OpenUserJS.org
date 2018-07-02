@@ -24,7 +24,7 @@
                 {{^cookie.sameSite}}<i class="fa fa-circle-o"></i>{{/cookie.sameSite}}
               </span>
               <span class="label label-{{#cookie.originalMaxAge}}success{{/cookie.originalMaxAge}}{{^cookie.originalMaxAge}}warning{{/cookie.originalMaxAge}}" title="originalMaxAge">
-                {{#cookie.originalMaxAge}}{{cookie.originalMaxAgeHumanized}}{{/cookie.originalMaxAge}}{{^cookie.originalMaxAge}}&and;{{/cookie.originalMaxAge}}
+                {{#cookie.originalMaxAge}}{{#passport.oujsOptions.extended}}&and;{{/passport.oujsOptions.extended}}{{cookie.originalMaxAgeHumanized}}{{/cookie.originalMaxAge}}{{^cookie.originalMaxAge}}&and;{{/cookie.originalMaxAge}}
               </span>
               {{#passport.oujsOptions.remoteAddress}}
               <span class="label label-info" title="remoteAddress">{{passport.oujsOptions.remoteAddressMask}}</span>

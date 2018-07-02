@@ -142,7 +142,7 @@ process.on('SIGINT', function () {
 var sessionStore = new MongoStore({
   mongooseConnection: db,
   autoRemove: 'native',
-  ttl: (6 * 3) * 60 * 60 // hours ; 14 * 24 * 60 * 60 = 14 days. Default
+  ttl: 10 * 60 // seconds to minutes ; 14 * 24 * 60 * 60 = 14 days. Default
 });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/

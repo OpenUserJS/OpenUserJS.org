@@ -1031,7 +1031,15 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
 
     // User session control
     tasks.push(function (aCallback) {
-      if (aReq.session.cookie.expires) {
+      if (!aReq.session.passport) {
+        aReq.session.passport = {};
+      }
+
+      if (!aReq.session.passport.oujsOptions) {
+        aReq.session.passport.oujsOptions = {};
+      }
+
+      if (!aReq.session.passport.oujsOptions.extended) {
         options.sessionControl = true;
       }
 
