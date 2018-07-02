@@ -199,3 +199,52 @@ exports.destroy = function (aReq, aUser, aCallback) {
    store.destroy(aId, aInnerCallback);
   }, aCallback);
 };
+
+exports.listData = function (aStore, aOptions, aCallback) {
+  var sessionColl = aStore.db.collection('sessions');
+
+  sessionColl.find({
+  }, function (aErr, aUserSessions) {
+    if (aErr) {
+      aCallback(aErr);
+      return;
+    }
+
+    if (!aUserSessions) {
+      aCallback('No sessions');
+      return;
+    }
+
+    aUserSessions.toArray(function (aErr, aSessionsData) {
+      aOptions.sessionList = [];
+
+      if (aErr) {
+        aCallback(aErr);
+        return;
+      }
+
+      aSessionsData.forEach(function (aElement, aIndex) {
+        var data = JSON.parse(aElement.session);
+
+        if (data) {
+
+          if (!data.passport) {
+            data.passport = {};
+          }
+
+          if (!data.passport.oujsOptions) {
+            data.passport.oujsOptions = {};
+          }
+
+          data.passport.oujsOptions.username = data.username;
+          data.passport.oujsOptions.sid = aElement._id;
+        }
+
+        aOptions.sessionList.push(data);
+      });
+
+      aCallback();
+    });
+  });
+}
+
