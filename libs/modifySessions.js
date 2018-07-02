@@ -96,20 +96,30 @@ exports.expand = function (aReq, aUser, aCallback) {
 
 // Extend a single session
 exports.extend = function (aReq, aUser, aCallback) {
+  var expiry = moment(aReq.session.cookie.expires);
+
   if (!aUser) {
     aCallback('No User');
     return;
   }
 
-  if (!aReq.session.cookie.expires) {
+  if (!aReq.session.passport) {
+    aReq.session.passport = {};
+  }
+
+  if (!aReq.session.passport.oujsOptions) {
+    aReq.session.passport.oujsOptions = {};
+  }
+
+  if (aReq.session.passport.oujsOptions.extended) {
     aCallback('Already extended');
     return;
   }
 
-  // NOTE: Currently allow on any session with
-  //   no additional User restrictions yet...
+  expiry = expiry.add(6 * 2, 'h'); // NOTE: Keep this addition to expanded timeout in sync with app.js
+  aReq.session.passport.oujsOptions.extended = true;
 
-  aReq.session.cookie.expires = false;
+  aReq.session.cookie.expires = expiry.toDate();
   aReq.session.save(aCallback);
 };
 
