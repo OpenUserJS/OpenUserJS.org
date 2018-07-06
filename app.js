@@ -106,7 +106,7 @@ db.on('connected', function () {
     console.log(colors.green('Connected to MongoDB v' + aInfo.version));
   });
 
-  ttlSanityTimer = setInterval(ttlSanity, 15 * 60 * 1000); // NOTE: Check every n minutes
+  ttlSanityTimer = setInterval(ttlSanity, settings.ttl.timerSanityExpiry * 60 * 1000); // NOTE: Check every n min
 });
 
 db.on('disconnected', function () {
@@ -122,7 +122,7 @@ db.on('reconnected', function () {
   console.error(colors.yellow('MongoDB connection is reconnected'));
 
   if (!ttlSanityTimer) {
-    ttlSanityTimer = setInterval(ttlSanity, 15 * 60 * 1000); // NOTE: Check every n minutes
+    ttlSanityTimer = setInterval(ttlSanity, settings.ttl.timerSanityExpiry * 60 * 1000); // NOTE: Check every n min
   }
 });
 
@@ -163,7 +163,7 @@ process.on('SIGINT', function () {
 var sessionStore = new MongoStore({
   mongooseConnection: db,
   autoRemove: 'native',
-  ttl: 10 * 60 // seconds to minutes ; 14 * 24 * 60 * 60 = 14 days. Default
+  ttl: settings.ttl.timerSanity * 60 // sec to min; 14 * 24 * 60 * 60 = 14 days. Default
 });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
@@ -524,11 +524,17 @@ function ttlSanity() {
     options.sessionList = _.map(options.sessionList, function (aSession) {
       var expiry = moment(aSession.cookie.expires);
 
-      if (expiry.add(15, 'm').isBefore()) {
+      if (expiry.add(settings.ttl.timerSanityExpiry, 'm').isBefore() ||
+        expiry.diff(moment(), 'm')
+          > settings.ttl.timerSanityExpiry && aSession.user && !aSession.user.roleName
+      ) {
         if (aSession.passport && aSession.passport.oujsOptions) {
-          console.warn('Forcibly destroyed a session id of', aSession.passport.oujsOptions.sid);
+          if (isDbg) {
+            console.warn('Forcibly destroyed a session id of', aSession.passport.oujsOptions.sid);
+          }
           sessionStore.destroy(aSession.passport.oujsOptions.sid);
         } else {
+          // NOTE: This should not happen
           console.error('Session found to be expired but no sid');
         }
       }
