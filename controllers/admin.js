@@ -396,7 +396,6 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   //--- Tasks
 
   tasks.push(function (aCallback) {
-
     listDataSessions(store, options, function (aErr) {
       if (aErr) {
         statusCodePage(aReq, aRes, aNext, {
@@ -406,27 +405,41 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
         return;
       }
 
-      options.sessionList = _.map(options.sessionList, function (aSession) {
-        var session = modelParser.parseSession(aSession);
-
-        var oujsOptions = session.passport.oujsOptions;
-
-        session.canDestroyOne = true; // TODO: Perhaps do some further conditionals
-
-        oujsOptions.remoteAddressMask = session.name === authedUser.name && !oujsOptions.authFrom
-          ? oujsOptions.remoteAddressMask
-          : oujsOptions.authFrom
-            ? oujsOptions.authFrom
-            : null;
-        return session;
-      });
-
       aCallback();
     });
   });
 
+  // Post processing that can't be handled in modelParser
+  tasks.push(function (aCallback) {
+    options.sessionList = _.map(options.sessionList, function (aSession) {
+      var session = modelParser.parseSession(aSession);
+
+      var oujsOptions = session.passport.oujsOptions;
+
+      session.canDestroyOne = true; // TODO: Perhaps do some further conditionals
+
+      oujsOptions.remoteAddressMask = session.name === authedUser.name && !oujsOptions.authFrom
+        ? oujsOptions.remoteAddressMask
+        : oujsOptions.authFrom
+          ? oujsOptions.authFrom
+          : null;
+      return session;
+    });
+
+    aCallback();
+  });
+
+  // Sort oldest to newest similar to comments
+  tasks.push(function (aCallback) {
+    options.sessionList = _.sortBy(options.sessionList, function (aSession) {
+      return aSession.passport.oujsOptions.since;
+    });
+
+    aCallback();
+  });
+
   //---
-  async.parallel(tasks, asyncComplete);
+  async.series(tasks, asyncComplete);
 };
 
 // View everything about current deployed `./package.json`
