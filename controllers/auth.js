@@ -154,8 +154,8 @@ exports.auth = function (aReq, aRes, aNext) {
 
       if (aErr) {
         console.error('Authfail with no User found of', username, aErr);
-//         aRes.redirect('/login?usernamefail');
-//         return;
+        aRes.redirect('/login?usernamefail');
+        return;
       }
 
       if (aUser) {

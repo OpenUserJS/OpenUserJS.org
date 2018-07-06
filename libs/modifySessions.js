@@ -8,6 +8,8 @@ var isDbg = require('../libs/debug').isDbg;
 //--- Library inclusions
 var moment = require('moment');
 
+var settings = require('../models/settings.json');
+
 //
 // This library allows for the modifications of user sessions
 var async = require('async');
@@ -68,7 +70,7 @@ exports.add = function (aReq, aUser, aCallback) {
 // Expand a single session
 exports.expand = function (aReq, aUser, aCallback) {
   var expiry = moment(aReq.session.cookie.expires);
-  var min = 5; // NOTE: Keep this initial timeout in sync with app.js
+  var min = settings.ttl.minimum;
 
   if (!aUser) {
     aCallback('No User');
@@ -87,7 +89,7 @@ exports.expand = function (aReq, aUser, aCallback) {
   }
 
   // NOTE: Expanded timeout minus initial timeout.
-  expiry = expiry.add(6, 'h').subtract(min, 'm');
+  expiry = expiry.add(settings.ttl.nominal, 'h').subtract(min, 'm');
 
   aReq.session.cookie.expires = expiry.toDate();
   aReq.session.cookie.sameSite = 'strict';
@@ -116,7 +118,7 @@ exports.extend = function (aReq, aUser, aCallback) {
     return;
   }
 
-  expiry = expiry.add(6 * 2, 'h'); // NOTE: Keep this addition to expanded timeout in sync with app.js
+  expiry = expiry.add(settings.ttl.maximum, 'h');
   aReq.session.passport.oujsOptions.extended = true;
 
   aReq.session.cookie.expires = expiry.toDate();
