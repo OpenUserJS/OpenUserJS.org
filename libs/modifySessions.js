@@ -5,15 +5,20 @@ var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
-//--- Library inclusions
+//--- Dependency inclusions
+var _ = require('underscore');
+var async = require('async');
 var moment = require('moment');
 
-var settings = require('../models/settings.json');
+//--- Library inclusions
+var modelParser = require('../libs/modelParser');
 var findMeta = require('../controllers/scriptStorage').findMeta;
+
+//--- Configuration inclusions
+var settings = require('../models/settings.json');
 
 //
 // This library allows for the modifications of user sessions
-var async = require('async');
 
 exports.init = function (aStore) {
   return function (aReq, aRes, aNext) {
@@ -213,6 +218,62 @@ exports.destroy = function (aReq, aUser, aCallback) {
   }, aCallback);
 };
 
+exports.getSessionDataList = function (aReq, aOptions, aCallback) {
+  var store = aReq.sessionStore;
+  var authedUser = aReq.session.user;
+
+  var username = aReq.query.q;
+  var query = {};
+
+  if (aOptions.isAdmin && aOptions.isAdminSessionActiveView) {
+    query = { username: username };
+  } else {
+    query = { username: authedUser.name };
+  }
+
+  async.series([
+    function (aInnerCallback) {
+      exports.findSessionData(query, store, aOptions, function (aErr) {
+        if (aErr) {
+          aCallback(aErr, null);
+          return;
+        }
+
+        aInnerCallback();
+      });
+    },
+    function (aInnerCallback) {
+      aOptions.sessionList = _.map(aOptions.sessionList, function (aSession) {
+        var session = modelParser.parseSession(aSession);
+        var oujsOptions = session.passport.oujsOptions;
+
+        session.showExtend = aReq.sessionID === oujsOptions.sid;
+        session.canExtend = !oujsOptions.extended;
+        session.canDestroyOne = true; // TODO: Perhaps do some further conditionals
+
+        oujsOptions.remoteAddressMask = session.name === authedUser.name && !oujsOptions.authFrom
+          ? oujsOptions.remoteAddressMask
+          : oujsOptions.authFrom
+            ? oujsOptions.authFrom
+            : null;
+
+        return session;
+      });
+
+      aInnerCallback();
+    },
+    function (aInnerCallback) {
+      aOptions.sessionList = _.sortBy(aOptions.sessionList, function (aSession) {
+        return -aSession.passport.oujsOptions.since || 0;
+      });
+
+      aInnerCallback();
+    }], function (aErr) {
+      aCallback(null);
+    }
+  );
+};
+
 exports.findSessionData = function (aQuery, aStore, aOptions, aCallback) {
   var sessionColl = aStore.db.collection('sessions');
 
@@ -264,7 +325,8 @@ exports.findSessionData = function (aQuery, aStore, aOptions, aCallback) {
         // Very simple query filter search check to start.
         // Currently only looking in `data.passport.oujsOptions.username`.
         if (aQuery && aQuery.username) {
-          rQuery = new RegExp('^' + aQuery.username, 'i');
+          rQuery = new RegExp('^' + aQuery.username +
+            (aOptions.isAdminSessionActiveView ? '' : '$'), 'i');
 
           if (rQuery.test(data.passport.oujsOptions.username)) {
             aOptions.sessionList.push(data);

@@ -39,7 +39,7 @@ var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var updateSessions = require('../libs/modifySessions').update;
-var findSessionData = require('../libs/modifySessions').findSessionData;
+var getSessionDataList = require('../libs/modifySessions').getSessionDataList;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Configuration inclusions
@@ -382,6 +382,8 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   options.isFounder = authedUser && authedUser.isFounder;
   options.isRoot = authedUser && authedUser.isRoot;
 
+  options.isAdminSessionActiveView = true;
+
   if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
@@ -401,54 +403,11 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   //--- Tasks
 
   tasks.push(function (aCallback) {
-    findSessionData({ username: username }, store, options, function (aErr) {
-      if (aErr) {
-        statusCodePage(aReq, aRes, aNext, {
-          statusCode: 500,
-          statusMessage: aErr
-        });
-        return;
-      }
-
-      aCallback();
-    });
-  });
-
-  // Post processing that can't be handled in modelParser
-  tasks.push(function (aCallback) {
-    options.sessionList = _.map(options.sessionList, function (aSession) {
-      var session = modelParser.parseSession(aSession);
-
-      var oujsOptions = session.passport.oujsOptions;
-
-      session.canDestroyOne = true; // TODO: Perhaps do some further conditionals
-
-      oujsOptions.remoteAddressMask = session.name === authedUser.name && !oujsOptions.authFrom
-        ? oujsOptions.remoteAddressMask
-        : oujsOptions.authFrom
-          ? oujsOptions.authFrom
-          : null;
-
-      session.showExtend = aReq.sessionID === oujsOptions.sid;
-      session.canExtend = !oujsOptions.extended;
-
-      return session;
-    });
-
-    aCallback();
-  });
-
-  // Sort newest to oldest
-  tasks.push(function (aCallback) {
-    options.sessionList = _.sortBy(options.sessionList, function (aSession) {
-      return -aSession.passport.oujsOptions.since || 0;
-    });
-
-    aCallback();
+    getSessionDataList(aReq, options, aCallback);
   });
 
   //---
-  async.series(tasks, asyncComplete);
+  async.parallel(tasks, asyncComplete);
 };
 
 // View everything about current deployed `./package.json`
