@@ -428,6 +428,10 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
         : oujsOptions.authFrom
           ? oujsOptions.authFrom
           : null;
+
+      session.showExtend = aReq.sessionID === oujsOptions.sid;
+      session.canExtend = !oujsOptions.extended;
+
       return session;
     });
 
