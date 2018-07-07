@@ -42,6 +42,14 @@
             Expires {{#cookie.expires}}<time datetime="{{cookie.expiresISOFormat}}" title="{{cookie.expires}}">{{cookie.expiresHumanized}}</time>{{/cookie.expires}}{{^cookie.expires}}&and;{{/cookie.expires}}.
           </div>
           <div class="pull-right">
+            {{#showExtend}}
+            <form class="form-inline" action="/api/user/session/extend" method="post">
+              <div class="input-group">
+                <button class="btn btn-success" type="submit"{{^canExtend}}disabled="disabled"{{/canExtend}}><i class="fa fa-fw fa-history"></i> Extend</button>
+              </div>
+            </form>
+            {{/showExtend}}
+            {{^showExtend}}
             <form class="form-inline" action="/api/user/session/destroyOne" method="post">
               <div class="input-group">
                 <input type="hidden" name="username" value="{{name}}">
@@ -51,6 +59,7 @@
                 </button>
               </div>
             </form>
+            {{/showExtend}}
           </div>
         </div>
       </div>
