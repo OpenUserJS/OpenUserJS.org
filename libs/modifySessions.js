@@ -9,6 +9,7 @@ var isDbg = require('../libs/debug').isDbg;
 var moment = require('moment');
 
 var settings = require('../models/settings.json');
+var findMeta = require('../controllers/scriptStorage').findMeta;
 
 //
 // This library allows for the modifications of user sessions
@@ -212,7 +213,7 @@ exports.destroy = function (aReq, aUser, aCallback) {
   }, aCallback);
 };
 
-exports.listData = function (aStore, aOptions, aCallback) {
+exports.findSessionData = function (aQuery, aStore, aOptions, aCallback) {
   var sessionColl = aStore.db.collection('sessions');
 
   sessionColl.find({
@@ -227,35 +228,53 @@ exports.listData = function (aStore, aOptions, aCallback) {
       return;
     }
 
-    aUserSessions.toArray(function (aErr, aSessionsData) {
-      aOptions.sessionList = [];
+    aOptions.sessionList = [];
+
+    aUserSessions.each(function (aErr, aSessionData) {
+      var data = null;
+      var rQuery = null;
 
       if (aErr) {
         aCallback(aErr);
         return;
       }
 
-      aSessionsData.forEach(function (aElement, aIndex) {
-        var data = JSON.parse(aElement.session);
+      if (!aSessionData) {
+        aCallback();
+        return;
+      }
 
-        if (data) {
+      //
+      data = JSON.parse(aSessionData.session);
 
-          if (!data.passport) {
-            data.passport = {};
-          }
+      if (data) {
 
-          if (!data.passport.oujsOptions) {
-            data.passport.oujsOptions = {};
-          }
-
-          data.passport.oujsOptions.username = data.username;
-          data.passport.oujsOptions.sid = aElement._id;
+        if (!data.passport) {
+          data.passport = {};
         }
 
-        aOptions.sessionList.push(data);
-      });
+        if (!data.passport.oujsOptions) {
+          data.passport.oujsOptions = {};
+        }
 
-      aCallback();
+
+        data.passport.oujsOptions.username = data.username || findMeta(data.user, 'name');
+        data.passport.oujsOptions.sid = aSessionData._id;
+
+        // Very simple query filter search check to start.
+        // Currently only looking in `data.passport.oujsOptions.username`.
+        if (aQuery && aQuery.username) {
+          rQuery = new RegExp('^' + aQuery.username, 'i');
+
+          if (rQuery.test(data.passport.oujsOptions.username)) {
+            aOptions.sessionList.push(data);
+          }
+        } else {
+          aOptions.sessionList.push(data);
+        }
+
+      }
+
     });
   });
 }

@@ -17,9 +17,16 @@
           {{{paginationRendered}}}
         </div>
         {{/paginationRendered}}
-        <div class="panel panel-default">
+        <div class="session-area list-group">
           {{#sessionList}}
             {{> includes/session.html }}
+          {{/sessionList}}
+          {{^sessionList}}
+          <div class="panel">
+            <div class="panel-body">
+              <em>This user hasn't added any sessions yet.</em>
+            </div>
+          </div>
           {{/sessionList}}
         </div>
         {{#paginationRendered}}
@@ -30,11 +37,6 @@
       </div>
       <div class="col-sm-4">
         {{> includes/searchBarPanel.html }}
-        {{#isFlagged}}
-          {{#isAdmin}}
-            {{> includes/flagAdminToolFlaggedFilters.html }}
-          {{/isAdmin}}
-        {{/isFlagged}}
       </div>
     </div>
   </div>
@@ -42,7 +44,6 @@
   {{#paginationRendered}}
     {{> includes/scripts/showTopPagination.html }}
   {{/paginationRendered}}
-  {{> includes/scripts/tableTrLinkScript.html }}
   {{> includes/scripts/formControlClear.html }}
 </body>
 </html>
