@@ -58,7 +58,7 @@ var db = mongoose.connection;
 
 var moment = require('moment');
 var _ = require('underscore');
-var listDataSessions = require('./libs/modifySessions').listData;
+var findSessionData = require('./libs/modifySessions').findSessionData;
 
 var dbOptions = {};
 if (isPro) {
@@ -515,7 +515,7 @@ if (secured) {
 
 function ttlSanity() {
   var options = {};
-  listDataSessions(sessionStore, options, function (aErr) {
+  findSessionData({}, sessionStore, options, function (aErr) {
     if (aErr) {
       console.error('some error during ttlSanity', aErr);
       return;

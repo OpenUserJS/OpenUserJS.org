@@ -39,7 +39,7 @@ var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var updateSessions = require('../libs/modifySessions').update;
-var listDataSessions = require('../libs/modifySessions').listData;
+var findSessionData = require('../libs/modifySessions').findSessionData;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Configuration inclusions
@@ -371,9 +371,9 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   var options = {};
   var authedUser = aReq.session.user;
   var tasks = [];
+  var username = null;
 
   var store = aReq.sessionStore;
-  var sessionColl = store.db.collection('sessions');
 
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
@@ -390,13 +390,18 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
     return;
   }
 
+  username = aReq.query.q;
+
   // Page metadata
   pageMetadata(options, ['Sessions', 'Admin']);
+
+  options.searchBarPlaceholder = 'Search Sessions';
+  options.searchBarValue = username;
 
   //--- Tasks
 
   tasks.push(function (aCallback) {
-    listDataSessions(store, options, function (aErr) {
+    findSessionData({ username: username }, store, options, function (aErr) {
       if (aErr) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 500,
@@ -429,10 +434,10 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
     aCallback();
   });
 
-  // Sort oldest to newest similar to comments
+  // Sort newest to oldest
   tasks.push(function (aCallback) {
     options.sessionList = _.sortBy(options.sessionList, function (aSession) {
-      return aSession.passport.oujsOptions.since;
+      return -aSession.passport.oujsOptions.since;
     });
 
     aCallback();
