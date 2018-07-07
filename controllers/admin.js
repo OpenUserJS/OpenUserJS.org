@@ -437,7 +437,7 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   // Sort newest to oldest
   tasks.push(function (aCallback) {
     options.sessionList = _.sortBy(options.sessionList, function (aSession) {
-      return -aSession.passport.oujsOptions.since;
+      return -aSession.passport.oujsOptions.since || 0;
     });
 
     aCallback();
