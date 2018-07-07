@@ -45,7 +45,7 @@
             {{#showExtend}}
             <form class="form-inline" action="/api/user/session/extend" method="post">
               <div class="input-group">
-                <button class="btn btn-success" type="submit"{{^canExtend}}disabled="disabled"{{/canExtend}}><i class="fa fa-fw fa-history"></i> Extend</button>
+                <button class="btn btn-success" type="submit"{{^canExtend}}disabled="disabled"{{/canExtend}}{{#canExtend}} title="Usually the default session timeout is enough but if you need some more time it is available here. Please use responsibly."{{/canExtend}}><i class="fa fa-fw fa-history"></i> Extend</button>
               </div>
             </form>
             {{/showExtend}}

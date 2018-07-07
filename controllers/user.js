@@ -53,6 +53,7 @@ var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
 
+var getSessionDataList = require('../libs/modifySessions').getSessionDataList;
 var extendSession = require('../libs/modifySessions').extend;
 var destroyOneSession = require('../libs/modifySessions').destroyOne;
 
@@ -1031,21 +1032,8 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
 
     // User session control
     tasks.push(function (aCallback) {
-      if (!aReq.session.passport) {
-        aReq.session.passport = {};
-      }
-
-      if (!aReq.session.passport.oujsOptions) {
-        aReq.session.passport.oujsOptions = {};
-      }
-
-      if (!aReq.session.passport.oujsOptions.extended) {
-        options.sessionControl = true;
-      }
-
-      aCallback();
+      getSessionDataList(aReq, options, aCallback);
     });
-
 
     // UserPage tasks
     tasks = tasks.concat(getUserPageTasks(options));
