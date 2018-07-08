@@ -101,11 +101,6 @@ exports.auth = function (aReq, aRes, aNext) {
   var authOpts = { failureRedirect: '/login?stratfail' };
   var passportKey = aReq._passport.instance._key;
 
-  if (consent !== 'true') {
-    aRes.redirect('/login?noconsent');
-    return;
-  }
-
   // Yet another passport hack.
   // Initialize the passport session data only when we need it.
   if (!aReq.session[passportKey] && aReq._passport.session) {
@@ -123,6 +118,9 @@ exports.auth = function (aReq, aRes, aNext) {
   } else if (authedUser) {
     aRes.redirect(aReq.session.redirectTo || '/');
     delete aReq.session.redirectTo;
+    return;
+  } else if (consent !== 'true') {
+    aRes.redirect('/login?noconsent');
     return;
   }
 
