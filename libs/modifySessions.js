@@ -98,7 +98,6 @@ exports.expand = function (aReq, aUser, aCallback) {
   expiry = expiry.add(settings.ttl.nominal, 'h').subtract(min, 'm');
 
   aReq.session.cookie.expires = expiry.toDate();
-  aReq.session.cookie.sameSite = 'strict';
   aReq.session.save(aCallback);
 };
 
