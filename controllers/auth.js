@@ -138,12 +138,14 @@ exports.auth = function (aReq, aRes, aNext) {
     return;
   }
 
-  // Store the username and useragent in the session so we still have it when they
+  // Store the username in the session so we still have it when they
   // get back from authentication
   if (!aReq.session.username) {
     aReq.session.username = username;
-    aReq.session.useragent = aReq.headers['user-agent'];
   }
+  // Store the useragent always so we still have it when they
+  // get back from authentication and attaching
+  aReq.session.useragent = aReq.get('user-agent');
 
   User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
     function (aErr, aUser) {
