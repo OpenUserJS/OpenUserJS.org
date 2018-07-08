@@ -16,19 +16,37 @@
               <div class="panel-body">
                 <div class="edit-authentication-box">
                   <h2 class="edit-authentication">Authentication</h2>
-                  <p><img src="/images/strat/{{defaultStrat}}16.png"> <strong>{{defaultStrategy}}</strong> is your current default preferred authentication.</p>
+                  <div class="input-group col-xs-12">
+                    <span class="input-group-addon">
+                      <i class="fa fa-user fa-fw"></i>
+                    </span>
+                    <span class="list-group-item">
+                      <img src="/images/strat/{{defaultStrat}}16.png"> <strong>{{defaultStrategy}}</strong>
+                    </span>
+                    <div style="width: 100%;">
+                      <div class="input-group-addon">
+                        <p class="pull-right"><strong>Default preferred <i class="fa fa-sign-in fa-fw"></i></strong></p>
+                      </div>
+                    </div>
+                  </div>
                   {{#haveOtherStrategies}}
-                  <p>Other verified forms of authentication:</p>
-                  <ul class="list-group">
                   {{#usedStrategies}}
-                    <li class="list-group-item">
-                      <a class="btn btn-success" href="/auth/{{strat}}">Make default <i class="fa fa-sign-in fa-fw"></i></a> <span><img src="/images/strat/{{strat}}16.png"> <strong>{{display}}</strong></span>
-                    </li>
+                  <div class="input-group col-xs-12">
+                    <span class="input-group-addon">
+                      <i class="fa fa-user fa-fw"></i>
+                    </span>
+                    <span class="list-group-item">
+                      <img src="/images/strat/{{strat}}16.png"> {{display}}
+                    </span>
+                    <div style="width: 100%;">
+                      <div class="input-group-addon">
+                        <a class="btn btn-success pull-right" href="/auth/{{strat}}">Make default preferred <i class="fa fa-sign-in fa-fw"></i></a>
+                      </div>
+                    </div>
+                  </div>
                   {{/usedStrategies}}
-                  </ul>
                   {{/haveOtherStrategies}}
                   <form id="register" method="post" action="/auth/">
-                    <p>Attach another authentication and set to default preferred:</p>
                     <div class="input-group col-xs-12">
                       <span class="input-group-addon">
                         <i class="fa fa-user fa-fw"></i>
@@ -40,7 +58,7 @@
                       </select>
                       <div style="width: 100%;">
                         <div class="input-group-addon">
-                          <button class="btn btn-success pull-right" type="submit">Attach <i class="fa fa-sign-in fa-fw"></i></button>
+                          <button class="btn btn-success pull-right" type="submit">Attach new default preferred <i class="fa fa-sign-in fa-fw"></i></button>
                         </div>
                       </div>
                     </div>
