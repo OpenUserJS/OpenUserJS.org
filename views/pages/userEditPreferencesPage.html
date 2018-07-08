@@ -26,13 +26,29 @@
                   <form id="register" method="post" action="/auth/">
                     <p>Attach another form of authentication:</p>
                     <div class="input-group col-xs-12">
+                      <span class="input-group-addon">
+                        <i class="fa fa-user fa-fw"></i>
+                      </span>
                       <select name="auth" class="form-control">
                         {{#openStrategies}}
                         <option value="{{strat}}">{{display}}</option>
                         {{/openStrategies}}
                       </select>
-                      <div class="input-group-btn">
-                        <button class="btn btn-success" type="submit"><i class="fa fa-sign-in fa-fw"></i> Attach</button>
+                      <div style="width: 100%;">
+                        <div class="input-group-addon">
+                          <p>
+                            <ul class="nav nav-pills nav-justified">
+                              <li><a href="/about/Terms-of-Service"><i class="fa fa-legal"></i> Terms of Service</a></li>
+                              <li><a href="/about/Privacy-Policy"><i class="fa fa-user-secret"></i> Privacy Policy</a></li>
+                            </ul>
+                          </p>
+                          <p>
+                            <span class="small pull-left" style="white-space: normal;"><input type="checkbox" name="consent" value="true" required="required"> I have reread, understand, and agree to these binding terms and policies.</span>
+                          </p>
+                        </div>
+                        <div class="input-group-addon">
+                          <button class="btn btn-success pull-right" type="submit">Sign in <i class="fa fa-sign-in fa-fw"></i></button>
+                        </div>
                       </div>
                     </div>
                   </form>
