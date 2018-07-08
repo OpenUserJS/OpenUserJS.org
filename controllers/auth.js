@@ -113,6 +113,7 @@ exports.auth = function (aReq, aRes, aNext) {
 
   // Allow a logged in user to add a new strategy
   if (strategy && authedUser) {
+    aReq.session.passport.oujsOptions.authAttach = true;
     aReq.session.newstrategy = strategy;
     aReq.session.username = authedUser.name;
   } else if (authedUser) {
@@ -330,9 +331,13 @@ exports.callback = function (aReq, aRes, aNext) {
           doneUri = aReq.session.redirectTo;
           delete aReq.session.redirectTo;
 
-          expandSession(aReq, aUser, function (aErr) {
+          if (!aReq.session.passport.oujsOptions.authAttach) {
+            expandSession(aReq, aUser, function (aErr) {
+              aRes.redirect(doneUri);
+            });
+          } else {
             aRes.redirect(doneUri);
-          });
+          }
         }
       });
     });

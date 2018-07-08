@@ -83,16 +83,16 @@ exports.expand = function (aReq, aUser, aCallback) {
     return;
   }
 
-//   // NOTE: Now plus initial timeout must always be greater than expiry
-//   if (!moment().add(min, 'm').isAfter(expiry)) {
-//     // We want to know that...
-//     console.warn(aReq.session.user.name, 'has an invalid `expires`');
-//
-//     // Buh bye
-//     aReq.session.destroy();
-//     aCallback('Invalid expires');
-//     return;
-//   }
+  // NOTE: Now plus initial timeout must always be greater than expiry
+  if (!moment().add(min, 'm').isAfter(expiry)) {
+    // We want to know that...
+    console.warn(aReq.session.user.name, 'has an invalid `expires`');
+
+    // Buh bye
+    aReq.session.destroy();
+    aCallback('Invalid expires');
+    return;
+  }
 
   // NOTE: Expanded timeout minus initial timeout.
   expiry = expiry.add(settings.ttl.nominal, 'h').subtract(min, 'm');
