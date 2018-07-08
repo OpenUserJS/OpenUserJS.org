@@ -18,7 +18,7 @@ var path = require('path');
 var crypto = require('crypto');
 
 var express = require('express');
-var toobusy = require('toobusy-js-harmony');
+var toobusy = require('toobusy-js');
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
 var methodOverride = require('method-override');
