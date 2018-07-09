@@ -90,7 +90,16 @@ exports.auth = function (aReq, aRes, aNext) {
     }
     authenticate = passport.authenticate(strategy, authOpts);
 
-    authenticate(aReq, aRes, aNext);
+    // Ensure `sameSite` is set to min before authenticating
+    // Necessity to demote for authentication
+    if (aReq.session.cookie.sameSite !== 'lax') {
+      aReq.session.cookie.sameSite = 'lax';
+      aReq.session.save(function (aErr) {
+        authenticate(aReq, aRes, aNext);
+      });
+    } else {
+      authenticate(aReq, aRes, aNext);
+    }
   }
 
   var authedUser = aReq.session.user;
@@ -338,6 +347,15 @@ exports.callback = function (aReq, aRes, aNext) {
           } else {
             aRes.redirect(doneUri);
           }
+
+          // Ensure `sameSite` is set to max after redirect
+          // Elevate for optimal future protection
+          setTimeout(function () {
+            if (aReq.session.cookie.sameSite !== 'strict') {
+              aReq.session.cookie.sameSite = 'strict';
+              aReq.session.save();
+            }
+          }, 500);
         }
       });
     });
