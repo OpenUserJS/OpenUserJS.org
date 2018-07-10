@@ -40,12 +40,13 @@
                     </span>
                     <div style="width: 100%;">
                       <div class="input-group-addon">
-                        <a class="btn btn-success pull-right" href="/auth/{{strat}}">Make default preferred <i class="fa fa-sign-in fa-fw"></i></a>
+                        <a class="btn btn-sm btn-success pull-right" href="/auth/{{strat}}">Make default preferred <i class="fa fa-sign-in fa-fw"></i></a>
                       </div>
                     </div>
                   </div>
                   {{/usedStrategies}}
                   {{/haveOtherStrategies}}
+                  {{#unusedStrategies}}
                   <form id="register" method="post" action="/auth/">
                     <div class="input-group col-xs-12">
                       <span class="input-group-addon">
@@ -58,11 +59,12 @@
                       </select>
                       <div style="width: 100%;">
                         <div class="input-group-addon">
-                          <button class="btn btn-success pull-right" type="submit">Attach new default preferred <i class="fa fa-sign-in fa-fw"></i></button>
+                          <button class="btn btn-sm btn-success pull-right" type="submit">Attach new default preferred <i class="fa fa-sign-in fa-fw"></i></button>
                         </div>
                       </div>
                     </div>
                   </form>
+                  {{/unusedStrategies}}
                 </div>
                 <div class="edit-session-box">
                   <h2 class="edit-session">Session</h2>
