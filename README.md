@@ -63,19 +63,13 @@ Repository | Reference | Recent Version
 [octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
 [passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] ![OAuth2][oauth2Logo]
-[passport-flickr][passport-flickrGHUrl] | [Documentation][passport-flickrDOCUrl] | [![NPM version][passport-flickrNPMVersionImage]][passport-flickrNPMUrl] ![oauth][oauthLogo]
-[passport-foursquare][passport-foursquareGHUrl] | [Documentation][passport-foursquareDOCUrl] | [![NPM version][passport-foursquareNPMVersionImage]][passport-foursquareNPMUrl] ![OAuth2][oauth2Logo]
 [passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl] ![OAuth2][oauth2Logo]
 [passport-gitlab2][passport-gitlab2GHUrl] | [Documentation][passport-gitlab2DOCUrl] | [![NPM version][passport-gitlab2NPMVersionImage]][passport-gitlab2NPMUrl] ![OAuth2][oauth2Logo]
 [passport-google-oauth][passport-google-oauthGHUrl] | [Documentation][passport-google-oauthDOCUrl] | [![NPM version][passport-google-oauthNPMVersionImage]][passport-google-oauthNPMUrl] ![oauth1][oauth1Logo] ![OAuth2][oauth2Logo]
 [passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] ![oauth][oauthLogo]
-[passport-instagram][passport-instagramGHUrl] | [Documentation][passport-instagramDOCUrl] | [![NPM version][passport-instagramNPMVersionImage]][passport-instagramNPMUrl] ![OAuth2][oauth2Logo]
-[passport-linkedin][passport-linkedinGHUrl] | [Documentation][passport-linkedinDOCUrl] | [![NPM version][passport-linkedinNPMVersionImage]][passport-linkedinNPMUrl] ![oauth1][oauth1Logo]
 [passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo]
 [passport-steam][passport-steamGHUrl] <br />&#x22D4; [`OpenID2`][passport-steamGHOpenIDUrl]  | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
-[passport-tumblr][passport-tumblrGHUrl] | [Documentation][passport-tumblrDOCUrl] | [![NPM version][passport-tumblrNPMVersionImage]][passport-tumblrNPMUrl] ![oauth][oauthLogo]
 [passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
-[passport-windowslive][passport-windowsliveGHUrl] | [Documentation][passport-windowsliveDOCUrl] | [![NPM version][passport-windowsliveNPMVersionImage]][passport-windowsliveNPMUrl] ![OAuth2][oauth2Logo]
 [passport-yahoo][passport-yahooGHUrl] <br />&#x22D4; [`OpenID2`][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
@@ -361,16 +355,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-facebookNPMUrl]: https://www.npmjs.com/package/passport-facebook
 [passport-facebookNPMVersionImage]: https://img.shields.io/npm/v/passport-facebook.svg?style=flat
 
-[passport-flickrGHUrl]: https://github.com/johnnyhalife/passport-flickr
-[passport-flickrDOCUrl]: https://github.com/johnnyhalife/passport-flickr/blob/master/README.md
-[passport-flickrNPMUrl]: https://www.npmjs.com/package/passport-flickr
-[passport-flickrNPMVersionImage]: https://img.shields.io/npm/v/passport-flickr.svg?style=flat
-
-[passport-foursquareGHUrl]: https://github.com/jaredhanson/passport-foursquare
-[passport-foursquareDOCUrl]: https://github.com/jaredhanson/passport-foursquare/blob/master/README.md
-[passport-foursquareNPMUrl]: https://www.npmjs.com/package/passport-foursquare
-[passport-foursquareNPMVersionImage]: https://img.shields.io/npm/v/passport-foursquare.svg?style=flat
-
 [passport-githubGHUrl]: https://github.com/jaredhanson/passport-github
 [passport-githubDOCUrl]: https://github.com/jaredhanson/passport-github/blob/master/README.md
 [passport-githubNPMUrl]: https://www.npmjs.com/package/passport-github
@@ -391,16 +375,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-imgurNPMUrl]: https://www.npmjs.com/package/passport-imgur
 [passport-imgurNPMVersionImage]: https://img.shields.io/npm/v/passport-imgur.svg?style=flat
 
-[passport-instagramGHUrl]: https://github.com/jaredhanson/passport-instagram
-[passport-instagramDOCUrl]: https://github.com/jaredhanson/passport-instagram/blob/master/README.md
-[passport-instagramNPMUrl]: https://www.npmjs.com/package/passport-instagram
-[passport-instagramNPMVersionImage]: https://img.shields.io/npm/v/passport-instagram.svg?style=flat
-
-[passport-linkedinGHUrl]: https://github.com/jaredhanson/passport-linkedin
-[passport-linkedinDOCUrl]:  https://github.com/jaredhanson/passport-linkedin/blob/master/README.md
-[passport-linkedinNPMUrl]: https://www.npmjs.com/package/passport-linkedin
-[passport-linkedinNPMVersionImage]: https://img.shields.io/npm/v/passport-linkedin.svg?style=flat
-
 [passport-redditGHUrl]: https://github.com/Slotos/passport-reddit
 [passport-redditDOCUrl]: https://github.com/Slotos/passport-reddit/blob/master/README.md
 [passport-redditNPMUrl]: https://www.npmjs.com/package/passport-reddit
@@ -412,20 +386,10 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-steamNPMUrl]: https://www.npmjs.com/package/passport-steam
 [passport-steamNPMVersionImage]: https://img.shields.io/npm/v/passport-steam.svg?style=flat
 
-[passport-tumblrGHUrl]: https://github.com/jaredhanson/passport-tumblr
-[passport-tumblrDOCUrl]: https://github.com/jaredhanson/passport-tumblr/blob/master/README.md
-[passport-tumblrNPMUrl]: https://www.npmjs.com/package/passport-tumblr
-[passport-tumblrNPMVersionImage]: https://img.shields.io/npm/v/passport-tumblr.svg?style=flat
-
 [passport-twitterGHUrl]: https://github.com/jaredhanson/passport-twitter
 [passport-twitterDOCUrl]: https://github.com/jaredhanson/passport-twitter/blob/master/README.md
 [passport-twitterNPMUrl]: https://www.npmjs.com/package/passport-twitter
 [passport-twitterNPMVersionImage]: https://img.shields.io/npm/v/passport-twitter.svg?style=flat
-
-[passport-windowsliveGHUrl]: https://github.com/jaredhanson/passport-windowslive
-[passport-windowsliveDOCUrl]: https://github.com/jaredhanson/passport-windowslive/blob/master/README.md
-[passport-windowsliveNPMUrl]: https://www.npmjs.com/package/passport-windowslive
-[passport-windowsliveNPMVersionImage]: https://img.shields.io/npm/v/passport-windowslive.svg?style=flat
 
 [passport-yahooGHUrl]: https://github.com/jaredhanson/passport-yahoo
 [passport-yahooGHOpenIDUrl]: https://github.com/OpenUserJs/passport-yahoo/tree/OpenID2
