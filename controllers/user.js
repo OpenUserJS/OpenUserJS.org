@@ -1025,6 +1025,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
 
         options.defaultStrat = defaultStrategy;
         options.haveOtherStrategies = options.usedStrategies.length > 0;
+        options.unusedStrategies = options.openStrategies.length > 0;
 
         aCallback();
       });
