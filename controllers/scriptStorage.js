@@ -1779,11 +1779,19 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           }), null);
           return;
         } else if ((!aScript && (aUpdate || collaboration))) {
-          aCallback(new statusError({
-            message: 'Collaboration restricted.',
-            code: 403
-          }), null);
-          return;
+          if (!aScript && collaboration) {
+            aCallback(new statusError({
+              message: 'Collaboration restricted.',
+              code: 403
+            }), null);
+            return;
+          } else if (!aScript && aUpdate) {
+            aCallback(new statusError({
+              message: 'Updating but no script found.',
+              code: 500
+            }), null);
+            return;
+          }
         } else if (!aScript) {
           // New script
           aScript = new Script({
