@@ -2094,7 +2094,10 @@ exports.webhook = function (aReq, aRes) {
 
     // Update modified scripts
     repoManager = RepoManager.getManager(null, aUser, repos);
-    repoManager.loadScripts(true, function () {
+    repoManager.loadScripts(true, function (aErr) {
+      if (aErr) {
+        console.error(aErr);
+      }
     });
   });
 };
