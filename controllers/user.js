@@ -1169,6 +1169,14 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
 
   options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
 
+  if (!options.isOwnRepo) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'You may only list your own repos.'
+    });
+    return;
+  }
+
   // Page metadata
   pageMetadata(options, ['Repositories', 'GitHub']);
 
@@ -1268,6 +1276,14 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
 
   options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
 
+  if (!options.isOwnRepo) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'You may only import from your own repo.'
+    });
+    return;
+  }
+
   options.githubRepoName = githubRepoName = aReq.query.repo;
 
   if (!(githubUserId && githubRepoName)) {
@@ -1361,6 +1377,14 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
     aReq.body.user || aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
   options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
+
+  if (!options.isOwnRepo) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'You may only import from your own scripts.'
+    });
+    return;
+  }
 
   options.githubRepoName = githubRepoName = aReq.body.repo || aReq.query.repo;
   options.githubDefaultBranch = githubDefaultBranch = aReq.body.default_branch || aReq.query.default_branch;
