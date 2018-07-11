@@ -57,6 +57,7 @@ var modelParser = require('../libs/modelParser');
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
 var blockSPDX = require('../libs/blockSPDX');
+var exceptSPDX = require('../libs/exceptSPDX');
 
 // Add greasemonkey support for Media Type
 if (!mediaDB['text/x-userscript-meta']) {
@@ -1395,8 +1396,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           }
 
           thatSPDX = thisKeyComponents[0];
-          if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
-            // Absent SPDX short code or blocked SPDX... reject
+          if (SPDX.indexOf(thatSPDX) === -1
+            || blockSPDX.indexOf(thatSPDX) > -1 && !exceptSPDX.indexOf(thatSPDX)) {
+
+            // Absent SPDX short code, or blocked SPDX with no except for dual licensed... reject
             aInnerCallback(new statusError({
               message: '`@license` has an incompatible SPDX in the metadata block(s).',
               code: 400
