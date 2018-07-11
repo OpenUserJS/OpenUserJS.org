@@ -25,7 +25,6 @@ var mediaDB = require('mime-db');
 var async = require('async');
 var moment = require('moment');
 var Base62 = require('base62/lib/ascii');
-var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 var SPDX = require('spdx-license-ids');
 var sizeOf = require('image-size');
 var ipRangeCheck = require("ip-range-check");
@@ -57,7 +56,7 @@ var modelParser = require('../libs/modelParser');
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
-var blockSPDX = require('./blockSPDX');
+var blockSPDX = require('../libs/blockSPDX');
 
 // Add greasemonkey support for Media Type
 if (!mediaDB['text/x-userscript-meta']) {
@@ -1362,8 +1361,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       }
 
       if (userKeyset) {
-        thatSPDX = userKeyset[userKeyset.length - 1].split('; ')[0].replace(/\+$/, '');
-        if (SPDXOSI.indexOf(thatSPDX) === -1) {
+        thatSPDX = userKeyset[userKeyset.length - 1].split('; ')[0];
+        if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
           // No valid OSI primary e.g. last key... reject
           aInnerCallback(new statusError({
             message: '`@license` is not OSI primary and compatible in the metadata block(s).',
@@ -1395,7 +1394,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             }
           }
 
-          thatSPDX = thisKeyComponents[0].replace(/\+$/, '');
+          thatSPDX = thisKeyComponents[0];
           if (SPDX.indexOf(thatSPDX) === -1 || blockSPDX.indexOf(thatSPDX) > -1) {
             // Absent SPDX short code or blocked SPDX... reject
             aInnerCallback(new statusError({
