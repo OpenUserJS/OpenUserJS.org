@@ -24,11 +24,6 @@
             <ul class="list-group">
             {{#javascriptBlobs}}
               <li class="list-group-item {{^canUpload}}list-group-item-danger{{/canUpload}}">
-                {{^isOwnRepo}}
-                  <div class="alert alert-warning small" role="alert">
-                    <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: You are browsing a repository that is not known to be your own. Scripts imported from here may not automatically sync. If you wish to have this feature with your available repositories please {{^authedUser.githubUserId}}visit <a href="/user/preferences">your preferences</a> and add GitHub as an authentication and then {{/authedUser.githubUserId}}import from {{#authedUser.githubUserId}}<a href="/users/{{authedUser.name}}/github/repos">your available repositories</a>{{/authedUser.githubUserId}}{{^authedUser.githubUserId}} your available repositories{{/authedUser.githubUserId}}.
-                  </div>
-                {{/isOwnRepo}}
                 <div>
                   <form action="{{{authedUser.userGitHubImportPageUrl}}}" method="post"{{#openImportInNewTab}} target="_blank"{{/openImportInNewTab}}>
                     <input type="hidden" name="user" value="{{repo.owner.login}}">
@@ -37,7 +32,7 @@
                     <input type="hidden" name="path" value="{{path.full}}">
                     <input type="hidden" name="pathname" value="{{path.name}}">
                     <input type="hidden" name="pathext" value="{{path.ext}}">
-                    <button type="submit" class="btn btn-sm btn-{{^isOwnRepo}}warning{{/isOwnRepo}}{{#isOwnRepo}}success{{/isOwnRepo}} pull-right {{^canUpload}}disabled{{/canUpload}}"><i class="octicon octicon-fw octicon-repo-clone"></i> Import</a>
+                    <button type="submit" class="btn btn-sm btn-success pull-right {{^canUpload}}disabled{{/canUpload}}"><i class="octicon octicon-fw octicon-repo-clone"></i> Import</a>
                   </form>
                 </div>
                 <p>
