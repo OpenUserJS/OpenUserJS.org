@@ -25,14 +25,15 @@ function removeable(aModel, aContent, aUser, aCallback) {
   // The user is a moderator then the content must be flagged
   // If the user is an admin or greater then the content may be removed
   if (!aUser || (!aContent.flagged && aUser.role > 3) || aUser.role > 2) {
-    return aCallback(false);
+    aCallback(false);
+    return;
   }
 
   // You can't remove yourself
   // You can only remove a remove a user with a lesser role than yourself
   if (aModel.modelName === 'User') {
-    return aCallback(aContent._id != aUser._id && aContent.role > aUser.role,
-      aContent);
+    aCallback(aContent._id != aUser._id && aContent.role > aUser.role, aContent);
+    return;
   }
 
   User.findOne({
@@ -40,13 +41,15 @@ function removeable(aModel, aContent, aUser, aCallback) {
   }, function (aErr, aAuthor) {
     // Content without an author shouldn't exist
     if (aErr || !aAuthor) {
-      return aCallback(false);
+      aCallback(false);
+      return;
     }
 
     // You can't remove your own content this way
     // When you remove your own content it's removed for good
     if (aAuthor._id == aUser._id) {
-      return aCallback(false, aAuthor);
+      aCallback(false, aAuthor);
+      return;
     }
 
     // You can only remove content by an author with a lesser user role
@@ -369,11 +372,13 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
     var rmQuery = { model: modelName };
 
     if (!aErr && aContent) {
-      return aCallback(true, aContent, null);
+      aCallback(true, aContent, null);
+      return;
     }
 
     if (modelName !== 'User' && -1 === modelNames.indexOf(modelName)) {
-      return aCallback(null, null, null);
+      aCallback(null, null, null);
+      return;
     }
 
     for (name in aQuery) {
@@ -382,11 +387,13 @@ exports.findDeadorAlive = function (aModel, aQuery, aUser, aCallback) {
 
     Remove.findOne(rmQuery, function (aErr, aRemoved) {
       if (aErr || !aRemoved) {
-        return aCallback(null, null, null);
+        aCallback(null, null, null);
+        return;
       }
 
       if (!aUser || (aUser !== true && aUser.role > aRemoved.removerRole)) {
-        return aCallback(false, null, aRemoved);
+        aCallback(false, null, aRemoved);
+        return;
       }
 
       aCallback(false, new aModel(aRemoved.content), aRemoved);
