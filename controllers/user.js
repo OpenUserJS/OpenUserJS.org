@@ -17,7 +17,6 @@ var util = require('util');
 var rfc2047 = require('rfc2047');
 
 var SPDX = require('spdx-license-ids');
-var SPDXOSI = require('spdx-osi'); // NOTE: Sub-dep of `spdx-is-osi`
 
 //--- Model inclusions
 var Comment = require('../models/comment').Comment;
@@ -64,7 +63,7 @@ var settings = require('../models/settings.json');
 
 var removeReasons = require('../views/includes/userModals.json').removeReasons;
 
-var blockSPDX = require('./blockSPDX');
+var blockSPDX = require('../libs/blockSPDX');
 
 //---
 
@@ -2049,7 +2048,7 @@ exports.editScript = function (aReq, aRes, aNext) {
           licensePrimary = licenses[licenses.length - 1];
           script.licensePrimary = licensePrimary.substr(0, (licensePrimary.indexOf(';') > -1
             ? licensePrimary.indexOf(';')
-            : undefined)).replace(/\+$/, '');
+            : undefined));
         }
 
         copyrights = scriptStorage.findMeta(aScript.meta, 'UserScript.copyright.value');
@@ -2082,7 +2081,7 @@ exports.editScript = function (aReq, aRes, aNext) {
           script.scriptMetaPageUrl;
 
         script.scriptAcceptableOSILicense = [];
-        SPDXOSI.forEach(function (aElement, aIndex, aArray) {
+        SPDX.forEach(function (aElement, aIndex, aArray) {
           if (blockSPDX.indexOf(aElement) === -1) {
             script.scriptAcceptableOSILicense.push({
               shortIdSPDX: aElement
@@ -2126,7 +2125,7 @@ exports.editScript = function (aReq, aRes, aNext) {
     }
 
     options.script.scriptAcceptableOSILicense = [];
-    SPDXOSI.forEach(function (aElement, aIndex, aArray) {
+    SPDX.forEach(function (aElement, aIndex, aArray) {
       if (blockSPDX.indexOf(aElement) === -1) {
         options.script.scriptAcceptableOSILicense.push({
           shortIdSPDX: aElement
