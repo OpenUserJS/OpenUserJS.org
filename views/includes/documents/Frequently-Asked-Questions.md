@@ -87,6 +87,35 @@ body {
 }
 </pre>
 
+Example 4:
+
+<pre>
+``` console
+userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:4 ERROR: Execution of script 'My jQuery Script' failed! $(...).ready is not a function
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:3
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:5
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:983
+```
+</pre>
+
+... which renders as:
+``` console
+userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:4 ERROR: Execution of script 'My jQuery Script' failed! $(...).ready is not a function
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:3
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:5
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:983
+```
+
+... instead of:
+
+```
+userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:4 ERROR: Execution of script 'My jQuery Script' failed! $(...).ready is not a function
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:3
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:5
+(anonymous) @ userscript.html?id=01234567-89ab-cdef-0123-456789abcdef:983
+```
+
+
 
 The smaller the code snippet, or having a flawed Code snippet, the more likely it will automatically pick the wrong highlighting with unnamed code fences, **or worse no highlighting**... so it is best to recommend coercing a snippet to the correct type.
 
