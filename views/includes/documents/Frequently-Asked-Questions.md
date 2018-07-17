@@ -121,7 +121,13 @@ The smaller the code snippet, or having a flawed Code snippet, the more likely i
 
 ### Q: What is a good way to present a Code change to an Author?
 
-Presuming there isn't a referenced [SCM][wikipediaSCM], like GitHub in the [`@supportURL`][oujsUserBlockSupportURL],  behind the presentational script here you could utilize `git diff file.original file.changed > change.diff`.
+1. Fork the persons script on their scripts Source Code page. This is the easiest way and you can refer to it in a discussion to help show what change you are proposing from the presentational view. Please do not post full script source in a discussion.
+
+2. Use GitHub, or other [SCM][wikipediaSCM] that shows the change. Use a markdown hyperlink in the discussion to point to the commit.
+
+3. If you have Linux or macOS you can utilize the `diff -u a.user.js b.user.js > change.diff` command line interface *(CLI)* directly. `a.user.js` being the original source code and `b.user.js` being the change. This will output a diff file that you can paste into a discussion.
+
+4. Use [git-scm][gitSCM]. You could utilize `git diff file.original file.changed > change.diff`. Git Bash, usually included, should also give you the direct `diff` command under Windows *(similar to the `cmd` prompt terminology for Windows users)*. More detailed usage can be found at [git documentation][gitSCMdoc].
 
 Take for example a simple `RFC 2606§3 - Hello, World!` script. Fixing any changes to the `file.changed` you could present the difference with a snippet in a code fence of type `diff` which renders like this:
 
@@ -191,4 +197,5 @@ As an added advantage and incentive to utilizing this source route *(URL path)* 
 [oujsAbout]: https://openuserjs.org/about
 [JSONHomepage]: http://json.org/
 [wikipediaSCM]: https://www.wikipedia.org/wiki/Version_control
-[oujsUserBlockSupportURL]: http://openuserjs.org/user/add/scripts#user-block-supporturl
+[gitSCM]: https://git-scm.com/
+[gitSCMdoc]: https://git-scm.com/doc
