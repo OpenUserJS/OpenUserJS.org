@@ -79,6 +79,10 @@ module.exports = function (aApp) {
     'js/lib/beautify.js': { maxage: day * 7 }
   });
 
+  serveModule('/redist/npm/', 'diff/', {
+    'dist/diff.js': { maxage: day * 7 }
+  });
+
   serveModule('/redist/npm/', 'marked/', {
     'lib/marked.js': { maxage: day * 1 }
   });

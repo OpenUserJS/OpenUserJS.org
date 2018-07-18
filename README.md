@@ -32,6 +32,7 @@ Repository | Reference | Recent Version
 [clipboard][clipboardGHUrl] | [Documentation][clipboardDOCUrl] | [![NPM version][clipboardNPMVersionImage]][clipboardNPMUrl]
 [compression][compressionGHUrl] | [Documentation][compressionDOCUrl] | [![NPM version][compressionNPMVersionImage]][compressionNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
+[diff][diffGHUrl] | [Documentation][diffDOCUrl] | [![NPM version][diffNPMVersionImage]][diffNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
 [express-brute][express-bruteGHUrl] | [Documentation][express-bruteDOCUrl] | [![NPM version][express-bruteNPMVersionImage]][express-bruteNPMUrl]
 [express-brute-mongo][express-brute-mongoGHUrl]  <br />&#x22D4; [`MongoDBv3.x`][express-brute-mongoGHMongoDBv3.xUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
@@ -185,6 +186,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/README.md
 [connect-mongoNPMUrl]: https://www.npmjs.com/package/connect-mongo
 [connect-mongoNPMVersionImage]: https://img.shields.io/npm/v/connect-mongo.svg?style=flat
+
+[diffGHUrl]: https://github.com/kpdecker/jsdiff
+[diffDOCUrl]: https://github.com/kpdecker/jsdiff/blob/master/README.md
+[diffNPMUrl]: https://www.npmjs.com/package/diff
+[diffNPMVersionImage]: https://img.shields.io/npm/v/diff.svg?style=flat
 
 [expressGHUrl]: https://github.com/expressjs/express
 [expressDOCUrl]: http://expressjs.com/
