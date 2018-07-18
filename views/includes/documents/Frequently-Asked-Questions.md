@@ -121,9 +121,9 @@ The smaller the code snippet, or having a flawed Code snippet, the more likely i
 
 ### Q: What is a good way to present a Code change to an Author?
 
-1. Edit the Authors script on the Source Code page and present a diff by clicking the button of the same name. This is usually the quickest way to present a change if using OUJS only. Please do **not** post full script source in a discussion. Don't forget to add a code fence around it preferably a named fence of type `diff`.
+1. Edit the Authors script on the Source Code page and present a diff by clicking the button of the same name. This is usually the quickest way to present a smaller change if using OUJS only. Please do **not** post full script source in a discussion. Don't forget to add a code fence around it preferably a named fence of type `diff`.
 
-2. Optionally fork the persons script on their scripts Source Code page. You can refer to it in a discussion to help show what change you are proposing from the full presentational view on OUJS. Please do **not** post full script source in a discussion. Refer a link to it to have the Author look it over.
+2. Optionally fork the persons script on their scripts Source Code page. You can refer to it in a discussion to help show what change you are proposing from the full, larger, presentational view on OUJS. Please do **not** post full script source in a discussion. Refer a link to it to have the Author look it over.
 
 3. Use GitHub, or other [SCM][wikipediaSCM] that shows the change. Use a markdown hyperlink in the discussion to point to the commit.
 
