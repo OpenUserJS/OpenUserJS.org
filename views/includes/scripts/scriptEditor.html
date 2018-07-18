@@ -1,5 +1,6 @@
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/ace-builds/src/ace.js"></script>
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/js-beautify/js/lib/beautify.js"></script>
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/diff/dist/diff.js"></script>
 <script type="text/javascript">
   (function () {
     'use strict';
@@ -8,7 +9,9 @@
       var editor = null;
       var wrap = $('#wrap');
       var beautify = $('#beautify');
+      var diff = $('#diff');
       var rawSource = null;
+      var modSource = null;
       var isBlocking = null;
       var hasChanged = false;
       var placeholder = null;
@@ -84,6 +87,7 @@
 
           $('button#submit_code').removeClass('btn-success').addClass('btn-warning');
           $('.ace_gutter-layer').addClass('btn-warning');
+          $('#diff').removeAttr('disabled');
         }
 
         $('#beautify').removeClass('active');
@@ -110,11 +114,15 @@
           $('button#submit_code').addClass('btn-success').removeClass('btn-warning');
           $('.ace_gutter-layer').removeClass('btn-warning');
 
+          $('#diff').attr('disabled', 'disabled');
+
         } else {
           isBlocking = true;
           if (!hasChanged) {
             aEv.target.classList.add('active');
           }
+
+          $('#diff').removeAttr('disabled');
 
           editor.getSession().setValue(
             beautifyThis(hasChanged ? editor.getSession().getValue() : rawSource));
@@ -158,6 +166,50 @@
           editor.scrollToLine(0, false, true, function () {});
         }
         window.location.hash = '';
+      }
+
+      function ondiff(aEv) {
+        isBlocking = true;
+        if (aEv.target.classList.contains('active')) {
+          aEv.target.classList.remove('active');
+
+          $('#beautify').removeAttr('disabled');
+          $('#submit_code').removeAttr('disabled');
+
+          editor.setReadOnly(false);
+          editor.getSession().setMode("ace/mode/javascript");
+          editor.renderer.setShowGutter(true);
+          editor.getSession().setValue(modSource);
+
+          modSource = null; // Free up mem
+
+        } else {
+          aEv.target.classList.add('active');
+          $('#beautify').attr('disabled', 'disabled');
+          $('#submit_code').attr('disabled', 'disabled');
+
+          modSource = editor.getSession().getValue();
+          editor.setReadOnly(true);
+          editor.getSession().setMode("ace/mode/diff");
+          editor.renderer.setShowGutter(false);
+
+          editor.getSession().setValue(
+            JsDiff.createTwoFilesPatch(
+            '{{script.scriptViewSourcePageUrl}}'
+              + '@{{script.meta.UserScript.version.0.value}}+{{script.hashShort}}',
+            '{{script.scriptViewSourcePageUrl}}',
+            rawSource,
+            modSource,
+            undefined, // NOTE: Required
+            undefined, // NOTE: Required
+            {
+              context: 3 // Show n lines before and after a diff
+            }
+          ).split('\n').slice(1).join('\n'));
+        }
+        isBlocking = false;
+
+        aEv.target.blur();
       }
 
       //
@@ -252,6 +304,7 @@
         editor.on('input', oninput);
         editor.on('change', onchange);
         wrap.on('click', onwrap);
+        diff.on('click', ondiff);
         beautify.on('click', onbeautify);
         setTimeout(oninput, 250);
 
