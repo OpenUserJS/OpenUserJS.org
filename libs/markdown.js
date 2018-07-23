@@ -6,9 +6,12 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+var _ = require('underscore');
 var marked = require('marked');
 var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');
+
+var isSameOrigin = require('./helpers').isSameOrigin;
 
 var jsdom = require("jsdom");
 var { JSDOM } = jsdom;
@@ -52,9 +55,60 @@ function gfmStyleToBootstrapClass(aTagName, aAttribs) {
   };
 }
 
+// Transform external content tags for SEO vs Privacy via GDPR
+function externalPolicy(aTagName, aAttribs) {
+  var attribRelAdd = [];
+  var attribRelReject = [
+    'dns-prefetch',
+    'preconnect',
+    'prefetch'
+  ];
+
+  switch (aTagName) {
+    case 'a':
+      if (!isSameOrigin(aAttribs.href)) {
+        attribRelAdd.push('external');
+        attribRelAdd.push('noreferrer');
+        attribRelAdd.push('noopener');
+//         attribRelAdd.push('nofollow'); // NOTE: Disabled for now
+
+        return {
+          tagName: aTagName,
+          attribs: _.extend(aAttribs, {
+            rel: aAttribs.rel
+              ? _.chain(aAttribs.rel.split(' '))
+                   .union(attribRelAdd)
+                     .reject(function (aRelItem) {
+                       return attribRelReject.indexOf(aRelItem) > -1;
+                     }).value()
+                .join(' ')
+              : attribRelAdd
+                .join(' '),
+            referrerpolicy: 'same-origin' // NOTE: Experimental adoption
+          })
+        };
+      }
+      break;
+    case 'img':
+      return {
+        tagName: aTagName,
+        attribs: _.extend(aAttribs, {
+          referrerpolicy: 'same-origin' // NOTE: Experimental adoption
+        })
+      };
+  }
+
+  return {
+    tagName: aTagName,
+    attribs: aAttribs
+  };
+}
+
 htmlWhitelistPost.transformTags = {
-  'th' : gfmStyleToBootstrapClass,
-  'td' : gfmStyleToBootstrapClass
+  'a' : externalPolicy,
+  'img' : externalPolicy,
+  'td' : gfmStyleToBootstrapClass,
+  'th' : gfmStyleToBootstrapClass
 };
 
 function sanitize(aHtml) {

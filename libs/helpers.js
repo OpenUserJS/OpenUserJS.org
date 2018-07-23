@@ -204,3 +204,24 @@ exports.ensureIntegerOrNull = function (aEnvVar) {
 
   return aEnvVar;
 };
+
+exports.isSameOrigin = function (aUrl) {
+  var url = null;
+  var port = process.env.PORT || 8080;
+  var securePort = process.env.SECURE_PORT || 8081;
+  var rOrigin = new RegExp(
+    '^(https://openuserjs\.org(:' + securePort + ')?|http://(oujs\.org|localhost:' + port + '))$'
+  );
+  var sameOrigin = false;
+
+  try {
+    url = new URL(aUrl, 'https://openuserjs.org/');
+
+    if (rOrigin.test(url.origin)) {
+      sameOrigin = true;
+    }
+  } catch (aE) {
+  }
+
+  return sameOrigin;
+}

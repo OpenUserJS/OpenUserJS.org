@@ -67,10 +67,12 @@
       "class"
     ],
     "a": [
-      "href"
+      "href",
+      "referrerpolicy"
     ],
     "img": [
-      "src"
+      "src",
+      "referrerpolicy"
     ],
     "div": [
       "itemscope",
