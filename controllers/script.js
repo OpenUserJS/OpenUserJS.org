@@ -27,6 +27,8 @@ var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 //--- Library inclusions
 // var scriptLib = require('../libs/script');
 
+var isSameOrigin = require('../libs/helpers').isSameOrigin;
+
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 
@@ -124,8 +126,7 @@ var getScriptPageTasks = function (aOptions) {
         aOptions.script.homepages.unshift({
           url: aElement.value,
           text: decode(aElement.value),
-          hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org\//i.
-            test(aElement.value)
+          isSameOrigin: isSameOrigin(aElement.value)
         });
 
       }

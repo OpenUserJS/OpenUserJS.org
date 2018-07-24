@@ -149,7 +149,7 @@ exports.updateUrlQueryString = function (aBaseUrl, aDict) {
 };
 
 exports.isFQUrl = function (aString, aMailto, aDataImg) {
-  var URL = url.parse(aString);
+  var URL = url.parse(aString); // TODO: Convert to non-legacy
 
   var protocol = URL.protocol;
   var username = URL.username; // NOTE: BUG: in current *node*
@@ -205,22 +205,39 @@ exports.ensureIntegerOrNull = function (aEnvVar) {
   return aEnvVar;
 };
 
+//
+exports.port = process.env.PORT || 8080;
+exports.securePort = process.env.SECURE_PORT || 8081;
+
+exports.baseOrigin = 'https://openuserjs.org/';
+
+// Absolute pattern and is combined for pro and dev
+exports.patternHasSameOrigin =
+  '(?:https?://openuserjs\.org(?::' + exports.securePort + ')?|http://(?:oujs\.org' +
+    (isDev ? '|localhost:' + exports.port : '' ) + '))';
+
+// Possible pattern and is split for pro vs. dev
+// NOTE: This re is quite sensitive to changes esp. with `|`
+exports.patternMaybeSameOrigin =
+  (isPro
+    ? '(?:(?:https?:)?(?://openuserjs\.org(?::' + exports.securePort +
+      ')?)?|(?:http:)?(?//:oujs\.org)?)'
+    : '(?:http:)?(?://localhost:' + exports.port + ')?')
+
 exports.isSameOrigin = function (aUrl) {
   var url = null;
-  var port = process.env.PORT || 8080;
-  var securePort = process.env.SECURE_PORT || 8081;
-  var rOrigin = new RegExp(
-    '^(https://openuserjs\.org(:' + securePort + ')?|http://(oujs\.org|localhost:' + port + '))$'
-  );
   var sameOrigin = false;
+  var rIsSameOrigin = new RegExp('^' + exports.patternHasSameOrigin + '$', 'i');
 
-  try {
-    url = new URL(aUrl, 'https://openuserjs.org/');
+  if (aUrl) {
+    try {
+      url = new URL(aUrl, exports.baseOrigin);
 
-    if (rOrigin.test(url.origin)) {
-      sameOrigin = true;
+      if (rIsSameOrigin.test(url.origin)) {
+        sameOrigin = true;
+      }
+    } catch (aE) {
     }
-  } catch (aE) {
   }
 
   return sameOrigin;
