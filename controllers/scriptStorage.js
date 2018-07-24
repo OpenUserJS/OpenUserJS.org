@@ -12,7 +12,6 @@ var statusError = require('../libs/debug').statusError;
 var fs = require('fs');
 var util = require('util');
 var _ = require('underscore');
-var URL = require('url');
 var crypto = require('crypto');
 var request = require('request');
 var stream = require('stream');
@@ -43,6 +42,9 @@ var Discussion = require('../models/discussion').Discussion;
 
 //--- Library inclusions
 // var scriptStorageLib = require('../libs/scriptStorage');
+
+var patternHasSameOrigin = require('../libs/helpers').patternHasSameOrigin;
+var patternMaybeSameOrigin = require('../libs/helpers').patternMaybeSameOrigin;
 
 var ensureIntegerOrNull = require('../libs/helpers').ensureIntegerOrNull;
 var RepoManager = require('../libs/repoManager');
@@ -600,13 +602,15 @@ exports.sendScript = function (aReq, aRes, aNext) {
     let updateUtf = null;
 
     let matches = null;
-    let rAnyLocalMetaUrl = new RegExp('^https?://(?:openuserjs\.org|oujs\.org' +
-      (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') +
-        ')/(?:meta|install|src/scripts)/(.+?)/(.+?)\.meta\.js$');
+    let rAnyLocalMetaUrl = new RegExp(
+      '^' + patternHasSameOrigin +
+        '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.meta\.js$'
+    );
     let hasAlternateLocalUpdateURL = false;
 
-    let rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
-      (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
+    let rSameOrigin =  new RegExp(
+      '^' + patternHasSameOrigin
+    );
 
     var lastModified = null;
     var eTag = null;
@@ -648,8 +652,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
           }
         } else {
           // Allow offsite checks
-          updateURL = URL.parse(updateURL);
-          if (rAnyLocalHost.test(updateURL.host)) {
+          updateURL = new URL(updateURL);
+          if (rSameOrigin.test(updateURL.origin)) {
             hasAlternateLocalUpdateURL = true;
           }
         }
@@ -1640,8 +1644,9 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     function (aInnerCallback) {
       // `@downloadURL` validations
       var downloadURL = null;
-      var rAnyLocalHost =  new RegExp('^(?:openuserjs\.org|oujs\.org' +
-        (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') + ')');
+      var rSameOrigin =  new RegExp(
+        '^' + patternHasSameOrigin
+      );
 
       downloadURL = findMeta(aMeta, 'UserScript.downloadURL.0.value');
       if (downloadURL) {
@@ -1655,10 +1660,10 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           return;
         }
 
-        downloadURL = URL.parse(downloadURL);
+        downloadURL = new URL(downloadURL);
 
         // Shouldn't install a userscript with a downloadURL of non-Userscript-source
-        if (rAnyLocalHost.test(downloadURL.host) &&
+        if (rSameOrigin.test(downloadURL.origin) &&
           !/^\/(?:install|src\/scripts)\//.test(downloadURL.pathname))
         {
           aInnerCallback(new statusError({
@@ -1669,7 +1674,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
         }
 
         // Shouldn't install a userscript with a downloadURL of source .meta.js
-        if (rAnyLocalHost.test(downloadURL.host) &&
+        if (rSameOrigin.test(downloadURL.origin) &&
           /^\/(?:install|src\/scripts)\//.test(downloadURL.pathname) &&
             /\.meta\.js$/.test(downloadURL.pathname))
         {
@@ -1719,9 +1724,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     var requires = null;
     var match = null;
     var rLibrary = new RegExp(
-      '^(?:(?:(?:https?:)?\/\/' +
-        (isPro ? 'openuserjs\.org' : 'localhost:' + (process.env.PORT || 8080)) +
-          ')?\/(?:libs\/src|src\/libs)\/)?(.*?)([^\/]*\.js)$', '');
+      '^' + patternMaybeSameOrigin +
+        '/src/libs/(.*?)([^/]*\.js)$');
     var libraries = [];
 
 

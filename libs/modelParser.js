@@ -27,6 +27,9 @@ var cleanFilename = require('../libs/helpers').cleanFilename;
 var encode = require('../libs/helpers').encode;
 var decode = require('../libs/helpers').decode;
 var isFQUrl = require('../libs/helpers').isFQUrl;
+var isSameOrigin = require('../libs/helpers').isSameOrigin;
+var patternHasSameOrigin = require('../libs/helpers').patternHasSameOrigin;
+
 
 //--- Configuration inclusions
 var userRoles = require('../models/userRoles.json');
@@ -219,9 +222,10 @@ var parseScript = function (aScript) {
 
   var downloadURL = null;
   var downloadUtf = null;
-  var rAnyLocalScriptUrl = new RegExp('^https?://(?:openuserjs\.org|oujs\.org' +
-    (isDev ? '|localhost:' + (process.env.PORT || 8080) : '') +
-      ')/(?:install|src/scripts)/(.+?)/(.+?)((?:\.min)?(?:\.user)?\.js)$');
+  var rAnyLocalScriptUrl = new RegExp(
+    '^' + patternHasSameOrigin +
+      '/(?:install|src/scripts)/(.+?)/(.+?)((?:\.min)?(?:\.user)?\.js)$'
+  );
 
   // Temporaries
 
@@ -286,7 +290,7 @@ var parseScript = function (aScript) {
       script.support = [{
         url: supportURL,
         text: decode(supportURL),
-        hasNoFollow: !/^(?:https?:\/\/)?openuserjs\.org/i.test(supportURL)
+        isSameOrigin: isSameOrigin(supportURL)
       }];
 
     }

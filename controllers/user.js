@@ -2082,8 +2082,8 @@ exports.editScript = function (aReq, aRes, aNext) {
         } else {
           if (authedUser) {
             sinceDate = new Date(script._sinceISOFormat);
-            script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name
-              + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+            script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name +
+              ' (' + helpers.baseOrigin + authedUser.userPageUrl + ')';
           }
         }
 
@@ -2095,11 +2095,11 @@ exports.editScript = function (aReq, aRes, aNext) {
           script.scriptInstallPageUrl;
         script.scriptPermalinkInstallPageXUrl = 'https://' + aReq.get('host') +
           script.scriptInstallPageXUrl;
-        script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
-          + scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
+        script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/' +
+          scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
             (isLib ? '.js#' : '.user.js#');
-        script.scriptRawPageXUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/'
-          + scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
+        script.scriptRawPageXUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/' +
+          scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
             (isLib ? '.min.js#' : '.min.user.js#');
         script.scriptPermalinkMetaPageUrl = 'https://' + aReq.get('host') +
           script.scriptMetaPageUrl;
@@ -2144,8 +2144,8 @@ exports.editScript = function (aReq, aRes, aNext) {
 
     if (authedUser) {
       nowDate = new Date();
-      options.script.copyrightPrimary = nowDate.getFullYear() + ', ' + authedUser.name
-        + ' (https://openuserjs.org' + authedUser.userPageUrl + ')';
+      options.script.copyrightPrimary = nowDate.getFullYear() + ', ' + authedUser.name +
+        ' (' + helpers.baseOrigin + authedUser.userPageUrl + ')';
     }
 
     options.script.scriptAcceptableOSILicense = [];

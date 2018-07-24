@@ -48,6 +48,7 @@
         img.classList.add('fade-icon');
         img.classList.add('translucent-icon');
 
+        img.referrerPolicy = 'same-origin';
         img.src = dataIconSrc;
 
         container.appendChild(img);

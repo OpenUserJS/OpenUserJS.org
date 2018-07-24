@@ -23,11 +23,15 @@
           </a>
         </div>
         {{#script.hasSupport}}
-        <div class="alert alert-success alert-dismissible small" role="alert">
-          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          {{#script.support}}<p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}"{{#hasNoFollow}} rel="nofollow"{{/hasNoFollow}}>{{text}}</a></p>{{/script.support}}
-          The script author requests that you use their preferred primary support method when filing an issue. Please consider using that for regular issues.
-        </div>
+        {{#script.support}}
+          {{^isSameOrigin}}
+          <div class="alert alert-success alert-dismissible small" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}" rel="external noreferrer noopener nofollow" referrerpolicy="same-origin">{{text}}</a></p>
+            The script author requests that you use their preferred primary support method when filing an issue. Please consider using that for regular issues.
+          </div>
+          {{/isSameOrigin}}
+        {{/script.support}}
         {{/script.hasSupport}}
         {{#paginationRendered}}
         <div class="text-center collapse">

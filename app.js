@@ -168,6 +168,7 @@ var sessionStore = new MongoStore({
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
 var ensureIntegerOrNull = require('./libs/helpers').ensureIntegerOrNull;
+var isSameOrigin = require('./libs/helpers').isSameOrigin;
 
 var maxLag = ensureIntegerOrNull(process.env.BUSY_MAXLAG) || 70;
 var pollInterval = ensureIntegerOrNull(process.env.BUSY_INTERVAL) || 500;
@@ -202,8 +203,7 @@ app.use(function (aReq, aRes, aNext) {
   aRes.oujsOptions.DNT = aReq.get('DNT') === '1' || aReq.get('DNT') === 'yes' ? true : false;
 
   // Middleware for GDPR Notice
-  aRes.oujsOptions.hideReminderGDPR =
-    /^https?:\/\/(?:localhost:8080|openuserjs\.org)/.test(referer);
+  aRes.oujsOptions.hideReminderGDPR = isSameOrigin(referer);
 
   //
   if (
