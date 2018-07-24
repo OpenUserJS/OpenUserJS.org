@@ -218,9 +218,10 @@ exports.patternHasSameOrigin =
 
 // Possible pattern and is split for pro vs. dev
 // NOTE: This re is quite sensitive to changes esp. with `|`
+// This routine is fuzzy due to the lack of https on short domain
 exports.patternMaybeSameOrigin =
   (isPro
-    ? '(?:https?:)?(?://openuserjs\.org(?::' + exports.securePort + ')?)?'
+    ? '(?:https?:)?(?://openuserjs\.org(?::' + exports.securePort + ')?|//oujs\.org)?'
     : '(?:http:)?(?://localhost:' + exports.port + ')?')
 
 exports.isSameOrigin = function (aUrl) {
