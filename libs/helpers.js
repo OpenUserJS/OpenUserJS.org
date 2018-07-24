@@ -220,8 +220,7 @@ exports.patternHasSameOrigin =
 // NOTE: This re is quite sensitive to changes esp. with `|`
 exports.patternMaybeSameOrigin =
   (isPro
-    ? '(?:(?:https?:)?(?://openuserjs\.org(?::' + exports.securePort +
-      ')?)?|(?:http:)?(?//:oujs\.org)?)'
+    ? '(?:https?:)?(?://openuserjs\.org(?::' + exports.securePort + ')?)?'
     : '(?:http:)?(?://localhost:' + exports.port + ')?')
 
 exports.isSameOrigin = function (aUrl) {
