@@ -240,5 +240,8 @@ exports.isSameOrigin = function (aUrl) {
     }
   }
 
-  return sameOrigin;
+  return {
+    result: sameOrigin,
+    URL: url
+  };
 }

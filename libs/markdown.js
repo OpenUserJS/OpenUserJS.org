@@ -17,6 +17,7 @@ var jsdom = require("jsdom");
 var { JSDOM } = jsdom;
 
 var htmlWhitelistPost = require('./htmlWhitelistPost.json');
+var htmlWhitelistFollow = require('./htmlWhitelistFollow.json');
 var renderer = new marked.Renderer();
 var blockRenderers = [
   'blockquote',
@@ -63,14 +64,32 @@ function externalPolicy(aTagName, aAttribs) {
     'preconnect',
     'prefetch'
   ];
+  var obj = null;
+  var dn = null;
+  var matches = null;
 
   switch (aTagName) {
     case 'a':
-      if (!isSameOrigin(aAttribs.href)) {
+      obj = isSameOrigin(aAttribs.href);
+      if (!obj.result) {
         attribRelAdd.push('external');
         attribRelAdd.push('noreferrer');
         attribRelAdd.push('noopener');
-//         attribRelAdd.push('nofollow'); // NOTE: Disabled for now
+
+        if (obj.URL) {
+          matches = obj.URL.hostname.match(/\.?(.*?\..*)$/);
+          if (matches) {
+            dn = matches[1];
+
+            if (htmlWhitelistFollow.indexOf(dn) === -1) {
+              attribRelAdd.push('nofollow');
+            }
+          } else {
+            attribRelAdd.push('nofollow');
+          }
+        } else {
+          attribRelAdd.push('nofollow');
+        }
 
         return {
           tagName: aTagName,

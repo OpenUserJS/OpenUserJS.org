@@ -126,7 +126,7 @@ var getScriptPageTasks = function (aOptions) {
         aOptions.script.homepages.unshift({
           url: aElement.value,
           text: decode(aElement.value),
-          isSameOrigin: isSameOrigin(aElement.value)
+          isSameOrigin: isSameOrigin(aElement.value).result
         });
 
       }
