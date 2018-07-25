@@ -290,7 +290,7 @@ var parseScript = function (aScript) {
       script.support = [{
         url: supportURL,
         text: decode(supportURL),
-        isSameOrigin: isSameOrigin(supportURL)
+        isSameOrigin: isSameOrigin(supportURL).result
       }];
 
     }
