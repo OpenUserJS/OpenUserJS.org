@@ -340,7 +340,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json({
-  extended: false,
   limit: parseInt(settings.maximum_upload_script_size / 1024, 10) + 'kb'
 }));
 
