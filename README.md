@@ -114,9 +114,9 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 [npmNPMUrl]: https://www.npmjs.com/package/npm
 [npmNPMVersionImage]: http://img.shields.io/npm/v/npm.svg
-[npmGHReleasesUrl]: https://github.com/npm/npm/releases
-[npmGHUrl]: https://github.com/npm/npm/
-[npmDOCUrl]: https://github.com/npm/npm/blob/master/README.md
+[npmGHReleasesUrl]: https://github.com/npm/cli/releases
+[npmGHUrl]: https://github.com/npm/cli
+[npmDOCUrl]: https://github.com/npm/cli/blob/latest/README.md
 
 [davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
 [davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
