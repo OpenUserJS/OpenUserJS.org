@@ -59,7 +59,7 @@ var tasks = [
     });
   },
   function (aSkip, aStdouts, aCallback) {
-    var cmd = 'sudo gem install bundler -v 1.10.6';
+    var cmd = 'sudo gem install bundler -v 1.16.4';
 
     if (aSkip) {
       aCallback(null, aStdouts);
