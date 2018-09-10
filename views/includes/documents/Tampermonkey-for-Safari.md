@@ -6,11 +6,11 @@ Tampermonkey is a userscript manager extension for [Android][android], [Chrome][
 
 ### Installing Tampermonkey
 
-To get userscripts going with the desktop version of Tampermonkey, first you have to install it from [the source at tampermonkey.net][tampermonkey].
+To get userscripts going with the desktop version of Tampermonkey, first you have to install it from [Apple Safari Extensions][tampermonkeyApple].
 
 ![Screenshot of Tampermonkey page in tampermonkey.net][tampermonkeyTampermonkeySafariScreenshot1]
 
-From the Tampermonkey page in the website, click the green "Download" button. Once the extension is fully downloaded, open the Downloads folder and double-click the extension to install. Safari will prompt you to Trust or Cancel the installation. Note this step can **not** currently be done remotely via a VNC remote desktop session due to security restrictions in Safari. Installation must be done directly with the machines keyboard/mouse.
+From the webpage, click the text "Install". Upon completion a Tampermonkey icon should appear next to the address bar.
 
 ### Installing Userscripts
 
@@ -42,7 +42,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 ### More
 
-* [Get Tampermonkey from tampermonkey.net][tampermonkey]
+* [Get Tampermonkey from Apple Safari Extensions][tampermonkeyApple]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
 * [Tampermonkey for Android][tampermonkeyForAndroid]
@@ -72,8 +72,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
 [tampermonkey]: http://tampermonkey.net/?ext=dhdg&browser=safari
 [tampermonkeyNet]: http://tampermonkey.net
-[gooChromeWebStoreTampermonkey]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
-[gooChromeWebStoreTampermonkeyBeta]: https://chrome.google.com/webstore/detail/tampermonkey-beta/gcalenpjmijncebpfijmoaglllgpjagf
+[tampermonkeyApple]: https://safari-extensions.apple.com/details/?id=net.tampermonkey.safari-G3XV72R5TC
 
 <!-- ## Screenshots -->
 [tampermonkeyTampermonkeySafariScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_sa1.gif "Tampermonkey in tampermonkey.net"
