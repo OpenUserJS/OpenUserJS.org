@@ -246,7 +246,7 @@ request({
       }
     });
     if (githubHookAddresses.length > 0) {
-      console.log(colors.green('Using GitHub `hooks` of', githubHookAddresses));
+      console.log(colors.green('Using GitHub `hooks` of'), githubHookAddresses);
     } else {
       console.error(colors.red('Error retrieving GitHub `hooks`... no compatible elements found'));
     }
