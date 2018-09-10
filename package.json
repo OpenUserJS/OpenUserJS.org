@@ -7,7 +7,7 @@
     "ace-builds": "git://github.com/ajaxorg/ace-builds#8a271c3",
     "ansi-colors": "3.0.5",
     "async": "2.6.1",
-    "aws-sdk": "2.302.0",
+    "aws-sdk": "2.311.0",
     "base62": "2.0.0",
     "body-parser": "1.18.3",
     "bootstrap": "3.3.7",
@@ -30,7 +30,7 @@
     "image-size": "0.6.3",
     "jsdom": "12.0.0",
     "jquery": "3.3.1",
-    "js-beautify": "1.7.5",
+    "js-beautify": "1.8.4",
     "jwt-simple": "0.5.1",
     "less-middleware": "3.0.1",
     "marked": "0.5.0",
@@ -40,7 +40,7 @@
     "moment": "2.22.2",
     "moment-duration-format": "2.2.2",
     "mongodb": "3.1.4",
-    "mongoose": "5.2.9",
+    "mongoose": "5.2.14",
     "morgan": "1.9.0",
     "mu2": "0.5.21",
     "octicons": "4.4.0",
@@ -57,11 +57,11 @@
     "pegjs": "0.10.0",
     "request": "2.88.0",
     "rfc2047": "2.0.1",
-    "sanitize-html": "1.18.4",
+    "sanitize-html": "1.18.5",
     "select2": "3.5.2-browserify",
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.5.0",
-    "spdx-license-ids": "3.0.0",
+    "spdx-license-ids": "3.0.1",
     "toobusy-js": "0.5.1",
     "uglify-js": "3.3.9",
     "uglify-es": "3.3.9",
@@ -69,7 +69,7 @@
     "useragent": "2.3.0"
   },
   "optionalDependencies": {
-    "kerberos": "0.0.24"
+    "kerberos": "1.0.0"
   },
   "repository": {
     "type": "git",
