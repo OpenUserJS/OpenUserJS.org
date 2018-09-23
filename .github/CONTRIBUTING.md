@@ -10,8 +10,6 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 * [Git](http://git-scm.com/)
 * [node.js](http://nodejs.org/) *(see [`./package.json`](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json) engines for specific requirements)*
 * [MongoDB](http://www.mongodb.org/) (Optional.  The project is preconfigured to use a dev DB on [MongoLab](https://mongolab.com/).)
-* [Ruby](https://www.ruby-lang.org/) (required to run [FakeS3](https://github.com/jubos/fake-s3/))
-* [FakeS3](https://github.com/jubos/fake-s3) (required to store libraries/scripts without [AWS S3](http://aws.amazon.com/s3/)) handled by [bundler](https://github.com/bundler/bundler)
 
 #### GitHub Fork Setup
 

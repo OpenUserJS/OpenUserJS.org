@@ -11,12 +11,14 @@ var statusError = require('../libs/debug').statusError;
 //--- Dependency inclusions
 var fs = require('fs');
 var util = require('util');
+var http = require('http');
 var _ = require('underscore');
 var crypto = require('crypto');
 var request = require('request');
 var stream = require('stream');
 var peg = require('pegjs');
 var AWS = require('aws-sdk');
+var S3rver = require('s3rver');
 var UglifyJS = require("uglify-es");
 var rfc2047 = require('rfc2047');
 var mediaType = require('media-type');
@@ -114,24 +116,64 @@ var parsers = (function () {
 exports.parsers = parsers;
 
 var bucketName = 'OpenUserJS.org';
+if (isDev) {
+  bucketName = bucketName.toLowerCase(); // NOTE: *S3rver* requirement
+}
 
 var DEV_AWS_URL = null;
+var devAWSURL = null;
+var serverS3 = null;
 
 if (isPro) {
   AWS.config.update({
     region: 'us-east-1'
   });
 } else {
-  // You need to install (and ruby too): https://github.com/jubos/fake-s3
-  // Then run the fakes3.sh script or: fakes3 -r fakeS3 -p 10001
   DEV_AWS_URL = process.env.DEV_AWS_URL || 'http://localhost:10001';
   AWS.config.update({
     accessKeyId: 'fakeId',
     secretAccessKey: 'fakeKey',
     httpOptions: {
       proxy: DEV_AWS_URL,
-      agent: require('http').globalAgent // TODO: Move this up eventually
+      agent: http.globalAgent
     }
+  });
+
+  devAWSURL = new URL(DEV_AWS_URL);
+
+  serverS3 = new S3rver({
+    hostname: devAWSURL.hostname,
+    port: devAWSURL.port,
+    directory: './S3rver' // WATCHPOINT: Technically this should be `..` Is probably upstream issue
+  }).run(function (aErr) {
+    if (aErr) {
+      console.error([
+        colors.red('ERROR: S3rver not initialized'),
+        aErr
+      ].join('\n'));
+      return;
+    }
+    console.log(colors.green('S3rver initialized'));
+
+    var s3 = new AWS.S3();
+    s3.createBucket({ Bucket: bucketName }, function (aErr) {
+      if (aErr) {
+        switch (aErr.statusCode) {
+          case 409:
+            console.log(colors.green('Default dev S3 bucket already exists'));
+            break;
+          default:
+            console.error([
+              colors.red('Error creating default dev S3 bucket'),
+              aErr
+            ].join('\n'));
+            // fallthrough
+        }
+        return;
+      } else {
+        console.log(colors.green('Created default dev S3 bucket'));
+      }
+    });
   });
 }
 

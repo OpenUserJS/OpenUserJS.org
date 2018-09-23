@@ -6,7 +6,6 @@ Repository | Reference | Recent Version
 :--- | :---: | :---
 [nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.png"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.png" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [CHANGELOG][nodejsReleasesUrl]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
-[bundler][bundlerGHUrl] | [Documentation][bundlerDOCUrl] | [![GEM version][bundlerGEMVersionImage]][bundlerGEMUrl] [CHANGELOG][bundlerGHReleasesUrl]
 
 ### Contributing
 
@@ -38,7 +37,6 @@ Repository | Reference | Recent Version
 [express-brute-mongo][express-brute-mongoGHUrl]  <br />&#x22D4; [`MongoDBv3.x`][express-brute-mongoGHMongoDBv3.xUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
 [express-minify][express-minifyGHUrl] | [Documentation][express-minifyDOCUrl] | [![NPM version][express-minifyNPMVersionImage]][express-minifyNPMUrl]
 [express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
-[fakes3][fakes3GHUrl] | [Documentation][fakes3DOCUrl] | [![GEM version][fakes3GEMVersionImage]][fakes3GEMUrl]
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
 [git-rev][git-revGHUrl] | [Documentation][git-revDOCUrl] | [![NPM version][git-revNPMVersionImage]][git-revNPMUrl]
@@ -75,6 +73,7 @@ Repository | Reference | Recent Version
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
+[S3rver][s3rverGHUrl] | [Documentation][s3rverDOCUrl] | [![NPM version][s3rverNPMVersionImage]][s3rverNPMUrl]
 [sanitize-html][sanitize-htmlGHUrl] | [Documentation][sanitize-htmlDOCUrl] | [![NPM version][sanitize-htmlNPMVersionImage]][sanitize-htmlNPMUrl]
 [select2][select2GHUrl] | [Documentation][select2DOCUrl] | [![NPM version][select2NPMVersionImage]][select2NPMUrl]
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
@@ -166,12 +165,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [bootstrap-markdownNPMUrl]: https://www.npmjs.com/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
 
-[bundlerGHUrl]: https://github.com/bundler/bundler
-[bundlerDOCUrl]: http://bundler.io/
-[bundlerGEMUrl]: http://rubygems.org/gems/bundler
-[bundlerGEMVersionImage]: http://img.shields.io/gem/v/bundler.svg?style=flat
-[bundlerGHReleasesUrl]: https://github.com/bundler/bundler/blob/master/CHANGELOG.md
-
 [clipboardGHUrl]: https://github.com/zenorocha/clipboard.js
 [clipboardDOCUrl]: https://github.com/zenorocha/clipboard.js/blob/master/readme.md
 [clipboardNPMUrl]: https://www.npmjs.com/package/clipboard
@@ -217,11 +210,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [express-sessionDOCUrl]: https://github.com/expressjs/session/blob/master/README.md
 [express-sessionNPMUrl]: https://www.npmjs.com/package/express-session
 [express-sessionNPMVersionImage]: https://img.shields.io/npm/v/express-session.svg?style=flat
-
-[fakes3GHUrl]: https://github.com/jubos/fake-s3
-[fakes3DOCUrl]: http://www.rubydoc.info/gems/fakes3
-[fakes3GEMUrl]: http://rubygems.org/gems/fakes3
-[fakes3GEMVersionImage]: http://img.shields.io/gem/v/fakes3.svg?style=flat
 
 [font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
 [font-awesomeDOCUrl]: http://fontawesome.io/
@@ -416,6 +404,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [rfc2047DOCUrl]: https://github.com/One-com/rfc2047/blob/master/README.md
 [rfc2047NPMUrl]: https://www.npmjs.com/package/rfc2047
 [rfc2047NPMVersionImage]: https://img.shields.io/npm/v/rfc2047.svg?style=flat
+
+[s3rverGHUrl]: https://github.com/jamhall/s3rver
+[s3rverDOCUrl]: https://github.com/jamhall/s3rver/blob/master/README.md
+[s3rverNPMUrl]: https://www.npmjs.com/package/s3rver
+[s3rverNPMVersionImage]: https://img.shields.io/npm/v/s3rver.svg?style=flat
 
 [sanitize-htmlGHUrl]: https://github.com/punkave/sanitize-html
 [sanitize-htmlDOCUrl]: https://github.com/punkave/sanitize-html/blob/master/README.md
