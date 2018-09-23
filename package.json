@@ -68,6 +68,9 @@
     "underscore": "1.9.1",
     "useragent": "2.3.0"
   },
+  "devDependencies": {
+    "s3rver": "2.2.6"
+  },
   "optionalDependencies": {
     "kerberos": "1.0.0"
   },

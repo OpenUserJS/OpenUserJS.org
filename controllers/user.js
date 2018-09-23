@@ -1952,7 +1952,7 @@ function getExistingScript(aReq, aOptions, aAuthedUser, aCallback) {
           'S3 GET (chunking indirect) ',
             aErr.code,
               'for', installNameBase + (isLib ? '.js' : '.user.js'),
-                'in the', bucketName, 'bucket\n' +
+                'in the S3 bucket\n' +
                   JSON.stringify(aErr, null, ' ') + '\n' +
                     aErr.stack
         );

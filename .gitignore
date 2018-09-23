@@ -20,6 +20,8 @@ data
 package-lock.json
 Gemfile.lock
 
+S3rver
+
 fakeS3
 dev/fakeS3
 
