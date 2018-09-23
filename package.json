@@ -57,6 +57,7 @@
     "pegjs": "0.10.0",
     "request": "2.88.0",
     "rfc2047": "2.0.1",
+    "s3rver": "2.2.6",
     "sanitize-html": "1.18.5",
     "select2": "3.5.2-browserify",
     "select2-bootstrap-css": "1.4.6",
@@ -67,9 +68,6 @@
     "uglify-es": "3.3.9",
     "underscore": "1.9.1",
     "useragent": "2.3.0"
-  },
-  "devDependencies": {
-    "s3rver": "2.2.6"
   },
   "optionalDependencies": {
     "kerberos": "1.0.0"
