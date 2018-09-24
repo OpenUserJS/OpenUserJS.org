@@ -79,8 +79,8 @@ Repository | Reference | Recent Version
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
 [serve-favicon][serve-faviconGHUrl] | [Documentation][serve-faviconDOCUrl] | [![NPM version][serve-faviconNPMVersionImage]][serve-faviconNPMUrl]
 [spdx-license-ids][spdx-license-idsGHUrl] | [Documentation][spdx-license-idsDOCUrl] | [![NPM version][spdx-license-idsNPMVersionImage]][spdx-license-idsNPMUrl]
+[terser][terserGHUrl] | [Documentation][terserDOCUrl] | [![NPM version][terserNPMVersionImage]][terserNPMUrl]
 [toobusy-js][toobusy-jsGHUrl] <br />&#x22D4; [`harmony`][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
-[uglifyJS][uglifyJS2GHUrl] <br />&#x21B3; [`harmony`][uglifyJS2GHHarmonyUrl] | [Documentation][uglifyJS2DOCUrl] [&#x00b9;][uglifyJS2DOC1Url] | [![NPM version][uglifyJS2NPMVersionImage]][uglifyJS2NPMUrl] <br />&#x21B3; [![NPM Harmony version][uglifyJS2NPMHarmonyVersionImage]][uglifyJS2NPMHarmonyUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 [useragent][useragentGHUrl] | [Documentation][useragentDOCUrl] | [![NPM version][useragentNPMVersionImage]][useragentNPMUrl]
 [@octokit/rest ᶠᵏᵃ ᵍᶦᵗʰᵘᵇ][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
@@ -436,20 +436,16 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [spdx-license-idsNPMUrl]: https://www.npmjs.com/package/spdx-license-ids
 [spdx-license-idsNPMVersionImage]: https://img.shields.io/npm/v/spdx-license-ids.svg?style=flat
 
+[terserGHUrl]: https://github.com/fabiosantoscode/terser
+[terserDOCUrl]: https://github.com/terser-js/terser/blob/master/README.md
+[terserNPMUrl]: https://www.npmjs.com/package/terser
+[terserNPMVersionImage]: https://img.shields.io/npm/v/terser.svg?style=flat
+
 [toobusy-jsGHUrl]: https://github.com/STRML/node-toobusy
 [toobusy-jsGHUrlHarmonyUrl]: https://github.com/OpenUserJs/node-toobusy/tree/harmony
 [toobusy-jsDOCUrl]: https://github.com/STRML/node-toobusy/blob/master/README.md
 [toobusy-jsNPMUrl]: https://npmjs.com/package/toobusy-js
 [toobusy-jsNPMVersionImage]: https://img.shields.io/npm/v/toobusy-js.svg?style=flat
-
-[uglifyJS2GHUrl]: https://github.com/mishoo/UglifyJS2
-[uglifyJS2GHHarmonyUrl]: https://github.com/mishoo/UglifyJS2/tree/harmony
-[uglifyJS2DOCUrl]: https://github.com/mishoo/UglifyJS2/blob/master/README.md
-[uglifyJS2DOC1Url]: http://lisperator.net/uglifyjs/
-[uglifyJS2NPMUrl]: https://www.npmjs.com/package/uglify-js
-[uglifyJS2NPMHarmonyUrl]: https://www.npmjs.com/package/uglify-es
-[uglifyJS2NPMVersionImage]: https://img.shields.io/npm/v/uglify-js.svg?style=flat
-[uglifyJS2NPMHarmonyVersionImage]: https://img.shields.io/npm/v/uglify-es.svg?style=flat
 
 [underscoreGHUrl]: https://github.com/jashkenas/underscore
 [underscoreDOCUrl]: http://underscorejs.org/

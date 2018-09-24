@@ -19,7 +19,7 @@ var stream = require('stream');
 var peg = require('pegjs');
 var AWS = require('aws-sdk');
 var S3rver = require('s3rver');
-var UglifyJS = require("uglify-es");
+var Terser = require("terser");
 var rfc2047 = require('rfc2047');
 var mediaType = require('media-type');
 var mediaDB = require('mime-db');
@@ -177,9 +177,9 @@ if (isPro) {
   });
 }
 
-// Get UglifyJS harmony installation datestamp once
-var stats = fs.statSync('./node_modules/uglify-es/package.json');
-var mtimeUglifyJS = new Date(util.inspect(stats.mtime));
+// Get Terser installation datestamp once
+var stats = fs.statSync('./node_modules/terser/package.json');
+var mtimeTerser = new Date(util.inspect(stats.mtime));
 
 // Brute initialization
 var store = null;
@@ -805,7 +805,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     } else { // Wants to try minified
       //
-      lastModified = moment(mtimeUglifyJS > aScript.updated ? mtimeUglifyJS : aScript.updated)
+      lastModified = moment(mtimeTerser > aScript.updated ? mtimeTerser : aScript.updated)
         .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
 
       // If already client-side... partial HTTP/1.1 Caching
@@ -851,7 +851,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
           msg = null;
 
           try {
-            result = UglifyJS.minify(source, {
+            result = Terser.minify(source, {
               parse: {
                 bare_returns: true
               },
@@ -868,7 +868,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
             if (result.error) {
               throw result.error; // Passthrough the error if present to our handler
             } else if(!result.code) {
-              throw new TypeError('UglifyJS error of `code` being absent');
+              throw new TypeError('Terser error of `code` being absent');
             } else {
               source = result.code;
 
@@ -878,13 +878,15 @@ exports.sendScript = function (aReq, aRes, aNext) {
                   ' .min.user.js"';
             }
           } catch (aE) { // On any failure default to unminified
-            console.warn([
-              'MINIFICATION WARNING (harmony):',
-              '  message: ' + aE.message,
-              '  installName: ' + aScript.installName,
-              '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos
+            if (isDev) {
+              console.warn([
+                'MINIFICATION WARNING (harmony):',
+                '  message: ' + aE.message,
+                '  installName: ' + aScript.installName,
+                '  line: ' + aE.line + ' col: ' + aE.col + ' pos: ' + aE.pos
 
-            ].join('\n'));
+              ].join('\n'));
+            }
 
             // Set up a `Warning` header with Q encoding under RFC2047
             msg = [
