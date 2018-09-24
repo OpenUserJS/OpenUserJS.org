@@ -28,7 +28,7 @@ var compression = require('compression');
 var favicon = require('serve-favicon');
 
 var minify = require('express-minify');
-var uglifyjs = require('uglify-js');
+var Terser = require('terser');
 
 var lessMiddleware = require('less-middleware');
 
@@ -405,7 +405,7 @@ var minifyErrorHandler = function (aErr, aCallback) {
 };
 
 app.use(minify({
-  uglifyJsModule: uglifyjs,
+  uglifyJsModule: Terser,
   cache: './dev/cache/express-minify/release',
   onerror: minifyErrorHandler
 }));
@@ -420,7 +420,7 @@ app.use(function(aReq, aRes, aNext) {
         /^\/mod\/removed\//.test(pathname)
   ) {
     aRes.minifyOptions = aRes.minifyOptions || {}; // Ensure object exists on response
-    aRes.minifyOptions.minify = false; // Skip using release minification because we control this with *uglify-es*
+    aRes.minifyOptions.minify = false; // Skip using release minification because we control this with *terser*
   }
   aNext();
 });
