@@ -86,7 +86,7 @@ exports.auth = function (aReq, aRes, aNext) {
     }
 
     if (strategy === 'google') {
-      authOpts.scope = ['https://www.googleapis.com/auth/plus.login'];
+      authOpts.scope = ['profile'];
     }
     authenticate = passport.authenticate(strategy, authOpts);
 
