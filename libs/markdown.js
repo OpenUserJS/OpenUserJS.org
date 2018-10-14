@@ -10,6 +10,7 @@ var _ = require('underscore');
 var marked = require('marked');
 var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');
+var colors = require('ansi-colors');
 
 var isSameOrigin = require('./helpers').isSameOrigin;
 
@@ -225,7 +226,7 @@ marked.setOptions({
   highlight: function (aCode, aLang) {
     var obj = null;
     var lang = [ // NOTE: More likely to less likely
-      'javascript', 'xpath', 'xml',
+      'javascript', 'xquery', 'xml',
         'css', 'less', 'scss',
           'json',
             'diff',
@@ -238,6 +239,13 @@ marked.setOptions({
       try {
         return hljs.highlight(aLang, aCode).value;
       } catch (aErr) {
+        if (isDev) {
+          console.error([
+            colors.red('Dependency named highlighting failed with:'),
+              aErr
+
+          ].join('\n'));
+        }
       }
     }
 
@@ -248,11 +256,22 @@ marked.setOptions({
         return obj.value;
       } else {
         if (isDev) {
-          console.log('Unusual auto-detected md language code is', '`' + obj.language + '`');
+          console.log([
+            colors.yellow('Unusual auto-detected md language code is')
+              + '`' + colors.cyan(obj.language) + '`',
+
+          ].join('\n'));
         }
         return hljs.highlightAuto(aCode, lang).value;
       }
     } catch (aErr) {
+      if (isDev) {
+        console.error([
+          colors.red('Dependency automatic named highlighting failed with:'),
+            aErr
+
+        ].join('\n'));
+      }
     }
 
     // If any external package failure don't block return e.g. prevent empty
