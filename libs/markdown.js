@@ -226,7 +226,7 @@ marked.setOptions({
   highlight: function (aCode, aLang) {
     var obj = null;
     var lang = [ // NOTE: More likely to less likely
-      'javascript', 'xquery', 'xml',
+      'javascript', 'xpath', 'xml',
         'css', 'less', 'scss',
           'json',
             'diff',
