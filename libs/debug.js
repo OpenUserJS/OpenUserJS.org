@@ -1,8 +1,55 @@
 'use strict';
 
+var fs = require('fs');
+
 var isPro = process.env.NODE_ENV === 'production';
 var isDev = !isPro;
 var isDbg = typeof v8debug === 'object';
+
+var isSecure = null;
+var privkey = null;
+var fullchain = null;
+var chain = null;
+
+try {
+  // Check for primary keys
+  privkey = './keys/private.key';
+  fullchain = './keys/cert.crt';
+  chain = './keys/intermediate.crt';
+
+  fs.accessSync(privkey, fs.constants.F_OK);
+  fs.accessSync(fullchain, fs.constants.F_OK);
+  fs.accessSync(chain, fs.constants.F_OK);
+
+  exports.privkey = privkey;
+  exports.fullchain = fullchain;
+  exports.chain = chain;
+  exports.isSecured = true;
+
+} catch (aE) {
+  // Check for backup alternate keys
+  try {
+    privkey = './keys/priv.pem';
+    fullchain = './keys/fullchain.pem';
+    chain = './keys/chain.pem';
+
+    fs.accessSync(privkey, fs.constants.F_OK);
+    fs.accessSync(fullchain, fs.constants.F_OK);
+    fs.accessSync(chain, fs.constants.F_OK);
+
+    exports.privkey = privkey;
+    exports.fullchain = fullchain;
+    exports.chain = chain;
+    exports.isSecured = true;
+
+  } catch (aE) {
+    // Ensure that all items are nulled or equivalent
+    exports.privkey = null;
+    exports.fullchain = null;
+    exports.chain = null;
+    exports.isSecured = false;
+  }
+}
 
 exports.isPro = isPro;
 exports.isDev = isDev;
