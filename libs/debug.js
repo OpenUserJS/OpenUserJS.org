@@ -29,7 +29,7 @@ try {
 } catch (aE) {
   // Check for backup alternate keys
   try {
-    privkey = './keys/priv.pem';
+    privkey = './keys/privkey.pem';
     fullchain = './keys/fullchain.pem';
     chain = './keys/chain.pem';
 
