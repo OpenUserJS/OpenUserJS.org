@@ -1,10 +1,5 @@
 'use strict';
 
-// Define some pseudo module globals
-var isPro = require('./libs/debug').isPro;
-var isDev = require('./libs/debug').isDev;
-var isDbg = require('./libs/debug').isDbg;
-
 // Stamp a message for stdout...
 console.log('Starting application...');
 
@@ -12,6 +7,16 @@ console.log('Starting application...');
 if (isPro) {
   console.warn('Starting application...');
 }
+
+// Define some pseudo module globals
+var isPro = require('./libs/debug').isPro;
+var isDev = require('./libs/debug').isDev;
+var isDbg = require('./libs/debug').isDbg;
+
+var isSecured = require('./libs/debug').isSecured;
+var privkey = require('./libs/debug').privkey;
+var fullchain = require('./libs/debug').fullchain;
+var chain = require('./libs/debug').chain;
 
 //
 var path = require('path');
@@ -80,10 +85,6 @@ var https = require('https');
 var sslOptions = null;
 var server = http.createServer(app);
 var secureServer = null;
-var privkey = './keys/private.key';
-var fullchain = './keys/cert.crt';
-var chain = './keys/intermediate.crt';
-var secured = null;
 
 app.set('port', process.env.PORT || 8080);
 app.set('securePort', process.env.SECURE_PORT || null);
@@ -268,20 +269,11 @@ app.use(function (aReq, aRes, aNext) {
 });
 
 // Force HTTPS
-secured = true;
-try {
-  fs.accessSync(privkey, fs.constants.F_OK);
-  fs.accessSync(fullchain, fs.constants.F_OK);
-  fs.accessSync(chain, fs.constants.F_OK);
-} catch (aE) {
-  secured = false;
-}
-
-if (app.get('securePort') && secured) {
+if (app.get('securePort') && isSecured) {
   sslOptions = {
-    key: fs.readFileSync(privkey),
-    cert: fs.readFileSync(fullchain),
-    ca: fs.readFileSync(chain),
+    key: fs.readFileSync(privkey, 'utf8'),
+    cert: fs.readFileSync(fullchain, 'utf8'),
+    ca: fs.readFileSync(chain, 'utf8'),
     ciphers: [
       'ECDHE-RSA-AES128-GCM-SHA256',
       'ECDHE-ECDSA-AES128-GCM-SHA256',
@@ -359,7 +351,7 @@ app.use(session({
   unset: 'destroy',
   cookie: {
     maxAge: 5 * 60 * 1000, // minutes in ms NOTE: Expanded after successful auth
-    secure: (isPro && secured ? true : false),
+    secure: (isPro && isSecured ? true : false),
     sameSite: 'lax' // NOTE: Current auth necessity
   },
   rolling: true,
@@ -508,7 +500,7 @@ function pingCert() {
   });
 };
 
-if (secured) {
+if (isSecured) {
   pingCertTimer = setInterval(pingCert, 60 * 60 * 1000); // NOTE: Check every hour
 }
 

@@ -4,6 +4,7 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var isSecured = require('../libs/debug').isSecured;
 var statusError = require('../libs/debug').statusError;
 
 //
@@ -249,54 +250,59 @@ var sourceMinBruteforce = new ExpressBrute(store, {
 });
 
 var githubHookAddresses = [];
-request({
-  url: 'https://api.github.com/meta',
-  headers: {
-    'User-Agent': 'OpenUserJS'
-  }
-}, function (aErr, aRes, aBody) {
-  var meta = null;
 
-  if (aErr
-    || aRes.statusCode !== 200
-      || !/^application\/json;/.test(aRes.headers['content-type'])) {
+if (isSecured) {
+  request({
+    url: 'https://api.github.com/meta',
+    headers: {
+      'User-Agent': 'OpenUserJS'
+    }
+  }, function (aErr, aRes, aBody) {
+    var meta = null;
 
-    console.error([
-      colors.red('Error retrieving GitHub `hooks`'),
-      aRes.statusCode,
-      aRes.headers['content-type'],
-      aErr
-    ].join('\n'));
-    return;
-  }
+    if (aErr
+      || aRes.statusCode !== 200
+        || !/^application\/json;/.test(aRes.headers['content-type'])) {
 
-  try {
-    meta = JSON.parse(aBody);
-  } catch (aE) {
-    console.error(colors.red('Error retrieving GitHub `hooks`', aE));
-    return;
-  }
-
-  if (meta && meta.hooks && Array.isArray(meta.hooks)) {
-    meta.hooks.forEach(function (aEl, aIdx, aArr) {
-      if (typeof aEl === 'string' && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/.test(aEl)) {
-        githubHookAddresses.push(aEl);
-      } else {
-        console.warn(
-          colors.yellow('GitHub `hooks` element', aEl, 'does not match IPv4 CIDR specification')
-        );
-      }
-    });
-    if (githubHookAddresses.length > 0) {
-      console.log(colors.green('Using GitHub `hooks` of'), githubHookAddresses);
-    } else {
-      console.error(colors.red('Error retrieving GitHub `hooks`... no compatible elements found'));
+      console.error([
+        colors.red('Error retrieving GitHub `hooks`'),
+        aRes.statusCode,
+        aRes.headers['content-type'],
+        aErr
+      ].join('\n'));
+      return;
     }
 
-  } else {
-    console.error(colors.red('Error retrieving GitHub `hooks`'));
-  }
-});
+    try {
+      meta = JSON.parse(aBody);
+    } catch (aE) {
+      console.error(colors.red('Error retrieving GitHub `hooks`', aE));
+      return;
+    }
+
+    if (meta && meta.hooks && Array.isArray(meta.hooks)) {
+      meta.hooks.forEach(function (aEl, aIdx, aArr) {
+        if (typeof aEl === 'string' && /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/.test(aEl)) {
+          githubHookAddresses.push(aEl);
+        } else {
+          console.warn(
+            colors.yellow('GitHub `hooks` element', aEl, 'does not match IPv4 CIDR specification')
+          );
+        }
+      });
+      if (githubHookAddresses.length > 0) {
+        console.log(colors.green('Using GitHub `hooks` of'), githubHookAddresses);
+      } else {
+        console.error(colors.red('Error retrieving GitHub `hooks`... no compatible elements found'));
+      }
+
+    } else {
+      console.error(colors.red('Error retrieving GitHub `hooks`'));
+    }
+  });
+} else {
+  console.warn(colors.yellow('Disabling GitHub `hooks` in unsecure mode'));
+}
 
 //
 function getInstallNameBase(aReq, aOptions) {
