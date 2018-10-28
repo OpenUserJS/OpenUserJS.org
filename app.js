@@ -269,7 +269,7 @@ app.use(function (aReq, aRes, aNext) {
 });
 
 // Force HTTPS
-if (app.get('securePort') && isSecured) {
+if (isSecured) {
   sslOptions = {
     key: fs.readFileSync(privkey, 'utf8'),
     cert: fs.readFileSync(fullchain, 'utf8'),
@@ -300,25 +300,54 @@ if (app.get('securePort') && isSecured) {
     honorCipherOrder: true,
     secureOptions: crypto.constants.SSL_OP_NO_TLSv1
   };
-  secureServer = https.createServer(sslOptions, app);
 
-  app.use(function (aReq, aRes, aNext) {
-    aRes.setHeader('Strict-Transport-Security',
-      'max-age=31536000000; includeSubDomains');
+  try {
+    secureServer = https.createServer(sslOptions, app);
 
-    if (!aReq.secure) {
-      aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
-      return;
+    app.use(function (aReq, aRes, aNext) {
+      aRes.setHeader('Strict-Transport-Security',
+        'max-age=31536000000; includeSubDomains');
+
+      if (!aReq.secure) {
+        aRes.redirect(301, 'https://' + aReq.headers.host + encodeURI(aReq.url));
+        return;
+      }
+
+      aNext();
+    });
+
+    secureServer.listen(app.get('securePort'));
+
+  } catch (aE) {
+    console.error(colors.red('Server is NOT secured. Certificates may already be expired'));
+    isSecured = false;
+    console.warn(colors.cyan('Attempting to rename certificates'));
+    try {
+      fs.renameSync(privkey, privkey + '.expired')
+      fs.renameSync(fullchain, fullchain + '.expired');
+      fs.renameSync(chain, chain + '.expired');
+
+      console.warn(colors.green('Certificates renamed'));
+
+      // NOTE: Cached modules and/or callbacks may not reflect this change immediately
+      // so must conclude with server trip
+
+    } catch (aE) {
+      console.warn(colors.red('Error renaming certificates'));
     }
 
-    aNext();
-  });
+    // Trip the server now to try any alternate fallback certificates
+    // If there aren't any it should run in http mode however usually no access through web
+    // This should prevent logging DoS
 
-  server.listen(app.get('port'));
-  secureServer.listen(app.get('securePort'));
-} else {
-  server.listen(app.get('port'));
+    beforeExit(); // NOTE: Event not triggered for direct `process.exit()`
+
+    process.exit(1);
+  }
 }
+
+// Always listen here but will usually be forwarded via FW
+server.listen(app.get('port'));
 
 if (isDev || isDbg) {
   app.use(morgan('dev'));
@@ -351,7 +380,7 @@ app.use(session({
   unset: 'destroy',
   cookie: {
     maxAge: 5 * 60 * 1000, // minutes in ms NOTE: Expanded after successful auth
-    secure: (isPro && isSecured ? true : false),
+    secure: (isSecured ? true : false),
     sameSite: 'lax' // NOTE: Current auth necessity
   },
   rolling: true,
@@ -438,21 +467,32 @@ function tripServerOnCertExpire(aValidToString) {
   var tripDate = new Date(tlsDate.getTime() - (2 * 60 * 60 * 1000)); // ~2 hours before fault
 
   if (nowDate.getTime() >= tripDate.getTime()) {
-    console.warn(colors.red('Attempting server restart'));
+    console.error(colors.red('Certificates expiring very soon. Tripping server to unsecure mode'));
+
+    isSecured = false;
+
+    console.warn(colors.cyan('Attempting to rename certificates'));
     try {
-      fs.renameSync(privkey, privkey + '.expired')
-      fs.renameSync(fullchain, fullchain + '.expired');
-      fs.renameSync(chain, chain + '.expired');
+      fs.renameSync(privkey, privkey + '.expiring')
+      fs.renameSync(fullchain, fullchain + '.expiring');
+      fs.renameSync(chain, chain + '.expiring');
 
-      console.warn(colors.red('TLS (SSL) EXPIRING VERY SOON... TRIPPING SERVER TO HTTP!'));
+      console.log(colors.green('Certificates renamed'));
 
-      beforeExit(); // NOTE: Event not triggered for direct `process.exit()`
-
-      process.exit(1);
+      // NOTE: Cached modules and/or callbacks may not reflect this change immediately
+      // so must conclude with server trip
 
     } catch (aE) {
-      // noop
+      console.warn(colors.red('Error renaming certificates'));
     }
+
+    // Trip the server now to try any alternate fallback certificates
+    // If there aren't any it should run in http mode however usually no access through web
+    // This should prevent logging DoS
+
+    beforeExit(); // NOTE: Event not triggered for direct `process.exit()`
+
+    process.exit(1);
   }
 }
 
