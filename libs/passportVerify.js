@@ -19,7 +19,6 @@ var allStrategies = require('../controllers/strategies.json');
 exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
   var shasum = crypto.createHash('sha256');
   var digest = null;
-  var digestUnsecure = null;
   var query = {};
   var ids = [];
 
@@ -89,56 +88,8 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
             }
           } else if (aUser) {
             // user was found matching name but can't be authenticated
-
-            if (aStrategy === 'steam') {
-              // Attempt to recover from http to https switch #1347
-              if (new Date(aUser._since) < new Date('2018-04-05T00:00:00.000Z')) {
-
-                digestUnsecure = crypto.createHash('sha256').update(String(aId)
-                  .replace(/^https:/, 'http:')).digest('hex');
-                pos = aUser.auths.indexOf(digestUnsecure);
-
-                if (pos > -1) {
-                  if (aUser.strategies[pos] === 'steam') {
-                    aUser.auths[pos] = digest;
-
-                    aUser.markModified('auths');
-                    aUser.save(function (aErr, aUser) {
-                      if (aErr) {
-                        console.error('UNRECOVERED STEAM AUTH WITH ERROR WRITE',
-                          aUser.name, digestUnsecure, '->', digest);
-
-                        aDone(null, false, 'username recovery failed');
-                        return;
-                      }
-
-                      console.log('RECOVERED STEAM AUTH',
-                        aUser.name, digestUnsecure, '->', digest);
-
-                      aDone(null, false, 'username recovered');
-                      return;
-                    });
-                  } else {
-                    console.warn('UNRECOVERED STEAM AUTH',
-                      aUser.name, digestUnsecure, '->', digest,
-                        'WARNING TYPE', aUser.strategies[pos]);
-
-                    aDone(null, false, 'username multi-auth collision');
-                    return;
-                  }
-                } else {
-                  aDone(null, false, 'username is taken');
-                  return;
-                }
-              } else {
-                aDone(null, false, 'username is taken');
-                return;
-              }
-
-            } else {
-              aDone(null, false, 'username is taken');
-              return;
-            }
+            aDone(null, false, 'username is taken');
+            return;
           } else {
             // Check for strategy readonly
             if (allStrategies[aStrategy].readonly) {
