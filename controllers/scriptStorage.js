@@ -1529,7 +1529,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
       icon = findMeta(aMeta, 'UserScript.icon.0.value');
       if (icon) {
-        if (!isFQUrl(icon, false, true)) {
+        if (!isFQUrl(icon, { canDataImg: true })) {
 
           // Not a web url... reject
           aInnerCallback(new statusError({
@@ -1636,7 +1636,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
       supportURL = findMeta(aMeta, 'UserScript.supportURL.0.value');
       if (supportURL) {
-        if (!isFQUrl(supportURL, true)) {
+        if (!isFQUrl(supportURL, { canMailto: true })) {
 
           // Not a web url... reject
           aInnerCallback(new statusError({
@@ -1645,6 +1645,27 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           }), null);
           return;
         }
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@contributionURL` validation
+      var contributionURL = null;
+
+      contributionURL = findMeta(aMeta, 'UserScript.contributionURL.0.value');
+      if (contributionURL) {
+        if (!isFQUrl(contributionURL, { isSecure: true })) {
+
+          // Not a secure web url... reject
+          aInnerCallback(new statusError({
+            message: '`contributionURL` not a secure web url in the UserScript metadata block.',
+            code: 400
+          }), null);
+          return;
+        }
+
+        // TODO: Pre-filter on abuse
       }
 
       aInnerCallback(null);

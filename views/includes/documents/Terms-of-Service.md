@@ -5,7 +5,7 @@
 * Staying on topic is a good thing to remember. Everyone has other duties to attend to at different times. Try to be succinct and don't obsess on a particular topic. Give others a chance to respond.
 * Intense conversations regarding "filling voids" should be avoided. Advocacy of one site or another should be minimal and gracefully done.
 * Passive aggressive behavior with abrasive commenting does not encourage teamwork even when it is coupled with genuine constructive feedback. Personal attacks may be eligible for account removal from OpenUserJS.org.
-* **"Open Source" is not the same as "the developers must do my bidding"**. A lot of generous time is donated by multiple developers in attempting to resolve any properly presented issues. However this does not mean there is an obligation to do it on any single persons time table. Until the OpenUserJS.org bills are paid by everyone involved it's a wise choice to be courteous instead of snarky.
+* **"Open Source" is not the same as "the developers must do my bidding"**. A lot of generous time is donated by multiple developers in attempting to resolve any properly presented issues. However this does not mean there is an obligation to do it on any single persons time table. Until the OpenUserJS.org bills are paid by everyone it is a wise choice to be courteous. Please **do not** be snarky.
 
 ### Abstraction
 

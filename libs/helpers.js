@@ -148,8 +148,10 @@ exports.updateUrlQueryString = function (aBaseUrl, aDict) {
   return url;
 };
 
-exports.isFQUrl = function (aString, aMailto, aDataImg) {
+exports.isFQUrl = function (aString, aOptions) {
   var URL = url.parse(aString); // TODO: Convert to non-legacy
+
+  var reTrusty = null;
 
   var protocol = URL.protocol;
   var username = URL.username; // NOTE: BUG: in current *node*
@@ -163,7 +165,13 @@ exports.isFQUrl = function (aString, aMailto, aDataImg) {
   var source = encodeURIComponent(aString);
   var target = null;
 
-  if (protocol && /^https?:$/.test(protocol)) {
+  if (!aOptions) {
+    aOptions = {};
+  }
+
+  reTrusty = aOptions.isSecure ? new RegExp('^https:$') : new RegExp('^https?:$');
+
+  if (protocol && reTrusty.test(protocol)) {
     if (hostname) {
       target = encodeURIComponent(protocol)
         + encodeURIComponent('//')
@@ -180,9 +188,9 @@ exports.isFQUrl = function (aString, aMailto, aDataImg) {
 
       return target === source;
     }
-  } else if (aMailto && /^mailto:\S+@\S+/.test(aString)) {
+  } else if (aOptions.canMailto && /^mailto:\S+@\S+/.test(aString)) {
     return true;
-  } else if (aDataImg && /^data:image\//.test(aString)) {
+  } else if (aOptions.canDataImg && /^data:image\//.test(aString)) {
     return true;
   }
 

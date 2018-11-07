@@ -44,6 +44,7 @@ Test the generated parser with some input for peg.js site at https://pegjs.org/o
 // @match       http://example.net/*
 // @exclude   http://example.com/foo
 // @exclude   http://example.org/foo
+// @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=your.email@example.org&item_name=OpenUserJS+Author+Donation
 // ==/UserScript==
 
 */
@@ -128,7 +129,8 @@ item1 =
       'icon64' /
       'icon' /
       'downloadURL' /
-      'defaulticon'
+      'defaulticon' /
+      'contributionURL'
     )
   whitespace
   value: non_newline
