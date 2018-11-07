@@ -219,6 +219,7 @@ var parseScript = function (aScript) {
   var description = null;
   var icon = null;
   var supportURL = null;
+  var contributionURL = null;
 
   var downloadURL = null;
   var downloadUtf = null;
@@ -283,7 +284,7 @@ var parseScript = function (aScript) {
   // Support Url
   supportURL = findMeta(script.meta, 'UserScript.supportURL.0.value');
   if (supportURL) {
-    if (isFQUrl(supportURL, true)) {
+    if (isFQUrl(supportURL, { canMailto: true })) {
 
       script.hasSupport = true;
 
@@ -291,6 +292,19 @@ var parseScript = function (aScript) {
         url: supportURL,
         text: decode(supportURL),
         isSameOrigin: isSameOrigin(supportURL).result
+      }];
+
+    }
+  }
+
+  // Contribution Url
+  contributionURL = findMeta(script.meta, 'UserScript.contributionURL.0.value');
+  if (contributionURL) {
+    if (isFQUrl(contributionURL, { isSecure: true })) {
+      script.hasContribution = true;
+      script.contribution = [{
+        url: contributionURL,
+        text: decode(contributionURL)
       }];
 
     }
