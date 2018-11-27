@@ -11,6 +11,7 @@
         <div style="width: {{script.flagsPercent}}%" class="progress-bar progress-bar-danger">{{#script.flags.critical}}{{script.flags.critical}} <i class="fa fa-fw fa-flag-o"></i>{{/script.flags.critical}}</div>
       </div>
     </div>
+    {{#canFlag}}
     <ul class="nav nav-pills nav-justified">
       <li>
         <div class="text-center">
@@ -26,5 +27,6 @@
         </div>
       </li>
     </ul>
+    {{/canFlag}}
   </div>
 </div>
