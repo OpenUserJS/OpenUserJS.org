@@ -3,12 +3,10 @@
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" data-toggle="collapse" data-target=".navbar-collapse-bottom" class="navbar-toggle" onclick="$('html, body').animate({scrollTop: $(document).height()}, 'slow')"><i class="fa fa-bars"></i></button>
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-          <input type="hidden" name="cmd" value="_s-xclick">
-          <input type="hidden" name="hosted_button_id" value="F359CDZSR6L7W">
-          <input type="submit" value="Donate" class="btn btn-donate" title="Donations for the site are greatly appreciated via PayPal - A safer, easier, way to donate online.">
-          <a href="https://github.com/OpenUserJs" class="navbar-brand">&copy; 2013+ OpenUserJS</a>
-        </form>
+        <a rel="external noreferrer noopener nofollow" referrerpolicy="same-origin" href="#" data-toggle="modal" data-target="#donateSiteModal" class="btn btn-donate" title="Monetary donations for this site">
+          <i class="fa fa-fw fa-money"></i><span class=""> Donate</span>
+        </a>
+        <a href="https://github.com/OpenUserJs" class="navbar-brand">&copy; 2013+ OpenUserJS</a>
       </div>
       <div class="navbar-collapse navbar-collapse-bottom collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -28,6 +26,7 @@
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/jquery/dist/jquery.js"></script>
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/bootstrap/dist/js/bootstrap.js"></script>
 
+{{> includes/siteModals.html }}
 {{> includes/scripts/hideReminders.html }}
 
 {{^isDev}}

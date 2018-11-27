@@ -55,23 +55,24 @@
       </div>
       <div class="container-fluid col-sm-4">
         {{> includes/searchBarPanel.html }}
-        {{#script.hasContribution}}
+        {{#script.canDonate}}
         {{#script.contribution}}
         <div class="panel">
           <div class="panel-body">
             <div class="btn-group btn-group-justified">
-              <a rel="external nofollow" referrerpolicy="strict-origin" href="{{{url}}}" class="btn btn-donate" title="External web payment processor URL for monetary donations to this Author">
+              <a rel="external noreferrer noopener nofollow" referrerpolicy="same-origin" href="#" data-toggle="modal" data-target="#donateScriptModal" class="btn btn-donate" title="Monetary donations for this Author">
                 <i class="fa fa-fw fa-money"></i><span class=""> Donate</span>
               </a>
             </div>
           </div>
           {{/script.contribution}}
-          {{/script.hasContribution}}
+          {{/script.canDonate}}
         </div>
       </div>
     </div>
   </div>
 
+  {{> includes/scriptModals.html }}
   {{> includes/footer.html }}
   {{#paginationRendered}}
       {{> includes/scripts/showTopPagination.html }}

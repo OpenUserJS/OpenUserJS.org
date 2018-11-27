@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Flag {{user.name}}</h4>
+        <h4 class="modal-title"><i class="fa fa-fw fa-flag"></i> Flag {{user.name}}</h4>
       </div>
       <div class="modal-body">
         <p>Are you sure you want to flag this user for potential inspection by a Moderator?</p>
@@ -13,7 +13,7 @@
           <input type="text" class="form-control" name="reason" placeholder="Reason for moderation inspection.">
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
           <input type="hidden" name="flag" value="true">
-          <button type="submit" class="btn btn-danger{{^canFlag}} disabled{{/canFlag}}"><i class="fa fa-fw fa-flag"></i> Flag</button>
+          <button type="submit" class="btn btn-danger{{^canFlag}} disabled{{/canFlag}}">Flag</button>
         </form>
       </div>
     </div>
@@ -25,7 +25,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Remove {{user.name}}</h4>
+        <h4 class="modal-title"><i class="fa fa-fw fa-ban"></i> Remove {{user.name}}</h4>
       </div>
       <div class="modal-body">
         <p>Are you sure you want to remove this user? You cannot undo this.</p>
@@ -41,7 +41,7 @@
           <br />
           <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
           <input type="hidden" name="remove" value="true">
-          <button type="submit" class="btn btn-danger"><i class="fa fa-fw fa-ban"></i> Remove</button>
+          <button type="submit" class="btn btn-danger">Remove</button>
         </form>
       </div>
     </div>
