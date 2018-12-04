@@ -238,7 +238,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [highlight.jsLANGUrl]: https://github.com/isagalaev/highlight.js/blob/master/docs/css-classes-reference.rst#language-names-and-aliases
 
 [image-sizeNPMUrl]: https://www.npmjs.com/package/image-size
-[image-sizeNPMVersionImage]: https://img.shields.io/npm/v/image-size?style=flat
+[image-sizeNPMVersionImage]: https://img.shields.io/npm/v/image-size.svg?style=flat
 [image-sizeGHUrl]: https://github.com/image-size/image-size
 [image-sizeDOCUrl]: https://github.com/image-size/image-size/blob/master/Readme.md
 
