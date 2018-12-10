@@ -280,6 +280,7 @@
 
         editor.setTheme("ace/theme/dawn");
         editor.getSession().setMode("ace/mode/javascript");
+        editor.container.style.fontFamily = "monospace";
 
         {{#readOnly}}editor.setReadOnly(true);{{/readOnly}}
         {{^readOnly}}
