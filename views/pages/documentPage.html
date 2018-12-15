@@ -20,7 +20,7 @@
             <p>Welcome to {{#pkg.name}}{{pkg.name}} <em>(OUJS)</em>{{#pkg.version}} v{{pkg.version}}{{/pkg.version}}{{/pkg.name}}{{#process.version}} using Node {{process.version}}{{/process.version}}{{#lastRestart}} last restarted <time datetime="{{lastRestartISOFormat}}" title="{{lastRestart}}">{{lastRestartHumanized}}</time>.{{/lastRestart}}</p>
             <ul>
               {{#lockdown.scriptStorageRO}}<li>Read-Only Script storage mode is in effect.</li>{{/lockdown.scriptStorageRO}}
-              {{#lockdown.updateURLCheck}}<li>UserScript metadata block <code>// @updateURL</code> is required.</li>{{/lockdown.updateURLCheck}}
+              {{#lockdown.updateURLCheck}}<li>UserScript metadata block <code>// @updateURL</code> is required. See <a href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">this FAQ</a>.</li>{{/lockdown.updateURLCheck}}
               <li><em>No other site status messages at this time.</em></li>
             </ul>
             <h3><a id="mission" rel="bookmark"></a>Mission<a class="anchor" href="#mission"><em class="fa fa-link"></em></a></h3>
