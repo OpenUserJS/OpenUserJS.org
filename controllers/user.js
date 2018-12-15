@@ -2059,6 +2059,11 @@ exports.editScript = function (aReq, aRes, aNext) {
           return;
         }
 
+        // Lockdown
+        options.lockdown = {};
+        options.lockdown.scriptStorageRO = process.env.READ_ONLY_SCRIPT_STORAGE === 'true';
+        options.lockdown.updateURLCheck = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
+
         // Script
         options.script = script = modelParser.parseScript(aScript);
 
