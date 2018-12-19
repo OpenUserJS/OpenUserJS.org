@@ -66,14 +66,15 @@ var _ = require('underscore');
 var findSessionData = require('./libs/modifySessions').findSessionData;
 
 var dbOptions = {};
+var defaultPoolSize = 5;
 if (isPro) {
   dbOptions = {
     secondaryAcceptableLatencyMS: 15,
-    poolSize: 5
+    poolSize: defaultPoolSize * 3
   }
 } else {
   dbOptions = {
-    poolSize: 5,
+    poolSize: defaultPoolSize,
     reconnectTries: 30,
     reconnectInterval: 1000
   }
