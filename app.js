@@ -18,8 +18,6 @@ var privkey = require('./libs/debug').privkey;
 var fullchain = require('./libs/debug').fullchain;
 var chain = require('./libs/debug').chain;
 
-var os = require('os');
-
 //
 var path = require('path');
 var crypto = require('crypto');
@@ -72,7 +70,7 @@ var defaultPoolSize = 5;
 if (isPro) {
   dbOptions = {
     secondaryAcceptableLatencyMS: 15,
-    poolSize: (isPro ? defaultPoolSize * os.cpus().length : defaultPoolSize)
+    poolSize: defaultPoolSize * 2
   }
 } else {
   dbOptions = {
