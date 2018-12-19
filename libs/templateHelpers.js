@@ -64,7 +64,7 @@ exports.paginateTemplate = paginateTemplate;
 
 var newPagination = function (aCurrentPage, aItemsPerPage) {
   // Options
-  var maxItemsPerPage = 100;
+  var maxItemsPerPage = 25;
   var defaultItemsPerPage = 25;
 
   //

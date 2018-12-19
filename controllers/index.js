@@ -34,6 +34,7 @@ var execQueryTask = require('../libs/tasks').execQueryTask;
 var removeSession = require('../libs/modifySessions').remove;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
 var strategies = require('./strategies.json');
@@ -209,26 +210,6 @@ function getRedirect(aReq) {
 
 // UI for user registration
 exports.register = function (aReq, aRes) {
-  function preRender() {
-    // Sort the strategies
-    options.strategies = _.sortBy(options.strategies, function (aStrategy) {
-      return aStrategy.display;
-    });
-  }
-
-  function render() {
-    aRes.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-    aRes.header('Pragma', 'no-cache');
-    aRes.header('Expires', '0');
-
-    aRes.render('pages/loginPage', options);
-  }
-
-  function asyncComplete() {
-    preRender();
-    render();
-  }
-
   //
   var options = {};
   var authedUser = aReq.session.user;
@@ -268,35 +249,40 @@ exports.register = function (aReq, aRes) {
     }
   });
 
-  //--- Tasks
-
   //
-  tasks.push(function (aCallback) {
-    Strategy.find({}, function (aErr, aAvailableStrategies) {
-      if (aErr || !aAvailableStrategies) {
-        aCallback(); // WARNING: Silent error handling
-      } else {
-        // Get the strategies we have OAuth keys for
-        aAvailableStrategies.forEach(function (aStrategy) {
-          options.strategies.push({
-            'strat': aStrategy.name,
-            'display': aStrategy.display
-          });
+
+  Strategy.find({}, function (aErr, aAvailableStrategies) {
+    if (aErr || !aAvailableStrategies) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 503,
+        statusMessage:
+          'We are experiencing technical difficulties right now. Please try again later.'
+      });
+    } else {
+      // Get the strategies we have OAuth keys for
+      aAvailableStrategies.forEach(function (aStrategy) {
+        options.strategies.push({
+          'strat': aStrategy.name,
+          'display': aStrategy.display
         });
-        aCallback();
-      }
-    });
-  });
+      });
 
-  tasks.push(function (aCallback) {
-    // Insert an empty default strategy at the beginning
-    // NOTE: Safari always autoselects an option when disabled
-    options.strategies.unshift({'strat': '', 'display': '(default preferred authentication)'});
-    aCallback();
-  });
+      // Insert an empty default strategy at the beginning
+      // NOTE: Safari always autoselects an option when disabled
+      options.strategies.unshift({'strat': '', 'display': '(default preferred authentication)'});
 
-  //---
-  async.parallel(tasks, asyncComplete);
+      // Sort the strategies
+      options.strategies = _.sortBy(options.strategies, function (aStrategy) {
+        return aStrategy.display;
+      });
+
+      aRes.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+      aRes.header('Pragma', 'no-cache');
+      aRes.header('Expires', '0');
+
+      aRes.render('pages/loginPage', options);
+    }
+  });
 };
 
 exports.logout = function (aReq, aRes) {
