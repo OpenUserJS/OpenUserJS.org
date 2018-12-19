@@ -70,7 +70,7 @@ var defaultPoolSize = 5;
 if (isPro) {
   dbOptions = {
     secondaryAcceptableLatencyMS: 15,
-    poolSize: defaultPoolSize * 2
+    poolSize: defaultPoolSize * 3
   }
 } else {
   dbOptions = {
