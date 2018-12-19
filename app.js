@@ -69,11 +69,13 @@ var dbOptions = {};
 var defaultPoolSize = 5;
 if (isPro) {
   dbOptions = {
+    useNewUrlParser: true,
     secondaryAcceptableLatencyMS: 15,
     poolSize: defaultPoolSize * 3
   }
 } else {
   dbOptions = {
+    useNewUrlParser: true,
     poolSize: defaultPoolSize,
     reconnectTries: 30,
     reconnectInterval: 1000
