@@ -7,7 +7,7 @@
     "ace-builds": "git://github.com/ajaxorg/ace-builds#0d62c26",
     "ansi-colors": "3.2.3",
     "async": "2.6.1",
-    "aws-sdk": "2.378.0",
+    "aws-sdk": "2.379.0",
     "base62": "2.0.0",
     "body-parser": "1.18.3",
     "bootstrap": "3.3.7",
