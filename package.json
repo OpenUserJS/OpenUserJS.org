@@ -7,7 +7,7 @@
     "ace-builds": "git://github.com/ajaxorg/ace-builds#0d62c26",
     "ansi-colors": "3.2.3",
     "async": "2.6.1",
-    "aws-sdk": "2.379.0",
+    "aws-sdk": "2.380.0",
     "base62": "2.0.0",
     "body-parser": "1.18.3",
     "bootstrap": "3.3.7",
@@ -63,7 +63,7 @@
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.5.0",
     "spdx-license-ids": "3.0.2",
-    "terser": "3.11.0",
+    "terser": "3.13.1",
     "toobusy-js": "0.5.1",
     "underscore": "1.9.1",
     "useragent": "2.3.0"
