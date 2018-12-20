@@ -31,7 +31,7 @@ var installLimiter = rateLimit({
     uri: 'mongodb://127.0.0.1:27017/test_db',
     expireTimeMs: waitMin * 60 * 1000 // n minutes for mongo store
   })),
-  windowMs: (isDev ? waitMin * 60 * 1000 : undefined), // n minutes for memory store
+  windowMs: waitMin * 60 * 1000, // n minutes
   max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext) {
 //     if (isDev) {
