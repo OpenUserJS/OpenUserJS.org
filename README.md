@@ -33,9 +33,8 @@ Repository | Reference | Recent Version
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [diff][diffGHUrl] | [Documentation][diffDOCUrl] | [![NPM version][diffNPMVersionImage]][diffNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
-[express-brute][express-bruteGHUrl] | [Documentation][express-bruteDOCUrl] | [![NPM version][express-bruteNPMVersionImage]][express-bruteNPMUrl]
-[express-brute-mongo][express-brute-mongoGHUrl]  <br />&#x22D4; [`MongoDBv3.x`][express-brute-mongoGHMongoDBv3.xUrl] | [Documentation][express-brute-mongoDOCUrl] | [![NPM version][express-brute-mongoNPMVersionImage]][express-brute-mongoNPMUrl]
 [express-minify][express-minifyGHUrl] | [Documentation][express-minifyDOCUrl] | [![NPM version][express-minifyNPMVersionImage]][express-minifyNPMUrl]
+[express-rate-limit][express-rate-limitGHUrl] | [Documentation][express-rate-limitDOCUrl] | [![NPM version][express-rate-limitNPMVersionImage]][express-rate-limitNPMUrl]
 [express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
@@ -71,6 +70,7 @@ Repository | Reference | Recent Version
 [passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
 [passport-yahoo][passport-yahooGHUrl] <br />&#x22D4; [`OpenID2`][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
+[rate-limit-mongo][rate-limit-mongoGHUrl] | [Documentation][rate-limit-mongoDOCUrl] | [![NPM version][rate-limit-mongoNPMVersionImage]][rate-limit-mongoNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
 [S3rver][s3rverGHUrl] | [Documentation][s3rverDOCUrl] | [![NPM version][s3rverNPMVersionImage]][s3rverNPMUrl]
@@ -190,21 +190,15 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [expressNPMUrl]: https://www.npmjs.com/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
 
-[express-bruteGHUrl]: https://github.com/AdamPflug/express-brute
-[express-bruteDOCUrl]: https://github.com/AdamPflug/express-brute/blob/master/README.md
-[express-bruteNPMUrl]: https://www.npmjs.com/package/express-brute
-[express-bruteNPMVersionImage]: https://img.shields.io/npm/v/express-brute.svg?style=flat
-
-[express-brute-mongoGHUrl]: https://github.com/auth0/express-brute-mongo
-[express-brute-mongoGHMongoDBv3.xUrl]: https://github.com/OpenUserJs/express-brute-mongo/tree/MongoDBv3.x
-[express-brute-mongoDOCUrl]: https://github.com/auth0/express-brute-mongo/blob/master/README.md
-[express-brute-mongoNPMUrl]: https://www.npmjs.com/package/express-brute-mongo
-[express-brute-mongoNPMVersionImage]: https://img.shields.io/npm/v/express-brute-mongo.svg?style=flat
-
 [express-minifyGHUrl]: https://github.com/breeswish/express-minify
 [express-minifyDOCUrl]: https://github.com/breeswish/express-minify/blob/master/README.md
 [express-minifyNPMUrl]: https://www.npmjs.com/package/express-minify
 [express-minifyNPMVersionImage]: https://img.shields.io/npm/v/express-minify.svg?style=flat
+
+[express-rate-limitGHUrl]: https://github.com/nfriedly/express-rate-limit
+[express-rate-limitDOCUrl]: https://github.com/nfriedly/express-rate-limit/blob/master/README.md
+[express-rate-limitNPMUrl]: https://www.npmjs.com/package/express-rate-limit
+[express-rate-limitNPMVersionImage]: https://img.shields.io/npm/v/express-rate-limit.svg?style=flat
 
 [express-sessionGHUrl]: https://github.com/expressjs/session
 [express-sessionDOCUrl]: https://github.com/expressjs/session/blob/master/README.md
@@ -394,6 +388,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [pegjsDOCUrl]: https://github.com/pegjs/pegjs/blob/master/README.md
 [pegjsNPMUrl]: https://www.npmjs.com/package/pegjs
 [pegjsNPMVersionImage]: https://img.shields.io/npm/v/pegjs.svg?style=flat
+
+[rate-limit-mongoGHUrl]: https://github.com/2do2go/rate-limit-mongo
+[rate-limit-mongoDOCUrl]: https://github.com/2do2go/rate-limit-mongo/blob/master/README.md
+[rate-limit-mongoNPMUrl]: https://www.npmjs.com/package/rate-limit-mongo
+[rate-limit-mongoNPMVersionImage]: https://img.shields.io/npm/v/rate-limit-mongo.svg?style=flat
 
 [requestGHUrl]: https://github.com/request/request
 [requestDOCUrl]: https://github.com/request/request/blob/master/README.md

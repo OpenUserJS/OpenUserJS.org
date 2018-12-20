@@ -32,10 +32,6 @@ var sizeOf = require('image-size');
 var ipRangeCheck = require("ip-range-check");
 var colors = require('ansi-colors');
 
-var MongoClient = require('mongodb').MongoClient;
-var ExpressBrute = require('express-brute');
-var MongoStore = require('express-brute-mongo');
-
 //--- Model inclusions
 var Script = require('../models/script').Script;
 var User = require('../models/user').User;
@@ -181,73 +177,6 @@ if (isPro) {
 // Get Terser installation datestamp once
 var stats = fs.statSync('./node_modules/terser/package.json');
 var mtimeTerser = new Date(util.inspect(stats.mtime));
-
-// Brute initialization
-var store = null;
-if (isPro) {
-  store = new MongoStore(function (ready) {
-    MongoClient.connect('mongodb://127.0.0.1:27017/test', {
-      useNewUrlParser: true
-    }, function(aErr, aClient) {
-      if (aErr) {
-        throw aErr;
-      }
-
-      ready(aClient.db().collection('bruteforce-store'));
-    });
-  });
-} else {
-  store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
-}
-
-var tooManyRequests = function (aReq, aRes, aNext, aNextValidRequestDate) {
-  var secondUntilNextRequest = null;
-
-  if (isDev) {
-    secondUntilNextRequest = Math.ceil((aNextValidRequestDate.getTime() - Date.now())/1000);
-    aRes.header('Retry-After', secondUntilNextRequest);
-  }
-  aRes.status(429).send(); // Too Many Requests
-}
-
-var sweetFactor = ensureIntegerOrNull(process.env.BRUTE_SWEETFACTOR) || (2);
-
-var installMaxBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || (1000 * 60), // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || (1000 * 60 * 15), // min
-  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
-  failCallback: tooManyRequests
-});
-
-var sourceMaxBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
-    ensureIntegerOrNull((1000 * 60) / sweetFactor), // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
-    ensureIntegerOrNull((1000 * 60 * 15) / sweetFactor), // min
-  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
-  failCallback: tooManyRequests
-});
-
-// Enabled with meta requests
-var installMinBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT) || ensureIntegerOrNull(1000 * (60 / 4)), // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT) || ensureIntegerOrNull(1000 * (60 / 4)), // min
-  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
-  failCallback: tooManyRequests
-});
-
-var sourceMinBruteforce = new ExpressBrute(store, {
-  freeRetries: ensureIntegerOrNull(process.env.BRUTE_FREERETRIES) || (0),
-  minWait: ensureIntegerOrNull(process.env.BRUTE_MINWAIT / sweetFactor) ||
-    ensureIntegerOrNull((1000 * (60 / 4)) / sweetFactor), // sec
-  maxWait: ensureIntegerOrNull(process.env.BRUTE_MAXWAIT / sweetFactor) ||
-    ensureIntegerOrNull((1000 * (60 / 4) * 15) / sweetFactor), // min
-  lifetime: ensureIntegerOrNull(process.env.BRUTE_LIFETIME) || undefined, //
-  failCallback: tooManyRequests
-});
 
 var githubHookAddresses = [];
 
@@ -525,11 +454,6 @@ exports.unlockScript = function (aReq, aRes, aNext) {
   let hasUnacceptable = false;
   let hasAcceptable = false;
 
-  let rMetaJS = /\.meta\.js$/;
-  let wantsUserScriptMeta = null;
-
-  let isSource = /^\/src\//.test(pathname);
-
   // Test known extensions
   if (!rMetaMinUserLibJS.test(pathname)) {
     aRes.status(400).send(); // Bad request
@@ -597,33 +521,7 @@ exports.unlockScript = function (aReq, aRes, aNext) {
     return;
   }
 
-  // Determine if .meta.js is wanted
-  wantsUserScriptMeta =
-    (aReq.headers.accept || '*/*').split(',').indexOf('text/x-userscript-meta') > -1 ||
-      rMetaJS.test(pathname);
-
-  // Test cacheable
-  if (isSource) {
-    if (cacheableScript(aReq) && process.env.FORCE_SCRIPT_NOCACHE !== 'true') {
-        aNext();
-    } else {
-      if (wantsUserScriptMeta) {
-        sourceMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
-      } else {
-        sourceMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
-      }
-    }
-  } else {
-    if (cacheableScript(aReq) && process.env.FORCE_SCRIPT_NOCACHE !== 'true') {
-        aNext();
-    } else {
-      if (wantsUserScriptMeta) {
-        installMinBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
-      } else {
-        installMaxBruteforce.getMiddleware({key : keyScript})(aReq, aRes, aNext);
-      }
-    }
-  }
+  aNext();
 }
 
 exports.sendScript = function (aReq, aRes, aNext) {

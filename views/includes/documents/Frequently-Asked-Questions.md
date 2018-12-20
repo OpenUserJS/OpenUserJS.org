@@ -188,7 +188,7 @@ A: Yes, use the raw source route like this in the UserScript metadata block:
 
 ... notice the **src**/**scripts** p.a.t.h/t.o instead of **install**.
 
-As an added advantage and incentive to utilizing this source route *(URL path)* with `@downloadURL` the "Too Many Requests" period is divided by a sweet factor. In other words this route is currently "less" managed than the install route. This UserScript metadata block key is not currently required but highly encouraged especially due to faulty .user.js engine updaters.
+The `@downloadURL` UserScript metadata block key is not currently required but highly encouraged especially due to potential faulty .user.js engine updaters.
 
 [greasemonkeyForFirefox]: Greasemonkey-for-Firefox
 [metaJSExample]: https://openuserjs.org/meta/Marti/oujs_-_Meta_View.meta.js
