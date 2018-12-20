@@ -5,6 +5,9 @@ var isPro = require('./libs/debug').isPro;
 var isDev = require('./libs/debug').isDev;
 var isDbg = require('./libs/debug').isDbg;
 
+var rateLimit = require('express-rate-limit');
+var MongoStore = require('rate-limit-mongo');
+
 //
 var main = require('./controllers/index');
 var authentication = require('./controllers/auth');
@@ -21,6 +24,22 @@ var scriptStorage = require('./controllers/scriptStorage');
 var document = require('./controllers/document');
 
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
+
+var waitMin = isDev ? 1 : 10;
+var installLimiter = rateLimit({
+  store: (isDev ? undefined : new MongoStore({
+    uri: 'mongodb://127.0.0.1:27017/test_db',
+    expireTimeMs: waitMin * 60 * 1000 // n minutes for mongo store
+  })),
+  windowMs: (isDev ? waitMin * 60 * 1000 : undefined), // n minutes for memory store
+  max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext) {
+//     if (isDev) {
+      aRes.header('Retry-After', waitMin * 60);
+//     }
+    aRes.status(429).send();
+  }
+});
 
 module.exports = function (aApp) {
   //--- Middleware
@@ -74,7 +93,7 @@ module.exports = function (aApp) {
     aRes.redirect(301, '/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(scriptStorage.unlockScript, scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').get(installLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
   aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
@@ -88,7 +107,7 @@ module.exports = function (aApp) {
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(scriptStorage.unlockScript, scriptStorage.sendScript);
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(installLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(issue.list);
