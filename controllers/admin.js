@@ -190,6 +190,8 @@ exports.adminUserUpdate = function (aReq, aRes, aNext) {
 
       // Make sure the change is reflected in the session store
       updateSessions(aReq, aUser, function (aErr, aSess) {
+        // WARNING: No err handling
+
         aRes.redirect(user.userPageUri);
       });
     });
@@ -509,6 +511,8 @@ exports.adminApiKeysPage = function (aReq, aRes, aNext) {
   // strategyListQuery
   tasks.push(function (aCallback) {
     Strategy.find({}, function (aErr, aStrats) {
+      // WARNING: No err handling
+
       var stored = nil();
       var strategies = null;
 
@@ -556,6 +560,8 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
   });
 
   Strategy.find({}, function (aErr, aStrats) {
+    // WARNING: No err handling
+
     var stored = nil();
 
     aStrats.forEach(function (aStrat) {
@@ -590,6 +596,8 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
         }
 
         strategy.save(function (aErr, aStrategy) {
+          // WARNING: No err handling
+
           loadPassport(aStrategy);
           aCallback();
         });
@@ -599,6 +607,8 @@ exports.apiAdminUpdate = function (aReq, aRes, aNext) {
 
       aCallback();
     }, function (aErr) {
+      // WARNING: No err handling
+
       aRes.redirect('/admin/api');
     });
   });

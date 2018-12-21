@@ -43,6 +43,7 @@ passport.serializeUser(function (aUser, aDone) {
 // Setup all the auth strategies
 var openIdStrategies = {};
 Strategy.find({}, function (aErr, aStrategies) {
+  // WARNING: No err handling
 
   // Get OpenId strategies
   for (var name in allStrategies) {
@@ -95,6 +96,8 @@ exports.auth = function (aReq, aRes, aNext) {
     if (aReq.session.cookie.sameSite !== 'lax') {
       aReq.session.cookie.sameSite = 'lax';
       aReq.session.save(function (aErr) {
+        // WARNING: No err handling
+
         authenticate(aReq, aRes, aNext);
       });
     } else {
@@ -342,6 +345,8 @@ exports.callback = function (aReq, aRes, aNext) {
 
           if (!aReq.session.passport.oujsOptions.authAttach) {
             expandSession(aReq, aUser, function (aErr) {
+              // WARNING: No err handling
+
               aRes.redirect(doneUri);
             });
           } else {

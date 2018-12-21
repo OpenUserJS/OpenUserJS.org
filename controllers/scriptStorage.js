@@ -853,7 +853,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
           // Resave affected properties
           aScript.save(function (aErr, aScript) {
-            // WARNING: No error handling at this stage
+            // WARNING: No err handling
           });
         }
       });
@@ -885,6 +885,8 @@ exports.sendMeta = function (aReq, aRes, aNext) {
 
   Script.findOne({ installName: caseSensitive(installNameBase + '.user.js') },
     function (aErr, aScript) {
+      // WARNING: No err handling
+
       var script = null;
       var scriptOpenIssueCountQuery = null;
       var whitespace = '\u0020\u0020\u0020\u0020';
@@ -1942,7 +1944,7 @@ exports.deleteScript = function (aInstallName, aCallback) {
     function (aErr, aScript) {
       var s3 = new AWS.S3();
 
-      // WARNING: No error handling at this stage
+      // WARNING: No err handling
 
       s3.deleteObject({ Bucket : bucketName, Key : aScript.installName},
         function (aErr) {

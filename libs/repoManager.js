@@ -19,6 +19,8 @@ var clientId = null;
 var clientKey = null;
 
 Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
+  // WARNING: No err handling
+
   clientId = aStrat.id;
   clientKey = aStrat.key;
 });

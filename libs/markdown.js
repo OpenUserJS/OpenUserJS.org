@@ -238,11 +238,11 @@ marked.setOptions({
     if (aLang && hljs.getLanguage(aLang)) {
       try {
         return hljs.highlight(aLang, aCode).value;
-      } catch (aErr) {
+      } catch (aE) {
         if (isDev) {
           console.error([
             colors.red('Dependency named highlighting failed with:'),
-              aErr
+              aE
 
           ].join('\n'));
         }
@@ -264,11 +264,11 @@ marked.setOptions({
         }
         return hljs.highlightAuto(aCode, lang).value;
       }
-    } catch (aErr) {
+    } catch (aE) {
       if (isDev) {
         console.error([
           colors.red('Dependency automatic named highlighting failed with:'),
-            aErr
+            aE
 
         ].join('\n'));
       }

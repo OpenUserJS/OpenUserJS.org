@@ -210,6 +210,8 @@ exports.unflag = function (aModel, aContent, aUser, aReason, aCallback) {
 
     function removeFlag(aAuthor) {
       aFlag.remove(function (aErr) {
+        // WARNING: No err handling
+
         saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? -2 : -1, true, aCallback);
       });
     }

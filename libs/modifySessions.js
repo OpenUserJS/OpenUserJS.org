@@ -47,6 +47,8 @@ exports.add = function (aReq, aUser, aCallback) {
   var store = aReq.sessionStore;
 
   function finish(aErr, aUser) {
+    // WARNING: No err handling
+
     aReq.session.user = serializeUser(aUser);
     aCallback();
   }
@@ -268,6 +270,8 @@ exports.getSessionDataList = function (aReq, aOptions, aCallback) {
 
       aInnerCallback();
     }], function (aErr) {
+      // WARNING: No err handling
+
       aCallback(null);
     }
   );

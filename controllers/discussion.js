@@ -427,6 +427,8 @@ function postComment(aUser, aDiscussion, aContent, aCreator, aUserAgent, aCallba
   });
 
   comment.save(function (aErr, aComment) {
+    // WARNING: No err handling
+
     ++aDiscussion.comments;
     aDiscussion.lastCommentor = aUser.name;
     aDiscussion.updated = new Date();
@@ -479,6 +481,8 @@ function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aUserAgent, aCall
     newDiscussion = new Discussion(props);
 
     newDiscussion.save(function (aErr, aDiscussion) {
+      // WARNING: No err handling
+
       // Now post the first comment
       postComment(aUser, aDiscussion, aContent, true, aUserAgent, function (aErr, aDiscussion) {
         aCallback(aDiscussion);
@@ -566,6 +570,8 @@ exports.createComment = function (aReq, aRes, aNext) {
 
 
     postComment(authedUser, aDiscussion, content, false, userAgent, function (aErr, aDiscussion) {
+      // WARNING: No err handling
+
       aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
         return encodeURIComponent(aStr);
       }).join('/') +
