@@ -124,6 +124,8 @@ exports.extend = function (aReq, aRes, aNext) {
     _id: authedUser._id,
     sessionIds: { "$in": [ aReq.sessionID ] }
   }, function (aErr, aUser) {
+    // WARNING: No err handling
+
     extendSession(aReq, aUser, function (aErr) {
       if (aErr) {
         if (aErr === 'Already extended') {
@@ -469,6 +471,8 @@ exports.view = function (aReq, aRes, aNext) {
           getFlaggedListForContent('User', options, aCallback);
         }
       ], function (aErr) {
+        // WARNING: No err handling
+
         preRender();
         render();
       });
@@ -731,6 +735,8 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
           }
         }
       ], function (aErr) {
+        // WARNING: No err handling
+
         preRender();
         render();
       });
@@ -969,6 +975,8 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     tasks.push(function (aCallback) {
       var userStrats = user.strategies.slice(0);
       Strategy.find({}, function (aErr, aStrats) {
+        // WARNING: No err handling
+
         var defaultStrategy = userStrats[userStrats.length - 1];
         var name = null;
         var strategy = null;
@@ -1652,6 +1660,8 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
   form = new formidable.IncomingForm();
   form.parse(aReq, function (aErr, aFields, aFiles) {
+    // WARNING: No err handling
+
     //
     var isLib = aReq.params.isLib;
     var script = aFiles.script;
@@ -1695,6 +1705,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
     stream.on('end', function () {
       User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
+        // WARNING: No err handling
 
         var bufferConcat = Buffer.concat(bufs);
 
@@ -1764,6 +1775,8 @@ exports.submitSource = function (aReq, aRes, aNext) {
   function storeScript(aMeta, aSource) {
 
     User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
+      // WARNING: No err handling
+
       scriptStorage.storeScript(aUser, aMeta, aSource, false, function (aErr, aScript) {
         var redirectUri = aScript
           ? ((aScript.isLib ? '/libs/' : '/scripts/') +
@@ -1815,6 +1828,8 @@ exports.submitSource = function (aReq, aRes, aNext) {
             aScript.fork = fork;
 
             aScript.save(function (aErr, aScript) {
+              // WARNING: No err handling
+
               aRes.redirect(redirectUri);
             });
           });

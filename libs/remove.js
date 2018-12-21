@@ -232,6 +232,8 @@ function remove(aModel, aContent, aUser, aReason, aAutomated, aCallback) {
               --aResult.discussion.comments;
 
               aResult.discussion.save(function (aErr) {
+                // WARNING: No err handling
+
                 aOuterCallback(null);
               });
 
@@ -241,6 +243,8 @@ function remove(aModel, aContent, aUser, aReason, aAutomated, aCallback) {
               aResult.discussion.updated = aResult.prevComment.created;
 
               aResult.discussion.save(function (aErr) {
+                // WARNING: No err handling
+
                 aOuterCallback(null);
               });
             } else {
@@ -337,6 +341,8 @@ exports.remove = function (aModel, aContent, aUser, aReason, aCallback) {
           _authorId: aContent._id
         },
           function (aErr, aContentArr) {
+            // WARNING: No err handling
+
             async.eachSeries(aContentArr, function (aContent, aEachInnerCallback) {
               remove(model, aContent, aUser, '', true, aEachInnerCallback);
             }, aEachOuterCallback);

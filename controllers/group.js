@@ -129,6 +129,8 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
         });
 
         group.save(function (aErr, aGroup) {
+          // WARNING: No err handling
+
           aScript._groupId = aGroup._id;
           aCallback();
         });
@@ -149,7 +151,9 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
             aGroup.size = aScripts.length;
             aGroup.rating = getRating(aScripts);
             aGroup.updated = new Date();
-            aGroup.save(function () {
+            aGroup.save(function (aErr, aGroup) {
+              // WARNING: No err handling
+
               // NOTE: This is a callback that does nothing
             });
           }

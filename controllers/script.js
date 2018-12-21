@@ -247,6 +247,8 @@ var getScriptPageTasks = function (aOptions) {
       _scriptId: script._id,
       _userId: authedUser._id
     }, function (aErr, aVoteModel) {
+      // WARNING: No err handling
+
       aOptions.voteable = !script.isOwner;
 
       if (aVoteModel) {
@@ -359,6 +361,8 @@ exports.view = function (aReq, aRes, aNext) {
             getFlaggedListForContent('Script', options, aCallback);
           }
         ], function (aErr) {
+          // WARNING: No err handling
+
           preRender();
           render();
         });
@@ -547,6 +551,8 @@ exports.vote = function (aReq, aRes, aNext) {
 
       Vote.findOne({ _scriptId: aScript._id, _userId: authedUser._id },
         function (aErr, aVoteModel) {
+          // WARNING: No err handling
+
           var votes = aScript.votes || 0;
           var flags = 0;
           var oldVote = null;
@@ -554,6 +560,8 @@ exports.vote = function (aReq, aRes, aNext) {
           function saveScript() {
             if (!flags) {
               aScript.save(function (aErr, aScript) {
+                // WARNING: No err handling
+
                 var script = null;
 
                 if (vote === false) {

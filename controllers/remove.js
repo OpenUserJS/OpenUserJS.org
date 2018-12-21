@@ -42,6 +42,8 @@ exports.rm = function (aReq, aRes, aNext) {
 
   form = new formidable.IncomingForm();
   form.parse(aReq, function (aErr, aFields) {
+    // WARNING: No err handling
+
     var reason = aFields.reason;
 
     var type = aReq.params[0];
@@ -87,6 +89,8 @@ exports.rm = function (aReq, aRes, aNext) {
           installName: scriptStorage.caseSensitive(installNameBase +
             (isLib ? '.js' : '.user.js'))
           }, function (aErr, aScript) {
+            // WARNING: No err handling
+
             removeLib.remove(Script, aScript, authedUser, reason, function (aRemoved) {
               if (!aRemoved) {
                 aNext();
@@ -101,6 +105,8 @@ exports.rm = function (aReq, aRes, aNext) {
 
         User.findOne({ name: { $regex: new RegExp('^' + username + '$', "i") } },
           function (aErr, aUser) {
+            // WARNING: No err handling
+
             removeLib.remove(User, aUser, authedUser, reason, function (aRemoved) {
               if (!aRemoved) {
                 aNext();

@@ -443,6 +443,8 @@ exports.comment = function (aReq, aRes, aNext) {
 
         discussionLib.postComment(authedUser, aIssue, content, false, userAgent,
           function (aErr, aDiscussion) {
+            // WARNING: No err handling
+
             aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
               return encodeURIComponent(aStr);
             }).join('/') +
@@ -493,6 +495,8 @@ exports.changeStatus = function (aReq, aRes, aNext) {
 
         if (changed) {
           aIssue.save(function (aErr, aDiscussion) {
+            // WARNING: No err handling
+
             aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
               return encodeURIComponent(aStr);
             }).join('/') +

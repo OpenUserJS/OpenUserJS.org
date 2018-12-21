@@ -107,6 +107,8 @@ exports.home = function (aReq, aRes) {
         getFlaggedListForContent('Script', options, aCallback);
       }
     ], function (aErr) {
+      // WARNING: No err handling
+
       preRender();
       render();
     });
@@ -295,6 +297,8 @@ exports.logout = function (aReq, aRes) {
   }
 
   User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
+    // WARNING: No err handling
+
     removeSession(aReq, aUser, function () {
       aRes.redirect(redirectUri);
     });

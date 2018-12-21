@@ -43,6 +43,8 @@ exports.flag = function (aReq, aRes, aNext) {
 
   form = new formidable.IncomingForm();
   form.parse(aReq, function (aErr, aFields) {
+    // WARNING: No err handling
+
     var flag = aFields.flag === 'false' ? false : true;
     var reason = null;
 

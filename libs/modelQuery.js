@@ -73,7 +73,7 @@ var parseSearchConditions = function (aQ, aPrefixSearchFields, aFullSearchFields
   var fullStr = '';
   var prefixRegex = null;
   var fullRegex = null;
-  var terms = aQ.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/).map(function (aE) { return aE.trim(); });
+  var terms = aQ.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1').split(/\s+/).map(function (aEl) { return aEl.trim(); });
 
   // Match all the terms but in any order
   terms.forEach(function (aTerm) {

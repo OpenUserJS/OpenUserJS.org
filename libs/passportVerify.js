@@ -72,6 +72,8 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
 
       if (!aUser) {
         User.findOne({ 'name': aUsername }, function (aErr, aUser) {
+          // WARNING: No err handling
+
           if (aUser && aLoggedIn) {
             if (allStrategies[aStrategy].readonly) {
               aDone(null, false, 'readonly strategy');
