@@ -25,17 +25,31 @@ var document = require('./controllers/document');
 
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
-var waitMin = isDev ? 1 : 10;
+var waitInstallMin = isDev ? 1 : 15;
 var installLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: 'mongodb://127.0.0.1:27017/test_db',
-    expireTimeMs: waitMin * 60 * 1000 // n minutes for mongo store
+    uri: 'mongodb://127.0.0.1:27017/installLimiter',
+    expireTimeMs: waitInstallMin * 60 * 1000 // n minutes for mongo store
   })),
-  windowMs: waitMin * 60 * 1000, // n minutes
+  windowMs: waitInstallMin * 60 * 1000, // n minutes for all stores
+  max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext) {
+      aRes.header('Retry-After', waitInstallMin * 60);
+    aRes.status(429).send();
+  }
+});
+
+var waitApiMin = isDev ? 1: 15
+var apiLimiter = rateLimit({
+  store: (isDev ? undefined : new MongoStore({
+    uri: 'mongodb://127.0.0.1:27017/apiLimiter',
+    expireTimeMs: waitApiMin * 60 * 1000 // n minutes for mongo store
+  })),
+  windowMs: waitApiMin * 60 * 1000, // n minutes for all stores
   max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext) {
 //     if (isDev) {
-      aRes.header('Retry-After', waitMin * 60);
+      aRes.header('Retry-After', waitApiMin * 60);
 //     }
     aRes.status(429).send();
   }
@@ -70,9 +84,9 @@ module.exports = function (aApp) {
   aApp.route('/user').get(function (aReq, aRes) {
     aRes.redirect(302, '/users');
   });
-  aApp.route('/api/user/exist/:username').head(user.exist);
-  aApp.route('/api/user/session/extend').post(authentication.validateUser, user.extend);
-  aApp.route('/api/user/session/destroyOne').post(authentication.validateUser, user.destroyOne);
+  aApp.route('/api/user/exist/:username').head(apiLimiter, user.exist);
+  aApp.route('/api/user/session/extend').post(apiLimiter, authentication.validateUser, user.extend);
+  aApp.route('/api/user/session/destroyOne').post(apiLimiter, authentication.validateUser, user.destroyOne);
 
   // Adding script/library routes
   aApp.route('/user/add/scripts').get(authentication.validateUser, user.newScriptPage);
