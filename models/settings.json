@@ -1,6 +1,6 @@
 {
  "secret" : "someSecretStringForSession",
- "connect" : "mongodb://dev:oujs@ds041651.mongolab.com:41651/openuserjs_dev",
+ "connect" : "mongodb://dev:oujs123@ds131963.mlab.com:31963/openuserjs_devel",
  "maximum_upload_script_size": 1048576,
  "ttl": {
   "minimum": 5,
