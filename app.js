@@ -71,7 +71,8 @@ if (isPro) {
   dbOptions = {
     useNewUrlParser: true,
     secondaryAcceptableLatencyMS: 15,
-    poolSize: defaultPoolSize
+    poolSize: defaultPoolSize,
+    socketTimeoutMS: 90000 // Mitigation of #1548
   }
 } else {
   dbOptions = {
