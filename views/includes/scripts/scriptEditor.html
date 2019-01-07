@@ -194,7 +194,7 @@
           editor.renderer.setShowGutter(false);
 
           editor.getSession().setValue(
-            JsDiff.createTwoFilesPatch(
+            Diff.createTwoFilesPatch(
             '{{script.scriptViewSourcePageUrl}}'
               + '@{{script.meta.UserScript.version.0.value}}+{{script.hashShort}}',
             '{{script.scriptViewSourcePageUrl}}',
