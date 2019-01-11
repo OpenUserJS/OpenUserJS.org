@@ -25,21 +25,21 @@ var document = require('./controllers/document');
 
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
-var waitInstallMin = isDev ? 1 : 15;
+var waitInstallMin = isDev ? 1 : 60;
 var installLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: 'mongodb://127.0.0.1:27017/installLimiter',
     expireTimeMs: waitInstallMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: waitInstallMin * 60 * 1000, // n minutes for all stores
-  max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  max: 50, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext) {
-    aRes.header('Retry-After', waitInstallMin * 60);
+    aRes.header('Retry-After', waitInstallMin * 60 + 60);
     aRes.status(429).send();
   }
 });
 
-var waitApiMin = isDev ? 1: 15
+var waitApiMin = isDev ? 1: 15;
 var apiLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: 'mongodb://127.0.0.1:27017/apiLimiter',
@@ -48,22 +48,30 @@ var apiLimiter = rateLimit({
   windowMs: waitApiMin * 60 * 1000, // n minutes for all stores
   max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext) {
-    aRes.header('Retry-After', waitApiMin * 60);
+    aRes.header('Retry-After', waitApiMin * 60 + 60);
     aRes.status(429).send();
   }
 });
 
-var listMin = isDev ? 1: 15
+var listMin = isDev ? 1: 60;
 var listLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: 'mongodb://127.0.0.1:27017/listLimiter',
     expireTimeMs: listMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: listMin * 60 * 1000, // n minutes for all stores
-  max: 300, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext) {
-    aRes.header('Retry-After', listMin * 60);
-    aRes.status(429).send();
+    aRes.header('Retry-After', listMin * 60 + 60);
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 429,
+      statusMessage: 'Too many requests.',
+      isCustomView: true,
+      statusData: {
+        isListView: true,
+        retryAfter: listMin * 60 + 60
+      }
+    });
   }
 });
 
@@ -181,7 +189,7 @@ module.exports = function (aApp) {
 
   // Discussion routes
   // TODO: Update templates for new discussion routes
-  aApp.route('/forum').get(discussion.categoryListPage);
+  aApp.route('/forum').get(listLimiter, discussion.categoryListPage);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(listLimiter, discussion.list);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(authentication.validateUser, discussion.createComment);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
@@ -192,7 +200,7 @@ module.exports = function (aApp) {
   aApp.route('/about/:document?').get(document.view);
 
   // Home route
-  aApp.route('/').get(main.home);
+  aApp.route('/').get(listLimiter, main.home);
 
   // Misc API
   aApp.route('/api').head(function (aReq, aRes, aNext) {
