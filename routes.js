@@ -29,6 +29,7 @@ var waitInstallMin = isDev ? 1 : 60;
 var installLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: 'mongodb://127.0.0.1:27017/installLimiter',
+    resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitInstallMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: waitInstallMin * 60 * 1000, // n minutes for all stores
@@ -43,6 +44,7 @@ var waitApiMin = isDev ? 1: 15;
 var apiLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: 'mongodb://127.0.0.1:27017/apiLimiter',
+    resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitApiMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: waitApiMin * 60 * 1000, // n minutes for all stores
@@ -57,6 +59,7 @@ var listMin = isDev ? 1: 60;
 var listLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: 'mongodb://127.0.0.1:27017/listLimiter',
+    resetExpireDateOnChange: true, // Rolling
     expireTimeMs: listMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: listMin * 60 * 1000, // n minutes for all stores
