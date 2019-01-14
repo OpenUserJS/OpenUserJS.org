@@ -150,7 +150,7 @@ module.exports = function (aApp) {
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(listLimiter, issue.list);
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(issue.view).post(authentication.validateUser, issue.comment);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(listLimiter, issue.view).post(authentication.validateUser, issue.comment);
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
 
   // Admin routes
@@ -194,7 +194,7 @@ module.exports = function (aApp) {
   // TODO: Update templates for new discussion routes
   aApp.route('/forum').get(listLimiter, discussion.categoryListPage);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(listLimiter, discussion.list);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(discussion.show).post(authentication.validateUser, discussion.createComment);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(listLimiter, discussion.show).post(authentication.validateUser, discussion.createComment);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
   // dupe
   aApp.route('/post/:category(announcements|corner|garage|discuss)').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
