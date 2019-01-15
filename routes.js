@@ -65,16 +65,26 @@ var listLimiter = rateLimit({
   windowMs: listMin * 60 * 1000, // n minutes for all stores
   max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext) {
-    aRes.header('Retry-After', listMin * 60 + 60);
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 429,
-      statusMessage: 'Too many requests.',
-      isCustomView: true,
-      statusData: {
-        isListView: true,
-        retryAfter: listMin * 60 + 60
-      }
-    });
+    if (aReq.rateLimit.current < aReq.rateLimit.limit + 5) {
+      aRes.header('Retry-After', listMin * 60 + 60);
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 429,
+        statusMessage: 'Too many requests.',
+        isCustomView: true,
+        statusData: {
+          isListView: true,
+          retryAfter: listMin * 60 + 60
+        }
+      });
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 10) {
+      aRes.header('Retry-After', listMin * 60 + 60);
+      aRes.status(429).send('Too many requests. Please try again later');
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
+      aRes.header('Retry-After', listMin * 60 + 60);
+      aRes.status(429).send();
+    } else {
+      aRes.connection.destroy();
+    }
   }
 });
 
