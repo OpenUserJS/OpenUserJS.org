@@ -582,7 +582,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
         } catch (aE) {
           aRes.set('Warning', '199 ' + aReq.headers.host +
             rfc2047.encode(' Invalid @updateURL'));
-          aRes.status(444).send(); // No Response
+          aRes.status(400).send(); // Bad request
           return;
         }
 
@@ -613,7 +613,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
       if (hasAlternateLocalUpdateURL) {
         aRes.set('Warning', '199 ' + aReq.headers.host +
           rfc2047.encode(' Invalid @updateURL in lockdown'));
-        aRes.status(444).send(); // No Response
+        aRes.status(404).send(); // Not found
         return;
       }
     }
