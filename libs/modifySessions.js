@@ -294,17 +294,11 @@ exports.findSessionData = function (aQuery, aStore, aOptions, aCallback) {
 
     aOptions.sessionList = [];
 
-    aUserSessions.each(function (aErr, aSessionData) {
+    aUserSessions.forEach(function (aSessionData) {
       var data = null;
       var rQuery = null;
 
-      if (aErr) {
-        aCallback(aErr);
-        return;
-      }
-
       if (!aSessionData) {
-        aCallback();
         return;
       }
 
@@ -340,6 +334,8 @@ exports.findSessionData = function (aQuery, aStore, aOptions, aCallback) {
 
       }
 
+    }, function (aErr) {
+      aCallback(aErr);  // done or err
     });
   });
 }
