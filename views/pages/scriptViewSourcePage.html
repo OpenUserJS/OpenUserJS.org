@@ -30,7 +30,7 @@
       <div class="col-md-12">
       {{/owner}}
         {{^newScript}}{{> includes/scriptPageHeader.html }}{{/newScript}}
-        <pre id="editor">{{source}}</pre>
+        <pre class="notranslate" translate="no" id="editor">{{source}}</pre>
         {{^readOnly}}
         <form action="{{#isLib}}/user/add/lib/new{{/isLib}}{{^isLib}}/user/add/scripts/new{{/isLib}}" id="code_form" method="post">
           <input type="hidden" id="source" name="source" value="" />
