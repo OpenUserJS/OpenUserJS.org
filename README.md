@@ -4,7 +4,7 @@ The home of Free and Open Source Software (FOSS) user scripts. Built using Node.
 
 Repository | Reference | Recent Version
 :--- | :---: | :---
-[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.png"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.png" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [CHANGELOG][nodejsReleasesUrl]
+[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [CHANGELOG][nodejsReleasesUrl]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
 
 ### Contributing
