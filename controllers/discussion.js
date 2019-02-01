@@ -131,7 +131,7 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
   options.multipleCategories = true;
 
   // discussionListQuery
-  discussionListQuery = Discussion.find();
+  discussionListQuery = Discussion.find().collation({ locale: 'en', strength: 3 });
 
   // discussionListQuery: remove issues
   discussionListQuery.and({ issue: { $ne: true } });
@@ -222,7 +222,7 @@ exports.list = function (aReq, aRes, aNext) {
   orderDir(aReq, options, 'updated', 'desc');
 
   // discussionListQuery
-  discussionListQuery = Discussion.find();
+  discussionListQuery = Discussion.find().collation({ locale: 'en', strength: 3 });
 
   // discussionListQuery: category
   modelQuery.applyDiscussionCategoryFilter(discussionListQuery, options, category.slug);

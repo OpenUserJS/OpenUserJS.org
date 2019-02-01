@@ -136,7 +136,7 @@ exports.list = function (aReq, aRes, aNext) {
       orderDir(aReq, options, 'updated', 'desc');
 
       // discussionListQuery
-      discussionListQuery = Discussion.find();
+      discussionListQuery = Discussion.find().collation({ locale: 'en', strength: 3 });
 
       // discussionListQuery: category
       discussionListQuery.find({ category: category.slug });

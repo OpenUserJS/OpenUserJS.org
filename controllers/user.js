@@ -425,7 +425,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
   orderDir(aReq, options, 'role', 'asc');
 
   // userListQuery
-  userListQuery = User.find();
+  userListQuery = User.find().collation({ locale: 'en', strength: 3 });
 
   // userListQuery: Defaults
   modelQuery.applyUserListQueryDefaults(userListQuery, options, aReq);
@@ -509,7 +509,7 @@ exports.view = function (aReq, aRes, aNext) {
     setupUserSidePanel(options);
 
     // scriptListQuery
-    scriptListQuery = Script.find();
+    scriptListQuery = Script.find().collation({ locale: 'en', strength: 3 });
 
     // scriptListQuery: author=user
     scriptListQuery.find({ _authorId: user._id });
@@ -789,7 +789,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     orderDir(aReq, options, 'updated', 'desc');
 
     // scriptListQuery
-    scriptListQuery = Script.find();
+    scriptListQuery = Script.find().collation({ locale: 'en', strength: 3 });
 
     // scriptListQuery: author=user
     scriptListQuery.find({ _authorId: user._id });
@@ -883,7 +883,7 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
     setupUserSidePanel(options);
 
     // Scripts: Query
-    scriptListQuery = Script.find();
+    scriptListQuery = Script.find().collation({ locale: 'en', strength: 3 });
 
     // Scripts: Query: author=user
     scriptListQuery.find({ _authorId: user._id });
@@ -955,7 +955,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     setupUserSidePanel(options);
 
     // Scripts: Query
-    scriptListQuery = Script.find();
+    scriptListQuery = Script.find().collation({ locale: 'en', strength: 3 });
 
     // Scripts: Query: author=user
     scriptListQuery.find({ _authorId: user._id });
