@@ -142,7 +142,7 @@ exports.home = function (aReq, aRes) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // scriptListQuery
-  scriptListQuery = Script.find();
+  scriptListQuery = Script.find().collation({ locale: 'en', strength: 3 });;
 
   // scriptListQuery: isLib
   modelQuery.findOrDefaultToNull(scriptListQuery, 'isLib', options.librariesOnly, false);
