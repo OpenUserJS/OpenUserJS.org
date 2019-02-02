@@ -210,7 +210,7 @@ exports.list = function (aReq, aRes) {
   orderDir(aReq, options, 'rating', 'desc');
 
   // groupListQuery
-  var groupListQuery = Group.find();
+  var groupListQuery = Group.find().collation({ locale: 'en', strength: 3 });
 
   // groupListQuery: Defaults
   modelQuery.applyGroupListQueryDefaults(groupListQuery, options, aReq);
@@ -219,7 +219,7 @@ exports.list = function (aReq, aRes) {
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
   // popularGroupListQuery
-  var popularGroupListQuery = Group.find();
+  var popularGroupListQuery = Group.find().collation({ locale: 'en', strength: 3 });
   popularGroupListQuery
     .sort('-size')
     .limit(25);
@@ -355,7 +355,7 @@ exports.view = function (aReq, aRes, aNext) {
     pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     // popularGroupListQuery
-    popularGroupListQuery = Group.find();
+    popularGroupListQuery = Group.find().collation({ locale: 'en', strength: 3 });
     popularGroupListQuery
       .sort('-size')
       .limit(25);
