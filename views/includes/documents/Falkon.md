@@ -88,7 +88,6 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 * [Falkon on Wikipedia][wikipediaFalkon]
 
 
-* [Get QupZilla *(discontinued)*][qupzillaBrowser]
 * [QupZilla Issue Tracker *(archived)*][qupzillaIssueTracker]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
@@ -109,5 +108,4 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 [falkonGHMirror]: https://github.com/KDE/falkon
 [wikipediaFalkon]: https://www.wikipedia.org/wiki/Falkon
 
-[qupzillaBrowser]: http://qupzilla.com/
 [qupzillaIssueTracker]: https://github.com/QupZilla/qupzilla/issues
