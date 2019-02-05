@@ -575,8 +575,10 @@ var parseGroup = function (aGroup) {
         group.rating = getRating(aScripts);
       }
 
+      // `aScripts` may change dynamically so check again
       if (aScripts && aScripts.length === 1) {
         group.size = aScripts.length;
+        group.rating = 0;
       }
 
       if (aScripts && aScripts.length === 0) {
