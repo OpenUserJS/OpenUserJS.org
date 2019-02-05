@@ -79,7 +79,17 @@ exports.search = function (aReq, aRes) {
 // When the select2 library submits
 exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
   if (aScript.isLib || !aGroupNames || aGroupNames[0].length === 0) {
-    aScript.save(aCallback);
+    aScript.save(function (aErr, aScript) {
+      if (aErr || !aScript) {
+        console.error('Script save NOT updated', 'aErr := ' + aErr, 'aScript := ' + aScript);
+        return;
+      }
+      if (isDbg) {
+        console.log(util.format('Script(%s) save updated', aScript.name));
+      }
+
+      aCallback();
+    });
     return;
   }
 
@@ -130,7 +140,13 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
         });
 
         group.save(function (aErr, aGroup) {
-          // WARNING: No err handling
+          if (aErr || !aGroup) {
+            console.error('Group save NOT updated', 'aErr := ' + aErr, 'aGroup := ' + aGroup);
+            return;
+          }
+          if (isDbg) {
+            console.log(util.format('Group(%s) save updated', aGroup.name));
+          }
 
           aScript._groupId = aGroup._id;
           aCallback();
@@ -153,9 +169,13 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
             aGroup.rating = getRating(aScripts);
             aGroup.updated = new Date();
             aGroup.save(function (aErr, aGroup) {
-              // WARNING: No err handling
-
-              // NOTE: This is a callback that does nothing
+              if (aErr || !aGroup) {
+                console.error('Group rating NOT updated', 'aErr := ' + aErr, 'aGroup := ' + aGroup);
+                return;
+              }
+              if (isDbg) {
+                console.log(util.format('Group(%s) rating updated', aGroup.name));
+              }
             });
           }
         );
