@@ -36,7 +36,8 @@ var orderDir = require('../libs/templateHelpers').orderDir;
 // clean the name of the group so it is url safe
 function cleanGroupName(aName) {
   return cleanFilename(aName, '').replace(/_/g, ' ')
-    .replace(/^\s+|\s+$/g, '').replace(/,/g, '');
+    .replace(/^\s+|\s+$/g, '').replace(/,/g, '')
+      .toLowerCase();
 }
 
 // api for the client side javascript select2 library
@@ -259,7 +260,7 @@ exports.view = function (aReq, aRes, aNext) {
   var groupname = aReq.params.groupname;
 
   // Strip out underscores for display
-  var groupName = groupname.replace(/_+/g, ' ');
+  var groupName = groupname.replace(/_+/g, ' ').toLowerCase();
 
   Group.findOne({
     name: groupName
