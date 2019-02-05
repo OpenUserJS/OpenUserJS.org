@@ -566,7 +566,7 @@ var parseGroup = function (aGroup) {
 
   // Wait two hours between group rating updates
   // This calculation runs in the background
-  if (new Date().getTime() > (group.updated.getTime() + 1000 * 60 * 60 * 2)) {
+  if (new Date().getTime() > (group.updated.getTime() + (isPro ? 1000 * 60 * 60 * 2 : 1000 * 60))) {
     Script.find({
       _id: { $in: group._scriptIds }
     }, function (aErr, aScripts) {
@@ -575,16 +575,29 @@ var parseGroup = function (aGroup) {
         group.rating = getRating(aScripts);
       }
 
-      group.updated = new Date();
-      group.save(function (aErr, aGroup) {
-        if (aErr || !aGroup) {
-          console.error('Group rating NOT updated', 'aErr := ' + aErr, 'aGroup := ' + aGroup);
-          return;
-        }
-        if (isDbg) {
-          console.log(util.format('Group(%s) rating updated', aGroup.name));
-        }
-      });
+      if (aScripts && aScripts.length === 0) {
+        group.remove(function (aErr, aGroup) {
+          if (aErr) {
+            console.error('Error removing empty group', 'aErr := ' + aErr, 'aGroup := ' + aGroup);
+            return;
+          }
+          if (isDbg) {
+            console.log(util.format('Empty Group(%s) removed', aGroup.name));
+          }
+        });
+
+      } else {
+        group.updated = new Date();
+        group.save(function (aErr, aGroup) {
+          if (aErr || !aGroup) {
+            console.error('Group rating NOT updated', 'aErr := ' + aErr, 'aGroup := ' + aGroup);
+            return;
+          }
+          if (isDbg) {
+            console.log(util.format('Group(%s) rating updated', aGroup.name));
+          }
+        });
+      }
     });
   }
 
