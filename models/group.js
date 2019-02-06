@@ -20,6 +20,10 @@ var groupSchema = new Schema({
   size: { type: Number, default: 0 }
 });
 
+groupSchema.virtual('_since').get(function () {
+  return this._id.getTimestamp();
+});
+
 var Group = mongoose.model('Group', groupSchema);
 
 exports.Group = Group;
