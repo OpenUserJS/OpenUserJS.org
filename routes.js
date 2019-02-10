@@ -15,6 +15,7 @@ var admin = require('./controllers/admin');
 var user = require('./controllers/user');
 var script = require('./controllers/script');
 var flag = require('./controllers/flag');
+var vote = require('./controllers/vote');
 var remove = require('./controllers/remove');
 var moderation = require('./controllers/moderation');
 var group = require('./controllers/group');
@@ -183,12 +184,10 @@ module.exports = function (aApp) {
   aApp.route('/mod/removed').get(authentication.validateUser, moderation.removedItemListPage);
   aApp.route('/mod/removed/:id').get(authentication.validateUser, moderation.removedItemPage);
 
-  // Vote routes
-  // TODO: Single vote route + POST
-  aApp.route('/vote/scripts/:username/:scriptname/:vote').get(authentication.validateUser, script.vote);
-  aApp.route('/vote/libs/:username/:scriptname/:vote').get(authentication.validateUser, script.lib(script.vote));
+  // Vote route
+  aApp.route(/^\/vote\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, vote.vote);
 
-  // Flag routes
+  // Flag route
   aApp.route(/^\/flag\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, flag.flag);
 
   // Remove route

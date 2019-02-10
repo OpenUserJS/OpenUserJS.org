@@ -380,6 +380,10 @@ var parseScript = function (aScript) {
   // Urls: Moderation
   script.scriptRemovePageUrl = '/remove' + (script.isLib ? '/libs/' : '/scripts/') +
     script.installNameSlugUrl;
+
+  script.scriptVotePageUrl = '/vote' + (script.isLib ? '/libs/' : '/scripts/') +
+    script.installNameSlugUrl;
+
   script.scriptFlagPageUrl = '/flag' + (script.isLib ? '/libs/' : '/scripts/') +
     script.installNameSlugUrl;
 

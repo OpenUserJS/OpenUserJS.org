@@ -16,7 +16,6 @@ var SPDX = require('spdx-license-ids');
 var Discussion = require('../models/discussion').Discussion;
 var Group = require('../models/group').Group;
 var Script = require('../models/script').Script;
-var Vote = require('../models/vote').Vote;
 
 //--- Controller inclusions
 var scriptStorage = require('./scriptStorage');
@@ -29,6 +28,7 @@ var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 
 var isSameOrigin = require('../libs/helpers').isSameOrigin;
 
+var voteLib = require('../libs/vote');
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 
@@ -233,35 +233,17 @@ var getScriptPageTasks = function (aOptions) {
     aOptions.voteDownUrl = voteUrl + '/down';
     aOptions.unvoteUrl = voteUrl + '/unvote';
 
-    aOptions.voteable = false;
-    aOptions.votedUp = false;
-    aOptions.votedDown = false;
-
-    // Can't vote when not logged in or when user owns the script.
-    if (!authedUser || aOptions.isOwner) {
-      aCallback();
-      return;
-    }
-
-    Vote.findOne({
-      _scriptId: script._id,
-      _userId: authedUser._id
-    }, function (aErr, aVoteModel) {
-      // WARNING: No err handling
-
-      aOptions.voteable = !script.isOwner;
-
-      if (aVoteModel) {
-        if (aVoteModel.vote) {
-          aOptions.votedUp = true;
+    voteLib.voteable(script, authedUser,
+      function (aCanVote, aAuthor, aVote) {
+        if (aVote) {
+          aOptions.votedUp = aVote.vote === true;
+          aOptions.votedDown = aVote.vote === false;
+          aOptions.canVote = true;
         } else {
-          aOptions.votedDown = true;
+          aOptions.canVote = aCanVote;
         }
-      }
-
-      aCallback();
-    });
-
+        aCallback();
+      });
   });
 
   // Setup the flagging UI
@@ -504,127 +486,5 @@ exports.edit = function (aReq, aRes, aNext) {
 
         async.parallel(tasks, asyncComplete);
       }
-    });
-};
-
-// Script voting
-exports.vote = function (aReq, aRes, aNext) {
-  //
-  var uri = aReq._parsedUrl.pathname.split('/');
-  var vote = aReq.params.vote;
-  var unvote = false;
-
-  var isLib = aReq.params.isLib;
-  var installNameBase = scriptStorage.getInstallNameBase(aReq);
-
-  // ---
-  if (uri.length > 5) {
-    uri.pop();
-  }
-  uri.shift();
-  uri.shift();
-  uri = '/' + uri.join('/');
-
-  if (vote === 'up') {
-    vote = true;
-  } else if (vote === 'down') {
-    vote = false;
-  } else if (vote === 'unvote') {
-    unvote = true;
-  } else {
-    aRes.redirect(uri);
-    return;
-  }
-
-  Script.findOne({
-    installName: scriptStorage.caseSensitive(installNameBase +
-      (isLib ? '.js' : '.user.js'))
-    }, function (aErr, aScript) {
-      //
-      var authedUser = aReq.session.user;
-
-      // ---
-      if (aErr || !aScript) {
-        aRes.redirect(uri);
-        return;
-      }
-
-      Vote.findOne({ _scriptId: aScript._id, _userId: authedUser._id },
-        function (aErr, aVoteModel) {
-          // WARNING: No err handling
-
-          var votes = aScript.votes || 0;
-          var flags = 0;
-          var oldVote = null;
-
-          function saveScript() {
-            if (!flags) {
-              aScript.save(function (aErr, aScript) {
-                // WARNING: No err handling
-
-                var script = null;
-
-                if (vote === false) {
-                  script = modelParser.parseScript(aScript);
-
-                  // Gently encourage browsing/creating an issue with a down vote
-                  aRes.redirect(script.scriptIssuesPageUri);
-                } else {
-                  aRes.redirect(uri);
-                }
-              });
-              return;
-            }
-
-            flagLib.getAuthor(aScript, function (aAuthor) {
-              flagLib.saveContent(Script, aScript, aAuthor, flags, false,
-                function (aFlagged) {
-                  aRes.redirect(uri);
-                });
-            });
-          }
-
-          if (!aScript.rating) {
-            aScript.rating = 0;
-          }
-
-          if (!aScript.votes) {
-            aScript.votes = 0;
-          }
-
-          if (authedUser._id == aScript._authorId || (!aVoteModel && unvote)) {
-            aRes.redirect(uri);
-            return;
-          } else if (!aVoteModel) {
-            aVoteModel = new Vote({
-              vote: vote,
-              _scriptId: aScript._id,
-              _userId: authedUser._id
-            });
-            aScript.rating += vote ? 1 : -1;
-            aScript.votes = votes + 1;
-            if (vote) {
-              flags = -1;
-            }
-          } else if (unvote) {
-            oldVote = aVoteModel.vote;
-            aVoteModel.remove(function () {
-              aScript.rating += oldVote ? -1 : 1;
-              aScript.votes = votes <= 0 ? 0 : votes - 1;
-              if (oldVote) {
-                flags = 1;
-              }
-              saveScript();
-            });
-            return;
-          } else if (aVoteModel.vote !== vote) {
-            aVoteModel.vote = vote;
-            aScript.rating += vote ? 2 : -2;
-            flags = vote ? -1 : 1;
-          }
-
-          aVoteModel.save(saveScript);
-        }
-      );
     });
 };

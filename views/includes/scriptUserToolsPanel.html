@@ -2,8 +2,16 @@
   <div class="panel-body">
     <div class="row">
       <div class="pull-left vote-area">
-        <a rel="nofollow" href="{{^votedUp}}{{{voteUpUrl}}}{{/votedUp}}{{#votedUp}}{{{unvoteUrl}}}{{/votedUp}}" class="btn-vote {{^voteable}}disabled{{/voteable}} {{#votedUp}}active{{/votedUp}}"><i class="fa fa-2x fa-caret-up"></i></a>
-        <a rel="nofollow" href="{{^votedDown}}{{{voteDownUrl}}}{{/votedDown}}{{#votedDown}}{{{unvoteUrl}}}{{/votedDown}}" class="btn-vote {{^voteable}}disabled{{/voteable}} {{#votedDown}}active{{/votedDown}}"><i class="fa fa-2x fa-caret-down"></i></a>
+        {{#canVote}}
+        <form action="{{{script.scriptVotePageUrl}}}" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="vote" value="{{^votedUp}}up{{/votedUp}}{{#votedUp}}un{{/votedUp}}">
+          <button class="btn-link btn-vote{{#votedUp}} active{{/votedUp}}" type="submit"><i class="fa fa-2x fa-caret-up"></i></button>
+        </form>
+        <form action="{{{script.scriptVotePageUrl}}}" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="vote" value="{{^votedDown}}down{{/votedDown}}{{#votedDown}}un{{/votedDown}}">
+          <button class="btn-link btn-vote{{#votedDown}} active{{/votedDown}}" type="submit"><i class="fa fa-2x fa-caret-down"></i></button>
+        </form>
+        {{/canVote}}
       </div>
       <p><i class="fa fa-fw fa-heartbeat"></i> <b>Rating:</b> {{script.rating}}</p>
       <div class="progress">
@@ -18,11 +26,11 @@
           {{#flagged}}
           <form action="{{{script.scriptFlagPageUrl}}}" method="post" enctype="multipart/form-data">
             <input type="hidden" name="flag" value="false">
-            <button class="btn btn-link" type="submit" class="{{^canFlag}} disabled{{/canFlag}}" title="Unflag from moderation review"><i class="fa fa-fw fa-flag"></i> Unflag</button>
+            <button class="btn btn-link" type="submit" title="Unflag from moderation review"><i class="fa fa-fw fa-flag"></i> Unflag</button>
           </form>
           {{/flagged}}
           {{^flagged}}
-          <a rel="nofollow" href="#" data-toggle="modal" data-target="#flagScriptModal" class="{{^canFlag}}disabled{{/canFlag}}" title="Flag for moderation review"><i class="fa fa-flag-o"></i> Flag</a>
+          <a rel="nofollow" href="#" data-toggle="modal" data-target="#flagScriptModal" title="Flag for moderation review"><i class="fa fa-flag-o"></i> Flag</a>
           {{/flagged}}
         </div>
       </li>
