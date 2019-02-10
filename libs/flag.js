@@ -70,7 +70,10 @@ function getFlag(aModel, aContent, aUser, aCallback) {
 function getAuthor(aContent, aCallback) {
   User.findOne({ _id: aContent._authorId }, function (aErr, aAuthor) {
     // Content without an author shouldn't exist
-    if (aErr || !aAuthor) { return aCallback(null); }
+    if (aErr || !aAuthor) {
+      aCallback(null);
+      return;
+    }
 
     aCallback(aAuthor);
   });
@@ -152,6 +155,8 @@ function flag(aModel, aContent, aUser, aAuthor, aReason, aCallback) {
   });
 
   flag.save(function (aErr, aFlag) {
+    // WARNING: No err handling
+
     if (!aContent.flags) {
       aContent.flags = {};
     }

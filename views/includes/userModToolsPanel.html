@@ -10,9 +10,11 @@
     {{#user}}
     {{> includes/flagModelSnippet.html }}
     {{/user}}
+    {{#canRemove}}
     <ul class="nav nav-pills nav-justified">
-      <li><a rel="nofollow" href="#" data-toggle="modal" data-target="#removeUserModal" class="{{^canRemove}}disabled{{/canRemove}}"><i class="fa fa-ban"></i> Remove User</a></li>
+      <li><a rel="nofollow" href="#" data-toggle="modal" data-target="#removeUserModal"><i class="fa fa-ban"></i> Remove User</a></li>
     </ul>
+    {{/canRemove}}
   </div>
 </div>
 {{/modTools}}

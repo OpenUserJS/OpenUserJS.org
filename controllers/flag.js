@@ -13,6 +13,7 @@ var formidable = require('formidable');
 
 //--- Model inclusions
 var Flag = require('../models/flag').Flag;
+
 var User = require('../models/user').User;
 var Script = require('../models/script').Script;
 
@@ -109,6 +110,7 @@ exports.flag = function (aReq, aRes, aNext) {
             });
 
         });
+
         break;
       case 'users':
         username = aReq.params[1];

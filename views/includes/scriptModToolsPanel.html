@@ -10,9 +10,11 @@
     {{#script}}
     {{> includes/flagModelSnippet.html }}
     {{/script}}
+    {{#canRemove}}
     <ul class="nav nav-pills nav-justified">
-      <li><a rel="nofollow" href="#" data-toggle="modal" data-target="#removeScriptModal" class="{{^canRemove}}disabled{{/canRemove}}"><i class="fa fa-ban"></i> Remove Script</a></li>
+      <li><a rel="nofollow" href="#" data-toggle="modal" data-target="#removeScriptModal"><i class="fa fa-ban"></i> Remove Script</a></li>
     </ul>
+    {{/canRemove}}
   </div>
 </div>
 {{/modTools}}
