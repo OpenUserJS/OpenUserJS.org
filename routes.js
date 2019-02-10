@@ -185,7 +185,7 @@ module.exports = function (aApp) {
   aApp.route('/mod/removed/:id').get(authentication.validateUser, moderation.removedItemPage);
 
   // Vote route
-  aApp.route(/^\/vote\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, vote.vote);
+  aApp.route(/^\/vote\/(scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, vote.vote);
 
   // Flag route
   aApp.route(/^\/flag\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, flag.flag);
