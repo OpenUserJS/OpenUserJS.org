@@ -23,7 +23,7 @@ var scriptSchema = new Schema({
   hash: String,
 
   // Moderation
-  votes: Number, // upvotes negate flags.critical
+  votes: Number, // upvotes negate flags.critical. Always a whole number and summation of Vote.count
   flags: {
     critical: Number,
     absolute: Number
