@@ -219,7 +219,6 @@ function vote(aCasting, aScript, aUser, aCallback) {
       if (aVote.vote !== aCasting) {
         aVote.vote = aCasting;
         aScript.rating += (aCasting ? 2 : -2);
-        //aScript.votes = aScript.votes + (aCasting ? 2 : -2);
         flags = aCasting ? -1 : 1;
 
       }
