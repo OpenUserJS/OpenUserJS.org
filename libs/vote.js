@@ -139,7 +139,7 @@ function newVote(aScript, aUser, aAuthor, aCasting, aCallback) {
     }
 
     aScript.rating += (aCasting ? 1 : -1);
-    aScript.votes = aScript.votes + (aCasting ? 1 : -1);
+    aScript.votes = aScript.votes + 1;
     if (aCasting) {
       flags = -1;
     }
@@ -219,7 +219,7 @@ function vote(aCasting, aScript, aUser, aCallback) {
       if (aVote.vote !== aCasting) {
         aVote.vote = aCasting;
         aScript.rating += (aCasting ? 2 : -2);
-        aScript.votes = aScript.votes + (aCasting ? 2 : -2);
+        //aScript.votes = aScript.votes + (aCasting ? 2 : -2);
         flags = aCasting ? -1 : 1;
 
       }
