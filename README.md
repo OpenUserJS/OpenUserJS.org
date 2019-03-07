@@ -144,8 +144,8 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [aws-sdkNPMUrl]: https://www.npmjs.com/package/aws-sdk
 [aws-sdkNPMVersionImage]: https://img.shields.io/npm/v/aws-sdk.svg?style=flat
 
-[base62GHUrl]: https://github.com/andrew/base62.js
-[base62DOCUrl]: https://github.com/andrew/base62.js/blob/master/Readme.md
+[base62GHUrl]: https://github.com/base62/base62.js
+[base62DOCUrl]: https://github.com/base62/base62.js/blob/master/Readme.md
 [base62NPMUrl]: https://www.npmjs.com/package/base62
 [base62NPMVersionImage]: https://img.shields.io/npm/v/base62.svg?style=flat
 
