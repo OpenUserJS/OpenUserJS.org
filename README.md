@@ -45,7 +45,6 @@ Repository | Reference | Recent Version
 [jquery][jQueryGHUrl] | [Documentation][jQueryDOCUrl] | [![NPM version][jQueryNPMVersionImage]][jQueryNPMUrl]
 [js-beautify][js-beautifyGHUrl] | [Documentation][js-beautifyDOCUrl] | [![NPM version][js-beautifyNPMVersionImage]][js-beautifyNPMUrl]
 [jsdom][jsdomGHUrl] | [Documentation][jsdomDOCUrl] | [![NPM version][jsdomNPMVersionImage]][jsdomNPMUrl]
-[jwt-simple][jwt-simpleGHUrl] | [Documentation][jwt-simpleDOCUrl] | [![NPM version][jwt-simpleNPMVersionImage]][jwt-simpleNPMUrl]
 [kerberos][kerberosGHUrl] | [Documentation][kerberosDOCUrl] | [![NPM version][kerberosNPMVersionImage]][kerberosNPMUrl]
 [less-middleware][less-middlewareGHUrl] [&#x00b9;][lessGHUrl] | [Documentation][less-middlewareDOCUrl] [&#x00b9;][lessDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
@@ -63,7 +62,7 @@ Repository | Reference | Recent Version
 [passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] ![OAuth2][oauth2Logo]
 [passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl] ![OAuth2][oauth2Logo]
 [passport-gitlab2][passport-gitlab2GHUrl] | [Documentation][passport-gitlab2DOCUrl] | [![NPM version][passport-gitlab2NPMVersionImage]][passport-gitlab2NPMUrl] ![OAuth2][oauth2Logo]
-[passport-google-oauth][passport-google-oauthGHUrl] | [Documentation][passport-google-oauthDOCUrl] | [![NPM version][passport-google-oauthNPMVersionImage]][passport-google-oauthNPMUrl] ![oauth1][oauth1Logo] ![OAuth2][oauth2Logo]
+[passport-google-oauth2][passport-google-oauth2GHUrl] | [Documentation][passport-google-oauth2DOCUrl] | [![NPM version][passport-google-oauth2NPMVersionImage]][passport-google-oauth2NPMUrl] ![OAuth2][oauth2Logo]
 [passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] ![oauth][oauthLogo]
 [passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo]
 [passport-steam][passport-steamGHUrl] <br />&#x22D4; [`OpenID2`][passport-steamGHOpenIDUrl]  | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
@@ -257,11 +256,6 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [jsdomGHUrl]: https://github.com/tmpvar/jsdom
 [jsdomDOCUrl]: https://github.com/tmpvar/jsdom/blob/master/README.md
 
-[jwt-simpleNPMUrl]: https://www.npmjs.com/package/jwt-simple
-[jwt-simpleNPMVersionImage]: https://img.shields.io/npm/v/jwt-simple.svg?style=flat
-[jwt-simpleGHUrl]: https://github.com/hokaccha/node-jwt-simple
-[jwt-simpleDOCUrl]: https://github.com/hokaccha/node-jwt-simple/blob/master/README.md
-
 [kerberosNPMUrl]: https://www.npmjs.com/package/kerberos
 [kerberosNPMVersionImage]: https://img.shields.io/npm/v/kerberos.svg?style=flat
 [kerberosGHUrl]: https://github.com/christkv/kerberos
@@ -352,10 +346,10 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [passport-gitlab2NPMUrl]: https://www.npmjs.com/package/passport-gitlab2
 [passport-gitlab2NPMVersionImage]: https://img.shields.io/npm/v/passport-gitlab2.svg?style=flat
 
-[passport-google-oauthGHUrl]: https://github.com/jaredhanson/passport-google-oauth
-[passport-google-oauthDOCUrl]: https://github.com/jaredhanson/passport-google-oauth/blob/master/README.md
-[passport-google-oauthNPMUrl]: https://www.npmjs.com/package/passport-google-oauth
-[passport-google-oauthNPMVersionImage]: https://img.shields.io/npm/v/passport-google-oauth.svg?style=flat
+[passport-google-oauth2GHUrl]: https://github.com/jaredhanson/passport-google-oauth2
+[passport-google-oauth2DOCUrl]: https://github.com/jaredhanson/passport-google-oauth2/blob/master/README.md
+[passport-google-oauth2NPMUrl]: https://www.npmjs.com/package/passport-google-oauth20
+[passport-google-oauth2NPMVersionImage]: https://img.shields.io/npm/v/passport-google-oauth20.svg?style=flat
 
 [passport-imgurGHUrl]: https://github.com/mindfreakthemon/passport-imgur
 [passport-imgurDOCUrl]: https://github.com/mindfreakthemon/passport-imgur/blob/master/README.md

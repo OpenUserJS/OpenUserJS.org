@@ -17,7 +17,7 @@
   "google": {
     "name": "Google",
     "oauth": true,
-    "readonly": true
+    "readonly": false
   },
   "imgur": {
     "name": "Imgur",

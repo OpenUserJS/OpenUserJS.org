@@ -9,7 +9,6 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var passport = require('passport');
-var jwt = require('jwt-simple');
 var url = require('url');
 var colors = require('ansi-colors');
 
@@ -87,7 +86,7 @@ exports.auth = function (aReq, aRes, aNext) {
     }
 
     if (strategy === 'google') {
-      authOpts.scope = ['profile'];
+      authOpts.scope = ['profile']; // NOTE: OAuth 2.0 profile
     }
     authenticate = passport.authenticate(strategy, authOpts);
 
@@ -229,14 +228,6 @@ exports.callback = function (aReq, aRes, aNext) {
         verifyPassport(aId, strategy, username, aReq.session.user, aDone);
       };
     }
-  } else if (strategy === 'google') { // OpenID to OAuth2 migration
-    strategyInstance._verify =
-      function(aAccessToken, aRefreshToken, aParams, aProfile, aDone) {
-        var openIdId = jwt.decode(aParams.id_token, null, true).openid_id;
-        var oAuthId = aProfile.id;
-
-        verifyPassport([openIdId, oAuthId], strategy, username, aReq.session.user, aDone);
-      };
   } else {
     strategyInstance._verify =
       function (aToken, aRefreshOrSecretToken, aProfile, aDone) {
