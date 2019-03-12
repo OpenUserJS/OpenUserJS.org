@@ -87,7 +87,7 @@ exports.auth = function (aReq, aRes, aNext) {
     }
 
     if (strategy === 'google') {
-      authOpts.scope = ['profile'];
+      authOpts.scope = ['profile']; // NOTE: OAuth 2.0 profile
     }
     authenticate = passport.authenticate(strategy, authOpts);
 
