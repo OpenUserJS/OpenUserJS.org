@@ -63,7 +63,7 @@ Repository | Reference | Recent Version
 [passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl] ![OAuth2][oauth2Logo]
 [passport-gitlab2][passport-gitlab2GHUrl] | [Documentation][passport-gitlab2DOCUrl] | [![NPM version][passport-gitlab2NPMVersionImage]][passport-gitlab2NPMUrl] ![OAuth2][oauth2Logo]
 [passport-google-oauth2][passport-google-oauth2GHUrl] | [Documentation][passport-google-oauth2DOCUrl] | [![NPM version][passport-google-oauth2NPMVersionImage]][passport-google-oauth2NPMUrl] ![OAuth2][oauth2Logo]
-[passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] ![oauth][oauthLogo]
+[passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] ![OAuth2][oauth2Logo] <sup>![oauth][oauthLogo]</sup>
 [passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo]
 [passport-steam][passport-steamGHUrl] <br />&#x22D4; [`OpenID2`][passport-steamGHOpenIDUrl]  | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
