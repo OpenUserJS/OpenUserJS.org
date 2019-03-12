@@ -19,17 +19,8 @@ var allStrategies = require('../controllers/strategies.json');
 exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
   var shasum = crypto.createHash('sha256');
   var digest = null;
-  var query = {};
-  var ids = [];
 
-  if (aId instanceof Array) {
-    ids = aId.map(function (aId) {
-      var shasum = crypto.createHash('sha256');
-      shasum.update(String(aId));
-      return shasum.digest('hex');
-    });
-    query.auths = { '$in': ids };
-  } else if (aStrategy === 'github') {
+  if (aStrategy === 'github') {
     // We only keep plaintext ids for GH since that's all we need
     digest = aId;
   } else if (aStrategy === 'steam') {
@@ -44,29 +35,15 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
     digest = shasum.digest('hex');
   }
 
-  if (!query.auths) {
-    query.auths = digest;
-  }
-
-  findDeadorAlive(User, query, true,
+  findDeadorAlive(User, { 'auths': digest }, true,
     function (aAlive, aUser, aRemoved) {
       var pos = aUser ? aUser.auths.indexOf(digest) : -1;
-      var openIdIdPos = -1;
       if (aRemoved) {
         aDone(null, false, 'User was removed');
 
         // Always return if production... allows for testing in dev with or without dbg
         if (isPro) {
           return;
-        }
-      }
-
-      // Set up for OpenId to OAuth Migration
-      if (!digest && ids.length > 0) {
-        digest = ids[1];
-        if (aUser) {
-          pos = aUser.auths.indexOf(digest);
-          openIdIdPos = aUser.auths.indexOf(ids[0]);
         }
       }
 
@@ -122,16 +99,6 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
         aUser.auths.push(digest);
 
         aUser.markModified('strategies');
-        aUser.markModified('auths');
-        aUser.save(function (aErr, aUser) {
-          aDone(aErr, aUser);
-          return;
-        });
-      } else if (openIdIdPos > 0) {
-        // The user was authenticated however...
-        // Migrate from OpenID to OAuth
-        aUser.auths[openIdIdPos] = digest;
-
         aUser.markModified('auths');
         aUser.save(function (aErr, aUser) {
           aDone(aErr, aUser);
