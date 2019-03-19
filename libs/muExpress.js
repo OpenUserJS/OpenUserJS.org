@@ -31,6 +31,7 @@ function renderFile(aRes, aPath, aOptions) {
   if (aRes.oujsOptions) {
     aOptions.DNT = aRes.oujsOptions.DNT;
     aOptions.hideReminderGDPR = aRes.oujsOptions.hideReminderGDPR;
+    aOptions.showReminderListLimit = aRes.oujsOptions.showReminderListLimit;
   }
 
   aRes.set('Content-Type', 'text/html; charset=UTF-8');

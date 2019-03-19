@@ -67,6 +67,7 @@
     </div>
   </div>
   {{> includes/footer.html }}
+  {{^suppressNavigation}}
   <script type="text/javascript">
     (function () {
       'use strict';
@@ -105,5 +106,6 @@
 
     })();
   </script>
+  {{/suppressNavigation}}
 </body>
 </html>
