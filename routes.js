@@ -65,25 +65,35 @@ var listLimiter = rateLimit({
     expireTimeMs: listMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: listMin * 60 * 1000, // n minutes for all stores
-  max: 150, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  max: 115, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext) {
     var cmd = null;
 
-    if (aReq.rateLimit.current < aReq.rateLimit.limit + 5) {
+    if (aReq.rateLimit.current < aReq.rateLimit.limit + 4) {
+      // Midddlware options
+      if (!aRes.oujsOptions) {
+        aRes.oujsOptions = {};
+      }
+
+      aRes.oujsOptions.showReminderListLimit = 4 - (aReq.rateLimit.current - aReq.rateLimit.limit);
+
+      aNext();
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 10) {
       aRes.header('Retry-After', listMin * 60 + 60);
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 429,
         statusMessage: 'Too many requests.',
+        suppressNavigation: true,
         isCustomView: true,
         statusData: {
           isListView: true,
           retryAfter: listMin * 60 + 60
         }
       });
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 10) {
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
       aRes.header('Retry-After', listMin * 60 + 60);
       aRes.status(429).send('Too many requests. Please try again later');
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 20) {
       aRes.header('Retry-After', listMin * 60 + 60);
       aRes.status(429).send();
     } else {
