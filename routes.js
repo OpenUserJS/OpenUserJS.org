@@ -7,6 +7,7 @@ var isDbg = require('./libs/debug').isDbg;
 
 var rateLimit = require('express-rate-limit');
 var MongoStore = require('rate-limit-mongo');
+var exec = require('child_process').exec;
 
 //
 var main = require('./controllers/index');
@@ -64,8 +65,10 @@ var listLimiter = rateLimit({
     expireTimeMs: listMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: listMin * 60 * 1000, // n minutes for all stores
-  max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  max: 150, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext) {
+    var cmd = null;
+
     if (aReq.rateLimit.current < aReq.rateLimit.limit + 5) {
       aRes.header('Retry-After', listMin * 60 + 60);
       statusCodePage(aReq, aRes, aNext, {
@@ -84,7 +87,20 @@ var listLimiter = rateLimit({
       aRes.header('Retry-After', listMin * 60 + 60);
       aRes.status(429).send();
     } else {
-      aRes.connection.destroy();
+      cmd = (isPro && process.env.AUTOBAN ? process.env.AUTOBAN : 'echo SIMULATING AUTOBAN') +
+        ' ' + aReq.connection.remoteAddress;
+
+      exec(cmd, function (aErr, aStdout, aStderr) {
+        if (aErr) {
+          console.error('FAIL AUTOBAN', cmd);
+          // fallthrough
+        } else {
+          console.log('AUTOBAN', aReq.connection.remoteAddress);
+          // fallthrough
+        }
+
+        aRes.connection.destroy();
+      });
     }
   }
 });
