@@ -1680,7 +1680,6 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
     // Reject non-js file
     switch (script.type) {
-      case 'application/x-javascript': // #872
       case 'application/javascript':   // #1599
       case 'text/javascript':          // Default
         break; // Acceptable
