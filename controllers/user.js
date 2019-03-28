@@ -1679,14 +1679,16 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     }
 
     // Reject non-js file
-    if (!(script.type === 'application/javascript'
-      || script.type === 'application/x-javascript')) {
-
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 400,
-        statusMessage: 'Selected file is not JavaScript.'
-      });
-      return;
+    switch (script.type) {
+      case 'application/javascript':   // #1599
+      case 'text/javascript':          // Default
+        break; // Acceptable
+      default:
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 400,
+          statusMessage: 'Selected file is not JavaScript.'
+        });
+        return;
     }
 
     // Reject huge file
