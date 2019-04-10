@@ -217,7 +217,7 @@ exports.ensureIntegerOrNull = function (aEnvVar) {
 exports.port = process.env.PORT || 8080;
 exports.securePort = process.env.SECURE_PORT || 8081;
 
-exports.baseOrigin = 'https://openuserjs.org/';
+exports.baseOrigin = 'https://openuserjs.org';
 
 // Absolute pattern and is combined for pro and dev
 exports.patternHasSameOrigin =
