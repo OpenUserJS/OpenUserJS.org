@@ -279,6 +279,9 @@ if (isSecured) {
     cert: fs.readFileSync(fullchain, 'utf8'),
     ca: fs.readFileSync(chain, 'utf8'),
     ciphers: [
+      'TLS_AES_256_GCM_SHA384',
+      'TLS_CHACHA20_POLY1305_SHA256',
+      'TLS_AES_128_GCM_SHA256',
       'ECDHE-RSA-AES128-GCM-SHA256',
       'ECDHE-ECDSA-AES128-GCM-SHA256',
       'ECDHE-RSA-AES256-GCM-SHA384',
@@ -301,8 +304,7 @@ if (isSecured) {
       '!SRP',
       '!CAMELLIA'
     ].join(':'),
-    honorCipherOrder: true,
-    secureOptions: crypto.constants.SSL_OP_NO_TLSv1
+    honorCipherOrder: true
   };
 
   try {
