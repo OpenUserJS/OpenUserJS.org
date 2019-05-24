@@ -258,7 +258,7 @@ function findDiscussion(aCategory, aTopicUrl, aCallback) {
 
   Discussion.findOne(query, function (aErr, aDiscussion) {
     if (aErr || !aDiscussion) {
-      aCallback(null);
+      aCallback();
       return;
     }
 
@@ -427,12 +427,26 @@ function postComment(aUser, aDiscussion, aContent, aCreator, aUserAgent, aCallba
   });
 
   comment.save(function (aErr, aComment) {
-    // WARNING: No err handling
+    if (aErr) {
+      console.error('Failed to postComment with comment save all the work of submitting a new comment and updating the discussion:\n', aErr, comment);
+
+      aCallback(); // NOTE: Watchpoint
+      return;
+    }
 
     ++aDiscussion.comments;
     aDiscussion.lastCommentor = aUser.name;
     aDiscussion.updated = new Date();
-    aDiscussion.save(aCallback);
+    aDiscussion.save(function (aErr, aDiscussion) {
+      if (aErr) {
+        console.error('Failed to postComment with discussion save all the work of submitting a new comment and updating the discussion:\n', aErr, aDiscussion);
+
+        aCallback(); // NOTE: Watchpoint
+        return;
+      }
+
+      aCallback(aDiscussion); // NOTE: Watchpoint
+    });
   });
 }
 exports.postComment = postComment;
@@ -446,7 +460,13 @@ function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aUserAgent, aCall
   params.sort.duplicateId = -1;
 
   if (!urlTopic) {
-    aCallback(null);
+    aCallback();
+    return;
+  }
+
+  if (urlTopic.length > 100) { // NOTE: Watchpoint
+    aCallback();
+    return;
   }
 
   Discussion.findOne({ path: path }, null, params, function (aErr, aDiscussion) {
@@ -481,10 +501,15 @@ function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aUserAgent, aCall
     newDiscussion = new Discussion(props);
 
     newDiscussion.save(function (aErr, aDiscussion) {
-      // WARNING: No err handling
+      if (aErr) {
+        console.error('Failed to postTopic with newDiscussion save all the work of submitting a new topic and resolving topic url collisions:\n', aErr, newDiscussion);
+
+        aCallback(); // NOTE: Watchpoint
+        return;
+      }
 
       // Now post the first comment
-      postComment(aUser, aDiscussion, aContent, true, aUserAgent, function (aErr, aDiscussion) {
+      postComment(aUser, aDiscussion, aContent, true, aUserAgent, function (aDiscussion) {
         aCallback(aDiscussion);
       });
     });
@@ -567,10 +592,16 @@ exports.createComment = function (aReq, aRes, aNext) {
       return;
     }
 
+    postComment(authedUser, aDiscussion, content, false, userAgent, function (aDiscussion) {
+      if (!aDiscussion) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500,
+          statusMessage: 'Failed to postComment with create a new comment on an existing discussion'
+        });
 
-
-    postComment(authedUser, aDiscussion, content, false, userAgent, function (aErr, aDiscussion) {
-      // WARNING: No err handling
+        console.error('Failed to postComment with create a new comment on an existing discussion:\n', aErr, aDiscussion);
+        return;
+      }
 
       aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
         return encodeURIComponent(aStr);
