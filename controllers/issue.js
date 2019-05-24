@@ -442,8 +442,16 @@ exports.comment = function (aReq, aRes, aNext) {
         }
 
         discussionLib.postComment(authedUser, aIssue, content, false, userAgent,
-          function (aErr, aDiscussion) {
-            // WARNING: No err handling
+          function (aDiscussion) {
+            if (!aDiscussion) {
+              statusCodePage(aReq, aRes, aNext, {
+                statusCode: 500,
+                statusMessage: 'Failed to postComment with add a new comment to a discussion on an issue'
+              });
+
+              console.error('Failed to postComment with add a new comment to a discussion on an issue', aIssue);
+              return;
+            }
 
             aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
               return encodeURIComponent(aStr);
@@ -495,7 +503,15 @@ exports.changeStatus = function (aReq, aRes, aNext) {
 
         if (changed) {
           aIssue.save(function (aErr, aDiscussion) {
-            // WARNING: No err handling
+            if (aErr) {
+              statusCodePage(aReq, aRes, aNext, {
+                statusCode: 500,
+                statusMessage: 'Failed to changeStatus with save open or close an issue you are allowed'
+              });
+
+              console.error('Failed to changeStatus with save open or close an issue you are allowed:\n', aErr, aIssue);
+              return;
+            }
 
             aRes.redirect(aDiscussion.path.split('/').map(function (aStr) {
               return encodeURIComponent(aStr);
