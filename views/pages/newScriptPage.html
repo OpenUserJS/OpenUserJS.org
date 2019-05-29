@@ -68,7 +68,7 @@
             <a href="{{{authedUser.userGitHubRepoListPageUrl}}}" class="list-group-item">
               <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-repo-clone"></i> Import Script from GitHub</h4>
               <p class="list-group-item-text">
-                Click here to import a script<em>(s)</em> from a GitHub repository. If Sync Script has already been set up for the selected repository then it should automatically be linked for any scripts imported.
+                Click here to import a script<em>(s)</em> from a personal user GitHub repository. If Sync Script has already been set up for the selected repository then it should automatically be linked for any scripts imported.
               </p>
             </a>
             <div role="alert" class="alert alert-info">
@@ -304,16 +304,21 @@
           <div class="panel panel-default">
             <div class="panel-body">
               <h3><i class="octicon octicon-mark-github"></i> GitHub</h3>
-              <p>You may add a webhook to one or more of your GitHub repositories to automatically keep it up to date on OpenUserJS.org.</p>
+              <p>You may add a webhook to one or more of your personal user GitHub repositories to automatically keep it up to date on OpenUserJS.org.</p>
               <h4>Instructions</h4>
               <p>Optionally you may upload the script to the site first. You may also use <a href="{{{authedUser.userGitHubRepoListPageUrl}}}">Import from Github</a> to speed things up as a shortcut.</p>
               <ol>
+                <li>Ensure that you have and use a <code>master</code> branch.</li>
                 <li>On your target GitHub repo, click Settings &gt; Webhooks &gt; Add Webhook.</li>
                 <li>In the Payload URL input, paste<br /><code>https://openuserjs.org/github/hook</code></li>
                 <li>Change the Content Type dropdown to<br /><code>application/x-www-form-urlencoded</code></li>
                 <li>Click <code>Add Webhook</code>.</li>
               </ol>
               <p>After adding the webhook, push a change to GitHub to make sure it's working.</p>
+              <p>This site will return an acknowledgement to GitHub of acceptance for queued retrieval. Larger payloads will take more time to process.</p>
+              <p>GitHub has a caching mecahnism that may prevent serving the next version from being pulled too quickly so please give a little time in-between commits.</p>
+              <p>If the database is locked, such as during brief maintenance periods or lockdown, updates may be temporarily rejected and may need to be redelivered manually.</p>
+              <p></p>
             </div>
           </div>
           <h3><a id="collaboration"></a>Collaboration<a href="#collaboration" class="anchor"><i class="fa fa-link"></i></a></h3>
