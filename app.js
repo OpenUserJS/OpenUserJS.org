@@ -79,7 +79,9 @@ if (isPro) {
     useNewUrlParser: true,
     poolSize: defaultPoolSize,
     reconnectTries: 30,
-    reconnectInterval: 1000
+    reconnectInterval: 1000,
+
+    useFindAndModify: false // #1516
   }
 }
 
