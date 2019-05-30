@@ -308,6 +308,7 @@
               <h4>Instructions</h4>
               <p>Optionally you may upload the script to the site first. You may also use <a href="{{{authedUser.userGitHubRepoListPageUrl}}}">Import from Github</a> to speed things up as a shortcut.</p>
               <ol>
+                <li>Ensure that you have GitHub as an authentication for this site.</li>
                 <li>Ensure that you have and use a default <code>master</code> branch.</li>
                 <li>On your target GitHub repo, click Settings &gt; Webhooks &gt; Add Webhook.</li>
                 <li>In the Payload URL input, paste<br /><code>https://openuserjs.org/github/hook</code></li>
@@ -315,18 +316,24 @@
                 <li>Click <code>Add Webhook</code>.</li>
               </ol>
               <p>After adding the webhook, push a change to GitHub to make sure it's working.</p>
-              <p>This site will return an acknowledgement to GitHub of acceptance for queued retrieval. Larger payloads will take more time to process.</p>
-              <p>GitHub has a caching mecahnism that may prevent serving the next version from being pulled too quickly so please give a little time in-between commits.</p>
-              <p>If the database is locked, such as during brief maintenance periods or lockdown, updates may be temporarily rejected and may need to be redelivered manually.</p>
-              <p></p>
+              <h4>Caveats</h4>
+              <ul class="small">
+                <li>This site will return an acknowledgement to GitHub of acceptance for queued retrieval. Larger payloads will take more time to process.</li>
+                <li>GitHub currently has a caching mecahnism that may prevent serving the next version from being pulled too quickly so please give a little time in-between commits.</li>
+                <li>If the database is locked, such as during brief maintenance periods or lockdown, updates may be temporarily rejected and may need to be redelivered manually.</li>
+              </ul>
             </div>
           </div>
           <h3><a id="collaboration"></a>Collaboration<a href="#collaboration" class="anchor"><i class="fa fa-link"></i></a></h3>
           <div class="panel panel-default">
             <div class="panel-body">
-              <p>To allow other users to upload modified versions of your script to your account from this site create an OpenUserJS metadata block and add the necessary keys... one for you yourself and for every existing user you wish to give write access as demonstrated here:<pre class="small"><code>// ==OpenUserJS==</code><br /><code>// @author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code><br /><code>// @collaborator username</code><br /><code>// ==/OpenUserJS==</code></pre> Only the real author of the script may modify these metadata keys.</p>
-              <p>Collaborators on this site may not use GitHub integration to update the script. Add them as collaborators to the GitHub repository instead.</p>
-              <p>If the webhook is enabled on the GitHub repository it will clobber any changes here on this site.</p>
+              <p>To allow other users to upload modified versions of your script to your account from this site create an OpenUserJS metadata block and add the necessary keys... one for you yourself and for every existing user you wish to give write access as demonstrated here:<pre class="small"><code>// ==OpenUserJS==</code><br /><code>// @author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code><br /><code>// @collaborator username</code><br /><code>// ==/OpenUserJS==</code></pre></p>
+              <h4>Caveats</h4>
+              <ul class="small">
+                <li>Only the real author of the script may modify these metadata keys.</li>
+                <li>Collaborators on this site may not use GitHub integration to update the script. Add them as collaborators to the GitHub repository instead.</li>
+                <li>If the webhook is enabled on the GitHub repository it will clobber any changes here on this site.</li>
+              </ul>
             </div>
           </div>
         </div>
