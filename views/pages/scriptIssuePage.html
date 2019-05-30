@@ -79,10 +79,8 @@
   {{/paginationRendered}}
   {{> includes/scripts/lazyIconScript.html }}
   {{> includes/scripts/formControlClear.html }}
-  {{#authedUser}}
-    {{> includes/scripts/markdownEditor.html }}
-    {{> includes/scripts/commentReplyScript.html }}
-  {{/authedUser}}
+  {{> includes/scripts/markdownEditor.html }}
+  {{> includes/scripts/commentReplyScript.html }}
   {{^authedUser}}
     {{> includes/scripts/commentReplyTooltip.html }}
   {{/authedUser}}

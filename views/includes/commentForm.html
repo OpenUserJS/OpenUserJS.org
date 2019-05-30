@@ -26,7 +26,7 @@
               <div class="submit-panel btn-toolbar">
                 <a href="/about/Frequently-Asked-Questions"><i class="fa fa-question-circle" title="FAQ"></i></a>
                 <a href="https://guides.github.com/features/mastering-markdown/"><i class="octicon octicon-markdown" title="GitHub Flavor Markdown compatible"></i></a>
-                <button class="btn-sm btn btn-success pull-right" type="submit"><i class="fa fa-reply"></i> Reply</button>
+                <button class="btn-sm btn btn-success pull-right" type="submit" {{^authedUser}}disabled="disabled"{{/authedUser}}><i class="fa fa-reply"></i> Reply</button>
               </div>
             </div>
           </form>

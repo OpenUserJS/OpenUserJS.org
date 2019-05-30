@@ -36,11 +36,9 @@
                   </div>
                   {{/paginationRendered}}
                 </section>
-                {{#authedUser}}
                 <section class="topic-area list-group">
                     {{> includes/commentForm.html }}
                 </section>
-                {{/authedUser}}
               </div>
             </div>
           </div>
@@ -57,10 +55,8 @@
     {{> includes/scripts/showTopPagination.html }}
   {{/paginationRendered}}
   {{> includes/scripts/formControlClear.html }}
-  {{#authedUser}}
-    {{> includes/scripts/markdownEditor.html }}
-    {{> includes/scripts/commentReplyScript.html }}
-  {{/authedUser}}
+  {{> includes/scripts/markdownEditor.html }}
+  {{> includes/scripts/commentReplyScript.html }}
   {{^authedUser}}
     {{> includes/scripts/commentReplyTooltip.html }}
   {{/authedUser}}
