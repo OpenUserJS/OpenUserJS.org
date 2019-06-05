@@ -72,7 +72,9 @@ if (isPro) {
     useNewUrlParser: true,
     secondaryAcceptableLatencyMS: 15,
     poolSize: defaultPoolSize,
-    socketTimeoutMS: 90000 // Mitigation of #1548
+    socketTimeoutMS: 90000, // Mitigation of #1548
+
+    useFindAndModify: false // #1516
   }
 } else {
   dbOptions = {
