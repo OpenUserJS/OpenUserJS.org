@@ -128,12 +128,11 @@ if (isPro) {
 } else {
   DEV_AWS_URL = process.env.DEV_AWS_URL || 'http://localhost:10001';
   AWS.config.update({
-    accessKeyId: 'fakeId',
-    secretAccessKey: 'fakeKey',
-    httpOptions: {
-      proxy: DEV_AWS_URL,
-      agent: http.globalAgent
-    }
+    accessKeyId: 'S3RVER',
+    secretAccessKey: 'S3RVER',
+    endpoint: DEV_AWS_URL,
+    sslEnabled: false,
+    s3ForcePathStyle: true
   });
 
   devAWSURL = new URL(DEV_AWS_URL);
