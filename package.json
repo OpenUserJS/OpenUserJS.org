@@ -14,7 +14,7 @@
     "bootstrap-markdown": "2.10.0",
     "clipboard": "2.0.4",
     "compression": "1.7.4",
-    "connect-mongo": "2.0.3",
+    "connect-mongo": "3.0.0",
     "diff": "4.0.1",
     "express": "4.17.1",
     "express-minify": "1.0.0",
