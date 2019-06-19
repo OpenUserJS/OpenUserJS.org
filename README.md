@@ -20,7 +20,7 @@ These also may use [shields.io][shieldsHomepage] where applicable for more expli
 ##### Dynamic
 Repository | Reference | Recent Version
 --- | --- | ---
-[ace-builds][ace-buildsGHUrl] [&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl] [&#x00b9;][aceDOCUrl] | [1.4.4][ace-buildsGHHASHUrl] [RELEASES][ace-buildsGHRELEASESUrl]
+[ace-builds][ace-buildsGHUrl] [&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl] [&#x00b9;][aceDOCUrl] | [1.4.5][ace-buildsGHHASHUrl] [RELEASES][ace-buildsGHRELEASESUrl]
 [ansi-colors][ansi-colorsGHUrl] | [Documentation][ansi-colorsDOCUrl] | [![NPM version][ansi-colorsNPMVersionImage]][ansi-colorsNPMUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
@@ -122,7 +122,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [shieldsHomepage]: http://shields.io/
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
-[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/5fe4368
+[ace-buildsGHHASHUrl]: https://github.com/ajaxorg/ace-builds/tree/7489e42
 [ace-buildsGHRELEASESUrl]: https://github.com/ajaxorg/ace-builds/releases
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
