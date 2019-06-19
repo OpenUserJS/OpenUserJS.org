@@ -69,20 +69,22 @@ var dbOptions = {};
 var defaultPoolSize = 5;
 if (isPro) {
   dbOptions = {
-    useNewUrlParser: true,
-    secondaryAcceptableLatencyMS: 15,
     poolSize: defaultPoolSize,
-    socketTimeoutMS: 90000, // Mitigation of #1548
+    reconnectTries: 30,
+    reconnectInterval: 1000,
+    family: 4,
 
+    useNewUrlParser: true,  // #1516
     useFindAndModify: false // #1516
   }
 } else {
   dbOptions = {
-    useNewUrlParser: true,
     poolSize: defaultPoolSize,
     reconnectTries: 30,
     reconnectInterval: 1000,
+    family: 4,
 
+    useNewUrlParser: true,  // #1516
     useFindAndModify: false // #1516
   }
 }
