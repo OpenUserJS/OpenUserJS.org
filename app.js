@@ -66,7 +66,7 @@ var _ = require('underscore');
 var findSessionData = require('./libs/modifySessions').findSessionData;
 
 var dbOptions = {};
-var defaultPoolSize = 5;
+var defaultPoolSize = 10;
 if (isPro) {
   dbOptions = {
     poolSize: defaultPoolSize,
