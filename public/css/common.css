@@ -402,6 +402,10 @@ ul.flaggedList {
   background: transparent url("/images/ua/chromium16.png") no-repeat left top;
   color: transparent;
 }
+.ua-coc-coc {
+  background: transparent url("/images/ua/coccoc16.png") no-repeat left top;
+  color: transparent;
+}
 .ua-dragon {
   background: transparent url("/images/ua/icedragon16.png") no-repeat left top;
   color: transparent;
