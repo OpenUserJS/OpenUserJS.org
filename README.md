@@ -4,7 +4,7 @@ The home of Free and Open Source Software (FOSS) user scripts. Built using Node.
 
 Repository | Reference | Recent Version
 :--- | :---: | :---
-[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [CHANGELOG][nodejsReleasesUrl]
+[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [&#x00b9;][nodejsGHReleasesUrl] [CHANGELOG][nodejsReleasesUrl]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
 
 ### Contributing
@@ -107,6 +107,7 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 
 
 [nodeGHUrl]: https://github.com/nodejs/node
+[nodejsGHReleasesUrl]: https://github.com/nodejs/Release/#release-schedule
 [nodejsReleasesUrl]: https://nodejs.org/download/release/
 [nodejsDOCUrl]: http://nodejs.org/documentation/
 
