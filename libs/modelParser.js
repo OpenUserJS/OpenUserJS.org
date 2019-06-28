@@ -266,6 +266,10 @@ var parseScript = function (aScript) {
         script.description = aElement.value;
       }
     });
+
+    if (script.description && script._description && script.description.length > script._description.length) {
+      script.hasLongDescription = true;
+    }
   }
 
   // Icons

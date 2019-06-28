@@ -1161,7 +1161,9 @@ function isEqualKeyset(aSlaveKeyset, aMasterKeyset) {
 exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var isLib = !!findMeta(aMeta, 'UserLibrary');
   var scriptName = null;
+  var scriptDescription = null;
   var thisName = null;
+  var thisDescription = null;
 
   async.series([
     function (aInnerCallback) {
@@ -1224,6 +1226,14 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
         return;
       }
 
+      if (scriptName.length > 128) {
+        aInnerCallback(new statusError({
+          message: '`@name` too long.',
+          code: 400
+        }), null);
+        return;
+      }
+
       // Can't install a script name ending in a reserved extension
       if (/\.(?:min|user|user\.js|meta)$/.test(scriptName)) {
         aInnerCallback(new statusError({
@@ -1249,10 +1259,28 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       aInnerCallback(null);
     },
     function (aInnerCallback) {
-      // `@description` validations including localizations
+      // `@description` validations
+      var description = null;
       var masterKeyset = null;
       var slaveKeyset = null;
 
+      if (!isLib) {
+        description = findMeta(aMeta, 'UserScript.description');
+      } else {
+        description = findMeta(aMeta, 'UserLibrary.description');
+      }
+
+      // Check for non-localized presence
+      if (description) {
+        description.forEach(function (aElement, aIndex, aArray) {
+          if (!description[aIndex].key) {
+            thisDescription = aElement.value;
+            scriptDescription = cleanFilename(thisDescription, '');
+          }
+        });
+      }
+
+      // `@description` validations including localizations
       masterKeyset = findMeta(aMeta, 'UserScript.description.value');
       slaveKeyset = findMeta(aMeta, 'UserLibrary.description.value');
 
@@ -1768,10 +1796,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           // New script
           aScript = new Script({
             name: thisName,
+            _description: (thisDescription ? thisDescription.substr(0, 512) : null),
             author: aUser.name,
             installs: 0,
             rating: 0,
             about: '',
+            _about: '',
             updated: new Date(),
             hash: crypto.createHash('sha512').update(aBuf).digest('hex'),
             votes: 0,
@@ -1803,6 +1833,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             }), null);
             return;
           }
+          aScript._description = (thisDescription ? thisDescription.substr(0, 512) : null);
           aScript.meta = aMeta;
           aScript.uses = libraries;
 
