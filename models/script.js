@@ -14,11 +14,13 @@ var Schema = mongoose.Schema;
 var scriptSchema = new Schema({
   // Visible
   name: String,
+  _description: String,
   author: String,
   installs: { type: Number, default: 0 },
   installsSinceUpdate: { type: Number, default: 0 },
   rating: Number,
   about: String,
+  _about: String,
   updated: Date,
   hash: String,
 

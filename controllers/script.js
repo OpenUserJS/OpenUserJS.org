@@ -324,7 +324,7 @@ exports.view = function (aReq, aRes, aNext) {
       function preRender() {
         if (script.groups) {
           pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
-            script.description, _.pluck(script.groups, 'name'));
+            script._description, _.pluck(script.groups, 'name'));
         }
       }
 
@@ -382,7 +382,7 @@ exports.view = function (aReq, aRes, aNext) {
 
       // Page metadata
       pageMetadata(options, ['About', script.name, (script.isLib ? 'Libraries' : 'Userscripts')],
-        script.description);
+        script._description);
       options.isScriptPage = true;
 
       // SearchBar
@@ -469,6 +469,7 @@ exports.edit = function (aReq, aRes, aNext) {
       } else if (typeof aReq.body.about !== 'undefined') {
         // POST
         aScript.about = aReq.body.about;
+        aScript._about = (aScript.about ? aScript.about.substr(0, 512) : null);
         scriptGroups = (aReq.body.groups || '');
         scriptGroups = scriptGroups.split(/,/);
         addScriptToGroups(aScript, scriptGroups, function () {
