@@ -74,8 +74,9 @@ if (isPro) {
     reconnectInterval: 1000,
     family: 4,
 
-    useNewUrlParser: true,  // #1516
-    useFindAndModify: false // #1516
+    useNewUrlParser: true,   // #1516
+    useFindAndModify: false, // #1516
+    useCreateIndex: true     // #1516
   }
 } else {
   dbOptions = {
@@ -84,8 +85,9 @@ if (isPro) {
     reconnectInterval: 1000,
     family: 4,
 
-    useNewUrlParser: true,  // #1516
-    useFindAndModify: false // #1516
+    useNewUrlParser: true,   // #1516
+    useFindAndModify: false, // #1516
+    useCreateIndex: true     // #1516
   }
 }
 
@@ -310,7 +312,8 @@ if (isSecured) {
       '!SRP',
       '!CAMELLIA'
     ].join(':'),
-    honorCipherOrder: true
+    honorCipherOrder: true,
+    secureOptions: crypto.constants.SSL_OP_NO_TLSv1_1 | crypto.constants.SSL_OP_NO_TLSv1
   };
 
   try {

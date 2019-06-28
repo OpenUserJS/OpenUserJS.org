@@ -38,12 +38,63 @@ var scriptSchema = new Schema({
   uses: [String],
   _groupId: Schema.Types.ObjectId, // The group is script created
   _authorId: Schema.Types.ObjectId
+},
+{
+  autoIndex: false
 });
 
 scriptSchema.virtual('_since').get(function () {
   return this._id.getTimestamp();
 });
 
+/*
+ * Manual-indexed
+ */
+
+scriptSchema.index({
+  isLib: 1,         // A lot of hits
+  author: 1,        // Some hits
+  name: 1           // Very few hits
+//   about: 'text'  // No hits period when included... only one allowed per Schema
+});  // NOTE: Array indexing isn't supported with *mongoose* (yet?)
+
+
+/*
+ * Auto-indexed copy
+ */
+
+// scriptSchema.index({ // NOTE: This index is currently covered in above manual compound index
+//   isLib: 1
+// });
+
+scriptSchema.index({
+  installName: 1
+});
+
+scriptSchema.index({
+  _authorId: 1,
+  flagged: 1,
+  isLib: 1
+});
+
+// --
+
 var Script = mongoose.model('Script', scriptSchema);
+
+Script.syncIndexes(function () {
+  Script.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('Script indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+Script.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for Script model');
+  }
+});
 
 exports.Script = Script;
