@@ -11,6 +11,9 @@ var isDbg = require('../libs/debug').isDbg;
 var async = require('async');
 var _ = require('underscore');
 var SPDX = require('spdx-license-ids');
+var remark = require('remark');
+var stripHTML = require('remark-strip-html');
+var stripMD = require('strip-markdown');
 
 //--- Model inclusions
 var Discussion = require('../models/discussion').Discussion;
@@ -469,12 +472,25 @@ exports.edit = function (aReq, aRes, aNext) {
       } else if (typeof aReq.body.about !== 'undefined') {
         // POST
         aScript.about = aReq.body.about;
-        aScript._about = (aScript.about ? aScript.about.substr(0, 512) : null);
-        scriptGroups = (aReq.body.groups || '');
-        scriptGroups = scriptGroups.split(/,/);
-        addScriptToGroups(aScript, scriptGroups, function () {
-          aRes.redirect(script.scriptPageUri);
+
+        remark().use(stripHTML).use(stripMD).process(aScript.about, function(aErr, aFile) {
+          if (aErr || !aFile) {
+            aScript._about = (aScript.about ? aScript.about.substr(0, 512) : '');
+          } else {
+            aScript._about = (
+              aFile.contents
+                ? aFile.contents.replace(/(\r\n|\n|\r)+/gm, ' ').substr(0, 512)
+                : ''
+            );
+          }
+
+          scriptGroups = (aReq.body.groups || '');
+          scriptGroups = scriptGroups.split(/,/);
+          addScriptToGroups(aScript, scriptGroups, function () {
+            aRes.redirect(script.scriptPageUri);
+          });
         });
+
       } else {
         // GET
 
