@@ -70,6 +70,8 @@ Repository | Reference | Recent Version
 [passport-yahoo][passport-yahooGHUrl] <br />&#x22D4; [`OpenID2`][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [rate-limit-mongo][rate-limit-mongoGHUrl] | [Documentation][rate-limit-mongoDOCUrl] | [![NPM version][rate-limit-mongoNPMVersionImage]][rate-limit-mongoNPMUrl]
+[remark][remarkGHUrl] | [Documentation][remarkDOCUrl] | [![NPM version][remarkNPMVersionImage]][remarkNPMUrl]
+[remark-strip-html][remark-strip-htmlGHUrl] | [Documentation][remark-strip-htmlDOCUrl] | [![NPM version][remark-strip-htmlNPMVersionImage]][remark-strip-htmlNPMUrl]
 [request][requestGHUrl] | [Documentation][requestDOCUrl] | [![NPM version][requestNPMVersionImage]][requestNPMUrl]
 [rfc2047][rfc2047GHUrl] | [Documentation][rfc2047DOCUrl] | [![NPM version][rfc2047NPMVersionImage]][rfc2047NPMUrl]
 [S3rver][s3rverGHUrl] | [Documentation][s3rverDOCUrl] | [![NPM version][s3rverNPMVersionImage]][s3rverNPMUrl]
@@ -78,6 +80,7 @@ Repository | Reference | Recent Version
 [select2-bootstrap-css][select2-bootstrap-cssGHUrl] | [Documentation][select2-bootstrap-cssDOCUrl] | [![NPM version][select2-bootstrap-cssNPMVersionImage]][select2-bootstrap-cssNPMUrl]
 [serve-favicon][serve-faviconGHUrl] | [Documentation][serve-faviconDOCUrl] | [![NPM version][serve-faviconNPMVersionImage]][serve-faviconNPMUrl]
 [spdx-license-ids][spdx-license-idsGHUrl] | [Documentation][spdx-license-idsDOCUrl] | [![NPM version][spdx-license-idsNPMVersionImage]][spdx-license-idsNPMUrl]
+[strip-markdown][strip-markdownGHUrl] | [Documentation][strip-markdownDOCUrl] | [![NPM version][strip-markdownNPMVersionImage]][strip-markdownNPMUrl]
 [terser][terserGHUrl] | [Documentation][terserDOCUrl] | [![NPM version][terserNPMVersionImage]][terserNPMUrl]
 [toobusy-js][toobusy-jsGHUrl] <br />&#x22D4; [`harmony`][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
@@ -389,6 +392,16 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [rate-limit-mongoNPMUrl]: https://www.npmjs.com/package/rate-limit-mongo
 [rate-limit-mongoNPMVersionImage]: https://img.shields.io/npm/v/rate-limit-mongo.svg?style=flat
 
+[remarkGHUrl]: https://github.com/remarkjs/remark
+[remarkDOCUrl]: https://github.com/remarkjs/remark/blob/master/readme.md
+[remarkNPMUrl]: https://www.npmjs.com/package/remark
+[remarkNPMVersionImage]: https://img.shields.io/npm/v/remark.svg?style=flat
+
+[remark-strip-htmlGHUrl]: https://github.com/craftzdog/remark-strip-html
+[remark-strip-htmlDOCUrl]: https://github.com/craftzdog/remark-strip-html/blob/master/readme.md
+[remark-strip-htmlNPMUrl]: https://www.npmjs.com/package/remark-strip-html
+[remark-strip-htmlNPMVersionImage]: https://img.shields.io/npm/v/remark-strip-html.svg?style=flat
+
 [requestGHUrl]: https://github.com/request/request
 [requestDOCUrl]: https://github.com/request/request/blob/master/README.md
 [requestNPMUrl]: https://www.npmjs.com/package/request
@@ -429,6 +442,11 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [spdx-license-idsDOCUrl]: https://github.com/shinnn/spdx-license-ids/blob/master/README.md
 [spdx-license-idsNPMUrl]: https://www.npmjs.com/package/spdx-license-ids
 [spdx-license-idsNPMVersionImage]: https://img.shields.io/npm/v/spdx-license-ids.svg?style=flat
+
+[strip-markdownGHUrl]: https://github.com/remarkjs/strip-markdown
+[strip-markdownDOCUrl]: https://github.com/remarkjs/strip-markdown/blob/master/readme.md
+[strip-markdownNPMUrl]: https://www.npmjs.com/package/strip-markdown
+[strip-markdownNPMVersionImage]: https://img.shields.io/npm/v/strip-markdown.svg?style=flat
 
 [terserGHUrl]: https://github.com/fabiosantoscode/terser
 [terserDOCUrl]: https://github.com/terser-js/terser/blob/master/README.md

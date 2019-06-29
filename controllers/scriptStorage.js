@@ -1796,7 +1796,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           // New script
           aScript = new Script({
             name: thisName,
-            _description: (thisDescription ? thisDescription.substr(0, 512) : null),
+            _description: (thisDescription ? thisDescription.substr(0, 512) : ''),
             author: aUser.name,
             installs: 0,
             rating: 0,
@@ -1833,7 +1833,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             }), null);
             return;
           }
-          aScript._description = (thisDescription ? thisDescription.substr(0, 512) : null);
+          aScript._description = (thisDescription ? thisDescription.substr(0, 512) : '');
           aScript.meta = aMeta;
           aScript.uses = libraries;
 
