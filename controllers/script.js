@@ -46,6 +46,7 @@ var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 
 //--- Configuration inclusions
 var removeReasons = require('../views/includes/scriptModals.json').removeReasons;
+var settings = require('../models/settings.json');
 
 //---
 
@@ -475,11 +476,16 @@ exports.edit = function (aReq, aRes, aNext) {
 
         remark().use(stripHTML).use(stripMD).process(aScript.about, function(aErr, aFile) {
           if (aErr || !aFile) {
-            aScript._about = (aScript.about ? aScript.about.substr(0, 512) : '');
+            aScript._about = (
+              aScript.about
+                ? aScript.about.substr(0, settings.scriptSearchQueryStoreMaxAbout).trim()
+                : ''
+            );
           } else {
             aScript._about = (
               aFile.contents
-                ? aFile.contents.replace(/(\r\n|\n|\r)+/gm, ' ').substr(0, 512)
+                ? aFile.contents.replace(/(\r\n|\n|\r)+/gm, ' ')
+                  .substr(0, settings.scriptSearchQueryStoreMaxAbout).trim()
                 : ''
             );
           }

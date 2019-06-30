@@ -112,10 +112,18 @@ var parseModelListSearchQuery = function (aModelListQuery, aQuery, aSearchOption
 };
 
 var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
-  parseModelListSearchQuery(aScriptListQuery, aQuery, {
-    partialWordMatchFields: ['name', '_description', 'author', '_about' ],
-    fullWordMatchFields: ['meta.UserScript.include.value', 'meta.UserScript.match.value']
-  });
+  if (process.env.LIMIT_SEARCH_QUERY === 'true'
+    || process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true') {
+    parseModelListSearchQuery(aScriptListQuery, aQuery, {
+      partialWordMatchFields: ['name', '_description', 'author' ],
+      fullWordMatchFields: ['meta.UserScript.include.value', 'meta.UserScript.match.value']
+    });
+  } else {
+    parseModelListSearchQuery(aScriptListQuery, aQuery, {
+      partialWordMatchFields: ['name', '_description', 'author', '_about' ],
+      fullWordMatchFields: ['meta.UserScript.include.value', 'meta.UserScript.match.value']
+    });
+  }
 };
 exports.parseScriptSearchQuery = parseScriptSearchQuery;
 

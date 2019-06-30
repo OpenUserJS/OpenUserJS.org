@@ -8,5 +8,10 @@
   "timerSanity": 7,
   "timerSanityExpiry": 11,
   "maximum": 12
- }
+ },
+
+ "NOTE": "Requires DB migration for changing below settings",
+
+ "scriptSearchQueryStoreMaxDescription": 512,
+ "scriptSearchQueryStoreMaxAbout": 256
 }
