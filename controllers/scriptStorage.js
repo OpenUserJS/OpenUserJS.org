@@ -59,6 +59,7 @@ var modelParser = require('../libs/modelParser');
 var userRoles = require('../models/userRoles.json');
 var blockSPDX = require('../libs/blockSPDX');
 var exceptSPDX = require('../libs/exceptSPDX');
+var settings = require('../models/settings.json');
 
 // Add greasemonkey support for Media Type
 if (!mediaDB['text/x-userscript-meta']) {
@@ -1796,7 +1797,11 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           // New script
           aScript = new Script({
             name: thisName,
-            _description: (thisDescription ? thisDescription.substr(0, 512) : ''),
+            _description: (
+              thisDescription
+                ? thisDescription.substr(0, settings.scriptSearchQueryStoreMaxDescription).trim()
+                : ''
+            ),
             author: aUser.name,
             installs: 0,
             rating: 0,
@@ -1833,7 +1838,11 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             }), null);
             return;
           }
-          aScript._description = (thisDescription ? thisDescription.substr(0, 512) : '');
+          aScript._description = (
+            thisDescription
+              ? thisDescription.substr(0, settings.scriptSearchQueryStoreMaxDescription).trim()
+              : ''
+          );
           aScript.meta = aMeta;
           aScript.uses = libraries;
 
