@@ -15,6 +15,7 @@
     <tr class="tr-link">
       <td>
         {{#showSourceNotices}}<span class="pull-right"><i class="fa fa-fw fa-exclamation-triangle" title="Source Code notices"></i></span>{{/showSourceNotices}}
+        {{#showSourceNoticesCritical}}<span class="pull-right"><i class="fa fa-fw fa-exclamation-circle" title="Critical Source Code notices"></i></span>{{/showSourceNoticesCritical}}
         {{#_issueCount}}<span class="pull-right"><a href="{{{scriptIssuesPageUri}}}/open" title="Open issue discussions"><i class="fa fa-fw fa-commenting"></i>{{_issueCount}}</a></span>{{/_issueCount}}
         <span class="script-icon hidden-xs" {{#icon16Url}}data-icon-src="{{{icon16Url}}}" data-icon-size="16"{{/icon16Url}}>
           {{#isLib}}<i class="fa fa-fw fa-file-excel-o"></i>{{/isLib}}{{^isLib}}<i class="fa fa-fw fa-file-code-o"></i>{{/isLib}}

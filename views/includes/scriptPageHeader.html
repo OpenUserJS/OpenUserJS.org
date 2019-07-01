@@ -2,17 +2,17 @@
   {{#isScriptPage}}
     {{^script.isLib}}
     <div class="btn-group pull-right">
-      <a href="{{{script.scriptInstallPageUrl}}}" class="btn btn-{{^script.showSourceNotices}}info{{/script.showSourceNotices}}{{#script.showSourceNotices}}warning{{/script.showSourceNotices}}">
+      <a href="{{{script.scriptInstallPageUrl}}}" class="btn btn-{{^script.showSourceNoticesCritical}}info{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}">
         <i class="fa fa-download"></i> Install
       </a>
-      <button type="button" class="btn btn-{{^script.showSourceNotices}}info{{/script.showSourceNotices}}{{#script.showSourceNotices}}warning{{/script.showSourceNotices}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button type="button" class="btn btn-{{^script.showSourceNotices}}info{{/script.showSourceNotices}}{{#script.showSourceNotices}}{{^script.showSourceNoticesCritical}}warning{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}{{/script.showSourceNotices}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right">
         <li>
           <div class="btn-group btn-group-justified">
-            <a href="{{{script.scriptInstallPageXUrl}}}.min.user.js" class="btn btn-{{#script.showSourceNotices}}warning{{/script.showSourceNotices}}{{^script.showSourceNotices}}info{{/script.showSourceNotices}}" title="EXPERIMENTAL INSTALLATION FORKING"><i class="fa fa-fw fa-download"></i> Install {{#script.hasAlternateDownloadURL}}once {{/script.hasAlternateDownloadURL}} with minification</a>
+            <a href="{{{script.scriptInstallPageXUrl}}}.min.user.js" class="btn btn-{{#script.showSourceNotices}}{{^script.showSourceNoticesCritical}}warning{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}{{/script.showSourceNotices}}{{^script.showSourceNotices}}info{{/script.showSourceNotices}}" title="EXPERIMENTAL INSTALLATION FORKING"><i class="fa fa-fw fa-download"></i> Install {{#script.hasAlternateDownloadURL}}once {{/script.hasAlternateDownloadURL}} with minification</a>
           </div>
           {{#script.showSourceNotices}}
           {{> includes/scriptPageHeaderSourceNotices.html }}
@@ -26,17 +26,17 @@
   {{/isScriptPage}}
   {{#isScriptViewSourcePage}}
     <div class="btn-group pull-right">
-      <a href="{{{script.scriptRawPageUrl}}}" class="btn btn-{{^script.showSourceNotices}}info{{/script.showSourceNotices}}{{#script.showSourceNotices}}warning{{/script.showSourceNotices}}">
+      <a href="{{{script.scriptRawPageUrl}}}" class="btn btn-{{^script.showSourceNoticesCritical}}info{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}">
         <i class="fa fa-file-{{#script.isLib}}excel{{/script.isLib}}{{^script.isLib}}code{{/script.isLib}}-o"></i> Raw Source
       </a>
-      <button type="button" class="btn btn-{{^script.showSourceNotices}}info{{/script.showSourceNotices}}{{#script.showSourceNotices}}warning{{/script.showSourceNotices}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button type="button" class="btn btn-{{^script.showSourceNotices}}info{{/script.showSourceNotices}}{{#script.showSourceNotices}}{{^script.showSourceNoticesCritical}}warning{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}{{/script.showSourceNotices}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right">
         <li>
           <div class="btn-group btn-group-justified">
-            <a href="{{{script.scriptRawPageXUrl}}}" class="btn btn-{{#script.showSourceNotices}}warning{{/script.showSourceNotices}}{{^script.showSourceNotices}}info{{/script.showSourceNotices}}" title="EXPERIMENTAL"><i class="fa fa-file-{{#script.isLib}}excel{{/script.isLib}}{{^script.isLib}}code{{/script.isLib}}-o"></i> Minified Source</a>
+            <a href="{{{script.scriptRawPageXUrl}}}" class="btn btn-{{#script.showSourceNotices}}{{^script.showSourceNoticesCritical}}warning{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}{{/script.showSourceNotices}}{{^script.showSourceNotices}}info{{/script.showSourceNotices}}" title="EXPERIMENTAL"><i class="fa fa-file-{{#script.isLib}}excel{{/script.isLib}}{{^script.isLib}}code{{/script.isLib}}-o"></i> Minified Source</a>
           </div>
           {{#script.showSourceNotices}}
           {{> includes/scriptPageHeaderSourceNotices.html }}

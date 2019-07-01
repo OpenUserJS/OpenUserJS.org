@@ -1,22 +1,27 @@
 <div class="alert alert-warning" role="alert">
   {{#script.hasInvalidUpdateURL}}
     <p>
-      <i class="fa fa-fw fa-exclamation-triangle"></i> Invalid update target
+      <i class="fa fa-fw fa-exclamation-circle"></i> Invalid update target.
     </p>
   {{/script.hasInvalidUpdateURL}}
+  {{#script.hasAlternateUpdateURL}}
+    <p{{^isScriptViewSourcePage}} title="{{script.meta.UserScript.updateURL.0.value}}"{{/isScriptViewSourcePage}}>
+      <i class="fa fa-fw fa-exclamation-triangle"></i> Alternate update target.
+    </p>
+  {{/script.hasAlternateUpdateURL}}
   {{#script.hasInvalidDownloadURL}}
     <p>
-      <i class="fa fa-fw fa-exclamation-triangle"></i> Invalid download target
+      <i class="fa fa-fw fa-exclamation-circle"></i> Invalid download target.
     </p>
   {{/script.hasInvalidDownloadURL}}
-  {{#script.hasUnstableMinify}}
-    <p{{^isScriptViewSourcePage}} title="{{script.meta.OpenUserJS.unstableMinify.0.value}}"{{/isScriptViewSourcePage}}>
-      <i class="fa fa-fw fa-exclamation-triangle"></i> The script author suggests that minification of this script may be unstable.
-    <p>
-  {{/script.hasUnstableMinify}}
   {{#script.hasAlternateDownloadURL}}
     <p{{^isScriptViewSourcePage}} title="{{script.meta.UserScript.downloadURL.0.value}}"{{/isScriptViewSourcePage}}>
       <i class="fa fa-fw fa-exclamation-triangle"></i> Alternate download target.
     </p>
   {{/script.hasAlternateDownloadURL}}
+  {{#script.hasUnstableMinify}}
+    <p{{^isScriptViewSourcePage}} title="{{script.meta.OpenUserJS.unstableMinify.0.value}}"{{/isScriptViewSourcePage}}>
+      <i class="fa fa-fw fa-exclamation-triangle"></i> The script author suggests that minification of this script may be unstable.
+    <p>
+  {{/script.hasUnstableMinify}}
 </div>
