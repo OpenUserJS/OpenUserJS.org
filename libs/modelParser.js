@@ -221,11 +221,21 @@ var parseScript = function (aScript) {
   var supportURL = null;
   var contributionURL = null;
 
+  var updateURL = null;
+  var updateUtf = null;
   var downloadURL = null;
   var downloadUtf = null;
   var rAnyLocalScriptUrl = new RegExp(
     '^' + patternHasSameOrigin +
       '/(?:install|src/scripts)/(.+?)/(.+?)((?:\.min)?(?:\.user)?\.js)$'
+  );
+  var rAnyLocalMetaUrl = new RegExp(
+    '^' + patternHasSameOrigin +
+      '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.meta\.js$'
+  );
+
+  var rSameOrigin =  new RegExp(
+    '^' + patternHasSameOrigin
   );
 
   // Temporaries
@@ -317,7 +327,7 @@ var parseScript = function (aScript) {
   // OpenUserJS metadata block checks
   if (findMeta(script.meta, 'OpenUserJS.unstableMinify.0.value')) {
     script.hasUnstableMinify = true;
-    script.showMinficationNotices = true;
+    script.showSourceNotices = true;
   }
 
   //
@@ -431,6 +441,54 @@ var parseScript = function (aScript) {
     script.isUpdated = true;
   }
 
+  // Update Url
+  if (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true') {
+    // `@updateURL` must be exact here for OUJS hosted checks
+    //   e.g. no `search`, no `hash`
+
+    updateURL = findMeta(script.meta, 'UserScript.updateURL.0.value');
+    if (updateURL) {
+      // Check for decoding error
+      try {
+        updateUtf = decodeURIComponent(updateURL);
+
+      } catch (aE) {
+        script.hasInvalidUpdateURL = true;
+        script.showSourceNotices = true;
+
+      } finally {
+        if (!script.hasInvalidUpdateURL)  {
+
+          // Validate `author` and `name` (installNameBase) to this scripts meta only
+          matches = updateUtf.match(rAnyLocalMetaUrl);
+          if (matches) {
+            if (script.authorSlug.toLowerCase() + '/' + script.nameSlug === matches[1].toLowerCase() + '/' + matches[2])
+            {
+              // Same script
+            } else {
+              script.hasInvalidUpdateURL = true;
+              script.showSourceNotices = true;
+            }
+          } else {
+            // Allow offsite checks
+            updateURL = new URL(updateURL);
+            if (rSameOrigin.test(updateURL.origin)) {
+              script.hasInvalidUpdateURL = true;
+              script.showSourceNotices = true;
+
+            }
+          }
+        }
+      }
+    } else {
+      if (!script.isLib) {
+        // Don't serve the script anywhere in this mode and if absent
+        script.hasInvalidUpdateURL = true;
+        script.showSourceNotices = true;
+      }
+    }
+  }
+
   // Download Url
   downloadURL = findMeta(script.meta, 'UserScript.downloadURL.0.value');
   if (downloadURL) {
@@ -439,7 +497,7 @@ var parseScript = function (aScript) {
 
     } catch (aE) {
       script.hasInvalidDownloadURL = true;
-      script.showMinficationNotices = true;
+      script.showSourceNotices = true;
 
     } finally {
       if (!script.hasInvalidDownloadURL)  {
@@ -451,15 +509,15 @@ var parseScript = function (aScript) {
               // Same script
             } else {
               script.hasAlternateDownloadURL = true;
-              script.showMinficationNotices = true;
+              script.showSourceNotices = true;
             }
           } else {
             script.hasAlternateDownloadURL = true;
-            script.showMinficationNotices = true;
+            script.showSourceNotices = true;
           }
         } else {
           script.hasAlternateDownloadURL = true;
-          script.showMinficationNotices = true;
+          script.showSourceNotices = true;
         }
       }
     }

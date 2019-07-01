@@ -1,7 +1,12 @@
 <div class="alert alert-warning" role="alert">
+  {{#script.hasInvalidUpdateURL}}
+    <p>
+      <i class="fa fa-fw fa-exclamation-triangle"></i> Invalid update target
+    </p>
+  {{/script.hasInvalidUpdateURL}}
   {{#script.hasInvalidDownloadURL}}
     <p>
-      <i class="fa fa-fw fa-exclamation"></i> Invalid download target
+      <i class="fa fa-fw fa-exclamation-triangle"></i> Invalid download target
     </p>
   {{/script.hasInvalidDownloadURL}}
   {{#script.hasUnstableMinify}}
