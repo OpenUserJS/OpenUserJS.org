@@ -223,6 +223,8 @@ var parseScript = function (aScript) {
 
   var updateURL = null;
   var updateUtf = null;
+  var updateURLForceCheck = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
+
   var downloadURL = null;
   var downloadUtf = null;
   var rAnyLocalScriptUrl = new RegExp(
@@ -442,50 +444,73 @@ var parseScript = function (aScript) {
   }
 
   // Update Url
-  if (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true') {
-    // `@updateURL` must be exact here for OUJS hosted checks
-    //   e.g. no `search`, no `hash`
+  // `@updateURL` must be exact here for OUJS hosted checks with updateURLForceCheck
+  //   e.g. no `search`, no `hash`
 
-    updateURL = findMeta(script.meta, 'UserScript.updateURL.0.value');
-    if (updateURL) {
-      // Check for decoding error
-      try {
-        updateUtf = decodeURIComponent(updateURL);
+  updateURL = findMeta(script.meta, 'UserScript.updateURL.0.value');
+  if (updateURL) {
+    // Check for decoding error
+    try {
+      updateUtf = decodeURIComponent(updateURL);
 
-      } catch (aE) {
-        script.hasInvalidUpdateURL = true;
-        script.showSourceNotices = true;
+    } catch (aE) {
+      script.hasAlternateUpdateURL = true;
+      script.hasInvalidUpdateURL = true;
 
-      } finally {
-        if (!script.hasInvalidUpdateURL)  {
-
-          // Validate `author` and `name` (installNameBase) to this scripts meta only
-          matches = updateUtf.match(rAnyLocalMetaUrl);
-          if (matches) {
-            if (script.authorSlug.toLowerCase() + '/' + script.nameSlug === matches[1].toLowerCase() + '/' + matches[2])
-            {
-              // Same script
-            } else {
-              script.hasInvalidUpdateURL = true;
-              script.showSourceNotices = true;
-            }
+      script.showSourceNotices = true;
+      script.showSourceNoticesCritical = true;
+    } finally {
+      if (!script.hasInvalidUpdateURL)  {
+        // Validate `author` and `name` (installNameBase) to this scripts meta only
+        matches = updateUtf.match(rAnyLocalMetaUrl);
+        if (matches) {
+          if (script.authorSlug.toLowerCase() + '/' + script.nameSlug ===
+            matches[1].toLowerCase() + '/' + matches[2])
+          {
+            // Same meta
           } else {
-            // Allow offsite checks
-            updateURL = new URL(updateURL);
-            if (rSameOrigin.test(updateURL.origin)) {
-              script.hasInvalidUpdateURL = true;
-              script.showSourceNotices = true;
+            script.hasAlternateUpdateURL = true;
+            script.hasInvalidUpdateURL = (
+              updateURLForceCheck
+                ? updateURLForceCheck
+                : script.hasInvalidUpdateURL
+            );
 
-            }
+            script.showSourceNotices = true;
+            script.showSourceNoticesCritical = updateURLForceCheck;
+          }
+        } else {
+          // Allow offsite checks
+          updateURL = new URL(updateURL);
+          if (rSameOrigin.test(updateURL.origin)) {
+            script.hasAlternateUpdateURL = true;
+            script.hasInvalidUpdateURL = (
+              updateURLForceCheck
+                ? updateURLForceCheck
+                : script.hasInvalidUpdateURL
+            );
+
+            script.showSourceNotices = true;
+            script.showSourceNoticesCritical = true;
+          } else {
+            script.hasAlternateUpdateURL = true;
+
+            script.showSourceNotices = true;
           }
         }
       }
-    } else {
-      if (!script.isLib) {
-        // Don't serve the script anywhere in this mode and if absent
-        script.hasInvalidUpdateURL = true;
-        script.showSourceNotices = true;
-      }
+    }
+  } else {
+    if (!script.isLib) {
+      // If updateURLForceCheck is true don't serve the script anywhere in this mode and if absent
+      script.hasInvalidUpdateURL = (
+        updateURLForceCheck
+          ? updateURLForceCheck
+          : script.hasInvalidUpdateURL
+      );
+
+      script.showSourceNotices = updateURLForceCheck;
+      script.showSourceNoticesCritical = updateURLForceCheck;
     }
   }
 
