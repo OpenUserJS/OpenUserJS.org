@@ -92,6 +92,15 @@ if (!mediaDB['image/jxr']) {
   });
 }
 
+// Allow some Chromium based browsers to test
+if (!mediaDB['application/signed-exchange']) {
+  mediaDB = _.extend(mediaDB, {
+    'application/signed-exchange' : {
+      source: 'google',
+      extensions: []
+    }
+  });
+}
 
 if (!mediaDB['*/*']) {
   mediaDB = _.extend(mediaDB, {'*/*' : { source: 'iana'}});
@@ -550,7 +559,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     let matches = null;
     let rAnyLocalMetaUrl = new RegExp(
       '^' + patternHasSameOrigin +
-        '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.meta\.js$'
+        '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.(?:meta|user)\.js$'
     );
     let hasAlternateLocalUpdateURL = false;
 

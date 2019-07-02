@@ -233,7 +233,7 @@ var parseScript = function (aScript) {
   );
   var rAnyLocalMetaUrl = new RegExp(
     '^' + patternHasSameOrigin +
-      '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.meta\.js$'
+      '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.(?:meta|user)\.js$'
   );
 
   var rSameOrigin =  new RegExp(
