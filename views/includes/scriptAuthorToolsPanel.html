@@ -58,11 +58,11 @@
 
     <div class="input-group">
       <span class="input-group-btn">
-        <button class="btn btn-info" id="license-raw" data-clipboard-text="// @license MIT" title="Copy key and primary raw SPDX short identifier to clipboard"><i class="octicon octicon-clippy"></i> // @license</button>
+        <button class="btn btn-info" id="license-raw" data-clipboard-text="// @license MIT" title="Copy key and primary raw SPDX short id to clipboard"><i class="octicon octicon-clippy"></i> // @license</button>
       </span>
       <input id="spdx-short-id" type="text" class="form-control" aria-label="..." value="MIT" readonly="readonly">
       <span class="input-group-btn dropup">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="/images/license/osi16.png"> <span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="OSI approved SPDX short id list"><img src="/images/license/osi16.png"> <span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
         <ul class="dropdown-menu scrollable-menu dropdown-menu-right" id="osi-spdx">
           {{#script.scriptAcceptableOSILicense}}<li><a href="#">{{shortIdSPDX}}</a></li>{{/script.scriptAcceptableOSILicense}}
         </ul>
