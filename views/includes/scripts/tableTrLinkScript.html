@@ -4,6 +4,20 @@
       var container = aEv.target;
       var anchor = null;
       var url = null;
+      var txt = null;
+
+      // If any text actively selected...
+      if (window.getSelection) {
+        txt = window.getSelection().toString();
+      } else if (document.getSelection) {
+         txt = document.getSelection().toString();
+      } else if (document.selection) {
+         txt = document.selection.createRange().text
+      }
+
+      if (txt) {
+       return; // ... then ignore
+      }
 
       switch (container.nodeName) {
         case 'A':
