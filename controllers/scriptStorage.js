@@ -1761,7 +1761,18 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       requires = findMeta(aMeta, 'UserScript.require.value');
       if (requires) {
         requires.forEach(function (aRequire) {
-          match = rLibrary.exec(aRequire);
+          var require = aRequire;
+          var url = null;
+
+          try {
+            url = new URL(aRequire);
+            require = url.origin +  url.pathname;
+          } catch (aE) {
+            // NOTE: Currently not always a real error in every .user.js engine so...
+            /* falls through */
+          }
+
+          match = rLibrary.exec(require);
           if (match) {
             if (!match[1]) {
               match[1] = aUser.name + '/';
