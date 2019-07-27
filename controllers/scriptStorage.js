@@ -1721,8 +1721,75 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       }
 
       aInnerCallback(null);
-    }
+    },
+    function (aInnerCallback) {
+      // OpenUserJS `@author` validations
+      var author = null;
 
+      author = findMeta(aMeta, 'OpenUserJS.author.0.value');
+
+      if (author) {
+        User.findOne({
+          name: author
+        }, function (aErr, aUser) {
+          if (aErr) {
+            aInnerCallback(new statusError({
+              message: 'DB error finding `@author` in OpenUserJS block',
+              code: 500
+            }), null);
+            return;
+          }
+
+          if (!aUser) {
+            aInnerCallback(new statusError({
+              message: '`@author ' + author +
+                '` in OpenUserJS block does not exist or is incorrectly cased.',
+              code: 400
+            }), null);
+            return;
+          }
+
+          aInnerCallback(null);
+        });
+      } else {
+        aInnerCallback(null);
+      }
+    },
+    function (aOuterCallback) {
+      // OpenUserJS block `@collaborator` validations
+      var collaborators = null;
+
+      collaborators = findMeta(aMeta, 'OpenUserJS.collaborator.value');
+      if (collaborators) {
+        async.eachSeries(collaborators, function (aCollaborator, aInnerCallback) {
+          User.findOne({
+            name: aCollaborator
+          }, function (aErr, aUser) {
+            if (aErr) {
+              aOuterCallback(new statusError({
+                message: 'DB error finding `@collaborator` ' +
+                  aCollaborator + ' in OpenUserJS block',
+                code: 500
+              }), null);
+              return;
+            }
+
+            if (!aUser) {
+              aOuterCallback(new statusError({
+                message: '`@collaborator ' + aCollaborator +
+                  '` in OpenUserJS block does not exist or is incorrectly cased',
+                code: 400
+              }), null);
+              return;
+            }
+
+            aInnerCallback();
+          });
+        }, aOuterCallback);
+      } else {
+        aOuterCallback(null);
+      }
+    }
 
   ], function (aErr, aResults) {
     var author = null;
