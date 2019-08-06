@@ -5,6 +5,8 @@
   (function () {
     'use strict';
 
+    {{> includes/scripts/polyfillObjectAssign.js }}
+
     $(document).ready(function () {
       var editor = null;
       var wrap = $('#wrap');
@@ -277,6 +279,89 @@
         beautify.removeAttr('disabled');
 
         $('#submit_code').removeAttr('disabled');
+
+        editor.getSession().on('changeMode', function (aEv, aSession) {
+          var globals = {};
+          if (editor.getSession().getMode().$id === "ace/mode/javascript") {
+            if (!!editor.getSession().$worker) {
+
+              Object.assign(globals,
+                // GM3- See https://sourceforge.net/p/greasemonkey/wiki/Greasemonkey_Manual:API/
+                {
+                  'GM_addStyle': true,
+                  'GM_deleteValue': true,
+                  'GM_getResourceText': true,
+                  'GM_getResourceURL': true,
+                  'GM_getValue': true,
+                  'GM_listValues': true,
+                  'GM_log': true,
+                  'GM_openInTab': true,
+                  'GM_setClipboard': true,
+                  'GM_setValue': true,
+                  'GM_registerMenuCommand': true,
+                  'GM_xmlhttpRequest': true,
+                  'unsafeWindow': true
+                },
+                // GM4 See https://wiki.greasespot.net/Greasemonkey_Manual:API
+                {
+                  'GM': true,
+                  'unsafeWindow': true
+                },
+                // Tampermonkey See https://www.tampermonkey.net/documentation.php
+                {
+                  'GM_addStyle': true,
+                  'GM_addValueChangeListener': true,
+                  'GM_deleteValue': true,
+                  'GM_download': true,
+                  'GM_getResourceText': true,
+                  'GM_getResourceURL': true,
+                  'GM_getTab': true,
+                  'GM_getTabs': true,
+                  'GM_getValue': true,
+                  'GM_info': true,
+                  'GM_listValues': true,
+                  'GM_log': true,
+                  'GM_notification': true,
+                  'GM_openInTab': true,
+                  'GM_registerMenuCommand': true,
+                  'GM_removeValueChangeListener': true,
+                  'GM_saveTab': true,
+                  'GM_setClipboard': true,
+                  'GM_setValue': true,
+                  'GM_unregisterMenuCommand': true,
+                  'GM_xmlhttpRequest': true,
+                  'unsafeWindow': true
+                },
+                // Violentmonkey See https://violentmonkey.github.io/api/
+                {
+                  'GM_addStyle': true,
+                  'GM_deleteValue': true,
+                  'GM_download': true,
+                  'GM_getResourceText': true,
+                  'GM_getResourceURL': true,
+                  'GM_getValue': true,
+                  'GM_info': true,
+                  'GM_listValues': true,
+                  'GM_notification': true,
+                  'GM_openInTab': true,
+                  'GM_registerMenuCommand': true,
+                  'GM_setClipboard': true,
+                  'GM_setValue': true,
+                  'GM_unregisterMenuCommand': true,
+                  'GM_xmlhttpRequest': true,
+                  'unsafeWindow': true
+                }
+              );
+
+              editor.getSession().$worker.send('setOptions', [{
+                // See https://jshint.com/docs/options/
+                'newcap': false,
+                'sub': true,
+                'globals': globals
+              }]);
+            }
+          }
+        });
 
         editor.setTheme("ace/theme/dawn");
         editor.getSession().setMode("ace/mode/javascript");
