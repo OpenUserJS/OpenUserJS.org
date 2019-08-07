@@ -355,10 +355,11 @@
 
               editor.getSession().$worker.send('setOptions', [{
                 // See https://jshint.com/docs/options/
-                'newcap': false,
-                'sub': true,
+                'maxerr': 1000,
+                'globals': globals,
                 'moz': true,
-                'globals': globals
+                'newcap': false,
+                'sub': true
               }]);
             }
           }
