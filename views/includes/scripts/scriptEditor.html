@@ -359,7 +359,8 @@
                 'globals': globals,
                 '-I003': true, // "ES5 option is now set per default" ... NOTE: KEEP ALWAYS
                 'moz': true,   // ES5.1 (JavaScript 1.7+)
-                'strict': 'global', // Useful for finding missing `globals` for Authors to add such as jQuery
+                'strict': 'implied', // Useful for finding missing `globals` for Authors to add such as jQuery
+                '-W034': true, // "Unnecessary directive \"{a}\".", e.g. `'use strict'`
                 'devel': true,
                 'browser': true,
                 'laxcomma': true, // NOTE: deprecated but in use with Ace current
