@@ -357,13 +357,18 @@
                 // See https://jshint.com/docs/options/
                 'maxerr': 1000,
                 'globals': globals,
-                'moz': true,
-                'newcap': false,
+                '-I003': true, // "ES5 option is now set per default" ... NOTE: KEEP ALWAYS
+                'moz': true,   // ES5.1 (JavaScript 1.7+)
+                'strict': 'implied', // Useful for finding missing `globals` for Authors to add such as jQuery
+                'devel': true,
+                'browser': true,
+                'laxcomma': true, // NOTE: deprecated but in use with Ace current
+                'laxbreak': true, // NOTE: deprecated but in use with Ace current
+                'multistr': true, // NOTE: deprecated but in use with Ace current
+                'newcap': false,  // NOTE: deprecated but in use with Ace current
+                'sub': true,      // NOTE: deprecated but in use with Ace current
                 'eqnull': true,
-                'sub': true,
-                '-I003': true, // "ES5 option is now set per default"
-                '-W014': true, // "Bad line breaking before '{a}'."
-                '-W043': true  // "Bad escaping of EOL. Use option multistr if needed.",
+                '-W014': true // "Bad line breaking before '{a}'."
               }]);
             }
           }
