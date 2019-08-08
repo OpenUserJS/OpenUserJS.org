@@ -96,7 +96,8 @@
       }
 
       function beautifyThis(aString) {
-        return js_beautify(aString.replace(/[“”]/g, '"').replace(/\t/g, '  '), {
+        return js_beautify(aString.replace(/\t/g, '  '), {
+
           indent_size: 2,
           indent_char: ' ',
           max_preserve_newlines: 2,
