@@ -154,6 +154,108 @@ index a8a6dcc..fdf7833 100644
 
 You should, at the very least, use a pair of markdown back ticks, e.g. <code>`</code>, around the Code change to ensure proper visibility especially if there is HTML present which normally gets sanitized and possibly rendered. Named Code fences allow for greater visual improvement and understanding.
 
+### Q: Why does my script source have so many warning triangle notices?
+
+A: This is not quickly answered but here are some tips for a more effective presentation of your script and perhaps a larger user usage pool, i.e. more installs and less issues encountered.
+
+Currently the editor that is used for writing scripts online is called [Ace][Ace]. It currently has a sub-dependency linter called [JSHint][JSHint]. By default this linter makes some advisory notices typically in the gutter of the Script Source Code page with the the exclamation triangle icon (__&#x26a0;__) next to the clickable line number. If hovered over it usually shows what the notice is. An author does have some control over what is shown depending on the version of this linter in use by the dependency and what [options][JSHintOptions] are chosen.
+
+For an example we will pick the default, stock, jQuery example:
+
+| &nbsp; | &nbsp; |
+| ---: | --- |
+| **1** | &nbsp;`// ==UserScript==`
+| **2** | &nbsp;`// @name          Hello jQuery`
+| **3** | &nbsp;`// @namespace     https://www.example.com/examples`
+| **4** | &nbsp;`// @description   jQuery test script`
+| **5** | &nbsp;`// @include       *`
+| **6** | &nbsp;`// @require       https://code.jquery.com/jquery-latest.js`
+| **7** | &nbsp;`// @grant         none`
+| **8** | &nbsp;`// @license       GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt`
+| **9** | &nbsp;`// ==/UserScript==`
+| **10** | &nbsp;
+| &#x26a0; **11** | &nbsp;`this.$ = this.jQuery = jQuery.noConflict(true);`
+| **12** | &nbsp;
+| &#x26a0; **13** | &nbsp;`$(document).ready(function() {`
+| &#x26a0; **14** | &nbsp;&nbsp;&nbsp;`$("a").click(function() {`
+| **15** | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`alert('Hello world!');`
+| **16** | &nbsp;&nbsp;&nbsp;`});`
+| **17** | &nbsp;`});`
+
+
+
+... usually you will see a warning triangle notice anywhere you use `$` or `jQuery` since they are considered `globals` to the .user.js and not usually directly declared in your script. They are usually defined with the `// @require https://code.jquery.com/jquery-latest.js` line in the UserScript metadata block and referenced in multiple places in your code. You might also be using a sites jQuery only in the DOM which is also in the globals space if you do not have jQuery required by the .user.js engine. This can be detrimental if the site stops using jQuery so it is best to declare at least a matching expected [jQuery][jQuery] version with `@require` and use `this.$ = this.jQuery = jQuery.noConflict(true);`.
+
+In order to minimize the occurence of these, and speed up the page load for you and your users, you may insert near the top of the file, before any code, the following diff lines, tailored to your needs:
+
+``` diff
+@@ -8,10 +8,18 @@
+ // @license       GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt
+ // ==/UserScript==
+
+-this.$ = this.jQuery = jQuery.noConflict(true);
++/* jshint esversion: 5 */
++/* globals $, jQuery */
+
+-$(document).ready(function() {
+-  $("a").click(function() {
+-    alert('Hello world!');
++(function () {
++  'use strict';
++
++  this.$ = this.jQuery = jQuery.noConflict(true);
++
++  $(document).ready(function() {
++    $("a").click(function() {
++      alert('Hello world!');
++    });
+   });
+-});
++
++})();
+```
+
+... ending up looking like this:
+
+
+| &nbsp; | &nbsp; |
+| ---: | --- |
+| **1** | &nbsp;`// ==UserScript==`
+| **2** | &nbsp;`// @name          Hello jQuery`
+| **3** | &nbsp;`// @namespace     https://www.example.com/examples`
+| **4** | &nbsp;`// @description   jQuery test script`
+| **5** | &nbsp;`// @include       *`
+| **6** | &nbsp;`// @require       https://code.jquery.com/jquery-latest.js`
+| **7** | &nbsp;`// @grant         none`
+| **8** | &nbsp;`// @license       GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt`
+| **9** | &nbsp;`// ==/UserScript==`
+| **10** | &nbsp;
+| **11** | &nbsp;`/* jshint esversion: 5 */`
+| **12** | &nbsp;`/* globals $, jQuery */`
+| **13** | &nbsp;
+| **14** | &nbsp;`(function () {`
+| **15** | &nbsp;&nbsp;&nbsp;`'use strict';`
+| **16** | &nbsp;
+| **17** | &nbsp;&nbsp;&nbsp;`this.$ = this.jQuery = jQuery.noConflict(true);`
+| **18** | &nbsp;
+| **19** | &nbsp;&nbsp;&nbsp;`$(document).ready(function() {`
+| **20** | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$("a").click(function() {`
+| **21** | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`alert('Hello world!');`
+| **22** | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`});`
+| **23** | &nbsp;&nbsp;&nbsp;`});`
+| **24** | &nbsp;
+| **25** | &nbsp;`})();`
+
+Not all of notices will go away with this diff change but a large number of this particular identifier *(variable)*, when using a lot of the `$` identifier in a larger script, do silence most of the notices related to the jQuery library framework and the possible strict violation by using an [IIFE][mdnIIFE] with a function level strict mode to protect your source from other DOM manipulation/detection, accidental or otherwise. Some warning notices are informational such as missing semicolons. While this is a highly volatile subject, and quite subjective, pick one and stick with it throughout your script. Some notices, of course, are actual errors. Use your best judgment.
+
+**More tips**
+* The `/* jshint esversion: 5 */` line tells JSHint that your script is primarily using ECMAScript 5 *(JavaScript ES version)*. If you are needing a newer version simply replace the `5` with a `6` *(or [optionally greater][JSHintOptionESVersion] when the Ace sub-dependency is upated next)* for better syntax linting. This is often useful to declare in case ECMAScript has a newer version and the sites default changes but your source doesn't.
+* The `/* globals $, jQuery */` line tells JSHint that `$` and `jQuery` are somewhere outside of your script but are acceptable to use as a global identifier.
+* By default this site currently will automatically choose ECMAScript `5` with `moz`illa extensions *(JavaScript 1.7 a.k.a ECMAScript 5.1)*, includes the known GM_\* and base GM.\* API identifiers, and treats all scripts with the implied use of [`'use strict';`][mdnStrictMode]. There are a few other options silenced that are more coding style than potential problems; may sometimes be deprecated in JSHint; or just general "annoyances" squelched. While JSHint is present in Ace you may choose to toggle those [options][JSHintOptions] as well in your script source and/or add additional `globals`.
+* If you are using Tampermonkeys script editor as well it utilizes [ESLint][ESLint] however the sites editor is currently using [JSHint][JSHint]. Some options are compatible, such as `globals` however others are not, such as `jshint esversion` *(this is why it is prefixed)*. The ESLint project decides for everyone what is a "currently acceptable default" ECMAScript version in your source.
+* Greasemonkeys script editor in version 4.x+ has some built in linting for the UserScript metadata block keys that it supports but isn't exposed at the time of this writing.
+
+
 ### Q: Does OpenUserJS.org have meta?
 
 A: Yes, use the meta routine.
@@ -201,3 +303,11 @@ The `@downloadURL` UserScript metadata block key is not currently required but h
 [wikipediaSCM]: https://www.wikipedia.org/wiki/Version_control
 [gitSCM]: https://git-scm.com/
 [gitSCMdoc]: https://git-scm.com/doc
+[Ace]: https://ace.c9.io/
+[JSHint]: https://jshint.com/
+[JSHintOptions]: https://jshint.com/docs/options/
+[JSHintOptionESVersion]: https://jshint.com/docs/options/#esversion
+[mdnStrictMode]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Strict_mode
+[mdnIIFE]: https://developer.mozilla.org/docs/Glossary/IIFE
+[ESLint]: https://eslint.org/
+[jQuery]: https://code.jquery.com/
