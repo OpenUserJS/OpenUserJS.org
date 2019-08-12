@@ -162,27 +162,7 @@ Currently the editor that is used for writing scripts online is called [Ace][Ace
 
 For an example we will pick the default, stock, jQuery example:
 
-| &nbsp; | &nbsp; |
-| ---: | --- |
-| **1** | &nbsp;`// ==UserScript==`
-| **2** | &nbsp;`// @name          Hello jQuery`
-| **3** | &nbsp;`// @namespace     https://www.example.com/examples`
-| **4** | &nbsp;`// @description   jQuery test script`
-| **5** | &nbsp;`// @include       *`
-| **6** | &nbsp;`// @require       https://code.jquery.com/jquery-latest.js`
-| **7** | &nbsp;`// @grant         none`
-| **8** | &nbsp;`// @license       GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt`
-| **9** | &nbsp;`// ==/UserScript==`
-| **10** | &nbsp;
-| &#x26a0;&nbsp;**11** | &nbsp;`this.$ = this.jQuery = jQuery.noConflict(true);`
-| **12** | &nbsp;
-| &#x26a0;&nbsp;**13** | &nbsp;`$(document).ready(function() {`
-| &#x26a0;&nbsp;**14** | &nbsp;&nbsp;&nbsp;`$("a").click(function() {`
-| **15** | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`alert('Hello world!');`
-| **16** | &nbsp;&nbsp;&nbsp;`});`
-| **17** | &nbsp;`});`
-
-
+![Warning Triangle Notices][faqWarningTriangleNotices]
 
 ... usually you will see a warning triangle notice anywhere you use `$` or `jQuery` since they are considered `globals` to the .user.js and not usually directly declared in your script. They are usually defined with the `// @require https://code.jquery.com/jquery-latest.js` line in the UserScript metadata block and referenced in multiple places in your code. You might also be using a sites jQuery only in the DOM which is also in the globals space if you do not have jQuery required by the .user.js engine. This can be detrimental if the site stops using jQuery so it is best to declare at least a matching expected [jQuery][jQuery] version with `@require` and use `this.$ = this.jQuery = jQuery.noConflict(true);`.
 
@@ -218,35 +198,9 @@ In order to minimize the occurence of these, and speed up the page load for you 
 ... ending up looking like this:
 
 
-| &nbsp; | &nbsp; |
-| ---: | --- |
-| **1** | &nbsp;`// ==UserScript==`
-| **2** | &nbsp;`// @name          Hello jQuery`
-| **3** | &nbsp;`// @namespace     https://www.example.com/examples`
-| **4** | &nbsp;`// @description   jQuery test script`
-| **5** | &nbsp;`// @include       *`
-| **6** | &nbsp;`// @require       https://code.jquery.com/jquery-latest.js`
-| **7** | &nbsp;`// @grant         none`
-| **8** | &nbsp;`// @license       GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt`
-| **9** | &nbsp;`// ==/UserScript==`
-| **10** | &nbsp;
-| **11** | &nbsp;`/* jshint esversion: 5 */`
-| **12** | &nbsp;`/* globals $, jQuery */`
-| **13** | &nbsp;
-| **14** | &nbsp;`(function () {`
-| **15** | &nbsp;&nbsp;&nbsp;`'use strict';`
-| **16** | &nbsp;
-| **17** | &nbsp;&nbsp;&nbsp;`this.$ = this.jQuery = jQuery.noConflict(true);`
-| **18** | &nbsp;
-| **19** | &nbsp;&nbsp;&nbsp;`$(document).ready(function() {`
-| **20** | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$("a").click(function() {`
-| **21** | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`alert('Hello world!');`
-| **22** | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`});`
-| **23** | &nbsp;&nbsp;&nbsp;`});`
-| **24** | &nbsp;
-| **25** | &nbsp;`})();`
+![Warning Triangle Notices Minimized][faqWarningTriangleNoticesMinimized]
 
-Not all of notices will go away with this diff change but a large number of this particular identifier *(variable)*, when using a lot of the `$` identifier in a larger script, do silence most of the notices related to the jQuery library framework and the possible strict violation by using an [IIFE][mdnIIFE] with a function level strict mode to protect your source from other DOM manipulation/detection, accidental or otherwise. Some warning notices are informational such as missing semicolons. While this is a highly volatile subject, and quite subjective, pick one and stick with it throughout your script. Some notices, of course, are actual errors. Use your best judgment.
+Not all notices will go away with this diff change but a large number of this particular identifier *(variable)*, when using a lot of the `$` identifier in a larger script, do silence most of the notices related to the jQuery library framework and the possible strict violation by using an [IIFE][mdnIIFE] with a function level strict mode to protect your source from other DOM manipulation/detection, accidental or otherwise. Some warning notices are informational such as missing semicolons. While this is a highly volatile subject, and quite subjective, pick one and stick with it throughout your script. Some notices, of course, are actual errors. Use your best judgment.
 
 **More tips**
 * The `/* jshint esversion: 5 */` line tells JSHint that your script is primarily using ECMAScript 5 *(JavaScript ES version)*. If you are needing a newer version simply replace the `5` with a `6` *(or [optionally greater][JSHintOptionESVersion] when the Ace sub-dependency is upated next)* for better syntax linting. This is often useful to declare in case ECMAScript has a newer version and the sites default changes but your source doesn't.
@@ -311,3 +265,6 @@ The `@downloadURL` UserScript metadata block key is not currently required but h
 [mdnIIFE]: https://developer.mozilla.org/docs/Glossary/IIFE
 [ESLint]: https://eslint.org/
 [jQuery]: https://code.jquery.com/
+[faqWarningTriangleNotices]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/faqWarningTriangleNotices.png "With the warnings. :("
+[faqWarningTriangleNoticesMinimized]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/faqWarningTriangleNoticesMinimized.png "Without the warnings. :)"
+
