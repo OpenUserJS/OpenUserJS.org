@@ -26,7 +26,7 @@ This is my reply
 
 A: Use markdown like these with named code fences:
 
-Example 1:
+**Example 1**:
 
 <pre>
 ``` js
@@ -45,7 +45,7 @@ var thisIsJavascript = "yahoo!";
 var thisIsJavascript = "yahoo!";
 ```
 
-Example 2:
+**Example 2**:
 <pre>
 ``` json
 {"json": "rules"}
@@ -62,7 +62,7 @@ Example 2:
 {"json": "rules"}
 </pre>
 
-Example 3:
+**Example 3**:
 <pre>
 ``` css
 body {
@@ -87,7 +87,7 @@ body {
 }
 </pre>
 
-Example 4:
+**Example 4**:
 
 <pre>
 ``` console
@@ -174,7 +174,7 @@ For an example we will pick the default, stock, jQuery example:
 | **8** | &nbsp;`// @license       GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt`
 | **9** | &nbsp;`// ==/UserScript==`
 | **10** | &nbsp;
-| **&#x26a0;&nbsp;11** | &nbsp;`this.$ = this.jQuery = jQuery.noConflict(true);`
+| &#x26a0;&nbsp;**11** | &nbsp;`this.$ = this.jQuery = jQuery.noConflict(true);`
 | **12** | &nbsp;
 | &#x26a0;&nbsp;**13** | &nbsp;`$(document).ready(function() {`
 | &#x26a0;&nbsp;**14** | &nbsp;&nbsp;&nbsp;`$("a").click(function() {`
@@ -251,7 +251,7 @@ Not all of notices will go away with this diff change but a large number of this
 **More tips**
 * The `/* jshint esversion: 5 */` line tells JSHint that your script is primarily using ECMAScript 5 *(JavaScript ES version)*. If you are needing a newer version simply replace the `5` with a `6` *(or [optionally greater][JSHintOptionESVersion] when the Ace sub-dependency is upated next)* for better syntax linting. This is often useful to declare in case ECMAScript has a newer version and the sites default changes but your source doesn't.
 * The `/* globals $, jQuery */` line tells JSHint that `$` and `jQuery` are somewhere outside of your script but are acceptable to use as a global identifier.
-* By default this site currently will automatically choose ECMAScript `5` with `moz`illa extensions *(JavaScript 1.7 a.k.a ECMAScript 5.1)*, includes the known GM_\* and base GM.\* API identifiers, and treats all scripts with the implied use of [`'use strict';`][mdnStrictMode]. There are a few other options silenced that are more coding style than potential problems; may sometimes be deprecated in JSHint; or just general "annoyances" squelched. While JSHint is present in Ace you may choose to toggle those [options][JSHintOptions] as well in your script source and/or add additional `globals`.
+* By default this site currently will automatically choose ECMAScript `5` with `moz`illa extensions *(JavaScript 1.7 a.k.a ECMAScript 5.1)*, includes the known base GM object for Greasemonkey 4.x+ and GM_\* identifiers, and treats all scripts with the implied use of [`'use strict';`][mdnStrictMode]. There are a few other options silenced that are more coding style than potential problems; may sometimes be deprecated in JSHint; or just general "annoyances" squelched. While JSHint is present in Ace you may choose to toggle those [options][JSHintOptions] as well in your script source and/or add additional `globals`.
 * If you are using Tampermonkeys script editor as well it utilizes [ESLint][ESLint] however the sites editor is currently using [JSHint][JSHint]. Some options are compatible, such as `globals` however others are not, such as `jshint esversion` *(this is why it is prefixed)*. The ESLint project decides for everyone what is a "currently acceptable default" ECMAScript version in your source.
 * Greasemonkeys script editor in version 4.x+ has some built in linting for the UserScript metadata block keys that it supports but isn't exposed at the time of this writing.
 
