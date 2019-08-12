@@ -174,7 +174,7 @@ For an example we will pick the default, stock, jQuery example:
 | **8** | &nbsp;`// @license       GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt`
 | **9** | &nbsp;`// ==/UserScript==`
 | **10** | &nbsp;
-| &#x26a0;&nbsp;**11** | &nbsp;`this.$ = this.jQuery = jQuery.noConflict(true);`
+| **&#x26a0;&nbsp;11** | &nbsp;`this.$ = this.jQuery = jQuery.noConflict(true);`
 | **12** | &nbsp;
 | &#x26a0;&nbsp;**13** | &nbsp;`$(document).ready(function() {`
 | &#x26a0;&nbsp;**14** | &nbsp;&nbsp;&nbsp;`$("a").click(function() {`
