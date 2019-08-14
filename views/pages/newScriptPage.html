@@ -156,17 +156,24 @@
               <div id="collapse-license" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>Specially formatted on the script page. All values shown in reverse order. If absent <a href="https://spdx.org/licenses/MIT.html"><code>MIT</code></a> <a href="https://opensource.org/licenses/MIT">License <em>(Expat)</em></a> is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</p>
-                  <p><strong><code>License Type</code> component is required</strong> using at least one <a href="https://opensource.org/licenses/category">OSI approved</a> <a href="https://spdx.org/licenses/">SPDX short identifier</a> and must be the primary, last, <code>@license</code> key. Single short ids are accepted only per license key. e.g. No conjunctions like <code>AND</code> or <code>OR</code>. These are handled by multiple <code>@license</code> keys.</p>
+                  <p><strong><code>License Type</code> component is required</strong> using at least one <a href="https://opensource.org/licenses/category">OSI approved</a> <a href="https://spdx.org/licenses/">SPDX short identifier</a> and must be the only primary, last, <code>@license</code> key. Single short ids are accepted only per license key. i.e. No conjunction composites like <code>AND</code> or <code>OR</code>, or <code>WITH</code>exceptions. Any additional license is considered conjunctive with an implied <code>AND</code> using another <code>@license</code> key.</p>
                   <p><strong><code>; License Homepage</code> component is currently optional</strong></p>
                   <p>A url of http or https.</p>
-                  <p>Single Licensed Example <em>(No specific document license web reference)</em>:
+                  <p><strong>Single Licensed Example</strong> <em>(No specific document license web reference)</em>:
                     <pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br />{{#newJSLibrary}}<code>// ==UserLibrary==</code><br />{{/newJSLibrary}}<code>// @license MIT</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code>{{#newJSLibrary}}<br /><code>// ==/UserLibrary==</code><br />{{/newJSLibrary}}</pre>
+                    &hellip; corresponding implied SPDX license expression syntax of <code>MIT</code> i.e. This file contains MIT primary source Code only.
                   </p>
-                  <p>Dual Licensed Example <em>(Specific document license web references)</em>:
+                  <p><strong>Dual Licensed Example</strong> <em>(Specific document license web references)</em>:
                     <pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br />{{#newJSLibrary}}<code>// ==UserLibrary==</code><br />{{/newJSLibrary}}<code>// @license CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode</code><br /><code>// @license GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code>{{#newJSLibrary}}<br /><code>// ==/UserLibrary==</code><br />{{/newJSLibrary}}</pre>
+                    &hellip; corresponding implied SPDX license expression syntax 2.0 of <code>(GPL-3.0-or-later AND CC-BY-NC-SA-4.0)</code> i.e. This file contains GPL primary Code and secondary CC content.
                   </p>
-                  <p>When in doubt it may be a wise choice to go with the site default of <code>MIT</code> or some other popular license such as <code>GPL-3.0-or-later</code>. If you don't understand a less popular license then please don't use it when authoring or consult your legal counsel. Licensing is both protective and permissive for all parties. Figure out what balance you need and make your decision.</p>
-                  <p>All values shown in reverse order. Last key is primary.</p>
+                  <p><strong>Tertiary Licensed Example</strong> <em>(Mixed document license web reference)</em>:
+                    <pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br />{{#newJSLibrary}}<code>// ==UserLibrary==</code><br />{{/newJSLibrary}}<code>// @license CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode</code><br /><code>// @license MIT</code><br /><code>// @license GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code>{{#newJSLibrary}}<br /><code>// ==/UserLibrary==</code><br />{{/newJSLibrary}}</pre>
+                    &hellip; corresponding implied SPDX license expression syntax 2.0 of <code>(GPL-3.0-or-later AND MIT AND CC-BY-NC-SA-4.0)</code> i.e. This file contains GPL primary Code, MIT secondary Code, and tertiary CC content. Ideally you should avoid multiple Code licenses and by keeping additional support scripts in a separate Library for clarity since <code>(MIT AND GPL-3.0-or-later AND CC-BY-NC-SA-4.0)</code> is considered incompatible licensing.
+                  </p>
+
+                  <p>When in doubt it may be a wise choice to go with the site default Code license of <code>MIT</code> or some other popular license such as <code>GPL-3.0-or-later</code>. If you don't understand a less popular license then please don't use it when authoring or consult your legal counsel. Licensing is both protective and permissive for all parties. Figure out what balance you need and make your decision.</p>
+                  <p>All values shown in reverse order. Last key in source code is primary; Next prior key in source code is secondary; and so on.</p>
                 </div>
               </div>
             </div>
