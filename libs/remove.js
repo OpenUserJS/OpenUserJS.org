@@ -31,8 +31,12 @@ function removeable(aModel, aContent, aUser, aCallback) {
 
   // You can't remove yourself
   // You can only remove a remove a user with a lesser role than yourself
+  //   except a reserved account
   if (aModel.modelName === 'User') {
-    aCallback(aContent._id != aUser._id && aContent.role > aUser.role, aContent);
+    aCallback(
+      aContent._id != aUser._id && aContent.role > aUser.role && aContent.role !== 6,
+        aContent
+    );
     return;
   }
 
@@ -53,7 +57,8 @@ function removeable(aModel, aContent, aUser, aCallback) {
     }
 
     // You can only remove content by an author with a lesser user role
-    aCallback(aAuthor.role > aUser.role, aAuthor);
+    //   except a reserved account
+    aCallback(aAuthor.role > aUser.role && aAuthor.role !== 6, aAuthor);
   });
 }
 exports.removeable = removeable;
