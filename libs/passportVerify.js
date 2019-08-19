@@ -80,7 +80,7 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
                 'name': aUsername,
                 'auths': [digest],
                 'strategies': [aStrategy],
-                'role': userRoles.length - 1,
+                'role': userRoles.length - 2,  // NOTE: Last array element value is system Reserved
                 'about': '',
                 'ghUsername': null
               });

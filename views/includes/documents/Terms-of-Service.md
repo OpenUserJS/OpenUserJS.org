@@ -33,7 +33,8 @@ Within moderation we understand the occasional necessity to conserve device stor
 
 #### Reserved Rights
 
-* OpenUserJs.org reserves including but not limited to the implied right to publish, distribute, and terminate access to your published works and code snippets to maintain the integrity of OpenUserJS.org.
+* OpenUserJs.org reserves including, but not limited to, the implied right to publish, distribute, and terminate access to your published works and code snippets to maintain the integrity of OpenUserJS.org.
+* OpenUserJS.org reserves the right to rename, or remove, your account. Usually this action is in the event a naming conflict.
 * OpenUserJs.org allows all published works on OpenUserJS.org to be forked via OpenUserJS.org forking capabilities.
 
 #### Fair Use Rationale

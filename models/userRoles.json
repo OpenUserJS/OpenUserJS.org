@@ -4,5 +4,6 @@
   "Admin",
   "Moderator",
   "Author",
-  "User"
+  "User",
+  "Reserved"
 ]
