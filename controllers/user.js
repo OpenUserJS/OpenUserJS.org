@@ -1679,7 +1679,9 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     }
 
     // Reject non-js file
+    console.log(script.type);
     switch (script.type) {
+      case 'application/x-javascript': // #872 #1661
       case 'application/javascript':   // #1599
       case 'text/javascript':          // Default
         break; // Acceptable
@@ -2020,7 +2022,10 @@ exports.editScript = function (aReq, aRes, aNext) {
 
   function asyncComplete(aErr) {
     if (aErr) {
-      aNext();
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+        statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.code)
+      });
       return;
     }
 
@@ -2049,7 +2054,12 @@ exports.editScript = function (aReq, aRes, aNext) {
   tasks.push(function (aCallback) {
     getExistingScript(aReq, options, authedUser, function (aOpts) {
       options = aOpts;
-      aCallback(!aOpts);
+
+      aCallback(!aOpts ? new statusError({
+        message: 'Error while getting existing script.',
+        code: 500
+      }) : null);
+
     });
   });
 
