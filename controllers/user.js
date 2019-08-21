@@ -1679,7 +1679,9 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     }
 
     // Reject non-js file
-    console.log(script.type);
+    if (isDev) {
+      console.log('Upload Script MIME Content-Type is `' + script.type + '`');
+    }
     switch (script.type) {
       case 'application/x-javascript': // #872 #1661
       case 'application/javascript':   // #1599
