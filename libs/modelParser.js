@@ -481,21 +481,30 @@ var parseScript = function (aScript) {
           }
         } else {
           // Allow offsite checks
-          updateURL = new URL(updateURL);
-          if (rSameOrigin.test(updateURL.origin)) {
-            script.hasAlternateUpdateURL = true;
-            script.hasInvalidUpdateURL = (
-              updateURLForceCheck
-                ? updateURLForceCheck
-                : script.hasInvalidUpdateURL
-            );
+          try {
+            updateURL = new URL(updateURL);
+          } catch (aE) {
+            script.hasInvalidUpdateURL = true;
 
             script.showSourceNotices = true;
             script.showSourceNoticesCritical = true;
-          } else {
-            script.hasAlternateUpdateURL = true;
+          }
+          if (updateURL) {
+            if (rSameOrigin.test(updateURL.origin)) {
+              script.hasAlternateUpdateURL = true;
+              script.hasInvalidUpdateURL = (
+                updateURLForceCheck
+                  ? updateURLForceCheck
+                  : script.hasInvalidUpdateURL
+              );
 
-            script.showSourceNotices = true;
+              script.showSourceNotices = true;
+              script.showSourceNoticesCritical = true;
+            } else {
+              script.hasAlternateUpdateURL = true;
+
+              script.showSourceNotices = true;
+            }
           }
         }
       }
