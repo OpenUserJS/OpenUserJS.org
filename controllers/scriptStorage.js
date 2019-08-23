@@ -1516,7 +1516,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           }
         } else {
           chunks = [];
-          req = request.get(icon)
+          req = request.get({
+            url: icon,
+            headers: {
+              'User-Agent': 'request'
+            }
+          })
             .on('response', function (aRes) {
               // TODO: Probably going to be something here
             })
