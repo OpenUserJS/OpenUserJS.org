@@ -4,7 +4,7 @@
       <th class="{{#orderedByName}}active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
       <th class="td-fit{{#orderedByRole}} active{{/orderedByRole}}"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Rank</a></th>
       {{#hasFlagged}}
-      <th>Flagged</th>
+      <th title="Flagger"><span class="visible-lg visible-md">Flagger</span><span class="hidden-lg hidden-md"><i class="fa fa-flag"></i></span></a></th>
       {{/hasFlagged}}
     </tr>
   </thead>

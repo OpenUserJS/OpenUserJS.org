@@ -3,7 +3,7 @@
     <tr>
       <th class="{{#orderedByName}}active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Name</a></th>
       <th class="text-center{{#orderedBySize}} active{{/orderedBySize}}"><a href="?orderBy=size&orderDir={{orderDir.size}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Size</a></th>
-      <th class="text-center{{#orderedByRating}} active{{/orderedByRating}}"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Rating</a></th>
+      <th class="text-center{{#orderedByRating}} active{{/orderedByRating}}" title="Rating"><a href="?orderBy=rating&orderDir={{orderDir.rating}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><span class="visible-lg visible-md">Rating</span><span class="hidden-lg hidden-md"><i class="fa fa-heartbeat"></i></span></a></th>
     </tr>
   </thead>
   <tbody>

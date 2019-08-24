@@ -55,6 +55,17 @@ var momentLangTinyDate = function (aDate) {
     return '[' + aDate.format("MMM 'YY") + ']';
   }
 };
+var momentLangTinyDateIconic = function (aDate) {
+  if (aDate.year() === moment().year()) {
+    return '[<strong>' +  aDate.format("MMM") + '</strong>'
+      + '<br><span>' + aDate.format("D") + '</span>'
+        + '<br><em></em>]';
+  } else {
+    return '[<strong>' + aDate.format("MMM") + '</strong>'
+      + '<br><span></span>'
+        + '<br><em>' +  aDate.format("YYYY") + '</em>]';
+  }
+};
 moment.locale('en-tiny', {
   calendar : {
     sameDay : function () {
@@ -95,6 +106,46 @@ moment.locale('en-tiny', {
   }
 });
 
+moment.locale('en-iconic', {
+  calendar : {
+    sameDay : function () {
+      return momentLangFromNow(this);
+    },
+    lastDay : function () {
+      return momentLangFromNow(this);
+    },
+    lastWeek : function () {
+      return momentLangFromNow(this);
+    },
+    nextDay : function () {
+      return momentLangTinyDateIconic(this);
+    },
+    nextWeek : function () {
+      return momentLangTinyDateIconic(this);
+    },
+    sameElse : function () {
+      return momentLangTinyDateIconic(this);
+    }
+  },
+  relativeTime : {
+    future : "<strong>&NegativeVeryThinSpace;</strong><br><span>in</span><br><em>%s</em>",
+    past : "<strong>&NegativeVeryThinSpace;</strong><br><span>%s</span><br><em>ago</em>",
+    s : function (aNumber, aWithoutSuffix, aKey, aIsFuture) {
+      return aNumber + "s";
+    },
+    m : "1m",
+    mm : "%dm",
+    h : "1h",
+    hh : "%dh",
+    d : "1d",
+    dd : "%dd",
+    M : "1M",
+    MM : "%dM",
+    y : "1y",
+    yy : "%dy"
+  }
+});
+
 var parseDateProperty = function (aObj, aKey) {
   var date = null;
 
@@ -104,6 +155,7 @@ var parseDateProperty = function (aObj, aKey) {
       aObj[aKey] = date;
       aObj[aKey + 'ISOFormat'] = date.toISOString();
       aObj[aKey + 'Humanized'] = moment(date).locale('en-tiny').calendar();
+      aObj[aKey + 'HumanizedIconic'] = moment(date).locale('en-iconic').calendar();
     }
   }
 };

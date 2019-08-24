@@ -519,3 +519,56 @@ ul.flaggedList {
   cursor: pointer;
 }
 
+/* Iconic dates */
+
+time.iconic {
+  font-size: 0.9em; /* change iconic size here */
+  display: block;
+  position: relative;
+  width: 3em;
+  height: 3em;
+  background-color: #fff;
+  margin: 0.25em auto;
+  border-radius: 0.5em;
+  box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #bdbdbd, 0 4px 0 #fff, 0 5px 0 #bdbdbd, 0 0 0 1px #bdbdbd;
+  overflow: hidden;
+  margin-top: 0;
+}
+
+time.iconic *
+{
+  display: block;
+  width: 100%;
+  font-size: 0.75em;
+  font-weight: bold;
+  font-style: normal;
+  text-align: center;
+}
+
+time.iconic strong
+{
+  position: absolute;
+  top: 0;
+  padding: 0.05em 0;
+  color: #fff;
+  background-color: #2c3e50;
+  border-bottom: 1px dotted #709ecc;
+  box-shadow: 0 2px 0 #2c3e50;
+}
+
+time.iconic span
+{
+  width: 100%;
+  font-size: 0.9em;
+  letter-spacing: -0.05em;
+  padding-top: 1.4em;
+  color: #2f2f2f;
+}
+
+time.iconic em
+{
+  font-size: 0.7em;
+  position: absolute;
+  bottom: 0;
+  color: #2c3e50;
+}

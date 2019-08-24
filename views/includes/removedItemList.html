@@ -4,8 +4,8 @@
       <th class="text-center td-fit{{#orderedByModel}} active{{/orderedByModel}}"><a href="?orderBy=model&orderDir={{orderDir.model}}{{#byModel}}&byModel={{byModel}}{{/byModel}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Model</a></th>
       <th>Item</th>
       <th>Reason</th>
-      <th class="text-center td-fit{{#orderedByRemoverName}} active{{/orderedByRemoverName}}"><a href="?orderBy=removerName&orderDir={{orderDir.removerName}}{{#byModel}}&byModel={{byModel}}{{/byModel}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Removed By</a></th>
-      <th class="text-center td-fit{{#orderedByRemoved}} active{{/orderedByRemoved}}"><a href="?orderBy=removed&orderDir={{orderDir.removed}}{{#byModel}}&byModel={{byModel}}{{/byModel}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Date</a></th>
+      <th class="text-center td-fit{{#orderedByRemoverName}} active{{/orderedByRemoverName}}" title="Removed By"><a href="?orderBy=removerName&orderDir={{orderDir.removerName}}{{#byModel}}&byModel={{byModel}}{{/byModel}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><span class="visible-lg visible-md">Removed By</span><span class="hidden-lg hidden-md"><i class="fa fa-coffee"></i></span></a></th>
+      <th class="text-center td-fit{{#orderedByRemoved}} active{{/orderedByRemoved}}"><a href="?orderBy=removed&orderDir={{orderDir.removed}}{{#byModel}}&byModel={{byModel}}{{/byModel}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><span class="visible-lg visible-md">Date</span><span class="hidden-lg hidden-md"><i class="fa fa-calendar"></span></a></th>
     </tr>
   </thead>
   <tbody>
@@ -22,11 +22,13 @@
       </td>
       <td class="td-fit">
         <p>
-          <a href="{{remover.userPageUrl}}">{{remover.name}}</a>
+          <span class="label label-info">
+            <a href="{{remover.userPageUrl}}">{{remover.name}}</a>
+          </span>
         </p>
       </td>
       <td class="text-center td-fit">
-        <time datetime="{{removedISOFormat}}" title="{{removed}}">{{removedHumanized}}</time>
+        <time datetime="{{removedISOFormat}}" title="{{removed}}" class="iconic">{{{removedHumanizedIconic}}}</time>
       </td>
     </tr>
     {{/removedItemList}}
