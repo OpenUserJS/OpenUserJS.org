@@ -469,6 +469,12 @@ function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aUserAgent, aCall
     return;
   }
 
+  // Retest for trailing underscore with numeric digits with cleaned and reject
+  if( /_\d+$/.test(urlTopic)) {
+    aCallback();
+    return;
+  }
+
   Discussion.findOne({ path: path }, null, params, function (aErr, aDiscussion) {
     var newDiscussion = null;
     var props = {

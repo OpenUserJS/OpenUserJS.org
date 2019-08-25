@@ -200,6 +200,7 @@ textarea {
 }
 
 input#discussion-topic {
+  display: inline-block;
   width: calc(100% - 18px - 4px);
 }
 
