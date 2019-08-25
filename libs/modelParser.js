@@ -58,12 +58,12 @@ var momentLangTinyDate = function (aDate) {
 var momentLangTinyDateIconic = function (aDate) {
   if (aDate.year() === moment().year()) {
     return '[<strong>' +  aDate.format("MMM") + '</strong>'
-      + '<br><span>' + aDate.format("D") + '</span>'
-        + '<br><em></em>]';
+      + ' <span>' + aDate.format("D") + '</span>'
+        + ' <em></em>]';
   } else {
     return '[<strong>' + aDate.format("MMM") + '</strong>'
-      + '<br><span></span>'
-        + '<br><em>' +  aDate.format("YYYY") + '</em>]';
+      + ' <span></span>'
+        + ' <em>' +  aDate.format("YYYY") + '</em>]';
   }
 };
 moment.locale('en-tiny', {
@@ -128,8 +128,8 @@ moment.locale('en-iconic', {
     }
   },
   relativeTime : {
-    future : "<strong>&NegativeVeryThinSpace;</strong><br><span>in</span><br><em>%s</em>",
-    past : "<strong>&NegativeVeryThinSpace;</strong><br><span>%s</span><br><em>ago</em>",
+    future : "<strong>&NegativeVeryThinSpace;</strong> <span>in</span> <em>%s</em>",
+    past : "<strong>&NegativeVeryThinSpace;</strong> <span>%s</span> <em>ago</em>",
     s : function (aNumber, aWithoutSuffix, aKey, aIsFuture) {
       return aNumber + "s";
     },
