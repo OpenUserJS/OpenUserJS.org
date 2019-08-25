@@ -799,7 +799,6 @@ var parseDiscussion = function (aDiscussion) {
 
   if (discussion._since && discussion.updated
     && discussion._since.toString() !== discussion.updated.toString()) {
-    console.log(discussion.comments);
     discussion.isUpdated = discussion.comments > 1 ? true : false;
   }
 
