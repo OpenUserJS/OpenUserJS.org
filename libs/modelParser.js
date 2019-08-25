@@ -778,7 +778,7 @@ var parseDiscussion = function (aDiscussion) {
     return;
   }
 
-  discussion = aDiscussion.toObject ? aDiscussion.toObject() : aDiscussion;
+  discussion = aDiscussion.toObject ? aDiscussion.toObject({ virtuals: true }) : aDiscussion;
   // discussion = aDiscussion; // Can't override discussion.category // TODO: Why is this commented and/or not removed?
 
   // Urls
@@ -796,6 +796,11 @@ var parseDiscussion = function (aDiscussion) {
   // Dates
   parseDateProperty(discussion, 'created');
   parseDateProperty(discussion, 'updated');
+
+  if (discussion._since && discussion.updated
+    && discussion._since.toString() !== discussion.updated.toString()) {
+    discussion.isUpdated = true;
+  }
 
   // RecentCommentors
   recentCommentors = [];
