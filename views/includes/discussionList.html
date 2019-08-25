@@ -41,7 +41,9 @@
           <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
         </td>
         <td class="text-center td-fit">
+          {{#isUpdated}}
           <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic">{{{updatedHumanizedIconic}}}</time>
+          {{/isUpdated}}
         </td>
       </tr>
       {{/discussionList}}
