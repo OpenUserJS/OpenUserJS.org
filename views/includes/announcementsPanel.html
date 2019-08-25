@@ -17,13 +17,13 @@
               </b>
             </td>
             <td class="text-center td-fit">
-              <p>{{replies}} replies</p>
+              <p>{{replies}}<br class="hidden-lg hidden-md"> replies</p>
             </td>
             <td class="text-center td-fit">
-              <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
+              <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
             </td>
             <td class="text-center td-fit">
-              <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
+              <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic">{{{updatedHumanizedIconic}}}</time>
             </td>
           </tr>
           {{/announcementsDiscussionList}}

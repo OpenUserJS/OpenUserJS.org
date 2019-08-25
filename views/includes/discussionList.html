@@ -6,10 +6,10 @@
         {{#multipleCategories}}
         <th class="text-center td-fit">Category</th>
         {{/multipleCategories}}
-        <th class="text-center td-fit">Users</th>
-        <th class="text-center td-fit{{#orderedByComments}} active{{/orderedByComments}}"><a href="?orderBy=comments&orderDir={{orderDir.comments}}">Replies</a></th>
-        <th class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}"><a href="?orderBy=created&orderDir={{orderDir.created}}">Created</a></th>
-        <th class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}"><a href="?orderBy=updated&orderDir={{orderDir.updated}}">Updated</a></th>
+        <th class="text-center td-fit" title="Users"><span class="visible-lg visible-md">Users</span><span class="hidden-lg hidden-md"><i class="fa fa-user"></i></th>
+        <th class="text-center td-fit{{#orderedByComments}} active{{/orderedByComments}}" title="Replies"><a href="?orderBy=comments&orderDir={{orderDir.comments}}"><span class="visible-lg visible-md">Replies</span><span class="hidden-lg hidden-md"><i class="fa fa-comment"></i></a></th>
+        <th class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}" title="Created"><a href="?orderBy=created&orderDir={{orderDir.created}}"><span class="visible-lg visible-md">Created</span><span class="hidden-lg hidden-md"><i class="fa fa-clock-o"></i></a></th>
+        <th class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}" title="Updated"><a href="?orderBy=updated&orderDir={{orderDir.updated}}"><span class="visible-lg visible-md">Updated</span><span class="hidden-lg hidden-md"><i class="fa fa-history"></i></a></th>
       </tr>
     </thead>
     <tbody>
@@ -31,16 +31,17 @@
         <td class="td-fit">
           {{#recentCommentors}}
           <span class="label label-info"><a href="/users/{{{name}}}">{{{name}}}</a></span>
+          <br class="hidden-lg hidden-md">
           {{/recentCommentors}}
         </td>
         <td class="text-center td-fit">
           <p>{{replies}}</p>
         </td>
         <td class="text-center td-fit">
-          <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
+          <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
         </td>
         <td class="text-center td-fit">
-          <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
+          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic">{{{updatedHumanizedIconic}}}</time>
         </td>
       </tr>
       {{/discussionList}}
