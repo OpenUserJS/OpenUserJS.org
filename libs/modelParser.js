@@ -529,7 +529,9 @@ var parseScript = function (aScript) {
             );
 
             script.showSourceNotices = true;
-            script.showSourceNoticesCritical = updateURLForceCheck;
+            script.showSourceNoticesCritical = script.showSourceNoticesCritical
+              ? true
+              : updateURLForceCheck;
           }
         } else {
           // Allow offsite checks
@@ -570,8 +572,10 @@ var parseScript = function (aScript) {
           : script.hasInvalidUpdateURL
       );
 
-      script.showSourceNotices = updateURLForceCheck;
-      script.showSourceNoticesCritical = updateURLForceCheck;
+      script.showSourceNotices = script.showSourceNotices ? true : updateURLForceCheck;
+      script.showSourceNoticesCritical = script.showSourceNoticesCritical
+        ? true
+        : updateURLForceCheck;
     }
   }
 
