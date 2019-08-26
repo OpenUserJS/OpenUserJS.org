@@ -11,16 +11,16 @@
   <tbody>
     {{#removedItemList}}
     <tr class="tr-link">
-      <td class="td-fit">
+      <td class="td-fit align-middle">
         <p>{{#item.hasUrl}}<a href="{{item.url}}" class="tr-link-a">{{/item.hasUrl}}{{model}}{{#item.hasUrl}}</a>{{/item.hasUrl}}</p>
       </td>
-      <td class="td-fit">
+      <td class="td-fit align-middle">
         <p><a href="{{{url}}}" class="tr-link-a">{{item.description}}</a></p>
       </td>
-      <td>
+      <td class="align-middle">
         <p{{#remover.automated}} class="reason-automated"{{/remover.automated}}>{{reason}}</p>
       </td>
-      <td class="td-fit">
+      <td class="td-fit align-middle">
         <p>
           <span class="label label-info">
             <a href="{{remover.userPageUrl}}">{{remover.name}}</a>

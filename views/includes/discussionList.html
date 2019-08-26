@@ -15,7 +15,7 @@
     <tbody>
       {{#discussionList}}
       <tr class="tr-link">
-        <td>
+        <td class="align-middle">
           <b>
             <a href="{{{discussionPageUrl}}}" class="tr-link-a">{{topic}}</a>
             {{^open}}
@@ -24,17 +24,17 @@
           </b>
         </td>
         {{#multipleCategories}}
-        <td class="td-fit">
+        <td class="td-fit align-middle">
           <span class="label label-default"><a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.name}}</a></span>
         </td>
         {{/multipleCategories}}
-        <td class="td-fit">
+        <td class="td-fit align-middle">
           {{#recentCommentors}}
           <span class="label label-info"><a href="/users/{{{name}}}">{{{name}}}</a></span>
           <br class="hidden-lg hidden-md">
           {{/recentCommentors}}
         </td>
-        <td class="text-center td-fit">
+        <td class="text-center td-fit align-middle">
           <p>{{replies}}</p>
         </td>
         <td class="text-center td-fit">

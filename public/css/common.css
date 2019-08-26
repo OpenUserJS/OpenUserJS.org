@@ -582,3 +582,8 @@ time.iconic-link em {
   bottom: 0;
   color: #2c3e50;
 }
+
+/* Bootstrap 4.x backports */
+.table > tbody > tr > td.align-middle {
+  vertical-align: middle;
+}
