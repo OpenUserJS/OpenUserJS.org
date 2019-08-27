@@ -27,12 +27,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 #### Installation
 
 1. Follow the forking instructions above to get a local copy of the project, or simply retrieve the code [as a ZIP](https://github.com/OpenUserJs/OpenUserJS.org/archive/master.zip) and extract it somewhere.
-2. If not already installed, install Ruby:
-  * **Linux:** Run `sudo apt-get install ruby` (or similar for your package manager)
-  * **Mac:** Use [Homebrew](http://brew.sh/) and [RubyGems](https://rubygems.org/)
-  * **Windows:**  Use [RubyInstaller](http://rubyinstaller.org/)
-3. If not already installed, install bundler by running `sudo gem install bundler`
-4. Navigate to the project directory and run `npm install` to install the dependencies defined within [package.json](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json) and [Gemfile](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/Gemfile)
+2. Navigate to the project directory and run `npm install` to install the dependencies defined within [package.json](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json).
 
 #### Configuration
 
@@ -47,8 +42,7 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 
 **NOTE:** You may set the app to listen on a specific port by setting a `PORT` environment variable.  Additionally, if your application instance will not be accessible at either http://localhost:8080 or http://localhost:<PORT> you should set the `AUTH_CALLBACK_BASE_URL` environment variable to the root (e.g. http://myserver.local:8080)
 
-1. Open a terminal, navigate to the root of the OpenUserJS.org project, and run `dev/fakes3.sh`.  Windows users will need to run the script commands manually.
-2. Open another terminal, navigate to the root of the OpenUserJS.org project, and run `npm start`
+1. Open a terminal, navigate to the root of the OpenUserJS.org project, and run `npm start`
 
 
 ### Pull Request Process
@@ -77,7 +71,7 @@ To contribute code to OpenUserJS.org the following process should generally be u
 The following is a brief list of **some** of the labels used on the project and is used to establish teamwork. Not everyone has permission to set these and usually will be set by someone, unless expressly prohibited, either when an Issue or Pull Request *(PR)* is created or after an Issue is reported:
 
 ##### BLOCKING
-Only the establishing owner and in extreme cases the active maintainer of the project may add this. Removal is done by the establishing owner. Recommendations by other contributors and collaborators are always accepted to have this put on or removed. This label means that merging unrelated or non-bug fix PRs will be put on hold until this label has been removed.
+Only the establishing owner and in extreme cases the active maintainer of the project may add this. Removal is done by the establishing owner. Recommendations by other contributors and collaborators are always accepted to have this put on or removed. This label means that merging unrelated or non-bug fix PRs will be put on hold until this label has been removed. Documentation fixes are always welcome by the Active Maintainer.
 
 ---
 
