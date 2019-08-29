@@ -447,6 +447,10 @@ ul.flaggedList {
   background: transparent url("/images/ua/palemoon16.png") no-repeat left top;
   color: transparent;
 }
+.ua-qq-browser {
+  background: transparent url("/images/ua/qqbrowser16.png") no-repeat left top;
+  color: transparent;
+}
 .ua-qupzilla {
   background: transparent url("/images/ua/qupzilla16.png") no-repeat left top;
   color: transparent;
