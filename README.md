@@ -448,8 +448,8 @@ Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
 [strip-markdownNPMUrl]: https://www.npmjs.com/package/strip-markdown
 [strip-markdownNPMVersionImage]: https://img.shields.io/npm/v/strip-markdown.svg?style=flat
 
-[terserGHUrl]: https://github.com/fabiosantoscode/terser
-[terserDOCUrl]: https://github.com/terser-js/terser/blob/master/README.md
+[terserGHUrl]: https://github.com/terser/terser
+[terserDOCUrl]: https://github.com/terser/terser/blob/master/README.md
 [terserNPMUrl]: https://www.npmjs.com/package/terser
 [terserNPMVersionImage]: https://img.shields.io/npm/v/terser.svg?style=flat
 
