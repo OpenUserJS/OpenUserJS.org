@@ -33,6 +33,28 @@
         </span>
       </div>
     </div>
+
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="downloadurl-raw" data-clipboard-text="// @downloadURL {{#script.meta.UserScript.downloadURL}}{{{script.meta.UserScript.downloadURL.0.value}}}{{/script.meta.UserScript.downloadURL}}{{^script.meta.UserScript.downloadURL}}{{{script.scriptPermalinkInstallPageUrl}}}{{/script.meta.UserScript.downloadURL}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @downloadURL</button>
+        </span>
+        <input type="text" class="form-control" id="downloadurl" value="{{#script.meta.UserScript.downloadURL}}{{{script.meta.UserScript.downloadURL.0.value}}}{{/script.meta.UserScript.downloadURL}}{{^script.meta.UserScript.downloadURL}}{{{script.scriptPermalinkInstallPageUrl}}}{{/script.meta.UserScript.downloadURL}}" readonly="readonly">
+        <span class="input-group-btn dropup">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Alternate download source targets"><span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
+          <ul class="dropdown-menu scrollable-menu dropdown-menu-right" id="install-targets">
+            {{#script.availableScriptPermalinkInstallPageUrl}}<li {{#default}}class="active"{{/default}}><a href="#" title="{{{url}}">{{label}}</a></li>{{/script.availableScriptPermalinkInstallPageUrl}}
+          </ul>
+        </span>
+        <span class="input-group-btn">
+          <a class="btn btn-default"
+            title="How do I use this?"
+            href="/about/Frequently-Asked-Questions#q-is-there-a-way-to-not-count-script-updates-with-this-sites-install-counter-">
+              <i class="fa fa-question-circle"></i>
+          </a>
+        </span>
+      </div>
+    </div>
     {{/newScript}}
     {{/script.isLib}}
 
