@@ -2076,6 +2076,7 @@ exports.editScript = function (aReq, aRes, aNext) {
         var script = null;
         var scriptOpenIssueCountQuery = null;
         var collaborators = null;
+        var downloadURL = null;
         var licenses = null;
         var licensePrimary = null;
         var copyrights = null;
@@ -2125,18 +2126,64 @@ exports.editScript = function (aReq, aRes, aNext) {
           || collaborators.indexOf(authedUser.name) > -1);
         modelParser.renderScript(script);
         script.installNameSlug = installNameBase;
+
         script.scriptPermalinkInstallPageUrl = 'https://' + aReq.get('host') +
           script.scriptInstallPageUrl;
-        script.scriptPermalinkInstallPageXUrl = 'https://' + aReq.get('host') +
-          script.scriptInstallPageXUrl;
+        script.scriptPermalinkInstallPageUrlMin = 'https://' + aReq.get('host') +
+          script.scriptInstallPageXUrl + ".min.user.js";
+
         script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/' +
           scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
-            (isLib ? '.js#' : '.user.js#');
+            (isLib ? '.js' : '.user.js');
         script.scriptRawPageXUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/' +
           scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
-            (isLib ? '.min.js#' : '.min.user.js#');
+            (isLib ? '.min.js' : '.min.user.js');
+
+        script.scriptPermalinkRawPageUrl = 'https://' + aReq.get('host') +
+          script.scriptRawPageUrl;
+        script.scriptPermalinkRawPageUrlMin = 'https://' + aReq.get('host') +
+          script.scriptRawPageXUrl;
+
         script.scriptPermalinkMetaPageUrl = 'https://' + aReq.get('host') +
           script.scriptMetaPageUrl;
+
+        script.availableScriptPermalinkInstallPageUrl = [];
+
+        downloadURL = scriptStorage.findMeta(script.meta, 'UserScript.downloadURL.0.value');
+        if (downloadURL) {
+          switch (downloadURL) {
+            case script.scriptPermalinkInstallPageUrl:
+              /* falls through */
+            case script.scriptPermalinkInstallPageUrlMin:
+              /* falls through */
+            case script.scriptPermalinkRawPageUrl:
+              /* falls through */
+            case script.scriptPermalinkRawPageUrlMin:
+              break;
+            default:
+              script.availableScriptPermalinkInstallPageUrl.push({
+                label: 'Custom',
+                url: downloadURL
+              });
+          }
+        }
+        script.availableScriptPermalinkInstallPageUrl.push({
+          label: 'Normal',
+          url: script.scriptPermalinkInstallPageUrl,
+          default: !downloadURL
+        });
+        script.availableScriptPermalinkInstallPageUrl.push({
+          label: 'Minified',
+          url: script.scriptPermalinkInstallPageUrlMin
+        });
+        script.availableScriptPermalinkInstallPageUrl.push({
+          label: 'Normal with counter skip',
+          url: script.scriptPermalinkRawPageUrl
+        });
+        script.availableScriptPermalinkInstallPageUrl.push({
+          label: 'Minified with counter skip',
+          url: script.scriptPermalinkRawPageUrlMin
+        });
 
         script.scriptAcceptableOSILicense = [];
         SPDX.forEach(function (aElement, aIndex, aArray) {

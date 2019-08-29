@@ -1,0 +1,53 @@
+<script type="text/javascript">
+  (function () {
+
+    {{> includes/scripts/polyfillElementClosest.js }}
+
+    function onClick(aEv) {
+      aEv.preventDefault();
+
+      var containerNode = aEv.target.closest('li');
+      var listInstallTargets = document.querySelectorAll('#install-targets li');
+      var inputInstall = document.querySelector('#downloadurl');
+      var copyDownloadURLButton = document.querySelector('#downloadurl-raw');
+      var i = null;
+      var thisItem = null;
+
+      if (containerNode && listInstallTargets && inputInstall && copyDownloadURLButton) {
+        inputInstall.value = aEv.target.title;
+        copyDownloadURLButton.setAttribute(
+          'data-clipboard-text',
+          '// @downloadURL ' + aEv.target.title
+        );
+
+        for (i = 0; thisItem = listInstallTargets[i++];) {
+          if (thisItem.classList.contains('active')) {
+            thisItem.classList.remove('active');
+          }
+        }
+
+        containerNode.classList.add('active');
+      }
+    }
+
+    function onDOMContentLoaded(aEv) {
+      var listInstallTargets = document.querySelectorAll('#install-targets li');
+      var thisItem = null;
+      var i = null;
+      var thisAnchor = null;
+
+      for (i = 0; thisItem = listInstallTargets[i++];) {
+        thisItem.addEventListener('click', onClick);
+
+        thisAnchor = thisItem.querySelector('a');
+
+        if (thisAnchor.title === '{{script.meta.UserScript.downloadURL.0.value}}') {
+          thisItem.classList.add('active');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+  })();
+</script>
