@@ -1,4 +1,5 @@
 ## Digital Millenium Copyright Act
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/misc-copyright.min.svg?sanitize=true" width="128" height="128">
 
 ### Filing a Notification
 
