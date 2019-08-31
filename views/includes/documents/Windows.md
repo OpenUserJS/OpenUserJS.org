@@ -1,5 +1,5 @@
 ## Windows
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/windows_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/windows_icon.png" width="128" height="128" align="right">
 
 Windows is an operating system that you purchase.
 

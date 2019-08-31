@@ -1,5 +1,5 @@
 ## Greasemonkey for Firefox
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey_icon.min.svg?sanitize=true" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey_icon.min.svg?sanitize=true" width="128" height="128" align="right">
 
 Greasemonkey is a userscript manager for Firefox, originally written by Aaron Boodman and currently Firefox front-end and back-end maintained by Anthony Lieuallen and Johan Sundström. It is the first extension to allow userscripts to be run in a web browser.
 

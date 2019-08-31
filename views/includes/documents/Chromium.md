@@ -1,5 +1,5 @@
 ## Chromium
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/chromium_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/chromium_icon.png" width="128" height="128" align="right">
 
 Chromium is a free open-source web browser. Chromium's selling points are security, speed, simplicity and stability. The desktop version runs on Windows, Linux and OS X, and there are mobile versions for Android and iOS.
 

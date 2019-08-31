@@ -1,5 +1,5 @@
 ## Tampermonkey for Edge
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png" width="128" height="128" align="right">
 
 Tampermonkey is a userscript manager extension for [Android][android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Firefox][firefox], [Opera][Opera], [Safari][Safari], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], [Firefox][tamperMonkeyForFirefox], [Opera][tampermonkeyForOpera], and [Safari][tampermonkeyForSafari].
 

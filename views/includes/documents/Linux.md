@@ -1,5 +1,5 @@
 ## Linux
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tux_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tux_icon.png" width="128" height="128" align="right">
 
 Linux is a free operating system and available from many distributions.
 

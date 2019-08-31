@@ -1,5 +1,5 @@
 ## Terms of Service
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/fa-gavel.min.svg?sanitize=true" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/fa-gavel.min.svg?sanitize=true" width="128" height="128" align="right">
 
 ### Etiquette
 * Everyone should maintain a professional and civil demeanor towards each other.
