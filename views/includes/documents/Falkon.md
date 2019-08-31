@@ -1,5 +1,5 @@
 ## Falkon
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/falkon_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/falkon_icon.png" width="128" height="128" align="right">
 
 Falkon is very fast Qt based browser. It is actively developed and uses open standards *(so it's easier for programmers to work with it)*. It aims to be a lightweight web browser available through most major platforms. Previously it was called QupZilla.
 

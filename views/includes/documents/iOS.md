@@ -1,5 +1,5 @@
 ## iOS
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/ios_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/ios_icon.png" width="128" height="128" align="right">
 
 iOS is an operating system exclusively for iPhone and iPad portable devices.
 

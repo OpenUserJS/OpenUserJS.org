@@ -1,5 +1,5 @@
 ## Android
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/android_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/android_icon.png" width="128" height="128" align="right">
 
 Android is an operating system on many portable devices.
 

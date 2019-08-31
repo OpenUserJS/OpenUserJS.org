@@ -1,5 +1,5 @@
 ## Firefox
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/firefox_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/firefox_icon.png" width="128" height="128" align="right">
 
 Firefox is the browser portion of SeaMonkey as a free, open source web browser developed by the Mozilla community.  It is actively developed and uses open standards *(so it's easier for programmers to work with it)*.  This means that there are scripts and add-ons available for Firefox, and few compatibility issues with websites. Firefox is available for Windows, Mac OS X and Linux.  There is also a [mobile version][firefoxBrowserForAndroid] that runs on Android.
 

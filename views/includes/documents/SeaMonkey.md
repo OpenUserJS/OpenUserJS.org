@@ -1,5 +1,5 @@
 ## SeaMonkey
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/seamonkey_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/seamonkey_icon.png" width="128" height="128" align="right">
 
 SeaMonkey is the original free, open source all-in-one web browser/email/chat suite developed by the Mozilla community.  It is actively developed and uses open standards *(so it's easier for programmers to work with it)*.  This means that there are scripts and add-ons available for SeaMonkey, and few compatibility issues with websites. SeaMonkey is available for Windows, Mac OS X and Linux.
 

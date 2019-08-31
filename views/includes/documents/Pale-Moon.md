@@ -1,5 +1,5 @@
 ## Pale Moon
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/pale_moon_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/pale_moon_icon.png" width="128" height="128" align="right">
 
 Pale Moon is an independent browser, originally forked from Firefox, as a free, open source web browser with continuing development by Moonchild Productions.  It is actively developed and uses many open standards. As an added benefit there is some compatibility with some Firefox add-ons along with its own unique add-ons.
 

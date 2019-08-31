@@ -1,5 +1,5 @@
 ## macOS
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/macos_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/macos_icon.png" width="128" height="128" align="right">
 
 macOS is an operating system exclusively for Macintosh desktop computers.
 

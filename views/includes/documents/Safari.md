@@ -1,5 +1,5 @@
 ## Safari
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/safari_icon.png" width="128" height="128">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/safari_icon.png" width="128" height="128" align="right">
 
 Safari is the native web browser for the macOS desktop and iOS devices. It is free and usually included in OS X. It is maintained by Apple, Inc. Safari is currently developed for recent macOS and iOS only.
 
