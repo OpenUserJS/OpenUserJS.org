@@ -1,6 +1,5 @@
 ## Falkon
-
-![Falkon icon][falkonIcon]
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/falkon_icon.png" width="128" height="128">
 
 Falkon is very fast Qt based browser. It is actively developed and uses open standards *(so it's easier for programmers to work with it)*. It aims to be a lightweight web browser available through most major platforms. Previously it was called QupZilla.
 
@@ -92,7 +91,6 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
-[falkonIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/falkon_icon.png "Falkon"
 [falkonExtensionsScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/falkon1.gif "Enabling the GreaseMonkey Extension"
 [oujsScriptPageScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [falkonScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/falkon3.png "Falkon start page with GreaseMoneky enabled"

@@ -1,5 +1,5 @@
 ## Greasemonkey for Firefox
-![Greasemonkey icon][greasemonkeyIcon]
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey_icon.min.svg?sanitize=true" width="128" height="128">
 
 Greasemonkey is a userscript manager for Firefox, originally written by Aaron Boodman and currently Firefox front-end and back-end maintained by Anthony Lieuallen and Johan Sundström. It is the first extension to allow userscripts to be run in a web browser.
 
@@ -59,7 +59,6 @@ Sometimes, usually on a portable device, it may look like the userscript manager
 [aboutAddons]: about:addons
 [aomUserScriptsScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey5.gif "Userscript management in Firefox"
 [greasespot]: https://www.greasespot.net/
-[greasemonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey_icon.png "Greasemonkey"
 [greasemonkeyAMOscreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey1.gif "Greasemonkey at Mozilla Add-Ons"
 [oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [greasemonkeyInstallationScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkey4.gif "Greasemonkey script installation warning"
