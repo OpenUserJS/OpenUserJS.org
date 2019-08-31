@@ -1,4 +1,5 @@
 ## Frequently Asked Questions
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/fa-exclamation.min.svg?sanitize=true" width="128" height="128">
 
 In this FAQ here are some of the most common questions and answers asked, some more silently than others, about OpenUserJS.org.
 

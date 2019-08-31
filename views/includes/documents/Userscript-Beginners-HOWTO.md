@@ -1,4 +1,5 @@
 ## Userscript Beginners HOWTO
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/fa-question.min.svg?sanitize=true" width="128" height="128">
 
 These pages are a work in progress, but are intended to help users with no previous knowledge understand how to install and use userscripts on their computer.
 
