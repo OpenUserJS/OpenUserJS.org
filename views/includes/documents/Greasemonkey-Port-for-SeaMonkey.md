@@ -1,5 +1,5 @@
 ## Greasemonkey Port for SeaMonkey
-![Greasemonkey icon][greasemonkeyPortIcon]
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport_icon.png" width="128" height="128">
 
 Greasemonkey Port is a userscript manager for SeaMonkey, originally written by Aaron Boodman and currently SeaMonkey front-end maintained by Marti, Ratty and/or Farby with some backend support from Anthony Lieuallen and Johan Sundström. It is the first extension to allow userscripts to be run in a web browser and is a near parallel branch of Greasemonkey itself. Originally Greasemonkey contained SeaMonkey support and is now split off.
 
@@ -61,7 +61,6 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [aomUserScriptsScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport5.png "Userscript management in SeaMonkey"
 [greasespot]: http://www.greasespot.net/
 [greasemonkeyPortWiki]: https://sourceforge.net/p/greasemonkey/wiki/Main_Page/
-[greasemonkeyPortIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport_icon.png "Greasemonkey Port"
 [greasemonkeyPortSFscreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport1.gif "Greasemonkey Port on SourceForge"
 [oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
 [greasemonkeyInstallationScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport4.gif "Greasemonkey Port script installation warning"

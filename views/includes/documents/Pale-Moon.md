@@ -1,6 +1,5 @@
 ## Pale Moon
-
-![Pale Moon icon][palemoonIcon]
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/pale_moon_icon.png" width="128" height="128">
 
 Pale Moon is an independent browser, originally forked from Firefox, as a free, open source web browser with continuing development by Moonchild Productions.  It is actively developed and uses many open standards. As an added benefit there is some compatibility with some Firefox add-ons along with its own unique add-ons.
 
@@ -14,7 +13,6 @@ While there is no official ported Greasmonkey for Pale Moon there is some activi
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
-[palemoonIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/pale_moon_icon.png "Pale Moon"
 [palemoonBrowser]: http://www.palemoon.org/
 [wikipediaPalemoon]: https://www.wikipedia.org/wiki/Pale_Moon_%28web_browser%29
 [palemoonIssueTracker]: https://github.com/MoonchildProductions/UXP/issues

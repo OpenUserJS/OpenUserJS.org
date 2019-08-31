@@ -1,6 +1,5 @@
 ## Violentmonkey for Chromium
-
-![Violentmonkey icon][violentmonkeyIcon]
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_icon.png" width="128" height="128">
 
 Violentmonkey is a userscript manager for the [Chrome][chrome], [Chromium][chromium], [Firefox][firefox], [Opera][opera] web browser, written by [gera2ld][gera2ld].
 
@@ -48,7 +47,6 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/favicon16.png
 [oujs]: https://openuserjs.org/
-[violentmonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_icon.png "Violentmonkey"
 [opera]: Opera
 [chrome]: Chrome
 [chromium]: Chromium

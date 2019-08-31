@@ -13,12 +13,11 @@
       <div class="container-fluid">
         <h2 class="page-heading">
           About
+          <img src="/images/favicon.min.svg" alt="OUJS" width="128" height="128" align="right" style="margin-right: 0.33em;">
         </h2>
         <div class="panel panel-default">
           <div class="panel-heading clearfix">
-            <img src="/images/favicon.min.svg" alt="OUJS" width="128" height="128" align="right">
-            <h3><a id="welcome" rel="bookmark"></a>Welcome<a class="anchor" href="#welcome"><em class="fa fa-link"></em></a></h3>
-            <p>We welcome you to {{#pkg.name}}{{pkg.name}} <em>(OUJS)</em>{{#pkg.version}} v{{pkg.version}}{{/pkg.version}}{{/pkg.name}}{{#process.version}} using Node {{process.version}}{{/process.version}}{{#lastRestart}} last restarted <time datetime="{{lastRestartISOFormat}}" title="{{lastRestart}}">{{lastRestartHumanized}}</time>.{{/lastRestart}}</p>
+            <h3>Welcome to {{#pkg.name}}{{pkg.name}} <em>(OUJS)</em>{{#pkg.version}} v{{pkg.version}}{{/pkg.version}}{{/pkg.name}}{{#process.version}} using Node {{process.version}}{{/process.version}}{{#lastRestart}} last restarted <time datetime="{{lastRestartISOFormat}}" title="{{lastRestart}}">{{lastRestartHumanized}}</time>.{{/lastRestart}}</h3>
             <ul>
               {{#lockdown.scriptStorageRO}}<li>Read-Only Script storage mode is in effect.</li>{{/lockdown.scriptStorageRO}}
               {{#lockdown.updateURLCheck}}<li>UserScript metadata block <code>// @updateURL</code> is required. See <a href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">this FAQ</a>.</li>{{/lockdown.updateURLCheck}}
@@ -34,19 +33,13 @@
             <p>For getting started with Userscripts please check out the <a href="/about/Userscript-Beginners-HOWTO">Userscript Beginners HOWTO</a> and visit the <a href="/about/Frequently-Asked-Questions">FAQ</a>.</p>
           </div>
           <div class="panel-footer">
-            <table>
-              <tr>
-                <td class="text-center td-fit">
-                  <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/gpl-v3-logo.min.svg?sanitize=true" alt="GPLv3" width="86" height="43"></a>
-                </td>
-                <td class="text-center td-fit">
-                  <a href="https://www.gnu.org/licenses/fdl-1.3.html"><img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/gfdl-logo.min.svg?sanitize=true" alt="GFDL" width="86" height="30"></a>
-                </td>
-                <td class="td-fit text-center">
-                  <a href="https://nodejs.org/"><img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/Node.js_logo.min.svg?sanitize=true" alt="Node.js" width="86" height="52"></a>
-                </td>
-              </tr>
-            </table>
+            <div>
+              <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/gpl-v3-logo.min.svg?sanitize=true" alt="GPLv3" width="52" height="29"></a>
+              <a href="https://nodejs.org/"><img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/Node.js_logo.min.svg?sanitize=true" alt="Node.js" width="58" height="52"></a>
+            </div>
+            <div>
+              <a href="https://www.gnu.org/licenses/fdl-1.3.html"><img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/gfdl-logo.min.svg?sanitize=true" alt="GFDL" width="86" height="30" align="right"></a>
+            </div>
           </div>
         </div>
       </div>
@@ -55,12 +48,16 @@
         <div class="col-sm-8">
           <h2 class="page-heading">
             <a href="/about">About</a> / {{pageHeading}}
+            {{#pageIcon}}<img src="{{pageIcon}}" width="128" height="128" align="right" style="margin: 0 0.33em;">{{/pageIcon}}
           </h2>
           <div class="panel panel-default">
             <div class="panel-body">
               <div id="document-content" class="document-content">
                 {{#pageData}}{{{pageData}}}{{/pageData}}
               </div>
+            </div>
+            <div class="panel-footer">
+              <a href="https://www.gnu.org/licenses/fdl-1.3.html"><img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/gfdl-logo.min.svg?sanitize=true" alt="GFDL" width="86" height="30" align="right"></a>
             </div>
           </div>
         </div>

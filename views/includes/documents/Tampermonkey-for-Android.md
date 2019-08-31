@@ -1,6 +1,5 @@
 ## Tampermonkey for Android
-
-![Tampermonkey icon][tampermonkeyIcon]
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png" width="128" height="128">
 
 Tampermonkey is a userscript manager extension for [Android][android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Firefox][firefox], [Opera][Opera], [Safari][Safari], and other similar web browsers, written by Jan Biniok. However, it is also available as a standalone, userscript enabled web browser for Android mobile devices. The version currently available is a Beta release and is rather basic as a web browser, so it may not have all the features required to make some websites work, but it is reasonably comprehensive in its support for userscripts. There are also versions for [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], [Firefox][tamperMonkeyForFirefox], [Opera][tampermonkeyForOpera], and [Safari][tampermonkeyForSafari].
 
@@ -83,7 +82,6 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [safari]: Safari
 
 <!-- ## .user.js engine external linkage -->
-[tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
 [tampermonkeyNet]: http://tampermonkey.net/
 [gooPlayStoreTampermonkey]: https://play.google.com/store/apps/details?id=net.biniok.tampermonkey
 

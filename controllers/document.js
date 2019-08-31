@@ -84,6 +84,7 @@ exports.view = function (aReq, aRes, aNext) {
         var lines = null;
         var matches = null;
         var heading = null;
+        var icon = null;
         var content = null;
 
         if (aErr) {
@@ -99,12 +100,18 @@ exports.view = function (aReq, aRes, aNext) {
         } else {
           heading = document;
         }
+        matches = lines[0].match(/^\<img src\=\"(.*?)\"/);
+        if (matches) {
+          icon = matches[1];
+          lines.shift();
+        }
         content = lines.join('\n');
 
         // Page metadata
         pageMetadata(options, [heading, 'About']);
 
         options.pageHeading = heading;
+        options.pageIcon = icon;
         options.pageData = renderMd(content);
 
         aCallback(null);
