@@ -1,5 +1,5 @@
 ## Chrome
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/chrome_icon.png" width="128" height="128" align="right">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/chrome_icon.min.svg?sanitize=true" width="128" height="128" align="right">
 
 Chrome is a free web browser developed by Google. Most of its code draws from the open-source [Chromium][] project. Chrome's selling points are security, speed, simplicity and stability. The desktop version runs on Windows, Linux and OS X, and there are mobile versions for Android and iOS.
 
