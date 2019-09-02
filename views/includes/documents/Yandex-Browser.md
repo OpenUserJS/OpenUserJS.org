@@ -1,5 +1,5 @@
 ## Yandex Browser
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/yandexbrowser_icon.png" width="128" height="128" align="right">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/yandexbrowser_icon.min.svg?sanitize=true" width="128" height="128" align="right">
 
 Yandex Browser is a browser.
 

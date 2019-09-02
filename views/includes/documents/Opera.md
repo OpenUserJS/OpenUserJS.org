@@ -1,5 +1,5 @@
 ## Opera
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/opera_icon.png" width="128" height="128" align="right">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/opera_icon.min.svg?sanitize=true" width="128" height="128" align="right">
 
 Opera is a web browser developed by Opera Software. While it is proprietary rather than open-source software, it is released as Freeware. Opera is usually known for usability and standards compliance. It has been designed with some security in mind, and versions are available for a wide range of mobile devices. The desktop version runs on Windows, Linux and OS X, and there are mobile versions for Android, iOS and Blackberry.
 
