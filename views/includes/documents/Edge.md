@@ -1,5 +1,5 @@
 ## Edge
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/edge_icon.png" width="128" height="128" align="right">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/edge_icon.min.svg?sanitize=true" width="128" height="128" align="right">
 
 Edge is a web browser integrated into Microsoft Windows 10.
 
