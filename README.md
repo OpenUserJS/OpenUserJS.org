@@ -106,7 +106,7 @@ Repository | Reference | Recent Version | Referenced
 
 [![Using David][davidImageViaShields]][davidReport]
 
-Outdated dependencies list can also be achieved with `$ npm --depth 0 outdated`
+Outdated dependencies list can also be achieved with `$ npm outdated`
 
 
 [nodeGHUrl]: https://github.com/nodejs/node
