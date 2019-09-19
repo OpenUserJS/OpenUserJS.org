@@ -3,6 +3,10 @@
 
 Tampermonkey is a userscript manager extension for [Android][android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Firefox][firefox], [Opera][Opera], [Safari][Safari], and other similar web browsers, written by Jan Biniok. There are also versions for [Android][tampermonkeyForAndroid], [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], [Firefox][tamperMonkeyForFirefox], and [Opera][tampermonkeyForOpera].
 
+## WARNING!
+
+Safari has end-of-life'd *(EOL)* .safariextz style extensions in version 13. Tampermonkey has made a notice at [Tampermonkey/tampermonkey#558 (comment)](https://github.com/Tampermonkey/tampermonkey/issues/558#issuecomment-506836395). If you have "Keep my software up to date" enabled on macOS you will be getting Safari 13 at any time and it will disable/remove Tampermonkey. It is currently, at the time of this notice, no longer available in the App Store. Please see the GitHub issue regarding potential intstallation methods if you have **not** upgraded Safari to version 13 and perhaps, meanwhile, an alternative.
+
 ### Installing Tampermonkey
 
 To get userscripts going with the desktop version of Tampermonkey, first you have to install it from [Apple Safari Extensions][tampermonkeyApple].
