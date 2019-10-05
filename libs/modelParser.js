@@ -954,9 +954,15 @@ var parseCategory = function (aCategory) {
 
   // Urls
 
-  category.slugUrl = category.slug.split('/').map(function (aStr) {
+  category.slugUrl = category.slug.split('/').map(function (aStr, aIndex, aArray) {
+    if (aArray.length > 1) {
+      category.slugAuthorUrl = [ aArray[0], aArray[1] ].join('/');
+    }
+
     return encode(aStr);
   }).join('/');
+
+  category.categoryAuthorPageUrl = '/' + category.slugAuthorUrl;
 
   category.categoryPageUrl = '/' + category.slugUrl;
   category.categoryPostDiscussionPageUrl = '/post/' + category.slugUrl;
@@ -964,9 +970,15 @@ var parseCategory = function (aCategory) {
 
 
   // Uris
-  category.slugUri = category.slug.split('/').map(function (aStr) {
+  category.slugUri = category.slug.split('/').map(function (aStr, aIndex, aArray) {
+    if (aArray.length > 1) {
+      category.slugAuthorUri = [ aArray[0], aArray[1] ].join('/');
+    }
+
     return encodeURIComponent(aStr);
   }).join('/');
+
+  category.categoryAuthorPageUri = '/' + category.slugAuthorUri;
 
   category.categoryPageUri = '/' + category.slugUri;
   category.categoryPostDiscussionPageUri = '/post/' + category.slugUri;
@@ -997,9 +1009,15 @@ var parseCategoryUnknown = function (aCategoryUnknownSlug) {
   var scriptName = null;
 
   if (isScriptIssue) {
+    category.isScriptIssue = !!isScriptIssue;
+
     scriptAuthorNameSlug = isScriptIssue[2];
     scriptNameSlug = isScriptIssue[4];
     scriptName = scriptNameSlug.replace(/\_/g, ' ');
+
+    category.authorName = scriptAuthorNameSlug;
+    category.scriptName = scriptName;
+
     category.name = scriptAuthorNameSlug + '/' + scriptName;
   }
 
