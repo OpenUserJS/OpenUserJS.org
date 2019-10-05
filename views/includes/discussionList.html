@@ -25,7 +25,17 @@
         </td>
         {{#multipleCategories}}
         <td class="td-fit align-middle">
-          <span class="label label-default"><a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.name}}</a></span>
+          {{#category.isScriptIssue}}
+          <span class="label label-default"><a {{#category.categoryAuthorPageUrl}}href="{{{category.categoryAuthorPageUrl}}}"{{/category.categoryAuthorPageUrl}}>{{category.authorName}}</a></span>
+          <br class="hidden-lg hidden-md">
+          <span style="color: #ccc;">/</span>
+          <span class="label label-default"><a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.scriptName}}</a></span>
+          {{/category.isScriptIssue}}
+          {{^category.isScriptIssue}}
+          <span class="label label-default">
+            <a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.name}}</a>
+          </span>
+          {{/category.isScriptIssue}}
         </td>
         {{/multipleCategories}}
         <td class="td-fit align-middle">
