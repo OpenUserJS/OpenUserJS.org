@@ -23,9 +23,20 @@
                   {{#commentList}}
                   <div class="topic-title row container-fluid">
                     <ol class="breadcrumb pull-left">
-                      <li><a href="{{{script.scriptPageUrl}}}">{{script.name}}</a></li>
-                      <li><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
-                      <li class="active"><a href="{{{discussion.discussionPageUrl}}}">{{discussion.topic}}</a></li>
+                      {{^discussion.topic}}
+                        <li><em>Topic not available</em></li>
+                      {{/discussion.topic}}
+                      {{#discussion.topic}}
+                        {{#category.isScriptIssue}}
+                        <li><a href="{{{category.categoryAuthorPageUrl}}}">{{category.authorName}}</a></li>
+                        <li><a href="{{{script.scriptPageUrl}}}">{{category.scriptName}}</a></li>
+                        {{/category.isScriptIssue}}
+                        {{^category.isScriptIssue}}
+                        <li><a href="{{{script.scriptPageUrl}}}">{{script.name}}</a></li>
+                        {{/category.isScriptIssue}}
+                        <li><a href="{{{category.categoryPageUrl}}}">{{category.name}}</a></li>
+                        <li class="active"><a href="{{{discussion.discussionPageUrl}}}">{{discussion.topic}}</a></li>
+                      {{/discussion.topic}}
                     </ol>
                   </div>
                   {{> includes/comment.html }}
