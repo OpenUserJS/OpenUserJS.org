@@ -1388,7 +1388,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
           thatSPDX = thisKeyComponents[0];
           if (SPDX.indexOf(thatSPDX) === -1
-            || blockSPDX.indexOf(thatSPDX) > -1 && !exceptSPDX.indexOf(thatSPDX)) {
+            || (blockSPDX.indexOf(thatSPDX) > -1 && exceptSPDX.indexOf(thatSPDX) === -1)) {
 
             // Absent SPDX short code, or blocked SPDX with no except for dual licensed... reject
             aInnerCallback(new statusError({
