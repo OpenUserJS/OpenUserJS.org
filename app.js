@@ -312,8 +312,7 @@ if (isSecured) {
       '!SRP',
       '!CAMELLIA'
     ].join(':'),
-    honorCipherOrder: true,
-    secureOptions: crypto.constants.SSL_OP_NO_TLSv1_1 | crypto.constants.SSL_OP_NO_TLSv1
+    honorCipherOrder: true
   };
 
   try {
