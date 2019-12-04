@@ -7,14 +7,14 @@
     "ace-builds": "git://github.com/ajaxorg/ace-builds.git#5ad04a4",
     "ansi-colors": "4.1.1",
     "async": "3.1.0",
-    "aws-sdk": "2.567.0",
+    "aws-sdk": "2.584.0",
     "base62": "2.0.1",
     "body-parser": "1.19.0",
     "bootstrap": "3.4.1",
     "bootstrap-markdown": "2.10.0",
     "clipboard": "2.0.4",
     "compression": "1.7.4",
-    "connect-mongo": "3.1.2",
+    "connect-mongo": "3.2.0",
     "diff": "4.0.1",
     "express": "4.17.1",
     "express-minify": "1.0.0",
@@ -37,8 +37,8 @@
     "mime-db": "1.42.0",
     "moment": "2.24.0",
     "moment-duration-format": "2.3.2",
-    "mongodb": "3.3.3",
-    "mongoose": "5.7.8",
+    "mongodb": "3.3.5",
+    "mongoose": "5.7.13",
     "morgan": "1.9.1",
     "mu2": "0.5.21",
     "octicons": "4.4.0",
@@ -49,12 +49,12 @@
     "passport-google-oauth20": "2.0.0",
     "passport-imgur": "0.0.3",
     "passport-reddit": "0.2.4",
-    "passport-steam": "1.0.11",
+    "passport-steam": "1.0.12",
     "passport-twitter": "1.0.4",
     "passport-yahoo": "git://github.com/OpenUserJs/passport-yahoo.git#OpenID2",
     "pegjs": "0.10.0",
-    "rate-limit-mongo": "1.0.3",
-    "remark": "11.0.1",
+    "rate-limit-mongo": "2.1.0",
+    "remark": "11.0.2",
     "remark-strip-html": "1.0.1",
     "request": "2.88.0",
     "rfc2047": "2.0.1",
@@ -65,7 +65,7 @@
     "serve-favicon": "2.5.0",
     "spdx-license-ids": "3.0.5",
     "strip-markdown": "3.1.1",
-    "terser": "4.3.9",
+    "terser": "4.4.2",
     "toobusy-js": "0.5.1",
     "underscore": "1.9.1",
     "useragent": "2.3.0"
@@ -85,8 +85,8 @@
     "clean": "node dev/clean.js"
   },
   "engines": {
-    "node": ">=10.16.0 <11.0.0",
-    "npm": ">=6.9.0"
+    "node": ">=12.13.1 <13.0.0",
+    "npm": ">=6.12.1"
   },
   "private": true
 }
