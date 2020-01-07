@@ -70,24 +70,22 @@ var defaultPoolSize = 10;
 if (isPro) {
   dbOptions = {
     poolSize: defaultPoolSize,
-    reconnectTries: 30,
-    reconnectInterval: 1000,
     family: 4,
 
     useNewUrlParser: true,   // #1516
     useFindAndModify: false, // #1516
-    useCreateIndex: true     // #1516
+    useCreateIndex: true,    // #1516
+    useUnifiedTopology: true // #1516
   }
 } else {
   dbOptions = {
     poolSize: defaultPoolSize,
-    reconnectTries: 30,
-    reconnectInterval: 1000,
     family: 4,
 
     useNewUrlParser: true,   // #1516
     useFindAndModify: false, // #1516
-    useCreateIndex: true     // #1516
+    useCreateIndex: true,    // #1516
+    useUnifiedTopology: true // #1516
   }
 }
 
