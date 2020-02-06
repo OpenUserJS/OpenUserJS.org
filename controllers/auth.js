@@ -219,21 +219,25 @@ exports.callback = function (aReq, aRes, aNext) {
   // Hijack the private verify method so we can mess stuff up freely
   // We use this library for things it was never intended to do
   if (openIdStrategies[strategy]) {
-    if (strategy === 'steam') {
-      strategyInstance._verify = function (aIgnore, aId, aDone) {
-        verifyPassport(aId, strategy, username, aReq.session.user, aDone);
-      };
-    } else {
-      strategyInstance._verify = function (aId, aDone) {
-        verifyPassport(aId, strategy, username, aReq.session.user, aDone);
-      };
+    switch(strategy) {
+      case 'steam':
+        strategyInstance._verify = function (aIgnore, aId, aDone) {
+          verifyPassport(aId, strategy, username, aReq.session.user, aDone);
+        };
+        break;
+      default:
+        strategyInstance._verify = function (aId, aDone) {
+          verifyPassport(aId, strategy, username, aReq.session.user, aDone);
+        };
     }
   } else {
-    strategyInstance._verify =
-      function (aToken, aRefreshOrSecretToken, aProfile, aDone) {
-        aReq.session.profile = aProfile;
-        verifyPassport(aProfile.id, strategy, username, aReq.session.user, aDone);
-      };
+    switch(strategy) {
+      default:
+        strategyInstance._verify = function (aToken, aRefreshOrSecretToken, aProfile, aDone) {
+          aReq.session.profile = aProfile;
+          verifyPassport(aProfile.id, strategy, username, aReq.session.user, aDone);
+        };
+    }
   }
 
   // This callback will happen after the verify routine
