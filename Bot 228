@@ -1,0 +1,623 @@
+// ==UserScript==
+// @name Mrush Easy v1.0
+
+//header
+trigger_key = 90; //ASCII key code for the letter 'Z'
+contentScriptMessage = "Fuck";
+
+//if (window == top) {
+//    window.addEventListener('keyup', doKeyPress, false);
+//}
+/*
+function doKeyPress(e){
+    if (e.shiftKey && e.ctrlKey && e.keyCode == trigger_key){
+        alert("Contentscript is sending '" + contentScriptMessage  + "'");
+        chrome.extension.sendMessage({message: contentScriptMessage});
+    }
+}*/
+chrome.runtime.sendMessage({message: contentScriptMessage});
+
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender) {
+        alert("from background script: '" + request.message + "'");
+//var request.message;
+    });
+//if (otv){
+//alert (otv);
+}
+/*
+if (!licenseStatus){ var licenseStatus='FAIL';}
+})(jQuery);
+$(document).ready(function(){
+    $('.paulund_modal').paulund_modal_box();
+    $('.paulund_modal_2').paulund_modal_box({
+        title:'123',
+        description: licenseStatus
+    });
+    $('.paulund_modal_3').paulund_modal_box({
+        title: 'Change Title with height',
+        height: '500'
+    });
+    $('.paulund_modal_4').paulund_modal_box({
+        title: 'Change Title with Width',
+        width: '800'
+    });
+    $('.paulund_modal_5').paulund_modal_box({
+        title:'Second Title Box',
+        description:'Custom description for box <br/><br/>Quisque sodales odio nec dolor porta sed laoreet mauris pretium. Aenean id mauris ligula, semper pulvinar dolor. Suspendisse rutrum, libero eu condimentum porta, mauris mauris semper augue, ut tempor nunc arcu vel ligula. Quisque orci eros, consequat vel iaculis eget, blandit bibendum est. Morbi ac tellus dui. Nullam eget eros et lectus dignissim placerat. Nulla facilisi. Ut congue posuere vulputate.',
+        height: '500',
+        width: '800'
+    });
+});*/
+/*var node = document.querySelector("a[class='mbtn mb2'][href='/profile']"),
+                ele = document.createElement("div");
+            ele.className = "fast_chest";
+            ele.innerHTML = '<a href="#" class="paulund_modal_2">Click Here</a>';
+            node.parentNode.insertBefore(ele, node.nextSibling);
+*/
+var easy_chat_homelink='Yes'; //в чате ссылка на главную. (Yes, No)
+var easy_chest_view='Yes'; //Показывать кнопку разбора вещей (Yes, No)
+var easy_chest_view_destroy=1; //Разбирать вещи, если их больше заданного числа (от 1 до 39)
+//   Установите 40, чтобы не разбирать
+var easy_home_addchat='Yes'; //На главной добавляется ссылка на чат (Yes, No)
+
+
+if (!document.querySelector("a[class='ubtn inbl mt-15 green mb2'][href='']") === false)
+{
+    if (document.querySelector("a[class='ubtn inbl mt-15 green mb2'][href='']").querySelector("span").querySelector("span").innerText=="Обновить")
+    {
+        setTimeout(function() {
+            document.querySelector("a[class='ubtn inbl mt-15 green mb2'][href='']").click();
+        }, 1500);
+    }
+}
+//add link to home in chat page
+if (document.location.pathname=="/chat" && easy_chat_homelink=='Yes'){
+    var node = document.querySelector("div[class='cntr mb5 mt5 lh1']"),
+        ele = document.createElement("div");
+    ele.className = "go_home";
+    ele.innerHTML = '<a class="mbtn mb2" href="/"><img class="icon" src="http://144.76.127.94/view/image/icons/home.png"> Главная</a>';
+    node.parentNode.insertBefore(ele, node.nextSibling);
+}
+
+//Если сумка пуста - идем на главную
+if (document.location.pathname=="/chest" && !document.querySelector("div[class='ml5 mt5 mb5 sh small']")==false)
+{
+    setTimeout(function() {
+        document.location.pathname='/';
+    }, 1000);
+}
+if (!document.querySelector("a[href^='/?check_cd=1']")==false)
+{
+    setTimeout(function() {
+        document.location.pathname='/';
+    }, 1000);
+}
+
+//Если надели все предметы - идем на главную
+if (document.location.pathname=="/profile" && !document.querySelector("div[class='nr cntr lyell lh1 p5 sh']")==false)
+{
+    if (document.querySelector("div[class='nr cntr lyell lh1 p5 sh']").querySelector("span").innerText.indexOf('надели')!='-1'){
+        setTimeout(function() {
+            document.location.pathname='/';
+        }, 1000);
+    }
+}
+
+
+//В сумке. Надевание нужных и разбор ненужных вещей begin
+if (document.location.pathname=="/chest" && !document.querySelector("a[class='sell_link']")==false )
+{
+    //equip best item
+    if (document.querySelector("a[class='sell_link']").innerText=="Надеть"){
+        var wear_item = document.querySelector("a[class='sell_link']");
+        setTimeout(function() {
+            wear_item.click();
+        }, 1500);
+    }
+    //destroy bad item
+    if (document.querySelector("a[class='sell_link']").innerText=="Разобрать"){
+        var join_item = document.querySelector("a[class='sell_link']");
+        setTimeout(function() {
+            join_item.click();
+        }, 1500);
+    }
+    //Not touch case (up. not open)
+    if (document.querySelector("a[class='sell_link']").innerText=="Открыть"){
+        setTimeout(function() {
+            document.location.pathname='/';
+        }, 1500);
+    }
+    //using key!
+    if (document.querySelector("a[class='sell_link']").innerText=="Использовать"){
+        var using_key = document.querySelector("a[class='sell_link']");
+        setTimeout(function() {
+            using_key.click();
+        }, 1500);
+    }
+}
+//join item from pathname=="/join_item"
+if (document.location.pathname=="/join_item" && 
+    !document.querySelector("a[href^='/join?id'][class='ubtn inbl mt-15 green mb5']")==false ){
+    var join_item_to_item = document.querySelector("a[href^='/join?id'][class='ubtn inbl mt-15 green mb5']");
+    setTimeout(function() {
+        join_item_to_item.click();
+    }, 1500);
+}
+//destroy or drop
+if (!document.querySelector("a[href^='/delete_item'][class='grey1']")==false)
+{
+    if (document.querySelector("a[href^='/delete_item'][class='grey1']").innerText=="Выбросить")
+    {
+        var join_item_to_item = document.querySelector("a[href^='/delete_item'][class='grey1']");
+        setTimeout(function() {
+            join_item_to_item.click();
+        }, 1500);
+    }
+}
+
+//В сумке. Надевание нужных и разбор ненужных вещей end
+
+// Задания. Вход, если есть выполненные 
+if (!document.querySelectorAll("[href^='/task']")[0]===false){
+    if (!document.querySelectorAll("[href^='/task']")[0].querySelectorAll("span[class='plus_nopad']")[0] === false){
+        var targetTaskEnter = document.querySelectorAll("[href^='/task']")[0];
+        if (targetTaskEnter) {
+            setTimeout(function() {
+                targetTaskEnter.click();
+            }, 1500);
+        }
+    }
+}
+//Задания. Забрать награду
+if (document.location.pathname=="/task" && !document.querySelector("a[href^='/task_reward']")===false){
+    var targetTaskComplete = document.querySelector("a[href^='/task_reward']");
+    if (targetTaskComplete) {
+        setTimeout(function() {
+            targetTaskComplete.click();
+        }, 1500);
+    }
+}
+//Задания. Если все выполнили - на главную
+if (document.location.pathname=="/task" && !document.querySelector("a[href^='/task_reward']")===true)
+{
+    setTimeout(function() {
+        document.location.pathname='/';
+    }, 1000);
+}
+//Тренировка. Заходим, если есть что покачать за серебро.
+if (!document.querySelectorAll("[href^='/train']")[0]===false){
+    if (!document.querySelectorAll("[href^='/train']")[0].querySelectorAll("span[class='plus_nopad']")[0] === false){
+        var targetTrainEnter = document.querySelectorAll("[href^='/train']")[0];
+        if (targetTrainEnter) {
+            setTimeout(function() {
+                targetTrainEnter.click();
+            }, 1100);
+        }
+    }
+}
+
+//Тренировка. Покачиваем за серебро.
+if (document.location.pathname=="/train" && !document.querySelector("a[href^='/train_skill']")===false
+    && !document.querySelector("a[class='nr cntr lyell lh1 p5 sh']")===true
+   ){
+    var arr = document.querySelectorAll("a[href^='/train_skill']");
+    var len = arr.length;
+    for(var i = 0;i<arr.length;i++){
+        if (!arr[i].querySelector("img")==false ){
+            if (arr[i].querySelector("img").src.indexOf('silver')!='-1'){
+                var targetTrainUpdate = arr[i];
+                if (targetTrainUpdate) {
+                    setTimeout(function() {
+                        targetTrainUpdate.click();
+                    }, 1500);
+                    break;
+                }
+            }
+        }
+    }
+}
+//Тренировка. Если не хватает серебра - сваливаем
+if (document.location.pathname=="/train" && !document.querySelector("a[href^='/train_skill']")===false
+    && !document.querySelector("div[class='nr cntr lyell lh1 p5 sh']")===false){
+    setTimeout(function() {
+        document.location.pathname='/';
+    }, 1000);   
+}
+
+/*
+    if (!document.querySelector("a[href^='/train_skill']").querySelector("img").src.indexOf('silver')==false){
+        var targetTrain = document.querySelector("a[href^='/task_reward']");
+        if (targetTaskComplete) {
+            setTimeout(function() {
+                targetTaskComplete.click();
+            }, 1500);
+        }
+    }*/
+
+
+
+// get fast destroy items from chest + stat + destroy
+if (!document.querySelector("a[class='mbtn mb2'][href='/profile']")===false
+    && easy_chest_view=='Yes'){
+    jQuery.ajax({
+        type: 'get',
+        url: "http://mrush.mobi/profile",
+        success: function(result) {
+            html = result;
+            var chest_info = html.substring(html.search('chest'), html.search('train')).substring(html.substring(html.search('chest'), html.search('train')).search('<span'), html.substring(html.search('chest'), html.search('train')).search('</a>'));
+            var node = document.querySelector("a[class='mbtn mb2'][href='/profile']"),
+                ele = document.createElement("div");
+            ele.className = "fast_chest";
+            ele.innerHTML = '<a href="/join_all_item" class="mbtn mb2">  '
+                +'<img src="http://144.76.127.94/view/image/icons/grind.png" class="icon" alt=""> '
+                +'Разобрать все ненужное '+chest_info+'</a>';
+            node.parentNode.insertBefore(ele, node.nextSibling);
+            var count_element=parseInt(document.querySelector("div[class='fast_chest']").querySelector("span").innerText.substring(document.querySelector("div[class='fast_chest']").querySelector("span").innerText.indexOf('(')+1, document.querySelector("div[class='fast_chest']").querySelector("span").innerText.indexOf(' ')));
+            if (easy_chest_view_destroy==0){easy_chest_view_destroy=1}
+            if (count_element>easy_chest_view_destroy && document.location.pathname=="/"){
+                document.querySelector("div[class='fast_chest']").querySelector("a").click();
+            }
+
+
+        },
+    });
+}
+//get clan chat in first page
+/*if (!document.querySelector("a[class='mbtn mb2'][href='/profile']")===false
+    && easy_home_addchat=='Yes'){
+jQuery.ajax({
+        type: 'get',
+        url: "http://mrush.mobi/clan"+document.querySelector("a[class='mbtn mb2'][href^='/clan?']").href.replace('http://mrush.mobi/clan',''),
+        success: function(result) {
+            html = result;
+            var doc = document.implementation.createHTMLDocument("example");
+            doc.documentElement.innerHTML=html+'<div class="hr_g mb10"><div><div></div></div></div>';
+            var node = document.querySelector("a[class='bdr cnr bg_blue mb2 bl nd']"),
+            ele = document.createElement("div");
+            ele.className = "fast_chat";
+            ele = doc.querySelector("a[class='mbtn mb2'][href^='/chat']");
+            node.parentNode.insertBefore(ele, node.nextSibling);         
+        },
+    });
+}*/
+// hide payment to arena and lair
+/*if (!document.querySelector("a[class='bdr cnr bg_blue mb2 bl nd']")==false){
+    document.querySelector("a[class='bdr cnr bg_blue mb2 bl nd']").style.display = 'none';
+}
+*/
+//local storage update
+var sessionStorage_transfer = function(event) {
+    if(!event) { event = window.event; } // ie suq
+    if(!event.newValue) return;          // do nothing if no value to work with
+    if (event.key == 'getSessionStorage') {
+        // another tab asked for the sessionStorage -> send it
+        localStorage.setItem('sessionStorage', JSON.stringify(sessionStorage));
+        // the other tab should now have it, so we're done with it.
+        localStorage.removeItem('sessionStorage'); // <- could do short timeout as well.
+    } else if (event.key == 'sessionStorage' && !sessionStorage.length) {
+        // another tab sent data <- get it
+        var data = JSON.parse(event.newValue);
+        for (var key in data) {
+            sessionStorage.setItem(key, data[key]);
+        }
+    }
+};
+
+// listen for changes to localStorage
+if(window.addEventListener) {
+    window.addEventListener("storage", sessionStorage_transfer, false);
+} else {
+    window.attachEvent("onstorage", sessionStorage_transfer);
+}
+
+
+// Ask other tabs for session storage (this is ONLY to trigger event)
+if (!sessionStorage.length) {
+    localStorage.setItem('getSessionStorage', 'foobar');
+    localStorage.removeItem('getSessionStorage', 'foobar');
+}
+// local storage end
+
+// post message to chat about update clan budget //start
+/*
+if (document.location.pathname=="/clan_budget"){
+if (!document.querySelector("div[class='nr cntr lyell lh1 p5 sh']").querySelectorAll("span[class='win']")[1]!=true){
+localStorage.setItem("gold_clan", 'Пополнил казну клана: '
+                     + document.querySelector("div[class='nr cntr lyell lh1 p5 sh']").querySelectorAll("span[class='win']")[1].textContent);
+}
+if (!document.querySelector("div[class='nr cntr lyell lh1 p5 sh']").querySelectorAll("span[class='win']")[2]!=true){
+localStorage.setItem("gold_clan", localStorage.getItem("gold_clan")+', '
+                     +document.querySelector("div[class='nr cntr lyell lh1 p5 sh']").querySelectorAll("span[class='win']")[2].textContent);
+}
+if (!document.querySelector("div[class='nr cntr lyell lh1 p5 sh']").querySelectorAll("span[class='win']")[3]!=true){
+localStorage.setItem("gold_clan", localStorage.getItem("gold_clan")+', '+
+                     document.querySelector("div[class='nr cntr lyell lh1 p5 sh']").querySelectorAll("span[class='win']")[3].textContent);
+}
+
+
+if (localStorage.getItem("gold_clan")!=null){
+ var popup = window.open('chat'+document.querySelector("a[class='mbtn mb2'][href^='/clan?']").href.replace('http://mrush.mobi/clan',''),"'" + name + "'",'height=300,width=300,location=no,resizable=yes,scrollbars=yes');       
+  var element = document.createElement('div');
+  element.setAttribute('id', 'mydiv');
+  element.appendChild(document.createTextNode('blah blah'));
+
+  popup.window.onload = function() {
+
+      var win = popup.document.body;
+      win.appendChild(element);
+      popup.window.document.querySelector("input[class^='lbfld h25 w96']").value=localStorage.getItem("gold_clan");
+	popup.window.document.querySelector("input[type='submit']").click();
+      localStorage.clear();
+               setTimeout(function() {
+			popup.window.close();
+               }, 1000);
+
+
+ };
+}
+}*/
+
+// post message to chat about update clan budget // end
+
+myFunction();
+function myFunction() { 
+
+    //begin travel block
+    if (!document.querySelectorAll("[href^='/travel']")[0]===false){
+        if (!document.querySelectorAll("[href^='/travel']")[0].querySelectorAll("span[class='plus_nopad']")[0] === false){
+            var targetTravelEnter = document.querySelectorAll("[href^='/travel']")[0];
+            if (targetTravelEnter) {
+                targetTravelEnter.click();
+            }
+        }
+    }
+    if (document.location.pathname=="/travel" && 
+        !document.querySelector("[href^='/travel?action'][class='ubtn inbl mt-15 red mb5']") === false){
+        var targetTravelstart = document.querySelector("[href^='/travel?action'][class='ubtn inbl mt-15 red mb5']");
+        if (targetTravelstart) {
+            targetTravelstart.click();
+        }
+    }
+    if (document.location.pathname=="/travel" && (
+        document.location.search.indexOf('action=enter')!='-1' || document.location.search.indexOf('action=attack')!='-1') ){
+        var targetTravelAttack = document.querySelector("[class='ubtn inbl mt-15 red mb2']");
+        if (targetTravelAttack) {
+            targetTravelAttack.click();
+        }
+    }
+    if (document.location.pathname=="/travel" && 
+        !document.querySelectorAll("[href^='/go_travel'][class^='ubtn inbl']")[0] === false){
+        var arr = document.querySelectorAll("[href^='/go_travel'][class^='ubtn inbl']");
+        var len = arr.length-1;
+        var targetNewTravelStart = document.querySelectorAll("[href^='/go_travel'][class^='ubtn inbl']")[len];
+        if (targetNewTravelStart) {
+            targetNewTravelStart.click();
+        }
+    }
+    if (document.location.pathname=="/travel" && 
+        !document.querySelector("[href='/'][class='ubtn inbl mt-15 mb5 green']") === false){
+        var targetTravelEnd = document.querySelector("[href='/'][class='ubtn inbl mt-15 mb5 green']");
+        if (targetTravelEnd) {
+            targetTravelEnd.click();
+        }
+    }
+    //end travel block
+
+
+    //start lair block
+    if (document.location.pathname=="/lair" && 
+        !document.querySelector("[href^='/lair?action'][class='ubtn inbl mt-15 red mb5']") === false){
+        var targetLairStart = document.querySelector("[href^='/lair?action'][class='ubtn inbl mt-15 red mb5']");
+        if (targetLairStart) {
+            targetLairStart.click();
+        }
+    }    
+    if (document.querySelector("[href^='/lair']") && document.location.pathname!="/lair"){
+        var targetLairEnter = document.querySelector("[href^='/lair']");
+        if (targetLairEnter) {
+            setTimeout(function() {
+                targetLairEnter.click();
+            }, 500);
+
+        }
+    }
+
+    if (document.location.pathname=="/lair" 
+        && !document.querySelectorAll("[href^='/lair'][class='ubtn inbl mt-15 red mb2']")===false){
+        var targetNode = null;
+        if (!document.querySelectorAll("[href^='/lair'][class='ubtn inbl mt-15 red mb2']")===false){
+            var arr = document.querySelectorAll("[href^='/lair'][class='ubtn inbl mt-15 red mb2']");
+            var len = arr.length;
+            for(var i = 0;i<arr.length;i++){
+                if (window.getComputedStyle(document.querySelectorAll("[href^='/lair'][class='ubtn inbl mt-15 red mb2']")[i].parentElement.parentElement.parentElement,null).getPropertyValue("height")
+                    !='0px' &&
+                    window.getComputedStyle(document.querySelectorAll("[href^='/lair'][class='ubtn inbl mt-15 red mb2']")[i].parentElement.parentElement.parentElement,null).getPropertyValue("height")
+                    !='auto'
+                   ){
+                    var targetLairAttack = document.querySelectorAll("[href^='/lair'][class='ubtn inbl mt-15 red mb2']")[i];
+                    if (targetLairAttack) {
+                        setTimeout(function() {
+                            targetLairAttack.click();
+                        }, 1500);
+                        break;
+                    }
+                }
+            }
+        }
+        //else {window.setTimeout("document.location.reload();", 2000);}
+
+    }
+
+    //end lair block
+
+
+    //start arena block
+
+    if (document.querySelector("[href^='/arena']") && document.location.pathname!="/arena"){
+        var targetArenaEnter = document.querySelector("[href^='/arena']");
+        if (targetArenaEnter) {
+            targetArenaEnter.click();
+
+        }
+    }
+
+    if (document.location.pathname=="/arena" 
+        && !document.querySelectorAll("[href^='/arena'][class='ubtn inbl mt-15 red mb5']")===false){
+        var targetNode = null;
+        if (!document.querySelectorAll("[href^='/arena'][class='ubtn inbl mt-15 red mb5']")===false){
+            var arr = document.querySelectorAll("[href^='/arena'][class='ubtn inbl mt-15 red mb5']");
+            var len = arr.length;
+            for(var i = 0;i<arr.length;i++){
+                if (window.getComputedStyle(document.querySelectorAll("[href^='/arena'][class='ubtn inbl mt-15 red mb5']")[i].parentElement.parentElement.parentElement,null).getPropertyValue("height")
+                    !='0px' &&
+                    window.getComputedStyle(document.querySelectorAll("[href^='/arena'][class='ubtn inbl mt-15 red mb5']")[i].parentElement.parentElement.parentElement,null).getPropertyValue("height")
+                    !='auto'
+                   ){
+                    var targetArenaAttack = document.querySelectorAll("[href^='/arena'][class='ubtn inbl mt-15 red mb5']")[i];
+                    if (targetArenaAttack) {
+                        setTimeout(function() {
+                            targetArenaAttack.click();
+                        }, 1500);
+                        break;
+                    }
+                }
+            }
+        }
+
+    }
+    //end arena block
+
+    //start clan_lair block
+    if (document.location.pathname=="/clan_lair" && 
+        !document.querySelector("[href^='/clan_lair?action'][class='ubtn inbl mt-15 red mb5']") === false){
+        var targetTravelstart = document.querySelector("[href^='/clan_lair?action'][class='ubtn inbl mt-15 red mb5']");
+        if (targetTravelstart) {
+            targetTravelstart.click();
+
+        }
+    }
+
+    if (document.location.pathname=="/clan_lair" 
+        && !document.querySelectorAll("[href^='/clan_lair'][class='ubtn inbl mt-15 red mb2']")===false){
+        var targetNode = null;
+        if (!document.querySelectorAll("[href^='/clan_lair'][class='ubtn inbl mt-15 red mb2']")===false){
+            var arr = document.querySelectorAll("[href^='/clan_lair'][class='ubtn inbl mt-15 red mb2']");
+            var len = arr.length;
+            for(var i = 0;i<arr.length;i++){
+                if (window.getComputedStyle(document.querySelectorAll("[href^='/clan_lair'][class='ubtn inbl mt-15 red mb2']")[i].parentElement.parentElement.parentElement,null).getPropertyValue("height")
+                    !='0px' &&
+                    window.getComputedStyle(document.querySelectorAll("[href^='/clan_lair'][class='ubtn inbl mt-15 red mb2']")[i].parentElement.parentElement.parentElement,null).getPropertyValue("height")
+                    !='auto'
+                   ){
+                    var targetClanLairAttack = document.querySelectorAll("[href^='/clan_lair'][class='ubtn inbl mt-15 red mb2']")[i];
+                    if (targetClanLairAttack) {
+                        setTimeout(function() {
+                            targetClanLairAttack.click();
+                        }, 1500);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    //end clan lair block
+
+    //start pvp block
+    if (document.location.pathname=="/pvp" && 
+        !document.querySelectorAll("[href^='/pvp'][class^='ubtn inbl mt-15 green mb2']")[0] === false){
+        var targetPVPStart = document.querySelectorAll("[href^='/pvp'][class^='ubtn inbl mt-15 green mb2']")[0];
+        if (targetPVPStart) {
+            setTimeout(function() {
+                targetPVPStart.click();
+            }, 1500);
+        }
+    }
+
+
+    if (document.location.pathname=="/pvp" &&
+        !document.querySelectorAll("[href^='/pvp'][class^='ubtn inbl mt-15 green mb2']")[0] === true
+        && 
+        !document.querySelectorAll("[href^='/pvp'][class='ubtn inbl s red_no']")[0]===false
+       ){
+        if (document.querySelectorAll("[href^='/pvp'][class='ubtn inbl s red_no']")[0]){
+            var arr = document.querySelectorAll("[href^='/pvp'][class='ubtn inbl s red_no']");
+            var len = arr.length;
+            for(var i = 0;i<arr.length;i++){
+                // var dis = document.getElementsByTagName('div')[i].className;
+                //  text="ubtn inbl mt-15 red mb2";
+                //  if (document.getElementsByTagName('div')[i].innerHTML.indexOf(text) != '-1'){
+                if (window.getComputedStyle(document.querySelectorAll("[href^='/pvp'][class='ubtn inbl s red_no']")[i].parentElement.parentElement,null).getPropertyValue('display')=='block'){
+                    var targetPVPAttack = document.querySelectorAll("[href^='/pvp'][class='ubtn inbl s red_no']")[i];
+                    if (targetPVPAttack) {
+                        setTimeout(function() {
+                            targetPVPAttack.click();
+                        }, 700);
+                        //targetPVPAttack.click();
+                    }
+                }
+                //}
+            }} //else {window.setTimeout("document.location.reload();", 1500);}
+    }
+    if (document.location.pathname=="/pvp" 
+        && !document.querySelectorAll("[href^='/pvp'][class^='ubtn inbl mt-15 green mb2']")[0] === true
+        && !document.querySelectorAll("[href^='/pvp'][class='ubtn inbl s red_no']")[0]=== true
+       ){
+        window.setTimeout("document.location.reload();", 2000);
+    }
+    /*
+    //pvp
+if (document.getElementsByClassName("fr w50")[0]){
+var arr = document.getElementsByClassName("fr w50")[0].getElementsByTagName('div');
+var len = arr.length;
+for(var i = 0;i<arr.length;i++){
+  var dis = document.getElementsByClassName("fr w50")[0].getElementsByTagName('div')[i].className;
+    if (window.getComputedStyle(document.getElementsByClassName(dis)[0],null).getPropertyValue('display')=='block'){
+     var targetNode = document.getElementsByClassName("fr w50")[0].getElementsByTagName('div')[i].querySelector("a[class*='ubtn inbl s red_no']");
+       if (targetNode) {
+           //window.setInterval(targetNode.click(),5000);
+               window.onload =function() {
+               setTimeout(function() {
+                   targetNode.click();
+               }, 1500);
+                   };
+      //     triggerMouseEvent (targetNode, "click");
+       }
+    }
+}
+
+
+}*/
+    //end pvp block
+    //start clan invite block
+
+    if (document.location.pathname=="/online"){
+        if (document.querySelector("[href^='/invite']")){
+            var targetClanInvite = document.querySelector("[href^='/invite']");
+            if (targetClanInvite) {
+                setTimeout(function() {
+                    targetClanInvite.click();
+                }, 1331);
+            }
+        }
+    }
+    //end clan invite block
+
+    //document.location.reload();
+    if (document.querySelector("a[class*='ubtn inbl mt-15 green mb2']") == null
+        && !document.querySelectorAll("[href^='/arena'][class='ubtn inbl mt-15 red mb5']") == false
+        && !document.querySelectorAll("[href^='/lair'][class='ubtn inbl mt-15 red mb2']") == false
+        && document.location.pathname!="/online"
+        && document.location.pathname!="/clan_budget"
+        && document.location.pathname!="/chat"
+       ){
+        window.setTimeout("document.location.reload();", 10035);
+    }
+}
+
+//document.location='http://mrush.mobi/'
+/*if (document.readyState="complete"){
+    window.setTimeout("",10000);
+i;
+}*/
