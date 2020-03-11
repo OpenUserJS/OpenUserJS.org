@@ -139,7 +139,7 @@ item1 =
       unique: true,
 
       key: upmix(keyword),
-      value: value.replace(/\s+$/, '')
+      value: value.trim()
     };
   }
 
@@ -161,7 +161,7 @@ item1Localized =
       unique: true,
 
       key: keywordUpmixed,
-      value: value.replace(/\s+$/, '')
+      value: value.trim()
     }
 
     if (locale) {
@@ -194,7 +194,7 @@ items1 =
   {
     return {
       key: upmix(keyword),
-      value: value.replace(/\s+$/, '')
+      value: value.trim()
     };
   }
 
@@ -208,7 +208,7 @@ items2 =
   whitespace
   value2: non_newline
   {
-    var value2trimmed = value2.replace(/\s+$/, '');
+    var value2trimmed = value2.trim();
 
     return {
       key: upmix(keyword),
