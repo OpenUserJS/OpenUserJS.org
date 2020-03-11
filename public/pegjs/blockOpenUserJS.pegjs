@@ -62,7 +62,7 @@ item1 =
       unique: true,
 
       key: upmix(keyword),
-      value: value.replace(/\s+$/, '')
+      value: value.trim()
     };
   }
 
@@ -76,6 +76,6 @@ items1 =
   {
     return {
       key: upmix(keyword),
-      value: value.replace(/\s+$/, '')
+      value: value.trim()
     };
   }
