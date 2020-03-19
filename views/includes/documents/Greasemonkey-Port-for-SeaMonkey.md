@@ -1,7 +1,7 @@
 ## Greasemonkey Port for SeaMonkey
 <img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport_icon.min.svg?sanitize=true" width="128" height="128" align="right">
 
-Greasemonkey Port is a userscript manager for SeaMonkey, originally written by Aaron Boodman and currently SeaMonkey front-end maintained by Marti, Ratty and/or Farby with some backend support from Anthony Lieuallen and Johan Sundström. It is the first extension to allow userscripts to be run in a web browser and is a near parallel branch of Greasemonkey itself. Originally Greasemonkey contained SeaMonkey support and is now split off.
+Greasemonkey Port is a userscript manager for SeaMonkey, originally written by Aaron Boodman and currently SeaMonkey front-end maintained by Marti, Ratty and/or Farby with some backend support from Anthony Lieuallen and Johan Sundström. It is the first extension to allow userscripts to be run in a web browser and is a near parallel branch of Greasemonkey 3.x itself. Originally Greasemonkey contained SeaMonkey support and is now split off.
 
 ### Installing Greasemonkey Port
 
