@@ -14,6 +14,8 @@ var Strategy = require('../models/strategy').Strategy;
 
 var nil = require('./helpers').nil;
 var github = require('../libs/githubClient');
+var settings = require('../models/settings.json');
+
 
 var clientId = null;
 var clientKey = null;
@@ -121,12 +123,16 @@ RepoManager.prototype.loadScripts = function (aUpdate, aCallback) {
       var url = '/' + encodeURI(aRepo.user) + '/' + encodeURI(aRepo.repo)
         + '/master' + aScript.path;
       fetchRaw('raw.githubusercontent.com', url, function (aBufs) {
-        scriptStorage.getMeta(aBufs, function (aMeta) {
-          if (aMeta) {
-            scriptStorage.storeScript(that.user, aMeta, Buffer.concat(aBufs), aUpdate,
-              aInnerCallback);
-          }
-        });
+        var thisBuf = Buffer.concat(aBufs);
+
+        if (thisBuf.byteLength <= settings.maximum_upload_script_size) {
+          scriptStorage.getMeta(aBufs, function (aMeta) {
+            if (aMeta) {
+              scriptStorage.storeScript(that.user, aMeta, thisBuf, aUpdate,
+                aInnerCallback);
+            }
+          });
+        }
       });
     }, aCallback);
   });
