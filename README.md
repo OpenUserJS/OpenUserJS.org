@@ -417,8 +417,8 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [s3rverNPMUrl]: https://www.npmjs.com/package/s3rver
 [s3rverNPMVersionImage]: https://img.shields.io/npm/v/s3rver.svg?style=flat
 
-[sanitize-htmlGHUrl]: https://github.com/punkave/sanitize-html
-[sanitize-htmlDOCUrl]: https://github.com/punkave/sanitize-html/blob/master/README.md
+[sanitize-htmlGHUrl]: https://github.com/apostrophecms/sanitize-html
+[sanitize-htmlDOCUrl]: https://github.com/apostrophecms/sanitize-html/blob/master/README.md
 [sanitize-htmlNPMUrl]: https://www.npmjs.com/package/sanitize-html
 [sanitize-htmlNPMVersionImage]: https://img.shields.io/npm/v/sanitize-html.svg?style=flat
 
