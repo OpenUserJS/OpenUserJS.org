@@ -42,6 +42,6 @@
   "yahoo": {
     "name": "Yahoo!",
     "oauth": false,
-    "readonly": false
+    "readonly": true
   }
 }

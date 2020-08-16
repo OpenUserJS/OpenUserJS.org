@@ -1881,7 +1881,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           return;
         } else if (!aScript && aUpdate) {
           aCallback(new statusError({
-            message: 'Updating but no script found.',
+            message: 'Updating but no script found. Reference: '
+              + installName + ' ; '+ caseSensitive(installName),
             code: 500 // Status code unknown... could be user error too
           }), null);
           return;
