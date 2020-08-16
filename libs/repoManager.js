@@ -28,7 +28,7 @@ Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
 });
 
 // Requests a GitHub url and returns the chunks as buffers
-function fetchRaw(aHost, aPath, aCallback) {
+function fetchRaw(aHost, aPath, aCallback, aOptions) {
   var options = {
     hostname: aHost,
     port: 443,
@@ -38,6 +38,14 @@ function fetchRaw(aHost, aPath, aCallback) {
       'User-Agent': 'Node.js'
     }
   };
+
+  if (aOptions) {
+    // Ideally do a deep merge of aOptions -> options
+    // But for now, we just need the headers
+    if (aOptions.headers) {
+      Object.assign(options.headers, aOptions.headers);
+    }
+  }
 
   var req = https.request(options,
     function (aRes) {
@@ -66,10 +74,18 @@ function fetchRaw(aHost, aPath, aCallback) {
 // Use for call the GitHub JSON api
 // Returns the JSON parsed object
 function fetchJSON(aPath, aCallback) {
-  aPath += '?client_id=' + clientId + '&client_secret=' + clientKey;
+  // The old authentication method, which GitHub deprecated
+  //aPath += '?client_id=' + clientId + '&client_secret=' + clientKey;
+  // We must now use OAuth Basic (user+key) or Bearer (token)
+  var encodedAuth = Buffer.from(`${clientId}:${clientKey}`).toString('base64');
+  var opts = {
+    headers: {
+      Authorization: `Basic ${encodedAuth}`
+    }
+  };
   fetchRaw('api.github.com', aPath, function (aBufs) {
     aCallback(JSON.parse(Buffer.concat(aBufs).toString()));
-  });
+  }, opts);
 }
 
 // This manages actions on the repos of a user
