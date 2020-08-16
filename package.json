@@ -7,7 +7,7 @@
     "ace-builds": "1.4.12",
     "ansi-colors": "4.1.1",
     "async": "3.2.0",
-    "aws-sdk": "2.730.0",
+    "aws-sdk": "2.734.0",
     "base62": "2.0.1",
     "body-parser": "1.19.0",
     "bootstrap": "3.4.1",
@@ -28,7 +28,7 @@
     "image-size": "0.8.3",
     "ip-range-check": "0.2.0",
     "jquery": "3.5.1",
-    "js-beautify": "1.11.0",
+    "js-beautify": "1.12.0",
     "jsdom": "16.4.0",
     "less-middleware": "3.1.0",
     "marked": "1.1.1",
@@ -38,7 +38,7 @@
     "moment": "2.27.0",
     "moment-duration-format": "2.3.2",
     "mongodb": "3.6.0",
-    "mongoose": "5.9.28",
+    "mongoose": "5.10.0",
     "morgan": "1.10.0",
     "mu2": "0.5.21",
     "octicons": "4.4.0",
@@ -59,7 +59,7 @@
     "request": "2.88.2",
     "rfc2047": "2.0.1",
     "s3rver": "3.6.1",
-    "sanitize-html": "1.27.2",
+    "sanitize-html": "1.27.3",
     "select2": "3.5.2-browserify",
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.5.0",
@@ -85,8 +85,8 @@
     "clean": "node dev/clean.js"
   },
   "engines": {
-    "node": ">=12.13.1 <13.0.0",
-    "npm": ">=6.12.1"
+    "node": ">=14.8.0 <15.0.0",
+    "npm": ">=6.14.7"
   },
   "private": true
 }
