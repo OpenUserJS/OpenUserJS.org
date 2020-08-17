@@ -246,7 +246,8 @@ exports.register = function (aReq, aRes) {
     if (!aStrategy.oauth) {
       options.strategies.push({
         'strat': aStrategyKey,
-        'display': aStrategy.name
+        'display': aStrategy.name,
+        'disabled': aStrategy.readonly
       });
     }
   });
@@ -265,7 +266,8 @@ exports.register = function (aReq, aRes) {
       aAvailableStrategies.forEach(function (aStrategy) {
         options.strategies.push({
           'strat': aStrategy.name,
-          'display': aStrategy.display
+          'display': aStrategy.display,
+          'disabled': aStrategy.readonly
         });
       });
 

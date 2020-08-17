@@ -54,7 +54,7 @@
                       </span>
                       <select name="auth" class="form-control">
                         {{#openStrategies}}
-                        <option value="{{strat}}">{{display}}</option>
+                        <option value="{{strat}}"{{#disabled}} disabled="disabled"{{/disabled}}>{{display}}</option>
                         {{/openStrategies}}
                       </select>
                       <div style="width: 100%;">
