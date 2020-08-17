@@ -992,12 +992,14 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
           if (userStrats.indexOf(aStrat.name) > -1) {
             options.usedStrategies.push({
               'strat': aStrat.name,
-              'display': aStrat.display
+              'display': aStrat.display,
+              'disabled': aStrat.readonly
             });
           } else {
             options.openStrategies.push({
               'strat': aStrat.name,
-              'display': aStrat.display
+              'display': aStrat.display,
+              'disabled': aStrat.readonly
             });
           }
         });
@@ -1010,12 +1012,14 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
             if (userStrats.indexOf(name) > -1) {
               options.usedStrategies.push({
                 'strat': name,
-                'display': strategy.name
+                'display': strategy.name,
+                'disabled': strategy.readonly
               });
             } else {
               options.openStrategies.push({
                 'strat': name,
-                'display': strategy.name
+                'display': strategy.name,
+                'disabled': strategy.readonly
               });
             }
           }

@@ -29,7 +29,7 @@
           </div>
           <select name="auth" class="form-control">
             {{#strategies}}
-            <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}>{{display}}</option>
+            <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}{{#disabled}} disabled="disabled"{{/disabled}}>{{display}}</option>
             {{/strategies}}
           </select>
           <div style="width: 100%;">
