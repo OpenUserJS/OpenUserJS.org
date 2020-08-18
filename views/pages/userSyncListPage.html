@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{> includes/head.html }}
+</head>
+<body>
+  {{> includes/header.html }}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="container-fluid col-sm-8">
+        <div class="row">
+          <div class="col-xs-12">
+            {{> includes/userPageHeader.html }}
+            {{#paginationRendered}}
+            <div class="text-center collapse">
+              {{{paginationRendered}}}
+            </div>
+            {{/paginationRendered}}
+            <div class="panel panel-default">
+              {{> includes/syncList.html }}
+            </div>
+            {{#paginationRendered}}
+            <div class="text-center">
+              {{{paginationRendered}}}
+            </div>
+            {{/paginationRendered}}
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid col-sm-4">
+        {{> includes/searchBarPanel.html }}
+      </div>
+    </div>
+  </div>
+  {{> includes/footer.html }}
+  {{#paginationRendered}}
+    {{> includes/scripts/showTopPagination.html }}
+  {{/paginationRendered}}
+  {{> includes/scripts/formControlClear.html }}
+</body>
+</html>

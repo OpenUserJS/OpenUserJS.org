@@ -13,6 +13,11 @@
       <li class="{{#isUserPage}}active{{/isUserPage}}"><a href="{{{user.userPageUrl}}}">Profile</a></li>
       <li class="{{#isUserScriptListPage}}active{{/isUserScriptListPage}}"><a href="{{{user.userScriptListPageUrl}}}" class="{{^user.userScriptListPageUrl}}disabled{{/user.userScriptListPageUrl}}">Scripts <span class="badge">{{scriptListCount}}</span></a></li>
       <li class="{{#isUserCommentListPage}}active{{/isUserCommentListPage}}"><a href="{{{user.userCommentListPageUrl}}}" class="{{^user.userCommentListPageUrl}}disabled{{/user.userCommentListPageUrl}}">Comments <span class="badge">{{commentListCount}}</span></a></li>
+      {{#isYou}}
+        {{#user.canSync}}
+          <li class="{{#isUserSyncListPage}}active{{/isUserSyncListPage}}"><a href="{{{user.userSyncListPageUrl}}}" class="{{^user.userSyncListPageUrl}}disabled{{/user.userSyncListPageUrl}}">Syncs <span class="badge">{{syncListCount}}</span></a></li>
+        {{/user.canSync}}
+      {{/isYou}}
     </ul>
   </div>
 </nav>

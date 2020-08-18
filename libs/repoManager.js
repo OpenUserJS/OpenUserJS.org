@@ -4,6 +4,17 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var statusError = require('../libs/debug').statusError;
+
+//--- Dependency inclusions
+var util = require('util');
+
+
+//--- Model inclusions
+var Sync = require('../models/sync').Sync;
+
+//--- Controller inclusions
+var scriptStorage = require('../controllers/scriptStorage');
 
 //
 var https = require('https');
@@ -127,29 +138,150 @@ RepoManager.prototype.fetchRecentRepos = function (aCallback) {
   ], aCallback);
 };
 
-// Import scripts on GitHub
-RepoManager.prototype.loadScripts = function (aUpdate, aCallback) {
-  var scriptStorage = require('../controllers/scriptStorage');
+// Import scripts to be sync'd into Sync model
+RepoManager.prototype.loadSyncs = function (aUpdate, aCallback) {
   var arrayOfRepos = this.makeRepoArray();
   var that = this;
 
-  // TODO: remove usage of makeRepoArray since it causes redundant looping
+  // TODO: Alter usage of makeRepoArray since it causes redundant looping
   arrayOfRepos.forEach(function (aRepo) {
     async.each(aRepo.scripts, function (aScript, aInnerCallback) {
+      var hostname = 'raw.githubusercontent.com';
+      var uri = '/' + aRepo.user + '/' + aRepo.repo
+        + '/master' + aScript.path;
+
+      Sync.findOne(
+        { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
+        function (aErr, aSync) {
+          if (aErr) {
+            console.error('Error retrieving sync status');
+            aInnerCallback(aErr, aSync);
+            return;
+          }
+
+          if (aSync) {
+            // TODO: Maybe update the updated, response, and message to reflect redelivery?
+
+            aInnerCallback(null, aSync);
+          } else {
+            var sync = new Sync({
+              strat: 'github',
+              id: aUpdate,
+              target: 'https://' + hostname + uri,
+              response: 202,
+              message: 'Accepted',
+              created: new Date(),
+              _authorId: that.user.id
+            });
+
+            sync.save(function (aErr, aSync) {
+              if (aErr || !aSync) {
+                console.error('Unable to create Sync record');
+                aInnerCallback(aErr, aSync);
+                return;
+              }
+
+              aInnerCallback(null, aSync);
+            });
+          }
+
+        });
+
+    }, aCallback);
+  });
+};
+
+// Import scripts from GitHub
+RepoManager.prototype.loadScripts = function (aUpdate, aCallback) {
+  var arrayOfRepos = this.makeRepoArray();
+  var that = this;
+
+  // TODO: Alter usage of makeRepoArray since it causes redundant looping
+  arrayOfRepos.forEach(function (aRepo) {
+    async.each(aRepo.scripts, function (aScript, aInnerCallback) {
+      var hostname = 'raw.githubusercontent.com';
+      var uri = '/' + aRepo.user + '/' + aRepo.repo
+        + '/master' + aScript.path;
       var url = '/' + encodeURI(aRepo.user) + '/' + encodeURI(aRepo.repo)
         + '/master' + aScript.path;
-      fetchRaw('raw.githubusercontent.com', url, function (aBufs) {
+
+      fetchRaw(hostname, url, function (aBufs) {
+        var msg = null;
         var thisBuf = Buffer.concat(aBufs);
 
         if (thisBuf.byteLength <= settings.maximum_upload_script_size) {
           scriptStorage.getMeta(aBufs, function (aMeta) {
             if (aMeta) {
-              scriptStorage.storeScript(that.user, aMeta, thisBuf, aUpdate,
-                aInnerCallback);
+              scriptStorage.storeScript(that.user, aMeta, thisBuf, !!aUpdate,
+                function (aErr, aScript) {
+                  if (aErr || !aScript) {
+                    msg = (aErr instanceof statusError ? aErr.status.message : aErr.message)
+                      || 'Unknown error with storing script';
+                    Sync.findOneAndUpdate(
+                      { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri }, {
+                        response: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+                        message: msg,
+                        updated: new Date()
+                      },
+                      function (aErr, aSync) {
+                        if (aErr || !aSync) {
+                          console.error('Error changing sync status with ' + msg);
+                          return;
+                        }
+                      });
+                  } else {
+                    msg = 'OK';
+                    Sync.findOneAndUpdate(
+                      { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
+                      { response: 200, message: msg, updated: new Date()},
+                      function (aErr, aSync) {
+                        if (aErr || !aSync) {
+                          console.error('Error changing sync status with ' + msg);
+                          return;
+                        }
+                      });
+                  }
+
+                  aInnerCallback(aErr, aScript);
+                });
+            } else {
+              msg = 'Metadata block(s) missing.'
+              Sync.findOneAndUpdate(
+                { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
+                { response: 400, message: msg, updated: new Date()},
+                function (aErr, aSync) {
+                  if (aErr || !aSync) {
+                    console.error('Error changing sync status with ' + msg);
+                    return;
+                  }
+                });
+
+              aInnerCallback(new statusError({
+                message: msg,
+                  code: 400
+                }, null));
             }
           });
+        } else {
+          msg = util.format('File size is larger than maximum (%s bytes).',
+            settings.maximum_upload_script_size);
+          Sync.findOneAndUpdate(
+            { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
+            { response: 400, message: msg},
+            function (aErr, aSync) {
+              if (aErr || !aSync) {
+                console.error('Error changing sync status with ' + msg);
+                return;
+              }
+            });
+
+          aInnerCallback(new statusError({
+            message: msg,
+              code: 400
+            }, null));
         }
       });
+
     }, aCallback);
   });
 };

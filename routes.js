@@ -135,6 +135,7 @@ module.exports = function (aApp) {
   aApp.route('/users/:username').get(user.view);
   aApp.route('/users/:username/comments').get(listLimiter, user.userCommentListPage);
   aApp.route('/users/:username/scripts').get(listLimiter, user.userScriptListPage);
+  aApp.route('/users/:username/syncs').get(listLimiter, user.userSyncListPage);
   aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);
   aApp.route('/users/:username/github/repo').get(authentication.validateUser, user.userGitHubRepoPage);
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);

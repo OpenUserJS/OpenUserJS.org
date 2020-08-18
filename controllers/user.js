@@ -21,6 +21,7 @@ var SPDX = require('spdx-license-ids');
 //--- Model inclusions
 var Comment = require('../models/comment').Comment;
 var Script = require('../models/script').Script;
+var Sync = require('../models/sync').Sync;
 var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
 var Discussion = require('../models/discussion').Discussion;
@@ -284,6 +285,7 @@ var getUserPageTasks = function (aOptions) {
   var user = null;
   var userScriptListCountQuery = null;
   var userCommentListCountQuery = null;
+  var userSyncListCountQuery = null;
   var tasks = [];
 
   // Shortcuts
@@ -298,6 +300,10 @@ var getUserPageTasks = function (aOptions) {
   // userCommentListCountQuery
   userCommentListCountQuery = Comment.find({ _authorId: user._id, flagged: { $ne: true } });
   tasks.push(countTask(userCommentListCountQuery, aOptions, 'commentListCount'));
+
+  // userSyncListCountQuery
+  userSyncListCountQuery = Sync.find({ _authorId: user._id });
+  tasks.push(countTask(userSyncListCountQuery, aOptions, 'syncListCount'));
 
   return tasks;
 };
@@ -838,6 +844,100 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
   });
 };
 
+exports.userSyncListPage = function (aReq, aRes, aNext) {
+  //
+  var username = aReq.params.username;
+
+  User.findOne({
+    name: caseInsensitive(username)
+  }, function (aErr, aUser) {
+    function preRender() {
+      // syncList
+      options.syncList = _.map(options.syncList, modelParser.parseSync);
+
+      // Pagination
+      options.paginationRendered = pagination.renderDefault(aReq);
+    }
+
+    function render() {
+      aRes.render('pages/userSyncListPage', options);
+    }
+
+    function asyncComplete() {
+      preRender();
+      render();
+    }
+
+    //
+    var options = {};
+    var authedUser = aReq.session.user;
+    var user = null;
+    var syncListQuery = null;
+    var pagination = null;
+    var tasks = [];
+
+    if (aErr || !aUser) {
+      aNext();
+      return;
+    }
+
+    // Session
+    options.authedUser = authedUser = modelParser.parseUser(authedUser);
+    options.isMod = authedUser && authedUser.isMod;
+    options.isAdmin = authedUser && authedUser.isAdmin;
+
+    // User
+    user = options.user = modelParser.parseUser(aUser);
+    options.isYou = authedUser && user && authedUser._id == user._id;
+
+    // If not you or not synacable auth strategy move along
+    if (!options.isYou || !options.user.canSync) {
+      aNext();
+      return;
+    }
+
+    // Page metadata
+    pageMetadata(options, [user.name, 'Users']);
+    options.isUserSyncListPage = true;
+
+    // Order dir
+    orderDir(aReq, options, 'target', 'desc');
+    orderDir(aReq, options, 'created', 'asc');
+    orderDir(aReq, options, 'updated', 'asc');
+    orderDir(aReq, options, 'response', 'desc');
+
+    // SyncListQuery
+    syncListQuery = Sync.find();
+
+    // syncListQuery: author=user
+    syncListQuery.find({ _authorId: user._id });
+
+    // syncListQuery: Defaults
+    modelQuery.applySyncListQueryDefaults(syncListQuery, options, aReq);
+
+    // syncListQuery: Pagination
+    pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
+
+    // SearchBar
+    options.searchBarPlaceholder = 'Search Syncs from ' + user.name;
+    options.searchBarFormAction = '';
+
+    //--- Tasks
+
+    // Pagination
+    tasks.push(pagination.getCountTask(syncListQuery));
+
+    // syncListQuery
+    tasks.push(execQueryTask(syncListQuery, options, 'syncList'));
+
+    // UserPage tasks
+    tasks = tasks.concat(getUserPageTasks(options));
+
+    //--
+    async.parallel(tasks, asyncComplete);
+  });
+};
+
 exports.userEditProfilePage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
@@ -1176,6 +1276,14 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // GitHub
+  if (!options.authedUser.hasGithub) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'You do not have GitHub as an auth strategy'
+    });
+    return;
+  }
+
   options.githubUserId = githubUserId =
     aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
@@ -1283,6 +1391,14 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   options.isAdmin = authedUser && authedUser.isAdmin;
 
   // GitHub
+  if (!options.authedUser.hasGithub) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'You do not have GitHub as an auth strategy'
+    });
+    return;
+  }
+
   options.githubUserId = githubUserId =
     aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
