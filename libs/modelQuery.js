@@ -151,6 +151,14 @@ var parseCommentSearchQuery = function (aCommentListQuery, aQuery) {
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
+var parseSyncSearchQuery = function (aSyncListQuery, aQuery) {
+  parseModelListSearchQuery(aSyncListQuery, aQuery, {
+    partialWordMatchFields: ['target'],
+    fullWordMatchFields: []
+  });
+};
+exports.parseSyncSearchQuery = parseSyncSearchQuery;
+
 var parseUserSearchQuery = function (aUserListQuery, aQuery) {
   parseModelListSearchQuery(aUserListQuery, aQuery, {
     partialWordMatchFields: ['name'],
@@ -311,7 +319,13 @@ var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDe
         break;
       case 'size':
         aOptions.orderedBySize = true;
-        // fallthrough
+        break;
+      case 'target':
+        aOptions.orderedByTarget = true;
+        break;
+      case 'response':
+        aOptions.orderedByResponse = true;
+        // fallsthrough
     }
   });
 
@@ -334,6 +348,15 @@ exports.applyCommentListQueryDefaults = function (aCommentListQuery, aOptions, a
     path: '_authorId',
     model: 'User',
     select: 'name role'
+  });
+};
+
+exports.applySyncListQueryDefaults = function (aSyncListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aSyncListQuery, aOptions, aReq, {
+    defaultSort: '-created',
+    parseSearchQueryFn: parseSyncSearchQuery,
+    searchBarPlaceholder: 'Search Syncs',
+    filterFlaggedItems: false
   });
 };
 
@@ -431,6 +454,18 @@ var removedItemCommentListQueryDefaults = {
 exports.removedItemCommentListQueryDefaults = removedItemCommentListQueryDefaults;
 exports.applyRemovedItemCommentListQueryDefaults = function (aRemovedItemCommentListQuery, aOptions, aReq) {
   applyModelListQueryDefaults(aRemovedItemCommentListQuery, aOptions, aReq, removedItemCommentListQueryDefaults);
+};
+
+var syncListQueryDefaults = {
+  defaultSort: '-created',
+  parseSearchQueryFn: parseSyncSearchQuery,
+  searchBarPlaceholder: 'Search Syncs',
+  searchBarFormAction: '/',
+  filterFlaggedItems: false
+};
+exports.syncListQueryDefaults = syncListQueryDefaults;
+exports.applySyncListQueryDefaults = function (aSyncListQuery, aOptions, aReq) {
+  applyModelListQueryDefaults(aSyncListQuery, aOptions, aReq, syncListQueryDefaults);
 };
 
 var removedItemDiscussionListQueryDefaults = {

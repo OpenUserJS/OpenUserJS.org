@@ -2096,6 +2096,7 @@ exports.webhook = function (aReq, aRes) {
   var reponame = null;
   var repos = {};
   var repo = null;
+  var update = null;
 
   // Return if script storage is in read-only mode
   if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
@@ -2154,6 +2155,7 @@ exports.webhook = function (aReq, aRes) {
       break;
     case 'push':
       // Pushing a change
+      update = aReq.get('X-GitHub-Delivery');
       break;
     default:
       aRes.status(400).send(); // Bad request
@@ -2193,6 +2195,11 @@ exports.webhook = function (aReq, aRes) {
       return;
     }
 
+    if (aUser.strategies.indexOf('github') <= -1) { // Don't rely on just `ghUsername`!
+      aRes.status(403).send(); // Reject due to lack of GitHub as Auth
+      return;
+    }
+
     aRes.status(202).send(); // Close connection with Accepted but processing
 
     // Gather the modified user scripts
@@ -2206,10 +2213,19 @@ exports.webhook = function (aReq, aRes) {
 
     // Update modified scripts
     repoManager = RepoManager.getManager(null, aUser, repos);
-    repoManager.loadScripts(true, function (aErr) {
+
+    repoManager.loadSyncs(update, function (aErr) {
       if (aErr) {
-        console.error(aErr);
+        console.error(update, aErr);
+        return;
       }
+
+      repoManager.loadScripts(update, function (aErr) {
+        if (aErr) {
+          console.error(update, aErr);
+        }
+      });
     });
+
   });
 };

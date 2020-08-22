@@ -65,12 +65,14 @@
                 While logged in view a script's source and click "Submit Code as Fork".
               </p>
             </div>
+            {{#authedUser.hasGithub}}
             <a href="{{{authedUser.userGitHubRepoListPageUrl}}}" class="list-group-item">
               <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-repo-clone"></i> Import Script from GitHub</h4>
               <p class="list-group-item-text">
                 Click here to import a script<em>(s)</em> from a personal user GitHub repository. If Sync Script has already been set up for the selected repository then it should automatically be linked for any scripts imported.
               </p>
             </a>
+            {{/authedUser.hasGithub}}
             <div role="alert" class="alert alert-info">
               <i class="fa fa-fw fa-info-circle"></i> <strong>LIMITS</strong>: The current transfer size limit is set at <span class="label label-default">{{maximumUploadScriptSize}} bytes</span> per script.
             </div>

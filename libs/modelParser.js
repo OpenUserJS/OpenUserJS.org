@@ -656,6 +656,7 @@ var parseUser = function (aUser) {
   user.userPageUrl = '/users/' + user.slugUrl;
   user.userCommentListPageUrl = user.userPageUrl + '/comments';
   user.userScriptListPageUrl = user.userPageUrl + '/scripts';
+  user.userSyncListPageUrl = user.userPageUrl + '/syncs';
   user.userGitHubRepoListPageUrl = user.userPageUrl + '/github/repos';
   user.userGitHubRepoPageUrl = user.userPageUrl + '/github/repo';
   user.userGitHubImportPageUrl = user.userPageUrl + '/github/import';
@@ -668,6 +669,7 @@ var parseUser = function (aUser) {
   user.userPageUri = '/users/' + user.slugUri;
   user.userCommentListPageUri = user.userPageUri + '/comments';
   user.userScriptListPageUri = user.userPageUri + '/scripts';
+  user.userSyncListPageUri = user.userPageUri + '/syncs';
   user.userGitHubRepoListPageUri = user.userPageUri + '/github/repos';
   user.userGitHubRepoPageUri = user.userPageUri + '/github/repo';
   user.userGitHubImportPageUri = user.userPageUri + '/github/import';
@@ -689,6 +691,8 @@ var parseUser = function (aUser) {
 
   // Strategies
   user.userStrategies = user.strategies;
+  user.hasGithub = user.strategies && user.strategies.indexOf('github') > -1; // NOTE: Watchpoint
+  user.canSync = user.hasGithub;
 
   // Dates
   parseDateProperty(user, '_since'); // Virtual
@@ -912,6 +916,31 @@ exports.renderComment = function (aComment) {
   }
   aComment.contentRendered = renderMd(aComment.content);
 };
+
+/**
+ * Sync
+ */
+
+//
+var parseSync = function (aSync) {
+  var sync = null;
+
+  if (!aSync) {
+    return;
+  }
+  sync = aSync.toObject ? aSync.toObject() : aSync;
+
+  sync.targetUrl = decodeURIComponent(sync.target);
+  sync.targetUrlBasename = decodeURIComponent(sync.target.split('/').pop());
+
+  // Dates
+  parseDateProperty(sync, 'created');
+  parseDateProperty(sync, 'updated');
+
+  return sync;
+};
+parseModelFnMap.Sync = parseSync;
+exports.parseSync = parseSync;
 
 /**
  * Category
