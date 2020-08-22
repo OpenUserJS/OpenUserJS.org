@@ -13,10 +13,10 @@
     {{#syncList}}
     <tr class="tr-link">
       <td class="text-center td-fit">
-        <p><img src="/images/strat/{{strat}}16.png" title="{{id}}"> {{source}}</p>
+        <p><img src="/images/strat/{{strat}}16.png" title="{{id}}"></p>
       </td>
       <td class="td-fit">
-        <p><a href="{{target}}#bypass=true" title="{{targetUrl}}">{{targetUrlBasename}}</i></a></p>
+        <p><a href="{{target}}#bypass=true" title="{{targetUrl}}">{{targetUrlBasename}}</a></p>
       </td>
       <td class="text-center td-fit">
         <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
@@ -35,7 +35,7 @@
     {{^syncList}}
     <tr class="tr-link">
       <td colspan="7">
-        <em>This user hasn't had any syncs yet.</em>
+        <em>This user hasn't had any tracked syncs yet.</em>
       </td>
     </tr>
     {{/syncList}}
