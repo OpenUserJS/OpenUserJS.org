@@ -153,8 +153,8 @@ exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
 var parseSyncSearchQuery = function (aSyncListQuery, aQuery) {
   parseModelListSearchQuery(aSyncListQuery, aQuery, {
-    partialWordMatchFields: ['target'],
-    fullWordMatchFields: []
+    partialWordMatchFields: [],
+    fullWordMatchFields: ['target']
   });
 };
 exports.parseSyncSearchQuery = parseSyncSearchQuery;
