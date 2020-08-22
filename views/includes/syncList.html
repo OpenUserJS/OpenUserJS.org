@@ -1,7 +1,7 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th title="Source" class="td-fit"><i class="fa fa-refresh"></i></th>
+      <th title="Source" class="text-center td-fit"><i class="fa fa-refresh"></i></th>
       <th title="Target" class="td-fit{{#orderedByTarget}} active{{/orderedByTarget}}"><a href="?orderBy=target&orderDir={{orderDir.target}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><span class="visible-lg visible-md">Target</span><span class="hidden-lg hidden-md">Target</span></a></th>
       <th title="Created" class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}"><a href="?orderBy=created&orderDir={{orderDir.created}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><span class="visible-lg visible-md">Created</span><span class="hidden-lg hidden-md"><i class="fa fa-clock-o"></i></span></a></th>
       <th title="Updated" class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}"><a href="?orderBy=updated&orderDir={{orderDir.updated}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><span class="visible-lg visible-md">Updated</span><span class="hidden-lg hidden-md"><i class="fa fa-history"></i></span></a></th>
@@ -15,7 +15,7 @@
       <td class="text-center td-fit">
         <p><img src="/images/strat/{{strat}}16.png" title="{{id}}"> {{source}}</p>
       </td>
-      <td class="text-center td-fit">
+      <td class="td-fit">
         <p><a href="{{target}}#bypass=true" title="{{targetUrl}}">{{targetUrlBasename}}</i></a></p>
       </td>
       <td class="text-center td-fit">
