@@ -67,7 +67,6 @@ Repository | Reference | Recent Version
 [passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo]
 [passport-steam][passport-steamGHUrl] <br />&#x22D4; [`OpenID2`][passport-steamGHOpenIDUrl]  | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
-[passport-yahoo][passport-yahooGHUrl] <br />&#x22D4; [`OpenID2`][passport-yahooGHOpenIDUrl] | [Documentation][passport-yahooDOCUrl] | [![NPM version][passport-yahooNPMVersionImage]][passport-yahooNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [rate-limit-mongo][rate-limit-mongoGHUrl] | [Documentation][rate-limit-mongoDOCUrl] | [![NPM version][rate-limit-mongoNPMVersionImage]][rate-limit-mongoNPMUrl]
 [remark][remarkGHUrl] | [Documentation][remarkDOCUrl] | [![NPM version][remarkNPMVersionImage]][remarkNPMUrl]
@@ -375,12 +374,6 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [passport-twitterDOCUrl]: https://github.com/jaredhanson/passport-twitter/blob/master/README.md
 [passport-twitterNPMUrl]: https://www.npmjs.com/package/passport-twitter
 [passport-twitterNPMVersionImage]: https://img.shields.io/npm/v/passport-twitter.svg?style=flat
-
-[passport-yahooGHUrl]: https://github.com/jaredhanson/passport-yahoo
-[passport-yahooGHOpenIDUrl]: https://github.com/OpenUserJs/passport-yahoo/tree/OpenID2
-[passport-yahooDOCUrl]: https://github.com/jaredhanson/passport-yahoo/blob/master/README.md
-[passport-yahooNPMUrl]: https://www.npmjs.com/package/passport-yahoo
-[passport-yahooNPMVersionImage]: https://img.shields.io/npm/v/passport-yahoo.svg?style=flat
 
 [pegjsGHUrl]: https://github.com/pegjs/pegjs
 [pegjsDOCUrl]: https://github.com/pegjs/pegjs/blob/master/README.md

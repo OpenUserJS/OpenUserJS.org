@@ -38,10 +38,5 @@
     "name": "Twitter",
     "oauth": true,
     "readonly": false
-  },
-  "yahoo": {
-    "name": "Yahoo!",
-    "oauth": false,
-    "readonly": true
   }
 }
