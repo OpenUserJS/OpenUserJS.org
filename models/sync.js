@@ -18,7 +18,7 @@ var syncSchema = new Schema({
   target: String,   // Fully Qualified URL target (should be encodeURIComponent already)
   response: Number, // HTTP Status Code
   message: String,  // Any message crafted or static
-  created: Date,
+  created: { type: Date, expires: 60 * 60 * 24 * 30 },
   updated: Date,
 
   // Extra info
