@@ -8,7 +8,7 @@ var statusError = require('../libs/debug').statusError;
 
 //--- Dependency inclusions
 var util = require('util');
-
+var colors = require('ansi-colors');
 
 //--- Model inclusions
 var Sync = require('../models/sync').Sync;
@@ -32,7 +32,21 @@ var clientId = null;
 var clientKey = null;
 
 Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
-  // WARNING: No err handling
+  if (aErr) {
+    console.error( aErr.message );
+    process.exit(1);
+    return;
+  }
+
+  if (!aStrat) {
+    console.error( colors.red( [
+      'Default GitHub Strategy document not found in DB',
+      'Terminating app'
+    ].join('\n')));
+
+    process.exit(1);
+    return;
+  }
 
   clientId = aStrat.id;
   clientKey = aStrat.key;

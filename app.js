@@ -103,8 +103,13 @@ app.set('securePort', process.env.SECURE_PORT || null);
 mongoose.connect(connectStr, dbOptions);
 
 // Trap a few events for MongoDB
-db.on('error', function () {
-  console.error(colors.red('MongoDB connection error'));
+db.on('error', function (aErr) {
+  console.error( colors.red( [
+      'MongoDB connection error',
+      aErr.message,
+      'Terminating app'
+    ].join('\n')));
+  process.exit(1);  // NOTE: Watchpoint
 });
 
 db.once('open', function () {
