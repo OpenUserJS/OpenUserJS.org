@@ -37,10 +37,6 @@ var discussionSchema = new Schema({
   _authorId: Schema.Types.ObjectId
 });
 
-discussionSchema.virtual('_since').get(function () {
-  return this._id.getTimestamp();
-});
-
 var Discussion = mongoose.model('Discussion', discussionSchema);
 
 exports.Discussion = Discussion;

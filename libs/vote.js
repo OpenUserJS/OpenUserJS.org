@@ -117,8 +117,10 @@ function saveScript(aScript, aAuthor, aFlags, aCallback) {
 exports.saveScript = saveScript;
 
 function newVote(aScript, aUser, aAuthor, aCasting, aCallback) {
+  var now = new Date();
   var vote = new Vote({
     vote: aCasting,
+    created: now,
     _scriptId: aScript._id,
     _userId: aUser._id
   });

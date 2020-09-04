@@ -13,6 +13,8 @@ var Schema = mongoose.Schema;
 
 var voteSchema = new Schema({
   vote: Boolean,
+  created: Date,
+
   _scriptId: Schema.Types.ObjectId,
   _userId: Schema.Types.ObjectId
 });

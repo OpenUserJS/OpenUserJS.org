@@ -132,10 +132,12 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
     // Create a custom group for the script
     if (!aScript._groupId && newGroup) {
       tasks.push(function (aCallback) {
+        var now = new Date();
         var group = new Group({
           name: newGroup,
           rating: 0,
-          updated: new Date(),
+          created: now,
+          updated: now,
           _scriptIds: [aScript._id]
         });
 

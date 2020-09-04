@@ -2162,7 +2162,7 @@ exports.editScript = function (aReq, aRes, aNext) {
   var installNameBase = null;
   var isLib = aReq.params.isLib;
   var tasks = [];
-  var nowDate = null;
+  var now = null;
 
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
@@ -2201,7 +2201,7 @@ exports.editScript = function (aReq, aRes, aNext) {
         var licensePrimary = null;
         var copyrights = null;
         var copyrightPrimary = null;
-        var sinceDate = null;
+        var createdDate = null;
 
         //---
         if (aErr || !aScript) {
@@ -2236,8 +2236,8 @@ exports.editScript = function (aReq, aRes, aNext) {
           script.copyrightPrimary = copyrightPrimary;
         } else {
           if (authedUser) {
-            sinceDate = new Date(script._sinceISOFormat);
-            script.copyrightPrimary = sinceDate.getFullYear() + ', ' + authedUser.name +
+            createdDate = new Date(script.createdISOFormat);
+            script.copyrightPrimary = createdDate.getFullYear() + ', ' + authedUser.name +
               ' (' + helpers.baseOrigin + authedUser.userPageUrl + ')';
           }
         }
@@ -2344,8 +2344,8 @@ exports.editScript = function (aReq, aRes, aNext) {
     options.script.licensePrimary = 'MIT'; // NOTE: Site default
 
     if (authedUser) {
-      nowDate = new Date();
-      options.script.copyrightPrimary = nowDate.getFullYear() + ', ' + authedUser.name +
+      now = new Date();
+      options.script.copyrightPrimary = now.getFullYear() + ', ' + authedUser.name +
         ' (' + helpers.baseOrigin + authedUser.userPageUrl + ')';
     }
 

@@ -1866,6 +1866,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       function (aAlive, aScript, aRemoved) {
         var script = null;
         var s3 = null;
+        var now = null;
 
         if (aRemoved) {
           aCallback(new statusError({
@@ -1887,6 +1888,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           return;
         } else if (!aScript) {
           // New script
+          now = new Date();
           aScript = new Script({
             name: thisName,
             _description: (
@@ -1899,7 +1901,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             rating: 0,
             about: '',
             _about: '',
-            updated: new Date(),
+            created: now,
+            updated: now,
             hash: crypto.createHash('sha512').update(aBuf).digest('hex'),
             votes: 0,
             flags: { critical: 0, absolute: 0 },

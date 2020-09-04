@@ -485,13 +485,13 @@ var parseScript = function (aScript) {
 
 
   // Dates
+  parseDateProperty(script, 'created');
   parseDateProperty(script, 'updated');
-  parseDateProperty(script, '_since'); // Virtual
 
   // Hash
   script.hashShort = script.hash ? script.hash.substr(0, 7) : 'undefined';
 
-  if (script._since && script.updated && script._since.toString() !== script.updated.toString()) {
+  if (script.created && script.updated && script.created.toString() !== script.updated.toString()) {
     script.isUpdated = true;
   }
 
@@ -695,7 +695,7 @@ var parseUser = function (aUser) {
   user.canSync = user.hasGithub;
 
   // Dates
-  parseDateProperty(user, '_since'); // Virtual
+  parseDateProperty(user, 'created');
 
   return user;
 };
@@ -805,8 +805,8 @@ var parseDiscussion = function (aDiscussion) {
   parseDateProperty(discussion, 'created');
   parseDateProperty(discussion, 'updated');
 
-  if (discussion._since && discussion.updated
-    && discussion._since.toString() !== discussion.updated.toString()) {
+  if (discussion.created && discussion.updated
+    && discussion.created.toString() !== discussion.updated.toString()) {
     discussion.isUpdated = discussion.comments > 1 ? true : false;
   }
 
