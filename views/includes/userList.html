@@ -2,7 +2,8 @@
   <thead>
     <tr>
       <th class="{{#orderedByName}}active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
-      <th class="td-fit{{#orderedByRole}} active{{/orderedByRole}}"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Rank</a></th>
+      <th class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}"><a href="?orderBy=created&orderDir={{orderDir.created}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Since</a></th>
+      <th class="text-center td-fit{{#orderedByRole}} active{{/orderedByRole}}"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Rank</a></th>
       {{#hasFlagged}}
       <th title="Flagger"><span class="visible-lg visible-md">Flagger</span><span class="hidden-lg hidden-md"><i class="fa fa-flag"></i></span></a></th>
       {{/hasFlagged}}
@@ -16,7 +17,10 @@
           <a href="{{{userPageUrl}}}" class="tr-link-a">{{name}}</a>
         </b>
       </td>
-      <td class="td-fit">
+      <td class="text-center td-fit">
+        <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
+      </td>
+      <td class="text-center td-fit">
         <p>
           <span class="label label-default">{{roleName}}</span>
         </p>
@@ -37,7 +41,7 @@
     {{/userList}}
     {{^userList}}
     <tr class="tr-link">
-      <td colspan="3">
+      <td colspan="4">
         <em>{{userListIsEmptyMessage}}</em>
       </td>
     </tr>
