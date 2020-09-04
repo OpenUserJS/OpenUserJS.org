@@ -477,14 +477,15 @@ function postTopic(aUser, aCategory, aTopic, aContent, aIssue, aUserAgent, aCall
 
   Discussion.findOne({ path: path }, null, params, function (aErr, aDiscussion) {
     var newDiscussion = null;
+    var now = new Date();
     var props = {
       topic: aTopic,
       category: aCategory,
       comments: 0,
       author: aUser.name,
-      created: new Date(),
+      created: now,
       lastCommentor: aUser.name,
-      updated: new Date(),
+      updated: now,
       rating: 0,
       flagged: false,
       path: path,

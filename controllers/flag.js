@@ -185,7 +185,7 @@ exports.getFlaggedListForContent = function (aModelName, aOptions, aCallback) {
           contentList[aContentKey].flaggedList.push({
             name: aUser.name,
             reason: aFlagList[aFlagKey].reason,
-            since: aFlagList[aFlagKey]._since
+            since: aFlagList[aFlagKey].created
           });
           aEachInnerCallback();
         });

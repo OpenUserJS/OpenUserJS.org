@@ -15,11 +15,9 @@ var flagSchema = new Schema({
   model: String,
   reason: String,
   _contentId: Schema.Types.ObjectId,
-  _userId: Schema.Types.ObjectId
-});
+  _userId: Schema.Types.ObjectId,
 
-flagSchema.virtual('_since').get(function () {
-  return this._id.getTimestamp();
+  created: Date
 });
 
 var Flag = mongoose.model('Flag', flagSchema);

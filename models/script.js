@@ -21,6 +21,7 @@ var scriptSchema = new Schema({
   rating: Number,
   about: String,
   _about: String,
+  created: Date,
   updated: Date,
   hash: String,
 
@@ -43,10 +44,6 @@ var scriptSchema = new Schema({
 },
 {
   autoIndex: false
-});
-
-scriptSchema.virtual('_since').get(function () {
-  return this._id.getTimestamp();
 });
 
 /*

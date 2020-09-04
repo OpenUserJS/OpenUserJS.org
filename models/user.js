@@ -15,6 +15,7 @@ var userSchema = new Schema({
   // Visible
   name: String,
   about: String,
+  created: Date,
 
   // A user can link multiple accounts to their OpenUserJS account
   consented: Boolean,
@@ -33,10 +34,6 @@ var userSchema = new Schema({
   },
   flagged: Boolean,
   sessionIds: [String]
-});
-
-userSchema.virtual('_since').get(function () {
-  return this._id.getTimestamp();
 });
 
 var User = mongoose.model('User', userSchema);

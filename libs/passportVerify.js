@@ -49,6 +49,7 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
 
       if (!aUser) {
         User.findOne({ 'name': aUsername }, function (aErr, aUser) {
+          var now = new Date();
           // WARNING: No err handling
 
           if (aUser && aLoggedIn) {
@@ -78,6 +79,7 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
               // Create a new user
               aUser = new User({
                 'name': aUsername,
+                'created': now,
                 'auths': [digest],
                 'strategies': [aStrategy],
                 'role': userRoles.length - 2,  // NOTE: Last array element value is system Reserved

@@ -15,13 +15,10 @@ var ObjectId = Schema.Types.ObjectId;
 var groupSchema = new Schema({
   name: { type: String },
   rating: { type: Number, default: 0 },
-  updated: { type: Date, default: Date.now },
+  created: { type: Date },
+  updated: { type: Date },
   _scriptIds: [{ type: ObjectId, ref: 'Script' }],
   size: { type: Number, default: 0 }
-});
-
-groupSchema.virtual('_since').get(function () {
-  return this._id.getTimestamp();
 });
 
 var Group = mongoose.model('Group', groupSchema);

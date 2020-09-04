@@ -163,11 +163,13 @@ function saveContent(aModel, aContent, aAuthor, aFlags, aIsFlagging, aCallback) 
 exports.saveContent = saveContent;
 
 function flag(aModel, aContent, aUser, aAuthor, aReason, aCallback) {
+  var now = new Date();
   var flag = new Flag({
     'model': aModel.modelName,
     '_contentId': aContent._id,
     '_userId': aUser._id,
-    'reason': aReason
+    'reason': aReason,
+    'created': now
   });
 
   flag.save(function (aErr, aFlag) {

@@ -479,11 +479,11 @@ require('./routes')(app);
 // Timers
 function tripServerOnCertExpire(aValidToString) {
   var tlsDate = new Date(aValidToString);
-  var nowDate = new Date();
+  var now = new Date();
 
   var tripDate = new Date(tlsDate.getTime() - (2 * 60 * 60 * 1000)); // ~2 hours before fault
 
-  if (nowDate.getTime() >= tripDate.getTime()) {
+  if (now.getTime() >= tripDate.getTime()) {
     console.error(colors.red('Certificates expiring very soon. Tripping server to unsecure mode'));
 
     isSecured = false;
