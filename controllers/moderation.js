@@ -160,6 +160,13 @@ exports.removedItemListPage = function (aReq, aRes, aNext) {
       break;
     default:
       modelQuery.applyRemovedItemListQueryDefaults(removedItemListQuery, options, aReq);
+      options.filterUser = true;
+      options.filterScript = true;
+      options.filterComment = true;
+      options.filterDiscussion = true;
+      options.filterFlag = true;
+      options.filterGroup = true;
+      options.filterVote = true;
   }
 
   // removedItemListQuery: Pagination
