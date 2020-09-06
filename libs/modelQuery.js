@@ -362,7 +362,7 @@ exports.applySyncListQueryDefaults = function (aSyncListQuery, aOptions, aReq) {
 
 exports.applyDiscussionListQueryDefaults = function (aDiscussionListQuery, aOptions, aReq) {
   applyModelListQueryDefaults(aDiscussionListQuery, aOptions, aReq, {
-    defaultSort: '-updated -rating',
+    defaultSort: '-updated -created',
     parseSearchQueryFn: parseDiscussionSearchQuery,
     searchBarPlaceholder: 'Search Topics',
     filterFlaggedItems: true

@@ -42,22 +42,26 @@ var categories = [
     slug: 'announcements',
     name: 'Announcements',
     description: 'UserScripts News (OpenUserJS, GreaseMonkey, etc)',
+    active: true,
     roleReqToPostTopic: 3 // Moderator
   },
   {
     slug: 'garage',
     name: 'The Garage',
-    description: 'Talk shop, and get help with user script development'
+    description: 'Talk shop, and get help with user script development',
+    active: true
   },
   {
     slug: 'corner',
     name: 'Beggar\'s Corner',
-    description: 'Propose ideas and request user scripts'
+    description: 'Propose ideas and request user scripts',
+    active: true
   },
   {
     slug: 'discuss',
     name: 'General Discussion',
-    description: 'Off-topic discussion about anything related to user scripts or OpenUserJS.org'
+    description: 'Off-topic discussion about anything related to user scripts or OpenUserJS.org',
+    active: true
   },
   {
     slug: 'issues',
@@ -69,6 +73,7 @@ var categories = [
     slug: 'all',
     name: 'All Discussions',
     description: 'Overview of all discussions',
+    clear: true,
     virtual: true
   }
 ];

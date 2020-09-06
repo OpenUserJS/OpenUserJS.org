@@ -15,7 +15,7 @@
         <div class="list-group col-sm-12 col-md-2 col-lg-3">
           <h3>Categories</h3>
           {{#categoryList}}
-          <a href="{{{categoryPageUrl}}}" class="list-group-item">
+          <a href="{{{categoryPageUrl}}}" class="list-group-item{{#active}} active{{/active}}{{#clear}} list-group-item-info{{/clear}}">
             <h4 class="list-group-item-heading">{{name}}</h4>
             <p class="list-group-item-text">{{description}}</p>
           </a>
