@@ -24,4 +24,20 @@ var removeSchema = new Schema({
 
 var Remove = mongoose.model('Remove', removeSchema);
 
+Remove.syncIndexes(function () {
+  Remove.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('Remove indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+Remove.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for Remove model');
+  }
+});
+
 exports.Remove = Remove;

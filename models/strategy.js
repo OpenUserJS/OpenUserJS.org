@@ -20,4 +20,20 @@ var strategySchema = new Schema({
 
 var Strategy = mongoose.model('Strategy', strategySchema);
 
+Strategy.syncIndexes(function () {
+  Strategy.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('Strategy indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+Strategy.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for Strategy model');
+  }
+});
+
 exports.Strategy = Strategy;

@@ -39,4 +39,20 @@ var discussionSchema = new Schema({
 
 var Discussion = mongoose.model('Discussion', discussionSchema);
 
+Discussion.syncIndexes(function () {
+  Discussion.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('Discussion indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+Discussion.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for Discussion model');
+  }
+});
+
 exports.Discussion = Discussion;

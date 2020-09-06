@@ -22,4 +22,20 @@ var flagSchema = new Schema({
 
 var Flag = mongoose.model('Flag', flagSchema);
 
+Flag.syncIndexes(function () {
+  Flag.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('Flag indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+Flag.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for Flag model');
+  }
+});
+
 exports.Flag = Flag;

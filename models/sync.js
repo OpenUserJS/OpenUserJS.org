@@ -27,4 +27,20 @@ var syncSchema = new Schema({
 
 var Sync = mongoose.model('Sync', syncSchema);
 
+Sync.syncIndexes(function () {
+  Sync.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('Sync indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+Sync.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for Sync model');
+  }
+});
+
 exports.Sync = Sync;
