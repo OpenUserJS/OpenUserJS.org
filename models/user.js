@@ -38,5 +38,21 @@ var userSchema = new Schema({
 
 var User = mongoose.model('User', userSchema);
 
+User.syncIndexes(function () {
+  User.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('User indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+User.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for User model');
+  }
+});
+
 exports.User = User;
 

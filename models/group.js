@@ -23,4 +23,20 @@ var groupSchema = new Schema({
 
 var Group = mongoose.model('Group', groupSchema);
 
+Group.syncIndexes(function () {
+  Group.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('Group indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+Group.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for Group model');
+  }
+});
+
 exports.Group = Group;

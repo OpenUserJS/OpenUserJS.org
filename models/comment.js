@@ -36,4 +36,20 @@ var commentSchema = new Schema({
 
 var Comment = mongoose.model('Comment', commentSchema);
 
+Comment.syncIndexes(function () {
+  Comment.collection.getIndexes({
+    full: true
+  }).then(function(aIndexes)  {
+    console.log('Comment indexes:\n', aIndexes);
+  }).catch(console.error);
+});
+
+Comment.on('index', function (aErr) {
+  if (aErr) {
+    console.error(aErr);
+  } else {
+    console.log('Index event triggered/trapped for Comment model');
+  }
+});
+
 exports.Comment = Comment;

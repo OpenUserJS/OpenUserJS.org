@@ -22,6 +22,9 @@ var chain = require('./libs/debug').chain;
 var path = require('path');
 var crypto = require('crypto');
 
+var events = require('events');
+events.EventEmitter.defaultMaxListeners = 15;
+
 var express = require('express');
 var toobusy = require('toobusy-js');
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
