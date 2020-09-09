@@ -528,7 +528,7 @@ function pingCert() {
         : ':' + app.get('port'))
           + '/api',
     headers: {
-      'User-Agent': uaOUJS + '.' + process.env.UA_SECRET
+      'User-Agent': uaOUJS + (process.env.UA_SECRET ? ' ' + process.env.UA_SECRET : '')
     }
   }, function (aErr, aRes, aBody) {
     if (aErr) {
