@@ -194,7 +194,7 @@ if (isSecured) {
   request({
     url: 'https://api.github.com/meta',
     headers: {
-      'User-Agent': uaOUJS + '.' + process.env.UA_SECRET
+      'User-Agent': uaOUJS + (process.env.UA_SECRET ? ' ' + process.env.UA_SECRET : '')
     }
   }, function (aErr, aRes, aBody) {
     var meta = null;

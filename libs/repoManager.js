@@ -61,7 +61,7 @@ function fetchRaw(aHost, aPath, aCallback, aOptions) {
     path: aPath,
     method: 'GET',
     headers: {
-      'User-Agent': uaOUJS + '.' + process.env.UA_SECRET
+      'User-Agent': uaOUJS + (process.env.UA_SECRET ? ' ' + process.env.UA_SECRET : '')
     }
   };
 

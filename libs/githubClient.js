@@ -71,7 +71,7 @@ var githubUserContentGetBlobAsUtf8 = function (aMsg, aCallback) {
       request.get({
         url: url,
         headers: {
-          'User-Agent': uaOUJS + '.' + process.env.UA_SECRET
+          'User-Agent': uaOUJS + (process.env.UA_SECRET ? ' ' + process.env.UA_SECRET : '')
         }
       }, aCallback);
     },

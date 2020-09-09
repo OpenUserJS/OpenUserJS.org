@@ -69,8 +69,8 @@ exports.isDbg = isDbg;
 
 hash = git.short(); // NOTE: Synchronous
 uaOUJS = pkg.org + '/' + pkg.version
-  + ' (' + os.type() + '; ' + os.arch() + '; rv:'
-    + hash + ') ' + 'OUJS/20131106 ' + pkg.name + '/' + hash;
+  + ' (' + os.type() + '; ' + os.arch() + '; rv:' + hash + ') '
+    + 'OUJS/20131106 ' + pkg.name + '/' + hash;
 exports.uaOUJS = uaOUJS;
 
 
