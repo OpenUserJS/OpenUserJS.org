@@ -23,6 +23,7 @@
     "font-awesome": "4.7.0",
     "formidable": "1.2.2",
     "git-rev": "0.2.1",
+    "git-rev-sync": "3.0.1",
     "github": "git://github.com/octokit/rest.js.git#29dedb3",
     "highlight.js": "10.1.2",
     "image-size": "0.8.3",

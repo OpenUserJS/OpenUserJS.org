@@ -5,6 +5,7 @@ var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 var isSecured = require('../libs/debug').isSecured;
+var uaOUJS = require('../libs/debug').uaOUJS;
 var statusError = require('../libs/debug').statusError;
 
 //
@@ -193,7 +194,7 @@ if (isSecured) {
   request({
     url: 'https://api.github.com/meta',
     headers: {
-      'User-Agent': 'OpenUserJS'
+      'User-Agent': uaOUJS + '.' + process.env.UA_SECRET
     }
   }, function (aErr, aRes, aBody) {
     var meta = null;
@@ -1519,7 +1520,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           req = request.get({
             url: icon,
             headers: {
-              'User-Agent': 'request'
+              'User-Agent': 'request' // NOTE: Anonymous intended
             }
           })
             .on('response', function (aRes) {
