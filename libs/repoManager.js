@@ -4,6 +4,7 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var uaOUJS = require('../libs/debug').uaOUJS;
 var statusError = require('../libs/debug').statusError;
 
 //--- Dependency inclusions
@@ -60,7 +61,7 @@ function fetchRaw(aHost, aPath, aCallback, aOptions) {
     path: aPath,
     method: 'GET',
     headers: {
-      'User-Agent': 'Node.js'
+      'User-Agent': uaOUJS + '.' + process.env.UA_SECRET
     }
   };
 

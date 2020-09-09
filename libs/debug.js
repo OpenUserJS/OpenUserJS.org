@@ -1,6 +1,12 @@
 'use strict';
 
 var fs = require('fs');
+var os = require('os');
+
+var git = require('git-rev-sync');
+
+var pkg = require('../package.json');
+pkg.org = pkg.name.substring(0, pkg.name.indexOf('.'));
 
 var isPro = process.env.NODE_ENV === 'production';
 var isDev = !isPro;
@@ -10,6 +16,11 @@ var isSecure = null;
 var privkey = null;
 var fullchain = null;
 var chain = null;
+
+
+var uaOUJS = null;
+var hash = null;
+
 
 try {
   // Check for primary keys
@@ -54,6 +65,14 @@ try {
 exports.isPro = isPro;
 exports.isDev = isDev;
 exports.isDbg = isDbg;
+
+
+hash = git.short(); // NOTE: Synchronous
+uaOUJS = pkg.org + '/' + pkg.version
+  + ' (' + os.type() + '; ' + os.arch() + '; rv:'
+    + hash + ') ' + 'OUJS/20131106 ' + pkg.name + '/' + hash;
+exports.uaOUJS = uaOUJS;
+
 
 // ES6+ in use to eliminate extra property
 class statusError extends Error {

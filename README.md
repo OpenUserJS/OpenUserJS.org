@@ -39,6 +39,7 @@ Repository | Reference | Recent Version
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
 [git-rev][git-revGHUrl] | [Documentation][git-revDOCUrl] | [![NPM version][git-revNPMVersionImage]][git-revNPMUrl]
+[git-rev-sync][git-rev-syncGHUrl] | [Documentation][git-rev-syncDOCUrl] | [![NPM version][git-rev-syncNPMVersionImage]][git-rev-syncNPMUrl]
 [highlight.js][highlight.jsGHUrl] | [Documentation][highlight.jsDOCUrl][ᴸᴬᴺᴳ][highlight.jsLANGUrl] | [![NPM version][highlight.jsNPMVersionImage]][highlight.jsNPMUrl]
 [image-size][image-sizeGHUrl] | [Documentation][image-sizeDOCUrl] | [![NPM version][image-sizeNPMVersionImage]][image-sizeNPMUrl]
 [ip-range-check][ip-range-checkGHUrl] | [Documentation][ip-range-checkDOCUrl] | [![NPM version][ip-range-checkNPMVersionImage]][ip-range-checkNPMUrl]
@@ -226,6 +227,11 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [git-revDOCUrl]: https://github.com/tblobaum/git-rev/blob/master/README.md
 [git-revNPMUrl]: https://www.npmjs.com/package/git-rev
 [git-revNPMVersionImage]: https://img.shields.io/npm/v/git-rev.svg?style=flat
+
+[git-rev-syncGHUrl]: https://github.com/kurttheviking/git-rev-sync-js
+[git-rev-syncDOCUrl]: https://github.com/kurttheviking/git-rev-sync-js/blob/master/README.md
+[git-rev-syncNPMUrl]: https://www.npmjs.com/package/git-rev-sync
+[git-rev-syncNPMVersionImage]: https://img.shields.io/npm/v/git-rev-sync.svg?style=flat
 
 [highlight.jsGHUrl]: https://github.com/isagalaev/highlight.js
 [highlight.jsDOCUrl]: http://highlightjs.readthedocs.org

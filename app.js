@@ -13,6 +13,8 @@ var isPro = require('./libs/debug').isPro;
 var isDev = require('./libs/debug').isDev;
 var isDbg = require('./libs/debug').isDbg;
 
+var uaOUJS = require('./libs/debug').uaOUJS;
+
 var isSecured = require('./libs/debug').isSecured;
 var privkey = require('./libs/debug').privkey;
 var fullchain = require('./libs/debug').fullchain;
@@ -524,7 +526,10 @@ function pingCert() {
       (isPro && app.get('securePort')
         ? ':' + app.get('securePort')
         : ':' + app.get('port'))
-          + '/api'
+          + '/api',
+    headers: {
+      'User-Agent': uaOUJS + '.' + process.env.UA_SECRET
+    }
   }, function (aErr, aRes, aBody) {
     if (aErr) {
       if (aErr.cert) {

@@ -4,6 +4,7 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var uaOUJS = require('../libs/debug').uaOUJS;
 
 //
 var GitHubApi = require("github");
@@ -67,7 +68,12 @@ var githubUserContentGetBlobAsUtf8 = function (aMsg, aCallback) {
   async.waterfall([
     function (aCallback) {
       var url = githubUserContentBuildUrl(aMsg.user, aMsg.repo, aMsg.path);
-      request.get(url, aCallback);
+      request.get({
+        url: url,
+        headers: {
+          'User-Agent': uaOUJS + '.' + process.env.UA_SECRET
+        }
+      }, aCallback);
     },
     function (aResponse, aBody, aCallback) {
       if (aResponse.statusCode !== 200)
