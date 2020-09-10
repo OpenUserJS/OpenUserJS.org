@@ -1,15 +1,15 @@
 ## Contributing
 
-This project uses [editor config](http://editorconfig.org/), please make sure to [download the plugin for your editor](http://editorconfig.org/#download) so that we stay consistent. Current ECMAScript 5 is implemented and supported at this time. This may change eventually to some ECMAScript 6 from the finalization that occurred in June of 2015.
+This project uses [editor config](https://editorconfig.org/), please make sure to [download the plugin for your editor](https://editorconfig.org/#download) so that we stay consistent. Current ECMAScript 5 is implemented and supported at this time. This may change eventually to some ECMAScript 6 from the finalization that occurred in June of 2015.
 
 
 ### Creating a Local Environment
 
 #### Prerequisites
 
-* [Git](http://git-scm.com/)
-* [node.js](http://nodejs.org/) *(see [`./package.json`](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json) engines for specific requirements)*
-* [MongoDB](http://www.mongodb.org/) (Optional.  The project is preconfigured to use a dev DB on [MongoLab](https://mongolab.com/).)
+* [Git](https://git-scm.com/)
+* [node.js](https://nodejs.org/) *(see [`./package.json`](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json) engines for specific requirements)*
+* [MongoDB](https://www.mongodb.org/) (Optional.  The project is preconfigured to use a dev DB on [mLab](https://mlab.com/).)
 
 #### GitHub Fork Setup
 
@@ -32,11 +32,11 @@ This project uses [editor config](http://editorconfig.org/), please make sure to
 #### Configuration
 
 1. Navigate to https://github.com/settings/applications and register a new OAuth application, saving the Client ID and Secret.  To ensure GitHub OAuth authentication will work the "Authorization callback URL" value must exactly match `AUTH_CALLBACK_BASE_URL` (see below, e.g. http://localhost:8080).
-2. Open a [MongoDB shell](http://docs.mongodb.org/manual/tutorial/getting-started-with-the-mongo-shell/) and run the following (replacing "your_GitHub_client_ID" and "your_GitHub_secret") to create an "oujs_dev" database with a "strategies" collection containing your application instance's GitHub OAuth information.
+2. Open a [MongoDB shell](https://docs.mongodb.com/manual/mongo/) and run the following (replacing "your_GitHub_client_ID" and "your_GitHub_secret") to create an "oujs_dev" database with a "strategies" collection containing your application instance's GitHub OAuth information.
   * `use oujs_dev`
   * `db.createCollection("strategies")`
   * `db.strategies.insert({id: "your_GitHub_client_ID", key: "your_GitHub_secret", name: "github", display: "GitHub"})`
-3. Edit `models/settings.json`, setting your desired session secret, [MongoDB connection string](http://docs.mongodb.org/manual/reference/connection-string/) (if using your own MongoDB instance), etc.
+3. Edit `models/settings.json`, setting your desired session secret, [MongoDB connection string](https://docs.mongodb.com/manual/reference/connection-string/) (if using your own MongoDB instance), etc.
 
 #### Running the Application
 
@@ -69,6 +69,10 @@ To contribute code to OpenUserJS.org the following process should generally be u
 #### Usage of Labels
 
 The following is a brief list of **some** of the labels used on the project and is used to establish teamwork. Not everyone has permission to set these and usually will be set by someone, unless expressly prohibited, either when an Issue or Pull Request *(PR)* is created or after an Issue is reported:
+
+##### SOFT BLOCKING
+Only the establishing owner and in extreme cases the active maintainer of the project may add this. Removal is usually done by the active maintainer and above. Recommendations by other contributors and collaborators are always accepted to have this put on or removed. This label means that merging unrelated or non-bug fix PRs will be put on hold until this label has been removed. Documentation fixes are always welcome by the active maintainer.
+
 
 ##### BLOCKING
 Only the establishing owner and in extreme cases the active maintainer of the project may add this. Removal is done by the establishing owner. Recommendations by other contributors and collaborators are always accepted to have this put on or removed. This label means that merging unrelated or non-bug fix PRs will be put on hold until this label has been removed. Documentation fixes are always welcome by the Active Maintainer.
