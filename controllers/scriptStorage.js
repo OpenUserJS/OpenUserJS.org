@@ -711,8 +711,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
             return;
           }
 
-          // Don't count installs from Fx XHR
-          if (aReq.get('accept') === '*/*') { // NOTE: Watchpoint
+          // Don't count installs on browser request in Fx
+          if (aReq.get('accept').indexOf('text/html') > -1) { // NOTE: Watchpoint
             return;
           }
 
