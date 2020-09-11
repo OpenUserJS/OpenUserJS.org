@@ -2,7 +2,7 @@
   {{#isScriptPage}}
     {{^script.isLib}}
     <div class="btn-group pull-right">
-      <a href="{{{script.scriptInstallPageUrl}}}" class="btn btn-{{^script.showSourceNoticesCritical}}info{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}">
+      <a href="{{{script.scriptInstallPageUrl}}}" class="btn btn-{{^script.showSourceNoticesCritical}}info{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}" type="text/javascript">
         <i class="fa fa-download"></i> Install
       </a>
       <button type="button" class="btn btn-{{^script.showSourceNotices}}info{{/script.showSourceNotices}}{{#script.showSourceNotices}}{{^script.showSourceNoticesCritical}}warning{{/script.showSourceNoticesCritical}}{{#script.showSourceNoticesCritical}}danger{{/script.showSourceNoticesCritical}}{{/script.showSourceNotices}} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
