@@ -706,6 +706,16 @@ exports.sendScript = function (aReq, aRes, aNext) {
             return;
           }
 
+          // Don't count installs from tagged XHR
+          if (aReq.get('x-requested-with')) {
+            return;
+          }
+
+          // Don't count installs from Fx XHR
+          if (aReq.get('accept') === '*/*') { // NOTE: Watchpoint
+            return;
+          }
+
           // Update the install count
           ++aScript.installs;
           ++aScript.installsSinceUpdate;
