@@ -24,7 +24,7 @@
             <i class="fa fa-user fa-fw"></i>
           </span>
           <div class="form-group has-feedback has-clear">
-            <input class="search form-control" type="text" name="username" value="{{wantname}}" placeholder="Username" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" required="required">
+            <input class="search form-control" type="text" name="username" value="{{wantname}}" placeholder="Username" spellcheck="false" autofocus="autofocus" autocomplete="username" autocorrect="off" autocapitalize="off" required="required">
             <span class="form-control-feedback form-control-clear fa fa-times hidden"></span>
           </div>
           <select name="auth" class="form-control">
@@ -41,7 +41,7 @@
                 </ul>
               </p>
               <p>
-                <span class="small" style="white-space: normal;"><input type="checkbox" name="consent" value="true" required="required"> I understand and agree to these binding terms and policies.</span>
+                <label for="consent" class="small" style="white-space: normal;"><input type="checkbox" id="consent" name="consent" value="true" required="required"> I understand and agree to these binding terms &amp; policies.</label>
               </p>
             </div>
             <div class="input-group-addon">
