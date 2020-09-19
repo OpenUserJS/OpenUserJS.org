@@ -16,7 +16,8 @@ var syncSchema = new Schema({
   strat: String,    // Currently github (lowercase always)
   id: String,       // Some unique identifier from source
   target: String,   // Fully Qualified URL target (should be encodeURIComponent already)
-  response: Number, // HTTP Status Code
+  response: String, // HTTP Status Code usually and sometimes text response,
+                    //   i.e. ENOTFOUND, with no associated numeric code. Usually from dep
   message: String,  // Any message crafted or static
   created: { type: Date, expires: 60 * 60 * 24 * 30 },
   updated: Date,
