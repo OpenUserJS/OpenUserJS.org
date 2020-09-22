@@ -410,7 +410,7 @@ app.use(session({
   store: sessionStore
 }));
 app.use(function (aReq, aRes, aNext) {
-  if (aReq.session[passport._key]) {
+  if (aReq.session && aReq.session[passport._key]) {
     // load data from existing session
     aReq._passport.session = aReq.session[passport._key];
   }
