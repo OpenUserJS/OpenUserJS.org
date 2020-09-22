@@ -2230,13 +2230,22 @@ exports.webhook = function (aReq, aRes) {
 
     repoManager.loadSyncs(update, function (aErr) {
       if (aErr) {
+        // These currently should be server side errors so always log
         console.error(update, aErr);
         return;
       }
 
       repoManager.loadScripts(update, function (aErr) {
+
+        var code = null;
         if (aErr) {
-          console.error(update, aErr);
+          // Some errors could be user generated or dep generated user error,
+          //   usually ignore those since handled with Sync model and visible
+          //     to end user. We shouldn't be sending non-numeric codes.
+          code = (aErr instanceof statusError ? aErr.status.code : aErr.code);
+          if (code && !isNaN(code) && code >= 500) {
+            console.error(update, aErr);
+          }
         }
       });
     });

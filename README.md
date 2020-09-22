@@ -213,8 +213,8 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [font-awesomeNPMUrl]: https://www.npmjs.com/package/font-awesome
 [font-awesomeNPMVersionImage]: https://img.shields.io/npm/v/font-awesome.svg?style=flat
 
-[formidableGHUrl]: https://github.com/felixge/node-formidable
-[formidableDOCUrl]: https://github.com/felixge/node-formidable/blob/master/Readme.md
+[formidableGHUrl]: https://github.com/node-formidable/formidable
+[formidableDOCUrl]: https://github.com/node-formidable/formidable/blob/master/README.md
 [formidableNPMUrl]: https://www.npmjs.com/package/formidable
 [formidableNPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
 

@@ -1781,7 +1781,51 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
   form = new formidable.IncomingForm();
   form.parse(aReq, function (aErr, aFields, aFiles) {
-    // WARNING: No err handling
+    var msg = null;
+
+    if (aErr) {
+      if (aErr) {
+        msg = 'Unknown error when form parsing at `uploadScript`.'
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500,
+          statusMessage: [msg, 'Please contact Development.'].join(' ')
+        });
+        console.error(aErr);
+        return;
+      }
+    }
+
+    if (!aFields || (aFields && !aFields.uploadScript)) {
+      msg = '`uploadScript` field is missing.';
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 500,
+        statusMessage: msg
+      });
+      console.error(msg);
+      return;
+    }
+
+    if (aFields.uploadScript !== 'true') {
+      msg = '`uploadScript` field is invalid :=';
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 500,
+        statusMessage: [msg, aFields.uploadScript].join(' ')
+      });
+      console.error([msg, aFields.uploadScript].join(' '));
+      return;
+    }
+
+    // TODO: Maybe add more fields validation
+
+    if (!aFiles) {
+      msg = 'Upload Script is missing File.';
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 500,
+        statusMessage: msg
+      });
+      console.error(msg);
+      return;
+    }
 
     //
     var isLib = aReq.params.isLib;
@@ -1789,6 +1833,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
     var stream = null;
     var bufs = [];
     var authedUser = aReq.session.user;
+    var msg = null;
 
     // Reject missing files
     if (!script) {
@@ -1818,36 +1863,71 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
     // Reject huge file
     if (script.size > settings.maximum_upload_script_size) {
+      msg = util.format('Selected file size is larger than maximum (%s bytes).',
+          settings.maximum_upload_script_size)
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 400,
-        statusMessage: 'Selected file is too big.'
+        statusMessage: msg
       });
       return;
     }
 
     stream = fs.createReadStream(script.path);
+
+    stream.on('error', function(aErr) {
+      msg = 'Upload Script failed.';
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 500,
+        statusMessage: msg
+      });
+      console.error(aErr);
+      return;
+    });
+
     stream.on('data', function (aData) {
       bufs.push(aData);
     });
 
     stream.on('end', function () {
       User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
-        // WARNING: No err handling
+        var msg = null;
+
+        if (aErr) {
+          msg = 'Unknown error when finding User at processing Script stream.'
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500,
+            statusMessage: [msg, 'Please contact Development.'].join(' ')
+          });
+          console.error(aErr);
+          return;
+        }
+
+        if (!aUser) {
+          msg = 'No user found.'
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500,
+            statusMessage: msg
+          });
+          return;
+        }
 
         var bufferConcat = Buffer.concat(bufs);
 
         scriptStorage.getMeta(bufs, function (aMeta) {
+          var msg = null;
+
           if (!isLib && !!scriptStorage.findMeta(aMeta, 'UserLibrary')) {
+            msg = 'UserLibrary metadata block found while attempting to upload as a UserScript.';
             statusCodePage(aReq, aRes, aNext, {
               statusCode: 400,
-              statusMessage:
-                'UserLibrary metadata block found while attempting to upload as a UserScript.'
+              statusMessage: msg
             });
             return;
           } else if (isLib && !!!scriptStorage.findMeta(aMeta, 'UserLibrary')) {
+              msg = 'UserLibrary metadata block missing.';
               statusCodePage(aReq, aRes, aNext, {
                 statusCode: 400,
-                statusMessage: 'UserLibrary metadata block missing.'
+                statusMessage: msg
               });
             return;
           }
@@ -1902,9 +1982,30 @@ exports.submitSource = function (aReq, aRes, aNext) {
   function storeScript(aMeta, aSource) {
 
     User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
-      // WARNING: No err handling
+      var msg = null;
+
+      if (aErr) {
+        msg = 'Unknown error when finding User at `submitSource`.'
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500,
+          statusMessage: [msg, 'Please contact Development.'].join(' ')
+        });
+        console.error(aErr);
+        return;
+      }
+
+      if (!aUser) {
+        msg = 'No user found.'
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500,
+          statusMessage: msg
+        });
+        return;
+      }
 
       scriptStorage.storeScript(aUser, aMeta, aSource, false, function (aErr, aScript) {
+        var msg = null;
+
         var redirectUri = aScript
           ? ((aScript.isLib ? '/libs/' : '/scripts/') +
             encodeURIComponent(helpers.cleanFilename(aScript.author)) +
@@ -1921,9 +2022,10 @@ exports.submitSource = function (aReq, aRes, aNext) {
         }
 
         if (!aScript) {
+          msg = 'No script found.';
           statusCodePage(aReq, aRes, aNext, {
-            statusCode: 500, // NOTE: Watch point
-            statusMessage: 'No script'
+            statusCode: 500,
+            statusMessage: msg
           });
           return;
         }
@@ -1955,7 +2057,26 @@ exports.submitSource = function (aReq, aRes, aNext) {
             aScript.fork = fork;
 
             aScript.save(function (aErr, aScript) {
-              // WARNING: No err handling
+              var msg = null;
+
+              if (aErr) {
+                msg = 'Unknown error when saving at `submitSource`.';
+                statusCodePage(aReq, aRes, aNext, {
+                  statusCode: 500,
+                  statusMessage: [msg, 'Please contact Development'].join(' ')
+                });
+                console.error(aErr);
+                return;
+              }
+              if (!aScript) {
+                msg = 'No script handle when saving at `submitSource`.';
+                statusCodePage(aReq, aRes, aNext, {
+                  statusCode: 500,
+                  statusMessage: [msg, 'Please contact Development'].join(' ')
+                });
+                console.error(msg)
+                return;
+              }
 
               aRes.redirect(redirectUri);
             });
