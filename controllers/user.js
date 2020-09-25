@@ -1682,13 +1682,17 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
     },
   ], function (aErr) {
     var script = null;
+    var code = null;
 
     if (aErr) {
-      console.error([
-        aErr,
-        authedUser.name + ' ' + githubUserId + ' ' + githubRepoName + ' ' + githubBlobPath
+      code = (aErr instanceof statusError ? aErr.status.code : aErr.code);
+      if (code && !isNaN(code) && code >= 500) {
+        console.error([
+          aErr,
+          authedUser.name + ' ' + githubUserId + ' ' + githubRepoName + ' ' + githubBlobPath
 
-      ].join('\n'));
+        ].join('\n'));
+      }
 
       if (!(aErr instanceof String)) {
         statusCodePage(aReq, aRes, aNext, {
@@ -1707,7 +1711,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
         });
       } else {
         statusCodePage(aReq, aRes, aNext, {
-          statusCode: 500, // NOTE: Watchpoint
+          statusCode: 500,
           statusMessage: aErr
         });
       }
