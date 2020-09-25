@@ -45,7 +45,7 @@
                   Session Length: <strong>{{length}}</strong>
                 {{/isAdminSessionLengthView}}
                 {{#isGHImport}}
-                  {{{statusMessage}}}<br /><a href="https://github.com/{{user}}/{{repo}}/tree/{{default_branch}}/{{path}}"><b>{{utf_pathname}}</b>{{utf_pathext}}</a>
+                  {{{statusMessage}}}<br /><a href="https://github.com/{{user}}/{{repo}}/tree/{{default_branch}}/{{path}}#bypass=true"><b>{{utf_pathname}}</b>{{utf_pathext}}</a>
                 {{/isGHImport}}
                 {{#isListView}}
                   {{{statusMessage}}}<br />Please retry {{#retryAfter}}after approximately {{retryAfter}} seconds{{/retryAfter}}{{^retryAfter}}later{{/retryAfter}}.
