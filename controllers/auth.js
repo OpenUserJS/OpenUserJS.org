@@ -150,6 +150,11 @@ exports.auth = function (aReq, aRes, aNext) {
     return;
   }
 
+  if (username.length > 64) {
+    aRes.redirect('/login?toolong');
+    return;
+  }
+
   // Store the username in the session so we still have it when they
   // get back from authentication
   if (!aReq.session.username) {
