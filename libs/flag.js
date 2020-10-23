@@ -114,7 +114,9 @@ function getThreshold(aModel, aContent, aAuthor, aCallback) {
 }
 exports.getThreshold = getThreshold;
 
-function saveContent(aModel, aContent, aAuthor, aFlags, aIsFlagging, aCallback) {
+function saveContent(aModel, aContent, aAuthor, aWeight, aIsFlagging, aCallback) {
+  var weight = (aAuthor.role < 4 ? 2 : 1);
+
   if (!aContent.flags) {
     aContent.flags = {};
   }
@@ -127,14 +129,14 @@ function saveContent(aModel, aContent, aAuthor, aFlags, aIsFlagging, aCallback) 
     aContent.flags.absolute = 0;
   }
 
-  aContent.flags.critical += aFlags;
+  aContent.flags.critical += aWeight;
 
   if (aIsFlagging) {
     aContent.flags.absolute +=
-      (aFlags > 0 ? 1 : (aFlags < 0 && aContent.flags.absolute !== 0 ? -1 : 0));
+      (aWeight > 0 ? 1 : (aWeight < 0 && aContent.flags.absolute !== 0 ? -1 : 0));
   }
 
-  if (aContent.flags.critical >= thresholds[aModel.modelName] * (aAuthor.role < 4 ? 2 : 1)) {
+  if (aContent.flags.critical >= thresholds[aModel.modelName] * weight) {
     return getThreshold(aModel, aContent, aAuthor, function (aThreshold) {
       aContent.flagged = aContent.flags.critical >= aThreshold;
 
@@ -168,6 +170,7 @@ function flag(aModel, aContent, aUser, aAuthor, aReason, aCallback) {
     'model': aModel.modelName,
     '_contentId': aContent._id,
     '_userId': aUser._id,
+    'weight': aUser.role < 4 ? 2 : 1,
     'reason': aReason,
     'created': now
   });
@@ -191,7 +194,7 @@ function flag(aModel, aContent, aUser, aAuthor, aReason, aCallback) {
       aContent.flagged = false;
     }
 
-    saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? 2 : 1, true, aCallback);
+    saveContent(aModel, aContent, aAuthor, aFlag.weight, true, aCallback);
   });
 }
 
@@ -238,7 +241,7 @@ exports.unflag = function (aModel, aContent, aUser, aReason, aCallback) {
       aFlag.remove(function (aErr) {
         // WARNING: No err handling
 
-        saveContent(aModel, aContent, aAuthor, aUser.role < 4 ? -2 : -1, true, aCallback);
+        saveContent(aModel, aContent, aAuthor, -aFlag.weight, true, aCallback);
       });
     }
 

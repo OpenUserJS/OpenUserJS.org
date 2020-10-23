@@ -14,6 +14,7 @@ var Schema = mongoose.Schema;
 var flagSchema = new Schema({
   model: String,
   reason: String,
+  weight: Number,                     // Natural number with the role weight of User at time of flagging
   _contentId: Schema.Types.ObjectId,
   _userId: Schema.Types.ObjectId,
 
