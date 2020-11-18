@@ -36,6 +36,7 @@ try {
   exports.fullchain = fullchain;
   exports.chain = chain;
   exports.isSecured = true;
+  exports.isRenewable = false;
 
 } catch (aE) {
   // Check for backup alternate keys
@@ -52,6 +53,7 @@ try {
     exports.fullchain = fullchain;
     exports.chain = chain;
     exports.isSecured = true;
+    exports.isRenewable = !!process.env.ATTEMPT_RENEWAL;
 
   } catch (aE) {
     // Ensure that all items are nulled or equivalent
@@ -59,6 +61,7 @@ try {
     exports.fullchain = null;
     exports.chain = null;
     exports.isSecured = false;
+    exports.isRenewable = !!process.env.ATTEMPT_RENEWAL;
   }
 }
 
