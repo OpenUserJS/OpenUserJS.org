@@ -19,6 +19,7 @@ var isSecured = require('./libs/debug').isSecured;
 var privkey = require('./libs/debug').privkey;
 var fullchain = require('./libs/debug').fullchain;
 var chain = require('./libs/debug').chain;
+var isRenewable = require('./libs/debug').isRenewable;
 
 //
 var path = require('path');
@@ -95,6 +96,7 @@ if (isPro) {
 }
 
 var fs = require('fs');
+var execSync = require('child_process').execSync;
 var http = require('http');
 var https = require('https');
 var sslOptions = null;
@@ -358,9 +360,12 @@ if (isSecured) {
       console.warn(colors.red('Error renaming certificates'));
     }
 
-    // Trip the server now to try any alternate fallback certificates
-    // If there aren't any it should run in http mode however usually no access through web
+    // Trip the server now to try any alternate fallback certificates or updated
+    // If there aren't any it should run in http mode however usually no easy access through web
     // This should prevent logging DoS
+
+    // NOTE: Pro will always stay in unsecure for `setInterval` value plus
+    // ~ n seconds (hours) until renewable check if available.
 
     beforeExit(); // NOTE: Event not triggered for direct `process.exit()`
 
@@ -485,36 +490,49 @@ require('./routes')(app);
 function tripServerOnCertExpire(aValidToString) {
   var tlsDate = new Date(aValidToString);
   var now = new Date();
+  var success = true;
 
   var tripDate = new Date(tlsDate.getTime() - (2 * 60 * 60 * 1000)); // ~2 hours before fault
 
   if (now.getTime() >= tripDate.getTime()) {
-    console.error(colors.red('Certificates expiring very soon. Tripping server to unsecure mode'));
+    console.error(colors.red('Valid secure certificates not available.'));
 
     isSecured = false;
 
-    console.warn(colors.cyan('Attempting to rename certificates'));
-    try {
-      fs.renameSync(privkey, privkey + '.expiring')
-      fs.renameSync(fullchain, fullchain + '.expiring');
-      fs.renameSync(chain, chain + '.expiring');
+    if (!isRenewable) {
+      console.warn(colors.cyan('Attempting to rename certificates'));
+      try {
+        fs.renameSync(privkey, privkey + '.expiring');
+        fs.renameSync(fullchain, fullchain + '.expiring');
+        fs.renameSync(chain, chain + '.expiring');
 
-      console.log(colors.green('Certificates renamed'));
+        console.log(colors.green('Certificates renamed'));
 
-      // NOTE: Cached modules and/or callbacks may not reflect this change immediately
-      // so must conclude with server trip
+        // NOTE: Cached modules and/or callbacks may not reflect this change immediately
+        // so must conclude with server trip
 
-    } catch (aE) {
-      console.warn(colors.red('Error renaming certificates'));
+      } catch (aE) {
+        console.warn(colors.red('Error renaming certificates'));
+      }
+    } else {
+      console.warn(colors.cyan('Attempting to renew certificates'));
+
+      try {
+        execSync(process.env.ATTEMPT_RENEWAL); // NOTE: Synchronous wait
+      } catch (aE) {
+        success = false;
+      }
     }
 
-    // Trip the server now to try any alternate fallback certificates
-    // If there aren't any it should run in http mode however usually no access through web
-    // This should prevent logging DoS
+    if (success) {
+      // Trip the server now to try any alternate fallback certificates or updated
+      // If there aren't any it should run in http mode however usually no easy access through web
+      // This should prevent logging DoS
 
-    beforeExit(); // NOTE: Event not triggered for direct `process.exit()`
+      beforeExit(); // NOTE: Event not triggered for direct `process.exit()`
 
-    process.exit(1);
+      process.exit(1);
+    }
   }
 }
 
@@ -561,13 +579,16 @@ function pingCert() {
 
     } else {
       console.warn(colors.yellow('Encryption not available'));
+
+      // NOTE: This will trip dev usually since it's normally not secure. If it is secure then
+      // server still needs to be tripped. This should be minor and usually devs have roughly the
+      // time indicated by `setInterval` below before it happens.
+      tripServerOnCertExpire(new Date());
     }
   });
 };
 
-if (isSecured) {
-  pingCertTimer = setInterval(pingCert, 60 * 60 * 1000); // NOTE: Check every hour
-}
+pingCertTimer = setInterval(pingCert, 60 * 60 * 1000); // NOTE: Check about every hour
 
 function ttlSanity() {
   var options = {};
