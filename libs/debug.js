@@ -12,11 +12,11 @@ var isPro = process.env.NODE_ENV === 'production';
 var isDev = !isPro;
 var isDbg = typeof v8debug === 'object';
 
-var isSecure = null;
 var privkey = null;
 var fullchain = null;
 var chain = null;
-
+var isSecured = null;
+var isRenewable = null;
 
 var uaOUJS = null;
 var hash = null;

@@ -343,24 +343,24 @@ if (isSecured) {
     secureServer.listen(app.get('securePort'));
 
   } catch (aE) {
-    console.error(colors.red('Server is NOT secured. Certificates may already be expired'));
+    console.error(colors.red('Server is NOT secured. Certificate may already be expired'));
     isSecured = false;
-    console.warn(colors.cyan('Attempting to rename certificates'));
+    console.warn(colors.cyan('Attempting to rename errored certificate'));
     try {
-      fs.renameSync(privkey, privkey + '.expired')
-      fs.renameSync(fullchain, fullchain + '.expired');
-      fs.renameSync(chain, chain + '.expired');
+      fs.renameSync(privkey, privkey + '.error')
+      fs.renameSync(fullchain, fullchain + '.error');
+      fs.renameSync(chain, chain + '.error');
 
-      console.warn(colors.green('Certificates renamed'));
+      console.warn(colors.green('Errored certificate renamed'));
 
       // NOTE: Cached modules and/or callbacks may not reflect this change immediately
       // so must conclude with server trip
 
     } catch (aE) {
-      console.warn(colors.red('Error renaming certificates'));
+      console.warn(colors.red('Error renaming errored certificate'));
     }
 
-    // Trip the server now to try any alternate fallback certificates or updated
+    // Trip the server now to try any alternate fallback certificate or updated
     // If there aren't any it should run in http mode however usually no easy access through web
     // This should prevent logging DoS
 
@@ -487,45 +487,49 @@ require('./routes')(app);
 
 
 // Timers
-function tripServerOnCertExpire(aValidToString) {
+function tripServerOnCertExpire(aValidToString, aStayResident) {
   var tlsDate = new Date(aValidToString);
   var now = new Date();
-  var success = true;
+  var trippy = false;
 
   var tripDate = new Date(tlsDate.getTime() - (2 * 60 * 60 * 1000)); // ~2 hours before fault
 
+  console.log('Validating certificate');
+
   if (now.getTime() >= tripDate.getTime()) {
-    console.error(colors.red('Valid secure certificates not available.'));
+    console.error(colors.red('Valid secure certificate not available.'));
 
-    isSecured = false;
 
-    if (!isRenewable) {
-      console.warn(colors.cyan('Attempting to rename certificates'));
+    if (!isRenewable && isSecured) {
+      console.warn(colors.cyan('Attempting to rename expiring certificate'));
       try {
-        fs.renameSync(privkey, privkey + '.expiring');
-        fs.renameSync(fullchain, fullchain + '.expiring');
-        fs.renameSync(chain, chain + '.expiring');
+        fs.renameSync(privkey, privkey + '.expiry');
+        fs.renameSync(fullchain, fullchain + '.expiry');
+        fs.renameSync(chain, chain + '.expiry');
 
-        console.log(colors.green('Certificates renamed'));
+        console.log(colors.green('Expiring certificate renamed'));
+        trippy = true;
 
         // NOTE: Cached modules and/or callbacks may not reflect this change immediately
         // so must conclude with server trip
 
       } catch (aE) {
-        console.warn(colors.red('Error renaming certificates'));
+        console.error(colors.red('Error renaming expiring certificate', aE.code));
       }
-    } else {
-      console.warn(colors.cyan('Attempting to renew certificates'));
+    } else if (isSecured) {
+      console.warn(colors.cyan('Attempting to renew expiring certificate'));
 
       try {
         execSync(process.env.ATTEMPT_RENEWAL); // NOTE: Synchronous wait
+        trippy = true;
+
       } catch (aE) {
-        success = false;
+        console.warn(colors.red('Error renewing expiring certificate', aE.code));
       }
     }
 
-    if (success) {
-      // Trip the server now to try any alternate fallback certificates or updated
+    if (trippy && !aStayResident) {
+      // Trip the server now to try any alternate fallback certificate or updated
       // If there aren't any it should run in http mode however usually no easy access through web
       // This should prevent logging DoS
 
@@ -556,15 +560,22 @@ function pingCert() {
         // browsers as well as false credentials supplied
 
         // Test for time limit of expiration
-        tripServerOnCertExpire(aErr.cert.valid_to);
+        tripServerOnCertExpire(new Date(aErr.cert.valid_to).toUTCString()); // NOTE: Strong coercion
 
       } else {
         console.warn([
-          colors.red(aErr),
-          colors.red('Server may not be running on specified port or port blocked by firewall'),
-          colors.red('Encryption not available')
+          colors.red(aErr.code),
+          colors.red('Server may not be running on specified port or port blocked by firewall.'),
+          colors.red('Encryption may not be available.')
 
         ].join('\n'));
+
+        if (isDev && aErr.code === 'EPROTO') {
+          tripServerOnCertExpire(new Date().toUTCString(), true); // NOTE: Strong coercion
+        } else {
+          tripServerOnCertExpire(new Date().toUTCString()); // NOTE: Strong coercion
+        }
+
       }
       return;
     }
@@ -575,26 +586,26 @@ function pingCert() {
       console.warn(colors.red('Firewall pass-through detected'));
 
       // Test for time limit of expiration
-      tripServerOnCertExpire(aRes.req.connection.getPeerCertificate().valid_to);
+      tripServerOnCertExpire(
+        new Date(aRes.req.connection.getPeerCertificate().valid_to).toUTCString()); // NOTE: Strong coercion
 
     } else {
-      console.warn(colors.yellow('Encryption not available'));
-
-      // NOTE: This will trip dev usually since it's normally not secure. If it is secure then
-      // server still needs to be tripped. This should be minor and usually devs have roughly the
-      // time indicated by `setInterval` below before it happens.
-      tripServerOnCertExpire(new Date());
+      console.warn(colors.yellow('Encryption not available.'));
     }
   });
 };
 
-pingCertTimer = setInterval(pingCert, 60 * 60 * 1000); // NOTE: Check about every hour
+// Re-test cert at init
+pingCert();
+
+// Re-test cert at interval
+pingCertTimer = setInterval(pingCert, (isPro ? 60 * 60 : 1 * 15) * 1000); // NOTE: Check about every hour for pro
 
 function ttlSanity() {
   var options = {};
   findSessionData({}, sessionStore, options, function (aErr) {
     if (aErr) {
-      console.error('some error during ttlSanity', aErr);
+      console.error('Some error during ttlSanity', aErr);
       return;
     }
 
