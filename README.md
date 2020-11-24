@@ -112,25 +112,25 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [nodeGHUrl]: https://github.com/nodejs/node
 [nodejsGHReleasesUrl]: https://github.com/nodejs/Release/#release-schedule
 [nodejsReleasesUrl]: https://nodejs.org/download/release/
-[nodejsDOCUrl]: http://nodejs.org/documentation/
+[nodejsDOCUrl]: https://nodejs.org/documentation/
 
 [npmNPMUrl]: https://www.npmjs.com/package/npm
-[npmNPMVersionImage]: http://img.shields.io/npm/v/npm.svg
+[npmNPMVersionImage]: https://img.shields.io/npm/v/npm.svg
 [npmGHReleasesUrl]: https://github.com/npm/cli/releases
 [npmGHUrl]: https://github.com/npm/cli
 [npmDOCUrl]: https://github.com/npm/cli/blob/latest/README.md
 
-[davidImageViaShields]: http://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
+[davidImageViaShields]: https://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
 [davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
 
-[shieldsHomepage]: http://shields.io/
+[shieldsHomepage]: https://shields.io/
 
 [ace-buildsGHUrl]: https://github.com/ajaxorg/ace-builds/tree/master/src
 [ace-buildsDOCUrl]: https://github.com/ajaxorg/ace-builds/blob/master/README.md
 [ace-buildsNPMUrl]: https://www.npmjs.com/package/ace-builds
 [ace-buildsNPMVersionImage]: https://img.shields.io/npm/v/ace-builds.svg?style=flat
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
-[aceDOCUrl]: http://ace.c9.io/#nav=api "ace"
+[aceDOCUrl]: https://ace.c9.io/#nav=api "ace"
 
 [ansi-colorsGHUrl]: https://github.com/doowb/ansi-colors
 [ansi-colorsDOCUrl]: https://github.com/doowb/ansi-colors/blob/master/README.md
@@ -157,14 +157,14 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [body-parserNPMUrl]: https://www.npmjs.com/package/body-parser
 [body-parserNPMVersionImage]: https://img.shields.io/npm/v/body-parser.svg?style=flat
 
-[bootstrapUrl]: http://getbootstrap.com/
+[bootstrapUrl]: https://getbootstrap.com/
 [bootstrapGHUrl]: https://github.com/twbs/bootstrap
-[bootstrapDOCUrl]: http://getbootstrap.com/components/
+[bootstrapDOCUrl]: https://getbootstrap.com/components/
 [bootstrapNPMUrl]: https://www.npmjs.com/package/bootstrap
 [bootstrapNPMVersionImage]: https://img.shields.io/npm/v/bootstrap.svg?style=flat
 
 [bootstrap-markdownGHUrl]: https://github.com/toopay/bootstrap-markdown
-[bootstrap-markdownDOCUrl]: http://toopay.github.io/bootstrap-markdown/
+[bootstrap-markdownDOCUrl]: https://toopay.github.io/bootstrap-markdown/
 [bootstrap-markdownNPMUrl]: https://www.npmjs.com/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
 
@@ -178,8 +178,8 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [compressionNPMUrl]: https://www.npmjs.com/package/compression
 [compressionNPMVersionImage]: https://img.shields.io/npm/v/compression.svg?style=flat
 
-[connect-mongoGHUrl]: https://github.com/kcbanner/connect-mongo
-[connect-mongoDOCUrl]: https://github.com/kcbanner/connect-mongo/blob/master/README.md
+[connect-mongoGHUrl]: https://github.com/jdesboeufs/connect-mongo
+[connect-mongoDOCUrl]: https://github.com/jdesboeufs/connect-mongo/blob/master/README.md
 [connect-mongoNPMUrl]: https://www.npmjs.com/package/connect-mongo
 [connect-mongoNPMVersionImage]: https://img.shields.io/npm/v/connect-mongo.svg?style=flat
 
@@ -189,7 +189,7 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [diffNPMVersionImage]: https://img.shields.io/npm/v/diff.svg?style=flat
 
 [expressGHUrl]: https://github.com/expressjs/express
-[expressDOCUrl]: http://expressjs.com/
+[expressDOCUrl]: https://expressjs.com/
 [expressNPMUrl]: https://www.npmjs.com/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
 
@@ -209,7 +209,7 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [express-sessionNPMVersionImage]: https://img.shields.io/npm/v/express-session.svg?style=flat
 
 [font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
-[font-awesomeDOCUrl]: http://fontawesome.io/
+[font-awesomeDOCUrl]: https://fontawesome.com/
 [font-awesomeNPMUrl]: https://www.npmjs.com/package/font-awesome
 [font-awesomeNPMVersionImage]: https://img.shields.io/npm/v/font-awesome.svg?style=flat
 
@@ -217,11 +217,6 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [formidableDOCUrl]: https://github.com/node-formidable/formidable/blob/master/README.md
 [formidableNPMUrl]: https://www.npmjs.com/package/formidable
 [formidableNPMVersionImage]: https://img.shields.io/npm/v/formidable.svg?style=flat
-
-[githubGHUrl]: https://github.com/octokit/rest.js
-[githubDOCUrl]: https://github.com/octokit/rest.js/blob/master/README.md
-[githubNPMUrl]: https://www.npmjs.com/package/@octokit/rest
-[githubNPMVersionImage]: https://img.shields.io/npm/v/@octokit/rest.svg?style=flat
 
 [git-revGHUrl]: https://github.com/tblobaum/git-rev
 [git-revDOCUrl]: https://github.com/tblobaum/git-rev/blob/master/README.md
@@ -233,8 +228,8 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [git-rev-syncNPMUrl]: https://www.npmjs.com/package/git-rev-sync
 [git-rev-syncNPMVersionImage]: https://img.shields.io/npm/v/git-rev-sync.svg?style=flat
 
-[highlight.jsGHUrl]: https://github.com/isagalaev/highlight.js
-[highlight.jsDOCUrl]: http://highlightjs.readthedocs.org
+[highlight.jsGHUrl]: https://github.com/highlightjs/highlight.js
+[highlight.jsDOCUrl]: https://highlightjs.readthedocs.io
 [highlight.jsNPMUrl]: https://www.npmjs.com/package/highlight.js
 [highlight.jsNPMVersionImage]: https://img.shields.io/npm/v/highlight.js.svg?style=flat
 [highlight.jsLANGUrl]: https://github.com/highlightjs/highlight.js#getting-started
@@ -252,8 +247,8 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [jQueryNPMUrl]: https://www.npmjs.com/package/jquery
 [jQueryNPMVersionImage]: https://img.shields.io/npm/v/jquery.svg?style=flat
 [jQueryGHUrl]: https://github.com/jquery/jquery
-[jQueryUrl]: http://jquery.com/
-[jQueryDOCUrl]: http://api.jquery.com/
+[jQueryUrl]: https://jquery.com/
+[jQueryDOCUrl]: https://api.jquery.com/
 
 [js-beautifyNPMUrl]: https://www.npmjs.com/package/js-beautify
 [js-beautifyNPMVersionImage]: https://img.shields.io/npm/v/js-beautify.svg?style=flat
@@ -262,13 +257,13 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 
 [jsdomNPMUrl]: https://www.npmjs.com/package/jsdom
 [jsdomNPMVersionImage]: https://img.shields.io/npm/v/jsdom.svg?style=flat
-[jsdomGHUrl]: https://github.com/tmpvar/jsdom
-[jsdomDOCUrl]: https://github.com/tmpvar/jsdom/blob/master/README.md
+[jsdomGHUrl]: https://github.com/jsdom/jsdom
+[jsdomDOCUrl]: https://github.com/jsdom/jsdom/blob/master/README.md
 
 [kerberosNPMUrl]: https://www.npmjs.com/package/kerberos
 [kerberosNPMVersionImage]: https://img.shields.io/npm/v/kerberos.svg?style=flat
-[kerberosGHUrl]: https://github.com/christkv/kerberos
-[kerberosDOCUrl]: https://github.com/christkv/kerberos/blob/master/README.md
+[kerberosGHUrl]: https://github.com/mongodb-js/kerberos
+[kerberosDOCUrl]: https://github.com/mongodb-js/kerberos/blob/master/README.md
 
 [less-middlewareGHUrl]: https://github.com/emberfeather/less.js-middleware
 [less-middlewareDOCUrl]: https://github.com/emberfeather/less.js-middleware/blob/master/readme.md
@@ -298,7 +293,7 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [mime-dbNPMVersionImage]: https://img.shields.io/npm/v/mime-db.svg?style=flat
 
 [momentGHUrl]: https://github.com/moment/moment
-[momentDOCUrl]: http://momentjs.com/docs/
+[momentDOCUrl]: https://momentjs.com/docs/
 [momentNPMUrl]: https://www.npmjs.com/package/moment
 [momentNPMVersionImage]: https://img.shields.io/npm/v/moment.svg?style=flat
 
@@ -312,8 +307,8 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [mongodbNPMUrl]: https://www.npmjs.com/package/mongodb
 [mongodbNPMVersionImage]: https://img.shields.io/npm/v/mongodb.svg?style=flat
 
-[mongooseGHUrl]: https://github.com/LearnBoost/mongoose
-[mongooseDOCUrl]: http://mongoosejs.com
+[mongooseGHUrl]: https://github.com/Automattic/mongoose
+[mongooseDOCUrl]: https://mongoosejs.com
 [mongooseNPMUrl]: https://www.npmjs.com/package/mongoose
 [mongooseNPMVersionImage]: https://img.shields.io/npm/v/mongoose.svg?style=flat
 
@@ -437,8 +432,8 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [serve-faviconNPMUrl]: https://www.npmjs.com/package/serve-favicon
 [serve-faviconNPMVersionImage]: https://img.shields.io/npm/v/serve-favicon.svg?style=flat
 
-[spdx-license-idsGHUrl]: https://github.com/shinnn/spdx-license-ids
-[spdx-license-idsDOCUrl]: https://github.com/shinnn/spdx-license-ids/blob/master/README.md
+[spdx-license-idsGHUrl]: https://github.com/jslicense/spdx-license-ids
+[spdx-license-idsDOCUrl]: https://github.com/jslicense/spdx-license-ids/blob/master/README.md
 [spdx-license-idsNPMUrl]: https://www.npmjs.com/package/spdx-license-ids
 [spdx-license-idsNPMVersionImage]: https://img.shields.io/npm/v/spdx-license-ids.svg?style=flat
 
@@ -459,7 +454,7 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [toobusy-jsNPMVersionImage]: https://img.shields.io/npm/v/toobusy-js.svg?style=flat
 
 [underscoreGHUrl]: https://github.com/jashkenas/underscore
-[underscoreDOCUrl]: http://underscorejs.org/
+[underscoreDOCUrl]: https://underscorejs.org/
 [underscoreNPMUrl]: https://www.npmjs.com/package/underscore
 [underscoreNPMVersionImage]: https://img.shields.io/npm/v/underscore.svg?style=flat
 
@@ -470,20 +465,23 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 
 
 [bootswatchGHUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/custom/bootstrap.css
-[bootswatchREPOUrl]: http://bootswatch.com
+[bootswatchREPOUrl]: https://bootswatch.com
 [bootswatchNPMUrl]: https://www.npmjs.com/package/bootswatch
 [bootswatchNPMVersionImage]: https://img.shields.io/npm/v/bootswatch.svg?style=flat
 [bootswatchDOCUrl]: https://github.com/thomaspark/bootswatch/blob/gh-pages/README.md
-[bootswatchBSUrl]: http://bootswatch.com/bower_components/bootstrap/dist/css/bootstrap.css
 
 [normalizeGHUrl]: https://github.com/necolas/normalize.css
-[normalizeDOCUrl]: http://git.io/normalize
+[normalizeDOCUrl]: https://github.com/necolas/normalize.css/blob/master/README.md
 
 [squadaOneGHUrl]: https://github.com/google/fonts/tree/master/ofl/squadaone
 [squadaOneREPOUrl]: https://www.google.com/fonts/specimen/Squada+One
 [squadaOneDOCUrl]: https://github.com/google/fonts/blob/master/README.md
 [squadaOneGHUrlRecent]: https://github.com/google/fonts/blob/master/ofl/squadaone/SquadaOne-Regular.ttf
 
+[githubGHUrl]: https://github.com/octokit/rest.js
+[githubDOCUrl]: https://github.com/octokit/rest.js/blob/master/README.md
+[githubNPMUrl]: https://www.npmjs.com/package/@octokit/rest
+[githubNPMVersionImage]: https://img.shields.io/npm/v/@octokit/rest.svg?style=flat
 
 
 [styleguide]: STYLEGUIDE.md
