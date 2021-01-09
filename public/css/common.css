@@ -199,6 +199,15 @@ textarea {
   margin: 0 auto;
 }
 
+.form-group-signin {
+  margin-bottom: 0;
+}
+
+.alert-signin {
+  margin-bottom: 0;
+  padding-top: 3.5em;
+}
+
 input#discussion-topic {
   display: inline-block;
   width: calc(100% - 18px - 4px);

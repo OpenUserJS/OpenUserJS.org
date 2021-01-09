@@ -23,9 +23,12 @@
           <span class="input-group-addon">
             <i class="fa fa-user fa-fw"></i>
           </span>
-          <div class="form-group has-feedback has-clear">
+          <div class="form-group form-group-signin has-feedback has-clear">
             <input class="search form-control" type="text" name="username" value="{{wantname}}" placeholder="Username" spellcheck="false" autofocus="autofocus" autocomplete="username" autocorrect="off" autocapitalize="off" required="required">
             <span class="form-control-feedback form-control-clear fa fa-times hidden"></span>
+            <div class="alert alert-warning alert-signin small" role="alert">
+              <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The Username that you choose to login with will be displayed to everyone. It is strongly recommended to <strong>not</strong> attempt to use an email address.
+            </div>
           </div>
           <select name="auth" class="form-control">
             {{#strategies}}
@@ -48,9 +51,6 @@
               <button class="btn btn-info" type="submit" id="action" class="pull-left">Next <i class="fa fa-sign-in fa-fw"></i></button>
             </div>
           </div>
-        </div>
-        <div class="alert alert-warning small" role="alert">
-          <i class="fa fa-exclamation-triangle"></i> <strong>CAUTION</strong>: The username that you choose to login with will be displayed to everyone. It is strongly recommended to <strong>not</strong> attempt to use an email address.
         </div>
       </form>
     </div>
