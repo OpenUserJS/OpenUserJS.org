@@ -9,7 +9,7 @@ This project uses [editor config](https://editorconfig.org/), please make sure t
 
 * [Git](https://git-scm.com/)
 * [node.js](https://nodejs.org/) *(see [`./package.json`](https://github.com/OpenUserJs/OpenUserJS.org/blob/master/package.json) engines for specific requirements)*
-* [MongoDB](https://www.mongodb.org/) (Optional.  The project is preconfigured to use a dev DB on [mLab](https://mlab.com/).)
+* [MongoDB](https://www.mongodb.org/) *(Required: See [overall instructions here](https://docs.mongodb.com/manual/installation/) or [Community Edition instructions](https://docs.mongodb.com/manual/administration/install-community/))*
 
 #### GitHub Fork Setup
 
@@ -32,11 +32,19 @@ This project uses [editor config](https://editorconfig.org/), please make sure t
 #### Configuration
 
 1. Navigate to https://github.com/settings/applications and register a new OAuth application, saving the Client ID and Secret.  To ensure GitHub OAuth authentication will work the "Authorization callback URL" value must exactly match `AUTH_CALLBACK_BASE_URL` (see below, e.g. http://localhost:8080).
-2. Open a [MongoDB shell](https://docs.mongodb.com/manual/mongo/) and run the following (replacing "your_GitHub_client_ID" and "your_GitHub_secret") to create an "oujs_dev" database with a "strategies" collection containing your application instance's GitHub OAuth information.
-  * `use oujs_dev`
+2. Open a [MongoDB shell](https://docs.mongodb.com/manual/mongo/) and run the following (replacing "your_GitHub_client_ID" and "your_GitHub_secret") to create an "openuserjs_devel" database with a "strategies" collection containing your application instance's GitHub OAuth information.
+  * `use openuserjs_devel`
   * `db.createCollection("strategies")`
   * `db.strategies.insert({id: "your_GitHub_client_ID", key: "your_GitHub_secret", name: "github", display: "GitHub"})`
 3. Edit `models/settings.json`, setting your desired session secret, [MongoDB connection string](https://docs.mongodb.com/manual/reference/connection-string/) (if using your own MongoDB instance), etc.
+4. Depending on how you installed MongoDB you may need to set an environment variable in your CLI:
+
+Linux Example:
+~/.bashrc
+``` console
+export CONNECT_STRING=mongodb://127.0.0.1:27017/openuserjs_devel
+```
+5. You may import a &ldquo;dirty&rdquo; database using `mongorestore --gzip --db openuserjs_devel --archive=./dev/devDBdirty.gz` from the projects home.
 
 #### Running the Application
 
