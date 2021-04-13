@@ -7,12 +7,14 @@ var isDbg = require('../libs/debug').isDbg;
 var uaOUJS = require('../libs/debug').uaOUJS;
 
 //
-var GitHubApi = require("github");
 var _ = require("underscore");
 var async = require('async');
 var util = require('util');
 var request = require('request');
 var colors = require('ansi-colors');
+
+var GitHubApi = require("github");
+var createOAuthAppAuth = require("@octokit/auth-oauth-app").createOAuthAppAuth;
 
 // Client
 var github = new GitHubApi({
@@ -22,22 +24,51 @@ module.exports = github;
 
 // Authenticate Client
 var Strategy = require('../models/strategy').Strategy;
-Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
+Strategy.findOne({ name: 'github' }, async function (aErr, aStrat) {
+  var auth = null;
+  var appAuthentication = null;
+
   if (aErr)
     console.error(aErr);
 
   if (aStrat) {
+    // This authentication authorization is currently required to authorize this app
+    //   to have the GitHub authentication callback work when the strategy `id` and `key` is found
+    //   and additional usage of the `id` and `key` elsewhere in the Code
+
+    auth = createOAuthAppAuth({
+      clientType: 'oauth-app',
+      clientId: aStrat.id,
+      clientSecret: aStrat.key
+    });
+
+    appAuthentication = await auth({
+      type: "oauth-app"
+    });
+
+    // TODO: Do something with `appAuthentication`
+
+    // DEPRECATED: This method will break on May 5th, 2021. See #1705
+    //  and importing a repo will be severely hindered with possible timeouts/failures
     github.authenticate({
       type: 'oauth',
       key: aStrat.id,
-      secret: aStrat.key,
+      secret: aStrat.key
     });
-    console.log(colors.green('GitHub client authenticated'));
+
+    // TODO: error handler for UnhandledPromiseRejectionWarning if it crops up after deprecation
+
+    if (github.auth) {
+      console.log(colors.green('GitHub client (a.k.a this app) is authenticated'));
+    } else {
+      console.log(colors.yellow('GitHub client (a.k.a this app) is partially authenticated'));
+    }
   } else {
-    console.warn(colors.yellow('GitHub client NOT authenticated. Will have a lower Rate Limit.'));
+    console.warn(colors.red('GitHub client NOT authenticated. Will have a lower Rate Limit.'));
   }
 
 });
+
 
 // Util functions for the client.
 github.usercontent = github.usercontent || {};

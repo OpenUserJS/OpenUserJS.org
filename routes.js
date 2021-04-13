@@ -136,9 +136,11 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/comments').get(listLimiter, user.userCommentListPage);
   aApp.route('/users/:username/scripts').get(listLimiter, user.userScriptListPage);
   aApp.route('/users/:username/syncs').get(listLimiter, user.userSyncListPage);
+
   aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);
   aApp.route('/users/:username/github/repo').get(authentication.validateUser, user.userGitHubRepoPage);
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
+
   aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
   aApp.route('/users/:username/update').post(authentication.validateUser, admin.adminUserUpdate);
   // NOTE: Some below inconsistent with priors
