@@ -85,8 +85,8 @@ Repository | Reference | Recent Version
 [toobusy-js][toobusy-jsGHUrl] <br />&#x22D4; [`harmony`][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
 [underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 [useragent][useragentGHUrl] | [Documentation][useragentDOCUrl] | [![NPM version][useragentNPMVersionImage]][useragentNPMUrl]
+[@octokit/auth-oauth-app][auth-oauth-appUrl] | [Documentation][auth-oauth-appDOCUrl] | [![NPM version][auth-oauth-appNPMVersionImage]][auth-oauth-appNPMUrl]
 [@octokit/rest ᶠᵏᵃ ᵍᶦᵗʰᵘᵇ][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
-
 
 ##### Static
 
@@ -477,6 +477,11 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [squadaOneREPOUrl]: https://www.google.com/fonts/specimen/Squada+One
 [squadaOneDOCUrl]: https://github.com/google/fonts/blob/master/README.md
 [squadaOneGHUrlRecent]: https://github.com/google/fonts/blob/master/ofl/squadaone/SquadaOne-Regular.ttf
+
+[auth-oauth-appGHUrl]: https://github.com/octokit/auth-oauth-app.js
+[auth-oauth-appDOCUrl]: https://github.com/octokit/auth-oauth-app.js/blob/master/README.md
+[auth-oauth-appNPMUrl]: https://www.npmjs.com/package/@octokit/auth-oauth-app
+[auth-oauth-appNPMVersionImage]: https://img.shields.io/npm/v/@octokit/auth-oauth-app.svg?style=flat
 
 [githubGHUrl]: https://github.com/octokit/rest.js
 [githubDOCUrl]: https://github.com/octokit/rest.js/blob/master/README.md
