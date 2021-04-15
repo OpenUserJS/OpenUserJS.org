@@ -66,7 +66,7 @@
               </p>
             </div>
             {{#authedUser.hasGithub}}
-            <a href="{{{authedUser.userGitHubRepoListPageUrl}}}" class="list-group-item">
+            <a href="{{{authedUser.userGitHubRepoListPageUrl}}}" class="list-group-item" id="import-script-from-github">
               <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-repo-clone"></i> Import Script from GitHub</h4>
               <p class="list-group-item-text">
                 Click here to import a script<em>(s)</em> from a personal user GitHub repository. If Sync Script using GitHub has already been set up for the selected repository then it should automatically be linked for any scripts imported or previously directly published.
@@ -284,7 +284,7 @@
               <div id="collapse-openuserjs-author" class="panel-collapse collapse in">
                 <div class="panel-body">
                   <p>The OpenUserJS Author username of the script.</p>
-                  <p><strong>Required to enable <a href="#collaboration">Collaboration</a></strong>.</p>
+                  <p><strong>Required to enable</strong> <a href="#collaboration">Collaboration</a>.</p>
                   <p>Last value shown.</p>
                 </div>
               </div>
@@ -352,7 +352,7 @@
                 </div>
                 <div id="collapse-github-instructions" class="panel-collapse collapse">
                   <div class="panel-body">
-                    <p>Optionally you may upload the script to the site first. You may also use <a href="{{{authedUser.userGitHubRepoListPageUrl}}}">Import from Github</a> to speed things up as a shortcut.</p>
+                    <p>Optionally you may upload the script to the site first. You may also use the link at <a href="#import-script-from-github">Import Script from Github</a> to speed things up as a shortcut.</p>
                     <ol>
                       <li>Ensure that you have GitHub as an authentication for this site.</li>
                       <li>Ensure that you have and use a default <code>master</code> branch.</li>
