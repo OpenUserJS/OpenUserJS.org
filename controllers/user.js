@@ -1280,7 +1280,15 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   if (!options.authedUser.hasGithub) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'You do not have GitHub as an auth strategy'
+      statusMessage: 'You do not have GitHub as an auth strategy.'
+    });
+    return;
+  }
+
+  if (process.env.DISABLE_SCRIPT_IMPORT === 'true') {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 503,
+      statusMessage: 'Service unavailable. Please check back later.'
     });
     return;
   }
@@ -1395,7 +1403,15 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   if (!options.authedUser.hasGithub) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'You do not have GitHub as an auth strategy'
+      statusMessage: 'You do not have GitHub as an auth strategy.'
+    });
+    return;
+  }
+
+  if (process.env.DISABLE_SCRIPT_IMPORT === 'true') {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 503,
+      statusMessage: 'Service unavailable. Please check back later'
     });
     return;
   }
@@ -1506,6 +1522,22 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
     aReq.body.user || aReq.query.user || authedUser.ghUsername || authedUser.githubUserId();
 
   options.isOwnRepo = authedUser.ghUsername && authedUser.ghUsername === options.githubUserId;
+
+  if (!options.authedUser.hasGithub) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403,
+      statusMessage: 'You do not have GitHub as an auth strategy.'
+    });
+    return;
+  }
+
+  if (process.env.DISABLE_SCRIPT_IMPORT === 'true') {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 503,
+      statusMessage: 'Service unavailable. Please check back later.'
+    });
+    return;
+  }
 
   if (!options.isOwnRepo) {
     statusCodePage(aReq, aRes, aNext, {
