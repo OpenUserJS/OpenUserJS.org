@@ -31,7 +31,7 @@ Strategy.findOne({ name: 'github' }, async function (aErr, aStrat) {
   if (aErr)
     console.error(aErr);
 
-  if (aStrat) {
+  if (aStrat && process.env.DISABLE_SCRIPT_IMPORT !== 'true') {
     // This authentication authorization is currently required to authorize this app
     //   to have the GitHub authentication callback work when the strategy `id` and `key` is found
     //   and additional usage of the `id` and `key` elsewhere in the Code

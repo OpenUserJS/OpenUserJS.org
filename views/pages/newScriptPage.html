@@ -26,14 +26,14 @@
                 Are you new to {{#newJSLibrary}}library {{/newJSLibrary}}{{^newJSLibrary}}user {{/newJSLibrary}} scripting and thought you would just dive right in without reading anything? Well if you change your mind check out some of our documentation by clicking here. Special thanks go out to all of our collaborators for all their dedication and effort.
               </p>
             </a>
-            <a href="{{{newScriptEditorPageUrl}}}" class="list-group-item">
+            <a href="{{{newScriptEditorPageUrl}}}" class="list-group-item" id="write-script-online">
               <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-pencil"></i> Write Script Online</h4>
               <p class="list-group-item-text">
                 Click here to write a script using the Ace editor</em>.
               </p>
             </a>
             <div class="list-group-item">
-              <h4 class="list-group-item-heading"><i class="fa fa-fw fa-upload"></i> Upload Script</h4>
+              <h4 class="list-group-item-heading" id="upload-script"><i class="fa fa-fw fa-upload"></i> Upload Script</h4>
               <p class="list-group-item-text">
                 <form action="{{{uploadNewScriptPageUrl}}}" method="post" enctype="multipart/form-data" class="form-horizontal">
                   <input type="hidden" name="uploadScript" value="true">
@@ -352,7 +352,7 @@
                 </div>
                 <div id="collapse-github-instructions" class="panel-collapse collapse">
                   <div class="panel-body">
-                    <p>Optionally you may upload the script to the site first. You may also use the link at <a href="#import-script-from-github">Import Script from Github</a> to speed things up as a shortcut.</p>
+                    <p>You may use <a href="#write-script-online">Write Script Online</a> or <a href="#upload-script">Upload Script</a> to the site first to determine if there are any validation issues. When the service is available you may use the link at <a href="#import-script-from-github">Import Script from Github</a> to speed things up as a shortcut.</p>
                     <ol>
                       <li>Ensure that you have GitHub as an authentication for this site.</li>
                       <li>Ensure that you have and use a default <code>master</code> branch.</li>
