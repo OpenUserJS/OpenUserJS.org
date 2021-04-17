@@ -40,17 +40,14 @@ Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
   }
 
   if (!aStrat) {
-    console.error( colors.red( [
-      'Default GitHub Strategy document not found in DB',
-      'Terminating app'
+    console.warn( colors.red([
+      'Default GitHub Strategy document not found in DB.',
+      'Lower rate limit will be available.'
     ].join('\n')));
-
-    process.exit(1);
-    return;
+  } else {
+    clientId = aStrat.id;
+    clientKey = aStrat.key;
   }
-
-  clientId = aStrat.id;
-  clientKey = aStrat.key;
 });
 
 // Requests a GitHub url and returns the chunks as buffers
@@ -100,15 +97,20 @@ function fetchRaw(aHost, aPath, aCallback, aOptions) {
 // Use for call the GitHub JSON api
 // Returns the JSON parsed object
 function fetchJSON(aPath, aCallback) {
+  var encodedAuth = null;
+  var opts = null;
+
   // The old authentication method, which GitHub deprecated
   //aPath += '?client_id=' + clientId + '&client_secret=' + clientKey;
   // We must now use OAuth Basic (user+key) or Bearer (token)
-  var encodedAuth = Buffer.from(`${clientId}:${clientKey}`).toString('base64');
-  var opts = {
-    headers: {
-      authorization: `basic ${encodedAuth}`
-    }
-  };
+  if (clientId && clientKey) {
+    encodedAuth = Buffer.from(`${clientId}:${clientKey}`).toString('base64');
+    opts = {
+      headers: {
+        authorization: `basic ${encodedAuth}`
+      }
+    };
+  }
   fetchRaw('api.github.com', aPath, function (aBufs) {
     aCallback(JSON.parse(Buffer.concat(aBufs).toString()));
   }, opts);
