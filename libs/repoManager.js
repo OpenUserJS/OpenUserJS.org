@@ -106,7 +106,7 @@ function fetchJSON(aPath, aCallback) {
   var encodedAuth = Buffer.from(`${clientId}:${clientKey}`).toString('base64');
   var opts = {
     headers: {
-      Authorization: `Basic ${encodedAuth}`
+      authorization: `basic ${encodedAuth}`
     }
   };
   fetchRaw('api.github.com', aPath, function (aBufs) {
