@@ -32,10 +32,8 @@ Strategy.findOne({ name: 'github' }, async function (aErr, aStrat) {
     console.error(aErr);
 
   if (aStrat && process.env.DISABLE_SCRIPT_IMPORT !== 'true') {
-    // This authentication authorization is currently required to authorize this app
-    //   to have the GitHub authentication callback work when the strategy `id` and `key` is found
-    //   and additional usage of the `id` and `key` elsewhere in the Code
 
+    // TODO: Incomplete migration here
     auth = createOAuthAppAuth({
       clientType: 'oauth-app',
       clientId: aStrat.id,
@@ -48,6 +46,7 @@ Strategy.findOne({ name: 'github' }, async function (aErr, aStrat) {
 
     // TODO: Do something with `appAuthentication`
 
+
     // DEPRECATED: This method will break on May 5th, 2021. See #1705
     //  and importing a repo will be severely hindered with possible timeouts/failures
     github.authenticate({
@@ -56,15 +55,26 @@ Strategy.findOne({ name: 'github' }, async function (aErr, aStrat) {
       secret: aStrat.key
     });
 
-    // TODO: error handler for UnhandledPromiseRejectionWarning if it crops up after deprecation
+    // TODO: error handler for UnhandledPromiseRejectionWarning if it crops up after deprecation.
+    //   Forced invalid credentials and no error thrown but doesn't mean that they won't appear.
 
-    if (github.auth) {
-      console.log(colors.green('GitHub client (a.k.a this app) is authenticated'));
-    } else {
-      console.log(colors.yellow('GitHub client (a.k.a this app) is partially authenticated'));
-    }
+     if (github.auth) {
+       console.log(colors.green([
+         'GitHub client (a.k.a this app) DOES contain authentication credentials.',
+         'Higher rate limit may be available'
+       ].join('\n')));
+     }
+     else {
+       console.log(colors.red([
+         'GitHub client (a.k.a this app) DOES NOT contain authentication credentials.',
+         'Critical error with dependency.'
+       ].join('\n')));
+     }
   } else {
-    console.warn(colors.red('GitHub client NOT authenticated. Will have a lower Rate Limit.'));
+    console.warn(colors.yellow([
+      'GitHub client (a.k.a this app) DOES NOT contain authentication credentials.',
+      'Lower rate limit will be available.'
+    ].join('\n')));
   }
 
 });
