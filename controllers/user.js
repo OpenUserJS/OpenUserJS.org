@@ -1251,12 +1251,29 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
   }
 
   function asyncComplete(aErr) {
+    var msg = null;
+
     if (aErr) {
-      console.error(aErr);
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 500,
-        statusMessage: 'Server Error'
-      });
+      switch (aErr.code) {
+        case 403:
+          try {
+            msg = JSON.parse(aErr.message);
+          } catch (aE) {
+            msg = { message: aErr.message };
+          }
+          console.warn(msg.message);
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 503,
+            statusMessage: 'Service unavailable. Please check back later.'
+          });
+          break;
+        default:
+          console.error(aErr);
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500,
+            statusMessage: 'Server Error'
+          });
+      }
       return;
     }
 
@@ -1378,8 +1395,29 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   }
 
   function asyncComplete(aErr) {
+    var msg = null;
+
     if (aErr) {
-      aNext();
+      switch (aErr.code) {
+        case 403:
+          try {
+            msg = JSON.parse(aErr.message);
+          } catch (aE) {
+            msg = { message: aErr.message };
+          }
+          console.warn(msg.message);
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 503,
+            statusMessage: 'Service unavailable. Please check back later.'
+          });
+          break;
+        default:
+          console.error(aErr);
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500,
+            statusMessage: 'Server Error'
+          });
+      }
       return;
     }
 
@@ -1411,7 +1449,7 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
   if (process.env.DISABLE_SCRIPT_IMPORT === 'true') {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 503,
-      statusMessage: 'Service unavailable. Please check back later'
+      statusMessage: 'Service unavailable. Please check back later.'
     });
     return;
   }
@@ -1715,6 +1753,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   ], function (aErr) {
     var script = null;
     var code = null;
+    var msg = null;
 
     if (aErr) {
       code = (aErr instanceof statusError ? aErr.status.code : aErr.code);
@@ -1727,20 +1766,35 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       }
 
       if (!(aErr instanceof String)) {
-        statusCodePage(aReq, aRes, aNext, {
-          statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
-          statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.message),
-          isCustomView: true,
-          statusData: {
-            isGHImport: true,
-            utf_pathname: githubPathName,
-            utf_pathext: githubPathExt,
-            user: encodeURIComponent(githubUserId),
-            repo: encodeURIComponent(githubRepoName),
-            default_branch: encodeURIComponent(githubDefaultBranch),
-            path: encodeURIComponent(githubBlobPath)
-          }
-        });
+        switch (aErr.code) { // NOTE: Important to test for GH 403 vs potential OUJS 403
+          case 403:
+            try {
+              msg = JSON.parse(aErr.message);
+            } catch (aE) {
+              msg = { message: aErr.message };
+            }
+            console.warn(msg.message);
+            statusCodePage(aReq, aRes, aNext, {
+              statusCode: 503,
+              statusMessage: 'Service unavailable. Please check back later.'
+            });
+            break;
+          default:
+            statusCodePage(aReq, aRes, aNext, {
+              statusCode: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+              statusMessage: (aErr instanceof statusError ? aErr.status.message : aErr.message),
+              isCustomView: true,
+              statusData: {
+                isGHImport: true,
+                utf_pathname: githubPathName,
+                utf_pathext: githubPathExt,
+                user: encodeURIComponent(githubUserId),
+                repo: encodeURIComponent(githubRepoName),
+                default_branch: encodeURIComponent(githubDefaultBranch),
+                path: encodeURIComponent(githubBlobPath)
+              }
+            });
+        }
       } else {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 500,
