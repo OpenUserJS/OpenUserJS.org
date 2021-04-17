@@ -1,5 +1,6 @@
 'use strict';
 
+var inspector = require('inspector');
 var fs = require('fs');
 var os = require('os');
 
@@ -10,7 +11,7 @@ pkg.org = pkg.name.substring(0, pkg.name.indexOf('.'));
 
 var isPro = process.env.NODE_ENV === 'production';
 var isDev = !isPro;
-var isDbg = typeof v8debug === 'object';
+var isDbg = typeof v8debug === 'object' || inspector.url();
 
 var privkey = null;
 var fullchain = null;

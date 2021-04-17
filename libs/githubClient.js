@@ -18,7 +18,11 @@ var createOAuthAppAuth = require("@octokit/auth-oauth-app").createOAuthAppAuth;
 
 // Client
 var github = new GitHubApi({
-  version: "3.0.0"
+  version: "3.0.0",
+  debug: (isDbg ? true : false),
+  headers: {
+    "User-Agent": uaOUJS + (process.env.UA_SECRET ? ' ' + process.env.UA_SECRET : '')
+  }
 });
 module.exports = github;
 
