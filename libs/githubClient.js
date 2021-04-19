@@ -51,12 +51,13 @@ Strategy.findOne({ name: 'github' }, async function (aErr, aStrat) {
     // TODO: Do something with `appAuthentication`
 
 
-    // DEPRECATED: This method will break on May 5th, 2021. See #1705
-    //  and importing a repo will be severely hindered with possible timeouts/failures
+    // DEPRECATED: See #1705
+    // NOTE: We are technically an oauth app client but uses the same authentication type
+    //   methodology in the static version of the dependency. In future versions it may be different.
     github.authenticate({
-      type: 'oauth',
-      key: aStrat.id,
-      secret: aStrat.key
+      type: 'basic',
+      username: aStrat.id,
+      password: aStrat.key
     });
 
     // TODO: error handler for UnhandledPromiseRejectionWarning if it crops up after deprecation.
