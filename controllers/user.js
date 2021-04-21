@@ -1254,7 +1254,9 @@ exports.userGitHubRepoListPage = function (aReq, aRes, aNext) {
     var msg = null;
 
     if (aErr) {
-      switch (aErr.code) {
+      switch (aErr.code) { // NOTE: Important to test for GH code vs potential OUJS code
+        case 401:
+          // fallsthrough
         case 403:
           try {
             msg = JSON.parse(aErr.message);
@@ -1398,7 +1400,9 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
     var msg = null;
 
     if (aErr) {
-      switch (aErr.code) {
+      switch (aErr.code) { // NOTE: Important to test for GH code vs potential OUJS code
+        case 401:
+          // fallsthrough
         case 403:
           try {
             msg = JSON.parse(aErr.message);
@@ -1766,7 +1770,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
       }
 
       if (!(aErr instanceof String)) {
-        switch (aErr.code) { // NOTE: Important to test for GH 403 vs potential OUJS 403
+        switch (aErr.code) { // NOTE: Important to test for GH code vs potential OUJS code
+          case 401:
+            // fallsthrough
           case 403:
             try {
               msg = JSON.parse(aErr.message);

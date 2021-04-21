@@ -107,7 +107,7 @@ function fetchJSON(aPath, aCallback) {
     encodedAuth = Buffer.from(`${clientId}:${clientKey}`).toString('base64');
     opts = {
       headers: {
-        authorization: `basic ${encodedAuth}`
+        Authorization: `Basic ${encodedAuth}`
       }
     };
   }
