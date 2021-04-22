@@ -225,7 +225,7 @@ renderer.link = function (aHref, aTitle, aText) {
 marked.setOptions({
   highlight: function (aCode, aLang) {
     var obj = null;
-    var lang = [ // NOTE: More likely to less likely
+    var langs = [ // NOTE: More likely to less likely
       'javascript', 'xpath', 'xml',
         'css', 'less', 'scss',
           'json',
@@ -237,7 +237,7 @@ marked.setOptions({
 
     if (aLang && hljs.getLanguage(aLang)) {
       try {
-        return hljs.highlight(aLang, aCode).value;
+        return hljs.highlight(aCode, { language: aLang }).value;
       } catch (aE) {
         if (isDev) {
           console.error([
@@ -252,7 +252,7 @@ marked.setOptions({
     try {
       obj = hljs.highlightAuto(aCode);
 
-      if (lang.indexOf(obj.language) > -1) {
+      if (langs.indexOf(obj.language) > -1) {
         return obj.value;
       } else {
         if (isDev) {
@@ -262,7 +262,7 @@ marked.setOptions({
 
           ].join('\n'));
         }
-        return hljs.highlightAuto(aCode, lang).value;
+        return hljs.highlightAuto(aCode, langs).value;
       }
     } catch (aE) {
       if (isDev) {
