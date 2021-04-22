@@ -37,17 +37,17 @@
           <input type="hidden" name="url" value="{{{url}}}" />
           {{^owner}}<input type="hidden" name="original" value="{{original}}" />{{/owner}}
           <div class="btn-toolbar">
-            <button class="btn btn-success" type="button" id="wrap" disabled="disabled">Wrap</button>
-            <button class="btn btn-success" type="button" id="beautify" disabled="disabled">Beautify</button>
-            <button class="btn btn-success" type="button" id="diff" disabled="disabled">Diff</button>
-            <button class="btn btn-success pull-right" type="submit" id="submit_code" disabled="disabled">{{#owner}}<i class="fa fa-fw fa-save"></i>{{/owner}}{{^owner}}<i class="fa fa-fw fa-code-fork"></i>{{/owner}} Submit Code{{^owner}} as Fork{{/owner}}</button>
+            <button class="btn btn-sm btn-success" type="button" id="wrap" disabled="disabled">Wrap</button>
+            <button class="btn btn-sm btn-success" type="button" id="beautify" disabled="disabled">Beautify</button>
+            <button class="btn btn-sm btn-success" type="button" id="diff" disabled="disabled">Diff</button>
+            <button class="btn btn-sm btn-success pull-right" type="submit" id="submit_code" disabled="disabled">{{#owner}}<i class="fa fa-fw fa-save"></i>{{/owner}}{{^owner}}<i class="fa fa-fw fa-code-fork"></i>{{/owner}} Submit Code{{^owner}} as Fork{{/owner}}</button>
           </div>
         </form>
         {{/readOnly}}
         {{#readOnly}}
           <div class="btn-toolbar">
-            <button class="btn btn-success" type="button" id="wrap" disabled="disabled">Wrap</button>
-            <button class="btn btn-success" type="button" id="beautify" disabled="disabled">Beautify</button>
+            <button class="btn btn-sm btn-success" type="button" id="wrap" disabled="disabled">Wrap</button>
+            <button class="btn btn-sm btn-success" type="button" id="beautify" disabled="disabled">Beautify</button>
           </div>
         {{/readOnly}}
       </div>
