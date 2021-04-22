@@ -35,7 +35,7 @@
                   {{#canRemove}}
                     <form class="form-inline" action="{{{comment.commentRemovePageUrl}}}" method="post" enctype="multipart/form-data">
                       <input type="hidden" name="remove" value="true">
-                      <button type="button" class="btn btn-sm btn-danger btn-comment-remove" title="Remove this reply.">
+                      <button type="button" class="btn btn-sm btn-danger btn-comment-remove" title="Remove this comment.">
                         <i class="fa fa-ban"></i><span class="hidden-xs"> Remove</span>
                       </button>
                     </form>
@@ -44,7 +44,7 @@
                     {{#flagged}}
                       <form class="form-inline" action="{{{comment.commentFlagPageUrl}}}" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="flag" value="false">
-                        <button class="btn btn-sm btn-warning btn-comment-flag" type="submit" title="Unflag this reply.">
+                        <button class="btn btn-sm btn-warning btn-comment-flag" type="submit" title="Unflag this comment.">
                           <i class="fa fa-flag"></i><span class="hidden-xs"> Unflag</span>
                         </button>
                       </form>
@@ -52,21 +52,21 @@
                     {{^flagged}}
                       <form class="form-inline" action="{{{comment.commentFlagPageUrl}}}" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="flag" value="true">
-                        <button class="btn btn-sm btn-warning btn-comment-flag" type="submit" title="Flag this reply.">
+                        <button class="btn btn-sm btn-warning btn-comment-flag" type="submit" title="Flag this comment.">
                           <i class="fa fa-flag-o"></i><span class="hidden-xs"> Flag</span>
                         </button>
                       </form>
                     {{/flagged}}
                   {{/canFlag}}
                   {{#canEdit}}
-                    <button type="button" class="btn btn-sm btn-danger btn-comment-delete" title="Delete this reply.">
+                    <button type="button" class="btn btn-sm btn-danger btn-comment-delete" title="Delete this comment.">
                       <i class="fa fa-remove"></i><span class="hidden-xs"> Delete</span>
                     </button>
-                    <button type="button" class="btn btn-sm btn-default btn-comment-edit" title="Begin editing this reply.">
+                    <button type="button" class="btn btn-sm btn-default btn-comment-edit" title="Begin editing this comment.">
                       <i class="fa fa-edit"></i><span class="hidden-xs"> Edit</span>
                     </button>
                   {{/canEdit}}
-                  <button class="btn btn-sm btn-info btn-comment-reply" title="Begin composing a reply to this post.">
+                  <button class="btn btn-sm btn-info btn-comment-reply" title="Begin composing a reply to this comment.">
                     <i class="fa fa-reply"></i><span class="hidden-xs"> Reply</span>
                   </button>
                 {{/authedUser}}

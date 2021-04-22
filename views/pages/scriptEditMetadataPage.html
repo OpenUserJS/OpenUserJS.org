@@ -19,17 +19,15 @@
           <div class="row">
             <div class="col-xs-12">
               {{> includes/scriptPageHeader.html }}
-              <div class="panel panel-default">
-                <div class="panel-body">
-                  <h2>Description</h2>
-                  <p><strong>Use <a target="_blank" href="https://help.github.com/articles/github-flavored-markdown">GitHub Flavored Markdown</a> for formatting.</strong></p>
-                  <div class="user-content form-group">
-                    <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="20" class="col-xs-12">{{script.about}}</textarea>
-                  </div>
-                  <div class="form-group">
-                    <button type="submit" class="btn btn-success"><i class="fa fa-fw fa-save"></i> Save</button>
-                  </div>
-                </div>
+              <div class="user-content">
+                <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="28" class="col-xs-12">{{script.about}}</textarea>
+              </div>
+              <div class="btn-toolbar">
+                <a href="/about/Frequently-Asked-Questions"><i class="fa fa-question-circle" title="FAQ"></i></a>
+                <a href="https://guides.github.com/features/mastering-markdown/" title="GitHub Flavor Markdown compatible"><i class="octicon octicon-markdown"></i></a>
+                <button type="submit" class="btn btn-sm btn-success pull-right" title="Save Script Info changes">
+                  <i class="fa fa-fw fa-save"></i><span class="hidden-xs"> Save</span>
+                </button>
               </div>
             </div>
           </div>
