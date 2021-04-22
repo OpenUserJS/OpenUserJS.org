@@ -270,7 +270,7 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [less-middlewareNPMUrl]: https://www.npmjs.com/package/less-middleware
 [less-middlewareNPMVersionImage]: https://img.shields.io/npm/v/less-middleware.svg?style=flat
 [lessGHUrl]: https://github.com/less/less.js
-[lessDOCUrl]: http://lesscss.org/
+[lessDOCUrl]: https://lesscss.org/
 
 [markedGHUrl]: https://github.com/markedjs/marked
 [markedDOCUrl]: https://github.com/markedjs/marked/blob/master/README.md
@@ -329,7 +329,7 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [octiconsNPMVersionImage]: https://img.shields.io/npm/v/octicons.svg?style=flat
 
 [passportGHUrl]: https://github.com/jaredhanson/passport
-[passportDOCUrl]: http://passportjs.org/
+[passportDOCUrl]: https://www.passportjs.org/
 [passportNPMUrl]: https://www.npmjs.com/package/passport
 [passportNPMVersionImage]: https://img.shields.io/npm/v/passport.svg?style=flat
 
