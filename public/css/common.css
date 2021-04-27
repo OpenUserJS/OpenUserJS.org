@@ -130,8 +130,15 @@ h2.page-heading {
   position: fixed;
 }
 
-.md-editor {
+.md-editor,
+.md-input {
   min-height: 300px;
+}
+
+.md-editor textarea,
+.md-input textarea,
+.md-editor .md-preview {
+  margin-bottom: 10px !important;
 }
 
 textarea {
