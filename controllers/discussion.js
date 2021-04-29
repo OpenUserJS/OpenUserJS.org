@@ -41,7 +41,7 @@ var categories = [
   {
     slug: 'announcements',
     name: 'Announcements',
-    description: 'UserScripts News (OpenUserJS, GreaseMonkey, etc)',
+    description: 'UserScripts News (OpenUserJS, Greasemonkey, etc)',
     active: true,
     roleReqToPostTopic: 3 // Moderator
   },
