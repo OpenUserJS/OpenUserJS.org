@@ -1,6 +1,6 @@
 ---
 
-name: "Bug Investigation"
+name: "Bug investigation"
 about: >
   If something isn't working as expected.
   (NOTES: Status codes below 500 are usually a user error and not a server error. i.e. Usually not a bug. Please search existing issues and milestones first.).
