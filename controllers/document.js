@@ -128,16 +128,20 @@ exports.view = function (aReq, aRes, aNext) {
           return;
         }
 
-        // Dynamically create a file listing of the pages
+        // Dynamically create a TOC file listing of the pages
         options.fileList = [];
-        for (file in aFileList) {
-          if (/\.md$/.test(aFileList[file])) {
-            options.fileList.push({
-              href: aFileList[file].replace(/\.md$/, ''),
-              textContent: aFileList[file].replace(/\.md$/, '').replace(/-/g, ' ')
-            });
+        for (file in aFileList.sort(
+          function (aA, aB) {
+            return aA.localeCompare(aB, 'en', { 'sensitivity' : 'base' });
+          })) {
+
+            if (/\.md$/.test(aFileList[file])) {
+              options.fileList.push({
+                href: aFileList[file].replace(/\.md$/, ''),
+                textContent: aFileList[file].replace(/\.md$/, '').replace(/-/g, ' ')
+              });
+            }
           }
-        }
 
         aCallback(null);
       });
