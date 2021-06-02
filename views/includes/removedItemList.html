@@ -15,7 +15,7 @@
         <p>{{#item.hasUrl}}<a href="{{item.url}}" class="tr-link-a">{{/item.hasUrl}}{{model}}{{#item.hasUrl}}</a>{{/item.hasUrl}}</p>
       </td>
       <td class="td-fit align-middle">
-        <p><a href="{{{url}}}" class="tr-link-a">{{item.description}}</a></p>
+        <p>{{#isAdmin}}<a href="{{{url}}}" class="tr-link-a">{{/isAdmin}}{{item.description}}{{#isAdmin}}</a>{{/isAdmin}}</p>
       </td>
       <td class="align-middle">
         <p{{#remover.automated}} class="reason-automated"{{/remover.automated}}>{{reason}}</p>
