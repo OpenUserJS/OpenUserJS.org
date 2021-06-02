@@ -42,10 +42,10 @@ exports.removedItemPage = function (aReq, aRes, aNext) {
   options.isMod = authedUser && authedUser.isMod;
   options.isAdmin = authedUser && authedUser.isAdmin;
 
-  if (!options.isMod) {
+  if (!options.isAdmin) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
-      statusMessage: 'This page is only accessible by moderators',
+      statusMessage: 'This page is only accessible by admins',
     });
     return;
   }
