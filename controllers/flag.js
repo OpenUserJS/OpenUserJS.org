@@ -26,6 +26,7 @@ var flagLib = require('../libs/flag');
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
+var userRoles = require('../models/userRoles.json');
 
 //---
 
@@ -184,6 +185,7 @@ exports.getFlaggedListForContent = function (aModelName, aOptions, aCallback) {
 
           contentList[aContentKey].flaggedList.push({
             name: aUser.name,
+            rank: userRoles[aUser.role],
             reason: aFlagList[aFlagKey].reason,
             since: aFlagList[aFlagKey].created
           });

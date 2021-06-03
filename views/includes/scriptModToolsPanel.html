@@ -1,5 +1,5 @@
 {{#modTools}}
-<div class="panel panel-default">
+<div class="panel {{#canRemove}}panel-danger{{/canRemove}}{{^canRemove}}panel-default{{/canRemove}}">
   <div class="panel-heading">
     <div class="panel-title">
       <i class="fa fa-fw fa-eye"></i>
@@ -10,6 +10,44 @@
     {{#script}}
     {{> includes/flagModelSnippet.html }}
     {{/script}}
+    {{#isAdmin}}
+      {{#hasFlagged}}
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Flagger</label>
+          <div class="col-sm-8">
+            <ul class="flaggedList">
+            {{#script.flaggedList}}
+              <li>
+                {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+                <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+              </li>
+            {{/script.flaggedList}}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {{/hasFlagged}}
+    {{/isAdmin}}
+    {{^isAdmin}}
+      {{#hasFlagged}}
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="col-sm-4 control-label">Flagger</label>
+          <div class="col-sm-8">
+            <ul class="flaggedList">
+            {{#script.flaggedList}}
+              <li>
+                {{#name}}<span class="label label-default">{{rank}}</span>{{/name}}
+                <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+              </li>
+            {{/script.flaggedList}}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {{/hasFlagged}}
+    {{/isAdmin}}
     {{#canRemove}}
     <ul class="nav nav-pills nav-justified">
       <li><a rel="nofollow" href="#" data-toggle="modal" data-target="#removeScriptModal"><i class="fa fa-ban"></i> Remove Script</a></li>

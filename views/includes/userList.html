@@ -1,7 +1,7 @@
 <table class="table table-hover table-condensed">
   <thead>
     <tr>
-      <th class="{{#orderedByName}}active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
+      <th class="text-center{{#orderedByName}} active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
       <th class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}"><a href="?orderBy=created&orderDir={{orderDir.created}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Since</a></th>
       <th class="text-center td-fit{{#orderedByRole}} active{{/orderedByRole}}"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Rank</a></th>
       {{#hasFlagged}}
@@ -10,35 +10,68 @@
     </tr>
   </thead>
   <tbody>
-    {{#userList}}
-    <tr class="tr-link">
-      <td>
-        <b>
-          <a href="{{{userPageUrl}}}" class="tr-link-a">{{name}}</a>
-        </b>
-      </td>
-      <td class="text-center td-fit">
-        <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
-      </td>
-      <td class="text-center td-fit">
-        <p>
-          <span class="label label-default">{{roleName}}</span>
-        </p>
-      </td>
-      {{#hasFlagged}}
-      <td>
-        <ul class="flaggedList">
-        {{#flaggedList}}
-          <li>
-            {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
-            <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
-          </li>
-        {{/flaggedList}}
-        </ul>
-      </td>
-      {{/hasFlagged}}
-    </tr>
-    {{/userList}}
+    {{#isAdmin}}
+      {{#userList}}
+      <tr class="tr-link">
+        <td>
+          <b>
+            <a href="{{{userPageUrl}}}" class="tr-link-a">{{name}}</a>
+          </b>
+        </td>
+        <td class="text-center td-fit">
+          <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
+        </td>
+        <td class="text-center td-fit">
+          <p>
+            <span class="label label-default">{{roleName}}</span>
+          </p>
+        </td>
+        {{#hasFlagged}}
+        <td>
+          <ul class="flaggedList">
+          {{#flaggedList}}
+            <li>
+              {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+              <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+            </li>
+          {{/flaggedList}}
+          </ul>
+        </td>
+        {{/hasFlagged}}
+      </tr>
+      {{/userList}}
+    {{/isAdmin}}
+    {{^isAdmin}}
+      {{#userList}}
+      <tr class="tr-link">
+        <td>
+          <b>
+            <a href="{{{userPageUrl}}}" class="tr-link-a">{{name}}</a>
+          </b>
+        </td>
+        <td class="text-center td-fit">
+          <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
+        </td>
+        <td class="text-center td-fit">
+          <p>
+            <span class="label label-default">{{roleName}}</span>
+          </p>
+        </td>
+        {{#hasFlagged}}
+        <td>
+          <ul class="flaggedList">
+          {{#flaggedList}}
+            <li>
+              {{#name}}<span class="label label-default">{{rank}}</span>{{/name}}
+              <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+            </li>
+          {{/flaggedList}}
+          </ul>
+        </td>
+        {{/hasFlagged}}
+      </tr>
+      {{/userList}}
+    {{/isAdmin}}
     {{^userList}}
     <tr class="tr-link">
       <td colspan="4">

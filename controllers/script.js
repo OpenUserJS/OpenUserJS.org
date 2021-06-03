@@ -340,7 +340,7 @@ exports.view = function (aReq, aRes, aNext) {
 
         async.parallel([
           function (aCallback) {
-            if (!options.isAdmin) {  // NOTE: Watchpoint
+            if (!options.isMod) {  // NOTE: Watchpoint
               aCallback();
               return;
             }
