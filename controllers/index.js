@@ -100,7 +100,7 @@ exports.home = function (aReq, aRes) {
 
     async.parallel([
       function (aCallback) {
-        if (!!!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+        if (!!!options.isFlagged || !options.isMod) {  // NOTE: Watchpoint
           aCallback();
           return;
         }

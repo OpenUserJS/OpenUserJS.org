@@ -398,7 +398,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
 
     async.parallel([
       function (aCallback) {
-        if (!!!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+        if (!!!options.isFlagged || !options.isMod) {  // NOTE: Watchpoint
           aCallback();
           return;
         }
@@ -471,7 +471,7 @@ exports.view = function (aReq, aRes, aNext) {
 
       async.parallel([
         function (aCallback) {
-          if (!options.isAdmin) {  // NOTE: Watchpoint
+          if (!options.isMod) {  // NOTE: Watchpoint
             aCallback();
             return;
           }
@@ -703,7 +703,7 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
 
       async.parallel([
         function (aCallback) {
-          if (!!!options.isFlagged || !options.isAdmin) {  // NOTE: Watchpoint
+          if (!!!options.isFlagged || !options.isMod) {  // NOTE: Watchpoint
             aCallback();
             return;
           }
