@@ -67,20 +67,30 @@ exports.flag = function (aReq, aRes, aNext) {
       if (!reason) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 403,
-          statusMessage: 'Missing reason for removal.'
+          statusMessage: 'Missing reason for flagging.'
         });
         return;
       }
 
       // Simple error check for string null and limit to max characters
       reason = reason.trim();
-      if (reason === '' || reason.length > 300) {
+
+      if (reason === '') {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 403,
-          statusMessage: 'Invalid reason for removal.'
+          statusMessage: 'Invalid reason for flagging.'
         });
         return;
       }
+
+      if (reason.length > 300) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 403,
+          statusMessage: 'Reason for flagging too long.'
+        });
+        return;
+      }
+
     }
 
     switch (type) {
