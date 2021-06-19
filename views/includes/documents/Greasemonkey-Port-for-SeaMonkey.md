@@ -48,7 +48,6 @@ Sometimes, when you use more than one userscript on the same web page, they need
 * [Get Greasemonkey Port from SourceForge][sfGreasemonkeyPort]
 * [SourceForge Greasemonkey/Port Wiki][greasemonkeyPortWiki]
 * [OpenUserJS.org Greasemonkey Port Update Announcements][oujsGMPUpdateAnnouncement]
-* [Additional older versions for SeaMonkey][xsidebarModGM]
 * [Greasespot.net][greasespot] - blog, documentation and discussion about Greasemonkey.
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
@@ -56,7 +55,6 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [oujs]: https://openuserjs.org/
 [oujsGMPUpdateAnnouncement]: /announcements/Greasemonkey_Port_Update
 [sfGreasemonkeyPort]: https://sourceforge.net/projects/gmport/
-[xsidebarModGM]: http://xsidebar.mozdev.org/modifiedmisc.html#greasemonkey
 [aboutAddons]: about:addons
 [aomUserScriptsScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/greasemonkeyport5.png "Userscript management in SeaMonkey"
 [greasespot]: http://www.greasespot.net/
