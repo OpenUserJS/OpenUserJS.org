@@ -1,5 +1,5 @@
 ## Violentmonkey for Opera
-<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_icon.png" width="128" height="128" align="right">
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_icon.min.svg" width="128" height="128" align="right">
 
 Violentmonkey is a userscript manager for the [Opera][opera], [Chrome][chrome], [Chromium][chromium], [Firefox][firefox] web browser, written by [gera2ld][gera2ld].
 
