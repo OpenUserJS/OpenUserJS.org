@@ -4,8 +4,12 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+permissions:
+  issues: write
+  pull-requests: write
+
 jobs:
-  lock:
+  action:
     runs-on: ubuntu-latest
     steps:
       - uses: dessant/lock-threads@v2
