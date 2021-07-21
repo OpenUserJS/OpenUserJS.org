@@ -27,7 +27,7 @@
 
             <div class="script-meta">
               <p><i class="fa fa-fw fa-clock-o"></i> <b>Published:</b> <time datetime="{{script.createdISOFormat}}" title="{{script.created}}">{{script.createdHumanized}}</time></p>
-              <p><i class="fa fa-fw fa-history"></i> <b>Version:</b> <code>{{script.meta.UserScript.version.0.value}}<span title="SHA-512 {{script.hash}}">+{{script.hashShort}}</span></code>{{#script.isUpdated}} updated <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time>{{/script.isUpdated}}</p>
+              <p><i class="fa fa-fw fa-history"></i> <b>Version:</b> <code>{{script.meta.UserScript.version.0.value}}<span title="{{script.hashSRI}}">+{{script.hashShort}}</span></code>{{#script.isUpdated}} updated <time class="script-updated" datetime="{{script.updatedISOFormat}}" title="{{script.updated}}">{{script.updatedHumanized}}</time>{{/script.isUpdated}}</p>
               {{#script.description}}<p><i class="fa fa-fw fa-info"></i> <b>Summary:</b> {{script.description}}</p>{{/script.description}}
               {{#script.hasGroups}}
                 <span>
