@@ -489,7 +489,14 @@ var parseScript = function (aScript) {
   parseDateProperty(script, 'updated');
 
   // Hash
-  script.hashShort = script.hash ? script.hash.substr(0, 7) : 'undefined';
+  script.hashShort = 'undefined';
+  script.hashSRI = 'undefined';
+
+  if (script.hash) {
+     // NOTE: May be absent in dev DB but should not be in pro DB
+    script.hashShort = script.hash.substr(0, 7);
+    script.hashSRI = 'sha512-' + Buffer.from(script.hash).toString('base64');
+  }
 
   if (script.created && script.updated && script.created.toString() !== script.updated.toString()) {
     script.isUpdated = true;

@@ -27,7 +27,6 @@ var mediaType = require('media-type');
 var mediaDB = require('mime-db');
 var async = require('async');
 var moment = require('moment');
-var Base62 = require('base62/lib/ascii');
 var SPDX = require('spdx-license-ids');
 var sizeOf = require('image-size');
 var ipRangeCheck = require("ip-range-check");
@@ -570,6 +569,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
     var lastModified = null;
     var eTag = null;
+    var hashSRI = null;
     var maxAge = 7 * 60 * 60 * 24; // nth day(s) in seconds
     var now = null;
     var continuation = true;
@@ -628,6 +628,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
       }
     }
 
+    hashSRI = aScript.hash
+      ? 'sha512-' + Buffer.from(aScript.hash).toString('base64')
+      : 'undefined';
+
     // HTTP/1.1 Caching
     aRes.set('Cache-Control', 'public, max-age=' + maxAge +
       ', no-cache, no-transform, must-revalidate');
@@ -639,8 +643,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
       lastModified = moment(aScript.updated)
         .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
 
-      // Convert a based representation of the hex sha512sum
-      eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .user.js"';
+      // Use SRI of the stored sha512sum
+      eTag = '"'  + hashSRI + ' .user.js"';
 
       // If already client-side... HTTP/1.1 Caching
       if (aReq.get('if-none-match') === eTag || aReq.get('if-modified-since') === lastModified) {
@@ -796,10 +800,12 @@ exports.sendScript = function (aReq, aRes, aNext) {
             } else {
               source = result.code;
 
-              // Calculate a based representation of the hex sha512sum
-              eTag = '"'  + Base62.encode(
-                parseInt('0x' + crypto.createHash('sha512').update(source).digest('hex'), 16)) +
-                  ' .min.user.js"';
+              // Calculate SRI of the source sha512sum
+              eTag = '"sha512-' +
+                Buffer.from(
+                  crypto.createHash('sha512').update(source).digest('hex')
+                ).toString('base64') + ' .min.user.js"';
+
             }
           } catch (aE) { // On any failure default to unminified
             if (isDev) {
@@ -827,8 +833,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
             lastModified = moment(aScript.updated)
               .utc().format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT';
 
-            // Reset to convert a based representation of the hex sha512sum
-            eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .user.js"';
+            // Reset SRI of the stored sha512sum
+            eTag = '"'  + hashSRI + ' .user.js"';
           }
 
           // If already client-side... partial HTTP/1.1 Caching
@@ -928,8 +934,8 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       meta = script.meta; // NOTE: Watchpoint
 
       if (/\.json$/.test(aReq.params.scriptname)) {
-        // Create a based representation of the hex sha512sum
-        eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .meta.json"';
+        // Use SRI of the stored sha512sum
+        eTag = '"'  + script.hashSRI + ' .meta.json"';
 
         // If already client-side... HTTP/1.1 Caching
         if (aReq.get('if-none-match') === eTag) {
@@ -955,7 +961,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         // Overwrite any keys found with the following...
         meta.OpenUserJS.installs = [{ value: script.installs }];
         meta.OpenUserJS.issues =  [{ value: 'n/a' }];
-        meta.OpenUserJS.hash = aScript.hash ? [{ value: aScript.hash }] : undefined;
+        meta.OpenUserJS.hash = script.hash ? [{ value: script.hashSRI }] : 'undefined';
 
         // Get the number of open issues
         scriptOpenIssueCountQuery = Discussion.find({ category: exports
@@ -966,8 +972,8 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         async.parallel(tasks, asyncComplete);
 
       } else {
-        // Create a based representation of the hex sha512sum
-        eTag = '"'  + Base62.encode(parseInt('0x' + aScript.hash, 16)) + ' .meta.js"';
+        // Use SRI of the stored sha512sum
+        eTag = '"'  + script.hashSRI + ' .meta.js"';
 
         // If already client-side... HTTP/1.1 Caching
         if (aReq.get('if-none-match') === eTag) {
