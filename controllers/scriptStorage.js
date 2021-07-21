@@ -629,7 +629,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
     }
 
     hashSRI = aScript.hash
-      ? 'sha512-' + Buffer.from(aScript.hash).toString('base64')
+      ? 'sha512-' + Buffer.from(aScript.hash, 'hex').toString('base64')
       : 'undefined';
 
     // HTTP/1.1 Caching
@@ -687,6 +687,7 @@ exports.sendScript = function (aReq, aRes, aNext) {
           source = chunks.join(''); // NOTE: Watchpoint
 
           // Send the script
+          aRes.set('Access-Control-Allow-Origin', '*');
           aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
           aStream.setEncoding('utf8');
 
