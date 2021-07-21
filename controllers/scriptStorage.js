@@ -804,8 +804,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
               // Calculate SRI of the source sha512sum
               eTag = '"sha512-' +
                 Buffer.from(
-                  crypto.createHash('sha512').update(source).digest('hex')
-                ).toString('base64') + ' .min.user.js"';
+                  crypto.createHash('sha512').update(source).digest('base64')
+                ) + ' .min.user.js"';
 
             }
           } catch (aE) { // On any failure default to unminified
