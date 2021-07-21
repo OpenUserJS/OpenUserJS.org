@@ -495,7 +495,7 @@ var parseScript = function (aScript) {
   if (script.hash) {
      // NOTE: May be absent in dev DB but should not be in pro DB
     script.hashShort = script.hash.substr(0, 7);
-    script.hashSRI = 'sha512-' + Buffer.from(script.hash).toString('base64');
+    script.hashSRI = 'sha512-' + Buffer.from(script.hash, 'hex').toString('base64');
   }
 
   if (script.created && script.updated && script.created.toString() !== script.updated.toString()) {
