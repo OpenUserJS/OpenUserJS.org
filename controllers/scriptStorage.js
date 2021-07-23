@@ -687,7 +687,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
           source = chunks.join(''); // NOTE: Watchpoint
 
           // Send the script
-          aRes.set('Access-Control-Allow-Origin', '*');
+          if (aScript.isLib) {
+            aRes.set('Access-Control-Allow-Origin', '*');
+          }
           aRes.set('Content-Type', 'text/javascript; charset=UTF-8');
           aStream.setEncoding('utf8');
 
