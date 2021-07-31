@@ -32,6 +32,17 @@ function renderFile(aRes, aPath, aOptions) {
     aOptions.DNT = aRes.oujsOptions.DNT;
     aOptions.hideReminderGDPR = aRes.oujsOptions.hideReminderGDPR;
     aOptions.showReminderListLimit = aRes.oujsOptions.showReminderListLimit;
+
+    // Keep in sync with app.js and headerReminders.html
+    aOptions.showInvalidAuth = aRes.oujsOptions.showInvalidAuth;
+    aOptions.showStratFail = aRes.oujsOptions.showStratFail;
+    aOptions.showNoConsent = aRes.oujsOptions.showNoConsent;
+    aOptions.showNoName = aRes.oujsOptions.showNoName;
+    aOptions.showTooLong = aRes.oujsOptions.showTooLong;
+    aOptions.showUsernameFail = aRes.oujsOptions.showUsernameFail;
+    aOptions.showROAuth = aRes.oujsOptions.showROAuth;
+    aOptions.showRetryAuth = aRes.oujsOptions.showRetryAuth;
+    aOptions.showAuthFail = aRes.oujsOptions.showAuthFail;
   }
 
   aRes.set('Content-Type', 'text/html; charset=UTF-8');

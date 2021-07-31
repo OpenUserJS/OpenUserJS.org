@@ -228,6 +228,20 @@ app.use(function (aReq, aRes, aNext) {
   // Middleware for GDPR Notice
   aRes.oujsOptions.hideReminderGDPR = isSameOrigin(referer).result;
 
+  // Middleware for Auth Notices
+  // Keep in sync with auth.js and headerReminders.html
+  if (aReq._parsedUrl && aReq._parsedUrl.query && /^\/login$/.test(pathname)) {
+    aRes.oujsOptions.showInvalidAuth = aReq.query.invalidauth === '';
+    aRes.oujsOptions.showStratFail = aReq.query.stratfail === '';
+    aRes.oujsOptions.showNoConsent = aReq.query.noconsent === '';
+    aRes.oujsOptions.showNoName  = aReq.query.noname === '';
+    aRes.oujsOptions.showTooLong = aReq.query.toolong === '';
+    aRes.oujsOptions.showUsernameFail = aReq.query.usernamefail === '';
+    aRes.oujsOptions.showROAuth = aReq.query.roauth === '';
+    aRes.oujsOptions.showRetryAuth = aReq.query.retryauth === '';
+    aRes.oujsOptions.showAuthFail = aReq.query.authfail === '';
+  }
+
   //
   if (
     /^\/favicon\.ico$/.test(pathname) ||

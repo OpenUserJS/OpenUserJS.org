@@ -7,6 +7,51 @@
     </div>
   {{/hideReminderGDPR}}
 {{/authedUser}}
+{{#showInvalidAuth}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Invalid Authorization for requested Strategy.</p>
+  </div>
+{{/showInvalidAuth}}
+{{#showStratFail}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Strategy Fail.</p>
+  </div>
+{{/showStratFail}}
+{{#showNoConsent}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> No Consent.</p>
+  </div>
+{{/showNoConsent}}
+{{#showNoName}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Missing Username.</p>
+  </div>
+{{/showNoName}}
+{{#showTooLong}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Username too long.</p>
+  </div>
+{{/showTooLong}}
+{{#showUsernameFail}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Username Fail. Please try again later.</p>
+  </div>
+{{/showUsernameFail}}
+{{#showROAuth}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Read-only Authorization for requested Strategy.</p>
+  </div>
+{{/showROAuth}}
+{{#showRetryAuth}}
+  <div class="alert alert-warning small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>WARNING:</b> Retry Authorization.</p>
+  </div>
+{{/showRetryAuth}}
+{{#showAuthFail}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Authorization Fail.</p>
+  </div>
+{{/showAuthFail}}
 {{#showReminderListLimit}}
   <div class="alert alert-danger small fade in" role="alert">
     <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>WARNING:</b> You will reach your list limit in {{showReminderListLimit}} more requests.</p>
