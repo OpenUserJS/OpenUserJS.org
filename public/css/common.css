@@ -475,7 +475,7 @@ ul.flaggedList {
   background: transparent url("/images/ua/rekonq16.png") no-repeat left top;
   color: transparent;
 }
-.ua-safari, .ua-mobile-safari, .ua-mobile-safari-ui/wkwebview {
+.ua-safari, .ua-mobile-safari, .ua-mobile-safari-ui-wkwebview {
   background: transparent url("/images/ua/safari16.png") no-repeat left top;
   color: transparent;
 }

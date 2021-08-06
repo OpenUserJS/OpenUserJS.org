@@ -1172,7 +1172,7 @@ var parseSession = function (aSession) {
 
   oujsOptions.remoteAddressMask = oujsOptions.remoteAddress;
   oujsOptions.userAgentFamily = useragent
-    .parse(oujsOptions.userAgent).family.toLowerCase().replace(/\s+/g, '-');
+    .parse(oujsOptions.userAgent).family.toLowerCase().replace(/[\s\/]+/g, '-');
   parseDateProperty(oujsOptions, 'since');
 
   cookie.sameSiteStrict = cookie.sameSite === 'strict';
