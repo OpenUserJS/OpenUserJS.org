@@ -898,7 +898,7 @@ var parseComment = function (aComment) {
 
   comment.ua = {};
   comment.ua.raw = comment.userAgent;
-  ua = useragent.parse(comment.userAgent).family.toLowerCase().replace(/\s+/g, '-');
+  ua = useragent.parse(comment.userAgent).family.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
   if (ua !== 'other') {
     comment.ua.class = 'fa-lg ua-' + ua;
   } else if (comment.userAgent) {
@@ -1172,7 +1172,7 @@ var parseSession = function (aSession) {
 
   oujsOptions.remoteAddressMask = oujsOptions.remoteAddress;
   oujsOptions.userAgentFamily = useragent
-    .parse(oujsOptions.userAgent).family.toLowerCase().replace(/[\s\/]+/g, '-');
+    .parse(oujsOptions.userAgent).family.toLowerCase().replace(/[^a-zA-Z0-9]+/g, '-');
   parseDateProperty(oujsOptions, 'since');
 
   cookie.sameSiteStrict = cookie.sameSite === 'strict';
