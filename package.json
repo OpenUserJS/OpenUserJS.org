@@ -38,7 +38,7 @@
     "mime-db": "1.49.0",
     "moment": "2.29.1",
     "moment-duration-format": "2.3.2",
-    "mongodb": "3.6.10",
+    "mongodb": "3.6.11",
     "mongoose": "5.13.7",
     "morgan": "1.10.0",
     "mu2": "0.5.21",
