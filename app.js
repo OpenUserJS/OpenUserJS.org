@@ -422,7 +422,7 @@ app.use(session({
   cookie: {
     maxAge: 5 * 60 * 1000, // minutes in ms NOTE: Expanded after successful auth
     secure: (isSecured ? true : false),
-    sameSite: 'lax' // NOTE: Current auth necessity
+    sameSite: 'strict'
   },
   rolling: true,
   secret: sessionSecret,
