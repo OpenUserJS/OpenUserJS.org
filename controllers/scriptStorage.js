@@ -1183,6 +1183,9 @@ exports.getMeta = function (aBufs, aCallback) {
       }
 
       if (CVES.length > 0) {
+        if (!blocks['OpenUserJS']) {
+          blocks['OpenUserJS'] = {};
+        }
         blocks['OpenUserJS'].CVE = CVES;
       }
 
