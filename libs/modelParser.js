@@ -273,6 +273,8 @@ var parseScript = function (aScript) {
   var supportURL = null;
   var contributionURL = null;
 
+  var CVES = null;
+
   var updateURL = null;
   var updateUtf = null;
   var updateURLForceCheck = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
@@ -487,6 +489,15 @@ var parseScript = function (aScript) {
   // Dates
   parseDateProperty(script, 'created');
   parseDateProperty(script, 'updated');
+
+  // CVE
+  CVES = findMeta(script.meta, 'OpenUserJS.CVE');
+  if (!!CVES && script.meta['OpenUserJS'].CVE.length > 0) {
+    script.hasCVE = true;
+    script.CVES = CVES;
+
+    script.showSourceNotices = true;
+  }
 
   // Hash
   script.hashShort = 'undefined';

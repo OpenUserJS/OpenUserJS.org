@@ -1047,7 +1047,9 @@ exports.findMeta = findMeta;
 // Parse a specific metadata block content with a specified *pegjs* parser
 function parseMeta(aParser, aString) {
   var lines = {};
+  var CEVLines = {};
   var rLine = /\/\/ @(\S+)(?:\s+(.*))?/;
+  var rCEVLine = /\/\/@/;
   var line = null;
   var header = null;
   var key = null;
@@ -1060,6 +1062,10 @@ function parseMeta(aParser, aString) {
 
   lines = aString.split(/[\r\n]+/).filter(function (aElement, aIndex, aArray) {
     return (aElement.match(rLine));
+  });
+
+  CEVLines = aString.split(/[\r\n]+/).filter(function (aElement, aIndex, aArray) {
+    return (aElement.match(rCEVLine));
   });
 
   for (line in lines) {
@@ -1111,6 +1117,15 @@ function parseMeta(aParser, aString) {
     });
   }
 
+  headers[':CVE'] = []; // NOTE: Important to prevent spoofing
+
+  if (CEVLines.length > 0) {
+    headers[':CVE'].push(
+      {
+        value: 'Comment only in Metadata Block may be parsed as a Key in certain non-standard UserScript engines.'
+      }
+    );
+  }
   return headers;
 }
 exports.parseMeta = parseMeta;
@@ -1129,6 +1144,8 @@ exports.getMeta = function (aBufs, aCallback) {
   var hasUserScriptHeaderContent = false;
   var blocksContent = {};
   var blocks = {};
+  var CVE = null;
+  var CVES = [];
 
   for (; i < aBufs.length; ++i) {
     // Accumulate the indexed Buffer length to use with `totalLength` parameter
@@ -1156,8 +1173,19 @@ exports.getMeta = function (aBufs, aCallback) {
       for (parser in parsers) {
         if (blocksContent[parser]) {
           blocks[parser] = parseMeta(parsers[parser], blocksContent[parser]);
+          if (parser !== 'OpenUserJS' && blocks[parser][':CVE']) {
+            for (CVE in blocks[parser][':CVE']) {
+              CVES.push(blocks[parser][':CVE'][CVE]);
+            }
+          }
+          delete blocks[parser][':CVE']
         }
       }
+
+      if (CVES.length > 0) {
+        blocks['OpenUserJS'].CVE = CVES;
+      }
+
       aCallback(blocks);
       return;
     }
