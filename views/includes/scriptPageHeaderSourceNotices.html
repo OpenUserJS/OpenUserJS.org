@@ -1,8 +1,10 @@
 <div class="alert alert-warning" role="alert">
   {{#script.hasCVE}}
+    {{#script.CVES}}
     <p>
-      {{#script.CVES}}<i class="fa fa-fw fa-exclamation-triangle"></i> CVE: {{value}} {{/script.CVES}}
+      <i class="fa fa-fw fa-exclamation-triangle"></i> CVE: {{value}}
     </p>
+    {{/script.CVES}}
   {{/script.hasCVE}}
   {{#script.hasInvalidUpdateURL}}
     <p>
