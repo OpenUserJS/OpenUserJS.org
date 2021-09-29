@@ -1577,7 +1577,12 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               // TODO: Probably going to be something here
             })
             .on('error', function (aErr) {
-              aInnerCallback(aErr);
+              if (aErr && aErr.code === 'ECONNRESET') {
+                console.error('*request* ECONNRESET error with `@icon` validation at', icon);
+                // fallsthrough
+              } else {
+                aInnerCallback(aErr);
+              }
             })
             .on('data', function (aChunk) {
               var buf = null;
