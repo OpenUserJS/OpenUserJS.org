@@ -2223,8 +2223,9 @@ exports.webhook = function (aReq, aRes) {
 
   //
 
-  // Only accept commits from the `master` branch
-  if (payload.ref !== 'refs/heads/master') {
+  // Only accept commits from the default branch
+  defaultBranch = `ref/heads/${payload.repository.default_branch}`
+  if (!(payload.ref === defaultBranch || payload.ref === 'refs/heads/master')) {
     aRes.status(403).send(); // Forbidden
     return;
   }
