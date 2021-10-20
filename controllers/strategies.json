@@ -2,7 +2,7 @@
   "facebook": {
     "name": "Facebook",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   },
   "github": {
     "name": "GitHub",
