@@ -36,7 +36,7 @@ var installLimiter = rateLimit({
   })),
   windowMs: waitInstallMin * 60 * 1000, // n minutes for all stores
   max: 50, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
-  handler: function (aReq, aRes, aNext) {
+  handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitInstallMin * 60 + 60);
     aRes.status(429).send();
   }
@@ -51,7 +51,7 @@ var apiLimiter = rateLimit({
   })),
   windowMs: waitApiMin * 60 * 1000, // n minutes for all stores
   max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
-  handler: function (aReq, aRes, aNext) {
+  handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitApiMin * 60 + 60);
     aRes.status(429).send();
   }
@@ -66,7 +66,7 @@ var listLimiter = rateLimit({
   })),
   windowMs: listMin * 60 * 1000, // n minutes for all stores
   max: 115, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
-  handler: function (aReq, aRes, aNext) {
+  handler: function (aReq, aRes, aNext, aOptions) {
     var cmd = null;
 
     if (aReq.rateLimit.current < aReq.rateLimit.limit + 4) {
