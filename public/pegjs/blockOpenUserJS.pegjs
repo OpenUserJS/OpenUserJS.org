@@ -1,7 +1,7 @@
 // peg grammar for parsing the OpenUserJS metadata block
 
 /*
-Test the generated parser with some input for peg.js site at https://pegjs.org/online:
+Test the generated parser with some input for peg.js site at https://pegjs.org/online :
 
 // ==OpenUserJS==
 // @author          Marti

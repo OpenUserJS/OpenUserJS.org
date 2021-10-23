@@ -1,7 +1,7 @@
 // peg grammar for parsing the UserScript metadata block
 
 /*
-Test the generated parser with some input for peg.js site at https://pegjs.org/online:
+Test the generated parser with some input for peg.js site at https://pegjs.org/online :
 
 // ==UserScript==
 // @name            RFC 2606§3 - Hello, World!
