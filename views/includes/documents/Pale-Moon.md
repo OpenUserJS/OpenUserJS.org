@@ -9,7 +9,7 @@ While there is no official ported Greasmonkey for Pale Moon there is some activi
 
 * [Get Pale Moon][palemoonBrowser]
 * [Pale Moon on Wikipedia][wikipediaPalemoon]
-* [Issue Tracker for Palemoon][palemoonIssueTracker]
+* [Issue Tracker for Pale Moon][palemoonIssueTracker]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
