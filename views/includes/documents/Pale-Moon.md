@@ -9,13 +9,13 @@ While there is no official ported Greasmonkey for Pale Moon there is some activi
 
 * [Get Pale Moon][palemoonBrowser]
 * [Pale Moon on Wikipedia][wikipediaPalemoon]
-* [UXP (with Pale Moon) Issue Tracker][palemoonIssueTracker]
+* [Issue Tracker][palemoonIssueTracker]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
 [palemoonBrowser]: http://www.palemoon.org/
 [wikipediaPalemoon]: https://www.wikipedia.org/wiki/Pale_Moon_%28web_browser%29
-[palemoonIssueTracker]: https://github.com/MoonchildProductions/UXP/issues
+[palemoonIssueTracker]: https://forum.palemoon.org/viewforum.php?f=5
 [greasemonkeyForkRepo]: https://github.com/janekptacijarabaci/greasemonkey
 [greasemonkeyForkReleases]: https://github.com/janekptacijarabaci/greasemonkey/releases
 [greasemonkeyForkLTS]: https://github.com/janekptacijarabaci/greasemonkey/issues/1
