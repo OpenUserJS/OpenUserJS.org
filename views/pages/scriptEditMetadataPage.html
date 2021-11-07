@@ -20,7 +20,7 @@
             <div class="col-xs-12">
               {{> includes/scriptPageHeader.html }}
               <div class="user-content">
-                <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="28" class="col-xs-12" placeholder="Type here using Markdown.">{{script.about}}</textarea>
+                <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="28" class="col-xs-12" placeholder="Type Script Info here using Markdown.">{{script.about}}</textarea>
               </div>
               <div class="btn-toolbar">
                 <a href="/about/Frequently-Asked-Questions"><i class="fa fa-question-circle" title="FAQ"></i></a>
@@ -37,10 +37,10 @@
           {{^isLib}}
           <div class="panel panel-default">
             <div class="panel-heading">
-              <div class="panel-title">Script Groups</div>
+              <div class="panel-title"><i class="fa fa-fw fa-tags"></i> Script Groups</div>
             </div>
             <div class="panel-body">
-              <input type="hidden" id="groups" name="groups" style="width: 100%;" />
+              <input type="hidden" id="groups" name="groups" style="width: 100%;" title="Optionally type a group name to add this script to. Pressing &#x2386; moves to the next group name search. One new group name may be created per script and must be the first group name." />
             </div>
           </div>
           {{/isLib}}

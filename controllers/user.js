@@ -1812,7 +1812,7 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
 
     script = modelParser.parseScript(options.script);
 
-    aRes.redirect(script.scriptPageUri);
+    aRes.redirect(script.scriptEditMetadataPageUri);
   });
 };
 
@@ -2041,7 +2041,8 @@ exports.uploadScript = function (aReq, aRes, aNext) {
               '/' + (isLib ? 'libs' : 'scripts') + '/' +
                 encodeURIComponent(helpers.cleanFilename(aScript.author)) +
                   '/' +
-                    encodeURIComponent(helpers.cleanFilename(aScript.name))
+                    encodeURIComponent(helpers.cleanFilename(aScript.name)) +
+                      (aScript._about !== '' ? '' : '/edit')
             );
           });
         });
@@ -2102,12 +2103,14 @@ exports.submitSource = function (aReq, aRes, aNext) {
       scriptStorage.storeScript(aUser, aMeta, aSource, false, function (aErr, aScript) {
         var msg = null;
 
-        var redirectUri = aScript
-          ? ((aScript.isLib ? '/libs/' : '/scripts/') +
-            encodeURIComponent(helpers.cleanFilename(aScript.author)) +
-              '/' +
-                encodeURIComponent(helpers.cleanFilename(aScript.name)))
-          : aReq.body.url;
+        var redirectUri = (
+          aScript
+            ? ((aScript.isLib ? '/libs/' : '/scripts/') +
+              encodeURIComponent(helpers.cleanFilename(aScript.author)) +
+                '/' +
+                  encodeURIComponent(helpers.cleanFilename(aScript.name)))
+            : aReq.body.url
+        ) + (aScript._about !== '' ? '' : '/edit');
 
         if (aErr) {
           statusCodePage(aReq, aRes, aNext, {
