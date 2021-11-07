@@ -6,8 +6,7 @@
   <div class="panel-body">
     {{^isScriptViewSourcePage}}
     <ul class="nav nav-pills nav-justified">
-      <li><a rel="nofollow" href="{{{script.scriptEditMetadataPageUrl}}}"><i class="fa fa-edit"></i> Edit Script Info</a></li>
-      <li><a rel="nofollow" href="{{{script.scriptEditSourcePageUrl}}}"><i class="fa fa-file-text"></i> Edit Script</a></li>
+      <li><a rel="nofollow" href="{{{script.scriptEditMetadataPageUrl}}}"><i class="fa fa-edit"></i> {{^script._about}}Add{{/script._about}}{{#script._about}}Edit{{/script._about}} Script Info</a></li>
     </ul>
     {{/isScriptViewSourcePage}}
     {{#isScriptViewSourcePage}}
