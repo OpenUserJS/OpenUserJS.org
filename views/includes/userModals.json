@@ -2,6 +2,8 @@
   "removeReasons" : [
     "Bad external script hosts ",
     "Cookie stealings ",
+    "Copyright infringement ",
+    "Improper forking ",
     "Incomplete metadata blocks ",
     "Licensing conflicts ",
     "Malwares ",
