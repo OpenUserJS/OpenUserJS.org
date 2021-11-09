@@ -2108,9 +2108,10 @@ exports.submitSource = function (aReq, aRes, aNext) {
             ? ((aScript.isLib ? '/libs/' : '/scripts/') +
               encodeURIComponent(helpers.cleanFilename(aScript.author)) +
                 '/' +
-                  encodeURIComponent(helpers.cleanFilename(aScript.name)))
-            : aReq.body.url
-        ) + (aScript._about !== '' ? '' : '/edit');
+                  encodeURIComponent(helpers.cleanFilename(aScript.name))) +
+                    (aScript._about !== '' ? '' : '/edit')
+            : aReq.body.url // NOTE: Watchpoint
+        );
 
         if (aErr) {
           statusCodePage(aReq, aRes, aNext, {
