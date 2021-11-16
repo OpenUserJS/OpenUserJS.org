@@ -103,9 +103,7 @@ Repository | Reference | Recent Version | Referenced
 
 #### Aggregate
 
-[![Using David][davidImageViaShields]][davidReport]
-
-Outdated dependencies list can also be achieved with `$ npm outdated`
+Outdated dependencies list can be achieved with `$ npm outdated` from the terminal.
 
 
 [nodeGHUrl]: https://github.com/nodejs/node
@@ -118,9 +116,6 @@ Outdated dependencies list can also be achieved with `$ npm outdated`
 [npmGHReleasesUrl]: https://github.com/npm/cli/releases
 [npmGHUrl]: https://github.com/npm/cli
 [npmDOCUrl]: https://github.com/npm/cli/blob/latest/README.md
-
-[davidImageViaShields]: https://img.shields.io/david/openuserjs/openuserjs.org.svg?style=flat
-[davidReport]: https://david-dm.org/OpenUserJS/OpenUserJS.org
 
 [shieldsHomepage]: https://shields.io/
 
