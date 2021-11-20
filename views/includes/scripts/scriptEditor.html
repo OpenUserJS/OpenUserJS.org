@@ -19,6 +19,7 @@
       var placeholder = null;
       var username = '{{authedUser.name}}' || 'username';
       var isLib = {{isLib}};
+      var isUpdateURLCheck = {{lockdown.updateURLCheck}};
       var now = new Date();
       var year = now.getFullYear();
 
@@ -258,7 +259,9 @@
               '// @version       0.0.0',
               '// @include       https://www.example.com/*',
               '// @grant none',
-              '// ==/UserScript==',
+              (isUpdateURLCheck
+                ? '// @updateURL     https://openuserjs.org/meta/' + username + '/Getting_Started_with_a_User_Script.meta.js\n// ==/UserScript=='
+                : '// ==/UserScript=='),
               '',
               '// ==OpenUserJS==',
               '// @author ' + username,
