@@ -40,6 +40,8 @@ var helpers = require('../libs/helpers');
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 
+var scriptStorageLib = require('../libs/scriptStorage');
+
 var flagLib = require('../libs/flag');
 var removeLib = require('../libs/remove');
 var stats = require('../libs/stats');
@@ -2466,6 +2468,24 @@ exports.editScript = function (aReq, aRes, aNext) {
 
         options.isOwner = authedUser && (authedUser._id == script._authorId
           || collaborators.indexOf(authedUser.name) > -1);
+
+        if (!options.isOwner && !options.isMod &&
+          !scriptStorageLib.validKey(
+            aScript.author,
+              aScript.name,
+                aScript.isLib,
+                  'updateURL',
+                    scriptStorage.findMeta(aScript.meta, 'UserScript.updateURL.0.value')
+            )
+        ) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 403,
+            statusMessage: 'Author intervention required for `@updateURL`' +
+              (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true' ? ' in lockdown.' : '.')
+          });
+          return;
+        }
+
         modelParser.renderScript(script);
         script.installNameSlug = installNameBase;
 
