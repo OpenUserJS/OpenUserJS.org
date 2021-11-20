@@ -40,7 +40,7 @@ var Discussion = require('../models/discussion').Discussion;
 //--- Controller inclusions
 
 //--- Library inclusions
-// var scriptStorageLib = require('../libs/scriptStorage');
+var scriptStorageLib = require('../libs/scriptStorage');
 
 var patternHasSameOrigin = require('../libs/helpers').patternHasSameOrigin;
 var patternMaybeSameOrigin = require('../libs/helpers').patternMaybeSameOrigin;
@@ -553,19 +553,6 @@ exports.sendScript = function (aReq, aRes, aNext) {
 
   exports.getSource(aReq, function (aScript, aStream) {
     let chunks = [];
-    let updateURL = null;
-    let updateUtf = null;
-
-    let matches = null;
-    let rAnyLocalMetaUrl = new RegExp(
-      '^' + patternHasSameOrigin +
-        '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.(?:meta|user)\.js$'
-    );
-    let hasAlternateLocalUpdateURL = false;
-
-    let rSameOrigin =  new RegExp(
-      '^' + patternHasSameOrigin
-    );
 
     var lastModified = null;
     var eTag = null;
@@ -579,53 +566,17 @@ exports.sendScript = function (aReq, aRes, aNext) {
       return;
     }
 
-    if (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true') {
-      // `@updateURL` must be exact here for OUJS hosted checks
-      //   e.g. no `search`, no `hash`
-
-      updateURL = findMeta(aScript.meta, 'UserScript.updateURL.0.value');
-      if (updateURL) {
-
-        // Check for decoding error
-        try {
-          updateUtf = decodeURIComponent(updateURL);
-        } catch (aE) {
-          aRes.set('Warning', '199 ' + aReq.headers.host +
-            rfc2047.encode(' Invalid @updateURL'));
-          aRes.status(400).send(); // Bad request
-          return;
-        }
-
-        // Validate `author` and `name` (installNameBase) to this scripts meta only
-        let matches = updateUtf.match(rAnyLocalMetaUrl);
-        if (matches) {
-          if (cleanFilename(aScript.author, '').toLowerCase() +
-            '/' + cleanFilename(aScript.name, '') === matches[1].toLowerCase() + '/' + matches[2])
-          {
-            // Same script
-          } else {
-            hasAlternateLocalUpdateURL = true;
-          }
-        } else {
-          // Allow offsite checks
-          updateURL = new URL(updateURL);
-          if (rSameOrigin.test(updateURL.origin)) {
-            hasAlternateLocalUpdateURL = true;
-          }
-        }
-      } else {
-        if (!aScript.isLib) {
-          // Don't serve the script anywhere in this mode and if absent
-          hasAlternateLocalUpdateURL = true;
-        }
-      }
-
-      if (hasAlternateLocalUpdateURL) {
-        aRes.set('Warning', '199 ' + aReq.headers.host +
-          rfc2047.encode(' Invalid @updateURL in lockdown'));
-        aRes.status(404).send(); // Not found
-        return;
-      }
+    if (!scriptStorageLib.validKey(
+      aScript.author,
+        aScript.name,
+          aScript.isLib,
+            'updateURL',
+              findMeta(aScript.meta, 'UserScript.updateURL.0.value') // TODO: Simplify maybe
+    )) {
+      aRes.set('Warning', '199 ' + aReq.headers.host +
+        rfc2047.encode(' Invalid @updateURL'));
+      aRes.status(403).send(); // Forbidden
+      return;
     }
 
     hashSRI = aScript.hash
@@ -1221,6 +1172,7 @@ function isEqualKeyset(aSlaveKeyset, aMasterKeyset) {
 
 exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var isLib = !!findMeta(aMeta, 'UserLibrary');
+  var userName = aUser.name;
   var scriptName = null;
   var scriptDescription = null;
   var thisName = null;
@@ -1692,20 +1644,22 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       aInnerCallback(null);
     },
     function (aInnerCallback) {
-      // `@updateURL` validations
-      var updateURL = null;
+      // `@updateURL` validation
 
-      updateURL = findMeta(aMeta, 'UserScript.updateURL.0.value');
-      if (updateURL) {
-        if (!isFQUrl(updateURL)) {
-
-          // Not a web url... reject
+      if (!scriptStorageLib.validKey(
+        userName,
+          scriptName,
+            isLib,
+              'updateURL',
+                findMeta(aMeta, 'UserScript.updateURL.0.value'))
+      ) {
+          // Not a valid url... reject
           aInnerCallback(new statusError({
-            message: '`@updateURL` not a web url',
-            code: 400
+            message: 'Author intervention required for `@updateURL`' +
+              (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true' ? ' in lockdown.' : '.'),
+            code: 403
           }), null);
           return;
-        }
       }
 
       aInnerCallback(null);
