@@ -574,7 +574,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
               findMeta(aScript.meta, 'UserScript.updateURL.0.value') // TODO: Simplify maybe
     )) {
       aRes.set('Warning', '199 ' + aReq.headers.host +
-        rfc2047.encode(' Invalid @updateURL'));
+        rfc2047.encode(' Invalid @updateURL') +
+          (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true' ? ' in lockdown.' : '.'));
       aRes.status(403).send(); // Forbidden
       return;
     }
