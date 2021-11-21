@@ -73,7 +73,7 @@
       if (headers["license"])
         headers["licence"] = headers["license"];
 
-      return (headers.toSource() != "({})") ? headers : undefined;
+      return (JSON.stringify(headers) != "({})") ? headers : undefined;
     }
 
     // NOTE: Keep in sync with helpers.js
