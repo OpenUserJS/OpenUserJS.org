@@ -73,7 +73,7 @@
       if (headers["license"])
         headers["licence"] = headers["license"];
 
-      return (JSON.stringify(headers) != "({})") ? headers : undefined;
+      return (JSON.stringify(headers) != "{}") ? headers : undefined;
     }
 
     // NOTE: Keep in sync with helpers.js
@@ -123,10 +123,6 @@
       var headerContent = rHeaderContent.exec(rawSource);
       if (headerContent) {
         block = parseMeta(headerContent);
-
-        // WARNING: Lines after this don't work in Fx or Chromium atm on return on dev but does in SM
-        // Function is exited with debugging however nothing happens afterwards. Also tried moving
-        // parseMeta into local funcion scope with no difference.
 
         if (block['name']) {
           names = block['name'].reverse();
