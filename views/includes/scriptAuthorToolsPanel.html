@@ -13,16 +13,22 @@
 
     {{^script.isLib}}
     <h4>UserScript Block</h4>
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-default btn-group-justified" id="regenerate" title="Click this to regenerate some keys based off the current code changes. Warning: If the source is large it may take a while depending on platform. This feature is BETA."><i class="fa fa-fw fa-history"></i> Regenerate some keys from current source</button>
+        </span>
+      </div>
+    </div>
     {{/script.isLib}}
 
     {{^script.isLib}}
-    {{^newScript}}
     <div class="form-group">
       <div class="input-group col-xs-12">
         <span class="input-group-btn">
           <button class="btn btn-{{#lockdown.updateURLCheck}}info{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}default{{/lockdown.updateURLCheck}}" id="updateurl-raw" data-clipboard-text="// @updateURL {{{script.scriptPermalinkMetaPageUrl}}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @updateURL</button>
         </span>
-        <input type="text" class="form-control" id="updateurl" value="{{{script.scriptPermalinkMetaPageUrl}}}" readonly="readonly">
+        <input type="text" class="form-control" id="updateurl" value="{{{script.scriptPermalinkMetaPageUrl}}}" placeholder="empty" readonly="readonly">
         <span class="input-group-btn">
           <a class="btn btn-{{#lockdown.updateURLCheck}}info{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}default{{/lockdown.updateURLCheck}}"
             title="How do I use this?"
@@ -38,9 +44,9 @@
         <span class="input-group-btn">
           <button class="btn btn-default" id="downloadurl-raw" data-clipboard-text="// @downloadURL {{#script.meta.UserScript.downloadURL}}{{{script.meta.UserScript.downloadURL.0.value}}}{{/script.meta.UserScript.downloadURL}}{{^script.meta.UserScript.downloadURL}}{{{script.scriptPermalinkInstallPageUrl}}}{{/script.meta.UserScript.downloadURL}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @downloadURL</button>
         </span>
-        <input type="text" class="form-control" id="downloadurl" value="{{#script.meta.UserScript.downloadURL}}{{{script.meta.UserScript.downloadURL.0.value}}}{{/script.meta.UserScript.downloadURL}}{{^script.meta.UserScript.downloadURL}}{{{script.scriptPermalinkInstallPageUrl}}}{{/script.meta.UserScript.downloadURL}}" readonly="readonly">
+        <input type="text" class="form-control" id="downloadurl" value="{{#script.meta.UserScript.downloadURL}}{{{script.meta.UserScript.downloadURL.0.value}}}{{/script.meta.UserScript.downloadURL}}{{^script.meta.UserScript.downloadURL}}{{{script.scriptPermalinkInstallPageUrl}}}{{/script.meta.UserScript.downloadURL}}" placeholder="empty" readonly="readonly">
         <span class="input-group-btn dropup">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Alternate download source targets"><span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
+          <button type="button" class="btn btn-default dropdown-toggle" id="alt-install-target-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Alternate download source targets"{{#newScript}} disabled="disabled"{{/newScript}}><span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
           <ul class="dropdown-menu scrollable-menu dropdown-menu-right" id="install-targets">
             {{#script.availableScriptPermalinkInstallPageUrl}}<li {{#default}}class="active"{{/default}}><a href="#" title="{{{url}}">{{label}}</a></li>{{/script.availableScriptPermalinkInstallPageUrl}}
           </ul>
@@ -54,7 +60,6 @@
         </span>
       </div>
     </div>
-    {{/newScript}}
     {{/script.isLib}}
 
     {{#script.isLib}}

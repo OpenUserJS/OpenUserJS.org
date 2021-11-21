@@ -1,9 +1,12 @@
-<script type="text/javascript" src="/redist/npm/clipboard/dist/clipboard.js"></script>
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/clipboard/dist/clipboard.js"></script>
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/ace-builds/src/ace.js"></script>
 <script type="text/javascript">
   (function () {
 
     var clipboard = null;
     var rMin = /\.min\.js$/;
+
+    var regenerateId = '#regenerate';
 
     var allowedIds = [
       '#copyright-raw',
@@ -26,6 +29,65 @@
       });
     }
 
+    // TODO: Should keep in sync with all peg.js upmixes eventually
+    function parseMeta(aString) {
+      aString = aString.toString();
+      var re = /\/\/ @(\S+)(?:\s+(.*))?/;
+      var headers = {};
+      var name = null;
+      var prefix = null;
+      var header = null;
+      var key = null;
+      var value = null;
+      var lines = aString.split(/[\r\n]+/).filter(function (aE, aI, aA) {
+        return (aE.match(re));
+      });
+      var line = null;
+
+      for (line in lines) {
+        [, name, value] = lines[line].replace(/\s+$/, "").match(re);
+        switch (name) {
+          case "licence":
+            name = "license";
+            break;
+        }
+        [key, prefix] = name.split(/:/).reverse();
+        if (key) {
+          if (prefix) {
+            if (!headers[prefix])
+              headers[prefix] = new Object;
+            header = headers[prefix];
+          }
+          else
+            header = headers;
+
+          if (header[key]) {
+            if (!(header[key] instanceof Array))
+              header[key] = new Array(header[key]);
+            header[key].push(value || "");
+          }
+          else
+            header[key] = value || "";
+        }
+      }
+      if (headers["license"])
+        headers["licence"] = headers["license"];
+
+      return (headers.toSource() != "({})") ? headers : undefined;
+    }
+
+    // NOTE: Keep in sync with helpers.js
+    cleanFilename = function (aFilename, aDefaultName) {
+      // Blacklist problem characters (slashes, colons, etc.).
+      var cleanName = (aFilename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
+
+      // Make whitespace readable.
+      .replace(/(\s|%20)+/g, '_');
+
+      return cleanName || aDefaultName;
+    };
+
+    //
     if (ClipboardJS.isSupported()) {
       clipboard = new ClipboardJS(allowedIds.join(', '));
 
@@ -42,6 +104,67 @@
     } else {
       unsupported();
     }
+
+    editor = ace.edit("editor");
+
+    $(regenerateId).on('click', function () {
+      var rawSource = editor.getSession().getValue();
+      var parser = 'UserScript';
+      var block = null;
+      var rHeaderContent = new RegExp(
+        '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+      );
+
+      var names = null;
+      var name = null;
+      var updateURL = null;
+      var downloadURL = null;
+
+      var headerContent = rHeaderContent.exec(rawSource);
+      if (headerContent) {
+        block = parseMeta(headerContent);
+
+        // WARNING: Lines after this don't work in Fx or Chromium atm on return on dev but does in SM
+        // Function is exited with debugging however nothing happens afterwards. Also tried moving
+        // parseMeta into local funcion scope with no difference.
+
+        if (block['name']) {
+          names = block['name'].reverse();
+          name = cleanFilename(names[0]);
+          if (name) {
+            updateURL = window.location.origin +
+              '/meta/' + '{{authedUser.name}}' + '/' + name + '.meta.js';
+
+            downloadURL = window.location.origin +
+              '/install/' + '{{authedUser.name}}' + '/' + name + '.user.js';
+
+            // TODO: Maybe add in alternate install-targets at a later date after browser
+            // testing on pro
+
+            $('#updateurl').val(updateURL);
+            $('#updateurl-raw').attr('data-clipboard-text', '// @updateURL ' + updateURL);
+            $('#downloadurl').val(downloadURL);
+            $('#downloadurl-raw').attr('data-clipboard-text', '// @downloadURL ' + downloadURL);
+
+            $('#install-targets').empty();
+            $('#install-targets').attr('disabled', 'disabled');
+            $('#alt-install-target-btn').attr('disabled', 'disabled');
+
+            return;
+          }
+        }
+      }
+
+      // Default
+      $('#updateurl').val('');
+      $('#updateurl-raw').attr('data-clipboard-text', '// @updateURL ');
+      $('#downloadurl').val('');
+      $('#downloadurl-raw').attr('data-clipboard-text', '// @downloadURL ');
+
+      $('#install-targets').empty();
+      $('#install-targets').attr('disabled', 'disabled');
+      $('#alt-install-target-btn').attr('disabled', 'disabled');
+    });
 
   })();
 </script>
