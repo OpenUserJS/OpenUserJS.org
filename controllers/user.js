@@ -2495,10 +2495,10 @@ exports.editScript = function (aReq, aRes, aNext) {
           script.scriptInstallPageXUrl + ".min.user.js";
 
         script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/' +
-          scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
+          scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) + // WATCHPOINT
             (isLib ? '.js' : '.user.js');
         script.scriptRawPageXUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/' +
-          scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) +
+          scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) + // WATCHPOINT
             (isLib ? '.min.js' : '.min.user.js');
 
         script.scriptPermalinkRawPageUrl = 'https://' + aReq.get('host') +

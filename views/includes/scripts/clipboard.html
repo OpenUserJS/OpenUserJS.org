@@ -118,7 +118,9 @@
       var names = null;
       var name = null;
       var updateURL = null;
-      var downloadURL = null;
+      var downloadURL = [];
+      var activeIdx = 0; // Default if new
+      var origin = window.location.origin;
 
       var headerContent = rHeaderContent.exec(rawSource);
       if (headerContent) {
@@ -128,23 +130,72 @@
           names = block['name'].reverse();
           name = cleanFilename(names[0]);
           if (name) {
-            updateURL = window.location.origin +
-              '/meta/' + '{{authedUser.name}}' + '/' + name + '.meta.js';
+            updateURL = origin + '/meta/' + '{{authedUser.name}}' + '/' + name + '.meta.js';
 
-            downloadURL = window.location.origin +
-              '/install/' + '{{authedUser.name}}' + '/' + name + '.user.js';
+            downloadURL.push(origin + '/install/' + '{{authedUser.name}}' + '/' +
+              name + '.user.js');
+            downloadURL.push(origin + '/install/' + '{{authedUser.name}}' + '/' +
+              name + '.min.user.js');
+            downloadURL.push(origin + '/src/scripts/' + '{{authedUser.name}}' + '/' +
+              name + '.user.js');
+            downloadURL.push(origin + '/src/scripts/' + '{{authedUser.name}}' + '/' +
+              name + '.min.user.js');
 
-            // TODO: Maybe add in alternate install-targets at a later date after browser
-            // testing on pro
+            // Find current active
+            $('#install-targets li').each(function (aIdx) {
+              if ($(this).hasClass('active')) {
+                activeIdx = aIdx;
+              }
+            });
 
+            if( $('#install-targets li').length === 0) {
+              // Add DOM html
+              $('#install-targets')
+                .append('<li class="active"><a href="#" title="">Normal</a></li>');
+              $('#install-targets')
+                .append('<li><a href="#" title="">Minified</a></li>');
+              $('#install-targets')
+                .append('<li><a href="#" title="">Normal with counter skip</a></li>');
+              $('#install-targets')
+                .append('<li><a href="#" title="">Minified with counter skip</a></li>');
+
+              // Add event listeners for new scripts
+              $('#install-targets li').each(function (aIdx) {
+                $(this).on('click', function (aEv) {
+                  // NOTE: Keep in sync with selectIntall.html onClick
+                  var containerNode = $(aEv.target).closest('li');
+
+                  $('#downloadurl').val(aEv.target.title);
+                  $('#downloadurl-raw').attr(
+                    'data-clipboard-text', '// @downloadURL ' + aEv.target.title
+                  );
+
+                  // Clear all actives
+                  $('#install-targets li').each(function (aIdx) {
+                    $(this).removeClass('active');
+                  });
+
+                  // Set this active
+                  containerNode.addClass('active');
+                })
+              });
+            }
+
+            // Modify title attributes
+            $('#install-targets li a').each(function (aIdx) {
+              $(this).attr('title', downloadURL[aIdx]);
+            });
+
+            // Simulate trigger click (actual doesn't appear to coexist well with *bootstrap*)
             $('#updateurl').val(updateURL);
             $('#updateurl-raw').attr('data-clipboard-text', '// @updateURL ' + updateURL);
-            $('#downloadurl').val(downloadURL);
-            $('#downloadurl-raw').attr('data-clipboard-text', '// @downloadURL ' + downloadURL);
 
-            $('#install-targets').empty();
-            $('#install-targets').attr('disabled', 'disabled');
-            $('#alt-install-target-btn').attr('disabled', 'disabled');
+            $('#downloadurl').val(downloadURL[activeIdx]);
+            $('#downloadurl-raw').attr(
+              'data-clipboard-text', '// @downloadURL ' + downloadURL[activeIdx]);
+
+            // Always enable the button here
+            $('#alt-install-target-btn').removeAttr('disabled');
 
             return;
           }
@@ -152,13 +203,13 @@
       }
 
       // Default
+        /* Leave existing li element(s) available for future mod */
+
       $('#updateurl').val('');
       $('#updateurl-raw').attr('data-clipboard-text', '// @updateURL ');
       $('#downloadurl').val('');
       $('#downloadurl-raw').attr('data-clipboard-text', '// @downloadURL ');
 
-      $('#install-targets').empty();
-      $('#install-targets').attr('disabled', 'disabled');
       $('#alt-install-target-btn').attr('disabled', 'disabled');
     });
 
