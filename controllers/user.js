@@ -2431,6 +2431,8 @@ exports.editScript = function (aReq, aRes, aNext) {
         var copyrights = null;
         var copyrightPrimary = null;
         var createdDate = null;
+        var tryURL = null;
+        var tryInstallNameBase = null;
 
         //---
         if (aErr || !aScript) {
@@ -2494,11 +2496,25 @@ exports.editScript = function (aReq, aRes, aNext) {
         script.scriptPermalinkInstallPageUrlMin = 'https://' + aReq.get('host') +
           script.scriptInstallPageXUrl + ".min.user.js";
 
+        tryInstallNameBase = scriptStorage.getInstallNameBase(aReq);
+
+        try {
+          tryURL = new URL('../' + tryInstallNameBase, 'https://example.org/');
+
+          if (
+            decodeURIComponent(tryURL.toString()) !== 'https://example.org/' + tryInstallNameBase
+          ) {
+            tryInstallNameBase = scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' });
+          }
+        } catch (aE) {
+          tryInstallNameBase = scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' });
+        }
+
         script.scriptRawPageUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/' +
-          scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) + // WATCHPOINT
+          tryInstallNameBase +
             (isLib ? '.js' : '.user.js');
         script.scriptRawPageXUrl = '/src/' + (isLib ? 'libs' : 'scripts') + '/' +
-          scriptStorage.getInstallNameBase(aReq, { encoding: 'uri' }) + // WATCHPOINT
+          tryInstallNameBase +
             (isLib ? '.min.js' : '.min.user.js');
 
         script.scriptPermalinkRawPageUrl = 'https://' + aReq.get('host') +
