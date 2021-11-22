@@ -115,8 +115,10 @@
         '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
       );
 
+      var username = '{{authedUser.name}}';
       var names = null;
       var name = null;
+      var tryURL = null;
       var updateURL = null;
       var downloadURL = [];
       var activeIdx = 0; // Default if new
@@ -130,16 +132,22 @@
           names = block['name'].reverse();
           name = cleanFilename(names[0]);
           if (name) {
-            updateURL = origin + '/meta/' + '{{authedUser.name}}' + '/' + name + '.meta.js';
+            try {
+              tryURL = new URL('../' + name, origin);
 
-            downloadURL.push(origin + '/install/' + '{{authedUser.name}}' + '/' +
-              name + '.user.js');
-            downloadURL.push(origin + '/install/' + '{{authedUser.name}}' + '/' +
-              name + '.min.user.js');
-            downloadURL.push(origin + '/src/scripts/' + '{{authedUser.name}}' + '/' +
-              name + '.user.js');
-            downloadURL.push(origin + '/src/scripts/' + '{{authedUser.name}}' + '/' +
-              name + '.min.user.js');
+              if (decodeURIComponent(tryURL.toString()) !== origin + '/' + name) {
+                name = encodeURIComponent(name);
+              }
+            } catch (aE) {
+              name = encodeURIComponent(name);
+            }
+
+            updateURL = origin + '/meta/' + username + '/' + name + '.meta.js';
+
+            downloadURL.push(origin + '/install/' + username + '/' + name + '.user.js');
+            downloadURL.push(origin + '/install/' + username + '/' + name + '.min.user.js');
+            downloadURL.push(origin + '/src/scripts/' + username + '/' + name + '.user.js');
+            downloadURL.push(origin + '/src/scripts/' + username + '/' + name + '.min.user.js');
 
             // Find current active
             $('#install-targets li').each(function (aIdx) {
