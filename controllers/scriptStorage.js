@@ -576,6 +576,10 @@ exports.sendScript = function (aReq, aRes, aNext) {
       aRes.set('Warning', '199 ' + aReq.headers.host +
         rfc2047.encode(' Invalid @updateURL') +
           (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true' ? ' in lockdown.' : '.'));
+
+      // NOTE: Force HTTP stack response for Chromium based browsers #1856
+      aRes.set('Content-Type', 'text/html; charset=UTF-8');
+
       aRes.status(403).send(); // Forbidden
       return;
     }
