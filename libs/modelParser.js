@@ -289,10 +289,16 @@ var parseScript = function (aScript) {
     '^' + patternHasSameOrigin +
       '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.(?:meta|user)\.js$'
   );
+  var rIsolatedLocalMetaUrl = new RegExp(
+    '^' + patternHasSameOrigin +
+      '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.(?:meta)\.js$'
+  );
 
   var rSameOrigin =  new RegExp(
     '^' + patternHasSameOrigin
   );
+
+  var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
   // Temporaries
 
@@ -532,7 +538,7 @@ var parseScript = function (aScript) {
     } finally {
       if (!script.hasInvalidUpdateURL)  {
         // Validate `author` and `name` (installNameBase) to this scripts meta only
-        matches = updateUtf.match(rAnyLocalMetaUrl);
+        matches = updateUtf.match((lockdown ? rIsolatedLocalMetaUrl : rAnyLocalMetaUrl));
         if (matches) {
           if (script.authorSlug.toLowerCase() + '/' + script.nameSlug ===
             matches[1].toLowerCase() + '/' + matches[2])
