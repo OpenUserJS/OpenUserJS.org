@@ -21,9 +21,15 @@ function validKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {
     '^' + patternHasSameOrigin +
       '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.(?:meta|user)\.js$'
   );
+  var rIsolatedLocalMetaUrl = new RegExp(
+    '^' + patternHasSameOrigin +
+      '/(?:meta|install|src/scripts)/(.+?)/(.+?)\.(?:meta)\.js$'
+  );
   var rSameOrigin =  new RegExp(
     '^' + patternHasSameOrigin
   );
+
+  var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
   switch (aKeyName) {
     case 'updateURL':
@@ -32,9 +38,9 @@ function validKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {
           return false;
         }
       } else {
-        if (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true') {
+        if (lockdown) {
           // `@updateURL` must be exact here for OUJS hosted checks and must exist
-          //   e.g. no `search`, no `hash`
+          //   e.g. no `search`, no `hash`, and no header check
 
           if (aKeyValue) {
 
@@ -46,7 +52,7 @@ function validKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {
             }
 
             // Validate `author` and `name` (installNameBase) to this scripts meta only
-            matches = keyValueUtf.match(rAnyLocalMetaUrl);
+            matches = keyValueUtf.match(rIsolatedLocalMetaUrl);
             if (matches) {
               if (cleanFilename(aAuthorName, '').toLowerCase() +
                 '/' + cleanFilename(aScriptName, '') === matches[1].toLowerCase() +
