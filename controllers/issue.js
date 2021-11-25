@@ -348,6 +348,12 @@ exports.open = function (aReq, aRes, aNext) {
       var userAgent = aReq.headers['user-agent'];
       var tasks = [];
 
+      var parser = 'UserScript';
+      var rHeaderContent = new RegExp(
+        '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+      );
+      var headerContent = null;
+
       // Session
       options.authedUser = authedUser = modelParser.parseUser(authedUser);
       options.isMod = authedUser && authedUser.isMod;
@@ -373,6 +379,16 @@ exports.open = function (aReq, aRes, aNext) {
             statusCode: 403,
             statusMessage: 'You cannot post an empty issue topic to this ' +
               (type === 'libs' ? 'library' : 'script')
+          });
+          return;
+        }
+
+        // Simple validation check
+        headerContent = rHeaderContent.exec(content);
+        if (headerContent) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 403, // Forbidden
+            statusMessage: 'Source Code not allowed in Comment.'
           });
           return;
         }
@@ -419,6 +435,12 @@ exports.comment = function (aReq, aRes, aNext) {
       var category = type + '/' + installNameBase + '/issues';
       var topic = aReq.params.topic;
 
+      var parser = 'UserScript';
+      var rHeaderContent = new RegExp(
+        '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+      );
+      var headerContent = null;
+
       if (aErr || !aScript) {
         aNext();
         return;
@@ -426,8 +448,18 @@ exports.comment = function (aReq, aRes, aNext) {
 
       if (!content || !content.trim()) {
         statusCodePage(aReq, aRes, aNext, {
-          statusCode: 403,
+          statusCode: 403, // Forbidden
           statusMessage: 'You cannot post an empty comment to this issue'
+        });
+        return;
+      }
+
+      // Simple validation check
+      headerContent = rHeaderContent.exec(content);
+      if (headerContent) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 403, // Forbidden
+          statusMessage: 'Source Code not allowed in Comment.'
         });
         return;
       }

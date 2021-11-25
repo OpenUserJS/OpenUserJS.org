@@ -29,6 +29,7 @@ var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 //--- Library inclusions
 // var scriptLib = require('../libs/script');
 
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var isSameOrigin = require('../libs/helpers').isSameOrigin;
 
 var voteLib = require('../libs/vote');
@@ -438,6 +439,12 @@ exports.edit = function (aReq, aRes, aNext) {
       var scriptGroups = null;
       var tasks = [];
 
+      var parser = 'UserScript';
+      var rHeaderContent = new RegExp(
+        '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+      );
+      var headerContent = null;
+
       // ---
       if (aErr || !aScript) {
         aNext();
@@ -473,6 +480,16 @@ exports.edit = function (aReq, aRes, aNext) {
       } else if (typeof aReq.body.about !== 'undefined') {
         // POST
         aScript.about = aReq.body.about;
+
+        // Simple validation check
+        headerContent = rHeaderContent.exec(aScript.about);
+        if (headerContent) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 403, // Forbidden
+            statusMessage: 'Source Code not allowed in Script Info.'
+          });
+          return;
+        }
 
         remark().use(stripHTML).use(stripMD).process(aScript.about, function(aErr, aFile) {
           if (aErr || !aFile) {
