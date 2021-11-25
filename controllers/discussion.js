@@ -540,6 +540,12 @@ exports.createTopic = function (aReq, aRes, aNext) {
   var content = aReq.body['comment-content'];
   var userAgent = aReq.headers['user-agent'];
 
+  var parser = 'UserScript';
+  var rHeaderContent = new RegExp(
+    '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+  );
+  var headerContent = null;
+
   if (!category) {
     aNext();
     return;
@@ -562,6 +568,16 @@ exports.createTopic = function (aReq, aRes, aNext) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 403,
       statusMessage: 'You cannot post an empty discussion topic to this category'
+    });
+    return;
+  }
+
+  // Simple validation check
+  headerContent = rHeaderContent.exec(content);
+  if (headerContent) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403, // Forbidden
+      statusMessage: 'Source Code not allowed in Comment.'
     });
     return;
   }
@@ -591,6 +607,12 @@ exports.createComment = function (aReq, aRes, aNext) {
     var content = aReq.body['comment-content'];
     var userAgent = aReq.headers['user-agent'];
 
+    var parser = 'UserScript';
+    var rHeaderContent = new RegExp(
+      '^(?:\\uFEFF)?\/\/ ==' + parser + '==([\\s\\S]*?)^\/\/ ==\/'+ parser + '==', 'm'
+    );
+    var headerContent = null;
+
     if (!aDiscussion) {
       aNext();
       return;
@@ -598,8 +620,18 @@ exports.createComment = function (aReq, aRes, aNext) {
 
     if (!content || !content.trim()) {
       statusCodePage(aReq, aRes, aNext, {
-        statusCode: 403,
+        statusCode: 403, // Forbidden
         statusMessage: 'You cannot post an empty comment to this discussion'
+      });
+      return;
+    }
+
+    // Simple validation check
+    headerContent = rHeaderContent.exec(content);
+    if (headerContent) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403, // Forbidden
+        statusMessage: 'Source Code not allowed in Comment.'
       });
       return;
     }
