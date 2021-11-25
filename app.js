@@ -482,7 +482,8 @@ app.use(function(aReq, aRes, aNext) {
         /^\/mod\/removed\//.test(pathname)
   ) {
     aRes.minifyOptions = aRes.minifyOptions || {}; // Ensure object exists on response
-    aRes.minifyOptions.minify = false; // Skip using release minification because we control this with *terser*
+    aRes.minifyOptions.minify = false; // Skip minification because we use *terser* with .js
+    aRes.minifyOptions.enabled = false; // Force no processing on remainder of types on these routes
   }
   aNext();
 });
