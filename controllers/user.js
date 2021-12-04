@@ -2482,9 +2482,14 @@ exports.editScript = function (aReq, aRes, aNext) {
 
         if (!options.isOwner && !options.isMod && hasInvalidKey) {
           statusCodePage(aReq, aRes, aNext, {
-            statusCode: hasInvalidKey.code,
-            statusMessage: hasInvalidKey.message +
-              (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true' ? ' in lockdown.' : '.')
+            statusCode: (hasInvalidKey instanceof statusError
+              ? hasInvalidKey.status.code
+              : hasInvalidKey.code
+            ),
+            statusMessage: (hasInvalidKey instanceof statusError
+              ? hasInvalidKey.status.message
+              : hasInvalidKey.message
+            )
           });
           return;
         }
