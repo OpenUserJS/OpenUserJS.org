@@ -38,20 +38,21 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
 
   var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
+  var hasInvalidKeys = [];
+  var hasGrantNone = null;
+
   switch (aKeyName) {
-    case 'css':
-    case 'grant':
+    case 'css':         // NOTE: We don't collect these yet (ref lost)
     case 'include':
-    case 'inject-into':
+    case 'inject-into': // NOTE: We don't collect this yet
     case 'match':
     case 'noframes':
-    case 'priority':
+    case 'priority':    // NOTE: We don't collect this yet
     case 'require':
     case 'resource':
     case 'run-at':
     case 'unwrap':
     case 'downloadURL':
-    case 'installURL':
       if (aIsLib) {
         if (aKeyValue) {
           return new statusError({
@@ -59,6 +60,87 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
               '` not valid in a Library.',
             code: 400 // Bad request
           });
+        }
+      }
+      break;
+    case 'grant':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      } else {
+        if (aKeyValue) {
+          aKeyValue.forEach(function (aElement, aIndex, aArray) {
+            switch (aElement) {
+              case 'none':
+                hasGrantNone = true;
+                // fallsthrough
+              case 'GM.*':
+              case 'GM_addElement':
+              case 'GM_addStyle':
+              case 'GM_addValueChangeListener':
+              case 'GM_deleteValue':
+              case 'GM.deleteValue':
+              case 'GM_download':
+              case 'GM_getResourceText':
+              case 'GM_getResourceURL':
+              case 'GM.getResourceUrl':
+              case 'GM_getTab':
+              case 'GM_getTabs':
+              case 'GM_getValue':
+              case 'GM.getValue':
+              case 'GM_listValues':
+              case 'GM.listValues':
+              case 'GM_log':
+              case 'GM_notification':
+              case 'GM.notification':
+              case 'GM_openInTab':
+              case 'GM.openInTab':
+              case 'GM_registerMenuCommand':
+              case 'GM.registerMenuCommand':
+              case 'GM_removeValueChangeListener':
+              case 'GM_saveTab':
+              case 'GM_setClipboard':
+              case 'GM_setClipboard':
+              case 'GM.setClipboard':
+              case 'GM_setValue':
+              case 'GM.setValue':
+              case 'GM_unregisterMenuCommand':
+              case 'GM_xmlhttpRequest':
+              case 'GM.xmlHttpRequest':
+              case 'unsafeWindow':
+              case 'window.close':
+              case 'window.focus':
+              case 'window.onurlchange':
+                if (hasGrantNone && aArray.length > 1) {
+                  hasInvalidKeys.push(
+                    new statusError({
+                      message: '`@' + aKeyName +
+                        '` value of `' + aElement + '` is not valid with other `@grant`s.',
+                      code: 400 // Bad request
+                    })
+                  );
+                }
+                break;
+              default:
+                hasInvalidKeys.push(
+                  new statusError({
+                    message: '`@' + aKeyName +
+                      '` with value of `' + aElement + '` is not valid or supported.',
+                    code: 400 // Bad request
+                  })
+                );
+            }
+          });
+
+          if (hasInvalidKeys.length > 0) {
+            // NOTE: return only first error since header limitations may throw if RFC2047'd
+            return hasInvalidKeys[0];
+          }
         }
       }
       break;
@@ -96,7 +178,7 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
           }
 
           // Validate `author` and `name` (installNameBase) to this scripts meta only
-          // NOTE: value needs to be decoded already since MongoDB and AWS don't store that
+          // NOTE: value needs to be decoded already since MongoDB and AWS doesn't store that
           matches = keyValueUtf.match(rAnyLocalMetaUrl);
           if (matches) {
             if (cleanFilename(aAuthorName, '').toLowerCase() +
@@ -121,7 +203,7 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
             keyValue = new URL(aKeyValue);
             if (!rSameOrigin.test(keyValue.origin)) {
               // Allow offsite checks
-              // fallsthtrough
+              // fallsthrough
             } else {
               return new statusError({
                 message: '`@' + aKeyName +
