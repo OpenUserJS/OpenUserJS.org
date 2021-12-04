@@ -53,20 +53,25 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
     case 'downloadURL':
     case 'installURL':
       if (aIsLib) {
-        return new statusError({
-          message: '`@' + aKeyName +
-            '` not valid in a Library.',
-          code: 400 // Bad request
-        });
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
       }
       break;
     case 'updateURL':
       if (aIsLib) {
-        return new statusError({
-          message: '`@' + aKeyName +
-            '` not valid in a Library.',
-          code: 400 // Bad request
-        });
+
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
       } else {
 
         if (aKeyValue) {
