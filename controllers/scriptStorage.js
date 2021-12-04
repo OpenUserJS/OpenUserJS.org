@@ -1739,6 +1739,23 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       aInnerCallback(null);
     },
     function (aInnerCallback) {
+      // `@grant` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'grant',
+                findMeta(aMeta, 'UserScript.grant.value')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
       // OpenUserJS `@author` validations
       var author = null;
 
