@@ -4,9 +4,9 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var statusError = require('../libs/debug').statusError;
 var isSecured = require('../libs/debug').isSecured;
 var uaOUJS = require('../libs/debug').uaOUJS;
-var statusError = require('../libs/debug').statusError;
 
 //
 
@@ -566,12 +566,12 @@ exports.sendScript = function (aReq, aRes, aNext) {
       return;
     }
 
-    if (!scriptStorageLib.validKey(
+    if (scriptStorageLib.invalidKey(
       aScript.author,
         aScript.name,
           aScript.isLib,
             'updateURL',
-              findMeta(aScript.meta, 'UserScript.updateURL.0.value') // TODO: Simplify maybe
+              findMeta(aScript.meta, 'UserScript.updateURL.0.value')
     )) {
       aRes.set('Warning', '199 ' + aReq.headers.host +
         rfc2047.encode(' Invalid @updateURL') +
@@ -1182,6 +1182,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var scriptDescription = null;
   var thisName = null;
   var thisDescription = null;
+  var hasInvalidKey = null;
 
   async.series([
     function (aInnerCallback) {
@@ -1650,21 +1651,16 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
     },
     function (aInnerCallback) {
       // `@updateURL` validation
-
-      if (!scriptStorageLib.validKey(
+      hasInvalidKey = scriptStorageLib.invalidKey(
         userName,
           scriptName,
             isLib,
               'updateURL',
-                findMeta(aMeta, 'UserScript.updateURL.0.value'))
-      ) {
-          // Not a valid url... reject
-          aInnerCallback(new statusError({
-            message: 'Author intervention required for `@updateURL`' +
-              (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true' ? ' in lockdown.' : '.'),
-            code: 403
-          }), null);
-          return;
+                findMeta(aMeta, 'UserScript.updateURL.0.value'));
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
       }
 
       aInnerCallback(null);

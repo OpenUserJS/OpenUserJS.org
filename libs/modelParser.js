@@ -4,6 +4,7 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var statusError = require('../libs/debug').statusError;
 
 //
 
@@ -29,6 +30,7 @@ var decode = require('../libs/helpers').decode;
 var isFQUrl = require('../libs/helpers').isFQUrl;
 var isSameOrigin = require('../libs/helpers').isSameOrigin;
 var patternHasSameOrigin = require('../libs/helpers').patternHasSameOrigin;
+var scriptStorageLib = require('../libs/scriptStorage').invalidKey;
 
 
 //--- Configuration inclusions
@@ -298,8 +300,6 @@ var parseScript = function (aScript) {
     '^' + patternHasSameOrigin
   );
 
-  var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
-
   // Temporaries
 
   //
@@ -519,6 +519,9 @@ var parseScript = function (aScript) {
     script.isUpdated = true;
   }
 
+
+
+  // TODO: Mimic scriptStorageLib.invalidKey return value here??
   // Update Url
   // `@updateURL` must be exact here for OUJS hosted checks with updateURLForceCheck
   //   e.g. no `search`, no `hash`
@@ -538,7 +541,7 @@ var parseScript = function (aScript) {
     } finally {
       if (!script.hasInvalidUpdateURL)  {
         // Validate `author` and `name` (installNameBase) to this scripts meta only
-        matches = updateUtf.match((lockdown ? rIsolatedLocalMetaUrl : rAnyLocalMetaUrl));
+        matches = updateUtf.match((updateURLForceCheck ? rIsolatedLocalMetaUrl : rAnyLocalMetaUrl));
         if (matches) {
           if (script.authorSlug.toLowerCase() + '/' + script.nameSlug ===
             matches[1].toLowerCase() + '/' + matches[2])
@@ -602,6 +605,8 @@ var parseScript = function (aScript) {
         : updateURLForceCheck;
     }
   }
+
+
 
   // Download Url
   downloadURL = findMeta(script.meta, 'UserScript.downloadURL.0.value');

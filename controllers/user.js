@@ -2433,6 +2433,7 @@ exports.editScript = function (aReq, aRes, aNext) {
         var createdDate = null;
         var tryURL = null;
         var tryInstallNameBase = null;
+        var hasInvalidKey = null;
 
         //---
         if (aErr || !aScript) {
@@ -2471,18 +2472,18 @@ exports.editScript = function (aReq, aRes, aNext) {
         options.isOwner = authedUser && (authedUser._id == script._authorId
           || collaborators.indexOf(authedUser.name) > -1);
 
-        if (!options.isOwner && !options.isMod &&
-          !scriptStorageLib.validKey(
-            aScript.author,
-              aScript.name,
-                aScript.isLib,
-                  'updateURL',
-                    scriptStorage.findMeta(aScript.meta, 'UserScript.updateURL.0.value')
-            )
-        ) {
+        hasInvalidKey = scriptStorageLib.invalidKey(
+          aScript.author,
+            aScript.name,
+              aScript.isLib,
+                'updateURL',
+                  scriptStorage.findMeta(aScript.meta, 'UserScript.updateURL.0.value')
+          );
+
+        if (!options.isOwner && !options.isMod && hasInvalidKey) {
           statusCodePage(aReq, aRes, aNext, {
-            statusCode: 403,
-            statusMessage: 'Author intervention required for `@updateURL`' +
+            statusCode: hasInvalidKey.code,
+            statusMessage: hasInvalidKey.message +
               (process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true' ? ' in lockdown.' : '.')
           });
           return;
