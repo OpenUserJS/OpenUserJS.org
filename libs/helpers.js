@@ -221,8 +221,8 @@ exports.baseOrigin = 'https://openuserjs.org';
 
 // Absolute pattern and is combined for pro and dev
 exports.patternHasSameOrigin =
-  '(?:https?://openuserjs\.org(?::' + exports.securePort + ')?|http://(?:oujs\.org' +
-    (isDev ? '|localhost:' + exports.port : '' ) + '))';
+  '(?:https?://openuserjs\.org(?::' + exports.securePort + ')?' +
+    (isDev ? '|http://localhost:' + exports.port + ')' : ')' );
 
 // Possible pattern and is split for pro vs. dev
 // NOTE: This re is quite sensitive to changes esp. with `|`
