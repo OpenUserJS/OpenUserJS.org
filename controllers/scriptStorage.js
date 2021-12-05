@@ -1713,27 +1713,52 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       aInnerCallback(null);
     },
     function (aInnerCallback) {
+      // `@include` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'include',
+                findMeta(aMeta, 'UserScript.include.value')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@match` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'match',
+                findMeta(aMeta, 'UserScript.match.value')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
       // `@exclude` validations
-      var excludes = null;
-      var missingExcludeAll = true;
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'exclude',
+                findMeta(aMeta, 'UserScript.exclude.value')
+      );
 
-      if (isLib) {
-        excludes = findMeta(aMeta, 'UserScript.exclude.value');
-        if (excludes) {
-          excludes.forEach(function (aElement, aIndex, aArray) {
-            if (aElement === '*') {
-              missingExcludeAll = false;
-            }
-          });
-        }
-
-        if (missingExcludeAll) {
-          aInnerCallback(new statusError({
-            message: 'UserScript Metadata Block missing `@exclude *`.',
-            code: 400
-          }), null);
-          return;
-        }
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
       }
 
       aInnerCallback(null);
@@ -1746,6 +1771,91 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             isLib,
               'grant',
                 findMeta(aMeta, 'UserScript.grant.value')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@require` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'require',
+                findMeta(aMeta, 'UserScript.require.value')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@resource` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'resource',
+                findMeta(aMeta, 'UserScript.resource.value')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@run-at` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'run-at',
+                findMeta(aMeta, 'UserScript.run-at.value')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@noframes` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'noframes',
+                findMeta(aMeta, 'UserScript.noframes')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@unwrap` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'unwrap',
+                findMeta(aMeta, 'UserScript.unwrap')
       );
 
       if (hasInvalidKey) {
@@ -1866,7 +1976,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
           try {
             url = new URL(aRequire);
-            require = url.origin +  url.pathname;
+            require = url.origin + url.pathname;
           } catch (aE) {
             // NOTE: Currently not always a real error in every .user.js engine so...
             /* falls through */

@@ -36,6 +36,8 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
       '/(?:meta|install|src/scripts)/(.+?)/(.+)\.(?:user)\.js$'
   );
 
+  var missingExcludeAll = true;
+
   var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
   var hasInvalidKeys = [];
@@ -43,15 +45,18 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
 
   switch (aKeyName) {
     case 'css':         // NOTE: We don't collect these yet (ref lost)
-    case 'include':
     case 'inject-into': // NOTE: We don't collect this yet
-    case 'match':
-    case 'noframes':
     case 'priority':    // NOTE: We don't collect this yet
-    case 'require':
-    case 'resource':
-    case 'run-at':
-    case 'unwrap':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      }
+      break;
     case 'downloadURL':
       if (aIsLib) {
         if (aKeyValue) {
@@ -59,6 +64,33 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
             message: '`@' + aKeyName +
               '` not valid in a Library.',
             code: 400 // Bad request
+          });
+        }
+      }
+      break;
+    case 'exclude':
+      if (aIsLib) {
+        if (aKeyValue) {
+          if (aKeyValue.length > 1) {
+            return new statusError({
+              message: '`@' + aKeyName +
+                '` must only have one key value in a Library.',
+              code: 400
+            });
+          }
+
+          aKeyValue.forEach(function (aElement, aIndex, aArray) {
+            if (aElement === '*') {
+              missingExcludeAll = false;
+            }
+          });
+        }
+
+        if (missingExcludeAll) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` missing value of `*` in a Library.',
+            code: 400
           });
         }
       }
@@ -105,7 +137,6 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
               case 'GM_removeValueChangeListener':
               case 'GM_saveTab':
               case 'GM_setClipboard':
-              case 'GM_setClipboard':
               case 'GM.setClipboard':
               case 'GM_setValue':
               case 'GM.setValue':
@@ -139,8 +170,86 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
 
           if (hasInvalidKeys.length > 0) {
             // NOTE: return only first error since header limitations may throw if RFC2047'd
+            // TODO: May expand this later
             return hasInvalidKeys[0];
           }
+        }
+      }
+      break;
+    case 'include':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      }
+      break;
+    case 'match':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      }
+      break;
+    case 'noframes':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      }
+      break;
+    case 'require':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      }
+      break;
+    case 'resource':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      }
+      break;
+    case 'run-at':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      }
+      break;
+    case 'unwrap':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
         }
       }
       break;
