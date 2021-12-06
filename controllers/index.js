@@ -218,6 +218,7 @@ exports.register = function (aReq, aRes) {
   var tasks = [];
 
   var SECRET = process.env.HCAPTCHA_SECRET_KEY;
+  var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
   // If already logged in, go back.
   if (authedUser) {
@@ -226,6 +227,8 @@ exports.register = function (aReq, aRes) {
   }
 
   options.hasCaptcha = (SECRET ? true : false);
+  options.hcaptchaSiteKey = (SITEKEY ? SITEKEY : '');
+
   options.redirectTo = getRedirect(aReq);
 
   // Page metadata

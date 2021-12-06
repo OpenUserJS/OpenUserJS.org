@@ -80,6 +80,7 @@ exports.preauth = function (aReq, aRes, aNext) {
   var username = aReq.body.username || aReq.session.username ||
     (authedUser ? authedUser.name : null);
   var SECRET = process.env.HCAPTCHA_SECRET_KEY;
+  var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
   if (!username) {
     aRes.redirect('/login?noname');
