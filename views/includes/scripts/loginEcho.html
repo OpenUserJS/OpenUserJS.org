@@ -17,6 +17,7 @@
       var auth = document.querySelector('select[name="auth"]');
       var consent = document.querySelector('input[name="consent"]');
       var action = document.querySelector('button#action');
+      var captcha = document.querySelector('div.h-captcha');
 
       function onInput(aEv) {
         var req = new XMLHttpRequest();
@@ -26,6 +27,10 @@
           action.innerHTML = action.innerHTML.replace(/Sign Up/, 'Sign In');
           action.classList.add('btn-success');
           action.classList.remove('btn-info');
+
+          if (captcha) {
+            captcha.style.display = 'none';
+          }
 
           if (aConsent) {
             consent.checked = false;
@@ -38,6 +43,10 @@
           action.innerHTML = action.innerHTML.replace(/Sign In/, 'Sign Up');
           action.classList.remove('btn-success');
           action.classList.add('btn-info');
+
+          if (captcha) {
+            captcha.style.display = 'block';
+          }
 
           consent.checked = false;
         }

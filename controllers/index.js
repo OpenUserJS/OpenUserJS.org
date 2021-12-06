@@ -217,12 +217,15 @@ exports.register = function (aReq, aRes) {
   var authedUser = aReq.session.user;
   var tasks = [];
 
+  var SECRET = process.env.HCAPTCHA_SECRET_KEY;
+
   // If already logged in, go back.
   if (authedUser) {
     aRes.redirect(getRedirect(aReq));
     return;
   }
 
+  options.hasCaptcha = (SECRET ? true : false);
   options.redirectTo = getRedirect(aReq);
 
   // Page metadata

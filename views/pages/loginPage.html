@@ -3,6 +3,9 @@
 <head>
   <title>{{title}}</title>
   {{> includes/head.html }}
+  {{#hasCaptcha}}
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  {{/hasCaptcha}}
 </head>
 <body>
   {{> includes/header.html }}
@@ -16,7 +19,7 @@
         </h3>
         <noscript>
           <div class="alert alert-danger small" role="alert">
-            <i class="fa fa-exclamation-triangle"></i> <strong>WARNING</strong>: The username entered may include additional sanitizing for web friendly URLs and Userscript engine compatibility. If you wish to see the sanitization changes please enable JavaScript and <a href="/login">start over</a>.
+            <i class="fa fa-exclamation-triangle"></i> <strong>WARNING</strong>: JavaScript must be enabled for new users to register.
           </div>
         </noscript>
         <div class="input-group">
@@ -37,6 +40,9 @@
           </select>
           <div style="width: 100%;">
             <div class="input-group-addon">
+              {{#hasCaptcha}}
+              <div class="h-captcha" data-sitekey="5c63330a-3689-44ea-a1a7-cbf8a4bd23dc"></div>
+              {{/hasCaptcha}}
               <p>
                 <ul class="nav nav-pills nav-justified">
                   <li><a href="/about/Terms-of-Service"><i class="fa fa-legal"></i> Terms of Service</a></li>
@@ -47,13 +53,13 @@
                 <label for="consent" class="small" style="white-space: normal;"><input type="checkbox" id="consent" name="consent" value="true" required="required"> I understand and agree to these binding terms &amp; policies.</label>
               </p>
             </div>
-            <div class="input-group-addon">
-              <button class="btn btn-info" type="submit" id="action" class="pull-left">Next <i class="fa fa-sign-in fa-fw"></i></button>
-            </div>
           </div>
         </div>
+        <div class="input-group-addon">
+          <button class="btn btn-info" type="submit" id="action" class="pull-left">Next <i class="fa fa-sign-in fa-fw"></i></button>
+        </div>
       </form>
-    </div>
+      </div>
   </div>
   {{> includes/footer.html }}
   {{> includes/scripts/loginEcho.html }}
