@@ -8,6 +8,7 @@ var isDbg = require('../libs/debug').isDbg;
 //
 
 //--- Dependency inclusions
+var request = require('request');
 var passport = require('passport');
 var url = require('url');
 var colors = require('ansi-colors');
@@ -74,6 +75,48 @@ function getRedirect(aReq) {
   return redirect;
 }
 
+exports.preauth = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
+  var username = aReq.body.username || aReq.session.username ||
+    (authedUser ? authedUser.name : null);
+  var SECRET = process.env.HCAPTCHA_SECRET_KEY;
+
+  if (!username) {
+    aRes.redirect('/login?noname');
+    return;
+  }
+  // Clean the username of leading and trailing whitespace,
+  // and other stuff that is unsafe in a url
+  username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
+
+  // The username could be empty after the replacements
+  if (!username) {
+    aRes.redirect('/login?noname');
+    return;
+  }
+
+  if (username.length > 64) {
+    aRes.redirect('/login?toolong');
+    return;
+  }
+
+  User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
+    function (aErr, aUser) {
+      if (aErr) {
+        console.error('Authfail with no User found of', username, aErr);
+        aRes.redirect('/login?usernamefail');
+        return;
+      }
+
+      if (aUser || !SECRET) {
+        // Skip captcha for known individuals and not implemented
+        exports.auth(aReq, aRes, aNext);
+      } else {
+        aNext();
+      }
+  });
+};
+
 exports.auth = function (aReq, aRes, aNext) {
   function auth() {
     var authenticate = null;
@@ -111,6 +154,11 @@ exports.auth = function (aReq, aRes, aNext) {
     (authedUser ? authedUser.name : null);
   var authOpts = { failureRedirect: '/login?stratfail' };
   var passportKey = aReq._passport.instance._key;
+
+  if (!authedUser) {
+    // TODO: Send out token and sitekey back to https://hcaptcha.com/siteverify
+    // Maybe postauth routine with req hcaptcha?
+  }
 
   // Yet another passport hack.
   // Initialize the passport session data only when we need it.

@@ -8,6 +8,8 @@ var isDbg = require('./libs/debug').isDbg;
 var rateLimit = require('express-rate-limit');
 var MongoStore = require('rate-limit-mongo');
 var exec = require('child_process').exec;
+var hcaptcha = require('express-hcaptcha');
+var SECRET = process.env.HCAPTCHA_SECRET_KEY;
 
 //
 var main = require('./controllers/index');
@@ -121,7 +123,15 @@ module.exports = function (aApp) {
 
   //--- Routes
   // Authentication routes
-  aApp.route('/auth/').post(authentication.auth);
+  aApp.route('/auth/').post(authentication.preauth, hcaptcha.middleware.validate(SECRET),
+    function (aErr, aReq, aRes, aNext) {
+      if (aErr) {
+        aRes.redirect(302, '/login?authfail');
+      } else {
+        aNext();
+      }
+  }, authentication.auth);
+
   aApp.route('/auth/:strategy').get(authentication.auth);
   aApp.route('/auth/:strategy/callback/:junk?').get(authentication.callback);
   aApp.route('/login').get(main.register);

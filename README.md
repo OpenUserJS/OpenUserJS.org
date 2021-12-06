@@ -32,6 +32,7 @@ Repository | Reference | Recent Version
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
 [diff][diffGHUrl] | [Documentation][diffDOCUrl] | [![NPM version][diffNPMVersionImage]][diffNPMUrl]
 [express][expressGHUrl] | [Documentation][expressDOCUrl] | [![NPM version][expressNPMVersionImage]][expressNPMUrl]
+[express-hcaptcha][express-hcaptchaGHUrl] <br />&#x22D4; [`fork`][express-hcaptchaGHUrlForkUrl] | [Documentation][express-hcaptchaDOCUrl] | [![NPM version][express-hcaptchaNPMVersionImage]][express-hcaptchaNPMUrl]
 [express-minify][express-minifyGHUrl] | [Documentation][express-minifyDOCUrl] | [![NPM version][express-minifyNPMVersionImage]][express-minifyNPMUrl]
 [express-rate-limit][express-rate-limitGHUrl] | [Documentation][express-rate-limitDOCUrl] | [![NPM version][express-rate-limitNPMVersionImage]][express-rate-limitNPMUrl]
 [express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
@@ -181,6 +182,12 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [expressDOCUrl]: https://expressjs.com/
 [expressNPMUrl]: https://www.npmjs.com/package/express
 [expressNPMVersionImage]: https://img.shields.io/npm/v/express.svg?style=flat
+
+[express-hcaptchaGHUrl]: https://github.com/vastus/express-hcaptcha
+[express-hcaptchaGHUrlForkUrl]: https://github.com/OpenUserJS/express-hcaptcha/tree/fork
+[express-hcaptchaDOCUrl]: https://github.com/vastus/express-hcaptcha/blob/master/README.md
+[express-hcaptchaNPMUrl]: https://www.npmjs.com/package/express-hcaptcha
+[express-hcaptchaNPMVersionImage]: https://img.shields.io/npm/v/express-hcaptcha.svg?style=flat
 
 [express-minifyGHUrl]: https://github.com/breeswish/express-minify
 [express-minifyDOCUrl]: https://github.com/breeswish/express-minify/blob/master/README.md
