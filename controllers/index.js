@@ -11,6 +11,7 @@ var isDbg = require('../libs/debug').isDbg;
 var async = require('async');
 var _ = require('underscore');
 var url = require('url');
+var crypto = require('crypto');
 
 //--- Model inclusions
 var Discussion = require('../models/discussion').Discussion;
@@ -261,6 +262,11 @@ exports.register = function (aReq, aRes) {
   //
 
   Strategy.find({}, function (aErr, aAvailableStrategies) {
+    var SECRET = process.env.HCAPTCHA_SECRET_KEY;
+    var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
+    var defaultCSP = ' \'self\'';
+    var captchaCSP = (SECRET ? ' hcaptcha.com *.hcaptcha.com' : '');
+
     if (aErr || !aAvailableStrategies) {
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 503,
@@ -277,6 +283,11 @@ exports.register = function (aReq, aRes) {
         });
       });
 
+      options.hasCaptcha = (SECRET ? true : false);
+
+      options.nonce = crypto.randomBytes(512).toString('hex');
+      defaultCSP += ' \'nonce-' + options.nonce + '\'';
+
       // Insert an empty default strategy at the beginning
       // NOTE: Safari always autoselects an option when disabled
       options.strategies.unshift({'strat': '', 'display': '(default preferred authentication)'});
@@ -286,9 +297,20 @@ exports.register = function (aReq, aRes) {
         return aStrategy.display;
       });
 
+
       aRes.header('Cache-Control', 'no-cache, no-store, must-revalidate');
       aRes.header('Pragma', 'no-cache');
       aRes.header('Expires', '0');
+
+      //
+      aRes.header('Content-Security-Policy',
+        'default-src' + defaultCSP +
+        '; connect-src' + defaultCSP + captchaCSP +
+        '; frame-src'   + defaultCSP + captchaCSP +
+        '; style-src'   + defaultCSP + captchaCSP +
+        '; script-src'  + defaultCSP + captchaCSP +
+        ''
+      );
 
       aRes.render('pages/loginPage', options);
     }
