@@ -1832,6 +1832,40 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       aInnerCallback(null);
     },
     function (aInnerCallback) {
+      // `@connect` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'connect',
+                findMeta(aMeta, 'UserScript.connect.value')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
+      // `@antifeature` validations
+      hasInvalidKey = scriptStorageLib.invalidKey(
+        userName,
+          scriptName,
+            isLib,
+              'antifeature',
+                findMeta(aMeta, 'UserScript.antifeature.value1')
+      );
+
+      if (hasInvalidKey) {
+        aInnerCallback(hasInvalidKey, null);
+        return;
+      }
+
+      aInnerCallback(null);
+    },
+    function (aInnerCallback) {
       // `@noframes` validations
       hasInvalidKey = scriptStorageLib.invalidKey(
         userName,

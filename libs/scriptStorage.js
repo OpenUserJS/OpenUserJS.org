@@ -57,6 +57,47 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
         }
       }
       break;
+    case 'antifeature':
+      if (aKeyValue) {
+        aKeyValue.forEach(function (aElement, aIndex, aArray) {
+          switch (aElement) {
+            case 'ads':
+            case 'membership':
+            case 'miner':
+            case 'referral-link':
+            case 'tracking':
+              // fallsthrough
+              break;
+            default:
+              hasInvalidKeys.push(
+                new statusError({
+                  message: '`@' + aKeyName +
+                    '` with value of `' + aElement + '` is not valid or supported.',
+                  code: 400 // Bad request
+                })
+              );
+          }
+        });
+
+        if (hasInvalidKeys.length > 0) {
+          // NOTE: return only first error since header limitations may throw if RFC2047'd
+          // TODO: May expand this later
+          return hasInvalidKeys[0];
+        }
+
+      }
+      break;
+    case 'connect':
+      if (aIsLib) {
+        if (aKeyValue) {
+          return new statusError({
+            message: '`@' + aKeyName +
+              '` not valid in a Library.',
+            code: 400 // Bad request
+          });
+        }
+      }
+      break;
     case 'downloadURL':
       if (aIsLib) {
         if (aKeyValue) {
