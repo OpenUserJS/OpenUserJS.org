@@ -22,6 +22,7 @@ Test the generated parser with some input for peg.js site at https://pegjs.org/o
 // @noframes
 // @grant     GM_log
 // @grant     none
+// @connect      example.com
 // @homepageURL  http://example.com/foo/atHomepageURL1
 // @homepage     http://example.com/foo/atHomepage2
 // @website      http://example.com/foo/atSite3
@@ -45,9 +46,24 @@ Test the generated parser with some input for peg.js site at https://pegjs.org/o
 // @exclude   http://example.com/foo
 // @exclude   http://example.org/foo
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=your.email@example.org&item_name=OpenUserJS+Author+Donation
+// @antifeature ads
+// @antifeature ads This script contains too many ads.
+// @antifeature:ru ads Этот скрипт содержит рекламу.
+// @antifeature membership
+// @antifeature membership This script requires an account for full functionality.
+// @antifeature miner
+// @antifeature miner This script uses a lot of electricity on your behalf.
+// @antifeature referral-link
+// @antifeature referral-link This script makes money for the Author.
+// @antifeature tracking
+// @antifeature tracking This script contains a tracking of your activity.
 // ==/UserScript==
 
 */
+
+/*
+ * // @antifeature payment should not be supported in FOSS
+ */
 
 {
   var upmix = function (aKeyword) {
@@ -68,6 +84,8 @@ Test the generated parser with some input for peg.js site at https://pegjs.org/o
       case 'installURL':
         aKeyword = 'downloadURL';
         break;
+      case 'domain':
+        aKeyword = 'connect';
     }
 
     return aKeyword;
@@ -91,7 +109,8 @@ line =
       item1Localized /
 
       items1 /
-      items2
+      items2 /
+      itemz2Localized
     )
   '\n'?
   {
@@ -186,6 +205,7 @@ items1 =
       'homepageURL' /
       'homepage' /
       'grant' /
+      'connect' /
       'exclude' /
       'copyright'
     )
@@ -217,4 +237,44 @@ items2 =
       value1: value1,
       value2: value2trimmed
     };
+  }
+
+itemz2Localized =
+  keyword:
+    (
+      'antifeature'
+    )
+  locale: (':' localeValue:$[a-zA-Z-]+ {
+    return localeValue;
+  })?
+  whitespace
+  value1: non_whitespace
+  whitespace?
+  value2: non_newline?
+  {
+    var keywordUpmixed = upmix(keyword);
+    var value2trimmed = null;
+
+    if (value2) {
+      value2trimmed = value2.trim();
+    }
+
+    var obj = {
+      key: keywordUpmixed,
+      value: (value1 + (value2trimmed ? '\u0020' + value2trimmed : '')),
+
+      value1: value1
+    }
+
+    if (value2trimmed) {
+      obj.value2 = value2trimmed;
+    }
+
+    if (locale) {
+      obj.key += ':' + locale;
+      obj.keyword = keywordUpmixed;
+      obj.locale = locale;
+    }
+
+    return obj;
   }
