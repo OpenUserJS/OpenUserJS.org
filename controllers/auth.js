@@ -42,7 +42,13 @@ passport.serializeUser(function (aUser, aDone) {
 // Setup all the auth strategies
 var openIdStrategies = {};
 Strategy.find({}, function (aErr, aStrategies) {
-  // WARNING: No err handling
+  if (aErr) {
+    // Some possible catastrophic error
+    console.error(colors.red(aErr));
+
+    process.exit(1);
+    return;
+  }
 
   // Get OpenId strategies
   for (var name in allStrategies) {
@@ -161,7 +167,16 @@ exports.auth = function (aReq, aRes, aNext) {
     if (aReq.session.cookie.sameSite !== 'lax') {
       aReq.session.cookie.sameSite = 'lax';
       aReq.session.save(function (aErr) {
-        // WARNING: No err handling
+        if (aErr) {
+          // Some possible catastrophic error
+          console.error(colors.red(aErr));
+
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 500,
+            statusMessage: 'Save Session failed.'
+          });
+          return;
+        }
 
         authenticate(aReq, aRes, aNext);
       });
@@ -171,6 +186,7 @@ exports.auth = function (aReq, aRes, aNext) {
   }
 
   function sessionauth() {
+    var captchaToken = aReq.body['g-captcha-response'] ?? aReq.body['h-captcha-response'];
     // Yet another passport hack.
     // Initialize the passport session data only when we need it. i.e. late binding
     if (!aReq.session[passportKey] && aReq._passport.session) {
@@ -180,6 +196,16 @@ exports.auth = function (aReq, aRes, aNext) {
 
     // Save redirect url from the form submission on the session
     aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
+
+    // Save the token from the captcha on the session and remove from body
+    if (captchaToken) {
+      aReq.session.captchaToken = captchaToken;
+      aReq.session.captchaSuccess = aReq.hcaptcha;
+
+      delete aReq.body['g-captcha-response'];
+      delete aReq.body['h-captcha-response'];
+      delete aReq.hcaptcha;
+    }
   }
 
   function anteauth() {
@@ -411,7 +437,16 @@ exports.callback = function (aReq, aRes, aNext) {
 
           if (!aReq.session.passport.oujsOptions.authAttach) {
             expandSession(aReq, aUser, function (aErr) {
-              // WARNING: No err handling
+              if (aErr) {
+                // Some possible catastrophic error
+                console.error(colors.red(aErr));
+
+                statusCodePage(aReq, aRes, aNext, {
+                  statusCode: 500,
+                  statusMessage: 'Expand Session failed.'
+                });
+                return;
+              }
 
               aRes.redirect(doneUri);
             });
