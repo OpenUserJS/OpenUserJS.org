@@ -77,45 +77,59 @@ function getRedirect(aReq) {
 
 exports.preauth = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
-  var username = aReq.body.username || aReq.session.username ||
-    (authedUser ? authedUser.name : null);
+
+  var username = aReq.body.username;
   var SECRET = process.env.HCAPTCHA_SECRET_KEY;
   var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
-  if (!username) {
-    aRes.redirect('/login?noname');
-    return;
+  if (!authedUser) {
+    if (!username) {
+      aRes.redirect('/login?noname');
+      return;
+    }
+    // Clean the username of leading and trailing whitespace,
+    // and other stuff that is unsafe in a url
+    username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
+
+    // The username could be empty after the replacements
+    if (!username) {
+      aRes.redirect('/login?noname');
+      return;
+    }
+
+    if (username.length > 64) {
+      aRes.redirect('/login?toolong');
+      return;
+    }
+
+    User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
+      function (aErr, aUser) {
+        if (aErr) {
+          console.error('Authfail with no User found of', username, aErr);
+          aRes.redirect('/login?usernamefail');
+          return;
+        }
+
+        if (aUser || !SECRET) {
+          // Ensure that casing is identical so we still have it, correctly, when they
+          // get back from authentication
+          aReq.body.username = aUser.name;
+
+          // Skip captcha for known individual and not implemented
+          exports.auth(aReq, aRes, aNext);
+        } else {
+          // Match cleansed name and this is the casing they have chosen
+          aReq.body.username = username;
+
+          // Validate captcha for unknown individual
+          aNext();
+        }
+    });
+  } else {
+    // Skip captcha for already logged in
+    exports.auth(aReq, aRes, aNext);
   }
-  // Clean the username of leading and trailing whitespace,
-  // and other stuff that is unsafe in a url
-  username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
 
-  // The username could be empty after the replacements
-  if (!username) {
-    aRes.redirect('/login?noname');
-    return;
-  }
-
-  if (username.length > 64) {
-    aRes.redirect('/login?toolong');
-    return;
-  }
-
-  User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
-    function (aErr, aUser) {
-      if (aErr) {
-        console.error('Authfail with no User found of', username, aErr);
-        aRes.redirect('/login?usernamefail');
-        return;
-      }
-
-      if (aUser || !SECRET) {
-        // Skip captcha for known individuals and not implemented
-        exports.auth(aReq, aRes, aNext);
-      } else {
-        aNext();
-      }
-  });
 };
 
 exports.auth = function (aReq, aRes, aNext) {
@@ -148,110 +162,115 @@ exports.auth = function (aReq, aRes, aNext) {
     }
   }
 
+  function anteauth() {
+    // Store the useragent always so we still have it when they
+    // get back from authentication and/or attaching
+    aReq.session.useragent = aReq.get('user-agent');
+
+    User.findOne({ name: username },
+      function (aErr, aUser) {
+        var strategies = null;
+        var strat = null;
+
+        if (aErr) { // NOTE: Possible DB error
+          console.error('Authfail with no User found of', username, aErr);
+          aRes.redirect('/login?usernamefail');
+          return;
+        }
+
+        if (aUser) {
+          strategies = aUser.strategies;
+          strat = strategies.pop();
+
+          if (aReq.session.newstrategy) { // authenticate with a new strategy
+            strategy = aReq.session.newstrategy;
+          } else if (!strategy) { // use an existing strategy
+            strategy = strat;
+          } else if (strategies.indexOf(strategy) === -1) {
+            // add a new strategy but first authenticate with existing strategy
+            aReq.session.newstrategy = strategy;
+            strategy = strat;
+          } // else {
+            //   use the strategy that was given in the POST
+            // }
+        }
+
+        if (!strategy) {
+          aRes.redirect('/login?stratfail');
+          return;
+        } else {
+          auth();
+          return;
+        }
+      }
+    );
+  }
+
   var authedUser = aReq.session.user;
   var consent = aReq.body.consent;
   var strategy = aReq.body.auth || aReq.params.strategy;
-  var username = aReq.body.username || aReq.session.username ||
-    (authedUser ? authedUser.name : null);
+  var username = null;
   var authOpts = { failureRedirect: '/login?stratfail' };
   var passportKey = aReq._passport.instance._key;
 
   if (!authedUser) {
+    // Already validated username
+    username = aReq.body.username;
+
+    if (consent !== 'true') {
+      aRes.redirect('/login?noconsent');
+      return;
+    }
+
+
     // TODO: Send out token and sitekey back to https://hcaptcha.com/siteverify
-    // Maybe postauth routine with req hcaptcha?
-  }
+    // ... routine with req hcaptcha?
+    // If successful then do below and call anteauth otherwise redirect
 
-  // Yet another passport hack.
-  // Initialize the passport session data only when we need it.
-  if (!aReq.session[passportKey] && aReq._passport.session) {
-    aReq.session[passportKey] = {};
-    aReq._passport.session = aReq.session[passportKey];
-  }
-
-  // Save redirect url from the form submission on the session
-  aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
-
-  // Allow a logged in user to add a new strategy
-  if (strategy && authedUser) {
-    aReq.session.passport.oujsOptions.authAttach = true;
-    aReq.session.newstrategy = strategy;
-    aReq.session.username = authedUser.name;
-  } else if (authedUser) {
-    aRes.redirect(aReq.session.redirectTo || '/');
-    delete aReq.session.redirectTo;
-    return;
-  } else if (consent !== 'true') {
-    aRes.redirect('/login?noconsent');
-    return;
-  }
-
-  if (!username) {
-    aRes.redirect('/login?noname');
-    return;
-  }
-  // Clean the username of leading and trailing whitespace,
-  // and other stuff that is unsafe in a url
-  username = cleanFilename(username.replace(/^\s+|\s+$/g, ''));
-
-  // The username could be empty after the replacements
-  if (!username) {
-    aRes.redirect('/login?noname');
-    return;
-  }
-
-  if (username.length > 64) {
-    aRes.redirect('/login?toolong');
-    return;
-  }
-
-  // Store the username in the session so we still have it when they
-  // get back from authentication
-  if (!aReq.session.username) {
-    aReq.session.username = username;
-  }
-  // Store the useragent always so we still have it when they
-  // get back from authentication and attaching
-  aReq.session.useragent = aReq.get('user-agent');
-
-  User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
-    function (aErr, aUser) {
-      var strategies = null;
-      var strat = null;
-
-      if (aErr) {
-        console.error('Authfail with no User found of', username, aErr);
-        aRes.redirect('/login?usernamefail');
-        return;
+      // Yet another passport hack.
+      // Initialize the passport session data only when we need it. i.e. late binding
+      if (!aReq.session[passportKey] && aReq._passport.session) {
+        aReq.session[passportKey] = {};
+        aReq._passport.session = aReq.session[passportKey];
       }
 
-      if (aUser) {
-        // Ensure that casing is identical so we still have it, correctly, when they
-        // get back from authentication
-        if (aUser.name !== username) {
-          aReq.session.username = aUser.name;
-        }
-        strategies = aUser.strategies;
-        strat = strategies.pop();
+      // Save redirect url from the form submission on the session
+      aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
 
-        if (aReq.session.newstrategy) { // authenticate with a new strategy
-          strategy = aReq.session.newstrategy;
-        } else if (!strategy) { // use an existing strategy
-          strategy = strat;
-        } else if (strategies.indexOf(strategy) === -1) {
-          // add a new strategy but first authenticate with existing strategy
-          aReq.session.newstrategy = strategy;
-          strategy = strat;
-        } // else use the strategy that was given in the POST
-      }
+      // Store the username always so we still have it when they
+      // get back from authentication
+        aReq.session.username = username;
 
-      if (!strategy) {
-        aRes.redirect('/login');
-        return;
-      } else {
-        auth();
-        return;
-      }
-    });
+      anteauth();
+
+
+  } else {
+    // Already validated username
+    username = aReq.session.username || (authedUser ? authedUser.name : null);
+
+    // Yet another passport hack.
+    // Initialize the passport session data only when we need it. i.e. late binding
+    if (!aReq.session[passportKey] && aReq._passport.session) {
+      aReq.session[passportKey] = {};
+      aReq._passport.session = aReq.session[passportKey];
+    }
+
+    // Save redirect url from the form submission on the session
+    aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
+
+    // Allow a logged in user to add a new strategy
+    if (strategy) {
+      aReq.session.passport.oujsOptions.authAttach = true;
+      aReq.session.newstrategy = strategy;
+      aReq.session.username = authedUser.name;
+    } else {
+      aRes.redirect(aReq.session.redirectTo || '/');
+      delete aReq.session.redirectTo;
+      return;
+    }
+
+    anteauth();
+  }
 };
 
 exports.callback = function (aReq, aRes, aNext) {
