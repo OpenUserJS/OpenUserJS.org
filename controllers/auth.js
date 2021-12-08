@@ -8,7 +8,6 @@ var isDbg = require('../libs/debug').isDbg;
 //
 
 //--- Dependency inclusions
-var request = require('request');
 var passport = require('passport');
 var url = require('url');
 var colors = require('ansi-colors');
@@ -162,6 +161,18 @@ exports.auth = function (aReq, aRes, aNext) {
     }
   }
 
+  function sessionauth() {
+    // Yet another passport hack.
+    // Initialize the passport session data only when we need it. i.e. late binding
+    if (!aReq.session[passportKey] && aReq._passport.session) {
+      aReq.session[passportKey] = {};
+      aReq._passport.session = aReq.session[passportKey];
+    }
+
+    // Save redirect url from the form submission on the session
+    aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
+  }
+
   function anteauth() {
     // Store the useragent always so we still have it when they
     // get back from authentication and/or attaching
@@ -222,41 +233,19 @@ exports.auth = function (aReq, aRes, aNext) {
       return;
     }
 
+    sessionauth();
 
-    // TODO: Send out token and sitekey back to https://hcaptcha.com/siteverify
-    // ... routine with req hcaptcha?
-    // If successful then do below and call anteauth otherwise redirect
+    // Store the username always so we still have it when they
+    // get back from authentication
+    aReq.session.username = username;
 
-      // Yet another passport hack.
-      // Initialize the passport session data only when we need it. i.e. late binding
-      if (!aReq.session[passportKey] && aReq._passport.session) {
-        aReq.session[passportKey] = {};
-        aReq._passport.session = aReq.session[passportKey];
-      }
-
-      // Save redirect url from the form submission on the session
-      aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
-
-      // Store the username always so we still have it when they
-      // get back from authentication
-        aReq.session.username = username;
-
-      anteauth();
-
+    anteauth();
 
   } else {
     // Already validated username
     username = aReq.session.username || (authedUser ? authedUser.name : null);
 
-    // Yet another passport hack.
-    // Initialize the passport session data only when we need it. i.e. late binding
-    if (!aReq.session[passportKey] && aReq._passport.session) {
-      aReq.session[passportKey] = {};
-      aReq._passport.session = aReq.session[passportKey];
-    }
-
-    // Save redirect url from the form submission on the session
-    aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
+    sessionauth();
 
     // Allow a logged in user to add a new strategy
     if (strategy) {

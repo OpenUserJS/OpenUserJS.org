@@ -10,6 +10,7 @@ var MongoStore = require('rate-limit-mongo');
 var exec = require('child_process').exec;
 var hcaptcha = require('express-hcaptcha');
 var SECRET = process.env.HCAPTCHA_SECRET_KEY;
+var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
 //
 var main = require('./controllers/index');
@@ -123,7 +124,7 @@ module.exports = function (aApp) {
 
   //--- Routes
   // Authentication routes
-  aApp.route('/auth/').post(authentication.preauth, hcaptcha.middleware.validate(SECRET),
+  aApp.route('/auth/').post(authentication.preauth, hcaptcha.middleware.validate(SECRET, SITEKEY),
     function (aErr, aReq, aRes, aNext) {
       if (aErr) {
         aRes.redirect(302, '/login?authfail');
