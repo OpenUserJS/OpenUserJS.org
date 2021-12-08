@@ -131,6 +131,15 @@ exports.preauth = function (aReq, aRes, aNext) {
 
 };
 
+exports.errauth = function (aErr, aReq, aRes, aNext) {
+  if (aErr) {
+    console.error(aErr.status, aErr.message);
+    aRes.redirect(302, '/login?authfail');
+  } else {
+    aNext();
+  }
+}
+
 exports.auth = function (aReq, aRes, aNext) {
   function auth() {
     var authenticate = null;

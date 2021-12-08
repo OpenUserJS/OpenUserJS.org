@@ -124,14 +124,10 @@ module.exports = function (aApp) {
 
   //--- Routes
   // Authentication routes
-  aApp.route('/auth/').post(authentication.preauth, hcaptcha.middleware.validate(SECRET, SITEKEY),
-    function (aErr, aReq, aRes, aNext) {
-      if (aErr) {
-        aRes.redirect(302, '/login?authfail');
-      } else {
-        aNext();
-      }
-  }, authentication.auth);
+  aApp.route('/auth/').post(authentication.preauth,
+    hcaptcha.middleware.validate(SECRET, SITEKEY),
+      authentication.errauth,
+        authentication.auth);
 
   aApp.route('/auth/:strategy').get(authentication.auth);
   aApp.route('/auth/:strategy/callback/:junk?').get(authentication.callback);
