@@ -1,6 +1,8 @@
 <script type="text/javascript"{{#nonce}} nonce="{{nonce}}"{{/nonce}}>
   (function () {
 
+    var captcha = document.querySelector('div.h-captcha');
+
     // NOTE: Keep in sync with helper
     function cleanFilename(aFilename, aDefaultName) {
       // Blacklist problem characters (slashes, colons, etc.).
@@ -17,7 +19,6 @@
       var auth = document.querySelector('select[name="auth"]');
       var consent = document.querySelector('input[name="consent"]');
       var action = document.querySelector('button#action');
-      var captcha = document.querySelector('div.h-captcha');
 
       function onInput(aEv) {
         var req = new XMLHttpRequest();
@@ -80,11 +81,26 @@
       if (username && auth && action) {
         action.innerHTML = action.innerHTML.replace(/Next/, 'Sign Up');
 
-        username.addEventListener('input', onInput);
+        username.addEventListener('input', onInput, {
+          capture : true,
+          passive : true
+        });
       }
     }
 
-    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+    if (captcha) {
+      setInterval(function () {
+        if (captcha && captcha.hasChildNodes()) {
+          captcha.removeAttribute('class');
+          captcha.removeAttribute('data-sitekey');
+        }
+      }, 1);
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded, {
+      capture : true,
+      passive : true
+    });
 
   })();
 </script>
