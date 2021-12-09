@@ -461,7 +461,7 @@ exports.callback = function (aReq, aRes, aNext) {
               aReq.session.cookie.sameSite = 'strict';
               aReq.session.save();
             }
-          }, 500);
+          }, 250);
         }
       });
     });

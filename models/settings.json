@@ -3,8 +3,8 @@
  "connect" : "mongodb://dev:oujs123@ds131963.mlab.com:31963/openuserjs_devel",
  "maximum_upload_script_size": 1048576,
  "ttl": {
-  "minimum": 5,
-  "nominal": 6,
+  "minimum": 2,
+  "nominal": 3,
   "timerSanity": 7,
   "timerSanityExpiry": 11,
   "maximum": 12
