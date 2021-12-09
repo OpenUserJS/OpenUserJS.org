@@ -84,7 +84,6 @@ exports.preauth = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var username = aReq.body.username;
-  var SECRET = process.env.HCAPTCHA_SECRET_KEY;
   var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
   if (!authedUser) {
@@ -115,19 +114,28 @@ exports.preauth = function (aReq, aRes, aNext) {
           return;
         }
 
-        if (aUser || !SECRET) {
+        if (aUser) {
           // Ensure that casing is identical so we still have it, correctly, when they
           // get back from authentication
           aReq.body.username = aUser.name;
 
-          // Skip captcha for known individual and not implemented
+          if (aUser) {
+            aReq.knownUser = true;
+          }
+
+          // Skip captcha for known individual
           exports.auth(aReq, aRes, aNext);
         } else {
           // Match cleansed name and this is the casing they have chosen
           aReq.body.username = username;
 
           // Validate captcha for unknown individual
-          aNext();
+          if (!SITEKEY) {
+            // Skip captcha for not implemented
+            exports.auth(aReq, aRes, aNext);
+          } else {
+            aNext();
+          }
         }
     });
   } else {
@@ -196,6 +204,10 @@ exports.auth = function (aReq, aRes, aNext) {
 
     // Save redirect url from the form submission on the session
     aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
+
+    // Save the known user on the session and remove
+    aReq.session.knownUser = aReq.knownUser;
+    delete aReq.knownUser;
 
     // Save the token from the captcha on the session and remove from body
     if (captchaToken) {
@@ -301,8 +313,17 @@ exports.callback = function (aReq, aRes, aNext) {
   var strategy = aReq.params.strategy;
   var username = aReq.session.username;
   var newstrategy = aReq.session.newstrategy;
+  var knownUser = aReq.session.knownUser;
+  var captchaToken = aReq.session.captchaToken;
   var strategyInstance = null;
   var doneUri = aReq.session.user ? '/user/preferences' : '/';
+  var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
+
+
+  if (SITEKEY && !knownUser && !captchaToken) {
+    aRes.redirect('/login?fail');
+    return;
+  }
 
   // The callback was called improperly or sesssion expired
   if (!strategy || !username) {
