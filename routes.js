@@ -9,8 +9,8 @@ var rateLimit = require('express-rate-limit');
 var MongoStore = require('rate-limit-mongo');
 var exec = require('child_process').exec;
 var hcaptcha = require('express-hcaptcha');
-var SECRET = process.env.HCAPTCHA_SECRET_KEY;
 var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
+var SECRET = process.env.HCAPTCHA_SECRET_KEY;
 
 //
 var main = require('./controllers/index');

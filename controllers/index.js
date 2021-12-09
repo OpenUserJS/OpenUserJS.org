@@ -218,7 +218,6 @@ exports.register = function (aReq, aRes) {
   var authedUser = aReq.session.user;
   var tasks = [];
 
-  var SECRET = process.env.HCAPTCHA_SECRET_KEY;
   var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
   // If already logged in, go back.
@@ -227,8 +226,7 @@ exports.register = function (aReq, aRes) {
     return;
   }
 
-  options.hasCaptcha = (SECRET ? true : false);
-  options.hcaptchaSiteKey = (SITEKEY ? SITEKEY : '');
+  options.hasCaptcha = (SITEKEY ? SITEKEY : '');
 
   options.redirectTo = getRedirect(aReq);
 
@@ -262,10 +260,9 @@ exports.register = function (aReq, aRes) {
   //
 
   Strategy.find({}, function (aErr, aAvailableStrategies) {
-    var SECRET = process.env.HCAPTCHA_SECRET_KEY;
     var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
     var defaultCSP = ' \'self\'';
-    var captchaCSP = (SECRET ? ' hcaptcha.com *.hcaptcha.com' : '');
+    var captchaCSP = (SITEKEY ? ' hcaptcha.com *.hcaptcha.com' : '');
 
     if (aErr || !aAvailableStrategies) {
       statusCodePage(aReq, aRes, aNext, {
@@ -283,7 +280,7 @@ exports.register = function (aReq, aRes) {
         });
       });
 
-      options.hasCaptcha = (SECRET ? true : false);
+      options.hasCaptcha = (SITEKEY ? SITEKEY : '');
 
       options.nonce = crypto.randomBytes(512).toString('hex');
       defaultCSP += ' \'nonce-' + options.nonce + '\'';
