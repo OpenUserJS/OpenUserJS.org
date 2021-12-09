@@ -4,7 +4,7 @@
   <title>{{title}}</title>
   {{> includes/head.html }}
   {{#hasCaptcha}}
-  <script src="https://js.hcaptcha.com/1/api.js" async="async" defer="defer"></script>
+  <script src="https://js.hcaptcha.com/1/api.js" async="async" defer="defer"{{#nonce}} nonce="{{nonce}}"{{/nonce}}></script>
   {{/hasCaptcha}}
 </head>
 <body>
@@ -38,7 +38,7 @@
             <option value="{{strat}}" {{#selected}}selected="selected"{{/selected}}{{#disabled}} disabled="disabled"{{/disabled}}>{{display}}</option>
             {{/strategies}}
           </select>
-          <div style="width: 100%;">
+          <div class="width-100">
             <div class="input-group-addon">
               {{#hasCaptcha}}
               <div class="h-captcha" data-sitekey="{{hasCaptcha}}"></div>
@@ -50,7 +50,7 @@
                 </ul>
               </p>
               <p>
-                <label for="consent" class="small" style="white-space: normal;"><input type="checkbox" id="consent" name="consent" value="true" required="required"> I understand and agree to these binding terms &amp; policies.</label>
+                <label for="consent" class="small white-space-normal"><input type="checkbox" id="consent" name="consent" value="true" required="required"> I understand and agree to these binding terms &amp; policies.</label>
               </p>
             </div>
           </div>

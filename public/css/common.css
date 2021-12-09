@@ -603,6 +603,14 @@ time.iconic-link em {
   color: #2c3e50;
 }
 
+/* Login page */
+.white-space-normal {
+  white-space: normal;
+}
+
+.width-100 {
+  width: 100%;
+}
 /* Bootstrap 4.x backports */
 .table > tbody > tr > td.align-middle {
   vertical-align: middle;

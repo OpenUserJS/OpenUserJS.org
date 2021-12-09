@@ -282,7 +282,7 @@ exports.register = function (aReq, aRes) {
 
       options.hasCaptcha = (SITEKEY ? SITEKEY : '');
 
-      options.nonce = crypto.randomBytes(512).toString('hex');
+      options.nonce = crypto.randomBytes(512).toString('base64');
       defaultCSP += ' \'nonce-' + options.nonce + '\'';
 
       // Insert an empty default strategy at the beginning
