@@ -420,7 +420,7 @@ app.use(session({
   saveUninitialized: false,
   unset: 'destroy',
   cookie: {
-    maxAge: 5 * 60 * 1000, // minutes in ms NOTE: Expanded after successful auth
+    maxAge: 2 * 60 * 1000, // minutes in ms NOTE: Expanded after successful auth
     secure: (isSecured ? true : false),
     sameSite: 'strict'
   },
