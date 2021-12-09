@@ -213,6 +213,10 @@ exports.auth = function (aReq, aRes, aNext) {
     if (captchaToken) {
       aReq.session.captchaToken = captchaToken;
       aReq.session.captchaSuccess = aReq.hcaptcha;
+
+      delete aReq.body['g-captcha-response'];
+      delete aReq.body['h-captcha-response'];
+      delete aReq.hcaptcha;
     }
   }
 
@@ -310,14 +314,13 @@ exports.callback = function (aReq, aRes, aNext) {
   var username = aReq.session.username;
   var newstrategy = aReq.session.newstrategy;
   var knownUser = aReq.session.knownUser;
-  var sessionCaptchaToken = aReq.session.captchaToken;
-  var captchaToken = aReq.body['g-captcha-response'] ?? aReq.body['h-captcha-response'];
+  var captchaToken = aReq.session.captchaToken;
 
   var strategyInstance = null;
   var doneUri = aReq.session.user ? '/user/preferences' : '/';
   var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
-  if (SITEKEY && !knownUser && captchaToken !== sessionCaptchaToken) {
+  if (SITEKEY && !knownUser && !captchaToken) {
     aRes.redirect('/login?authfail');
     return;
   }
