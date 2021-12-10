@@ -261,7 +261,7 @@ exports.register = function (aReq, aRes) {
 
   Strategy.find({}, function (aErr, aAvailableStrategies) {
     var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
-    var defaultCSP = ' \'self\'';
+    var defaultCSP = ' https: \'self\'';
     var captchaCSP = (SITEKEY ? ' hcaptcha.com *.hcaptcha.com' : '');
 
     if (aErr || !aAvailableStrategies) {
@@ -301,11 +301,17 @@ exports.register = function (aReq, aRes) {
 
       //
       aRes.header('Content-Security-Policy',
-        'default-src' + defaultCSP +
+        'default-src \'none\'' +
+        '; base-uri'    + defaultCSP +
+        '; child-src'   + defaultCSP +
         '; connect-src' + defaultCSP + captchaCSP +
+        '; font-src'    + defaultCSP +
         '; frame-src'   + defaultCSP + captchaCSP +
-        '; style-src'   + defaultCSP + captchaCSP +
+        '; img-src'     + defaultCSP +
         '; script-src'  + defaultCSP + captchaCSP +
+        '; style-src'   + defaultCSP + captchaCSP +
+        '; form-action' + defaultCSP +
+        '; navigate-to' + defaultCSP +
         ''
       );
 

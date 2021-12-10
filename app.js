@@ -58,6 +58,7 @@ var pingCertTimer = null;
 var ttlSanityTimer = null;
 
 var app = express();
+app.disable('x-powered-by');
 
 var modifySessions = require('./libs/modifySessions');
 
