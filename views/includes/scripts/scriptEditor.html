@@ -383,7 +383,12 @@
         editor.getSession().setMode("ace/mode/javascript");
         editor.container.style.fontFamily = "monospace";
 
-        {{#readOnly}}editor.setReadOnly(true);{{/readOnly}}
+        {{#readOnly}}
+        ['showSettingsMenu', 'overwrite'].forEach(function (aE, aI, aA) {
+          editor.commands.removeCommand(aE);
+        });
+        editor.setReadOnly(true);
+        {{/readOnly}}
         {{^readOnly}}
         // TODO: Submit using AJAX
         $('#submit_code').click(function () {
