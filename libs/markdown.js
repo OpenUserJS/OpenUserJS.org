@@ -62,8 +62,12 @@ function externalPolicy(aTagName, aAttribs) {
   var attribRelAdd = [];
   var attribRelReject = [
     'dns-prefetch',
+    'modulepreload',
+    'pingback',
     'preconnect',
-    'prefetch'
+    'prefetch',
+    'preload',
+    'prerender'
   ];
   var obj = null;
   var dn = null;
@@ -76,6 +80,7 @@ function externalPolicy(aTagName, aAttribs) {
         attribRelAdd.push('external');
         attribRelAdd.push('noreferrer');
         attribRelAdd.push('noopener');
+        attribRelAdd.push('ugc');
 
         if (obj.URL) {
           matches = obj.URL.hostname.match(/\.?(.*?\..*)$/);
