@@ -26,7 +26,7 @@
         {{#script.support}}
           {{^isSameOrigin}}
           <div class="alert alert-success small" role="alert">
-            <p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}" rel="external noreferrer noopener nofollow" referrerpolicy="same-origin">{{text}}</a></p>
+            <p><i class="fa fa-fw fa-support"></i> <b>Support:</b> <a href="{{{url}}}" rel="external noreferrer noopener nofollow ugc" referrerpolicy="same-origin">{{text}}</a></p>
             The script author requests that you use their preferred primary support method when filing an issue. Please consider using that for regular issues.
           </div>
           {{/isSameOrigin}}
@@ -60,7 +60,7 @@
           {{#script.contribution}}
           <div class="panel-footer">
             <div class="btn-group btn-group-justified">
-              <a rel="external noreferrer noopener nofollow" referrerpolicy="same-origin" href="#" data-toggle="modal" data-target="#donateScriptModal" class="btn btn-donate" title="Monetary donations for this Author">
+              <a rel="bookmark" referrerpolicy="same-origin" href="#" data-toggle="modal" data-target="#donateScriptModal" class="btn btn-donate" title="Monetary donations for this Author">
                 <i class="fa fa-fw fa-money"></i><span class=""> Donate</span>
               </a>
             </div>
