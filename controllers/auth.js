@@ -308,12 +308,13 @@ exports.callback = function (aReq, aRes, aNext) {
   var newstrategy = aReq.session.newstrategy;
   var knownUser = aReq.session.knownUser;
   var captchaToken = aReq.session.captchaToken;
+  var captchaSuccess = aReq.session.captchaSuccess;
 
   var strategyInstance = null;
   var doneUri = aReq.session.user ? '/user/preferences' : '/';
   var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
-  if (SITEKEY && !knownUser && !captchaToken) {
+  if (SITEKEY && !knownUser && !captchaToken && !captchaSuccess) {
     aRes.redirect('/login?authfail');
     return;
   }
