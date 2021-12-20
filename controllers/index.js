@@ -28,6 +28,8 @@ var getFlaggedListForContent = require('./flag').getFlaggedListForContent;
 //--- Library inclusions
 // var indexLib = require('../libs/index');
 
+var getRedirect = require('../libs/helpers').getRedirect;
+
 var modelParser = require('../libs/modelParser');
 var modelQuery = require('../libs/modelQuery');
 
@@ -195,21 +197,6 @@ exports.home = function (aReq, aRes) {
   //---
   async.parallel(tasks, asyncComplete);
 };
-
-// Get the referer url for redirect after login/logout
-function getRedirect(aReq) {
-  var referer = aReq.get('Referer');
-  var redirect = '/';
-
-  if (referer) {
-    referer = url.parse(referer);
-    if (referer.hostname === aReq.hostname) {
-      redirect = referer.path;
-    }
-  }
-
-  return redirect;
-}
 
 // UI for user registration
 exports.register = function (aReq, aRes) {
