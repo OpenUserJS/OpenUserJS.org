@@ -9,7 +9,6 @@ var isDbg = require('../libs/debug').isDbg;
 
 //--- Dependency inclusions
 var passport = require('passport');
-var url = require('url');
 var colors = require('ansi-colors');
 
 //--- Model inclusions
@@ -25,6 +24,8 @@ var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
 var verifyPassport = require('../libs/passportVerify').verify;
 var cleanFilename = require('../libs/helpers').cleanFilename;
+var getRedirect = require('../libs/helpers').getRedirect;
+var isSameOrigin = require('../libs/helpers').isSameOrigin;
 var addSession = require('../libs/modifySessions').add;
 var expandSession = require('../libs/modifySessions').expand;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
@@ -63,22 +64,6 @@ Strategy.find({}, function (aErr, aStrategies) {
     loadPassport(aStrategy);
   });
 });
-
-// Get the referer url for redirect after login/logout
-// WARNING: Also found in `./controller/index.js`
-function getRedirect(aReq) {
-  var referer = aReq.get('Referer');
-  var redirect = '/';
-
-  if (referer) {
-    referer = url.parse(referer);
-    if (referer.hostname === aReq.hostname) {
-      redirect = referer.path;
-    }
-  }
-
-  return redirect;
-}
 
 exports.preauth = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
@@ -194,7 +179,9 @@ exports.auth = function (aReq, aRes, aNext) {
   }
 
   function sessionauth() {
+    var redirectTo = null;
     var captchaToken = aReq.body['g-captcha-response'] ?? aReq.body['h-captcha-response'];
+
     // Yet another passport hack.
     // Initialize the passport session data only when we need it. i.e. late binding
     if (!aReq.session[passportKey] && aReq._passport.session) {
@@ -202,8 +189,14 @@ exports.auth = function (aReq, aRes, aNext) {
       aReq._passport.session = aReq.session[passportKey];
     }
 
-    // Save redirect url from the form submission on the session
-    aReq.session.redirectTo = aReq.body.redirectTo || getRedirect(aReq);
+    // Validate and save redirect url from the form submission on the session
+    redirectTo = isSameOrigin(aReq.body.redirectTo || getRedirect(aReq));
+    if (redirectTo.result) {
+      aReq.session.redirectTo = redirectTo.URL.pathname;
+    } else {
+      delete aReq.body.redirectTo;
+      aReq.session.redirectTo = '/';
+    }
 
     // Save the known user on the session and remove
     aReq.session.knownUser = aReq.knownUser;
