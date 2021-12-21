@@ -21,6 +21,7 @@
     "express-minify": "1.0.0",
     "express-rate-limit": "5.5.1",
     "express-session": "1.17.2",
+    "express-svg-captcha": "1.0.1",
     "font-awesome": "4.7.0",
     "formidable": "1.2.2",
     "git-rev": "0.2.1",

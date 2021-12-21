@@ -36,6 +36,7 @@ Repository | Reference | Recent Version
 [express-minify][express-minifyGHUrl] | [Documentation][express-minifyDOCUrl] | [![NPM version][express-minifyNPMVersionImage]][express-minifyNPMUrl]
 [express-rate-limit][express-rate-limitGHUrl] | [Documentation][express-rate-limitDOCUrl] | [![NPM version][express-rate-limitNPMVersionImage]][express-rate-limitNPMUrl]
 [express-session][express-sessionGHUrl] | [Documentation][express-sessionDOCUrl] | [![NPM version][express-sessionNPMVersionImage]][express-sessionNPMUrl]
+[express-svg-captcha][express-svg-captchaGHUrl] | [Documentation][express-svg-captchaDOCUrl] | [![NPM version][express-svg-captchaNPMVersionImage]][express-svg-captchaNPMUrl]
 [font-awesome][font-awesomeGHUrl] | [Documentation][font-awesomeDOCUrl] | [![NPM version][font-awesomeNPMVersionImage]][font-awesomeNPMUrl]
 [formidable][formidableGHUrl] | [Documentation][formidableDOCUrl] | [![NPM version][formidableNPMVersionImage]][formidableNPMUrl]
 [git-rev][git-revGHUrl] | [Documentation][git-revDOCUrl] | [![NPM version][git-revNPMVersionImage]][git-revNPMUrl]
@@ -203,6 +204,11 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [express-sessionDOCUrl]: https://github.com/expressjs/session/blob/master/README.md
 [express-sessionNPMUrl]: https://www.npmjs.com/package/express-session
 [express-sessionNPMVersionImage]: https://img.shields.io/npm/v/express-session.svg?style=flat
+
+[express-svg-captchaGHUrl]: https://github.com/cmd430/express-svg-captcha
+[express-svg-captchaDOCUrl]: https://github.com/cmd430/express-svg-captcha/blob/master/README.md
+[express-svg-captchaNPMUrl]: https://www.npmjs.com/package/express-svg-captcha
+[express-svg-captchaNPMVersionImage]: https://img.shields.io/npm/v/express-svg-captcha.svg?style=flat
 
 [font-awesomeGHUrl]: https://github.com/FortAwesome/Font-Awesome
 [font-awesomeDOCUrl]: https://fontawesome.com/

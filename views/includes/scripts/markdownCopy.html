@@ -1,0 +1,46 @@
+<script type="text/javascript">
+  (function () {
+    var textareaContent = null;
+
+    function show() {
+      var textarea = document.querySelector('.user-content textarea[name=about]');
+      if (textarea) {
+        textarea.setAttribute('readonly', 'readonly');
+        textareaContent = textarea.value;
+      } else {
+        textareaContent = '';
+      }
+
+      var submit = document.querySelector('#captchaModal button[type=submit]');
+      if (submit) {
+        document.addEventListener('click', click, { capture: true, passive: true });
+      }
+    }
+
+    function hide() {
+      var textarea = document.querySelector('.user-content textarea[name=about]');
+      if (textarea) {
+        textarea.removeAttribute('readonly', 'readonly');
+        textareaContent = null;
+      }
+    }
+
+    function click() {
+      var textarea = document.querySelector('.user-content textarea[name=about]');
+      var input = document.querySelector('#captchaModal input[name=about]');
+      var submit = document.querySelector('#captchaModal button[type=submit]');
+
+      if (input && textarea && textarea.value === textareaContent) {
+        input.value = textareaContent;
+      }
+      if (submit) {
+        submit.removeEventListener('click', click, { capture: true, passive: true });
+      }
+    }
+
+    // WARNING: jQuery required for event capture with *bootstrap*@3.x events
+    $('#captchaModal').on('show.bs.modal', show);
+    $('#captchaModal').on('hide.bs.modal', hide);
+
+  })();
+</script>
