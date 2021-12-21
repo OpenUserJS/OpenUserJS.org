@@ -149,6 +149,7 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
 
   aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
+  aApp.route('/users/:username/profile/captcha').get(authentication.validateUser, user.userEditProfilePageCaptcha);
   aApp.route('/users/:username/update').post(authentication.validateUser, admin.adminUserUpdate);
   // NOTE: Some below inconsistent with priors
   aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);

@@ -18,3 +18,38 @@
     </div>
   </div>
 </div>
+{{#user.hasCaptcha}}
+<div class="modal fade" id="captchaModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><i class="fa fa-fw fa-user"></i> I am human</h4>
+      </div>
+      <div class="modal-body text-center d-block">
+        <p>Please solve this.</p>
+      </div>
+      <div class="form-group has-feedback has-clear text-center">
+        <img class="" src="/users/{{user.slugUrl}}/profile/captcha"/>
+      </div>
+      <form action="" method="post">
+        <div class="modal-footer">
+          <input type="hidden" name="about">
+          <div class="input-group col-xs-12">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
+            </span>
+            <input class="form-control text-center" type="text" name="captcha" placeholder="Type solution here" autocomplete="off"/>
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-success" title="Submit solution">
+                <i class="fa fa-fw fa-check"></i><span > Submit</span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{{> includes/scripts/markdownCopy.html }}
+{{/user.hasCaptcha}}

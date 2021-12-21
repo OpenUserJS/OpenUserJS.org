@@ -15,6 +15,7 @@ var async = require('async');
 var _ = require('underscore');
 var util = require('util');
 var rfc2047 = require('rfc2047');
+var expressCaptcha = require('express-svg-captcha');
 
 var SPDX = require('spdx-license-ids');
 
@@ -940,6 +941,25 @@ exports.userSyncListPage = function (aReq, aRes, aNext) {
     async.parallel(tasks, asyncComplete);
   });
 };
+
+var captcha = new expressCaptcha({
+  isMath: true,           // if true will be a simple math equation
+  useFont: null,          // Can be path to ttf/otf font file
+  size: 4,                // number of characters for string capthca
+  ignoreChars: '0o1i',    // characters to not include in string capthca
+  noise: 3,               // number of noise lines
+  color: true,            // if true noise lines and captcha characters will be randomly colored
+                          // (is set to true if background is set)
+  background: null,       // HEX or RGB(a) value for background set to null for transparent
+  width: 200,             // width of captcha
+  height: 50,             // height of captcha
+  fontSize: 56,           // font size for captcha
+  charPreset: null        // string of characters for use with string captcha set to null for default aA-zZ
+});
+
+exports.userEditProfilePageCaptcha = function (aReq, aRes, aNext) {
+  (captcha.generate())(aReq, aRes, aNext);
+}
 
 exports.userEditProfilePage = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
@@ -2059,16 +2079,56 @@ exports.update = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   // Update the about section of a user's profile
-  User.findOneAndUpdate({ _id: authedUser._id }, { about: aReq.body.about },
-    function (aErr, aUser) {
+  User.findOne({ _id: authedUser._id }, function (aErr, aUser) {
+    if (aErr) {
+      aRes.redirect('/');
+      return;
+    }
+
+    if (!aUser) {
+      msg = 'No user found.'
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 500,
+        statusMessage: msg
+      });
+      return;
+    }
+
+    if (!captcha.validate(aReq, aReq.body.captcha)) {
+      aRes.redirect('/users/' + encodeURIComponent(aUser.name));
+      return;
+    }
+
+    // Update DB
+    aUser.about = aReq.body.about;
+    aUser.save(function (aErr, aUser) {
+      var msg = null;
+
       if (aErr) {
-        aRes.redirect('/');
+        msg = 'Unknown error when saving Profile.';
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500,
+          statusMessage: [msg, 'Please contact Development'].join(' ')
+        });
+        console.error(aErr);
+        return;
+      }
+      if (!aUser) {
+        msg = 'No user handle when saving Profile.';
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 500,
+          statusMessage: [msg, 'Please contact Development'].join(' ')
+        });
+        console.error(msg)
         return;
       }
 
+      // Update session
       authedUser.about = aUser.about;
+
       aRes.redirect('/users/' + encodeURIComponent(aUser.name));
     });
+  });
 };
 
 // Submit a script through the web editor

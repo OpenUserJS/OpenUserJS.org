@@ -13,18 +13,16 @@
         <div class="row">
           <div class="col-xs-12">
             {{> includes/userPageHeader.html }}
-            <form action="" method="post">
               <div class="user-content">
                 <textarea name="about" data-provide="markdown" data-iconlibrary="fa" rows="28" class="col-xs-12" placeholder="Type Profile here using Markdown.">{{user.about}}</textarea>
               </div>
               <div class="btn-toolbar">
                 <a href="/about/Frequently-Asked-Questions"><i class="fa fa-question-circle" title="FAQ"></i></a>
                 <a href="https://guides.github.com/features/mastering-markdown/" title="GitHub Flavor Markdown compatible"><i class="octicon octicon-markdown"></i></a>
-                <button type="submit" class="btn btn-sm btn-success pull-right" title="Save Profile changes">
+                <a rel="bookmark" referrerpolicy="same-origin" href="#" data-toggle="modal" data-target="#captchaModal" class="btn btn-sm btn-success pull-right" title="Save Profile changes">
                   <i class="fa fa-fw fa-save"></i><span class="hidden-xs"> Save</span>
-                </button>
+                </a>
               </div>
-            </form>
           </div>
         </div>
       </div>
