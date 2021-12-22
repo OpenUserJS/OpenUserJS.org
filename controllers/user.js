@@ -16,6 +16,7 @@ var _ = require('underscore');
 var util = require('util');
 var rfc2047 = require('rfc2047');
 var expressCaptcha = require('express-svg-captcha');
+var svgCaptcha = require('svg-captcha');
 
 var SPDX = require('spdx-license-ids');
 
@@ -946,8 +947,11 @@ exports.userSyncListPage = function (aReq, aRes, aNext) {
   });
 };
 
-var captcha = new expressCaptcha({
+var captchaOpts = {
   isMath: true,           // if true will be a simple math equation
+  mathMin: 1,
+  mathMin: 19,
+  mathOperator: '+-',
   useFont: null,          // Can be path to ttf/otf font file
   size: 4,                // number of characters for string capthca
   ignoreChars: '0o1i',    // characters to not include in string capthca
@@ -959,7 +963,8 @@ var captcha = new expressCaptcha({
   height: 50,             // height of captcha
   fontSize: 56,           // font size for captcha
   charPreset: null        // string of characters for use with string captcha set to null for default aA-zZ
-});
+};
+var captcha = new expressCaptcha(captchaOpts);
 
 exports.userEditProfilePageCaptcha = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
@@ -968,8 +973,7 @@ exports.userEditProfilePageCaptcha = function (aReq, aRes, aNext) {
   if (authedUser.slugUrl === username) {
     (captcha.generate())(aReq, aRes, aNext);
   } else {
-    // NOTE: Keep class in sync with expressCaptcha metric
-    aRes.redirect('/images/favicon.min.svg');
+    aRes.type('svg').status(200).send(svgCaptcha('3.14 x 2.71 / 0', captchaOpts));
   }
 }
 
