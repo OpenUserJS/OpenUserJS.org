@@ -28,7 +28,14 @@ var issue = require('./controllers/issue');
 var scriptStorage = require('./controllers/scriptStorage');
 var document = require('./controllers/document');
 
+var svgCaptcha = require('svg-captcha');
+
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
+
+//--- Configuration inclusions
+var settings = require('./models/settings.json');
+
+//--
 
 var waitInstallMin = isDev ? 1 : 60;
 var installLimiter = rateLimit({
@@ -57,6 +64,24 @@ var apiLimiter = rateLimit({
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitApiMin * 60 + 60);
     aRes.status(429).send();
+  }
+});
+
+var waitCaptchaMin = isDev ? 1: 120;
+var captchaLimiter = rateLimit({
+  store: (isDev ? undefined : new MongoStore({
+    uri: 'mongodb://127.0.0.1:27017/captchaLimiter',
+    resetExpireDateOnChange: true, // Rolling
+    expireTimeMs: waitCaptchaMin * 60 * 1000 // n minutes for mongo store
+  })),
+  windowMs: waitCaptchaMin * 60 * 1000, // n minutes for all stores
+  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    aRes.type('svg').status(200).send(
+      svgCaptcha('429 Too Many Requests', Object.assign(settings.captchaOpts, {
+        width: 350
+      }))
+    );
   }
 });
 
@@ -149,7 +174,7 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
 
   aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
-  aApp.route('/users/:username/profile/captcha').get(authentication.validateUser, user.userEditProfilePageCaptcha);
+  aApp.route('/users/:username/profile/captcha').get(captchaLimiter, authentication.validateUser, user.userEditProfilePageCaptcha);
   aApp.route('/users/:username/update').post(authentication.validateUser, admin.adminUserUpdate);
   // NOTE: Some below inconsistent with priors
   aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
