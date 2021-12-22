@@ -104,12 +104,20 @@ exports.preauth = function (aReq, aRes, aNext) {
           // get back from authentication
           aReq.body.username = aUser.name;
 
-          if (aUser) {
-            aReq.knownUser = true;
-          }
+          if (!aUser._probationary) {
+            // Skip captcha for well known individual
+            aReq.wellKnownUser = true;
 
-          // Skip captcha for known individual
-          exports.auth(aReq, aRes, aNext);
+            exports.auth(aReq, aRes, aNext);
+          } else {
+            // Validate captcha for lesser known individual
+            if (!SITEKEY) {
+              // Skip captcha for not implemented
+              exports.auth(aReq, aRes, aNext);
+            } else {
+              aNext();
+            }
+          }
         } else {
           // Match cleansed name and this is the casing they have chosen
           aReq.body.username = username;
@@ -199,8 +207,8 @@ exports.auth = function (aReq, aRes, aNext) {
     }
 
     // Save the known user on the session and remove
-    aReq.session.knownUser = aReq.knownUser;
-    delete aReq.knownUser;
+    aReq.session.wellKnownUser = aReq.wellKnownUser;
+    delete aReq.wellKnownUser;
 
     // Save the token from the captcha on the session and remove from body
     if (captchaToken) {
@@ -306,7 +314,7 @@ exports.callback = function (aReq, aRes, aNext) {
   var strategy = aReq.params.strategy;
   var username = aReq.session.username;
   var newstrategy = aReq.session.newstrategy;
-  var knownUser = aReq.session.knownUser;
+  var wellKnownUser = aReq.session.wellKnownUser;
   var captchaToken = aReq.session.captchaToken;
   var captchaSuccess = aReq.session.captchaSuccess;
 
@@ -314,7 +322,7 @@ exports.callback = function (aReq, aRes, aNext) {
   var doneUri = aReq.session.user ? '/user/preferences' : '/';
   var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
-  if (SITEKEY && !knownUser && !captchaToken && !captchaSuccess) {
+  if (SITEKEY && !wellKnownUser && !captchaToken && !captchaSuccess) {
     aRes.redirect('/login?authfail');
     return;
   }
