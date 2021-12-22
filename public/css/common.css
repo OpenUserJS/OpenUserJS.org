@@ -611,6 +611,12 @@ time.iconic-link em {
 .width-100 {
   width: 100%;
 }
+
+/* NOTE: Keep class in sync with expressCaptcha metric */
+.svg-captcha {
+  height: 50px;
+}
+
 /* Bootstrap 4.x backports */
 .table > tbody > tr > td.align-middle {
   vertical-align: middle;

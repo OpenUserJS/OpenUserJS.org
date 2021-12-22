@@ -962,7 +962,15 @@ var captcha = new expressCaptcha({
 });
 
 exports.userEditProfilePageCaptcha = function (aReq, aRes, aNext) {
-  (captcha.generate())(aReq, aRes, aNext);
+  var authedUser = aReq.session.user;
+  var username = aReq.params.username;
+
+  if (authedUser.slugUrl === username) {
+    (captcha.generate())(aReq, aRes, aNext);
+  } else {
+    // NOTE: Keep class in sync with expressCaptcha metric
+    aRes.redirect('/images/favicon.min.svg');
+  }
 }
 
 exports.userEditProfilePage = function (aReq, aRes, aNext) {
