@@ -116,7 +116,11 @@ exports.exist = function (aReq, aRes) {
       aRes.set('Warning', msg);
     }
 
-    aRes.status(200).send();
+    if (aUser._probationary) {
+      aRes.status(204).send();
+    } else {
+      aRes.status(200).send();
+    }
   });
 };
 

@@ -6,6 +6,8 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 
 //
+var moment = require('moment');
+
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
@@ -34,6 +36,10 @@ var userSchema = new Schema({
   },
   flagged: Boolean,
   sessionIds: [String]
+});
+
+userSchema.virtual('_probationary').get(function () {
+  return !moment().isAfter(moment(this.created).add(1, 'year'));
 });
 
 var User = mongoose.model('User', userSchema);

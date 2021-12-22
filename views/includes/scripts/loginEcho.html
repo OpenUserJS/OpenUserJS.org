@@ -19,6 +19,7 @@
       var auth = document.querySelector('select[name="auth"]');
       var consent = document.querySelector('input[name="consent"]');
       var action = document.querySelector('button#action');
+      var blocking = null;
 
       function onInput(aEv) {
         var req = new XMLHttpRequest();
@@ -30,7 +31,11 @@
           action.classList.remove('btn-info');
 
           if (captcha) {
-            captcha.style.display = 'none';
+            if (!blocking) {
+              captcha.style.display = 'none';
+            } else {
+              captcha.style.display = 'block';
+            }
           }
 
           if (aConsent) {
@@ -57,7 +62,13 @@
           req.onreadystatechange = function () {
             if (this.readyState == this.DONE) {
               switch (this.status) {
+                case 204:
+                  blocking = true;
+                  show(/ consent$/.test(this.getResponseHeader('Warning')));
+                  auth.value = '';
+                  break;
                 case 200:
+                  blocking = false;
                   show(/ consent$/.test(this.getResponseHeader('Warning')));
                   auth.value = '';
                   break;
