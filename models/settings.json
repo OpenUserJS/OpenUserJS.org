@@ -10,6 +10,23 @@
   "maximum": 12
  },
 
+ "captchaOpts" : {
+  "isMath": true,
+  "mathMin": 10,
+  "mathMin": 99,
+  "mathOperator": "+-",
+  "useFont": null,
+  "size": 4,
+  "ignoreChars": "0o1i",
+  "noise": 5,
+  "color": true,
+  "background": null,
+  "width": 200,
+  "height": 50,
+  "fontSize": 56,
+  "charPreset": null
+ },
+
  "NOTE": "Requires DB migration for changing below settings",
 
  "scriptSearchQueryStoreMaxDescription": 512,
