@@ -2107,6 +2107,7 @@ exports.update = function (aReq, aRes, aNext) {
     }
 
     // Update DB
+    aUser.updated = new Date();
     aUser.about = aReq.body.about;
     aUser.save(function (aErr, aUser) {
       var msg = null;
