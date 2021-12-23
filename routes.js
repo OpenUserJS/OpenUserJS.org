@@ -75,7 +75,7 @@ var captchaLimiter = rateLimit({
     expireTimeMs: waitCaptchaMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: waitCaptchaMin * 60 * 1000, // n minutes for all stores
-  max: 2, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.type('svg').status(200).send(
       svgCaptcha('429 Too Many Requests', Object.assign(settings.captchaOpts, {
