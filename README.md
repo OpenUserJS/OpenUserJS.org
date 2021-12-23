@@ -105,7 +105,7 @@ Repository | Reference | Recent Version | Referenced
 
 #### Aggregate
 
-Outdated dependencies list can be achieved with `$ npm outdated` from the terminal.
+Outdated dependencies list can be achieved with `$ npm outdated` from the terminal and alternatively `$ npm show packagename versions`.
 
 
 [nodeGHUrl]: https://github.com/nodejs/node
