@@ -472,6 +472,10 @@ exports.view = function (aReq, aRes, aNext) {
     }
 
     function render() {
+      // Set crawlers to ignore for indexing. Following is currently managed in markdown rendering.
+      // Because we use common html across multiple pages meta tags shouldn't be used.
+      aRes.set('X-Robots-Tag', 'noindex');
+
       aRes.render('pages/userPage', options);
     }
 
