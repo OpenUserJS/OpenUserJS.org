@@ -726,9 +726,6 @@ var parseUser = function (aUser) {
   // Dates
   parseDateProperty(user, 'created');
 
-  // Misc
-  user.hasCaptcha = true;
-
   return user;
 };
 parseModelFnMap.User = parseUser;

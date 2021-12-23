@@ -953,9 +953,11 @@ exports.userEditProfilePageCaptcha = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var username = aReq.params.username;
 
+
   if (authedUser.slugUrl === username) {
     (captcha.generate())(aReq, aRes, aNext);
   } else {
+    aRes.set('X-Robots-Tag', 'noindex, nofollow');
     aRes.type('svg').status(200).send(svgCaptcha('3.14 x 2.71 / 0', settings.captchaOpts));
   }
 }
@@ -997,6 +999,8 @@ exports.userEditProfilePage = function (aReq, aRes, aNext) {
     // User
     options.user = user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
+
+    options.user.hasCaptcha = true;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
