@@ -80,6 +80,7 @@ exports.verify = function (aId, aStrategy, aUsername, aLoggedIn, aDone) {
               aUser = new User({
                 'name': aUsername,
                 'created': now,
+                'updated': now,
                 'auths': [digest],
                 'strategies': [aStrategy],
                 'role': userRoles.length - 2,  // NOTE: Last array element value is system Reserved
