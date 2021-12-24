@@ -72,7 +72,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 <!-- ## .user.js engine external linkage -->
 [tampermonkeyNet]: http://tampermonkey.net/
-[edgeAddons]: https://www.microsoft.com/store/apps/9NBLGGH5162S
+[edgeAddons]: https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd
 
 <!-- ## Screenshots -->
 [tampermonkeyMSWebStoreScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_edge.gif "Tampermonkey in the Windows Store"
