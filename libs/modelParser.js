@@ -519,8 +519,6 @@ var parseScript = function (aScript) {
     script.isUpdated = true;
   }
 
-
-
   // TODO: Mimic scriptStorageLib.invalidKey return value here??
   // Update Url
   // `@updateURL` must be exact here for OUJS hosted checks with updateURLForceCheck
@@ -725,6 +723,11 @@ var parseUser = function (aUser) {
 
   // Dates
   parseDateProperty(user, 'created');
+  parseDateProperty(user, 'updated');
+
+  if (user.created && user.updated && user.created.toString() !== user.updated.toString()) {
+    user.isUpdated = true;
+  }
 
   return user;
 };
