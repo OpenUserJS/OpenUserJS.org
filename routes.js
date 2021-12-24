@@ -37,7 +37,7 @@ var settings = require('./models/settings.json');
 
 //--
 
-var waitInstallMin = isDev ? 1 : 60;
+var waitInstallMin = isDev ? 1 : 360;
 var installLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: 'mongodb://127.0.0.1:27017/installLimiter',
