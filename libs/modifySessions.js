@@ -249,7 +249,7 @@ exports.getSessionDataList = function (aReq, aOptions, aCallback) {
         var oujsOptions = session.passport.oujsOptions;
 
         session.showExtend = aReq.sessionID === oujsOptions.sid;
-        session.canExtend = !oujsOptions.extended;
+        session.canExtend = !oujsOptions.extended && !authedUser._probationary;
         session.canDestroyOne = true; // TODO: Perhaps do some further conditionals
 
         oujsOptions.remoteAddressMask = session.name === authedUser.name && !oujsOptions.authFrom

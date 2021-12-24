@@ -135,6 +135,14 @@ exports.extend = function (aReq, aRes, aNext) {
   }, function (aErr, aUser) {
     // WARNING: No err handling
 
+    if (aUser._probationary) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403,
+        statusMessage: 'Newer users may not extend their session.'
+      });
+      return;
+    }
+
     extendSession(aReq, aUser, function (aErr) {
       if (aErr) {
         if (aErr === 'Already extended') {
