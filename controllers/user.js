@@ -437,6 +437,7 @@ exports.userListPage = function (aReq, aRes, aNext) {
   // Order dir
   orderDir(aReq, options, 'name', 'asc');
   orderDir(aReq, options, 'created', 'desc');
+  orderDir(aReq, options, 'updated', 'desc');
   orderDir(aReq, options, 'role', 'asc');
 
   // userListQuery

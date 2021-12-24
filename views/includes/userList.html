@@ -2,8 +2,9 @@
   <thead>
     <tr>
       <th class="text-center{{#orderedByName}} active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
-      <th class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}"><a href="?orderBy=created&orderDir={{orderDir.created}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Since</a></th>
-      <th class="text-center td-fit{{#orderedByRole}} active{{/orderedByRole}}"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Rank</a></th>
+      <th class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}" title="Since"><a href="?orderBy=created&orderDir={{orderDir.created}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}"><span class="visible-lg visible-md">Since</span><span class="hidden-lg hidden-md"><i class="fa fa-clock-o"></i></a></th>
+      <th class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}" title="Revised"><a href="?orderBy=updated&orderDir={{orderDir.created}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}"><span class="visible-lg visible-md">Revised</span><span class="hidden-lg hidden-md"><i class="fa fa-history"></i></a></th>
+      <th class="text-center td-fit{{#orderedByRole}} active{{/orderedByRole}}"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}"><span class="visible-lg visible-md">Rank</span><span class="hidden-lg hidden-md"><i class="fa fa-trophy"></i></a></th>
       {{#hasFlagged}}
       <th title="Flagger"><span class="visible-lg visible-md">Flagger</span><span class="hidden-lg hidden-md"><i class="fa fa-flag"></i></span></a></th>
       {{/hasFlagged}}
@@ -20,6 +21,11 @@
         </td>
         <td class="text-center td-fit">
           <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
+        </td>
+        <td class="text-center td-fit">
+          {{#isUpdated}}
+          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic">{{{updatedHumanizedIconic}}}</time>
+          {{/isUpdated}}
         </td>
         <td class="text-center td-fit">
           <p>
@@ -51,6 +57,11 @@
         </td>
         <td class="text-center td-fit">
           <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
+        </td>
+        <td class="text-center td-fit">
+          {{#isUpdated}}
+          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic">{{{updatedHumanizedIconic}}}</time>
+          {{/isUpdated}}
         </td>
         <td class="text-center td-fit">
           <p>
