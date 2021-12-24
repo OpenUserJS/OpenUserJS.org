@@ -725,8 +725,12 @@ var parseUser = function (aUser) {
   parseDateProperty(user, 'created');
   parseDateProperty(user, 'updated');
 
-  if (user.created && user.updated && user.created.toString() !== user.updated.toString()) {
+  if (user.created && user.updated) {
     user.isUpdated = true;
+  }
+
+  if (user.created && user.updated && user.created.toString() === user.updated.toString()) {
+    user.isUpdatedWarning = true;
   }
 
   return user;

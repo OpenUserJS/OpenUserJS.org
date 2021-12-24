@@ -556,6 +556,14 @@ time.iconic, time.iconic-link {
   margin-top: 0;
 }
 
+time.iconic-warning, time.iconic-link-warning {
+  box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #df691a, 0 4px 0 #fff, 0 5px 0 #df691a, 0 0 0 1px #bdbdbd;
+}
+
+time.iconic-danger, time.iconic-link-danger {
+  box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #df691a, 0 4px 0 #fff, 0 5px 0 #df691a, 0 0 0 1px #bdbdbd;
+}
+
 time.iconic *,
 time.iconic-link * {
   display: block;
