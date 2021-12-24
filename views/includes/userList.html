@@ -24,7 +24,7 @@
         </td>
         <td class="text-center td-fit">
           {{#isUpdated}}
-          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic{{#isMod}}{{#isUpdatedWarning}} iconic-warning{{/isUpdatedWarning}}{{/isMod}}">{{{updatedHumanizedIconic}}}</time>
+          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic{{#authedUser.isMod}}{{#isUpdatedWarning}} iconic-warning{{/isUpdatedWarning}}{{/authedUser.isMod}}">{{{updatedHumanizedIconic}}}</time>
           {{/isUpdated}}
         </td>
         <td class="text-center td-fit">
@@ -60,7 +60,7 @@
         </td>
         <td class="text-center td-fit">
           {{#isUpdated}}
-          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic{{#isMod}}{{#isUpdatedWarning}} iconic-warning{{/isUpdatedWarning}}{{/isMod}}">{{{updatedHumanizedIconic}}}</time>
+          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic{{#authedUser.isMod}}{{#isUpdatedWarning}} iconic-warning{{/isUpdatedWarning}}{{/authedUser.isMod}}">{{{updatedHumanizedIconic}}}</time>
           {{/isUpdated}}
         </td>
         <td class="text-center td-fit">
