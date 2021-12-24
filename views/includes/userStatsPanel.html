@@ -11,8 +11,8 @@
       <dt><span class="">Member since</span></dt>
       <dd><span class=""><time datetime="{{user.createdISOFormat}}" title="{{user.created}}">{{user.createdHumanized}}</time></span></dd>
       {{#user.isUpdated}}
-      <dt><span class="{{#authedUser.isMod}}{{#isUpdatedWarning}}text-warning{{/isUpdatedWarning}}{{/authedUser.isMod}}">Revised since</span></dt>
-      <dd><span class="{{#authedUser.isMod}}{{#isUpdatedWarning}}text-warning{{/isUpdatedWarning}}{{/authedUser.isMod}}"><time datetime="{{user.updatedISOFormat}}" title="{{user.updated}}">{{user.updatedHumanized}}</time></span>      </dd>
+      <dt><span class="{{#authedUser.isMod}}{{#user.isUpdatedWarning}}text-warning{{/user.isUpdatedWarning}}{{/authedUser.isMod}}">Revised since</span></dt>
+      <dd><span class="{{#authedUser.isMod}}{{#user.isUpdatedWarning}}text-warning{{/user.isUpdatedWarning}}{{/authedUser.isMod}}"><time datetime="{{user.updatedISOFormat}}" title="{{user.updated}}">{{user.updatedHumanized}}</time></span>      </dd>
       {{/user.isUpdated}}
       <dt>Number of userscripts</dt>
       <dd>{{stats.totalScripts}}</dd>
