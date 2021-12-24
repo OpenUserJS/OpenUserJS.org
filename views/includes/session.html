@@ -26,9 +26,11 @@
               <span class="label label-{{#cookie.originalMaxAge}}success{{/cookie.originalMaxAge}}{{^cookie.originalMaxAge}}warning{{/cookie.originalMaxAge}}" title="originalMaxAge">
                 {{#cookie.originalMaxAge}}{{#passport.oujsOptions.extended}}&and;{{/passport.oujsOptions.extended}}{{cookie.originalMaxAgeHumanized}}{{/cookie.originalMaxAge}}{{^cookie.originalMaxAge}}&and;{{/cookie.originalMaxAge}}
               </span>
+              {{#authedUser.isMod}}
               {{#user.isUpdatedWarning}}
               <span class="label label-warning" title="User updated warning"><i class="fa fa-fw fa-history"></i></span>
               {{/user.isUpdatedWarning}}
+              {{#authedUser.isMod}}
               {{#passport.oujsOptions.remoteAddress}}
               <span class="label label-info" title="remoteAddress">{{passport.oujsOptions.remoteAddressMask}}</span>
               {{/passport.oujsOptions.remoteAddress}}
