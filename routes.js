@@ -36,11 +36,12 @@ var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 var settings = require('./models/settings.json');
 
 //--
+var limiter = process.env.LIMITER_STRING || settings.limiter;
 
 var waitInstallMin = isDev ? 1 : 60;
 var installLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: 'mongodb://127.0.0.1:27017/installLimiter',
+    uri: limiter + '/installLimiter',
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitInstallMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -55,7 +56,7 @@ var installLimiter = rateLimit({
 var waitApiMin = isDev ? 1: 15;
 var apiLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: 'mongodb://127.0.0.1:27017/apiLimiter',
+    uri: limiter + '/apiLimiter',
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitApiMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -70,7 +71,7 @@ var apiLimiter = rateLimit({
 var waitAuthMin = isDev ? 1: 1440;
 var authLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: 'mongodb://127.0.0.1:27017/authLimiter',
+    uri: limiter + '/authLimiter',
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitAuthMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -94,7 +95,7 @@ var authLimiter = rateLimit({
 var waitCaptchaMin = isDev ? 1: 1440;
 var captchaLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: 'mongodb://127.0.0.1:27017/captchaLimiter',
+    uri: limiter + '/captchaLimiter',
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitCaptchaMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -112,7 +113,7 @@ var captchaLimiter = rateLimit({
 var listMin = isDev ? 1: 60;
 var listLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: 'mongodb://127.0.0.1:27017/listLimiter',
+    uri: limiter + '/listLimiter',
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: listMin * 60 * 1000 // n minutes for mongo store
   })),
