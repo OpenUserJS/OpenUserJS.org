@@ -547,6 +547,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
     ((aReq.headers.accept || '*/*').split(',').indexOf('text/x-userscript-meta') > -1 ||
       rMetaJS.test(pathname))) {
 
+    // Search engine affirmation
+    aRes.set('X-Robots-Tag', 'noindex');
+
     exports.sendMeta(aReq, aRes, aNext);
     return;
   }
@@ -591,6 +594,9 @@ exports.sendScript = function (aReq, aRes, aNext) {
     // HTTP/1.1 Caching
     aRes.set('Cache-Control', 'public, max-age=' + maxAge +
       ', no-cache, no-transform, must-revalidate');
+
+    // Search engine affirmation
+    aRes.set('X-Robots-Tag', 'noindex');
 
     // Only minify for response that doesn't contain `.min.` extension
     if (!/\.min(\.user)?\.js$/.test(aReq._parsedUrl.pathname) ||
