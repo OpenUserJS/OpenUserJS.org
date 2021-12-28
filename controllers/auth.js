@@ -453,7 +453,8 @@ exports.callback = function (aReq, aRes, aNext) {
             aReq.session.cookie.sameSite = 'strict';
             aReq.session.save(function (aErr, aSession) {
               if (aErr) {
-                console.error('Catastrophic MongoDB Error with elevating session sameSite');
+                // Some catastrophic error
+                console.error(colors.red(aErr));
                 return;
               }
               if (ID) {
