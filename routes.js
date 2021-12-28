@@ -30,6 +30,7 @@ var document = require('./controllers/document');
 
 var svgCaptcha = require('svg-captcha');
 
+var isSameOrigin = require('./libs/helpers').isSameOrigin;
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
@@ -38,47 +39,85 @@ var settings = require('./models/settings.json');
 //--
 var limiter = process.env.LIMITER_STRING || settings.limiter;
 
-var waitInstallMin = isDev ? 1 : 60;
-var installLimiter = rateLimit({
+var waitInstallCapMin = isDev ? 1 : 60;
+var installCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/installLimiter',
+    uri: limiter + '/installCapLimiter',
     resetExpireDateOnChange: true, // Rolling
-    expireTimeMs: waitInstallMin * 60 * 1000 // n minutes for mongo store
+    expireTimeMs: waitInstallCapMin * 60 * 1000 // n minutes for mongo store
   })),
-  windowMs: waitInstallMin * 60 * 1000, // n minutes for all stores
+  windowMs: waitInstallCapMin * 60 * 1000, // n minutes for all stores
   max: 50, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitInstallMin * 60 + 60);
+    aRes.header('Retry-After', waitInstallCapMin * 60 + 60);
     aRes.status(429).send();
   }
 });
 
-var waitApiMin = isDev ? 1: 15;
-var apiLimiter = rateLimit({
+var waitRateInstallMin = isDev ? 0.5 : 1;
+var installRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/apiLimiter',
+    uri: limiter + '/installRateLimiter',
     resetExpireDateOnChange: true, // Rolling
-    expireTimeMs: waitApiMin * 60 * 1000 // n minutes for mongo store
+    expireTimeMs: waitRateInstallMin * 60 * 1000 // n minutes for mongo store
   })),
-  windowMs: waitApiMin * 60 * 1000, // n minutes for all stores
+  windowMs: waitRateInstallMin * 60 * 1000, // n minutes for all stores
+  max: 2, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    aRes.header('Retry-After', waitRateInstallMin * 60 + 60);
+
+    if (isSameOrigin(aReq.get('Referer')).result) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 429,
+        statusMessage: 'Too many requests.',
+        suppressNavigation: true,
+        isCustomView: true,
+        statusData: {
+          isListView: true,
+          retryAfter: waitRateInstallMin * 60 + 60
+        }
+      });
+    } else {
+      aRes.status(429).send();
+    }
+  },
+  keyGenerator: function (aReq, aRes, aNext) {
+    return aReq.ip + '://' + aReq._parsedUrl.pathname;
+  },
+  skip: function (aReq, aRes, aNext) {
+    if (aReq.params.type === 'libs') {
+      return true;
+    }
+  }
+});
+
+
+var waitApiCapMin = isDev ? 1: 15;
+var apiCapLimiter = rateLimit({
+  store: (isDev ? undefined : new MongoStore({
+    uri: limiter + '/apiCapLimiter',
+    resetExpireDateOnChange: true, // Rolling
+    expireTimeMs: waitApiCapMin * 60 * 1000 // n minutes for mongo store
+  })),
+  windowMs: waitApiCapMin * 60 * 1000, // n minutes for all stores
   max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitApiMin * 60 + 60);
+    aRes.header('Retry-After', waitApiCapMin * 60 + 60);
     aRes.status(429).send();
   }
 });
 
-var waitAuthMin = isDev ? 1: 1440;
-var authLimiter = rateLimit({
+var waitAuthCapMin = isDev ? 1: 1440;
+var authCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/authLimiter',
+    uri: limiter + '/authCapLimiter',
     resetExpireDateOnChange: true, // Rolling
-    expireTimeMs: waitAuthMin * 60 * 1000 // n minutes for mongo store
+    expireTimeMs: waitAuthCapMin * 60 * 1000 // n minutes for mongo store
   })),
-  windowMs: waitAuthMin * 60 * 1000, // n minutes for all stores
+  windowMs: waitAuthCapMin * 60 * 1000, // n minutes for all stores
   max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitAuthMin * 60 + 60);
+    aRes.header('Retry-After', waitAuthCapMin * 60 + 60);
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 429,
       statusMessage: 'Too many requests.',
@@ -86,20 +125,20 @@ var authLimiter = rateLimit({
       isCustomView: true,
       statusData: {
         isListView: true,
-        retryAfter: waitAuthMin * 60 + 60
+        retryAfter: waitAuthCapMin * 60 + 60
       }
     });
   }
 });
 
-var waitCaptchaMin = isDev ? 1: 1440;
-var captchaLimiter = rateLimit({
+var waitCaptchaCapMin = isDev ? 1: 1440;
+var captchaCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/captchaLimiter',
+    uri: limiter + '/captchaCapLimiter',
     resetExpireDateOnChange: true, // Rolling
-    expireTimeMs: waitCaptchaMin * 60 * 1000 // n minutes for mongo store
+    expireTimeMs: waitCaptchaCapMin * 60 * 1000 // n minutes for mongo store
   })),
-  windowMs: waitCaptchaMin * 60 * 1000, // n minutes for all stores
+  windowMs: waitCaptchaCapMin * 60 * 1000, // n minutes for all stores
   max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.type('svg').status(200).send(
@@ -110,14 +149,14 @@ var captchaLimiter = rateLimit({
   }
 });
 
-var listMin = isDev ? 1: 60;
-var listLimiter = rateLimit({
+var waitListCapMin = isDev ? 1: 60;
+var listCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/listLimiter',
+    uri: limiter + '/listCapLimiter',
     resetExpireDateOnChange: true, // Rolling
-    expireTimeMs: listMin * 60 * 1000 // n minutes for mongo store
+    expireTimeMs: waitListCapMin * 60 * 1000 // n minutes for mongo store
   })),
-  windowMs: listMin * 60 * 1000, // n minutes for all stores
+  windowMs: waitListCapMin * 60 * 1000, // n minutes for all stores
   max: 115, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     var cmd = null;
@@ -132,7 +171,7 @@ var listLimiter = rateLimit({
 
       aNext();
     } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 10) {
-      aRes.header('Retry-After', listMin * 60 + 60);
+      aRes.header('Retry-After', waitListCapMin * 60 + 60);
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 429,
         statusMessage: 'Too many requests.',
@@ -140,14 +179,14 @@ var listLimiter = rateLimit({
         isCustomView: true,
         statusData: {
           isListView: true,
-          retryAfter: listMin * 60 + 60
+          retryAfter: waitListCapMin * 60 + 60
         }
       });
     } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
-      aRes.header('Retry-After', listMin * 60 + 60);
+      aRes.header('Retry-After', waitListCapMin * 60 + 60);
       aRes.status(429).send('Too many requests. Please try again later');
     } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 20) {
-      aRes.header('Retry-After', listMin * 60 + 60);
+      aRes.header('Retry-After', waitListCapMin * 60 + 60);
       aRes.status(429).send();
     } else {
       cmd = (isPro && process.env.AUTOBAN ? process.env.AUTOBAN : 'echo SIMULATING AUTOBAN') +
@@ -180,7 +219,7 @@ module.exports = function (aApp) {
   });
   aApp.route('/auth/').post(
     authentication.preauth,
-      authLimiter,
+      authCapLimiter,
         hcaptcha.middleware.validate(SECRET, SITEKEY),
           authentication.errauth,
             authentication.auth
@@ -190,30 +229,30 @@ module.exports = function (aApp) {
   aApp.route('/logout').get(main.logout);
 
   // User routes
-  aApp.route('/users').get(listLimiter, user.userListPage);
+  aApp.route('/users').get(listCapLimiter, user.userListPage);
   aApp.route('/users/:username').get(user.view);
-  aApp.route('/users/:username/comments').get(listLimiter, user.userCommentListPage);
-  aApp.route('/users/:username/scripts').get(listLimiter, user.userScriptListPage);
-  aApp.route('/users/:username/syncs').get(listLimiter, user.userSyncListPage);
+  aApp.route('/users/:username/comments').get(listCapLimiter, user.userCommentListPage);
+  aApp.route('/users/:username/scripts').get(listCapLimiter, user.userScriptListPage);
+  aApp.route('/users/:username/syncs').get(listCapLimiter, user.userSyncListPage);
 
   aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);
   aApp.route('/users/:username/github/repo').get(authentication.validateUser, user.userGitHubRepoPage);
   aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
 
   aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
-  aApp.route('/users/:username/profile/captcha').get(captchaLimiter, authentication.validateUser, user.userEditProfilePageCaptcha);
+  aApp.route('/users/:username/profile/captcha').get(captchaCapLimiter, authentication.validateUser, user.userEditProfilePageCaptcha);
   aApp.route('/users/:username/update').post(authentication.validateUser, admin.adminUserUpdate);
   // NOTE: Some below inconsistent with priors
   aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
   aApp.route('/user').get(function (aReq, aRes) {
     aRes.redirect(302, '/users');
   });
-  aApp.route('/api/user/exist/:username').head(apiLimiter, user.exist);
-  aApp.route('/api/user/session/extend').post(apiLimiter, authentication.validateUser, user.extend);
-  aApp.route('/api/user/session/destroyOne').post(apiLimiter, authentication.validateUser, user.destroyOne);
+  aApp.route('/api/user/exist/:username').head(apiCapLimiter, user.exist);
+  aApp.route('/api/user/session/extend').post(apiCapLimiter, authentication.validateUser, user.extend);
+  aApp.route('/api/user/session/destroyOne').post(apiCapLimiter, authentication.validateUser, user.destroyOne);
 
   // Adding script/library routes
-  aApp.route('/user/add/scripts').get(listLimiter, authentication.validateUser, user.newScriptPage);
+  aApp.route('/user/add/scripts').get(listCapLimiter, authentication.validateUser, user.newScriptPage);
   aApp.route('/user/add/scripts/new').get(authentication.validateUser, script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
   aApp.route('/user/add/scripts/upload').post(authentication.validateUser, user.uploadScript);
   aApp.route('/user/add/lib').get(authentication.validateUser, user.newLibraryPage);
@@ -231,7 +270,7 @@ module.exports = function (aApp) {
     aRes.redirect(301, '/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(installLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').get(installRateLimiter, installCapLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
   aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
 
@@ -245,12 +284,12 @@ module.exports = function (aApp) {
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(installLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(installRateLimiter, installCapLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
   // Issues routes
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(listLimiter, issue.list);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(listCapLimiter, issue.list);
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(listLimiter, issue.view).post(authentication.validateUser, issue.comment);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(listCapLimiter, issue.view).post(authentication.validateUser, issue.comment);
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
 
   // Admin routes
@@ -283,16 +322,16 @@ module.exports = function (aApp) {
   aApp.route(/^\/remove\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, remove.rm);
 
   // Group routes
-  aApp.route('/groups').get(listLimiter, group.list);
-  aApp.route('/group/:groupname').get(listLimiter, group.view);
+  aApp.route('/groups').get(listCapLimiter, group.list);
+  aApp.route('/group/:groupname').get(listCapLimiter, group.view);
   aApp.route('/group').get(function (aReq, aRes) { aRes.redirect('/groups'); });
   aApp.route('/api/group/search/:term/:addTerm?').get(group.search);
 
   // Discussion routes
   // TODO: Update templates for new discussion routes
-  aApp.route('/forum').get(listLimiter, discussion.categoryListPage);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(listLimiter, discussion.list);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(listLimiter, discussion.show).post(authentication.validateUser, discussion.createComment);
+  aApp.route('/forum').get(listCapLimiter, discussion.categoryListPage);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(listCapLimiter, discussion.list);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(listCapLimiter, discussion.show).post(authentication.validateUser, discussion.createComment);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
   // dupe
   aApp.route('/post/:category(announcements|corner|garage|discuss)').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
@@ -301,7 +340,7 @@ module.exports = function (aApp) {
   aApp.route('/about/:document?').get(document.view);
 
   // Home route
-  aApp.route('/').get(listLimiter, main.home);
+  aApp.route('/').get(listCapLimiter, main.home);
 
   // Misc API
   aApp.route('/api').head(function (aReq, aRes, aNext) {
