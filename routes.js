@@ -82,7 +82,7 @@ var installRateLimiter = rateLimit({
     }
   },
   keyGenerator: function (aReq, aRes, aNext) {
-    return aReq.ip + '://' + aReq._parsedUrl.pathname;
+    return aReq.ip + aReq._parsedUrl.pathname;
   },
   skip: function (aReq, aRes, aNext) {
     if (aReq.params.type === 'libs') {
