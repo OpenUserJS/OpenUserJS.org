@@ -67,6 +67,30 @@ var apiLimiter = rateLimit({
   }
 });
 
+var waitAuthMin = isDev ? 1: 1440;
+var authLimiter = rateLimit({
+  store: (isDev ? undefined : new MongoStore({
+    uri: 'mongodb://127.0.0.1:27017/authLimiter',
+    resetExpireDateOnChange: true, // Rolling
+    expireTimeMs: waitAuthMin * 60 * 1000 // n minutes for mongo store
+  })),
+  windowMs: waitAuthMin * 60 * 1000, // n minutes for all stores
+  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    aRes.header('Retry-After', waitAuthMin * 60 + 60);
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 429,
+      statusMessage: 'Too many requests.',
+      suppressNavigation: true,
+      isCustomView: true,
+      statusData: {
+        isListView: true,
+        retryAfter: waitAuthMin * 60 + 60
+      }
+    });
+  }
+});
+
 var waitCaptchaMin = isDev ? 1: 1440;
 var captchaLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
@@ -149,17 +173,19 @@ module.exports = function (aApp) {
 
   //--- Routes
   // Authentication routes
-  aApp.route('/auth/').post(authentication.preauth,
-    hcaptcha.middleware.validate(SECRET, SITEKEY),
-      authentication.errauth,
-        authentication.auth);
-
-  aApp.route('/auth/:strategy').get(authentication.auth);
-  aApp.route('/auth/:strategy/callback/:junk?').get(authentication.callback);
   aApp.route('/login').get(main.register);
   aApp.route('/register').get(function (aReq, aRes) {
     aRes.redirect(301, '/login');
   });
+  aApp.route('/auth/').post(
+    authentication.preauth,
+      authLimiter,
+        hcaptcha.middleware.validate(SECRET, SITEKEY),
+          authentication.errauth,
+            authentication.auth
+  );
+  aApp.route('/auth/:strategy').get(authentication.auth);
+  aApp.route('/auth/:strategy/callback/:junk?').get(authentication.callback);
   aApp.route('/logout').get(main.logout);
 
   // User routes
