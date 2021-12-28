@@ -447,6 +447,26 @@ exports.callback = function (aReq, aRes, aNext) {
       }
 
       addSession(aReq, aUser, function () {
+        var ID = null;
+        var intervalId = function () {
+          console.log('ping');
+          if (aReq.session.cookie.sameSite !== 'strict') {
+            aReq.session.cookie.sameSite = 'strict';
+            aReq.session.save(function (aErr, aSession) {
+              if (aErr) {
+                console.error('Catastrophic MongoDB Error with elevating session sameSite');
+                return;
+              }
+              if (ID) {
+                clearTimeout(ID);
+              }
+            })
+          };
+        };
+        var timeoutId = function () {
+          ID = setInterval(intervalId, 1);
+        }
+
         if (newstrategy && newstrategy !== strategy) {
           // Allow a user to link to another account
           aRes.redirect('/auth/' + newstrategy); // NOTE: Watchpoint... careful with encoding
@@ -479,12 +499,7 @@ exports.callback = function (aReq, aRes, aNext) {
 
           // Ensure `sameSite` is set to max after redirect
           // Elevate for optimal future protection
-          setTimeout(function () {
-            if (aReq.session.cookie.sameSite !== 'strict') {
-              aReq.session.cookie.sameSite = 'strict';
-              aReq.session.save();
-            }
-          }, 250);
+          setTimeout(timeoutId, 5);
         }
       });
     });
