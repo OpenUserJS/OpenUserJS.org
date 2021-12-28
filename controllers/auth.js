@@ -449,7 +449,6 @@ exports.callback = function (aReq, aRes, aNext) {
       addSession(aReq, aUser, function () {
         var ID = null;
         var intervalId = function () {
-          console.log('ping');
           if (aReq.session.cookie.sameSite !== 'strict') {
             aReq.session.cookie.sameSite = 'strict';
             aReq.session.save(function (aErr, aSession) {
