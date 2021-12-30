@@ -229,18 +229,32 @@ app.use(function (aReq, aRes, aNext) {
   // Middleware for GDPR Notice
   aRes.oujsOptions.hideReminderGDPR = isSameOrigin(referer).result;
 
-  // Middleware for Auth Notices
-  // Keep in sync with auth.js and headerReminders.html
-  if (aReq._parsedUrl && aReq._parsedUrl.query && /^\/login$/.test(pathname)) {
-    aRes.oujsOptions.showInvalidAuth = aReq.query.invalidauth === '';
-    aRes.oujsOptions.showStratFail = aReq.query.stratfail === '';
-    aRes.oujsOptions.showNoConsent = aReq.query.noconsent === '';
-    aRes.oujsOptions.showNoName  = aReq.query.noname === '';
-    aRes.oujsOptions.showTooLong = aReq.query.toolong === '';
-    aRes.oujsOptions.showUsernameFail = aReq.query.usernamefail === '';
-    aRes.oujsOptions.showROAuth = aReq.query.roauth === '';
-    aRes.oujsOptions.showRetryAuth = aReq.query.retryauth === '';
-    aRes.oujsOptions.showAuthFail = aReq.query.authfail === '';
+  // Middleware for Notices
+  if (aReq._parsedUrl && aReq._parsedUrl.query) {
+    // NOTE: Keep in sync with muExpress.js, auth.js, user.js, and headerReminders.html
+    if (/^\/login$/.test(pathname)) {
+      // Middleware for Auth Notices
+      aRes.oujsOptions.showInvalidAuth = aReq.query.invalidauth === '';
+      aRes.oujsOptions.showStratFail = aReq.query.stratfail === '';
+      aRes.oujsOptions.showNoConsent = aReq.query.noconsent === '';
+      aRes.oujsOptions.showNoName  = aReq.query.noname === '';
+      aRes.oujsOptions.showTooLong = aReq.query.toolong === '';
+      aRes.oujsOptions.showUsernameFail = aReq.query.usernamefail === '';
+      aRes.oujsOptions.showROAuth = aReq.query.roauth === '';
+      aRes.oujsOptions.showRetryAuth = aReq.query.retryauth === '';
+      aRes.oujsOptions.showAuthFail = aReq.query.authfail === '';
+    }
+
+    // NOTE: Keep in sync with muExpress, user.js and headerReminders.html
+    if (/^(?:\/admin\/session\/active|\/user\/preferences)$/.test(pathname)) {
+      // Middleware for Session Notices
+      aRes.oujsOptions.showSesssionNoExtend = aReq.query.noextend === '';
+      aRes.oujsOptions.showSessionMissingUsername = aReq.query.noname === '';
+      aRes.oujsOptions.showSesssionCurrentSessionProhibited = aReq.query.curses === '';
+      aRes.oujsOptions.showSesssionHigherRankProhibited = aReq.query.hirank === '';
+      aRes.oujsOptions.showSesssionNoOwned = aReq.query.noown === '';
+      aRes.oujsOptions.showSesssionNoAdmin = aReq.query.noadmin === '';
+    }
   }
 
   //
