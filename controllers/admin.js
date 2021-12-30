@@ -399,14 +399,14 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
 
   username = aReq.query.q;
 
-  // redirectTo
+  // redirectTo (forced)
   thisURL = new URL(aReq.url, baseOrigin);
   ['noname', 'curses', 'hirank', 'noown', 'noadmin', 'noextend']
     .forEach(function (aE, aI, aA) {
       thisURL.searchParams.delete(aE);
     }
   );
-  options.redirectTo = thisURL.pathname + (thisURL.search ? thisURL.search : '')
+  options.redirectToo = thisURL.pathname + (thisURL.search ? thisURL.search : '');
 
   // Page metadata
   pageMetadata(options, ['Sessions', 'Admin']);

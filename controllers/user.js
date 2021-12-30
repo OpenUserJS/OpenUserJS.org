@@ -210,8 +210,19 @@ exports.destroyOne = function (aReq, aRes, aNext) {
     var store = aReq.sessionStore;
     var user = null;
 
-    if (aErr || !aUser) {
-      aNext();
+    if (aErr) {
+      console.error(aErr);
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: aErr.code,
+        statusMessage: aErr.message
+      });
+      return;
+    }
+
+    if (!aUser) {
+      redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+        'curses';
+      aRes.redirect(redirectTo);
       return;
     }
 
@@ -1095,14 +1106,6 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
       return;
     }
 
-    // redirectTo
-    thisURL = new URL(aReq.url, helpers.baseOrigin);
-    ['noname', 'curses', 'hirank', 'noown', 'noadmin', 'noextend']
-      .forEach(function (aE, aI, aA) {
-        thisURL.searchParams.delete(aE);
-      });
-    options.redirectTo = thisURL.pathname + (thisURL.search ? thisURL.search : '');
-
     // Session
     options.authedUser = authedUser = modelParser.parseUser(authedUser);
     options.isMod = authedUser && authedUser.isMod;
@@ -1112,13 +1115,13 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     options.user = user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
-    // redirectTo
+    // redirectTo (forced)
     thisURL = new URL(aReq.url, helpers.baseOrigin);
     ['noname', 'curses', 'hirank', 'noown', 'noadmin', 'noextend']
       .forEach(function (aE, aI, aA) {
         thisURL.searchParams.delete(aE);
       });
-    options.redirectTo = thisURL.pathname + (thisURL.search ? thisURL.search : '');
+    options.redirectToo = thisURL.pathname + (thisURL.search ? thisURL.search : '');
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);

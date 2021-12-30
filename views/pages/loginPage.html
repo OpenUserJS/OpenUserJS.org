@@ -12,7 +12,7 @@
   <div class="container-fluid">
     <div class="row">
       <form action="/auth/" method="post" class="form-register">
-        <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
+        <input type="hidden" name="redirectTo" value="{{#redirectToo}}{{redirectToo}}{{/redirectToo}}{{^redirectToo}}{{redirectTo}}{{/redirectToo}}" />
         <h3>
           Login
           <span class="help-block small">Enter your username for our site to use with your preferred <a href="https://www.wikipedia.org/wiki/OAuth">OAuth</a>/<a href="https://www.wikipedia.org/wiki/OpenID">OpenID</a> service.</span>

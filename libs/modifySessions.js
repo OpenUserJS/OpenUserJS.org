@@ -177,13 +177,13 @@ exports.destroyOne = function (aReq, aUser, aId, aCallback) {
   var authedUser = aReq.session.user;
 
   if (!aUser || !aId) {
-    aCallback('No user or id', null);
+    aCallback('No user or id to delete', null);
     return;
   }
 
   store.get(aId, function (aErr, aSess) {
     if (aErr || !aSess) {
-      aCallback('No session', null);
+      aCallback('No session to delete', null);
       return;
     }
 
