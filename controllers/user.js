@@ -128,25 +128,42 @@ exports.exist = function (aReq, aRes) {
 // API - Request for extending a logged in user session
 exports.extend = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
+  var redirectTo = helpers.isSameOrigin(aReq.body.redirectTo);
+
+  redirectTo = redirectTo.result ? redirectTo.URL : new URL('/', helpers.baseOrigin);
 
   User.findOne({
     _id: authedUser._id,
     sessionIds: { "$in": [ aReq.sessionID ] }
   }, function (aErr, aUser) {
-    // WARNING: No err handling
+    if (aErr) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: aErr.code || 500,
+        statusMessage: aErr.message
+      });
+      return;
+    }
+
+    if (!aUser) {
+      redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+        'noextend';
+      aRes.redirect(redirectTo);
+      return;
+    }
 
     if (aUser._probationary) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 403,
-        statusMessage: 'Newer users may not extend their session.'
-      });
+      redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+        'noextend';
+      aRes.redirect(redirectTo);
       return;
     }
 
     extendSession(aReq, aUser, function (aErr) {
       if (aErr) {
         if (aErr === 'Already extended') {
-          aNext();
+          redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+            'noextend';
+          aRes.redirect(redirectTo);
           return;
         }
 
@@ -157,7 +174,7 @@ exports.extend = function (aReq, aRes, aNext) {
         return;
       }
 
-      aRes.redirect('back');
+      aRes.redirect(redirectTo);
     });
   });
 };
@@ -168,20 +185,21 @@ exports.destroyOne = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
   var username = aReq.body.username;;
   var id = aReq.body.id;
+  var redirectTo = helpers.isSameOrigin(aReq.body.redirectTo);
+
+  redirectTo = redirectTo.result ? redirectTo.URL : new URL('/', helpers.baseOrigin);
 
   if (!username) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 400,
-      statusMessage: '<code>username</code> must be set.'
-    });
+    redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+      'noname';
+    aRes.redirect(redirectTo);
     return;
   }
 
   if (aReq.sessionID === id) {
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 403,
-      statusMessage: 'Cannot delete the current session.'
-    });
+    redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+      'curses';
+    aRes.redirect(redirectTo);
     return;
   }
 
@@ -200,49 +218,46 @@ exports.destroyOne = function (aReq, aRes, aNext) {
     user = aUser; // NOTE: We really shouldn't need modelParser here
 
     if (authedUser.role > user.role) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 403,
-        statusMessage: 'Cannot delete a session with a higher rank.'
-      });
+      redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+        'hirank';
+      aRes.redirect(redirectTo);
       return;
     }
 
     // You can only delete your own other sessions when you are not an admin
     if (!authedUser.isAdmin && authedUser.name !== user.name) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 403,
-        statusMessage: 'Cannot delete a session that is not owned.'
-      });
+      redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+        'noown';
+      aRes.redirect(redirectTo);
       return;
     }
 
     store.get(id, function (aErr, aSess) {
       if (aErr) {
         statusCodePage(aReq, aRes, aNext, {
-          statusCode: 500,
-          statusMessage: aErr
+          statusCode: aErr.code || 500,
+          statusMessage: aErr.message
         });
         return;
       }
 
       if (!authedUser.isAdmin && aSess.passport.oujsOptions.authFrom) {
-        statusCodePage(aReq, aRes, aNext, {
-          statusCode: 403,
-          statusMessage: 'Cannot delete a session that is being administered.'
-        });
+        redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+          'noadmin';
+        aRes.redirect(redirectTo);
         return;
       }
 
       destroyOneSession(aReq, user, id, function (aErr) {
         if (aErr) {
           statusCodePage(aReq, aRes, aNext, {
-            statusCode: 500,
-            statusMessage: aErr
+            statusCode: aErr.code || 500,
+            statusMessage: aErr.message
           });
           return;
         }
 
-        aRes.redirect('back');
+        aRes.redirect(redirectTo);
       });
     });
   });
@@ -1073,10 +1088,20 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     var scriptListQuery = null;
     var tasks = [];
 
+    var thisURL = null;
+
     if (aErr || !aUser) {
       aNext();
       return;
     }
+
+    // redirectTo
+    thisURL = new URL(aReq.url, helpers.baseOrigin);
+    ['noname', 'curses', 'hirank', 'noown', 'noadmin', 'noextend']
+      .forEach(function (aE, aI, aA) {
+        thisURL.searchParams.delete(aE);
+      });
+    options.redirectTo = thisURL.pathname + (thisURL.search ? thisURL.search : '');
 
     // Session
     options.authedUser = authedUser = modelParser.parseUser(authedUser);
@@ -1086,6 +1111,14 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
     // User
     options.user = user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
+
+    // redirectTo
+    thisURL = new URL(aReq.url, helpers.baseOrigin);
+    ['noname', 'curses', 'hirank', 'noown', 'noadmin', 'noextend']
+      .forEach(function (aE, aI, aA) {
+        thisURL.searchParams.delete(aE);
+      });
+    options.redirectTo = thisURL.pathname + (thisURL.search ? thisURL.search : '');
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);

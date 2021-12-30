@@ -33,7 +33,7 @@ function renderFile(aRes, aPath, aOptions) {
     aOptions.hideReminderGDPR = aRes.oujsOptions.hideReminderGDPR;
     aOptions.showReminderListLimit = aRes.oujsOptions.showReminderListLimit;
 
-    // Keep in sync with app.js and headerReminders.html
+    // NOTE: Keep in sync with app.js, user.js, and headerReminders.html
     aOptions.showInvalidAuth = aRes.oujsOptions.showInvalidAuth;
     aOptions.showStratFail = aRes.oujsOptions.showStratFail;
     aOptions.showNoConsent = aRes.oujsOptions.showNoConsent;
@@ -43,6 +43,14 @@ function renderFile(aRes, aPath, aOptions) {
     aOptions.showROAuth = aRes.oujsOptions.showROAuth;
     aOptions.showRetryAuth = aRes.oujsOptions.showRetryAuth;
     aOptions.showAuthFail = aRes.oujsOptions.showAuthFail;
+
+    // NOTE: Keep in sync with app.js, admin.js, user.js, and headerReminders.html
+    aOptions.showSesssionNoExtend = aRes.oujsOptions.showSesssionNoExtend;
+    aOptions.showSessionMissingUsername = aRes.oujsOptions.showSessionMissingUsername;
+    aOptions.showSesssionCurrentSessionProhibited = aRes.oujsOptions.showSesssionCurrentSessionProhibited;
+    aOptions.showSesssionHigherRankProhibited = aRes.oujsOptions.showSesssionHigherRankProhibited;
+    aOptions.showSesssionNoOwned = aRes.oujsOptions.showSesssionNoOwned;
+    aOptions.showSesssionNoAdmin = aRes.oujsOptions.showSesssionNoAdmin;
   }
 
   aRes.set('Content-Type', 'text/html; charset=UTF-8');

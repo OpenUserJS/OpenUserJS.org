@@ -57,6 +57,42 @@
     <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>WARNING:</b> You will reach your list limit in {{showReminderListLimit}} more requests.</p>
   </div>
 {{/showReminderListLimit}}
+{{#showSesssionNoExtend}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Extending session further prohibited.</p>
+  </div>
+{{/showSesssionNoExtend}}
+{{#showSessionMissingUsername}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> <code>Username</code> must be set.</p>
+  </div>
+{{/showSessionMissingUsername}}
+{{#showSesssionCurrentSessionProhibited}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Cannot delete the current session.</p>
+  </div>
+{{/showSesssionCurrentSessionProhibited}}
+{{#showSesssionHigherRankProhibited}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Cannot delete a session with a higher rank.</p>
+  </div>
+{{/showSesssionHigherRankProhibited}}
+{{#showSesssionNoOwned}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Cannot delete a session that is not owned.</p>
+  </div>
+{{/showSesssionNoOwned}}
+{{#showSesssionNoAdmin}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Cannot delete a session that is being administered.</p>
+  </div>
+{{/showSesssionNoAdmin}}
 {{^hideReminderThis}}
 <!--  <div class="alert alert-info alert-dismissible alert-autodismissible small fade in" role="alert">
     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>

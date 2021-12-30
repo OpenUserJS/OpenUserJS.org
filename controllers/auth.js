@@ -499,7 +499,7 @@ exports.callback = function (aReq, aRes, aNext) {
 
           // Ensure `sameSite` is set to max after redirect
           // Elevate for optimal future protection
-          setTimeout(timeoutId, 5);
+          setTimeout(timeoutId, 0);
         }
       });
     });

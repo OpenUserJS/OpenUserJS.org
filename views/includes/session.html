@@ -50,6 +50,7 @@
             {{#showExtend}}
             <form class="form-inline" action="/api/user/session/extend" method="post">
               <div class="input-group">
+                <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
                 <button class="btn btn-success" type="submit"{{^canExtend}}disabled="disabled"{{/canExtend}}{{#canExtend}} title="Usually the default session timeout is enough but if you need some more time it is available here. Please use responsibly."{{/canExtend}}><i class="fa fa-fw fa-history"></i> Extend</button>
               </div>
             </form>
@@ -59,6 +60,7 @@
               <div class="input-group">
                 <input type="hidden" name="username" value="{{name}}">
                 <input type="hidden" name="id" value="{{passport.oujsOptions.sid}}">
+                <input type="hidden" name="redirectTo" value="{{{redirectTo}}" />
                 <button type="submit" class="btn btn-danger{{^canDestroyOne}} disabled{{/canDestroyOne}}"{{^canDestroyOne}} disabled="disabled"{{/canDestroyOne}}>
                   <span class="fa fa-trash"> Delete</span>
                 </button>

@@ -34,6 +34,7 @@ var Vote = require('../models/vote').Vote;
 var modelParser = require('../libs/modelParser');
 
 var nil = require('../libs/helpers').nil;
+var baseOrigin = require('../libs/helpers').baseOrigin;
 
 var loadPassport = require('../libs/passportLoader').loadPassport;
 var strategyInstances = require('../libs/passportLoader').strategyInstances;
@@ -377,6 +378,8 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
 
   var store = aReq.sessionStore;
 
+  var thisURL = null;
+
   // Session
   options.authedUser = authedUser = modelParser.parseUser(authedUser);
   options.isMod = authedUser && authedUser.isMod;
@@ -395,6 +398,15 @@ exports.adminSessionActiveView = function (aReq, aRes, aNext) {
   }
 
   username = aReq.query.q;
+
+  // redirectTo
+  thisURL = new URL(aReq.url, baseOrigin);
+  ['noname', 'curses', 'hirank', 'noown', 'noadmin', 'noextend']
+    .forEach(function (aE, aI, aA) {
+      thisURL.searchParams.delete(aE);
+    }
+  );
+  options.redirectTo = thisURL.pathname + (thisURL.search ? thisURL.search : '')
 
   // Page metadata
   pageMetadata(options, ['Sessions', 'Admin']);
