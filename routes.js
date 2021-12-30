@@ -51,6 +51,14 @@ var installCapLimiter = rateLimit({
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitInstallCapMin * 60 + 60);
     aRes.status(429).send();
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (authedUser && authedUser.isMod) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
   }
 });
 
@@ -84,8 +92,15 @@ var installRateLimiter = rateLimit({
   keyGenerator: function (aReq, aRes, aNext) {
     return aReq.ip + aReq._parsedUrl.pathname;
   },
-  skip: function (aReq, aRes, aNext) {
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
     if (aReq.params.type === 'libs') {
+      return true;
+    }
+
+    if (authedUser && authedUser.isAdmin) {
+      this.store.resetKey(this.keyGenerator);
       return true;
     }
   }
@@ -104,6 +119,14 @@ var apiCapLimiter = rateLimit({
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitApiCapMin * 60 + 60);
     aRes.status(429).send();
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (authedUser && authedUser.isMod) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
   }
 });
 
@@ -146,6 +169,14 @@ var captchaCapLimiter = rateLimit({
         width: 350
       }))
     );
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (authedUser && authedUser.isMod) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
   }
 });
 
@@ -203,6 +234,14 @@ var listCapLimiter = rateLimit({
 
         aRes.connection.destroy();
       });
+    }
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (authedUser && authedUser.isMod) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
     }
   }
 });
