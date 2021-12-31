@@ -67,7 +67,7 @@
     <ul class="nav navbar-nav">
       <li class="{{#isScriptPage}}active{{/isScriptPage}}"><a href="{{{script.scriptPageUrl}}}">About</a></li>
       <li class="{{#isScriptViewSourcePage}}active{{/isScriptViewSourcePage}}"><a href="{{{script.scriptViewSourcePageUrl}}}" class="{{^script.scriptViewSourcePageUrl}}disabled{{/script.scriptViewSourcePageUrl}}">Source Code</a></li>
-      <li class="{{#isScriptIssuesPage}}active{{/isScriptIssuesPage}}"><a href="{{{script.scriptIssuesPageUrl}}}" class="{{^script.scriptIssuesPageUrl}}disabled{{/script.scriptIssuesPageUrl}}">Issues <span class="badge">{{issueCount}}</span></a></li>
+      <li class="{{#isScriptIssuesPage}}active{{/isScriptIssuesPage}}"><a href="{{{script.scriptIssuesPageUrl}}}" class="{{^script.scriptIssuesPageUrl}}disabled{{/script.scriptIssuesPageUrl}}">Issues{{#issueCount}} <span class="badge{{#isOwner}} animate__animated animate__zoomInRight animate__slow{{/isOwner}}">{{issueCount}}</span>{{/issueCount}}</a></li>
     </ul>
     {{^script.isLib}}
     <p class="navbar-text pull-right hidden-xs"><i class="fa fa-fw fa-signal"></i> <b>Installs:</b> {{script.installs}}</p>

@@ -21,6 +21,7 @@ These also may use [shields.io][shieldsHomepage] where applicable for more expli
 Repository | Reference | Recent Version
 --- | --- | ---
 [ace-builds][ace-buildsGHUrl] [&#x00b9;][aceGHUrl] | [Documentation][ace-buildsDOCUrl] [&#x00b9;][aceDOCUrl] | [![NPM version][ace-buildsNPMVersionImage]][ace-buildsNPMUrl]
+[animate.css][animate.cssGHUrl] | [Documentation][animate.cssDOCUrl] | [![NPM version][animate.cssNPMVersionImage]][animate.cssNPMUrl]
 [ansi-colors][ansi-colorsGHUrl] | [Documentation][ansi-colorsDOCUrl] | [![NPM version][ansi-colorsNPMVersionImage]][ansi-colorsNPMUrl]
 [async][asyncGHUrl] | [Documentation][asyncDOCUrl] | [![NPM version][asyncNPMVersionImage]][asyncNPMUrl]
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
@@ -127,6 +128,11 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [ace-buildsNPMVersionImage]: https://img.shields.io/npm/v/ace-builds.svg?style=flat
 [aceGHUrl]: https://github.com/ajaxorg/ace "ace"
 [aceDOCUrl]: https://ace.c9.io/#nav=api "ace"
+
+[animate.cssGHUrl]: https://github.com/animate-css/animate.css
+[animate.cssDOCUrl]: https://animate.style/
+[animate.cssNPMUrl]: https://www.npmjs.com/package/animate.css
+[animate.cssNPMVersionImage]: https://img.shields.io/npm/v/animate.css.svg?style=flat
 
 [ansi-colorsGHUrl]: https://github.com/doowb/ansi-colors
 [ansi-colorsDOCUrl]: https://github.com/doowb/ansi-colors/blob/master/README.md
