@@ -5,6 +5,7 @@
   "main": "app",
   "dependencies": {
     "ace-builds": "1.4.13",
+    "animate.css": "4.1.1",
     "ansi-colors": "4.1.1",
     "async": "3.2.2",
     "@octokit/auth-oauth-app": "4.3.0",

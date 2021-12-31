@@ -44,6 +44,10 @@ module.exports = function (aApp) {
 
   serveModule('/redist/npm/', 'ace-builds/src/', 7);
 
+  serveModule('/redist/npm/', 'animate.css/', {
+    'animate.css': { maxage: day * 1 }
+  });
+
   serveModule('/redist/npm/', 'bootstrap/', {
     'dist/js/bootstrap.js': { maxage: day * 1 }
   });
