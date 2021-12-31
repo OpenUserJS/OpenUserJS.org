@@ -106,6 +106,49 @@ var installRateLimiter = rateLimit({
   }
 });
 
+var waitRateMetaMin = isDev ? 0.5 : 1;
+var metaRateLimiter = rateLimit({
+  store: (isDev ? undefined : new MongoStore({
+    uri: limiter + '/metaRateLimiter',
+    resetExpireDateOnChange: true, // Rolling
+    expireTimeMs: waitRateMetaMin * 60 * 1000 // n minutes for mongo store
+  })),
+  windowMs: waitRateMetaMin * 60 * 1000, // n minutes for all stores
+  max: 2, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    aRes.header('Retry-After', waitRateMetaMin * 60 + 60);
+
+    if (isSameOrigin(aReq.get('Referer')).result) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 429,
+        statusMessage: 'Too many requests.',
+        suppressNavigation: true,
+        isCustomView: true,
+        statusData: {
+          isListView: true,
+          retryAfter: waitRateMetaMin * 60 + 60
+        }
+      });
+    } else {
+      aRes.status(429).send();
+    }
+  },
+  keyGenerator: function (aReq, aRes, aNext) {
+    return aReq.ip + aReq._parsedUrl.pathname;
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (/\.meta\.json$/.test(aReq._parsedUrl.pathname)) {
+      return true;
+    }
+
+    if (authedUser && authedUser.isAdmin) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
+  }
+});
 
 var waitApiCapMin = isDev ? 1: 15;
 var apiCapLimiter = rateLimit({
@@ -311,7 +354,7 @@ module.exports = function (aApp) {
 
   aApp.route('/install/:username/:scriptname').get(installRateLimiter, installCapLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
-  aApp.route('/meta/:username/:scriptname').get(scriptStorage.sendMeta);
+  aApp.route('/meta/:username/:scriptname').get(metaRateLimiter, scriptStorage.sendMeta);
 
   // Github hook routes
   aApp.route('/github/hook').post(scriptStorage.webhook);
