@@ -39,8 +39,9 @@ var settings = require('./models/settings.json');
 //--
 var limiter = process.env.LIMITER_STRING || settings.limiter;
 
-var fudgeMin = 50; // WATCHPOINT: 60 second poll time in MongoDB
-var fudgeSec = 5;  // WATCHPOINT: 60 second poll time in MongoDB
+ // WATCHPOINT: ~60 second poll time in MongoDB
+var fudgeMin = 60;
+var fudgeSec = 6;
 
 var waitInstallCapMin = isDev ? 1 : 60;
 var installCapLimiter = rateLimit({
@@ -292,28 +293,24 @@ var listCapLimiter = rateLimit({
   }
 });
 
-var waitListRateSec = isDev ? parseInt(5 / 2) : parseInt(5 / 2);
+var waitListRateSec = isDev ? parseInt(4 / 2) : 4;
 var listRateLimiter = rateLimit({
   store: (isDev ? undefined : undefined),
   windowMs: waitListRateSec * 1000, // n seconds for all stores
-  max: 2, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitListRateSec + fudgeSec);
 
-    if (isSameOrigin(aReq.get('Referer')).result) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 429,
-        statusMessage: 'Too many requests.',
-        suppressNavigation: true,
-        isCustomView: true,
-        statusData: {
-          isListView: true,
-          retryAfter: waitListRateSec + fudgeSec
-        }
-      });
-    } else {
-      aRes.status(429).send();
-    }
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 429,
+      statusMessage: 'Too many requests.',
+      suppressNavigation: true,
+      isCustomView: true,
+      statusData: {
+        isListView: true,
+        retryAfter: waitListRateSec + fudgeSec
+      }
+    });
   },
   keyGenerator: function (aReq, aRes, aNext) {
     return aReq.ip + aReq._parsedUrl.pathname;
