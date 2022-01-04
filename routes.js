@@ -39,8 +39,9 @@ var settings = require('./models/settings.json');
 //--
 var limiter = process.env.LIMITER_STRING || settings.limiter;
 
-var fudgeMin = 60; // WATCHPOINT: ~60 second poll time in MongoDB
-var fudgeSec = 5;  // WATCHPOINT: ~60 second poll time in MongoDB
+ // WATCHPOINT: ~60 second poll time in MongoDB
+var fudgeMin = 60;
+var fudgeSec = 6;
 
 var waitInstallCapMin = isDev ? 1 : 60;
 var installCapLimiter = rateLimit({
