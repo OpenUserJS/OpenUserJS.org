@@ -292,7 +292,7 @@ var listCapLimiter = rateLimit({
   }
 });
 
-var waitListRateSec = isDev ? parseInt(5 / 2) : 5;
+var waitListRateSec = isDev ? parseInt(5 / 2) : parseInt(5 / 2);
 var listRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: limiter + '/listRateLimiter',
@@ -300,7 +300,7 @@ var listRateLimiter = rateLimit({
     expireTimeMs: waitListRateSec  * 1000 // n seconds for mongo store
   })),
   windowMs: waitListRateSec * 1000, // n seconds for all stores
-  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  max: 2, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitListRateSec + fudgeSec);
 
