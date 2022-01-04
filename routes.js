@@ -296,7 +296,7 @@ var waitListRateSec = isDev ? parseInt(5 / 2) : parseInt(5 / 2);
 var listRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: limiter + '/listRateLimiter',
-    resetExpireDateOnChange: true, // Rolling
+    resetExpireDateOnChange: false, // Non-Rolling
     expireTimeMs: waitListRateSec  * 1000 // n seconds for mongo store
   })),
   windowMs: waitListRateSec * 1000, // n seconds for all stores
