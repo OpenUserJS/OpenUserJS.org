@@ -301,20 +301,16 @@ var listRateLimiter = rateLimit({
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitListRateSec + fudgeSec);
 
-    if (isSameOrigin(aReq.get('Referer')).result) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 429,
-        statusMessage: 'Too many requests.',
-        suppressNavigation: true,
-        isCustomView: true,
-        statusData: {
-          isListView: true,
-          retryAfter: waitListRateSec + fudgeSec
-        }
-      });
-    } else {
-      aRes.status(429).send();
-    }
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 429,
+      statusMessage: 'Too many requests.',
+      suppressNavigation: true,
+      isCustomView: true,
+      statusData: {
+        isListView: true,
+        retryAfter: waitListRateSec + fudgeSec
+      }
+    });
   },
   keyGenerator: function (aReq, aRes, aNext) {
     return aReq.ip + aReq._parsedUrl.pathname;
