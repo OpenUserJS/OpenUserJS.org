@@ -53,7 +53,7 @@ var installCapLimiter = rateLimit({
   windowMs: waitInstallCapMin * 60 * 1000, // n minutes for all stores
   max: 50, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitInstallCapMin * 60 + fudgeMin);
+    aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
     aRes.status(429).send();
   },
   skip: function (aReq, aRes) {
@@ -76,22 +76,23 @@ var installRateLimiter = rateLimit({
   windowMs: waitRateInstallSec * 1000, // n seconds for all stores
   max: 2, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitRateInstallSec + fudgeSec);
-
+    aRes.header('Retry-After', waitRateInstallSec + (isDev ? fudgeSec : fudgeMin));
     if (isSameOrigin(aReq.get('Referer')).result) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 429,
-        statusMessage: 'Too many requests.',
-        suppressNavigation: true,
-        isCustomView: true,
-        statusData: {
-          isListView: true,
-          retryAfter: waitRateInstallSec + fudgeSec
-        }
-      });
-    } else {
-      aRes.status(429).send();
+      if (aReq.rateLimit.current <= aReq.rateLimit.limit + 2) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 429,
+          statusMessage: 'Too many requests.',
+          suppressNavigation: true,
+          isCustomView: true,
+          statusData: {
+            isListView: true,
+            retryAfter: waitRateInstallSec + (isDev ? fudgeSec : fudgeMin)
+          }
+        });
+        return;
+      }
     }
+    aRes.status(429).send();
   },
   keyGenerator: function (aReq, aRes, aNext) {
     return aReq.ip + aReq._parsedUrl.pathname;
@@ -120,22 +121,23 @@ var metaRateLimiter = rateLimit({
   windowMs: waitRateMetaSec * 1000, // n seconds for all stores
   max: 2, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitRateMetaSec + fudgeSec);
-
+    aRes.header('Retry-After', waitRateMetaSec + (isDev ? fudgeSec : fudgeMin));
     if (isSameOrigin(aReq.get('Referer')).result) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 429,
-        statusMessage: 'Too many requests.',
-        suppressNavigation: true,
-        isCustomView: true,
-        statusData: {
-          isListView: true,
-          retryAfter: waitRateMetaSec + fudgeSec
-        }
-      });
-    } else {
-      aRes.status(429).send();
+      if (aReq.rateLimit.current <= aReq.rateLimit.limit + 2) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 429,
+          statusMessage: 'Too many requests.',
+          suppressNavigation: true,
+          isCustomView: true,
+          statusData: {
+            isListView: true,
+            retryAfter: waitRateMetaSec + (isDev ? fudgeSec : fudgeMin)
+          }
+        });
+        return;
+      }
     }
+    aRes.status(429).send();
   },
   keyGenerator: function (aReq, aRes, aNext) {
     return aReq.ip + aReq._parsedUrl.pathname;
@@ -164,7 +166,7 @@ var apiCapLimiter = rateLimit({
   windowMs: waitApiCapMin * 60 * 1000, // n minutes for all stores
   max: 100, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitApiCapMin * 60 + fudgeMin);
+    aRes.header('Retry-After', waitApiCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
     aRes.status(429).send();
   },
   skip: function (aReq, aRes) {
@@ -187,7 +189,7 @@ var authCapLimiter = rateLimit({
   windowMs: waitAuthCapMin * 60 * 1000, // n minutes for all stores
   max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitAuthCapMin * 60 + fudgeMin);
+    aRes.header('Retry-After', waitAuthCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 429,
       statusMessage: 'Too many requests.',
@@ -195,7 +197,7 @@ var authCapLimiter = rateLimit({
       isCustomView: true,
       statusData: {
         isListView: true,
-        retryAfter: waitAuthCapMin * 60 + fudgeMin
+        retryAfter: waitAuthCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
       }
     });
   }
@@ -249,7 +251,7 @@ var listCapLimiter = rateLimit({
 
       aNext();
     } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 10) {
-      aRes.header('Retry-After', waitListCapMin * 60 + fudgeMin);
+      aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 429,
         statusMessage: 'Too many requests.',
@@ -257,14 +259,14 @@ var listCapLimiter = rateLimit({
         isCustomView: true,
         statusData: {
           isListView: true,
-          retryAfter: waitListCapMin * 60 + fudgeMin
+          retryAfter: waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
         }
       });
     } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
-      aRes.header('Retry-After', waitListCapMin * 60 + fudgeMin);
+      aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send('Too many requests. Please try again later');
     } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 20) {
-      aRes.header('Retry-After', waitListCapMin * 60 + fudgeMin);
+      aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send();
     } else {
       cmd = (isPro && process.env.AUTOBAN ? process.env.AUTOBAN : 'echo SIMULATING AUTOBAN') +
@@ -300,17 +302,20 @@ var listRateLimiter = rateLimit({
   max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitListRateSec + fudgeSec);
-
-    statusCodePage(aReq, aRes, aNext, {
-      statusCode: 429,
-      statusMessage: 'Too many requests.',
-      suppressNavigation: true,
-      isCustomView: true,
-      statusData: {
-        isListView: true,
-        retryAfter: waitListRateSec + fudgeSec
-      }
-    });
+    if (aReq.rateLimit.current <= aReq.rateLimit.limit + 1) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 429,
+        statusMessage: 'Too many requests.',
+        suppressNavigation: true,
+        isCustomView: true,
+        statusData: {
+          isListView: true,
+          retryAfter: waitListRateSec + fudgeSec
+        }
+      });
+      return;
+    }
+    aRes.status(429).send();
   },
   keyGenerator: function (aReq, aRes, aNext) {
     return aReq.ip + aReq._parsedUrl.pathname;
