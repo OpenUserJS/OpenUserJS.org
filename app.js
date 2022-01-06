@@ -408,7 +408,15 @@ server.listen(app.get('port'));
 if (isDev || isDbg) {
   app.use(morgan('dev'));
 } else if (process.env.FORCE_MORGAN_PREDEF_FORMAT) {
-  app.use(morgan(process.env.FORCE_MORGAN_PREDEF_FORMAT));
+  app.use(morgan(process.env.FORCE_MORGAN_PREDEF_FORMAT, {
+    skip: function (aReq, aRes) {
+      if (process.env.FORCE_MORGAN_PREDEF_FORMAT_SKIP === 'true') {
+        return (aRes.statusCode >= 400 && aRes.statusCode <= 499 || aRes.statusCode === 304);
+      } else {
+        return false;
+      }
+    }
+  }));
 }
 
 app.use(bodyParser.urlencoded({
