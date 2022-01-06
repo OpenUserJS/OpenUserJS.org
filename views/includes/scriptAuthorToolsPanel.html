@@ -16,7 +16,7 @@
     <div class="form-group">
       <div class="input-group col-xs-12">
         <span class="input-group-btn">
-          <button class="btn btn-default btn-group-justified" id="regenerate" title="Click this to regenerate some keys based off the current code changes. Warning: If the source is large it may take a while depending on platform. This feature is BETA."><i class="fa fa-fw fa-history"></i> Regenerate some keys from current source</button>
+          <button class="btn btn-default btn-group-justified" id="regenerate" title="Click this to regenerate some keys based off the current code changes. Warning: If the source is large it may take a while depending on platform."><i class="fa fa-fw fa-history"></i> Regenerate some keys from the current editor source</button>
         </span>
       </div>
     </div>
@@ -30,7 +30,7 @@
         </span>
         <input type="text" class="form-control" id="updateurl" value="{{{script.scriptPermalinkMetaPageUrl}}}" placeholder="empty" readonly="readonly">
         <span class="input-group-btn">
-          <a class="btn btn-{{#lockdown.updateURLCheck}}info{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}default{{/lockdown.updateURLCheck}}"
+          <a class="btn btn-{{#lockdown.updateURLCheck}}danger{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}warning{{/lockdown.updateURLCheck}}"
             title="How do I use this?"
             href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">
               <i class="fa fa-{{#lockdown.updateURLCheck}}exclamation-triangle{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}question-circle{{/lockdown.updateURLCheck}}"></i>
@@ -94,7 +94,7 @@
         </ul>
       </span>
       <span class="input-group-btn">
-        <a class="btn btn-info"
+        <a class="btn btn-danger"
           title="How do I use this?"
           href="/user/add/{{#script.isLib}}lib{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}#user-block-license">
             <i class="fa fa-exclamation-triangle"></i>

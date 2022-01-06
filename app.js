@@ -300,7 +300,7 @@ app.use(function (aReq, aRes, aNext) {
       if (usedMem > maxMem) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 503,
-          statusMessage: 'We are very busy right now\u2026 Please try again later.'
+          statusMessage: 'We are very busy right now \u2026 Please try again later.'
         });
         return;
       }
@@ -314,7 +314,7 @@ app.use(function (aReq, aRes, aNext) {
       return;
     } else {
       aNext(); // not toobusy
-      // fallthrough
+      // fallsthrough
     }
   }
 });
