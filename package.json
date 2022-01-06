@@ -18,7 +18,7 @@
     "connect-mongo": "3.2.0",
     "diff": "5.0.0",
     "express": "4.17.2",
-    "express-hcaptcha": "git+https://github.com/OpenUserJS/express-hcaptcha.git#fork",
+    "express-hcaptcha": "git+https://github.com/OpenUserJS/express-hcaptcha.git#forkUpdate",
     "express-minify": "1.0.0",
     "express-rate-limit": "5.5.1",
     "express-session": "1.17.2",
