@@ -53,9 +53,20 @@ var scriptSchema = new Schema({
 scriptSchema.index({
   isLib: 1,         // A lot of hits
   author: 1,        // Some hits
-  name: 1           // Very few hits
-//   about: 'text'  // No hits period when included... only one allowed per Schema
-});  // NOTE: Array indexing isn't supported with *mongoose* (yet?)
+  name: 1,          // Very few hits
+  _about: 1,
+  _description: 1,
+  'meta.UserScript.include.value': 1
+});
+
+scriptSchema.index({
+  isLib: 1,         // A lot of hits
+  author: 1,        // Some hits
+  name: 1,          // Very few hits
+  _about: 1,
+  _description: 1,
+  'meta.UserScript.match.value': 1
+});
 
 
 /*
