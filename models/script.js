@@ -47,28 +47,39 @@ var scriptSchema = new Schema({
 });
 
 /*
- * Manual-indexed
+ * Manual indexed
  */
 
 scriptSchema.index({
-  isLib: 1,         // A lot of hits
-  author: 1,        // Some hits
-  name: 1           // Very few hits
-//   about: 'text'  // No hits period when included... only one allowed per Schema
-});  // NOTE: Array indexing isn't supported with *mongoose* (yet?)
+  isLib: 1,
+  name: 1,
+  author: 1,
+  _description: 1,
+  _about: 1,
+  'meta.UserScript.include.value': 1
+});
+
+scriptSchema.index({
+  isLib: 1,
+  name: 1,
+  author: 1,
+  _description: 1,
+  _about: 1,
+  'meta.UserScript.match.value': 1
+});
 
 
 /*
- * Auto-indexed copy
+ * Direct access indexed
  */
-
-// scriptSchema.index({ // NOTE: This index is currently covered in above manual compound index
-//   isLib: 1
-// });
 
 scriptSchema.index({
   installName: 1
 });
+
+/*
+ * Other access indexed
+ */
 
 scriptSchema.index({
   _authorId: 1,
