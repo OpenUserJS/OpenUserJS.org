@@ -1,12 +1,15 @@
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/clipboard/dist/clipboard.js"></script>
-<script type="text/javascript" charset="UTF-8" src="/redist/npm/ace-builds/src/ace.js"></script>
 <script type="text/javascript">
   (function () {
 
     var clipboard = null;
     var rMin = /\.min\.js$/;
 
+    {{#isScriptViewSourcePage}}
+    {{#isOwner}}
     var regenerateId = '#regenerate';
+    {{/isOwner}}
+    {{/isScriptViewSourcePage}}
 
     var allowedIds = [
       '#copyright-raw',
@@ -29,6 +32,8 @@
       });
     }
 
+    {{#isScriptViewSourcePage}}
+    {{#isOwner}}
     // TODO: Should keep in sync with all peg.js upmixes eventually
     function parseMeta(aString) {
       aString = aString.toString();
@@ -86,6 +91,8 @@
 
       return cleanName || aDefaultName;
     };
+    {{/isOwner}}
+    {{/isScriptViewSourcePage}}
 
     //
     if (ClipboardJS.isSupported()) {
@@ -105,6 +112,8 @@
       unsupported();
     }
 
+    {{#isScriptViewSourcePage}}
+    {{#isOwner}}
     editor = ace.edit("editor");
 
     $(regenerateId).on('click', function () {
@@ -220,6 +229,8 @@
 
       $('#alt-install-target-btn').attr('disabled', 'disabled');
     });
+    {{/isOwner}}
+    {{/isScriptViewSourcePage}}
 
   })();
 </script>
