@@ -222,9 +222,17 @@ var captchaCapLimiter = rateLimit({
   skip: function (aReq, aRes) {
     var authedUser = aReq.session.user;
 
-    if (authedUser && authedUser.isMod) {
-      this.store.resetKey(this.keyGenerator);
-      return true;
+    if (authedUser) {
+      if (authedUser.isMod) {
+        this.store.resetKey(this.keyGenerator);
+        return true;
+      }
+
+      if (!authedUser._probationary) {
+        // NOTE: Still counting by design
+        return true;
+      }
+
     }
   }
 });

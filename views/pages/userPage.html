@@ -15,7 +15,14 @@
             {{#user.aboutRendered}}
             <div class="panel panel-default">
               <div class="panel-body">
+                {{#authedUser}}
                 <div class="user-content">{{{user.aboutRendered}}}</div>
+                {{/authedUser}}
+                {{^authedUser}}
+                {{#user.aboutRendered}}
+                <em>This site requires you to be registered and logged in to view profiles.</em>
+                {{/user.aboutRendered}}
+                {{/authedUser}}
               </div>
             </div>
             {{/user.aboutRendered}}
