@@ -10,6 +10,48 @@ var path = require('path');
 var url = require('url');
 
 var express = require('express');
+var rateLimit = require('express-rate-limit');
+
+
+var waitStaticRateSec = isDev ? parseInt(4 / 2) : 4;
+var staticRateLimiter = rateLimit({
+  store: (isDev ? undefined : undefined),
+  windowMs: waitStaticRateSec * 1000, // n seconds for all stores
+  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    aRes.header('Retry-After', waitStaticRateSec + fudgeSec);
+    if (aReq.rateLimit.current <= aReq.rateLimit.limit + 1) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 429,
+        statusMessage: 'Too many requests.',
+        suppressNavigation: true,
+        isCustomView: true,
+        statusData: {
+          isListView: true,
+          retryAfter: waitStaticRateSec + fudgeSec
+        }
+      });
+      return;
+    }
+    aRes.status(429).send();
+  },
+  keyGenerator: function (aReq, aRes, aNext) {
+    return aReq.ip + aReq._parsedUrl.pathname;
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (/\.meta\.json$/.test(aReq._parsedUrl.pathname)) {
+      return true;
+    }
+
+    if (authedUser && authedUser.isAdmin) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
+  }
+});
+
 
 module.exports = function (aApp) {
   var day = 1000 * 60 * 60 * 24;
@@ -25,7 +67,8 @@ module.exports = function (aApp) {
         express.static(
           path.join(dirname, aModuleBaseName),
           { maxage: aModuleOption }
-        )
+        ),
+        staticRateLimiter
       );
     } else {
       for (basename in aModuleOption) {
@@ -34,13 +77,14 @@ module.exports = function (aApp) {
           express.static(
             path.join(dirname, aModuleBaseName, basename),
             { maxage: aModuleOption[basename].maxage }
-          )
+          ),
+          staticRateLimiter
         );
       }
     }
   }
 
-  aApp.use(express.static(path.join(__dirname, 'public'), { maxage: day * 1 }));
+  aApp.use(express.static(path.join(__dirname, 'public'), { maxage: day * 1 }), staticRateLimiter);
 
   serveModule('/redist/npm/', 'ace-builds/src/', 7);
 
