@@ -41,10 +41,6 @@ var staticRateLimiter = rateLimit({
   skip: function (aReq, aRes) {
     var authedUser = aReq.session.user;
 
-    if (/\.meta\.json$/.test(aReq._parsedUrl.pathname)) {
-      return true;
-    }
-
     if (authedUser && authedUser.isAdmin) {
       this.store.resetKey(this.keyGenerator);
       return true;
