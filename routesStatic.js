@@ -12,6 +12,7 @@ var url = require('url');
 var express = require('express');
 var rateLimit = require('express-rate-limit');
 
+var fudgeSec = 6;
 
 var waitStaticRateSec = isDev ? parseInt(4 / 2) : 4;
 var staticRateLimiter = rateLimit({
@@ -20,19 +21,6 @@ var staticRateLimiter = rateLimit({
   max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitStaticRateSec + fudgeSec);
-    if (aReq.rateLimit.current <= aReq.rateLimit.limit + 1) {
-      statusCodePage(aReq, aRes, aNext, {
-        statusCode: 429,
-        statusMessage: 'Too many requests.',
-        suppressNavigation: true,
-        isCustomView: true,
-        statusData: {
-          isListView: true,
-          retryAfter: waitStaticRateSec + fudgeSec
-        }
-      });
-      return;
-    }
     aRes.status(429).send();
   },
   keyGenerator: function (aReq, aRes, aNext) {
@@ -60,27 +48,28 @@ module.exports = function (aApp) {
     if (!aModuleOption || typeof aModuleOption === 'number') {
       aApp.use(
         url.resolve(aModuleBase, aModuleBaseName),
+        staticRateLimiter,
         express.static(
           path.join(dirname, aModuleBaseName),
           { maxage: aModuleOption }
-        ),
-        staticRateLimiter
+        )
       );
     } else {
       for (basename in aModuleOption) {
         aApp.use(
           url.resolve(aModuleBase, url.resolve(aModuleBaseName, basename)),
+          staticRateLimiter,
           express.static(
             path.join(dirname, aModuleBaseName, basename),
             { maxage: aModuleOption[basename].maxage }
-          ),
-          staticRateLimiter
+          )
+
         );
       }
     }
   }
 
-  aApp.use(express.static(path.join(__dirname, 'public'), { maxage: day * 1 }), staticRateLimiter);
+  aApp.use(staticRateLimiter, express.static(path.join(__dirname, 'public'), { maxage: day * 1 }));
 
   serveModule('/redist/npm/', 'ace-builds/src/', 7);
 
