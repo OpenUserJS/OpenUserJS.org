@@ -48,7 +48,6 @@ module.exports = function (aApp) {
     if (!aModuleOption || typeof aModuleOption === 'number') {
       aApp.use(
         url.resolve(aModuleBase, aModuleBaseName),
-        staticRateLimiter,
         express.static(
           path.join(dirname, aModuleBaseName),
           { maxage: aModuleOption }
@@ -58,7 +57,6 @@ module.exports = function (aApp) {
       for (basename in aModuleOption) {
         aApp.use(
           url.resolve(aModuleBase, url.resolve(aModuleBaseName, basename)),
-          staticRateLimiter,
           express.static(
             path.join(dirname, aModuleBaseName, basename),
             { maxage: aModuleOption[basename].maxage }
