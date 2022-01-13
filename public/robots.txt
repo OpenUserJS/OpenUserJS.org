@@ -1,4 +1,5 @@
 User-agent: *
+Crawl-Delay: 5
 Disallow: /admin/
 Disallow: /mod/
 Disallow: /flag/
@@ -15,3 +16,5 @@ Disallow: /src/
 Disallow: /meta/
 Disallow: /api/
 Disallow: /post/
+Disallow: /*.js$
+Disallow: /*.user.js$
