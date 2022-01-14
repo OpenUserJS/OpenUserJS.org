@@ -10,7 +10,7 @@
           <div class="names pull-left">
             <span>
               {{#user.userPageUrl}}<a href="{{{user.userPageUrl}}}" class="username">{{name}}</a>{{/user.userPageUrl}}
-              {{^user.userPageUrl}}<span class="username">{{#name}}{{name}}{{/name}}{{^name}}<em>&hellip;</em>{{/name}}</span>{{/user.userPageUrl}}
+              {{^user.userPageUrl}}<span class="username">{{#passport.oujsOptions.newUser}}<em>{{/passport.oujsOptions.newUser}}{{#name}}{{name}}{{/name}}{{#passport.oujsOptions.newUser}}</em>{{/passport.oujsOptions.newUser}}{{^name}}<em>&hellip;</em>{{/name}}</span>{{/user.userPageUrl}}
               <span class="label label-default">{{#user.roleName}}{{user.roleName}}{{/user.roleName}}{{^user.roleName}}<em>&hellip;</em>{{/user.roleName}}</span>
               <span class="label label-{{#cookie.secure}}success{{/cookie.secure}}{{^cookie.secure}}warning{{/cookie.secure}}" title="secure">
                 <i class="fa fa-{{^cookie.secure}}un{{/cookie.secure}}lock"></i>
