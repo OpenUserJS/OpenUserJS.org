@@ -53,7 +53,7 @@ var categories = [
   },
   {
     slug: 'corner',
-    name: 'Beggar\'s Corner',
+    name: 'Beggars Corner',
     description: 'Propose ideas and request user scripts',
     active: true
   },
