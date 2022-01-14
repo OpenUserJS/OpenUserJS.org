@@ -219,26 +219,26 @@ exports.destroyOne = function (aReq, aRes, aNext) {
       return;
     }
 
-    if (!aUser) {
+    if (aUser) {
+      user = aUser; // NOTE: We really shouldn't need modelParser here
+
+      if (authedUser.role > user.role) {
+        redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+          'hirank';
+        aRes.redirect(redirectTo);
+        return;
+      }
+
+      // You can only delete your own other sessions when you are not an admin
+      if (!authedUser.isAdmin && authedUser.name !== user.name) {
+        redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+          'noown';
+        aRes.redirect(redirectTo);
+        return;
+      }
+    } else if (!authedUser.isAdmin) {
       redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
         'curses';
-      aRes.redirect(redirectTo);
-      return;
-    }
-
-    user = aUser; // NOTE: We really shouldn't need modelParser here
-
-    if (authedUser.role > user.role) {
-      redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
-        'hirank';
-      aRes.redirect(redirectTo);
-      return;
-    }
-
-    // You can only delete your own other sessions when you are not an admin
-    if (!authedUser.isAdmin && authedUser.name !== user.name) {
-      redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
-        'noown';
       aRes.redirect(redirectTo);
       return;
     }
