@@ -252,14 +252,14 @@ exports.destroyOne = function (aReq, aRes, aNext) {
         return;
       }
 
-      if (!authedUser.isAdmin && aSess.passport.oujsOptions.authFrom) {
+      if (!authedUser.isAdmin && aSess.passport && aSess.passport.oujsOptions.authFrom) {
         redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
           'noadmin';
         aRes.redirect(redirectTo);
         return;
       }
 
-      destroyOneSession(aReq, user, id, function (aErr) {
+      destroyOneSession(aReq, authedUser.isAdmin, user, id, function (aErr) {
         if (aErr) {
           statusCodePage(aReq, aRes, aNext, {
             statusCode: aErr.code || 500,
