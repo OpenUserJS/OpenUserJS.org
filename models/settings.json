@@ -5,7 +5,7 @@
  "maximum_upload_script_size": 1048576,
  "ttl": {
   "minimum": 2,
-  "nominal": 3,
+  "nominal": 6,
   "timerSanity": 7,
   "timerSanityExpiry": 11,
   "maximum": 12
