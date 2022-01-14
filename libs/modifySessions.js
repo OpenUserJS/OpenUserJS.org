@@ -172,12 +172,17 @@ exports.update = function (aReq, aUser, aCallback) {
 };
 
 // Destroy one session for a user
-exports.destroyOne = function (aReq, aUser, aId, aCallback) {
+exports.destroyOne = function (aReq, aSkipUserCheck, aUser, aId, aCallback) {
   var store = aReq.sessionStore;
   var authedUser = aReq.session.user;
 
-  if (!aUser || !aId) {
-    aCallback('No user or id to delete', null);
+  if (!aId) {
+    aCallback('No id to delete', null);
+    return;
+  }
+
+  if (!aUser && !aSkipUserCheck) {
+    aCallback('No user to delete', null);
     return;
   }
 
@@ -190,14 +195,23 @@ exports.destroyOne = function (aReq, aUser, aId, aCallback) {
     // We want to know who deleted someone else!
     // If we didn't want this then this call to get the session
     // from id would not be necessary.
-    if (authedUser.name !== aUser.name) {
+    if (!aUser && aSkipUserCheck) {
+      console.log(
+        '`' + authedUser.name + '`',
+          'removed a session id of',
+            '`' + aId + '`',
+              (aSess.passport && aSess.passport.oujsOptions && aSess.passport.oujsOptions.authFrom
+                ? 'authed from `' + aSess.passport.oujsOptions.authFrom + '`'
+                : '')
+      );
+    } else if (authedUser.name !== aUser.name) {
       console.log(
         '`' + authedUser.name + '`',
           'removed a session by',
             '`' + aUser.name + '`',
-              aSess.passport.oujsOptions.authFrom
+              (aSess.passport && aSess.passport.oujsOptions && aSess.passport.oujsOptions.authFrom
                 ? 'authed from `' + aSess.passport.oujsOptions.authFrom + '`'
-                : ''
+                : '')
       );
     }
 
