@@ -199,7 +199,7 @@ exports.destroyOne = function (aReq, aSkipUserCheck, aUser, aId, aCallback) {
       console.log(
         '`' + authedUser.name + '`',
           'removed a session id of',
-            '`' + aId + '`',
+            '`' + aId + '`', 'for `' + aSess.username + '`',
               (aSess.passport && aSess.passport.oujsOptions && aSess.passport.oujsOptions.authFrom
                 ? 'authed from `' + aSess.passport.oujsOptions.authFrom + '`'
                 : '')
@@ -207,7 +207,7 @@ exports.destroyOne = function (aReq, aSkipUserCheck, aUser, aId, aCallback) {
     } else if (authedUser.name !== aUser.name) {
       console.log(
         '`' + authedUser.name + '`',
-          'removed a session by',
+          'removed a session for',
             '`' + aUser.name + '`',
               (aSess.passport && aSess.passport.oujsOptions && aSess.passport.oujsOptions.authFrom
                 ? 'authed from `' + aSess.passport.oujsOptions.authFrom + '`'
@@ -331,6 +331,7 @@ exports.findSessionData = function (aQuery, aStore, aOptions, aCallback) {
 
 
         data.passport.oujsOptions.username = data.username || findMeta(data.user, 'name');
+        data.passport.oujsOptions.newUser = data.newUser;
         data.passport.oujsOptions.sid = aSessionData._id;
 
         // Very simple query filter search check to start.

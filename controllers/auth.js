@@ -122,6 +122,8 @@ exports.preauth = function (aReq, aRes, aNext) {
           // Match cleansed name and this is the casing they have chosen
           aReq.body.username = username;
 
+          aReq.newUser = true;
+
           // Validate captcha for unknown individual
           if (!SITEKEY) {
             // Skip captcha for not implemented
@@ -206,9 +208,11 @@ exports.auth = function (aReq, aRes, aNext) {
       aReq.session.redirectTo = '/';
     }
 
-    // Save the known user on the session and remove
+    // Save the known statuses of the user on the session and remove
     aReq.session.wellKnownUser = aReq.wellKnownUser;
+    aReq.session.newUser = aReq.newUser;
     delete aReq.wellKnownUser;
+    delete aReq.newUser;
 
     // Save the token from the captcha on the session and remove from body
     if (captchaToken) {

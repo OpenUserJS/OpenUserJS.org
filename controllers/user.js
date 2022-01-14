@@ -261,10 +261,10 @@ exports.destroyOne = function (aReq, aRes, aNext) {
 
       destroyOneSession(aReq, authedUser.isAdmin, user, id, function (aErr) {
         if (aErr) {
-          statusCodePage(aReq, aRes, aNext, {
-            statusCode: aErr.code || 500,
-            statusMessage: aErr.message
-          });
+          // NOTE: Watchpoint
+          redirectTo.search = (redirectTo.search ? redirectTo.search + '&' : '') +
+            'curses';
+          aRes.redirect(redirectTo);
           return;
         }
 
