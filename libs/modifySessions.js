@@ -331,8 +331,20 @@ exports.findSessionData = function (aQuery, aStore, aOptions, aCallback) {
 
 
         data.passport.oujsOptions.username = data.username || findMeta(data.user, 'name');
+        data.passport.oujsOptions.userrole = data.passport.oujsOptions.username
+          ? data.userrole
+          : '\u2026';
         data.passport.oujsOptions.newUser = data.newUser;
         data.passport.oujsOptions.sid = aSessionData._id;
+
+        // NOTE: These only shows up during authentication otherwise don't use
+        if (data.userauth) {
+          data.passport.oujsOptions.strategy = data.userauth;
+        }
+
+        if (data.useragent) {
+          data.passport.oujsOptions.userAgent = data.useragent;
+        }
 
         // Very simple query filter search check to start.
         // Currently only looking in `data.passport.oujsOptions.username`.

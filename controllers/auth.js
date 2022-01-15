@@ -30,6 +30,8 @@ var addSession = require('../libs/modifySessions').add;
 var expandSession = require('../libs/modifySessions').expand;
 var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
+var modelParser = require('../libs/modelParser');
+
 //--- Configuration inclusions
 var allStrategies = require('./strategies.json');
 
@@ -69,6 +71,7 @@ exports.preauth = function (aReq, aRes, aNext) {
   var authedUser = aReq.session.user;
 
   var username = aReq.body.username;
+  var userauth = aReq.body.auth;
   var SITEKEY = process.env.HCAPTCHA_SITE_KEY;
 
   if (!authedUser) {
@@ -93,6 +96,8 @@ exports.preauth = function (aReq, aRes, aNext) {
 
     User.findOne({ name: { $regex: new RegExp('^' + username + '$', 'i') } },
       function (aErr, aUser) {
+        var user = null;
+
         if (aErr) {
           console.error('Authfail with no User found of', username, aErr);
           aRes.redirect('/login?usernamefail');
@@ -100,11 +105,20 @@ exports.preauth = function (aReq, aRes, aNext) {
         }
 
         if (aUser) {
+          user = modelParser.parseUser(aUser);
+
           // Ensure that casing is identical so we still have it, correctly, when they
           // get back from authentication
-          aReq.body.username = aUser.name;
+          aReq.body.username = user.name;
 
-          if (!aUser._probationary) {
+          if (userauth) {
+            aReq.body.userauth = userauth;
+          } else {
+            aReq.body.userauth = user.userStrategies[user.userStrategies.length - 1];
+          }
+          aReq.userrole = user.roleName;
+
+          if (!user._probationary) {
             // Skip captcha for well known individual
             aReq.wellKnownUser = true;
 
@@ -122,6 +136,7 @@ exports.preauth = function (aReq, aRes, aNext) {
           // Match cleansed name and this is the casing they have chosen
           aReq.body.username = username;
 
+          aReq.body.userauth = userauth;
           aReq.newUser = true;
 
           // Validate captcha for unknown individual
@@ -209,8 +224,11 @@ exports.auth = function (aReq, aRes, aNext) {
     }
 
     // Save the known statuses of the user on the session and remove
+    aReq.session.userauth = aReq.body.userauth;
+    aReq.session.userrole = aReq.userrole;
     aReq.session.wellKnownUser = aReq.wellKnownUser;
     aReq.session.newUser = aReq.newUser;
+    delete aReq.userrole;
     delete aReq.wellKnownUser;
     delete aReq.newUser;
 
@@ -317,8 +335,8 @@ exports.auth = function (aReq, aRes, aNext) {
 exports.callback = function (aReq, aRes, aNext) {
   var strategy = aReq.params.strategy;
   var username = aReq.session.username;
-  var newstrategy = aReq.session.newstrategy;
   var wellKnownUser = aReq.session.wellKnownUser;
+  var newstrategy = aReq.session.newstrategy;
   var captchaToken = aReq.session.captchaToken;
   var captchaSuccess = aReq.session.captchaSuccess;
 
