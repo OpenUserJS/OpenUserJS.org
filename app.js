@@ -552,7 +552,7 @@ function tripServerOnCertExpire(aValidToString, aStayResident) {
         // so must conclude with server trip
 
       } catch (aE) {
-        console.error(colors.red('Error renaming expiring certificate', aE.code));
+        console.error(colors.red('Error renaming expiring certificate ' + aE.code));
       }
     } else if (isSecured) {
       console.warn(colors.cyan('Attempting to renew expiring certificate'));
@@ -562,7 +562,7 @@ function tripServerOnCertExpire(aValidToString, aStayResident) {
         trippy = true;
 
       } catch (aE) {
-        console.warn(colors.red('Error renewing expiring certificate', aE.code));
+        console.warn(colors.red('Error renewing expiring certificate ' + aE.code));
       }
     }
 

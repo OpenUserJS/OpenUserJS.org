@@ -214,7 +214,7 @@ if (isSecured) {
     try {
       meta = JSON.parse(aBody);
     } catch (aE) {
-      console.error(colors.red('Error retrieving GitHub `hooks`', aE));
+      console.error(colors.red('Error retrieving GitHub `hooks` ' + aE));
       return;
     }
 
@@ -224,7 +224,8 @@ if (isSecured) {
           githubHookAddresses.push(aEl);
         } else {
           console.warn(
-            colors.yellow('GitHub `hooks` element', aEl, 'does not match IPv4 CIDR specification')
+            colors.yellow('GitHub `hooks` element ' + aEl +
+              ' does not match IPv4 CIDR specification')
           );
         }
       });
