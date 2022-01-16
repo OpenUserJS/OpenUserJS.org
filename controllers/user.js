@@ -21,8 +21,10 @@ var svgCaptcha = require('svg-captcha');
 var SPDX = require('spdx-license-ids');
 
 //--- Model inclusions
-var Comment = require('../models/comment').Comment;
 var Script = require('../models/script').Script;
+var Comment = require('../models/comment').Comment;
+var Vote = require('../models/vote').Vote;
+var Flag = require('../models/flag').Flag;
 var Sync = require('../models/sync').Sync;
 var Strategy = require('../models/strategy').Strategy;
 var User = require('../models/user').User;
@@ -327,6 +329,8 @@ var getUserPageTasks = function (aOptions) {
   var user = null;
   var userScriptListCountQuery = null;
   var userCommentListCountQuery = null;
+  var userVoteListCountQuery = null;
+  var userFlagListCountQuery = null;
   var userSyncListCountQuery = null;
   var tasks = [];
 
@@ -342,6 +346,14 @@ var getUserPageTasks = function (aOptions) {
   // userCommentListCountQuery
   userCommentListCountQuery = Comment.find({ _authorId: user._id, flagged: { $ne: true } });
   tasks.push(countTask(userCommentListCountQuery, aOptions, 'commentListCount'));
+
+  // userVoteListCountQuery
+  userVoteListCountQuery = Vote.find({ _userId: user._id });
+  tasks.push(countTask(userVoteListCountQuery, aOptions, 'voteListCount'));
+
+  // userFlagListCountQuery
+  userFlagListCountQuery = Flag.find({ _userId: user._id });
+  tasks.push(countTask(userFlagListCountQuery, aOptions, 'flagListCount'));
 
   // userSyncListCountQuery
   userSyncListCountQuery = Sync.find({ _authorId: user._id });
