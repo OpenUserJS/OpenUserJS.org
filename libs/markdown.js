@@ -284,7 +284,6 @@ marked.setOptions({
   },
   renderer: renderer,
   gfm: true,
-  tables: true,
   breaks: true,
   pedantic: false,
   sanitize: false, // we use sanitize-html to sanitize HTML
@@ -293,5 +292,5 @@ marked.setOptions({
 });
 
 exports.renderMd = function (aText) {
-  return marked(aText);
+  return marked.parse(aText);
 };
