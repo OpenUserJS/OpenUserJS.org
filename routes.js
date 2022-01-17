@@ -366,9 +366,9 @@ module.exports = function (aApp) {
   // User routes
   aApp.route('/users').get(listRateLimiter, listCapLimiter, user.userListPage);
   aApp.route('/users/:username').get(user.view);
-  aApp.route('/users/:username/comments').get(listRateLimiter, listCapLimiter, user.userCommentListPage);
   aApp.route('/users/:username/scripts').get(listRateLimiter, listCapLimiter, user.userScriptListPage);
   aApp.route('/users/:username/syncs').get(listRateLimiter, listCapLimiter, user.userSyncListPage);
+  aApp.route('/users/:username/comments').get(listRateLimiter, listCapLimiter, user.userCommentListPage);
 
   aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);
   aApp.route('/users/:username/github/repo').get(authentication.validateUser, user.userGitHubRepoPage);

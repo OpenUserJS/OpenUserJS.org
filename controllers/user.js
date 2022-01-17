@@ -567,6 +567,9 @@ exports.view = function (aReq, aRes, aNext) {
     user.aboutRendered = renderMd(user.about);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
+    options.isYouOrAdmin = options.isYou || options.isAdmin;
+    options.isYouOrMod = options.isYou || options.isMod;
+
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
     options.isUserPage = true;
@@ -678,6 +681,9 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
     // User
     user = options.user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
+
+    options.isYouOrAdmin = options.isYou || options.isAdmin;
+    options.isYouOrMod = options.isYou || options.isMod;
 
     // Page metadata
     pageMetadata(options, [user.name, 'Users']);
@@ -832,6 +838,9 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
     options.user = user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
+    options.isYouOrAdmin = options.isYou || options.isAdmin;
+    options.isYouOrMod = options.isYou || options.isMod;
+
     switch (aReq.query.library) {
       case 'true': // List just libraries
         options.includeLibraries = true;
@@ -950,8 +959,11 @@ exports.userSyncListPage = function (aReq, aRes, aNext) {
     user = options.user = modelParser.parseUser(aUser);
     options.isYou = authedUser && user && authedUser._id == user._id;
 
+    options.isYouOrAdmin = options.isYou || options.isAdmin;
+    options.isYouOrMod = options.isYou || options.isMod;
+
     // If not you or not synacable auth strategy move along
-    if (!options.isYou || !options.user.canSync) {
+    if (!options.isYouOrAdmin || !options.user.canSync) {
       aNext();
       return;
     }

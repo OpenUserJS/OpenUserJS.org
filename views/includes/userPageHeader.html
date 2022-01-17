@@ -12,16 +12,16 @@
     <ul class="nav navbar-nav">
       <li class="{{#isUserPage}}active{{/isUserPage}}"><a href="{{{user.userPageUrl}}}">Profile</a></li>
       <li class="{{#isUserScriptListPage}}active{{/isUserScriptListPage}}"><a href="{{{user.userScriptListPageUrl}}}" class="{{^user.userScriptListPageUrl}}disabled{{/user.userScriptListPageUrl}}">Scripts{{#scriptListCount}} <span class="badge">{{scriptListCount}}</span>{{/scriptListCount}}</a></li>
-      <li class="{{#isUserCommentListPage}}active{{/isUserCommentListPage}}"><a href="{{{user.userCommentListPageUrl}}}" class="{{^user.userCommentListPageUrl}}disabled{{/user.userCommentListPageUrl}}">Comments{{#commentListCount}} <span class="badge">{{commentListCount}}</span>{{/commentListCount}}</a></li>
-      {{#isAdmin}}
-      <li class=""><a href="#">Votes{{#voteListCount}} <span class="badge">{{voteListCount}}</span>{{/voteListCount}}</a></li>
-      <li class=""><a href="#">Flags{{#flagListCount}} <span class="badge">{{flagListCount}}</span>{{/flagListCount}}</a></li>
-      {{/isAdmin}}
-      {{#isYou}}
+      {{#isYouOrAdmin}}
         {{#user.canSync}}
           <li class="{{#isUserSyncListPage}}active{{/isUserSyncListPage}}"><a href="{{{user.userSyncListPageUrl}}}" class="{{^user.userSyncListPageUrl}}disabled{{/user.userSyncListPageUrl}}">Syncs{{#syncListCount}} <span class="badge">{{syncListCount}}</span>{{/syncListCount}}</a></li>
         {{/user.canSync}}
-      {{/isYou}}
+      {{/isYouOrAdmin}}
+      <li class="{{#isUserCommentListPage}}active{{/isUserCommentListPage}}"><a href="{{{user.userCommentListPageUrl}}}" class="{{^user.userCommentListPageUrl}}disabled{{/user.userCommentListPageUrl}}">Comments{{#commentListCount}} <span class="badge">{{commentListCount}}</span>{{/commentListCount}}</a></li>
+      {{#isYouOrAdmin}}
+        <li class=""><a href="#">Votes{{#voteListCount}} <span class="badge">{{voteListCount}}</span>{{/voteListCount}}</a></li>
+        <li class=""><a href="#">Flags{{#flagListCount}} <span class="badge">{{flagListCount}}</span>{{/flagListCount}}</a></li>
+      {{/isYouOrAdmin}}
     </ul>
   </div>
 </nav>
