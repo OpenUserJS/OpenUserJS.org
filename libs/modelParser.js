@@ -673,6 +673,8 @@ var parseUser = function (aUser) {
   user.isRoot = user.role < 1;
   user.roleName = userRoles[user.role];
 
+  user.showFlags = user.role >= 3;
+
   //
   user.slug = user.name;
 
