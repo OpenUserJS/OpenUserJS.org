@@ -24,7 +24,7 @@
     "express-session": "1.17.2",
     "express-svg-captcha": "1.0.1",
     "font-awesome": "4.7.0",
-    "formidable": "1.2.6",
+    "formidable": "2.0.1",
     "git-rev": "0.2.1",
     "git-rev-sync": "3.0.2",
     "github": "git+https://github.com/octokit/rest.js.git#29dedb3",
