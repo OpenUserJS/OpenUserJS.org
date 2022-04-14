@@ -2028,9 +2028,9 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
     // Reject non-js file
     if (isDev) {
-      console.log('Upload Script MIME Content-Type is `' + script.type + '`');
+      console.log('Upload Script MIME Content-Type is `' + script.mimetype + '`');
     }
-    switch (script.type) {
+    switch (script.mimetype) {
       case 'application/x-javascript': // #872 #1661
       case 'application/javascript':   // #1599
       case 'text/javascript':          // Default
@@ -2054,7 +2054,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
       return;
     }
 
-    stream = fs.createReadStream(script.path);
+    stream = fs.createReadStream(script.filepath);
 
     stream.on('error', function(aErr) {
       msg = 'Upload Script failed.';
