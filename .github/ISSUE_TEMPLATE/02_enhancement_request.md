@@ -13,7 +13,7 @@ labels: enhancement
 
 **What’s missing?**
 
-  <!-- Describe your feature idea  -->
+  <!-- Describe your enhancement idea  -->
 
 **Why?**
 
