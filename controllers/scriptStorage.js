@@ -927,6 +927,7 @@ exports.sendMeta = function (aReq, aRes, aNext) {
         // Overwrite any keys found with the following...
         meta.OpenUserJS.installs = [{ value: script.installs }];
         meta.OpenUserJS.issues =  [{ value: 'n/a' }];
+        meta.OpenUserJS.rating =  [{ value: script.rating }];
         meta.OpenUserJS.hash = script.hash ? [{ value: script.hashSRI }] : 'undefined';
 
         // Get the number of open issues
