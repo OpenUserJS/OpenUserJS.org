@@ -27,7 +27,7 @@ Repository | Reference | Recent Version
 [aws-sdk][aws-sdkGHUrl] | [Documentation][aws-sdkDOCUrl] | [![NPM version][aws-sdkNPMVersionImage]][aws-sdkNPMUrl]
 [body-parser][body-parserGHUrl] | [Documentation][body-parserDOCUrl] | [![NPM version][body-parserNPMVersionImage]][body-parserNPMUrl]
 [bootstrap][bootstrapGHUrl] | [Documentation][bootstrapDOCUrl] | [![NPM version][bootstrapNPMVersionImage]][bootstrapNPMUrl]
-[bootstrap-markdown][bootstrap-markdownGHUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl]
+[bootstrap-markdown][bootstrap-markdownGHUrl] <br />&#x22D4; [`marked4.x`][bootstrap-markdownGHUrlForkUrl] | [Documentation][bootstrap-markdownDOCUrl] | [![NPM version][bootstrap-markdownNPMVersionImage]][bootstrap-markdownNPMUrl]
 [clipboard][clipboardGHUrl] | [Documentation][clipboardDOCUrl] | [![NPM version][clipboardNPMVersionImage]][clipboardNPMUrl]
 [compression][compressionGHUrl] | [Documentation][compressionDOCUrl] | [![NPM version][compressionNPMVersionImage]][compressionNPMUrl]
 [connect-mongo][connect-mongoGHUrl] | [Documentation][connect-mongoDOCUrl] | [![NPM version][connect-mongoNPMVersionImage]][connect-mongoNPMUrl]
@@ -161,6 +161,7 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [bootstrapNPMVersionImage]: https://img.shields.io/npm/v/bootstrap.svg?style=flat
 
 [bootstrap-markdownGHUrl]: https://github.com/refactory-id/bootstrap-markdown
+[bootstrap-markdownGHUrlForkUrl]: https://github.com/OpenUserJS/bootstrap-markdown/tree/marked4.x
 [bootstrap-markdownDOCUrl]: https://refactory-id.github.io/bootstrap-markdown/
 [bootstrap-markdownNPMUrl]: https://www.npmjs.com/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
