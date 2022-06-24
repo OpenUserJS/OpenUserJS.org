@@ -160,8 +160,8 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [bootstrapNPMUrl]: https://www.npmjs.com/package/bootstrap
 [bootstrapNPMVersionImage]: https://img.shields.io/npm/v/bootstrap.svg?style=flat
 
-[bootstrap-markdownGHUrl]: https://github.com/toopay/bootstrap-markdown
-[bootstrap-markdownDOCUrl]: https://toopay.github.io/bootstrap-markdown/
+[bootstrap-markdownGHUrl]: https://github.com/refactory-id/bootstrap-markdown
+[bootstrap-markdownDOCUrl]: https://refactory-id.github.io/bootstrap-markdown/
 [bootstrap-markdownNPMUrl]: https://www.npmjs.com/package/bootstrap-markdown
 [bootstrap-markdownNPMVersionImage]: https://img.shields.io/npm/v/bootstrap-markdown.svg?style=flat
 
