@@ -115,7 +115,7 @@ module.exports = function (aApp) {
   });
 
   serveModule('/redist/npm/', 'marked/', {
-    'lib/marked.cjs': { maxage: day * 1 }
+    'marked.min.js': { maxage: day * 1 }
   });
 
   serveModule('/redist/npm/', 'octicons/', {
