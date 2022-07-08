@@ -859,7 +859,34 @@ exports.sendMeta = function (aReq, aRes, aNext) {
   }
 
   function render() {
-    aRes.end(JSON.stringify(meta, null, isPro ? '' : ' '));
+    var metaJSON = JSON.stringify(meta, null, isPro ? '' : ' ');
+    var hash = null;
+
+    // HTTP/1.1 Caching
+    aRes.set('Cache-Control', 'public, max-age=' + maxAge +
+      ', no-cache, no-transform, must-revalidate');
+
+    // Use SRI of the recalculated sha512sum
+    hash = crypto.createHash('sha512').update(metaJSON).digest('hex');
+    eTag =  '"'  + 'sha512-' + Buffer.from(hash, 'hex').toString('base64') + ' .meta.json"';
+
+    // If already client-side... HTTP/1.1 Caching
+    if (aReq.get('if-none-match') === eTag) {
+      aRes.status(304).send(); // Not Modified
+      return;
+    }
+
+    // Okay to send .meta.json...
+    aRes.set('Content-Type', 'application/json; charset=UTF-8');
+
+    // HTTP/1.0 Caching
+    aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
+      .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
+
+    // HTTP/1.1 Caching
+    aRes.set('Etag', eTag);
+
+    aRes.end(metaJSON);
   }
 
   function asyncComplete(aErr) {
@@ -875,6 +902,9 @@ exports.sendMeta = function (aReq, aRes, aNext) {
   var installNameBase = getInstallNameBase(aReq, { hasExtension: true });
   var meta = null;
 
+  var eTag = null;
+  var maxAge = 7 * 60 * 60 * 24; // nth day(s) in seconds
+
   Script.findOne({ installName: caseSensitive(installNameBase + '.user.js') },
     function (aErr, aScript) {
       // WARNING: No err handling
@@ -884,40 +914,16 @@ exports.sendMeta = function (aReq, aRes, aNext) {
       var whitespace = '\u0020\u0020\u0020\u0020';
       var tasks = [];
 
-      var eTag = null;
-      var maxAge = 7 * 60 * 60 * 24; // nth day(s) in seconds
-
       if (!aScript) {
         aNext();
         return;
       }
 
-      // HTTP/1.1 Caching
-      aRes.set('Cache-Control', 'public, max-age=' + maxAge +
-        ', no-cache, no-transform, must-revalidate');
-
       script = modelParser.parseScript(aScript);
       meta = script.meta; // NOTE: Watchpoint
 
       if (/\.json$/.test(aReq.params.scriptname)) {
-        // Use SRI of the stored sha512sum
-        eTag = '"'  + script.hashSRI + ' .meta.json"';
-
-        // If already client-side... HTTP/1.1 Caching
-        if (aReq.get('if-none-match') === eTag) {
-          aRes.status(304).send(); // Not Modified
-          return;
-        }
-
-        // Okay to send .meta.json...
-        aRes.set('Content-Type', 'application/json; charset=UTF-8');
-
-        // HTTP/1.0 Caching
-        aRes.set('Expires', moment(moment() + maxAge * 1000).utc()
-          .format('ddd, DD MMM YYYY HH:mm:ss') + ' GMT');
-
-        // HTTP/1.1 Caching
-        aRes.set('Etag', eTag);
+        // NOTE: Caching is managed on rendering for more live stats
 
         // Check for existance of OUJS metadata block
         if (!meta.OpenUserJS) {
