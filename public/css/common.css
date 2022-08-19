@@ -411,7 +411,7 @@ ul.flaggedList {
   width: 16px;
   height: 16px;
 }
-.ua-chrome, .ua-chrome-mobile, .ua-chrome-mobile-webview {
+.ua-chrome, .ua-chrome-mobile, .ua-chrome-mobile-ios, .ua-chrome-mobile-webview {
   background: transparent url("/images/ua/chrome16.png") no-repeat left top;
   color: transparent;
 }
