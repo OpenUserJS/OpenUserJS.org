@@ -85,7 +85,7 @@ Repository | Reference | Recent Version
 [strip-markdown][strip-markdownGHUrl] | [Documentation][strip-markdownDOCUrl] | [![NPM version][strip-markdownNPMVersionImage]][strip-markdownNPMUrl]
 [terser][terserGHUrl] | [Documentation][terserDOCUrl] | [![NPM version][terserNPMVersionImage]][terserNPMUrl]
 [toobusy-js][toobusy-jsGHUrl] <br />&#x22D4; [`harmony`][toobusy-jsGHUrlHarmonyUrl] | [Documentation][toobusy-jsDOCUrl] | [![NPM version][toobusy-jsNPMVersionImage]][toobusy-jsNPMUrl]
-[underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
+[underscore][underscoreGHUrl] | [Documentation][underscoreDOCUrl][&Delta;][underscoreDOCCLUrl] | [![NPM version][underscoreNPMVersionImage]][underscoreNPMUrl]
 [useragent][useragentGHUrl] | [Documentation][useragentDOCUrl] | [![NPM version][useragentNPMVersionImage]][useragentNPMUrl]
 [@octokit/auth-oauth-app][auth-oauth-appGHUrl] | [Documentation][auth-oauth-appDOCUrl] | [![NPM version][auth-oauth-appNPMVersionImage]][auth-oauth-appNPMUrl]
 [@octokit/rest ᶠᵏᵃ ᵍᶦᵗʰᵘᵇ][githubGHUrl] | [Documentation][githubDOCUrl] | [![NPM version][githubNPMVersionImage]][githubNPMUrl]
@@ -464,6 +464,7 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 
 [underscoreGHUrl]: https://github.com/jashkenas/underscore
 [underscoreDOCUrl]: https://underscorejs.org/
+[underscoreDOCCLUrl]: https://underscorejs.org/#changelog
 [underscoreNPMUrl]: https://www.npmjs.com/package/underscore
 [underscoreNPMVersionImage]: https://badgen.net/npm/v/underscore?cache=86400
 
