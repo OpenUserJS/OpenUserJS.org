@@ -55,6 +55,8 @@ var installCapLimiter = rateLimit({
   windowMs: waitInstallCapMin * 60 * 1000, // n minutes for all stores
   max: 50, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
+    var cmd = null;
+
     if (aReq.rateLimit.current < aReq.rateLimit.limit + 4) {
       // Midddlware options
       if (!aRes.oujsOptions) {
