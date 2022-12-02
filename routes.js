@@ -39,6 +39,8 @@ var settings = require('./models/settings.json');
 //--
 var limiter = process.env.LIMITER_STRING || settings.limiter;
 
+var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
+
  // WATCHPOINT: ~60 second poll time in MongoDB
 var fudgeMin = 60;
 var fudgeSec = 6;
@@ -53,8 +55,49 @@ var installCapLimiter = rateLimit({
   windowMs: waitInstallCapMin * 60 * 1000, // n minutes for all stores
   max: 50, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
-    aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
-    aRes.status(429).send();
+    if (aReq.rateLimit.current < aReq.rateLimit.limit + 4) {
+      // Midddlware options
+      if (!aRes.oujsOptions) {
+        aRes.oujsOptions = {};
+      }
+
+      aRes.oujsOptions.showReminderInstallLimit = 4 - (aReq.rateLimit.current - aReq.rateLimit.limit);
+
+      aNext();
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 10) {
+      aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 429,
+        statusMessage: 'Too many requests.',
+        suppressNavigation: true,
+        isCustomView: true,
+        statusData: {
+          isListView: true,
+          retryAfter: waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
+        }
+      });
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
+      aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
+      aRes.status(429).send('Too many requests. Please try again later');
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 20) {
+      aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
+      aRes.status(429).send();
+    } else {
+      cmd = (isPro && process.env.AUTOBAN ? process.env.AUTOBAN : 'echo SIMULATING INSTALL AUTOBAN') +
+        ' ' + aReq.connection.remoteAddress;
+
+      exec(cmd, function (aErr, aStdout, aStderr) {
+        if (aErr) {
+          console.error('FAIL INSTALL AUTOBAN', cmd);
+          // fallthrough
+        } else {
+          console.log('INSTALL AUTOBAN', aReq.connection.remoteAddress);
+          // fallthrough
+        }
+
+        aRes.connection.destroy();
+      });
+    }
   },
   skip: function (aReq, aRes) {
     var authedUser = aReq.session.user;
@@ -100,7 +143,7 @@ var installRateLimiter = rateLimit({
   skip: function (aReq, aRes) {
     var authedUser = aReq.session.user;
 
-    if (aReq.params.type === 'libs') {
+    if (aReq.params.type === 'libs' && !lockdown) {
       return true;
     }
 
@@ -277,15 +320,15 @@ var listCapLimiter = rateLimit({
       aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send();
     } else {
-      cmd = (isPro && process.env.AUTOBAN ? process.env.AUTOBAN : 'echo SIMULATING AUTOBAN') +
+      cmd = (isPro && process.env.AUTOBAN ? process.env.AUTOBAN : 'echo SIMULATING LIST AUTOBAN') +
         ' ' + aReq.connection.remoteAddress;
 
       exec(cmd, function (aErr, aStdout, aStderr) {
         if (aErr) {
-          console.error('FAIL AUTOBAN', cmd);
+          console.error('FAIL LIST AUTOBAN', cmd);
           // fallthrough
         } else {
-          console.log('AUTOBAN', aReq.connection.remoteAddress);
+          console.log('LIST AUTOBAN', aReq.connection.remoteAddress);
           // fallthrough
         }
 
