@@ -32,6 +32,7 @@ function renderFile(aRes, aPath, aOptions) {
     aOptions.DNT = aRes.oujsOptions.DNT;
     aOptions.hideReminderGDPR = aRes.oujsOptions.hideReminderGDPR;
     aOptions.showReminderListLimit = aRes.oujsOptions.showReminderListLimit;
+    aOptions.showReminderInstallLimit = aRes.oujsOptions.showReminderInstallLimit;
 
     // NOTE: Keep in sync with app.js, user.js, and headerReminders.html
     aOptions.showInvalidAuth = aRes.oujsOptions.showInvalidAuth;

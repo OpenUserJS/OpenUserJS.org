@@ -57,6 +57,11 @@
     <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>WARNING:</b> You will reach your list limit in {{showReminderListLimit}} more requests.</p>
   </div>
 {{/showReminderListLimit}}
+{{#showReminderInstallLimit}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>WARNING:</b> You will reach your install limit in {{showReminderListLimit}} more requests.</p>
+  </div>
+{{/showReminderInstallLimit}}
 {{#showSesssionNoExtend}}
   <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
