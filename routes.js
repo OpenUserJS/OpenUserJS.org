@@ -156,6 +156,9 @@ var installRateLimiter = rateLimit({
   }
 });
 
+var install1Limiter = lockdown ? installCapLimiter : installRateLimiter;
+var install2Limiter = lockdown ? installRateLimiter : installCapLimiter;
+
 var waitRateMetaSec = isDev ? 30 : 60;
 var metaRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
@@ -450,7 +453,7 @@ module.exports = function (aApp) {
     aRes.redirect(301, '/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(installRateLimiter, installCapLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').get(install1Limiter, install2Limiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
   aApp.route('/meta/:username/:scriptname').get(metaRateLimiter, scriptStorage.sendMeta);
 
@@ -464,7 +467,7 @@ module.exports = function (aApp) {
   aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(installRateLimiter, installCapLimiter, scriptStorage.unlockScript, scriptStorage.sendScript);
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(install1Limiter, install2Limiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
   // Issues routes
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(listRateLimiter, listCapLimiter, issue.list);
