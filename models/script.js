@@ -56,18 +56,9 @@ scriptSchema.index({
   author: 1,
   _description: 1,
   _about: 1,
+  'meta.UserScript.match.value': 1,
   'meta.UserScript.include.value': 1
 });
-
-scriptSchema.index({
-  isLib: 1,
-  name: 1,
-  author: 1,
-  _description: 1,
-  _about: 1,
-  'meta.UserScript.match.value': 1
-});
-
 
 /*
  * Direct access indexed

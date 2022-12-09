@@ -53,7 +53,7 @@ var installCapLimiter = rateLimit({
     expireTimeMs: waitInstallCapMin * 60 * 1000 // n minutes for mongo store
   })),
   windowMs: waitInstallCapMin * 60 * 1000, // n minutes for all stores
-  max: 50, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  max: 75, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     var cmd = null;
 
@@ -81,7 +81,7 @@ var installCapLimiter = rateLimit({
     } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
       aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send('Too many requests. Please try again later');
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 20) {
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 25) {
       aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send();
     } else {
@@ -321,7 +321,7 @@ var listCapLimiter = rateLimit({
     } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
       aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send('Too many requests. Please try again later');
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 20) {
+    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 25) {
       aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send();
     } else {
@@ -390,6 +390,8 @@ var listRateLimiter = rateLimit({
   }
 });
 
+var list1Limiter = lockdown ? listCapLimiter : listRateLimiter;
+var list2Limiter = lockdown ? listRateLimiter : listCapLimiter;
 
 module.exports = function (aApp) {
   //--- Middleware
@@ -412,11 +414,11 @@ module.exports = function (aApp) {
   aApp.route('/logout').get(main.logout);
 
   // User routes
-  aApp.route('/users').get(listRateLimiter, listCapLimiter, user.userListPage);
+  aApp.route('/users').get(list1Limiter, list2Limiter, user.userListPage);
   aApp.route('/users/:username').get(user.view);
-  aApp.route('/users/:username/scripts').get(listRateLimiter, listCapLimiter, user.userScriptListPage);
-  aApp.route('/users/:username/syncs').get(listRateLimiter, listCapLimiter, user.userSyncListPage);
-  aApp.route('/users/:username/comments').get(listRateLimiter, listCapLimiter, user.userCommentListPage);
+  aApp.route('/users/:username/scripts').get(list1Limiter, list2Limiter, user.userScriptListPage);
+  aApp.route('/users/:username/syncs').get(list1Limiter, list2Limiter, user.userSyncListPage);
+  aApp.route('/users/:username/comments').get(list1Limiter, list2Limiter, user.userCommentListPage);
 
   aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);
   aApp.route('/users/:username/github/repo').get(authentication.validateUser, user.userGitHubRepoPage);
@@ -435,7 +437,7 @@ module.exports = function (aApp) {
   aApp.route('/api/user/session/destroyOne').post(apiCapLimiter, authentication.validateUser, user.destroyOne);
 
   // Adding script/library routes
-  aApp.route('/user/add/scripts').get(listRateLimiter, listCapLimiter, authentication.validateUser, user.newScriptPage);
+  aApp.route('/user/add/scripts').get(list1Limiter, list2Limiter, authentication.validateUser, user.newScriptPage);
   aApp.route('/user/add/scripts/new').get(authentication.validateUser, script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
   aApp.route('/user/add/scripts/upload').post(authentication.validateUser, user.uploadScript);
   aApp.route('/user/add/lib').get(authentication.validateUser, user.newLibraryPage);
@@ -470,9 +472,9 @@ module.exports = function (aApp) {
   aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(install1Limiter, install2Limiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
   // Issues routes
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(listRateLimiter, listCapLimiter, issue.list);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(list1Limiter, list2Limiter, issue.list);
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(listRateLimiter, listCapLimiter, issue.view).post(authentication.validateUser, issue.comment);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(list1Limiter, list2Limiter, issue.view).post(authentication.validateUser, issue.comment);
   aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
 
   // Admin routes
@@ -505,16 +507,16 @@ module.exports = function (aApp) {
   aApp.route(/^\/remove\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, remove.rm);
 
   // Group routes
-  aApp.route('/groups').get(listRateLimiter, listCapLimiter, group.list);
-  aApp.route('/group/:groupname').get(listRateLimiter, listCapLimiter, group.view);
+  aApp.route('/groups').get(list1Limiter, list2Limiter, group.list);
+  aApp.route('/group/:groupname').get(list1Limiter, list2Limiter, group.view);
   aApp.route('/group').get(function (aReq, aRes) { aRes.redirect('/groups'); });
   aApp.route('/api/group/search/:term/:addTerm?').get(group.search);
 
   // Discussion routes
   // TODO: Update templates for new discussion routes
-  aApp.route('/forum').get(listRateLimiter, listCapLimiter, discussion.categoryListPage);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(listRateLimiter, listCapLimiter, discussion.list);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(listRateLimiter, listCapLimiter, discussion.show).post(authentication.validateUser, discussion.createComment);
+  aApp.route('/forum').get(list1Limiter, list2Limiter, discussion.categoryListPage);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(list1Limiter, list2Limiter, discussion.list);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(list1Limiter, list2Limiter, discussion.show).post(authentication.validateUser, discussion.createComment);
   aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
   // dupe
   aApp.route('/post/:category(announcements|corner|garage|discuss)').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
@@ -523,7 +525,7 @@ module.exports = function (aApp) {
   aApp.route('/about/:document?').get(document.view);
 
   // Home route
-  aApp.route('/').get(listRateLimiter, listCapLimiter, main.home);
+  aApp.route('/').get(list1Limiter, list2Limiter, main.home);
 
   // Misc API
   aApp.route('/api').head(function (aReq, aRes, aNext) {
