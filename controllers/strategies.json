@@ -37,6 +37,6 @@
   "twitter": {
     "name": "Twitter",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   }
 }
