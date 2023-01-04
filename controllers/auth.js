@@ -422,6 +422,8 @@ exports.callback = function (aReq, aRes, aNext) {
     }
 
     aReq.logIn(aUser, function (aErr) {
+      var now = null;
+
       if (aErr) {
         console.error('Not logged in');
         console.error(aErr);
@@ -434,9 +436,16 @@ exports.callback = function (aReq, aRes, aNext) {
       }
 
       // Show a console notice that successfully logged in
-      if (isDev || isDbg) {
-        console.log(colors.green('Logged in'));
-      }
+      now = new Date();
+
+      console.log(
+        colors.green('Logged in'),
+        aUser.name,
+        colors.green('at'),
+        aReq.connection.remoteAddress,
+        colors.green('on'),
+        now.toISOString()
+      );
 
       // Store the user info in the session
       aReq.session.user = aUser;
