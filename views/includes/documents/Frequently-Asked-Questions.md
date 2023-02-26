@@ -165,7 +165,7 @@ For an example we will pick the default, stock, jQuery example:
 
 ![Warning Triangle Notices][faqWarningTriangleNotices]
 
-... usually you will see a warning triangle notice anywhere you use `$` or `jQuery` since they are considered `globals` to the .user.js and not usually directly declared in your script. They are usually defined with the `// @require https://code.jquery.com/jquery-latest.js` line in the UserScript metadata block and referenced in multiple places in your code. You might also be using a sites jQuery only in the DOM which is also in the globals space if you do not have jQuery required by the .user.js engine. This can be detrimental if the site stops using jQuery so it is best to declare at least a matching expected [jQuery][jQuery] version with `@require` and use `this.$ = this.jQuery = jQuery.noConflict(true);`.
+... usually you will see a warning triangle notice anywhere you use `$` or `jQuery` since they are considered `globals` to the .user.js and not usually directly declared in your script. They are usually defined with the `// @require https://code.jquery.com/jquery-3.6.3.js` line in the UserScript metadata block and referenced in multiple places in your code. You might also be using a sites jQuery only in the DOM which is also in the globals space if you do not have jQuery required by the .user.js engine. This can be detrimental if the site stops using jQuery so it is best to declare at least a matching expected [jQuery][jQuery] version with `@require` and use `this.$ = this.jQuery = jQuery.noConflict(true);`.
 
 In order to minimize the occurence of these, and speed up the page load for you and your users, you may insert near the top of the file, before any code, the following diff lines, tailored to your needs:
 
