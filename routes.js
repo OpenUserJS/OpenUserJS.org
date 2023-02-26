@@ -41,7 +41,13 @@ var limiter = process.env.LIMITER_STRING || settings.limiter;
 
 var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
- // WATCHPOINT: ~60 second poll time in MongoDB
+//
+var statusTMR = function (aReq, aRes, aNext) {
+  // Ignore Retry-After header here
+  aRes.status(429).send();
+};
+
+// WATCHPOINT: ~60 second poll time in MongoDB
 var fudgeMin = 60;
 var fudgeSec = 6;
 
@@ -390,16 +396,102 @@ var listRateLimiter = rateLimit({
   }
 });
 
+
 var list1Limiter = lockdown ? listCapLimiter : listRateLimiter;
 var list2Limiter = lockdown ? listRateLimiter : listCapLimiter;
+
+
+var waitListAnyQRateSec = isDev ? parseInt(40 / 2) : 40;
+var listAnyQRateLimiter = rateLimit({
+  store: (isDev ? undefined : undefined),
+  windowMs: waitListAnyQRateSec * 1000, // n seconds for all stores
+  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    aRes.header('Retry-After', waitListAnyQRateSec + fudgeSec);
+    if (aReq.rateLimit.current <= aReq.rateLimit.limit + 2) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 429,
+        statusMessage: 'Too many requests.',
+        suppressNavigation: true,
+        isCustomView: true,
+        statusData: {
+          isListView: true,
+          retryAfter: waitListAnyQRateSec + fudgeSec
+        }
+      });
+      return;
+    }
+    aRes.status(429).send();
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (authedUser && authedUser.isAdmin) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
+
+    if (!aReq.query.q) {
+      return true;
+    }
+  }
+});
+
+var waitListSameQCapMin = isDev ? 5 : 15;
+var listSameQRateLimiter = rateLimit({
+  store: (isDev ? undefined : new MongoStore({
+    uri: limiter + '/listSameQCapLimiter',
+    resetExpireDateOnChange: true, // Rolling
+    expireTimeMs: waitListSameQCapMin * 60 * 1000 // n minutes for mongo store
+  })),
+  windowMs: waitListSameQCapMin * 60 * 1000, // n minutes for all stores
+  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    aRes.header('Retry-After', waitListSameQCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
+    if (aReq.rateLimit.current <= aReq.rateLimit.limit + 2) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 429,
+        statusMessage: 'Too many requests.',
+        suppressNavigation: true,
+        isCustomView: true,
+        statusData: {
+          isListView: true,
+          retryAfter: waitListSameQCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
+        }
+      });
+      return;
+    }
+    aRes.status(429).send();
+  },
+  keyGenerator: function (aReq, aRes, aNext) {
+    return aReq.ip + '/?' +
+    'q=' + (aReq.query.q ? aReq.query.q : '') + '&' +
+      'orderBy=' + (aReq.query.orderBy ? aReq.query.orderBy : '') + '&' +
+        'orderDir=' + (aReq.query.orderDir ? aReq.query.orderDir : '') + '&' +
+          'p=' + (aReq.query.p ? aReq.query.p : '1');
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (authedUser && authedUser.isAdmin) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
+
+    if (!aReq.query.q) {
+      return true;
+    }
+  }
+});
+
 
 module.exports = function (aApp) {
   //--- Middleware
 
   //--- Routes
   // Authentication routes
-  aApp.route('/login').get(main.register);
-  aApp.route('/register').get(function (aReq, aRes) {
+  aApp.route('/login').head(statusTMR).get(main.register);
+  aApp.route('/register').head(statusTMR).get(function (aReq, aRes) {
     aRes.redirect(301, '/login');
   });
   aApp.route('/auth/').post(
@@ -409,27 +501,27 @@ module.exports = function (aApp) {
           authentication.errauth,
             authentication.auth
   );
-  aApp.route('/auth/:strategy').get(authentication.auth);
-  aApp.route('/auth/:strategy/callback/:junk?').get(authentication.callback);
-  aApp.route('/logout').get(main.logout);
+  aApp.route('/auth/:strategy').head(statusTMR).get(authentication.auth);
+  aApp.route('/auth/:strategy/callback/:junk?').head(statusTMR).get(authentication.callback);
+  aApp.route('/logout').head(statusTMR).get(main.logout);
 
   // User routes
-  aApp.route('/users').get(list1Limiter, list2Limiter, user.userListPage);
-  aApp.route('/users/:username').get(user.view);
-  aApp.route('/users/:username/scripts').get(list1Limiter, list2Limiter, user.userScriptListPage);
-  aApp.route('/users/:username/syncs').get(list1Limiter, list2Limiter, user.userSyncListPage);
-  aApp.route('/users/:username/comments').get(list1Limiter, list2Limiter, user.userCommentListPage);
+  aApp.route('/users').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, user.userListPage);
+  aApp.route('/users/:username').head(statusTMR).get(user.view);
+  aApp.route('/users/:username/scripts').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, user.userScriptListPage);
+  aApp.route('/users/:username/syncs').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, user.userSyncListPage);
+  aApp.route('/users/:username/comments').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, user.userCommentListPage);
 
-  aApp.route('/users/:username/github/repos').get(authentication.validateUser, user.userGitHubRepoListPage);
-  aApp.route('/users/:username/github/repo').get(authentication.validateUser, user.userGitHubRepoPage);
-  aApp.route('/users/:username/github/import').post(authentication.validateUser, user.userGitHubImportScriptPage);
+  aApp.route('/users/:username/github/repos').head(statusTMR).get(authentication.validateUser, user.userGitHubRepoListPage);
+  aApp.route('/users/:username/github/repo').head(statusTMR).get(authentication.validateUser, user.userGitHubRepoPage);
+  aApp.route('/users/:username/github/import').head(statusTMR).post(authentication.validateUser, user.userGitHubImportScriptPage);
 
-  aApp.route('/users/:username/profile/edit').get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
-  aApp.route('/users/:username/profile/captcha').get(captchaCapLimiter, authentication.validateUser, user.userEditProfilePageCaptcha);
-  aApp.route('/users/:username/update').post(authentication.validateUser, admin.adminUserUpdate);
+  aApp.route('/users/:username/profile/edit').head(statusTMR).get(authentication.validateUser, user.userEditProfilePage).post(authentication.validateUser, user.update);
+  aApp.route('/users/:username/profile/captcha').head(statusTMR).get(captchaCapLimiter, authentication.validateUser, user.userEditProfilePageCaptcha);
+  aApp.route('/users/:username/update').head(statusTMR).post(authentication.validateUser, admin.adminUserUpdate);
   // NOTE: Some below inconsistent with priors
-  aApp.route('/user/preferences').get(authentication.validateUser, user.userEditPreferencesPage);
-  aApp.route('/user').get(function (aReq, aRes) {
+  aApp.route('/user/preferences').head(statusTMR).get(authentication.validateUser, user.userEditPreferencesPage);
+  aApp.route('/user').head(statusTMR).get(function (aReq, aRes) {
     aRes.redirect(302, '/users');
   });
   aApp.route('/api/user/exist/:username').head(apiCapLimiter, user.exist);
@@ -437,65 +529,65 @@ module.exports = function (aApp) {
   aApp.route('/api/user/session/destroyOne').post(apiCapLimiter, authentication.validateUser, user.destroyOne);
 
   // Adding script/library routes
-  aApp.route('/user/add/scripts').get(list1Limiter, list2Limiter, authentication.validateUser, user.newScriptPage);
-  aApp.route('/user/add/scripts/new').get(authentication.validateUser, script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
+  aApp.route('/user/add/scripts').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, authentication.validateUser, user.newScriptPage);
+  aApp.route('/user/add/scripts/new').head(statusTMR).get(authentication.validateUser, script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
   aApp.route('/user/add/scripts/upload').post(authentication.validateUser, user.uploadScript);
-  aApp.route('/user/add/lib').get(authentication.validateUser, user.newLibraryPage);
-  aApp.route('/user/add/lib/new').get(authentication.validateUser, script.new(script.lib(user.editScript))).post(authentication.validateUser, script.new(script.lib(user.submitSource)));
+  aApp.route('/user/add/lib').head(statusTMR).get(authentication.validateUser, user.newLibraryPage);
+  aApp.route('/user/add/lib/new').head(statusTMR).get(authentication.validateUser, script.new(script.lib(user.editScript))).post(authentication.validateUser, script.new(script.lib(user.submitSource)));
   aApp.route('/user/add/lib/upload').post(authentication.validateUser, script.lib(user.uploadScript));
-  aApp.route('/user/add').get(function (aReq, aRes) {
+  aApp.route('/user/add').head(statusTMR).get(function (aReq, aRes) {
     aRes.redirect(301, '/user/add/scripts');
   });
 
   // Script routes
-  aApp.route('/scripts/:username/:scriptname').get(script.view);
-  aApp.route('/scripts/:username/:scriptname/edit').get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
-  aApp.route('/scripts/:username/:scriptname/source').get(user.editScript);
-  aApp.route('/scripts/:username').get(function (aReq, aRes) {
+  aApp.route('/scripts/:username/:scriptname').head(statusTMR).get(script.view);
+  aApp.route('/scripts/:username/:scriptname/edit').head(statusTMR).get(authentication.validateUser, script.edit).post(authentication.validateUser, script.edit);
+  aApp.route('/scripts/:username/:scriptname/source').head(statusTMR).get(user.editScript);
+  aApp.route('/scripts/:username').head(statusTMR).get(function (aReq, aRes) {
     aRes.redirect(301, '/users/' + aReq.params.username + '/scripts'); // NOTE: Watchpoint
   });
 
-  aApp.route('/install/:username/:scriptname').get(install1Limiter, install2Limiter, scriptStorage.unlockScript, scriptStorage.sendScript);
+  aApp.route('/install/:username/:scriptname').head(statusTMR).get(install1Limiter, install2Limiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
-  aApp.route('/meta/:username/:scriptname').get(metaRateLimiter, scriptStorage.sendMeta);
+  aApp.route('/meta/:username/:scriptname').head(statusTMR).get(metaRateLimiter, scriptStorage.sendMeta);
 
   // Github hook routes
   aApp.route('/github/hook').post(scriptStorage.webhook);
   aApp.route('/github/service').post(function (aReq, aRes, aNext) { aNext(); });
 
   // Library routes
-  aApp.route('/libs/:username/:scriptname').get(script.lib(script.view));
-  aApp.route('/libs/:username/:scriptname/edit').get(authentication.validateUser, script.lib(script.edit)).post(authentication.validateUser, script.lib(script.edit));
-  aApp.route('/libs/:username/:scriptname/source').get(script.lib(user.editScript));
+  aApp.route('/libs/:username/:scriptname').head(statusTMR).get(script.lib(script.view));
+  aApp.route('/libs/:username/:scriptname/edit').head(statusTMR).get(authentication.validateUser, script.lib(script.edit)).post(authentication.validateUser, script.lib(script.edit));
+  aApp.route('/libs/:username/:scriptname/source').head(statusTMR).get(script.lib(user.editScript));
 
   // Raw source
-  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').get(install1Limiter, install2Limiter, scriptStorage.unlockScript, scriptStorage.sendScript);
+  aApp.route('/src/:type(scripts|libs)/:username/:scriptname').head(statusTMR).get(install1Limiter, install2Limiter, scriptStorage.unlockScript, scriptStorage.sendScript);
 
   // Issues routes
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').get(list1Limiter, list2Limiter, issue.list);
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issue/new').get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').get(list1Limiter, list2Limiter, issue.view).post(authentication.validateUser, issue.comment);
-  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)').get(authentication.validateUser, issue.changeStatus);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:open(open|closed|all)?').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, issue.list);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issue/new').head(statusTMR).get(authentication.validateUser, issue.open).post(authentication.validateUser, issue.open);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, issue.view).post(authentication.validateUser, issue.comment);
+  aApp.route('/:type(scripts|libs)/:username/:scriptname/issues/:topic/:action(close|reopen)').head(statusTMR).get(authentication.validateUser, issue.changeStatus);
 
   // Admin routes
-  aApp.route('/admin').get(authentication.validateUser, admin.adminPage);
-  aApp.route('/admin/npm/version').get(authentication.validateUser, admin.adminNpmVersionView);
-  aApp.route('/admin/git/short').get(authentication.validateUser, admin.adminGitShortView);
-  aApp.route('/admin/git/branch').get(authentication.validateUser, admin.adminGitBranchView);
-  aApp.route('/admin/process/clone').get(authentication.validateUser, admin.adminProcessCloneView);
-  aApp.route('/admin/session/active').get(authentication.validateUser, admin.adminSessionActiveView);
-  aApp.route('/admin/npm/package').get(authentication.validateUser, admin.adminNpmPackageView);
-  aApp.route('/admin/npm/list').get(authentication.validateUser, admin.adminNpmListView);
-  aApp.route('/admin/api').get(authentication.validateUser, admin.adminApiKeysPage);
-  aApp.route('/admin/authas').get(authentication.validateUser, admin.authAsUser);
-  aApp.route('/admin/json').get(authentication.validateUser, admin.adminJsonView);
+  aApp.route('/admin').head(statusTMR).get(authentication.validateUser, admin.adminPage);
+  aApp.route('/admin/npm/version').head(statusTMR).get(authentication.validateUser, admin.adminNpmVersionView);
+  aApp.route('/admin/git/short').head(statusTMR).get(authentication.validateUser, admin.adminGitShortView);
+  aApp.route('/admin/git/branch').head(statusTMR).get(authentication.validateUser, admin.adminGitBranchView);
+  aApp.route('/admin/process/clone').head(statusTMR).get(authentication.validateUser, admin.adminProcessCloneView);
+  aApp.route('/admin/session/active').head(statusTMR).get(authentication.validateUser, admin.adminSessionActiveView);
+  aApp.route('/admin/npm/package').head(statusTMR).get(authentication.validateUser, admin.adminNpmPackageView);
+  aApp.route('/admin/npm/list').head(statusTMR).get(authentication.validateUser, admin.adminNpmListView);
+  aApp.route('/admin/api').head(statusTMR).get(authentication.validateUser, admin.adminApiKeysPage);
+  aApp.route('/admin/authas').head(statusTMR).get(authentication.validateUser, admin.authAsUser);
+  aApp.route('/admin/json').head(statusTMR).get(authentication.validateUser, admin.adminJsonView);
 
   aApp.route('/admin/api/update').post(authentication.validateUser, admin.apiAdminUpdate);
 
   // Moderation routes
-  aApp.route('/mod').get(authentication.validateUser, moderation.modPage);
-  aApp.route('/mod/removed').get(authentication.validateUser, moderation.removedItemListPage);
-  aApp.route('/mod/removed/:id').get(authentication.validateUser, moderation.removedItemPage);
+  aApp.route('/mod').head(statusTMR).get(authentication.validateUser, moderation.modPage);
+  aApp.route('/mod/removed').head(statusTMR).get(authentication.validateUser, moderation.removedItemListPage);
+  aApp.route('/mod/removed/:id').head(statusTMR).get(authentication.validateUser, moderation.removedItemPage);
 
   // Vote route
   aApp.route(/^\/vote\/(scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, vote.vote);
@@ -507,27 +599,27 @@ module.exports = function (aApp) {
   aApp.route(/^\/remove\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, remove.rm);
 
   // Group routes
-  aApp.route('/groups').get(list1Limiter, list2Limiter, group.list);
-  aApp.route('/group/:groupname').get(list1Limiter, list2Limiter, group.view);
-  aApp.route('/group').get(function (aReq, aRes) { aRes.redirect('/groups'); });
-  aApp.route('/api/group/search/:term/:addTerm?').get(group.search);
+  aApp.route('/groups').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, group.list);
+  aApp.route('/group/:groupname').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, group.view);
+  aApp.route('/group').head(statusTMR).get(function (aReq, aRes) { aRes.redirect('/groups'); });
+  aApp.route('/api/group/search/:term/:addTerm?').head(statusTMR).get(group.search);
 
   // Discussion routes
   // TODO: Update templates for new discussion routes
-  aApp.route('/forum').get(list1Limiter, list2Limiter, discussion.categoryListPage);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').get(list1Limiter, list2Limiter, discussion.list);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').get(list1Limiter, list2Limiter, discussion.show).post(authentication.validateUser, discussion.createComment);
-  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
+  aApp.route('/forum').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, discussion.categoryListPage);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss|issues|all)').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, discussion.list);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/:topic').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, discussion.show).post(authentication.validateUser, discussion.createComment);
+  aApp.route('/:p(forum)?/:category(announcements|corner|garage|discuss)/new').head(statusTMR).get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
   // dupe
-  aApp.route('/post/:category(announcements|corner|garage|discuss)').get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
+  aApp.route('/post/:category(announcements|corner|garage|discuss)').head(statusTMR).get(authentication.validateUser, discussion.newTopic).post(authentication.validateUser, discussion.createTopic);
 
   // About document routes
-  aApp.route('/about/:document?').get(document.view);
+  aApp.route('/about/:document?').head(statusTMR).get(document.view);
 
   // Home route
-  aApp.route('/').get(list1Limiter, list2Limiter, main.home);
+  aApp.route('/').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, main.home);
 
-  // Misc API
+  // Misc API for cert testing
   aApp.route('/api').head(function (aReq, aRes, aNext) {
     aRes.status(200).send();
   });
