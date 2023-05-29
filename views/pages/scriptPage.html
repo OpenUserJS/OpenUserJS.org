@@ -53,7 +53,7 @@
                 <ul>
                 {{#script.fork}}
                   <li>
-                    <a href="/{{#script.isLib}}libs{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}/{{{url}}">{{utf}}</a>
+                    <a href="/{{#script.isLib}}libs{{/script.isLib}}{{^script.isLib}}{{^embeddedLib}}scripts{{/embeddedLib}}{{#embeddedLib}}libs{{/embeddedLib}}{{/script.isLib}}/{{{url}}">{{utf}}</a>
                   </li>
                 {{/script.fork}}
                 </ul>
