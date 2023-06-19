@@ -27,7 +27,7 @@
   "reddit": {
     "name": "Reddit",
     "oauth": true,
-    "readonly": false
+    "readonly": true
   },
   "steam": {
     "name": "Steam",
