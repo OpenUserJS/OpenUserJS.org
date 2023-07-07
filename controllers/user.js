@@ -1180,13 +1180,13 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
             options.usedStrategies.push({
               'strat': aStrat.name,
               'display': aStrat.display,
-              'disabled': aStrat.readonly
+              'disabled': strategies[aStrat.name].readonly
             });
           } else {
             options.openStrategies.push({
               'strat': aStrat.name,
               'display': aStrat.display,
-              'disabled': aStrat.readonly
+              'disabled': strategies[aStrat.name].readonly
             });
           }
         });
@@ -1220,6 +1220,9 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
         options.defaultStrategy = strategies[defaultStrategy]
           ? strategies[defaultStrategy].name
           : null;
+        options.defaultStrategyDisabled = strategies[defaultStrategy]
+          ? strategies[defaultStrategy].readonly
+          : false;
 
         options.defaultStrat = defaultStrategy;
         options.haveOtherStrategies = options.usedStrategies.length > 0;

@@ -263,7 +263,7 @@ exports.register = function (aReq, aRes) {
         options.strategies.push({
           'strat': aStrategy.name,
           'display': aStrategy.display,
-          'disabled': aStrategy.readonly
+          'disabled': strategies[aStrategy.name].readonly
         });
       });
 
