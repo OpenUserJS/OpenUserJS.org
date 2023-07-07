@@ -21,7 +21,7 @@
                       <i class="fa fa-user fa-fw"></i>
                     </span>
                     <span class="list-group-item">
-                      <img src="/images/strat/{{defaultStrat}}16.png"> <strong>{{defaultStrategy}}</strong>
+                      <img src="/images/strat/{{defaultStrat}}16.png"> <strong>{{defaultStrategy}} {{#defaultStrategyDisabled}} &#x1D3F;&#x1D3C;{{/defaultStrategyDisabled}}</strong>
                     </span>
                     <div style="width: 100%;">
                       <div class="input-group-addon">
@@ -36,7 +36,7 @@
                       <i class="fa fa-user fa-fw"></i>
                     </span>
                     <span class="list-group-item">
-                      <img src="/images/strat/{{strat}}16.png"> {{display}}
+                      <img src="/images/strat/{{strat}}16.png"> {{display}}{{#disabled}} &#x1D3F;&#x1D3C;{{/disabled}}
                     </span>
                     <div style="width: 100%;">
                       <div class="input-group-addon">
@@ -54,7 +54,7 @@
                       </span>
                       <select name="auth" class="form-control">
                         {{#openStrategies}}
-                        <option value="{{strat}}"{{#disabled}} disabled="disabled"{{/disabled}}>{{display}}</option>
+                        <option value="{{strat}}"{{#disabled}} disabled="disabled"{{/disabled}}>{{display}}{{#disabled}} &#x1D3F;&#x1D3C;{{/disabled}}</option>
                         {{/openStrategies}}
                       </select>
                       <div style="width: 100%;">
