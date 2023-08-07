@@ -171,7 +171,7 @@ In order to minimize the occurence of these, and speed up the page load for you 
 
 ``` diff
 @@ -8,10 +8,18 @@
- // @license       GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt
+ // @license       GPL-3.0-or-later; https://www.gnu.org/licenses/gpl-3.0.txt
  // ==/UserScript==
 
 -this.$ = this.jQuery = jQuery.noConflict(true);
@@ -247,6 +247,16 @@ A: Yes, use the raw source route like this in the UserScript metadata block:
 
 The `@downloadURL` UserScript metadata block key is not currently required but highly encouraged especially due to potential faulty .user.js engine updaters.
 
+### Q: Does OpenUserJS.org have script synchronization from a version control site?
+
+This site is currently a presentational userscript repository and is intended to distribute the final published product in a familiar community setting.
+
+However if you need, or want, the highly recommended [version control][wikipediaSCM] for prior versions of your script please add an additional, supported, authentication strategy in [your account preferences][oujsPreferences] or when you first sign up. This enables you to have the available import and synchronization options described on the respective pages accessed from your accounts username. The site will only attempt to synchronize to your existing script already on the site. Please ensure there is, at minimum, the same metadata block(s) present you want to synchronize from.
+
+Current supported synchronizable authentication stragegies are:
+
+* GitHub
+
 [greasemonkeyForFirefox]: Greasemonkey-for-Firefox
 [metaJSExample]: https://openuserjs.org/meta/Marti/oujs_-_Meta_View.meta.js
 [metaJSExample2]: https://openuserjs.org/install/Marti/oujs_-_Meta_View.meta.js
@@ -254,7 +264,8 @@ The `@downloadURL` UserScript metadata block key is not currently required but h
 [userJSExampleBrokenAsIntended]: https://openuserjs.org/install/Marti/.user.js
 [oujsMetaViewExample]: https://openuserjs.org/scripts/Marti/oujs_-_Meta_View
 [oujsAbout]: https://openuserjs.org/about
-[JSONHomepage]: http://json.org/
+[oujsPreferences]: https://openuserjs.org/user/preferences
+[JSONHomepage]: https://json.org/
 [wikipediaSCM]: https://www.wikipedia.org/wiki/Version_control
 [gitSCM]: https://git-scm.com/
 [gitSCMdoc]: https://git-scm.com/doc
