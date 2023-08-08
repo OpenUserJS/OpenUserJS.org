@@ -253,7 +253,7 @@ This site is currently a presentational userscript repository and is intended to
 
 However if you need, or want, the highly recommended [version control][wikipediaSCM] for prior versions of your script please add an additional, supported, authentication strategy in [your account preferences][oujsPreferences] or when you first sign up. This enables you to have the available import and synchronization options described on the respective pages accessed from your accounts username. The site will only attempt to synchronize to your existing script already on the site. Please ensure there is, at minimum, the same metadata block(s) present you want to synchronize from.
 
-Current supported synchronizable authentication stragegies are:
+Current supported synchronizable authentication strategies are:
 
 * GitHub
 
