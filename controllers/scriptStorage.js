@@ -664,6 +664,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
           aRes.set('Last-modified', lastModified);
           aRes.set('Etag', eTag);
 
+          aRes.set('Content-Length', Buffer.byteLength(source, 'utf8'));
+
           aRes.write(source);
           aRes.end();
 
@@ -826,6 +828,8 @@ exports.sendScript = function (aReq, aRes, aNext) {
           // HTTP/1.1 Caching
           aRes.set('Last-Modified', lastModified);
           aRes.set('Etag', eTag);
+
+          aRes.set('Content-Length', Buffer.byteLength(source, 'utf8'));
 
           aRes.write(source);
           aRes.end();

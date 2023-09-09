@@ -1,0 +1,34 @@
+<script type="text/javascript">
+  (function () {
+    'use strict';
+
+    function onDOMContentLoaded(aEv) {
+      var block = null;
+      var key = null;
+      var collapse = null;
+      var clickNode = null;
+      var testNode = null;
+
+      var matches = window.location.hash.match(/^\#(userscript|openuserjs)-block-(.*)$/);
+      if (matches) {
+
+        [, block, key] = matches;
+
+        if (block && key) {
+          collapse = 'collapse-' + block + '-' + key;
+
+          clickNode = document.querySelector('a[href="#' + collapse + '"]');
+          testNode = document.querySelector('div[id="' + collapse + '"]');
+
+          if (clickNode && testNode && !testNode.classList.contains('in')) {
+            clickNode.click();
+          }
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+    window.addEventListener('hashchange', onDOMContentLoaded);
+
+  })();
+</script>

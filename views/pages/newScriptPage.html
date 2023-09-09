@@ -3,6 +3,7 @@
 <head>
   <title>{{title}}</title>
   {{> includes/head.html }}
+  {{> includes/scripts/autoClickBookmark.html }}
   <style>
     .script-metadata-definitions .list-group-item-heading code,
     .panel code {
@@ -92,11 +93,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-exclude" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-exclude" href="#collapse-exclude"><code>@exclude *</code></a>
+                  <a id="userscript-block-exclude" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-exclude" href="#collapse-userscript-exclude"><code>@exclude *</code></a>
                 </h5>
               </div>
-              <div id="collapse-exclude" class="panel-collapse collapse in">
+              <div id="collapse-userscript-exclude" class="panel-collapse collapse in">
                 <div class="panel-body">
                   <p><strong>This is required.</strong></p>
                 </div>
@@ -109,11 +110,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-name" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-name"><code>@name My Script</code></a>
+                  <a id="userscript-block-name" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-name"><code>@name My Script</code></a>
                 </h5>
               </div>
-              <div id="collapse-name" class="panel-collapse collapse in">
+              <div id="collapse-userscript-name" class="panel-collapse collapse in">
                 <div class="panel-body">
                   <p><strong>Default non-localized is required.</strong></p>
                   <p>Last value is used.</p>
@@ -123,11 +124,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-description" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-description"><code>@description This script even does the laundry!</code></a>
+                  <a id="userscript-block-description" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-description"><code>@description This script even does the laundry!</code></a>
                 </h5>
               </div>
-              <div id="collapse-description" class="panel-collapse collapse">
+              <div id="collapse-userscript-description" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>Specially formatted on the script page.</p>
                   <p>Last value shown.</p>
@@ -137,11 +138,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-copyright" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-copyright"><code>@copyright Year, Author (Author Website)</code></a>
+                  <a id="userscript-block-copyright" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-copyright"><code>@copyright Year, Author (Author Website)</code></a>
                 </h5>
               </div>
-              <div id="collapse-copyright" class="panel-collapse collapse">
+              <div id="collapse-userscript-copyright" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>Specially formatted on the script page.</p>
                   <p>All values shown in reverse order. Last key is primary.</p>
@@ -151,11 +152,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-license" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-license"><code>@license License Type; License Homepage</code></a>
+                  <a id="userscript-block-license" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-license"><code>@license License Type; License Homepage</code></a>
                 </h5>
               </div>
-              <div id="collapse-license" class="panel-collapse collapse">
+              <div id="collapse-userscript-license" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>Specially formatted on the script page. All values shown in reverse order. If absent <a href="https://spdx.org/licenses/MIT.html"><code>MIT</code></a> <a href="https://opensource.org/licenses/MIT">License <em>(Expat)</em></a> is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</p>
                   <p><strong><code>License Type</code> component is required</strong> using at least one <a href="https://opensource.org/licenses/category">OSI approved</a> case&dash;sensitive <a href="https://spdx.org/licenses/">SPDX short identifier</a> and must be the only primary, last, <code>@license</code> key. Single short ids are accepted only per license key. i.e. No conjunction composites like <code>AND</code> or <code>OR</code>, or <code>WITH</code>exceptions. Any additional license is considered conjunctive with an implied <code>AND</code> using another <code>@license</code> key.</p>
@@ -183,11 +184,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-icon" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-icon"><code>@icon url</code></a>
+                  <a id="userscript-block-icon" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-icon"><code>@icon url</code></a>
                 </h5>
               </div>
-              <div id="collapse-icon" class="panel-collapse collapse">
+              <div id="collapse-userscript-icon" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>A url of http, https, or an image <a href="https://www.wikipedia.org/wiki/Data_URI_scheme">data uri</a>.</p>
                   <p>Resolution should be near 48px by 48px.</p>
@@ -199,11 +200,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-homepageurl" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-homepageurl"><code>@homepageURL url</code></a>
+                  <a id="userscript-block-homepageurl" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-homepageurl"><code>@homepageURL url</code></a>
                 </h5>
               </div>
-              <div id="collapse-homepageurl" class="panel-collapse collapse">
+              <div id="collapse-userscript-homepageurl" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>A url of http or https. Specially formatted on the script page.</p>
                   <p>All values shown in reverse order.</p>
@@ -214,11 +215,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-supporturl" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-supporturl"><code>@supportURL url</code></a>
+                  <a id="userscript-block-supporturl" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-supporturl"><code>@supportURL url</code></a>
                 </h5>
               </div>
-              <div id="collapse-supporturl" class="panel-collapse collapse">
+              <div id="collapse-userscript-supporturl" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>A url of http, https or mailto protocol. Specially formatted on the script page.</p>
                   <p>Last value shown.</p>
@@ -228,11 +229,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-contributionurl" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-contributionurl"><code>@contributionURL url</code></a>
+                  <a id="userscript-block-contributionurl" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-contributionurl"><code>@contributionURL url</code></a>
                 </h5>
               </div>
-              <div id="collapse-contributionurl" class="panel-collapse collapse">
+              <div id="collapse-userscript-contributionurl" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>A url of https protocol only. Used for monetary requests for contributions. <code>@contributionAmount</code> is currently unsupported. Specially formatted on the script issues list and script issue page.</p>
                   <p>Last value shown.</p>
@@ -243,11 +244,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-version" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-version"><code>@version 1.0.0</code></a>
+                  <a id="userscript-block-version" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-version"><code>@version 1.0.0</code></a>
                 </h5>
               </div>
-              <div id="collapse-version" class="panel-collapse collapse">
+              <div id="collapse-userscript-version" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>Enables the ability to use automatic script updates in most .user.js engines.</p>
                   <p>Usually major dot minor dot build <em>(or Patch)</em>. May utilize the <a href="https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/version/format">Manifest Version Format</a> previously known as the Toolkit version format.</p>
@@ -259,11 +260,11 @@
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h5 class="panel-title">
-                  <a id="user-block-updateurl" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-updateurl"><code>@updateURL https://openuserjs.org/meta/{{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}/My_Script.meta.js</code></a>
+                  <a id="userscript-block-updateurl" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-updateurl"><code>@updateURL https://openuserjs.org/meta/{{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}/My_Script.meta.js</code></a>
                 </h5>
               </div>
-              <div id="collapse-updateurl" class="panel-collapse collapse">
+              <div id="collapse-userscript-updateurl" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p><strong>Required in lockdown mode.</strong> See <a href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">this FAQ item</a> for more.</p>
                   <p>Last value is used.</p>
@@ -293,10 +294,10 @@
               <div class="panel-heading">
                 <h5 class="panel-title">
                   <a id="openuserjs-block-collaborator" rel="bookmark"></a>
-                  <a data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-openuserjs-collaboration"><code>@collaborator username</code></a>
+                  <a data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-openuserjs-collaborator"><code>@collaborator username</code></a>
                 </h5>
               </div>
-              <div id="collapse-openuserjs-collaboration" class="panel-collapse collapse">
+              <div id="collapse-openuserjs-collaborator" class="panel-collapse collapse">
                 <div class="panel-body">
                   <p>The OpenUserJS Author username to collaborate with.</p>
                   <p><strong>Required to activate</strong> <a href="#collaboration">Collaboration</a>. <strong>Please ensure the usernames exist for your scripts security.</strong></p>

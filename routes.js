@@ -529,7 +529,7 @@ module.exports = function (aApp) {
   aApp.route('/api/user/session/destroyOne').post(apiCapLimiter, authentication.validateUser, user.destroyOne);
 
   // Adding script/library routes
-  aApp.route('/user/add/scripts').head(statusTMR).get(list1Limiter, list2Limiter, listAnyQRateLimiter, listSameQRateLimiter, authentication.validateUser, user.newScriptPage);
+  aApp.route('/user/add/scripts').head(statusTMR).get(authentication.validateUser, user.newScriptPage);
   aApp.route('/user/add/scripts/new').head(statusTMR).get(authentication.validateUser, script.new(user.editScript)).post(authentication.validateUser, script.new(user.submitSource));
   aApp.route('/user/add/scripts/upload').post(authentication.validateUser, user.uploadScript);
   aApp.route('/user/add/lib').head(statusTMR).get(authentication.validateUser, user.newLibraryPage);
