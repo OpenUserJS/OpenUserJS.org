@@ -2293,7 +2293,7 @@ exports.webhook = function (aReq, aRes) {
 
   // Return if script storage is in read-only mode
   if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
-    aRes.status(423).send(); // Locked
+    aRes.status(423).send('Resource is in lockdown.'); // Locked
     return;
   }
 
@@ -2303,30 +2303,30 @@ exports.webhook = function (aReq, aRes) {
   //   IPv6 address for caller will return `false` from dep in this
   //   configuration
   if (githubHookAddresses.length < 1) {
-    aRes.status(502).send(); // Bad gateway
+    aRes.status(502).send('Authorized gateways absent.'); // Bad gateway
     return;
   }
 
   if (!ipRangeCheck(aReq.connection.remoteAddress, githubHookAddresses)) {
-    aRes.status(401).send(); // Unauthorized: No challenge and silent iterations
+    aRes.status(401).send('Unauthorized gateway.'); // Unauthorized: No challenge and silent iterations
     return;
   }
 
   // If media type is not corectly set up in GH webhook then reject
    // NOTE: Keep in sync with newScriptPage.html view
   if (!aReq.is('application/x-www-form-urlencoded')) {
-    aRes.status(415).send(); // Unsupported media type
+    aRes.status(415).send('Unsupported Content-Type for webhook.'); // Unsupported media type
     return;
   }
 
   if (!aReq.body.payload) {
-    aRes.status(502).send(); // Bad gateway
+    aRes.status(502).send('No initial payload.'); // Bad gateway
     return;
   }
 
   payload = JSON.parse(aReq.body.payload);
   if (!payload) {
-    aRes.status(400).send(); // Bad request
+    aRes.status(400).send('No parsed payload.'); // Bad request
     return;
   }
 
@@ -2334,16 +2334,16 @@ exports.webhook = function (aReq, aRes) {
     case 'ping':
       // Initial setup of the webhook checks... informational
       if (!payload.hook && !payload.hook.events) {
-        aRes.status(502).send(); // Bad gateway e.g. something catastrophic to look into
+        aRes.status(502).send('Bad gateway.'); // Bad gateway e.g. something catastrophic to look into
           return;
       }
 
       if (payload.hook.events.length !== 1 || payload.hook.events.indexOf('push') !== 0) {
-        aRes.status(413).send(); // Payload (events) too large
+        aRes.status(413).send('Too many events.'); // Payload (events) too large
           return;
       }
 
-      aRes.status(200).send(); // Send acknowledgement for GH history
+      aRes.status(200).send('pong.'); // Send acknowledgement for GH history
         return;
       break;
     case 'push':
@@ -2351,7 +2351,7 @@ exports.webhook = function (aReq, aRes) {
       update = aReq.get('X-GitHub-Delivery');
       break;
     default:
-      aRes.status(400).send(); // Bad request
+      aRes.status(400).send('Unsupported event.'); // Bad request
         return;
   }
 
@@ -2359,7 +2359,7 @@ exports.webhook = function (aReq, aRes) {
 
   // Only accept commits from the `master` branch
   if (payload.ref !== 'refs/heads/master') {
-    aRes.status(403).send(); // Forbidden
+    aRes.status(403).send('Default branch is not `master`.'); // Forbidden
     return;
   }
 
@@ -2374,26 +2374,26 @@ exports.webhook = function (aReq, aRes) {
     var repoManager = null;
 
     if (aErr) {
-      aRes.status(500).send(); // Internal server error: Possibly 502 Bad gateway to DB or bad dep.
+      aRes.status(500).send('Internal server error.'); // Internal server error: Possibly 502 Bad gateway to DB or bad dep.
       return;
     }
 
     if (!aUser) {
-      aRes.status(400).send(); // Bad request: Possibly 410 Gone from DB but not GH
+      aRes.status(400).send('Bad request.'); // Bad request: Possibly 410 Gone from DB but not GH
       return;
     }
 
     if (!aUser.consented) {
-      aRes.status(451).send(); // Reject until consented
+      aRes.status(451).send('Consent is required for access.'); // Reject until consented
       return;
     }
 
     if (aUser.strategies.indexOf('github') <= -1) { // Don't rely on just `ghUsername`!
-      aRes.status(403).send(); // Reject due to lack of GitHub as Auth
+      aRes.status(403).send('Requires supported authentication strategy on account.'); // Reject due to lack of GitHub as Auth
       return;
     }
 
-    aRes.status(202).send(); // Close connection with Accepted but processing
+    aRes.status(202).send('Your request is queued.'); // Close connection with Accepted but processing
 
     // Gather the modified user scripts
     payload.commits.forEach(function (aCommit) {
