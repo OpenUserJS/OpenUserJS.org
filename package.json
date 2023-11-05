@@ -66,7 +66,7 @@
     "select2": "3.5.2-browserify",
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.5.0",
-    "spdx-license-ids": "3.0.5",
+    "spdx-license-ids": "3.0.16",
     "strip-markdown": "4.2.0",
     "terser": "4.8.1",
     "toobusy-js": "0.5.1",
