@@ -143,6 +143,22 @@ function sanitize(aHtml) {
 // Sanitize the output from the block level renderers
 blockRenderers.forEach(function (aType) {
   renderer[aType] = function () {
+    var matches = null;
+    var openTagName = null;
+    var closeTagName = null;
+
+    // Begin workaround for #1775
+    if (aType === 'html') {
+      matches = arguments[0].match(/^<([a-z]+)(?![^>]*\/>)[^>]*>$/);
+      if (matches) {
+        openTagName = matches[1];
+      }
+      matches = arguments[0].match(/^<\/([a-z]+)>$/);
+      if (matches) {
+        closeTagName = matches[1];
+      }
+    }
+
     // Sanitize first to close any tags
     var sanitized = sanitize(marked.Renderer.prototype[aType].apply(renderer, arguments));
 
@@ -198,7 +214,18 @@ blockRenderers.forEach(function (aType) {
         }
       }
 
-      sanitized = hookNode.innerHTML
+      sanitized = hookNode.innerHTML;
+    }
+
+    // End workaround for #1775
+    if (aType === 'html') {
+      if (openTagName) {
+        sanitized = sanitized.replace(/<\/[a-z]+>/, '');
+      }
+
+      if (closeTagName) {
+        sanitized = '</' + closeTagName + '>';
+      }
     }
 
     return sanitized;

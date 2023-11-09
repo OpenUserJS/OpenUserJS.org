@@ -35,7 +35,7 @@
     "js-beautify": "1.14.9",
     "jsdom": "22.1.0",
     "less-middleware": "3.1.0",
-    "marked": "4.3.0",
+    "marked": "7.0.5",
     "media-type": "0.3.1",
     "method-override": "3.0.0",
     "mime-db": "1.52.0",
