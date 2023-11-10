@@ -98,7 +98,7 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 [falkonScreenshot5]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/falkon5.png "Script management"
 
 [falkonBrowser]: https://www.falkon.org/
-[falkonHTMLRepo]: https://cgit.kde.org/falkon.git/
+[falkonHTMLRepo]: https://invent.kde.org/network/falkon
 [kdeIssueTracker]: https://bugs.kde.org/
 [kdeIssueTrackerFalkonIssues]: https://bugs.kde.org/buglist.cgi?product=Falkon
 [falkonMailingList]: mailto:falkon@kde.org
