@@ -154,7 +154,7 @@ blockRenderers.forEach(function (aType) {
         openTagName = matches[1];
       }
       matches = arguments[0].match(/^<\/([a-z]+)>$/);
-      if (matches) {
+      if (matches && !!sanitize('<' + matches[1] + '></' + matches[1] + '>')) {
         closeTagName = matches[1];
       }
     }
