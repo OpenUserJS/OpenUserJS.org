@@ -137,6 +137,7 @@ exports.view = function (aReq, aRes, aNext) {
 
             if (/\.md$/.test(aFileList[file])) {
               options.fileList.push({
+                active: document === aFileList[file].replace(/\.md$/, ''),
                 href: aFileList[file].replace(/\.md$/, ''),
                 textContent: aFileList[file].replace(/\.md$/, '').replace(/-/g, ' ')
               });

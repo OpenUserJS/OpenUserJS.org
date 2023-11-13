@@ -67,9 +67,9 @@
               <div class="panel-title"><em class="fa fa-fw fa-file-text-o"></em> Pages</div>
             </div>
             <div class="panel-body">
-              <ul class="list-group">
-                {{#fileList}}<li class="list-group-item"><a href="{{{href}}}">{{textContent}}</a></li>{{/fileList}}</li>
-              </ul>
+              <div class="list-group list-group-striped">
+                {{#fileList}}<a class="list-group-item{{#active}} active{{/active}}" href="{{{href}}}">{{textContent}}</a>{{/fileList}}
+              </div>
             </div>
           </div>
         </div>
