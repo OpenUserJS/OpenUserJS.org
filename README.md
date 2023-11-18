@@ -51,6 +51,7 @@ Repository | Reference | Recent Version
 [kerberos][kerberosGHUrl] | [Documentation][kerberosDOCUrl] | [![NPM version][kerberosNPMVersionImage]][kerberosNPMUrl]
 [less-middleware][less-middlewareGHUrl] [&#x00b9;][lessGHUrl] | [Documentation][less-middlewareDOCUrl] [&#x00b9;][lessDOCUrl] | [![NPM version][less-middlewareNPMVersionImage]][less-middlewareNPMUrl]
 [marked][markedGHUrl] | [Documentation][markedDOCUrl] | [![NPM version][markedNPMVersionImage]][markedNPMUrl]
+[marked-highlight][marked-highlightGHUrl] | [Documentation][marked-highlightDOCUrl] | [![NPM version][marked-highlightNPMVersionImage]][marked-highlightNPMUrl]
 [media-type][media-typeGHUrl] | [Documentation][media-typeDOCUrl] | [![NPM version][media-typeNPMVersionImage]][media-typeNPMUrl]
 [method-override][method-overrideGHUrl] | [Documentation][method-overrideDOCUrl] | [![NPM version][method-overrideNPMVersionImage]][method-overrideNPMUrl]
 [mime-db][mime-dbGHUrl] | [Documentation][mime-dbDOCUrl] | [![NPM version][mime-dbNPMVersionImage]][mime-dbNPMUrl]
@@ -283,6 +284,11 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [markedDOCUrl]: https://github.com/markedjs/marked/blob/master/README.md
 [markedNPMUrl]: https://www.npmjs.com/package/marked
 [markedNPMVersionImage]: https://badgen.net/npm/v/marked?cache=86400
+
+[marked-highlightGHUrl]: https://github.com/markedjs/marked-highlight
+[marked-highlightDOCUrl]: https://github.com/markedjs/marked-highlight/blob/main/README.md
+[marked-highlightNPMUrl]: https://www.npmjs.com/package/marked-highlight
+[marked-highlightNPMVersionImage]: https://badgen.net/npm/v/marked-highlight?cache=86400
 
 [media-typeGHUrl]: https://github.com/lovell/media-type
 [media-typeDOCUrl]: https://github.com/lovell/media-type/blob/master/README.md
