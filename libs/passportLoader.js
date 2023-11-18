@@ -7,6 +7,7 @@ var isDbg = require('../libs/debug').isDbg;
 
 //
 var passport = require('passport');
+var colors = require('ansi-colors');
 
 var nil = require('../libs/helpers').nil;
 
@@ -23,9 +24,17 @@ exports.strategyInstances = nil();
 exports.loadPassport = function (aStrategy) {
   var requireStr = 'passport-' + aStrategy.name
     + (aStrategy.name === 'google' ? '-oauth20' : (aStrategy.name === 'gitlab' ? '2' : ''));
-  var PassportStrategy = require(requireStr).Strategy;
   var instance = null;
-  var authParams = null;
+  var PassportStrategy = null;
+
+  try {
+    PassportStrategy = require(requireStr).Strategy;
+  } catch (aE) {
+    console.error(
+      colors.red('Error loading *' + requireStr + '* for stored Auth Strategy API Key')
+    );
+    return;
+  }
 
   if (aStrategy.openid) {
     instance = new PassportStrategy(
