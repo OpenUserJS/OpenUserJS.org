@@ -5,14 +5,11 @@
 
     // Keep in sync with `./libs/markdown.js`
     marked.setOptions({
-      // highlight: ...
       // renderer: ...
-      gfm: true,
+      async: false,
       breaks: true,
-      pedantic: false,
-      // sanitize: ...
-      smartLists: true,
-      smartypants: false
+      gfm: true,
+      pedantic: false
     });
 
   })();

@@ -7,19 +7,83 @@ var isDbg = require('../libs/debug').isDbg;
 
 //
 var _ = require('underscore');
-var marked = require('marked');
+var { Marked } = require('marked');
+var { markedHighlight } = require('marked-highlight');
 var hljs = require('highlight.js');
 var sanitizeHtml = require('sanitize-html');
 var colors = require('ansi-colors');
 
 var isSameOrigin = require('./helpers').isSameOrigin;
 
-var jsdom = require("jsdom");
-var { JSDOM } = jsdom;
+var { JSDOM } = require("jsdom");
 
 var htmlWhitelistPost = require('./htmlWhitelistPost.json');
 var htmlWhitelistFollow = require('./htmlWhitelistFollow.json');
+
+function highlighter(aCode, aLang) {
+  var obj = null;
+  var langs = [ // NOTE: More likely to less likely
+    'javascript', 'xpath', 'xml',
+      'css', 'less', 'scss',
+        'json',
+          'diff',
+            'shell', 'console',
+              'bash', 'dos',
+                'vbscript'
+  ];
+
+  if (aLang && hljs.getLanguage(aLang)) {
+    try {
+      return hljs.highlight(aCode, { language: aLang }).value;
+    } catch (aE) {
+      if (isDev) {
+        console.error([
+          colors.red('Dependency named highlighting failed with:'),
+            aE
+
+        ].join('\n'));
+      }
+    }
+  }
+
+  try {
+    obj = hljs.highlightAuto(aCode);
+
+    if (langs.indexOf(obj.language) > -1) {
+      return obj.value;
+    } else {
+      if (isDev) {
+        console.log([
+          colors.yellow('Unusual auto-detected md language code is')
+            + '`' + colors.cyan(obj.language) + '`',
+
+        ].join('\n'));
+      }
+      return hljs.highlightAuto(aCode, langs).value;
+    }
+  } catch (aE) {
+    if (isDev) {
+      console.error([
+        colors.red('Dependency automatic named highlighting failed with:'),
+          aE
+
+      ].join('\n'));
+    }
+  }
+
+  // If any external package failure don't block return e.g. prevent empty
+  return aCode;
+};
+
+var marked = new Marked(
+  markedHighlight({
+    langPrefix: 'hljs language-',
+    highlight: highlighter
+  })
+);
+
 var renderer = new marked.Renderer();
+
 var blockRenderers = [
   'blockquote',
   'html',
@@ -27,6 +91,8 @@ var blockRenderers = [
   'paragraph',
   'table'
 ];
+
+
 
 // Transform exact Github Flavored Markdown generated style tags to bootstrap custom classes
 // to allow the sanitizer to whitelist on th and td tags for table alignment
@@ -239,68 +305,11 @@ renderer.link = function (aHref, aTitle, aText) {
 // Set the options to use for rendering markdown
 // Keep in sync with ./views/includes/scripts/markdownEditor.html
 marked.setOptions({
-  highlight: function (aCode, aLang) {
-    var obj = null;
-    var langs = [ // NOTE: More likely to less likely
-      'javascript', 'xpath', 'xml',
-        'css', 'less', 'scss',
-          'json',
-            'diff',
-              'shell',
-                'bash', 'dos',
-                  'vbscript'
-    ];
-
-    if (aLang && hljs.getLanguage(aLang)) {
-      try {
-        return hljs.highlight(aCode, { language: aLang }).value;
-      } catch (aE) {
-        if (isDev) {
-          console.error([
-            colors.red('Dependency named highlighting failed with:'),
-              aE
-
-          ].join('\n'));
-        }
-      }
-    }
-
-    try {
-      obj = hljs.highlightAuto(aCode);
-
-      if (langs.indexOf(obj.language) > -1) {
-        return obj.value;
-      } else {
-        if (isDev) {
-          console.log([
-            colors.yellow('Unusual auto-detected md language code is')
-              + '`' + colors.cyan(obj.language) + '`',
-
-          ].join('\n'));
-        }
-        return hljs.highlightAuto(aCode, langs).value;
-      }
-    } catch (aE) {
-      if (isDev) {
-        console.error([
-          colors.red('Dependency automatic named highlighting failed with:'),
-            aE
-
-        ].join('\n'));
-      }
-    }
-
-    // If any external package failure don't block return e.g. prevent empty
-    return aCode;
-  },
   renderer: renderer,
-  gfm: true,
+  async: false,
   breaks: true,
-  pedantic: false,
-  sanitize: false, // we use sanitize-html to sanitize HTML
-  smartLists: true,
-  smartypants: false,
-  silent: (isPro ? true : false)
+  gfm: true,
+  pedantic: false
 });
 
 exports.renderMd = function (aText) {
