@@ -1,9 +1,4 @@
 {
-  "facebook": {
-    "name": "Facebook",
-    "oauth": true,
-    "readonly": true
-  },
   "github": {
     "name": "GitHub",
     "oauth": true,
@@ -33,10 +28,5 @@
     "name": "Steam",
     "oauth": false,
     "readonly": false
-  },
-  "twitter": {
-    "name": "Twitter",
-    "oauth": true,
-    "readonly": true
   }
 }

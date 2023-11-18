@@ -62,14 +62,12 @@ Repository | Reference | Recent Version
 [mu2][mu2GHUrl] | [Documentation][mu2DOCUrl] | [![NPM version][mu2NPMVersionImage]][mu2NPMUrl]
 [octicons][octiconsGHUrl] | [Documentation][octiconsDOCUrl] | [![NPM version][octiconsNPMVersionImage]][octiconsNPMUrl]
 [passport][passportGHUrl] | [Documentation][passportDOCUrl] | [![NPM version][passportNPMVersionImage]][passportNPMUrl]
-[passport-facebook][passport-facebookGHUrl] | [Documentation][passport-facebookDOCUrl] | [![NPM version][passport-facebookNPMVersionImage]][passport-facebookNPMUrl] ![OAuth2][oauth2Logo]
 [passport-github][passport-githubGHUrl] | [Documentation][passport-githubDOCUrl] | [![NPM version][passport-githubNPMVersionImage]][passport-githubNPMUrl] ![OAuth2][oauth2Logo]
 [passport-gitlab2][passport-gitlab2GHUrl] | [Documentation][passport-gitlab2DOCUrl] | [![NPM version][passport-gitlab2NPMVersionImage]][passport-gitlab2NPMUrl] ![OAuth2][oauth2Logo]
 [passport-google-oauth2][passport-google-oauth2GHUrl] | [Documentation][passport-google-oauth2DOCUrl] | [![NPM version][passport-google-oauth2NPMVersionImage]][passport-google-oauth2NPMUrl] ![OAuth2][oauth2Logo]
 [passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] ![OAuth2][oauth2Logo] <sup>![oauth][oauthLogo]</sup>
 [passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo]
 [passport-steam][passport-steamGHUrl] <br />&#x22D4; [`OpenID2`][passport-steamGHOpenIDUrl]  | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
-[passport-twitter][passport-twitterGHUrl] | [Documentation][passport-twitterDOCUrl] | [![NPM version][passport-twitterNPMVersionImage]][passport-twitterNPMUrl] ![oauth1][oauth1Logo]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [rate-limit-mongo][rate-limit-mongoGHUrl] | [Documentation][rate-limit-mongoDOCUrl] | [![NPM version][rate-limit-mongoNPMVersionImage]][rate-limit-mongoNPMUrl]
 [remark][remarkGHUrl] | [Documentation][remarkDOCUrl] | [![NPM version][remarkNPMVersionImage]][remarkNPMUrl]
@@ -344,11 +342,6 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 
 [passport-openid]: https://github.com/OpenUserJs/passport-openid/tree/OpenID2
 
-[passport-facebookGHUrl]: https://github.com/jaredhanson/passport-facebook
-[passport-facebookDOCUrl]: https://github.com/jaredhanson/passport-facebook/blob/master/README.md
-[passport-facebookNPMUrl]: https://www.npmjs.com/package/passport-facebook
-[passport-facebookNPMVersionImage]: https://badgen.net/npm/v/passport-facebook?cache=86400
-
 [passport-githubGHUrl]: https://github.com/jaredhanson/passport-github
 [passport-githubDOCUrl]: https://github.com/jaredhanson/passport-github/blob/master/README.md
 [passport-githubNPMUrl]: https://www.npmjs.com/package/passport-github
@@ -379,11 +372,6 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [passport-steamDOCUrl]: https://github.com/liamcurry/passport-steam/blob/master/README.md
 [passport-steamNPMUrl]: https://www.npmjs.com/package/passport-steam
 [passport-steamNPMVersionImage]: https://badgen.net/npm/v/passport-steam?cache=86400
-
-[passport-twitterGHUrl]: https://github.com/jaredhanson/passport-twitter
-[passport-twitterDOCUrl]: https://github.com/jaredhanson/passport-twitter/blob/master/README.md
-[passport-twitterNPMUrl]: https://www.npmjs.com/package/passport-twitter
-[passport-twitterNPMVersionImage]: https://badgen.net/npm/v/passport-twitter?cache=86400
 
 [pegjsGHUrl]: https://github.com/pegjs/pegjs
 [pegjsDOCUrl]: https://github.com/pegjs/pegjs/blob/master/README.md
