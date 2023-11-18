@@ -299,7 +299,8 @@ marked.setOptions({
   pedantic: false,
   sanitize: false, // we use sanitize-html to sanitize HTML
   smartLists: true,
-  smartypants: false
+  smartypants: false,
+  silent: (isPro ? true : false)
 });
 
 exports.renderMd = function (aText) {
