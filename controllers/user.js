@@ -1180,13 +1180,13 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
             options.usedStrategies.push({
               'strat': aStrat.name,
               'display': aStrat.display,
-              'disabled': strategies[aStrat.name].readonly
+              'disabled': strategies[aStrat.name] ? strategies[aStrat.name].readonly : true
             });
           } else {
             options.openStrategies.push({
               'strat': aStrat.name,
               'display': aStrat.display,
-              'disabled': strategies[aStrat.name].readonly
+              'disabled': strategies[aStrat.name] ? strategies[aStrat.name].readonly : true
             });
           }
         });
