@@ -1222,7 +1222,7 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
           : null;
         options.defaultStrategyDisabled = strategies[defaultStrategy]
           ? strategies[defaultStrategy].readonly
-          : false;
+          : true;
 
         options.defaultStrat = defaultStrategy;
         options.haveOtherStrategies = options.usedStrategies.length > 0;
