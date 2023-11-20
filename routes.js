@@ -63,16 +63,16 @@ var installCapLimiter = rateLimit({
   handler: function (aReq, aRes, aNext, aOptions) {
     var cmd = null;
 
-    if (aReq.rateLimit.current < aReq.rateLimit.limit + 4) {
+    if (aReq.rateLimit.used < aReq.rateLimit.limit + 4) {
       // Midddlware options
       if (!aRes.oujsOptions) {
         aRes.oujsOptions = {};
       }
 
-      aRes.oujsOptions.showReminderInstallLimit = 4 - (aReq.rateLimit.current - aReq.rateLimit.limit);
+      aRes.oujsOptions.showReminderInstallLimit = 4 - (aReq.rateLimit.used - aReq.rateLimit.limit);
 
       aNext();
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 10) {
+    } else if (aReq.rateLimit.used < aReq.rateLimit.limit + 10) {
       aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 429,
@@ -84,10 +84,10 @@ var installCapLimiter = rateLimit({
           retryAfter: waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
         }
       });
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
+    } else if (aReq.rateLimit.used < aReq.rateLimit.limit + 15) {
       aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send('Too many requests. Please try again later');
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 25) {
+    } else if (aReq.rateLimit.used < aReq.rateLimit.limit + 25) {
       aRes.header('Retry-After', waitInstallCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send();
     } else {
@@ -129,7 +129,7 @@ var installRateLimiter = rateLimit({
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitRateInstallSec + (isDev ? fudgeSec : fudgeMin));
     if (isSameOrigin(aReq.get('Referer')).result) {
-      if (aReq.rateLimit.current <= aReq.rateLimit.limit + 2) {
+      if (aReq.rateLimit.used <= aReq.rateLimit.limit + 2) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 429,
           statusMessage: 'Too many requests.',
@@ -177,7 +177,7 @@ var metaRateLimiter = rateLimit({
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitRateMetaSec + (isDev ? fudgeSec : fudgeMin));
     if (isSameOrigin(aReq.get('Referer')).result) {
-      if (aReq.rateLimit.current <= aReq.rateLimit.limit + 2) {
+      if (aReq.rateLimit.used <= aReq.rateLimit.limit + 2) {
         statusCodePage(aReq, aRes, aNext, {
           statusCode: 429,
           statusMessage: 'Too many requests.',
@@ -303,16 +303,16 @@ var listCapLimiter = rateLimit({
   handler: function (aReq, aRes, aNext, aOptions) {
     var cmd = null;
 
-    if (aReq.rateLimit.current < aReq.rateLimit.limit + 4) {
+    if (aReq.rateLimit.used < aReq.rateLimit.limit + 4) {
       // Midddlware options
       if (!aRes.oujsOptions) {
         aRes.oujsOptions = {};
       }
 
-      aRes.oujsOptions.showReminderListLimit = 4 - (aReq.rateLimit.current - aReq.rateLimit.limit);
+      aRes.oujsOptions.showReminderListLimit = 4 - (aReq.rateLimit.used - aReq.rateLimit.limit);
 
       aNext();
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 10) {
+    } else if (aReq.rateLimit.used < aReq.rateLimit.limit + 10) {
       aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 429,
@@ -324,10 +324,10 @@ var listCapLimiter = rateLimit({
           retryAfter: waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
         }
       });
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 15) {
+    } else if (aReq.rateLimit.used < aReq.rateLimit.limit + 15) {
       aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send('Too many requests. Please try again later');
-    } else if (aReq.rateLimit.current < aReq.rateLimit.limit + 25) {
+    } else if (aReq.rateLimit.used < aReq.rateLimit.limit + 25) {
       aRes.header('Retry-After', waitListCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
       aRes.status(429).send();
     } else {
@@ -364,7 +364,7 @@ var listRateLimiter = rateLimit({
   max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitListRateSec + fudgeSec);
-    if (aReq.rateLimit.current <= aReq.rateLimit.limit + 1) {
+    if (aReq.rateLimit.used <= aReq.rateLimit.limit + 1) {
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 429,
         statusMessage: 'Too many requests.',
@@ -408,7 +408,7 @@ var listAnyQRateLimiter = rateLimit({
   max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitListAnyQRateSec + fudgeSec);
-    if (aReq.rateLimit.current <= aReq.rateLimit.limit + 2) {
+    if (aReq.rateLimit.used <= aReq.rateLimit.limit + 2) {
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 429,
         statusMessage: 'Too many requests.',
@@ -448,7 +448,7 @@ var listSameQRateLimiter = rateLimit({
   max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
   handler: function (aReq, aRes, aNext, aOptions) {
     aRes.header('Retry-After', waitListSameQCapMin * 60 + (isDev ? fudgeSec : fudgeMin));
-    if (aReq.rateLimit.current <= aReq.rateLimit.limit + 2) {
+    if (aReq.rateLimit.used <= aReq.rateLimit.limit + 2) {
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 429,
         statusMessage: 'Too many requests.',
