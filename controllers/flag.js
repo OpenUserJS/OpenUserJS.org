@@ -69,7 +69,6 @@ exports.flag = function (aReq, aRes, aNext) {
     flag = aFields.flag[0] === 'false' ? false : true;
 
     if (flag) {
-      flag = aFields.flag[0] === 'false' ? false : true;
       reason = aFields.reason && aFields.reason[0] ? aFields.reason[0] : null;
 
       // Check to make sure form submission has this name available.
