@@ -44,7 +44,7 @@ exports.rm = function (aReq, aRes, aNext) {
   form.parse(aReq, function (aErr, aFields) {
     // WARNING: No err handling
 
-    var reason = aFields.reason;
+    var reason = aFields.reason && aFields.reason[0] ? aFields.reason[0] : null;
 
     var type = aReq.params[0];
     var isLib = null;
