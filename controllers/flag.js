@@ -47,7 +47,7 @@ exports.flag = function (aReq, aRes, aNext) {
   form.parse(aReq, function (aErr, aFields) {
     // WARNING: No err handling
 
-    var flag = aFields.flag === 'false' ? false : true;
+    var flag = aFields.flag && aFields.flag[0] ? aFields.flag[0] : null;
     var reason = null;
 
     var type = aReq.params[0];
@@ -58,8 +58,19 @@ exports.flag = function (aReq, aRes, aNext) {
 
     var authedUser = aReq.session.user;
 
+    if (!flag) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403,
+        statusMessage: 'Missing flag field.'
+      });
+      return;
+    }
+
+    flag = aFields.flag[0] === 'false' ? false : true;
+
     if (flag) {
-      reason = aFields.reason;
+      flag = aFields.flag[0] === 'false' ? false : true;
+      reason = aFields.reason && aFields.reason[0] ? aFields.reason[0] : null;
 
       // Check to make sure form submission has this name available.
       // This occurs either when no reason is supplied,

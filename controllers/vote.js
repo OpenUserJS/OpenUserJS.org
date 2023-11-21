@@ -45,7 +45,7 @@ exports.vote = function (aReq, aRes, aNext) {
   form.parse(aReq, function (aErr, aFields) {
     // WARNING: No err handling
 
-    var vote = aFields.vote;
+    var vote = aFields.vote && aFields.vote[0] ? aFields.vote[0] : null;
     var unvote = false;
 
     var type = aReq.params[0];
@@ -56,9 +56,9 @@ exports.vote = function (aReq, aRes, aNext) {
 
     switch (vote) {
       case 'up':
-        // fallthrough
+        // fallsthrough
       case 'down':
-        // fallthrough
+        // fallsthrough
       case 'un':
         break;
       default:

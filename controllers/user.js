@@ -1980,7 +1980,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
       }
     }
 
-    if (!aFields || (aFields && !aFields.uploadScript)) {
+    if (!aFields || (aFields && aFields.uploadScript && !aFields.uploadScript[0])) {
       msg = '`uploadScript` field is missing.';
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 500,
@@ -1990,7 +1990,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
       return;
     }
 
-    if (aFields.uploadScript !== 'true') {
+    if (aFields.uploadScript[0] !== 'true') {
       msg = '`uploadScript` field is invalid :=';
       statusCodePage(aReq, aRes, aNext, {
         statusCode: 500,
@@ -2014,7 +2014,7 @@ exports.uploadScript = function (aReq, aRes, aNext) {
 
     //
     var isLib = aReq.params.isLib;
-    var script = aFiles.script;
+    var script = aFiles.script && aFiles.script[0] ? aFiles.script[0] : null;
     var stream = null;
     var bufs = [];
     var authedUser = aReq.session.user;
