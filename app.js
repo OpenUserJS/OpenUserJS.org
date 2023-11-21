@@ -44,7 +44,7 @@ var Terser = require('terser');
 var lessMiddleware = require('less-middleware');
 
 var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
+var MongoStore = require('connect-mongo');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
@@ -108,7 +108,11 @@ app.set('port', process.env.PORT || 8080);
 app.set('securePort', process.env.SECURE_PORT || null);
 
 // Connect to the database
-mongoose.connect(connectStr, dbOptions);
+var clientP = mongoose.connect(connectStr, dbOptions).then(
+  function (aMongoose) {
+    return aMongoose.connection.getClient();
+  }
+);
 
 // Trap a few events for MongoDB
 db.on('error', function (aErr) {
@@ -184,8 +188,8 @@ process.on('SIGINT', function () {
   process.exit(0);
 });
 
-var sessionStore = new MongoStore({
-  mongooseConnection: db,
+var sessionStore = MongoStore.create({
+  clientPromise: clientP,
   autoRemove: 'native',
   ttl: settings.ttl.timerSanity * 60 // sec to min; 14 * 24 * 60 * 60 = 14 days. Default
 });

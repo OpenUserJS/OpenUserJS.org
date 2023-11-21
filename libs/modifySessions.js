@@ -291,8 +291,8 @@ exports.getSessionDataList = function (aReq, aOptions, aCallback) {
   );
 };
 
-exports.findSessionData = function (aQuery, aStore, aOptions, aCallback) {
-  var sessionColl = aStore.db.collection('sessions');
+exports.findSessionData = async function (aQuery, aStore, aOptions, aCallback) {
+  var sessionColl = await aStore.collectionP;
 
   sessionColl.find({
   }, function (aErr, aUserSessions) {
