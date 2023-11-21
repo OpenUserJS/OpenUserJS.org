@@ -201,8 +201,8 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [express-minifyNPMUrl]: https://www.npmjs.com/package/express-minify
 [express-minifyNPMVersionImage]: https://badgen.net/npm/v/express-minify?cache=86400
 
-[express-rate-limitGHUrl]: https://github.com/nfriedly/express-rate-limit
-[express-rate-limitDOCUrl]: https://github.com/nfriedly/express-rate-limit/blob/master/README.md
+[express-rate-limitGHUrl]: https://github.com/express-rate-limit/express-rate-limit
+[express-rate-limitDOCUrl]: https://github.com/express-rate-limit/express-rate-limit/blob/main/readme.md
 [express-rate-limitNPMUrl]: https://www.npmjs.com/package/express-rate-limit
 [express-rate-limitNPMVersionImage]: https://badgen.net/npm/v/express-rate-limit?cache=86400
 
