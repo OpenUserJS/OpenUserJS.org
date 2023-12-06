@@ -4,12 +4,12 @@
   "version": "0.5.3",
   "main": "app",
   "dependencies": {
-    "ace-builds": "1.31.2",
+    "ace-builds": "1.32.0",
     "animate.css": "4.1.1",
     "ansi-colors": "4.1.3",
     "async": "3.2.5",
     "@octokit/auth-oauth-app": "4.3.1",
-    "aws-sdk": "2.1500.0",
+    "aws-sdk": "2.1512.0",
     "body-parser": "1.20.2",
     "bootstrap": "3.4.1",
     "bootstrap-markdown": "git+https://github.com/OpenUserJS/bootstrap-markdown.git#marked4.x",
@@ -20,7 +20,7 @@
     "express": "4.18.2",
     "express-hcaptcha": "git+https://github.com/OpenUserJS/express-hcaptcha.git#forkUpdate",
     "express-minify": "1.0.0",
-    "express-rate-limit": "7.1.4",
+    "express-rate-limit": "7.1.5",
     "express-session": "1.17.3",
     "express-svg-captcha": "1.0.1",
     "font-awesome": "4.7.0",
@@ -33,10 +33,10 @@
     "ip-range-check": "0.2.0",
     "jquery": "3.7.1",
     "js-beautify": "1.14.11",
-    "jsdom": "22.1.0",
+    "jsdom": "23.0.1",
     "less-middleware": "3.1.0",
-    "marked": "10.0.0",
-    "marked-highlight": "2.0.7",
+    "marked": "11.0.0",
+    "marked-highlight": "2.0.9",
     "media-type": "0.3.1",
     "method-override": "3.0.0",
     "mime-db": "1.52.0",
@@ -73,7 +73,7 @@
     "useragent": "2.3.0"
   },
   "optionalDependencies": {
-    "kerberos": "2.0.3"
+    "kerberos": "2.1.0"
   },
   "repository": {
     "type": "git",
