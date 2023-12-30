@@ -260,8 +260,8 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 
 [js-beautifyNPMUrl]: https://www.npmjs.com/package/js-beautify
 [js-beautifyNPMVersionImage]: https://badgen.net/npm/v/js-beautify?cache=86400
-[js-beautifyGHUrl]: https://github.com/beautify-web/js-beautify
-[js-beautifyDOCUrl]: https://github.com/beautify-web/js-beautify/blob/master/README.md
+[js-beautifyGHUrl]: https://github.com/beautifier/js-beautify
+[js-beautifyDOCUrl]: https://github.com/beautifier/js-beautify/blob/main/README.md
 
 [jsdomNPMUrl]: https://www.npmjs.com/package/jsdom
 [jsdomNPMVersionImage]: https://badgen.net/npm/v/jsdom?cache=86400
