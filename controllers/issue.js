@@ -273,8 +273,9 @@ exports.view = function (aReq, aRes, aNext) {
         options.discussion = discussion;
 
         options.canClose = authedUser &&
-          (authedUser._id == script._authorId || authedUser._id == discussion._authorId);
-        options.canOpen = authedUser && authedUser._id == script._authorId;
+          (authedUser._id == script._authorId || authedUser._id == discussion._authorId) &&
+            discussion.open;
+        options.canOpen = authedUser && (authedUser._id == script._authorId) && !discussion.open;
 
         // commentListQuery
         commentListQuery = Comment.find();

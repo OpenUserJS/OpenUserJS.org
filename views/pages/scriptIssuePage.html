@@ -25,7 +25,7 @@
 
               </ul>
               <a class="btn btn-sm {{^discussion.open}}btn-link{{/discussion.open}}{{#discussion.open}}btn-success{{/discussion.open}}" {{#canOpen}}href="{{{discussion.issueOpenUrl}}}"{{/canOpen}}>Open</a>
-              <a class="btn btn-sm {{#discussion.open}}btn-link{{/discussion.open}}{{^discussion.open}}btn-danger{{/discussion.open}}" {{#canClose}}href="{{{discussion.issueCloseUrl}}}"{{/canClose}}>{{#discussion.open}}Close{{/discussion.open}}{{^discussion.open}}Closed{{/discussion.open}}</a>
+              <a {{#canClose}}rel="bookmark" referrerpolicy="same-origin" data-toggle="modal" data-target="#closeIssueScriptModal" href="#" {{/canClose}}class="btn btn-sm {{#discussion.open}}btn-link{{/discussion.open}}{{^discussion.open}}btn-danger{{/discussion.open}}">{{#discussion.open}}Close{{/discussion.open}}{{^discussion.open}}Closed{{/discussion.open}}</a>
             </div>
           </div>
           <div class="container-fluid comments">
