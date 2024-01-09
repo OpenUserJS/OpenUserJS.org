@@ -11,14 +11,36 @@
       <div class="modal-footer">
         <form action="{{{script.scriptFlagPageUrl}}}" method="post" enctype="multipart/form-data">
           <input type="text" class="form-control" name="reason" placeholder="Reason for moderation inspection.">
-          <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Cancel</button>
           <input type="hidden" name="flag" value="true">
-          <button type="submit" class="btn btn-danger{{^canFlag}} disabled{{/canFlag}}"><i class="fa fa-fw fa-flag"></i> Flag</button>
+          <button type="submit" class="btn btn-danger{{^canFlag}} disabled{{/canFlag}}"><i class="fa fa-fw fa-flag" title="Flag this script"></i> Flag</button>
         </form>
       </div>
     </div>
   </div>
 </div>
+{{#canClose}}
+<div class="modal fade" id="closeIssueScriptModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><i class="fa fa-fw fa-commenting"></i> Close issue for {{discussion.topic}}</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to close this issue?</p>
+        <div class="alert alert-warning" role="alert">
+          <i class="fa fa-fw fa-exclamation-triangle"></i> WARNING: If you are the reporter of this issue you may not be able to reopen the issue, and the Author may conclude that this issue is resolved.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Cancel</button>
+        <a rel="external noreferrer noopener nofollow sponsored ugc" referrerpolicy="same-origin" href="{{{discussion.issueCloseUrl}}}" class="btn btn-danger" role="button" title="Close this issue for this script">Close</a>
+      </div>
+    </div>
+  </div>
+</div>
+{{/canClose}}
 {{#script.canDonate}}
 <div class="modal fade" id="donateScriptModal">
   <div class="modal-dialog">
@@ -34,7 +56,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Cancel</button>
         {{#script.contribution}}
         <a rel="external noreferrer noopener nofollow sponsored ugc" referrerpolicy="same-origin" href="{{url}}" class="btn btn-danger" role="button" title="Send a monetary Thank You!">Donate</a>
         {{/script.contribution}}
@@ -43,6 +65,7 @@
   </div>
 </div>
 {{/script.canDonate}}
+
 {{#authorTools}}
 <div class="modal fade" id="deleteScriptModal">
   <div class="modal-dialog">
@@ -56,15 +79,16 @@
       </div>
       <div class="modal-footer">
         <form action="{{{script.scriptEditMetadataPageUrl}}}" method="post">
-          <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Cancel</button>
           <input type="hidden" name="remove" value="true">
-          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="submit" class="btn btn-danger" title="Delete this script">Delete</button>
         </form>
       </div>
     </div>
   </div>
 </div>
 {{/authorTools}}
+
 {{#modTools}}
 <div class="modal fade" id="removeScriptModal">
   <div class="modal-dialog">
@@ -85,9 +109,9 @@
           </datalist>
           {{/modTools.hasRemoveReasons}}
           <br />
-          <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Close</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-fw fa-close"></i> Cancel</button>
           <input type="hidden" name="remove" value="true">
-          <button type="submit" class="btn btn-danger"><i class="fa fa-fw fa-ban"></i> Remove</button>
+          <button type="submit" class="btn btn-danger"><i class="fa fa-fw fa-ban" title="Remove this script"></i> Remove</button>
         </form>
       </div>
     </div>
