@@ -8,6 +8,7 @@
     "Malware ",
     "Obfuscated script ",
     "Obfuscated external script ",
+    "Obfuscated dynamic code via outside script injection that doesn't match the matches ",
     "Privacy stealing ",
     "Spamming ",
     "Unattributed script derivative ",
