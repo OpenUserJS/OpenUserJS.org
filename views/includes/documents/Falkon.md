@@ -45,9 +45,9 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 #### Debugging
 
-Curently to enable the remote debugging feature in Falkon with <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>i</kbd> an environment variable with a name of `QTWEBENGINE_REMOTE_DEBUGGING` needs to be set with an available numeric TCP port such as `12345`. This applies to all platforms.
+Enabling the remote debugging feature with <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>i</kbd> an environment variable may need to be created in some versions of Falkon using a name of `QTWEBENGINE_REMOTE_DEBUGGING` and an available numeric TCP port such as `12345`. This applies to all available platforms.
 
-#### Compiling
+#### Optional Compiling
 
 After installing the necessary dependencies:
 
@@ -56,7 +56,7 @@ After installing the necessary dependencies:
 
 ``` sh-session
 $ # Anonymous checkout
-$ git clone git://anongit.kde.org/falkon.git
+$ git clone git@invent.kde.org:network/falkon.git
 $ cd falkon
 $ # Cleanup build directory if needed for cmake pitfalls
 $ rm -Rf build
@@ -80,6 +80,7 @@ Patches are usually submitted by using `$ git diff > mypatch.diff` to KDE.
 ### More
 
 * [Get Falkon][falkonBrowser]
+  * **NOTE:** At the time of writing the flatpak repository appears to have a newer version than the snap repository. The snap repository may not include the GreaseMonkey extension. See their download link for specific package repositories.
 * [Falkon HTML Repo][falkonHTMLRepo]
 * [KDE Bugs Issue Tracker][kdeIssueTracker] [*(Falkon Issues)*][kdeIssueTrackerFalkonIssues]
 * [Falkon Mailing List][falkonMailingList] [*(Subscribe here)*][falkonMailingListSubscribe]
