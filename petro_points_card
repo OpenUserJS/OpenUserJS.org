@@ -1,0 +1,91 @@
+
+const emailID = "nixede8950@kravify.com";
+const currentPageUrl = window.location.href;
+
+if (currentPageUrl == "https://www.petro-canada.ca/en/personal/petro-points-sign-up-activate#i-dont-have-a-card") {
+	document.getElementById("emailAddress").value = emailID;
+	document.getElementById("password").value = 'rytham@216#RDAP';
+	document.getElementById("firstName").value = 'John';
+	document.getElementById("lastName").value = 'Dow';
+	
+	document.getElementById("address-autocomplete").value = 'aaa';
+	document.getElementById("address").value = 'A-1061 Aalders Ave';
+	document.getElementById("city").value = 'New Minas';
+	document.getElementById("province").value = 'NS';
+	document.getElementById("postalCode").value = 'B4N3H3';
+	
+	document.getElementById("securityQuestion").querySelector('option').value = '18';
+	document.getElementById("securityAnswer").value = 'I was IT Engineer.';
+
+	document.querySelector('.input-column__button.button.button--full.button--primary.button--large').click();
+
+	setTimeout(() => {
+	    const locatorResult = document.querySelector('.locator-result');
+	    const inputButton = document.querySelector('.input-column__button.button.button--full.button--primary.button--large');
+    
+	    if (locatorResult) {
+        	locatorResult.click();
+	    } else {
+	        console.error('Locator result element not found.');
+	    }
+	    
+	    if (inputButton) {
+	        inputButton.click();
+	    } else {
+	        console.error('Input button element not found.');
+	    }
+	}, 1000);
+} else if (currentPageUrl == "https://temp-mail.org/en/") {
+	const allLinks = document.getElementsByTagName('a');
+	var hrefValue = '';
+	// Loop through the <a> tags to find the specific one
+	for (const link of allLinks) {
+	    // Check if the href attribute contains 'https://temp-mail.org'
+	    if (link.href.includes('https://temp-mail.org/en/view')) {
+	        // Get the value of the href attribute
+	        hrefValue = link.href;
+	        break; // Stop searching after finding the first matching link
+	    }
+	}
+	window.location.href = hrefValue;
+} else  if (currentPageUrl.includes('https://temp-mail.org/en/view')) {
+	const allLinks = document.getElementsByTagName('a');
+	var hrefValue = '';
+	// Loop through the <a> tags to find the specific one
+	for (const link of allLinks) {
+	    // Check if the href attribute contains 'https://temp-mail.org'
+	    if (link.href.includes('https://u26620010.ct.sendgrid.net/ls/click')) {
+	        // Get the value of the href attribute
+	        hrefValue = link.href;
+	        break; // Stop searching after finding the first matching link
+	    }
+	}
+	window.location.href = hrefValue;
+} else  if (currentPageUrl.includes('https://www.petro-canada.ca/en/personal/verify-email-success')) {
+	window.location.href = 'https://temp-mail.org/en';
+} else  if (currentPageUrl.includes('https://www.petro-canada.ca/en/personal/email-activation-success')) {
+	document.addEventListener("DOMContentLoaded", () => {
+		window.location.href = 'https://www.petro-canada.ca/en/personal/login';
+	});
+	
+} else  if (currentPageUrl.includes('https://www.petro-canada.ca/en/personal/login')) {
+	document.getElementById("email").value = emailID;
+	document.getElementById("password").value = 'rytham@216#RDAP';
+	const button = document.querySelector('.sign-in__button.button.button--full.button--primary.button--disabled');
+	button.classList.remove('button--disabled');
+	button.disabled = false;
+	button.click();
+} else  if (currentPageUrl == 'https://www.petro-canada.ca/en/personal/my-petro-points') {
+	window.location.href = 'https://www.petro-canada.ca/en/personal/my-petro-points?modalUrl=%2Fen%2Fpersonal%2Fmy-petro-points%2Faccount%2Floyalty-card';
+} else  if (currentPageUrl == 'https://www.petro-canada.ca/en/personal/my-petro-points?modalUrl=%2Fen%2Fpersonal%2Fmy-petro-points%2Faccount%2Floyalty-card') {
+	//document.getElementById('btn_register').click();
+	window.location.href = 'https://www.petro-canada.ca/en/personal/my-petro-points/account/use-temporary-card';
+}  else  if (currentPageUrl.includes('https://www.petro-canada.ca/en/personal/my-petro-points/account/use-temporary-card')) {
+	window.print();
+	setTimeout(() => {
+		document.querySelector('.visitor-dropdown__sign-out-button').click();
+	}, 1000);
+} else {
+	window.location.href = 'https://www.petro-canada.ca/en/personal/petro-points-sign-up-activate#i-dont-have-a-card';
+	/*console.log('%c⚠️🔧⚠️ Code Alert ⚠️🔧⚠️\nYour code is currently experiencing turbulence and is not 	operating at optimal levels. 🛠️\nPlease schedule maintenance to ensure smooth operation and prevent 	further disruptions. 🚧\nThank you for your attention to this matter. 🙏\nPlease report this issue to 	Ridham Patel.', 'color: cyan; background-color: black;');*/
+}
