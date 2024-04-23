@@ -227,9 +227,6 @@ app.use(function (aReq, aRes, aNext) {
     aRes.oujsOptions = {};
   }
 
-  // Middleware for DNT
-  aRes.oujsOptions.DNT = aReq.get('DNT') === '1' || aReq.get('DNT') === 'yes' ? true : false;
-
   // Middleware for GDPR Notice
   aRes.oujsOptions.hideReminderGDPR = isSameOrigin(referer).result;
 
