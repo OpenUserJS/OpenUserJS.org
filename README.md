@@ -100,7 +100,6 @@ Repository | Reference | Recent Version | Stored
 
 Repository | Reference | Recent Version | Referenced
 --- | --- | --- | ---
-[Google Analytics][gaCFGUrl] | [Documentation][gaDOCUrl] | Client-side from GA | [gaCDNUrl]
 
 
 #### Aggregate
@@ -495,10 +494,6 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 
 [styleguide]: STYLEGUIDE.md
 [contributing]: .github/CONTRIBUTING.md
-
-[gaCFGUrl]: https://www.google.com/analytics/
-[gaDOCUrl]: https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced
-[gaCDNUrl]: //www.google-analytics.com/analytics.js
 
 [oauthLogo]:  https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/oauth.png "OAuth"
 [oauth1Logo]:  https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/oauth1.png "OAuth1"
