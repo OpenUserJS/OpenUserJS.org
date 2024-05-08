@@ -4,8 +4,8 @@ The home of Free and Open Source Software (FOSS) user scripts. Built using Node.
 
 Repository | Reference | Recent Version
 :--- | :---: | :---
-[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [&#x00b9;][nodejsGHReleasesUrl] [CHANGELOG][nodejsReleasesUrl]
-[npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [CHANGELOG][npmGHReleasesUrl]
+[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [&#x00b9;][nodejsGHReleasesUrl] [RELEASES][nodejsReleasesUrl] [²][nodejsDownloadsUrl]
+[npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [RELEASES][npmGHReleasesUrl]
 
 ### Contributing
 
@@ -109,7 +109,8 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 
 [nodeGHUrl]: https://github.com/nodejs/node
 [nodejsGHReleasesUrl]: https://github.com/nodejs/Release/#release-schedule
-[nodejsReleasesUrl]: https://nodejs.org/download/release/
+[nodejsReleasesUrl]: https://nodejs.org/blog/release
+[nodejsDownloadsUrl]: https://nodejs.org/download/release/
 [nodejsDOCUrl]: https://nodejs.org/documentation/
 
 [npmNPMUrl]: https://www.npmjs.com/package/npm
