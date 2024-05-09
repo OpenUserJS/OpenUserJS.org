@@ -13,8 +13,8 @@
 
  "captchaOpts" : {
   "isMath": true,
-  "mathMin": 10,
   "mathMin": 999,
+  "mathMax": 9999,
   "mathOperator": "+-",
   "useFont": null,
   "size": 4,
