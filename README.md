@@ -4,7 +4,7 @@ The home of Free and Open Source Software (FOSS) user scripts. Built using Node.
 
 Repository | Reference | Recent Version
 :--- | :---: | :---
-[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [&#x00b9;][nodejsGHReleasesUrl] [RELEASES][nodejsReleasesUrl] [²][nodejsDownloadsUrl]
+[nodejs][nodeGHUrl] | [Documentation][nodejsDOCUrl] | <a href="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true"><img src="https://raw.githubusercontent.com/nodejs/Release/master/schedule.svg?sanitize=true" alt="Current release schedule" title="Click to enlarge... Current release schedule" width="96" height="50"/></a> [&#x00b9;][nodejsGHReleasesUrl] [RELEASES][nodejsReleasesUrl] [²][nodejsDownloadsUrl] [³][nodejsNvmDownload]
 [npm][npmGHUrl] | [Documentation][npmDOCUrl] | [![npm][npmNPMVersionImage]][npmNPMUrl] [RELEASES][npmGHReleasesUrl]
 
 ### Contributing
@@ -112,6 +112,7 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [nodejsReleasesUrl]: https://nodejs.org/blog/release
 [nodejsDownloadsUrl]: https://nodejs.org/download/release/
 [nodejsDOCUrl]: https://nodejs.org/documentation/
+[nodejsNvmDownload]: https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating
 
 [npmNPMUrl]: https://www.npmjs.com/package/npm
 [npmNPMVersionImage]: https://badgen.net/npm/v/npm?cache=86400
