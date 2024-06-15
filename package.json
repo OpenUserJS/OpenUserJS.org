@@ -62,7 +62,7 @@
     "rfc2047": "4.0.1",
     "s3rver": "3.7.1",
     "sanitize-html": "2.13.0",
-    "select2": "3.5.2-browserify",
+    "select2": "4.0.6",
     "select2-bootstrap-css": "1.4.6",
     "serve-favicon": "2.5.0",
     "spdx-license-ids": "3.0.17",
