@@ -47,7 +47,7 @@
     "morgan": "1.10.0",
     "mu2": "0.5.21",
     "octicons": "4.4.0",
-    "passport": "0.4.1",
+    "passport": "0.6.0",
     "passport-github": "1.1.0",
     "passport-gitlab2": "5.0.0",
     "passport-google-oauth20": "2.0.0",
