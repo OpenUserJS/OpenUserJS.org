@@ -215,6 +215,8 @@ var maxMem = ensureIntegerOrNull(process.env.BUSY_MAXMEM) || 50; // 50% default
 
 var forceBusyAbsolute = process.env.FORCE_BUSY_ABSOLUTE === 'true';
 var forceBusy = process.env.FORCE_BUSY === 'true';
+var forceBusyMessage = process.env.FORCE_BUSY_MESSAGE
+  || 'We are experiencing technical difficulties right now.';
 
 app.use(function (aReq, aRes, aNext) {
   var pathname = aReq._parsedUrl.pathname;
@@ -286,7 +288,7 @@ app.use(function (aReq, aRes, aNext) {
     statusCodePage(aReq, aRes, aNext, {
       statusCode: 503,
       statusMessage:
-        'We are experiencing technical difficulties right now. Please try again later.'
+        forceBusyMessage + ' Please try again later.'
     });
     return;
 
