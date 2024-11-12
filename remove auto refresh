@@ -1,0 +1,14 @@
+// ==UserScript==
+// @name         Block Auto Refresh
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Prevents auto-refresh on web pages
+// @match        *://*/*
+// @run-at       document-start
+// ==/UserScript==
+
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = '';
+})
+;
