@@ -197,6 +197,15 @@ exports.isFQUrl = function (aString, aOptions) {
   return false;
 };
 
+exports.appendUrlLeaf = function (aUrl, aLeaf) {
+  let target = new URL(aUrl);
+
+  target.pathname = target.pathname.replace(/\/$/, '') + '/'
+    + aLeaf.replace(/^\//, '').replace(/\/$/);
+
+  return target.href;
+}
+
 // Helper function to ensure value is type Integer `number` or `null`
 // Please be very careful if this is edited
 exports.ensureIntegerOrNull = function (aEnvVar) {

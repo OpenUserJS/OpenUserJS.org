@@ -31,6 +31,8 @@ var document = require('./controllers/document');
 var svgCaptcha = require('svg-captcha');
 
 var isSameOrigin = require('./libs/helpers').isSameOrigin;
+var appendUrlLeaf = require('./libs/helpers').appendUrlLeaf;
+
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
@@ -54,7 +56,7 @@ var fudgeSec = 6;
 var waitInstallCapMin = isDev ? 1 : 60;
 var installCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/installCapLimiter',
+    uri: appendUrlLeaf(limiter, '/installCapLimiter'),
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitInstallCapMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -120,7 +122,7 @@ var installCapLimiter = rateLimit({
 var waitRateInstallSec = isDev ? 30 : 60;
 var installRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/installRateLimiter',
+    uri: appendUrlLeaf(limiter, '/installRateLimiter'),
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitRateInstallSec * 1000 // n seconds for mongo store
   })),
@@ -168,7 +170,7 @@ var install2Limiter = lockdown ? installRateLimiter : installCapLimiter;
 var waitRateMetaSec = isDev ? 30 : 60;
 var metaRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/metaRateLimiter',
+    uri: appendUrlLeaf(limiter, '/metaRateLimiter'),
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitRateMetaSec  * 1000 // n seconds for mongo store
   })),
@@ -213,7 +215,7 @@ var metaRateLimiter = rateLimit({
 var waitApiCapMin = isDev ? 1: 15;
 var apiCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/apiCapLimiter',
+    uri: appendUrlLeaf(limiter, '/apiCapLimiter'),
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitApiCapMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -236,7 +238,7 @@ var apiCapLimiter = rateLimit({
 var waitAuthCapMin = isDev ? 1: 1440;
 var authCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/authCapLimiter',
+    uri: appendUrlLeaf(limiter, '/authCapLimiter'),
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitAuthCapMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -260,7 +262,7 @@ var authCapLimiter = rateLimit({
 var waitCaptchaCapMin = isDev ? 1: 1440;
 var captchaCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/captchaCapLimiter',
+    uri: appendUrlLeaf(limiter, '/captchaCapLimiter'),
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitCaptchaCapMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -294,7 +296,7 @@ var captchaCapLimiter = rateLimit({
 var waitListCapMin = isDev ? 1: 60;
 var listCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/listCapLimiter',
+    uri: appendUrlLeaf(limiter, '/listCapLimiter'),
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitListCapMin * 60 * 1000 // n minutes for mongo store
   })),
@@ -440,7 +442,7 @@ var listAnyQRateLimiter = rateLimit({
 var waitListSameQCapMin = isDev ? 5 : 15;
 var listSameQRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
-    uri: limiter + '/listSameQCapLimiter',
+    uri: appendUrlLeaf(limiter, '/listSameQCapLimiter'),
     resetExpireDateOnChange: true, // Rolling
     expireTimeMs: waitListSameQCapMin * 60 * 1000 // n minutes for mongo store
   })),
