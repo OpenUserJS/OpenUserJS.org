@@ -53,11 +53,11 @@ var github = require('./../libs/githubClient');
 
 var renderMd = require('../libs/markdown').renderMd;
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
-var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 var getSessionDataList = require('../libs/modifySessions').getSessionDataList;
 var extendSession = require('../libs/modifySessions').extend;
@@ -491,6 +491,14 @@ exports.userListPage = function (aReq, aRes, aNext) {
 
   // userListQuery: Defaults
   modelQuery.applyUserListQueryDefaults(userListQuery, options, aReq);
+
+  if (options.authToSearch) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403, // Forbidden
+      statusMessage: 'Please Sign In to Search'
+    });
+    return;
+  }
 
   // userListQuery: Pagination
   pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults

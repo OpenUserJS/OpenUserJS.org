@@ -28,6 +28,7 @@ var getRating = require('../libs/collectiveRating').getRating;
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
 
@@ -188,7 +189,7 @@ exports.addScriptToGroups = function (aScript, aGroupNames, aCallback) {
 };
 
 // list groups
-exports.list = function (aReq, aRes) {
+exports.list = function (aReq, aRes, aNext) {
   function preRender() {
     // groupList
     options.groupList = _.map(options.groupList, modelParser.parseGroup);
@@ -237,6 +238,14 @@ exports.list = function (aReq, aRes) {
 
   // groupListQuery: Defaults
   modelQuery.applyGroupListQueryDefaults(groupListQuery, options, aReq);
+
+  if (options.authToSearch) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403, // Forbidden
+      statusMessage: 'Please Sign In to Search'
+    });
+    return;
+  }
 
   // groupListQuery: Pagination
   var pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
@@ -373,6 +382,14 @@ exports.view = function (aReq, aRes, aNext) {
 
     // scriptListQuery: Defaults
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
+
+    if (options.authToSearch) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403, // Forbidden
+        statusMessage: 'Please Sign In to Search'
+      });
+      return;
+    }
 
     // scriptListQuery: Pagination
     pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults

@@ -29,9 +29,9 @@ var modelQuery = require('../libs/modelQuery');
 
 var cleanFilename = require('../libs/helpers').cleanFilename;
 var execQueryTask = require('../libs/tasks').execQueryTask;
-var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
 
@@ -144,6 +144,14 @@ exports.categoryListPage = function (aReq, aRes, aNext) {
   // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
 
+  if (options.authToSearch) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403, // Forbidden
+      statusMessage: 'Please Sign In to Search'
+    });
+    return;
+  }
+
   // discussionListQuery: Pagination
   pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
@@ -234,6 +242,14 @@ exports.list = function (aReq, aRes, aNext) {
 
   // discussionListQuery: Defaults
   modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
+
+  if (options.authToSearch) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403, // Forbidden
+      statusMessage: 'Please Sign In to Search'
+    });
+    return;
+  }
 
   // discussionListQuery: Pagination
   pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
