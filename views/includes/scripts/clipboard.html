@@ -6,9 +6,7 @@
     var rMin = /\.min\.js$/;
 
     {{#isScriptViewSourcePage}}
-    {{#isOwner}}
     var regenerateId = '#regenerate';
-    {{/isOwner}}
     {{/isScriptViewSourcePage}}
 
     var allowedIds = [
@@ -33,7 +31,6 @@
     }
 
     {{#isScriptViewSourcePage}}
-    {{#isOwner}}
     // TODO: Should keep in sync with all peg.js upmixes eventually
     function parseMeta(aString) {
       aString = aString.toString();
@@ -91,7 +88,6 @@
 
       return cleanName || aDefaultName;
     };
-    {{/isOwner}}
     {{/isScriptViewSourcePage}}
 
     //
@@ -113,7 +109,6 @@
     }
 
     {{#isScriptViewSourcePage}}
-    {{#isOwner}}
     editor = ace.edit("editor");
 
     $(regenerateId).on('click', function () {
@@ -229,7 +224,6 @@
 
       $('#alt-install-target-btn').attr('disabled', 'disabled');
     });
-    {{/isOwner}}
     {{/isScriptViewSourcePage}}
 
   })();
