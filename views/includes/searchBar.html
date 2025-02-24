@@ -1,14 +1,14 @@
 <form action="{{{searchBarFormAction}}}" method="get">
   {{#searchBarFormHiddenVariables}}
-  <input type="hidden" name="{{name}}" value="{{value}}"{{#authToSearch}} readonly="readonly"{{/authToSearch}}>
+  <input type="hidden" name="{{name}}" value="{{value}}"{{#authRequired}} readonly="readonly"{{/authRequired}}>
   {{/searchBarFormHiddenVariables}}
   <div class="input-group col-xs-12">
     <div class="form-group has-feedback has-clear">
-      <input name="q" type="text" placeholder="{{searchBarPlaceholder}}" class="search form-control" value="{{searchBarValue}}" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"{{#authToSearch}} readonly="readonly"{{/authToSearch}} />
+      <input name="q" type="text" placeholder="{{searchBarPlaceholder}}" class="search form-control" value="{{searchBarValue}}" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"{{#authRequired}} readonly="readonly"{{/authRequired}} />
       <span class="form-control-feedback form-control-clear fa fa-times hidden"></span>
     </div>
     <span class="input-group-btn">
-      <button class="btn btn-default" type="submit"{{#authToSearch}} disabled="disabled"{{/authToSearch}}>
+      <button class="btn btn-default" type="submit"{{#authRequired}} disabled="disabled"{{/authRequired}}>
         <i class="fa fa-search"></i>
       </button>
     </span>
