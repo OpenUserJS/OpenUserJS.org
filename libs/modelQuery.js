@@ -8,7 +8,10 @@ var isDbg = require('../libs/debug').isDbg;
 //
 var _ = require('underscore');
 
+//--
 var getDefaultPagination = require('../libs/templateHelpers').getDefaultPagination;
+
+var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
 // Transform a "tri-state" value condition to null for true/false/null stored DB values
 // See also #701
@@ -257,17 +260,27 @@ exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
 
 var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDefaultOptions) {
   var orders = null;
+  var authedUser = aReq.session.user;
+  var authRequired = 'Sign In to ';
 
   // Search
-  if (aReq.query.q) {
-    aOptions.searchBarValue = aReq.query.q;
+  if (authedUser || !aOptions.authToSearch) {
+    authRequired = '';
+    aOptions.authToSearch = false;
 
-    if (aDefaultOptions.parseSearchQueryFn) {
-      aDefaultOptions.parseSearchQueryFn(aModelListQuery, aReq.query.q);
+    if (aReq.query.q) {
+      aOptions.searchBarValue = aReq.query.q;
+
+      if (aDefaultOptions.parseSearchQueryFn) {
+        aDefaultOptions.parseSearchQueryFn(aModelListQuery, aReq.query.q);
+      }
     }
+  } else if (!aReq.query.q) {
+    aOptions.authToSearch = false;
   }
   aOptions.searchBarFormAction = aDefaultOptions.searchBarFormAction || '';
-  aOptions.searchBarPlaceholder = aDefaultOptions.searchBarPlaceholder || 'Search';
+  aOptions.searchBarPlaceholder = authRequired
+    + aDefaultOptions.searchBarPlaceholder || 'Search';
   aOptions.searchBarFormHiddenVariables = aDefaultOptions.searchBarFormHiddenVariables || [];
 
   // flagged
@@ -336,6 +349,8 @@ var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDe
 };
 
 exports.applyCommentListQueryDefaults = function (aCommentListQuery, aOptions, aReq) {
+  aOptions.authToSearch = lockdown;
+
   applyModelListQueryDefaults(aCommentListQuery, aOptions, aReq, {
     defaultSort: 'created',
     parseSearchQueryFn: parseCommentSearchQuery,
@@ -352,6 +367,8 @@ exports.applyCommentListQueryDefaults = function (aCommentListQuery, aOptions, a
 };
 
 exports.applySyncListQueryDefaults = function (aSyncListQuery, aOptions, aReq) {
+  aOptions.authToSearch = lockdown;
+
   applyModelListQueryDefaults(aSyncListQuery, aOptions, aReq, {
     defaultSort: '-created',
     parseSearchQueryFn: parseSyncSearchQuery,
@@ -361,6 +378,8 @@ exports.applySyncListQueryDefaults = function (aSyncListQuery, aOptions, aReq) {
 };
 
 exports.applyDiscussionListQueryDefaults = function (aDiscussionListQuery, aOptions, aReq) {
+  aOptions.authToSearch = lockdown;
+
   applyModelListQueryDefaults(aDiscussionListQuery, aOptions, aReq, {
     defaultSort: '-updated -created',
     parseSearchQueryFn: parseDiscussionSearchQuery,
@@ -370,6 +389,8 @@ exports.applyDiscussionListQueryDefaults = function (aDiscussionListQuery, aOpti
 };
 
 exports.applyGroupListQueryDefaults = function (aGroupListQuery, aOptions, aReq) {
+  aOptions.authToSearch = lockdown;
+
   applyModelListQueryDefaults(aGroupListQuery, aOptions, aReq, {
     defaultSort: '-rating name',
     parseSearchQueryFn: parseGroupSearchQuery,
@@ -387,6 +408,8 @@ var scriptListQueryDefaults = {
 };
 exports.scriptListQueryDefaults = scriptListQueryDefaults;
 exports.applyScriptListQueryDefaults = function (aScriptListQuery, aOptions, aReq) {
+  aOptions.authToSearch = lockdown;
+
   applyModelListQueryDefaults(aScriptListQuery, aOptions, aReq, scriptListQueryDefaults);
 };
 
@@ -402,10 +425,14 @@ var libraryListQueryDefaults = {
 };
 exports.libraryListQueryDefaults = libraryListQueryDefaults;
 exports.applyLibraryListQueryDefaults = function (aLibraryListQuery, aOptions, aReq) {
+  aOptions.authToSearch = lockdown;
+
   applyModelListQueryDefaults(aLibraryListQuery, aOptions, aReq, libraryListQueryDefaults);
 };
 
 exports.applyUserListQueryDefaults = function (aUserListQuery, aOptions, aReq) {
+  aOptions.authToSearch = lockdown;
+
   applyModelListQueryDefaults(aUserListQuery, aOptions, aReq, {
     defaultSort: 'name',
     parseSearchQueryFn: parseUserSearchQuery,

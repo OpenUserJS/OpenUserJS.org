@@ -45,7 +45,7 @@ var strategies = require('./strategies.json');
 //---
 
 // The site home page has scriptList, and groups in a sidebar
-exports.home = function (aReq, aRes) {
+exports.home = function (aReq, aRes, aNext) {
   function preRender() {
     // scriptList
     options.scriptList = _.map(options.scriptList, modelParser.parseScript);
@@ -157,6 +157,14 @@ exports.home = function (aReq, aRes) {
   } else {
     // Scripts
     modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
+  }
+
+  if (options.authToSearch) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 403, // Forbidden
+      statusMessage: 'Please Sign In to Search'
+    });
+    return;
   }
 
   // scriptListQuery: Pagination

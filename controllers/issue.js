@@ -28,9 +28,9 @@ var modelQuery = require('../libs/modelQuery');
 
 var execQueryTask = require('../libs/tasks').execQueryTask;
 var countTask = require('../libs/tasks').countTask;
-var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 var pageMetadata = require('../libs/templateHelpers').pageMetadata;
 var orderDir = require('../libs/templateHelpers').orderDir;
+var statusCodePage = require('../libs/templateHelpers').statusCodePage;
 
 //--- Configuration inclusions
 
@@ -159,11 +159,19 @@ exports.list = function (aReq, aRes, aNext) {
       // discussionListQuery: Defaults
       modelQuery.applyDiscussionListQueryDefaults(discussionListQuery, options, aReq);
 
+      if (options.authToSearch) {
+        statusCodePage(aReq, aRes, aNext, {
+          statusCode: 403, // Forbidden
+          statusMessage: 'Please Sign In to Search'
+        });
+        return;
+      }
+
       // discussionListQuery: Pagination
       pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
       // SearchBar
-      options.searchBarPlaceholder = 'Search Issues';
+      options.searchBarPlaceholder = options.searchBarPlaceholder.replace(/Topics/, 'Issues');
 
       //--- Tasks
 
@@ -285,6 +293,14 @@ exports.view = function (aReq, aRes, aNext) {
 
         // commentListQuery: Defaults
         modelQuery.applyCommentListQueryDefaults(commentListQuery, options, aReq);
+
+        if (options.authToSearch) {
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 403, // Forbidden
+            statusMessage: 'Please Sign In to Search'
+          });
+          return;
+        }
 
         // commentListQuery: Pagination
         pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
