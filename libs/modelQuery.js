@@ -261,11 +261,11 @@ exports.applyModelListQueryFlaggedFilter = applyModelListQueryFlaggedFilter;
 var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDefaultOptions) {
   var orders = null;
   var authedUser = aReq.session.user;
-  var authRequired = 'Sign In to ';
+  aOptions.authRequired = 'Sign In to ';
 
   // Search
   if (authedUser || !aOptions.authToSearch) {
-    authRequired = '';
+    aOptions.authRequired = '';
     aOptions.authToSearch = false;
 
     if (aReq.query.q) {
@@ -279,7 +279,7 @@ var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDe
     aOptions.authToSearch = false;
   }
   aOptions.searchBarFormAction = aDefaultOptions.searchBarFormAction || '';
-  aOptions.searchBarPlaceholder = authRequired
+  aOptions.searchBarPlaceholder = aOptions.authRequired
     + aDefaultOptions.searchBarPlaceholder || 'Search';
   aOptions.searchBarFormHiddenVariables = aDefaultOptions.searchBarFormHiddenVariables || [];
 
