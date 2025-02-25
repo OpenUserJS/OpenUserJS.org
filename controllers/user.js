@@ -701,6 +701,14 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
     modelQuery.applyCommentListQueryDefaults(commentListQuery, options, aReq);
     commentListQuery.sort('-created');
 
+    if (options.authToSearch) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403, // Forbidden
+        statusMessage: 'Please Sign In to Search'
+      });
+      return;
+    }
+
     // commentListQuery: Pagination
     pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
@@ -711,7 +719,7 @@ exports.userCommentListPage = function (aReq, aRes, aNext) {
     });
 
     // SearchBar
-    options.searchBarPlaceholder = 'Search Comments from ' + user.name;
+    options.searchBarPlaceholder = options.authRequired + 'Search Comments from ' + user.name;
     options.searchBarFormAction = '';
 
     //--- Tasks
@@ -885,12 +893,20 @@ exports.userScriptListPage = function (aReq, aRes, aNext) {
       modelQuery.applyScriptListQueryDefaults(scriptListQuery, options, aReq);
     }
 
+    if (options.authToSearch) {
+      statusCodePage(aReq, aRes, aNext, {
+        statusCode: 403, // Forbidden
+        statusMessage: 'Please Sign In to Search'
+      });
+      return;
+    }
+
     // scriptListQuery: Pagination
     pagination = options.pagination; // is set in modelQuery.apply___ListQueryDefaults
 
     // SearchBar
-    options.searchBarPlaceholder = 'Search ' +
-      (options.librariesOnly ? 'Libraries' : 'Scripts') + ' from ' + user.name;
+    options.searchBarPlaceholder = options.authRequired + 'Search ' +
+      (librariesOnly ? 'Libraries' : 'Scripts') + ' from ' + user.name;
     options.searchBarFormAction = '';
 
     //--- Tasks
