@@ -13,6 +13,9 @@ var getDefaultPagination = require('../libs/templateHelpers').getDefaultPaginati
 
 var lockdown = process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true';
 
+var authQuery = JSON.parse(process.env.AUTH_QUERY || '{}');
+var limitQuery = JSON.parse(process.env.LIMIT_QUERY || '{}');
+
 // Transform a "tri-state" value condition to null for true/false/null stored DB values
 // See also #701
 var findOrDefaultToNull = function (aQuery, aKey, aValue, aDefaultValue) {
@@ -115,8 +118,7 @@ var parseModelListSearchQuery = function (aModelListQuery, aQuery, aSearchOption
 };
 
 var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
-  if (process.env.LIMIT_SEARCH_QUERY === 'true'
-    || process.env.FORCE_BUSY_UPDATEURL_CHECK === 'true') {
+  if (lockdown || limitQuery.Script === 'true') {
     parseModelListSearchQuery(aScriptListQuery, aQuery, {
       partialWordMatchFields: ['name', '_description', 'author' ],
       fullWordMatchFields: ['meta.UserScript.include.value', 'meta.UserScript.match.value']
@@ -131,26 +133,47 @@ var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
 exports.parseScriptSearchQuery = parseScriptSearchQuery;
 
 var parseGroupSearchQuery = function (aGroupListQuery, aQuery) {
-  parseModelListSearchQuery(aGroupListQuery, aQuery, {
-    partialWordMatchFields: ['name'],
-    fullWordMatchFields: []
-  });
+  if (lockdown || limitQuery.Group === 'true') {
+    parseModelListSearchQuery(aGroupListQuery, aQuery, {
+      partialWordMatchFields: ['name'],
+      fullWordMatchFields: []
+    });
+  } else {
+    parseModelListSearchQuery(aGroupListQuery, aQuery, {
+      partialWordMatchFields: ['name'],
+      fullWordMatchFields: []
+    });
+  }
 };
 exports.parseGroupSearchQuery = parseGroupSearchQuery;
 
 var parseDiscussionSearchQuery = function (aDiscussionListQuery, aQuery) {
-  parseModelListSearchQuery(aDiscussionListQuery, aQuery, {
-    partialWordMatchFields: ['topic'],
-    fullWordMatchFields: ['author']
-  });
+  if (lockdown || limitQuery.Discussion === 'true') {
+    parseModelListSearchQuery(aDiscussionListQuery, aQuery, {
+      partialWordMatchFields: ['topic'],
+      fullWordMatchFields: ['author']
+    });
+  } else {
+    parseModelListSearchQuery(aDiscussionListQuery, aQuery, {
+      partialWordMatchFields: ['topic'],
+      fullWordMatchFields: ['author']
+    });
+  }
 };
 exports.parseDiscussionSearchQuery = parseDiscussionSearchQuery;
 
 var parseCommentSearchQuery = function (aCommentListQuery, aQuery) {
-  parseModelListSearchQuery(aCommentListQuery, aQuery, {
-    partialWordMatchFields: ['content'],
-    fullWordMatchFields: ['author']
-  });
+  if (lockdown || limitQuery.Comment === 'true') {
+    parseModelListSearchQuery(aCommentListQuery, aQuery, {
+      partialWordMatchFields: ['content'],
+      fullWordMatchFields: ['author']
+    });
+  } else {
+    parseModelListSearchQuery(aCommentListQuery, aQuery, {
+      partialWordMatchFields: ['content'],
+      fullWordMatchFields: ['author']
+    });
+  }
 };
 exports.parseCommentSearchQuery = parseCommentSearchQuery;
 
@@ -163,10 +186,17 @@ var parseSyncSearchQuery = function (aSyncListQuery, aQuery) {
 exports.parseSyncSearchQuery = parseSyncSearchQuery;
 
 var parseUserSearchQuery = function (aUserListQuery, aQuery) {
-  parseModelListSearchQuery(aUserListQuery, aQuery, {
-    partialWordMatchFields: ['name'],
-    fullWordMatchFields: []
-  });
+  if (lockdown || limitQuery.User === 'true') {
+    parseModelListSearchQuery(aUserListQuery, aQuery, {
+      partialWordMatchFields: ['name'],
+      fullWordMatchFields: []
+    });
+  } else {
+    parseModelListSearchQuery(aUserListQuery, aQuery, {
+      partialWordMatchFields: ['name'],
+      fullWordMatchFields: []
+    });
+  }
 };
 exports.parseUserSearchQuery = parseUserSearchQuery;
 
@@ -349,7 +379,7 @@ var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDe
 };
 
 exports.applyCommentListQueryDefaults = function (aCommentListQuery, aOptions, aReq) {
-  aOptions.authToSearch = lockdown;
+  aOptions.authToSearch = lockdown || authQuery.Comment === 'true';
 
   applyModelListQueryDefaults(aCommentListQuery, aOptions, aReq, {
     defaultSort: 'created',
@@ -367,8 +397,6 @@ exports.applyCommentListQueryDefaults = function (aCommentListQuery, aOptions, a
 };
 
 exports.applySyncListQueryDefaults = function (aSyncListQuery, aOptions, aReq) {
-  aOptions.authToSearch = lockdown;
-
   applyModelListQueryDefaults(aSyncListQuery, aOptions, aReq, {
     defaultSort: '-created',
     parseSearchQueryFn: parseSyncSearchQuery,
@@ -378,7 +406,7 @@ exports.applySyncListQueryDefaults = function (aSyncListQuery, aOptions, aReq) {
 };
 
 exports.applyDiscussionListQueryDefaults = function (aDiscussionListQuery, aOptions, aReq) {
-  aOptions.authToSearch = lockdown;
+  aOptions.authToSearch = lockdown || authQuery.Discussion === 'true';
 
   applyModelListQueryDefaults(aDiscussionListQuery, aOptions, aReq, {
     defaultSort: '-updated -created',
@@ -389,7 +417,7 @@ exports.applyDiscussionListQueryDefaults = function (aDiscussionListQuery, aOpti
 };
 
 exports.applyGroupListQueryDefaults = function (aGroupListQuery, aOptions, aReq) {
-  aOptions.authToSearch = lockdown;
+  aOptions.authToSearch = lockdown || authQuery.Group === 'true';
 
   applyModelListQueryDefaults(aGroupListQuery, aOptions, aReq, {
     defaultSort: '-rating name',
@@ -408,7 +436,7 @@ var scriptListQueryDefaults = {
 };
 exports.scriptListQueryDefaults = scriptListQueryDefaults;
 exports.applyScriptListQueryDefaults = function (aScriptListQuery, aOptions, aReq) {
-  aOptions.authToSearch = lockdown;
+  aOptions.authToSearch = lockdown || authQuery.Script === 'true';
 
   applyModelListQueryDefaults(aScriptListQuery, aOptions, aReq, scriptListQueryDefaults);
 };
@@ -425,13 +453,13 @@ var libraryListQueryDefaults = {
 };
 exports.libraryListQueryDefaults = libraryListQueryDefaults;
 exports.applyLibraryListQueryDefaults = function (aLibraryListQuery, aOptions, aReq) {
-  aOptions.authToSearch = lockdown;
+  aOptions.authToSearch = lockdown || authQuery.Script === 'true';
 
   applyModelListQueryDefaults(aLibraryListQuery, aOptions, aReq, libraryListQueryDefaults);
 };
 
 exports.applyUserListQueryDefaults = function (aUserListQuery, aOptions, aReq) {
-  aOptions.authToSearch = lockdown;
+  aOptions.authToSearch = lockdown || authQuery.User === 'true';
 
   applyModelListQueryDefaults(aUserListQuery, aOptions, aReq, {
     defaultSort: 'name',
