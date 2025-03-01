@@ -117,8 +117,8 @@ var parseModelListSearchQuery = function (aModelListQuery, aQuery, aSearchOption
   });
 };
 
-var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
-  if (lockdown || limitQuery.Script === 'true') {
+var parseScriptSearchQuery = function (aScriptListQuery, aQuery, aLimited) {
+  if (lockdown || limitQuery.Script === 'true' || aLimited) {
     parseModelListSearchQuery(aScriptListQuery, aQuery, {
       partialWordMatchFields: ['name', '_description', 'author' ],
       fullWordMatchFields: ['meta.UserScript.include.value', 'meta.UserScript.match.value']
@@ -132,8 +132,8 @@ var parseScriptSearchQuery = function (aScriptListQuery, aQuery) {
 };
 exports.parseScriptSearchQuery = parseScriptSearchQuery;
 
-var parseGroupSearchQuery = function (aGroupListQuery, aQuery) {
-  if (lockdown || limitQuery.Group === 'true') {
+var parseGroupSearchQuery = function (aGroupListQuery, aQuery, aLimited) {
+  if (lockdown || limitQuery.Group === 'true' || aLimited) {
     parseModelListSearchQuery(aGroupListQuery, aQuery, {
       partialWordMatchFields: ['name'],
       fullWordMatchFields: []
@@ -147,8 +147,8 @@ var parseGroupSearchQuery = function (aGroupListQuery, aQuery) {
 };
 exports.parseGroupSearchQuery = parseGroupSearchQuery;
 
-var parseDiscussionSearchQuery = function (aDiscussionListQuery, aQuery) {
-  if (lockdown || limitQuery.Discussion === 'true') {
+var parseDiscussionSearchQuery = function (aDiscussionListQuery, aQuery, aLimited) {
+  if (lockdown || limitQuery.Discussion === 'true' || aLimited) {
     parseModelListSearchQuery(aDiscussionListQuery, aQuery, {
       partialWordMatchFields: ['topic'],
       fullWordMatchFields: ['author']
@@ -162,8 +162,8 @@ var parseDiscussionSearchQuery = function (aDiscussionListQuery, aQuery) {
 };
 exports.parseDiscussionSearchQuery = parseDiscussionSearchQuery;
 
-var parseCommentSearchQuery = function (aCommentListQuery, aQuery) {
-  if (lockdown || limitQuery.Comment === 'true') {
+var parseCommentSearchQuery = function (aCommentListQuery, aQuery, aLimited) {
+  if (lockdown || limitQuery.Comment === 'true' || aLimited) {
     parseModelListSearchQuery(aCommentListQuery, aQuery, {
       partialWordMatchFields: ['content'],
       fullWordMatchFields: ['author']
@@ -185,8 +185,8 @@ var parseSyncSearchQuery = function (aSyncListQuery, aQuery) {
 };
 exports.parseSyncSearchQuery = parseSyncSearchQuery;
 
-var parseUserSearchQuery = function (aUserListQuery, aQuery) {
-  if (lockdown || limitQuery.User === 'true') {
+var parseUserSearchQuery = function (aUserListQuery, aQuery, aLimited) {
+  if (lockdown || limitQuery.User === 'true' || aLimited) {
     parseModelListSearchQuery(aUserListQuery, aQuery, {
       partialWordMatchFields: ['name'],
       fullWordMatchFields: []
@@ -302,7 +302,7 @@ var applyModelListQueryDefaults = function (aModelListQuery, aOptions, aReq, aDe
       aOptions.searchBarValue = aReq.query.q;
 
       if (aDefaultOptions.parseSearchQueryFn) {
-        aDefaultOptions.parseSearchQueryFn(aModelListQuery, aReq.query.q);
+        aDefaultOptions.parseSearchQueryFn(aModelListQuery, aReq.query.q, !!!authedUser);
       }
     }
   } else if (!aReq.query.q) {
