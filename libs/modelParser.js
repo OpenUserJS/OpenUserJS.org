@@ -351,8 +351,8 @@ var parseScript = function (aScript) {
     if (script.description && script._description
       && script.description.length && script.description.length > logographicDivisor
         && script.description.length > (logographic
-          ? parseInt(script._description.length / logographicDivisor)
-          : script._description.length)) {
+          ? parseInt(settings.scriptSearchQueryStoreMaxDescription / logographicDivisor)
+          : settings.scriptSearchQueryStoreMaxDescription)) {
             script.hasLongDescription = true;
     }
   }
