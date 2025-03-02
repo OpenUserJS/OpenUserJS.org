@@ -8,6 +8,9 @@ var statusError = require('../libs/debug').statusError;
 var isSecured = require('../libs/debug').isSecured;
 var uaOUJS = require('../libs/debug').uaOUJS;
 
+var rLogographic = require('../libs/debug').rLogographic;
+var logographicDivisor = require('../libs/debug').logographicDivisor;
+
 //
 
 //--- Dependency inclusions
@@ -1198,8 +1201,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var userName = findMeta(aMeta, 'OpenUserJS.author.0.value') || aUser.name;
   var scriptName = null;
   var scriptDescription = null;
-  var thisName = null;
-  var thisDescription = null;
   var hasInvalidKey = null;
 
   async.series([
@@ -1250,8 +1251,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       // Check for non-localized presence
       name.forEach(function (aElement, aIndex, aArray) {
         if (!name[aIndex].key) {
-          thisName = aElement.value;
-          scriptName = cleanFilename(thisName, '');
+          scriptName = aElement.value;
         }
       });
 
@@ -1311,8 +1311,7 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       if (description) {
         description.forEach(function (aElement, aIndex, aArray) {
           if (!description[aIndex].key) {
-            thisDescription = aElement.value;
-            scriptDescription = cleanFilename(thisDescription, '');
+            scriptDescription = aElement.value;
           }
         });
       }
@@ -2058,6 +2057,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
         var s3 = null;
         var now = null;
 
+        var storeDescriptionLength = null;
+
         if (aRemoved) {
           aCallback(new statusError({
             message: 'Script removed permanently.',
@@ -2079,11 +2080,18 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
         } else if (!aScript) {
           // New script
           now = new Date();
+
+
+          storeDescriptionLength = settings.scriptSearchQueryStoreMaxDescription;
+          storeDescriptionLength = rLogographic.test(scriptDescription)
+            ? parseInt(storeDescriptionLength / logographicDivisor)
+            : storeDescriptionLength;
+
           aScript = new Script({
-            name: thisName,
+            name: scriptName,
             _description: (
-              thisDescription
-                ? thisDescription.substr(0, settings.scriptSearchQueryStoreMaxDescription).trim()
+              scriptDescription
+                ? scriptDescription.substr(0, storeDescriptionLength).trim()
                 : ''
             ),
             author: aUser.name,
@@ -2123,9 +2131,15 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             }), null);
             return;
           }
+
+          storeDescriptionLength = settings.scriptSearchQueryStoreMaxDescription;
+          storeDescriptionLength = rLogographic.test(scriptDescription)
+            ? parseInt(storeDescriptionLength / logographicDivisor)
+            : storeDescriptionLength;
+
           aScript._description = (
-            thisDescription
-              ? thisDescription.substr(0, settings.scriptSearchQueryStoreMaxDescription).trim()
+            scriptDescription
+              ? scriptDescription.substr(0, storeDescriptionLength).trim()
               : ''
           );
           aScript.meta = aMeta;
