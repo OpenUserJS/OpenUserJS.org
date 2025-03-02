@@ -1201,6 +1201,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
   var userName = findMeta(aMeta, 'OpenUserJS.author.0.value') || aUser.name;
   var scriptName = null;
   var scriptDescription = null;
+  var thisName = null;
+  var thisDescription = null;
   var hasInvalidKey = null;
 
   async.series([
@@ -1251,7 +1253,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       // Check for non-localized presence
       name.forEach(function (aElement, aIndex, aArray) {
         if (!name[aIndex].key) {
-          scriptName = aElement.value;
+          thisName = aElement.value;
+          scriptName = cleanFilename(thisName, '');
         }
       });
 
@@ -1311,7 +1314,8 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
       if (description) {
         description.forEach(function (aElement, aIndex, aArray) {
           if (!description[aIndex].key) {
-            scriptDescription = aElement.value;
+            thisDescription = aElement.value;
+            scriptDescription = cleanFilename(thisDescription, '');
           }
         });
       }
@@ -2083,15 +2087,15 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
 
 
           storeDescriptionLength = settings.scriptSearchQueryStoreMaxDescription;
-          storeDescriptionLength = rLogographic.test(scriptDescription)
+          storeDescriptionLength = rLogographic.test(thisDescription)
             ? parseInt(storeDescriptionLength / logographicDivisor)
             : storeDescriptionLength;
 
           aScript = new Script({
-            name: scriptName,
+            name: thisName,
             _description: (
-              scriptDescription
-                ? scriptDescription.substr(0, storeDescriptionLength).trim()
+              thisDescription
+                ? thisDescription.substr(0, storeDescriptionLength).trim()
                 : ''
             ),
             author: aUser.name,
@@ -2133,13 +2137,13 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           }
 
           storeDescriptionLength = settings.scriptSearchQueryStoreMaxDescription;
-          storeDescriptionLength = rLogographic.test(scriptDescription)
+          storeDescriptionLength = rLogographic.test(thisDescription)
             ? parseInt(storeDescriptionLength / logographicDivisor)
             : storeDescriptionLength;
 
           aScript._description = (
-            scriptDescription
-              ? scriptDescription.substr(0, storeDescriptionLength).trim()
+            thisDescription
+              ? thisDescription.substr(0, storeDescriptionLength).trim()
               : ''
           );
           aScript.meta = aMeta;
