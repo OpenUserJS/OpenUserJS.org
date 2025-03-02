@@ -6,6 +6,9 @@ var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
 var statusError = require('../libs/debug').statusError;
 
+var rLogographic = require('../libs/debug').rLogographic;
+var logographicDivisor = require('../libs/debug').logographicDivisor;
+
 //
 
 //--- Dependency inclusions
@@ -31,6 +34,7 @@ var isFQUrl = require('../libs/helpers').isFQUrl;
 var isSameOrigin = require('../libs/helpers').isSameOrigin;
 var patternHasSameOrigin = require('../libs/helpers').patternHasSameOrigin;
 var scriptStorageLib = require('../libs/scriptStorage').invalidKey;
+var settings = require('../models/settings.json');
 
 
 //--- Configuration inclusions
@@ -316,6 +320,9 @@ var parseScript = function (aScript) {
 
   var matches = null;
 
+  var logographic = null;
+  var storeDescriptionLength = null;
+
   if (!aScript) {
     return;
   }
@@ -339,8 +346,14 @@ var parseScript = function (aScript) {
       }
     });
 
-    if (script.description && script._description && script.description.length > script._description.length) {
-      script.hasLongDescription = true;
+    logographic = rLogographic.test(script.description);
+
+    if (script.description && script._description
+      && script.description.length && script.description.length > logographicDivisor
+        && script.description.length > (logographic
+          ? parseInt(script._description.length / logographicDivisor)
+          : script._description.length)) {
+            script.hasLongDescription = true;
     }
   }
 

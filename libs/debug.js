@@ -77,6 +77,11 @@ uaOUJS = pkg.org + '/' + pkg.version
     + 'OUJS/20131106 ' + pkg.name + '/' + hash;
 exports.uaOUJS = uaOUJS;
 
+//  NOTE: Requires DB migration for changing below settings
+exports.rLogographic = /[\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}]/u;
+exports.logographicDivisor = 4;
+
+// /NOTE:
 
 // ES6+ in use to eliminate extra property
 class statusError extends Error {
