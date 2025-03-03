@@ -134,8 +134,8 @@ moment.locale('en-iconic', {
     }
   },
   relativeTime : {
-    future : "<strong>&NegativeVeryThinSpace;</strong> <span>in</span> <em>%s</em>",
-    past : "<strong>&NegativeVeryThinSpace;</strong> <span>%s</span> <em>ago</em>",
+    future : "<strong>in</strong> <span>&NegativeVeryThinSpace;</span> <em>%s</em>",
+    past : "<strong>%s</strong> <span>&NegativeVeryThinSpace;</span> <em>ago</em>",
     s : function (aNumber, aWithoutSuffix, aKey, aIsFuture) {
       return aNumber + "s";
     },
