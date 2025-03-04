@@ -28,6 +28,8 @@ var crypto = require('crypto');
 var events = require('events');
 events.EventEmitter.defaultMaxListeners = 15;
 
+var ensureIntegerOrNull = require('./libs/helpers').ensureIntegerOrNull;
+
 var express = require('express');
 var toobusy = require('toobusy-js');
 var statusCodePage = require('./libs/templateHelpers').statusCodePage;
@@ -195,7 +197,6 @@ var sessionStore = MongoStore.create({
 });
 
 // See https://hacks.mozilla.org/2013/01/building-a-node-js-server-that-wont-melt-a-node-js-holiday-season-part-5/
-var ensureIntegerOrNull = require('./libs/helpers').ensureIntegerOrNull;
 var isSameOrigin = require('./libs/helpers').isSameOrigin;
 
 var maxLag = ensureIntegerOrNull(process.env.BUSY_MAXLAG) || 70;
