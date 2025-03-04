@@ -2062,8 +2062,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
         var now = null;
 
         var storeDescriptionLength = null;
-        var includes = null;
-        var matches = null;
 
         if (aRemoved) {
           aCallback(new statusError({
@@ -2087,8 +2085,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
           // New script
           now = new Date();
 
-          includes = findMeta(aMeta, 'UserScript.include.value');
-          matches = findMeta(aMeta, 'UserScript.match.value');
 
           storeDescriptionLength = settings.scriptSearchQueryStoreMaxDescription;
           storeDescriptionLength = rLogographic.test(thisDescription)
@@ -2115,8 +2111,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
             installName: installName,
             fork: null,
             meta: aMeta,
-            _pattern: ((includes ? includes.join(' ') : '') + ' '
-              + (matches ? matches.join(' ') : '')).trim(),
             isLib: isLib,
             uses: isLib ? null : libraries,
             _authorId: aUser._id
@@ -2153,13 +2147,6 @@ exports.storeScript = function (aUser, aMeta, aBuf, aUpdate, aCallback) {
               : ''
           );
           aScript.meta = aMeta;
-
-          includes = findMeta(aMeta, 'UserScript.include.value');
-          matches = findMeta(aMeta, 'UserScript.match.value');
-
-          aScript._pattern = ((includes ? includes.join(' ') : '') + ' '
-            + (matches ? matches.join(' ') : '')).trim()
-
           aScript.uses = libraries;
 
           // Okay to update

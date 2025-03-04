@@ -15,7 +15,6 @@ var scriptSchema = new Schema({
   // Visible
   name: String,
   _description: String,
-  _pattern: String,
   author: String,
   installs: { type: Number, default: 0 },
   installsSinceUpdate: { type: Number, default: 0 },
@@ -55,7 +54,6 @@ scriptSchema.index({
   isLib: 1,
   name: 1,
   author: 1,
-  _pattern: 1,
   _description: 1,
   _about: 1
 });
