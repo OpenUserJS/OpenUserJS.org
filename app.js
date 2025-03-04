@@ -73,7 +73,7 @@ var _ = require('underscore');
 var findSessionData = require('./libs/modifySessions').findSessionData;
 
 var dbOptions = {};
-var defaultPoolSize = 10;
+var defaultPoolSize = ensureIntegerOrNull(process.env.CONNECT_POOL_SIZE) || 100; // Current *mongoose* default
 if (isPro) {
   dbOptions = {
     poolSize: defaultPoolSize,
