@@ -125,7 +125,7 @@ var parseScriptSearchQuery = function (aScriptListQuery, aQuery, aLimited) {
     });
   } else {
     parseModelListSearchQuery(aScriptListQuery, aQuery, {
-      partialWordMatchFields: ['name', '_description', 'author', '_about' ],
+      partialWordMatchFields: ['name', 'author', '_description', '_about'],
       fullWordMatchFields: ['meta.UserScript.include.value', 'meta.UserScript.match.value']
     });
   }
