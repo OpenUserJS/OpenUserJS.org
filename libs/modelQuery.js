@@ -118,10 +118,15 @@ var parseModelListSearchQuery = function (aModelListQuery, aQuery, aSearchOption
 };
 
 var parseScriptSearchQuery = function (aScriptListQuery, aQuery, aLimited) {
-  if (lockdown || limitQuery.Script === 'true' || aLimited) {
+  if (lockdown) {
     parseModelListSearchQuery(aScriptListQuery, aQuery, {
       partialWordMatchFields: ['name', 'author'],
       fullWordMatchFields: []
+    });
+  } else if (limitQuery.Script === 'true' || aLimited) {
+    parseModelListSearchQuery(aScriptListQuery, aQuery, {
+      partialWordMatchFields: ['name', 'author'],
+      fullWordMatchFields: ['meta.UserScript.include.value', 'meta.UserScript.match.value']
     });
   } else {
     parseModelListSearchQuery(aScriptListQuery, aQuery, {
