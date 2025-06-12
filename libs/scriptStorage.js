@@ -332,11 +332,11 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
           matches = keyValueUtf.match(rAnyLocalMetaUrl);
           if (matches) {
             if (/\.min$/.test(matches[2])) {
-                return new statusError({
-                  message: '`@' + aKeyName +
-                    '` must not be a minified URL.',
-                  code: 403 // Forbidden
-                });
+              return new statusError({
+                message: '`@' + aKeyName +
+                  '` must not be a minified URL.',
+                code: 403 // Forbidden
+              });
             } else if (cleanFilename(aAuthorName, '').toLowerCase() +
               '/' + cleanFilename(aScriptName, '') ===
                 matches[1].toLowerCase() + '/' + matches[2]) {
