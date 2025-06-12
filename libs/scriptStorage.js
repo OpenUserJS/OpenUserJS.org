@@ -331,7 +331,13 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
           // NOTE: value needs to be decoded already since MongoDB and AWS doesn't store that
           matches = keyValueUtf.match(rAnyLocalMetaUrl);
           if (matches) {
-            if (cleanFilename(aAuthorName, '').toLowerCase() +
+            if (/\.min$/.test(matches[2])) {
+                return new statusError({
+                  message: '`@' + aKeyName +
+                    '` must not be a minified URL.',
+                  code: 403 // Forbidden
+                });
+            } else if (cleanFilename(aAuthorName, '').toLowerCase() +
               '/' + cleanFilename(aScriptName, '') ===
                 matches[1].toLowerCase() + '/' + matches[2]) {
               // Same script
