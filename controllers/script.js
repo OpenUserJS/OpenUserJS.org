@@ -81,6 +81,8 @@ var getScriptPageTasks = function (aOptions) {
   var copyright = null;
   var license = null;
   var licenseConflict = false;
+  var antifeature = null;
+  var types = [];
   var author = null;
   var collaborator = null;
 
@@ -173,6 +175,24 @@ var getScriptPageTasks = function (aOptions) {
     });
   } else {
     aOptions.script.licenseConflict = true;
+  }
+
+  // Show antifeatures of the script
+  antifeature = scriptStorage.findMeta(script.meta, 'UserScript.antifeature');
+  if (antifeature) {
+    aOptions.hasAntiFeature = true;
+
+    antifeature.forEach(function (aElement, aIndex, aArray) {
+      var type = types[aElement.value1];
+      var comment = type ? (type.comment || '') : '';
+
+      types[aElement.value1] = { name: aElement.value1, comment:
+        (aElement.value2 ? aElement.value2 : '')
+          + (comment ? (aElement.value2 ? '\n' : '') + comment: '')
+      };
+    });
+
+    aOptions.script.antifeatures = Object.values(types);
   }
 
   // Show collaborators of the script
