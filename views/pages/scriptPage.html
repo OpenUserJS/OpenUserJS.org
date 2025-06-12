@@ -45,8 +45,11 @@
               {{#script.copyrights}}<p><i class="fa fa-fw fa-copyright"></i> <b>Copyright:</b> {{name}}</p>{{/script.copyrights}}
               {{#script.licenseConflict}}<p><i class="fa fa-fw fa-legal"></i> <b>License:</b> {{#script.licenseParadox}}<s>{{/script.licenseParadox}}<a rel="external noreferrer noopener nofollow ugc license" referrerpolicy="same-origin" href="https://spdx.org/licenses/MIT.html">MIT</a>; <a rel="external noreferrer noopener nofollow ugc license" referrerpolicy="same-origin" href="https://opensource.org/licenses/MIT">https://opensource.org/licenses/MIT</a>{{#script.licenseParadox}}</s>{{/script.licenseParadox}}</p>{{/script.licenseConflict}}
               {{#script.licenses}}<p><i class="fa fa-fw fa-balance-scale"></i> <b>License:</b> {{#name}}{{name}}{{/name}}{{^name}}<a rel="external noreferrer noopener nofollow ugc license" referrerpolicy="same-origin" href="https://spdx.org/licenses/{{spdx}}.html">{{spdx}}</a>{{#url}}; <a rel="external noreferrer noopener nofollow ugc license" referrerpolicy="same-origin" href="{{url}}">{{url}}</a>{{/url}}{{/name}}</p>{{/script.licenses}}
+              {{^hasAntiFeature}}
+                <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>Antifeature:</b> <a href="/about/Frequently-Asked-Questions#q-what-is-antifeature-"><i>not specified</i></a>
+              {{/hasAntiFeature}}
               {{#hasAntiFeature}}
-                <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>Antifeatures:</b> <span>{{#script.antifeatures}}<a href="/about/Frequently-Asked-Questions#antifeature-{{name}}" title="{{comment}}"> {{name}}</a>{{/script.antifeatures}}</span></p>
+                <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>Antifeature:</b> <span>{{#script.antifeatures}}<a href="/about/Frequently-Asked-Questions#{{name}}-antifeature" title="{{comment}}"> {{name}}</a>{{/script.antifeatures}}</span></p>
               {{/hasAntiFeature}}
               {{#hasCollab}}
               <p><i class="fa fa-fw fa-user"></i> <b>Collaborator:</b> {{#script.collaborators}} <span class="label label-info"><a href="/users/{{{url}}}">{{text}}</a></span> {{/script.collaborators}}</p>

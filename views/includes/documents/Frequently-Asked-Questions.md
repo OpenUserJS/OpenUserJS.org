@@ -249,7 +249,7 @@ The `@downloadURL` UserScript metadata block key is not currently required but h
 
 ### Q: What is antifeature?
 
-A: Adopted and vetted from another site, this UserScript metadata block key indicates what types of Author beneficial Code has been included with the script. This allows any visitor to make a more informed decision before installation.
+A: Adopted and vetted from another site, this UserScript metadata block key indicates what types of Author indicated beneficial Code has been included with the script. This allows any visitor to make a more informed decision before installation.
 
 Non-localized usage:
 ``` js
@@ -270,32 +270,32 @@ Localized usage:
 
 The following key type(s) are currently supported:
 
-#### antifeature ads
+#### ads antifeature
 
 ``` js
 // @antifeature ads This script contains too many ads.
 ```
 
-#### antifeature membership
+#### membership antifeature
 
 ``` js
 // @antifeature membership This script requires an account for full functionality.
 ```
 
-#### antifeature miner
+#### miner antifeature
 
 ``` js
 // @antifeature miner This script uses a lot of electricity on your behalf.
 ```
 
-#### antifeature referral-link
+#### referral-link antifeature
 
 ``` js
 // @antifeature referral-link This script makes money for the Author.
 ```
 
 
-#### antifeature tracking
+#### tracking antifeature
 
 ``` js
 // @antifeature tracking This script contains a tracking of your activity.
@@ -303,13 +303,13 @@ The following key type(s) are currently supported:
 
 The following key type(s) are currently __not__ supported:
 
-#### antifeature payment
+#### payment antifeature
 
 ``` js
-// @antifeature payment This script utilizes additional proprietary upstream software and access.
+// @antifeature payment This script utilizes additional monetary proprietary upstream software and access.
 ```
 
-If any of these keys are present then additional consideration should be utilized for moderation requests. If any key is absent and a script is found to contain Code relevant to these types please flag the script for moderation inspection.
+If any of these keys are present then additional consideration should be utilized for moderation requests. If any key is absent and a script is found to contain Code relevant to these types please flag the script for moderation inspection with specifics.
 
 
 ### Q: Does OpenUserJS.org have script synchronization from a version control site?
