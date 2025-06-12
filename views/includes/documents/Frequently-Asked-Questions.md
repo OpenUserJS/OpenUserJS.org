@@ -247,6 +247,71 @@ A: Yes, use the raw source route like this in the UserScript metadata block:
 
 The `@downloadURL` UserScript metadata block key is not currently required but highly encouraged especially due to potential faulty .user.js engine updaters.
 
+### Q: What is antifeature?
+
+A: Adopted and vetted from another site, this UserScript metadata block key indicates what types of Author beneficial Code has been included with the script. This allows any visitor to make a more informed decision before installation.
+
+Non-localized usage:
+``` js
+// @antifeature type comment
+```
+
+Localized usage:
+``` js
+// @antifeature:cs type komentář.
+// @antifeature:es-MX type comentario.
+// @antifeature:ru type комментарий
+
+```
+
+* There can be any number of @antifeature keys in a script.
+* `comment` is optional but recommended. Comments will show up as a tooltip for all unlocalized and localized values.
+
+
+The following key type(s) are currently supported:
+
+#### antifeature ads
+
+``` js
+// @antifeature ads This script contains too many ads.
+```
+
+#### antifeature membership
+
+``` js
+// @antifeature membership This script requires an account for full functionality.
+```
+
+#### antifeature miner
+
+``` js
+// @antifeature miner This script uses a lot of electricity on your behalf.
+```
+
+#### antifeature referral-link
+
+``` js
+// @antifeature referral-link This script makes money for the Author.
+```
+
+
+#### antifeature tracking
+
+``` js
+// @antifeature tracking This script contains a tracking of your activity.
+```
+
+The following key type(s) are currently __not__ supported:
+
+#### antifeature payment
+
+``` js
+// @antifeature payment This script utilizes additional proprietary upstream software and access.
+```
+
+If any of these keys are present then additional consideration should be utilized for moderation requests. If any key is absent and a script is found to contain Code relevant to these types please flag the script for moderation inspection.
+
+
 ### Q: Does OpenUserJS.org have script synchronization from a version control site?
 
 This site is currently a presentational userscript repository and is intended to distribute the final published product in a familiar community setting.
