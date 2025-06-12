@@ -192,7 +192,7 @@ var getScriptPageTasks = function (aOptions) {
       };
     });
 
-    aOptions.script.antifeatures = Object.values(types);
+    aOptions.script.antifeatures = Object.values(types).reverse();
   }
 
   // Show collaborators of the script
