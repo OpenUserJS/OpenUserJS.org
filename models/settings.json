@@ -28,7 +28,52 @@
   "charPreset": null
  },
 
- "NOTE": "Requires DB migration for changing below settings",
+ "NOTE1": "WATCHPOINT: ~60 second poll time in MongoDB",
+
+ "fudgeMin": 60,
+ "fudgeSec": 5,
+ "waitInstallCapMin": {
+  "dev": 1,
+  "pro": 60
+ },
+ "waitRateInstallSec": {
+  "dev": 30,
+  "pro": 60
+ },
+ "waitRateMetaSec": {
+  "dev": 30,
+  "pro": 60
+ },
+ "waitApiCapMin": {
+  "dev": 1,
+  "pro": 15
+ },
+ "waitAuthCapMin": {
+  "dev": 1,
+  "pro": 1440
+ },
+ "waitCaptchaCapMin": {
+  "dev": 1,
+  "pro": 1440
+ },
+ "waitListCapMin": {
+  "dev": 1,
+  "pro": 60
+ },
+ "waitListRateSec": {
+  "dev": 2,
+  "pro": 4
+ },
+ "waitListAnyQRateSec": {
+  "dev": 20,
+  "pro": 40
+ },
+ "waitListSameQCapMin": {
+  "dev": 5,
+  "pro": 15
+ },
+
+ "NOTE2": "Requires DB migration for changing below settings",
 
  "scriptSearchQueryStoreMaxDescription": 512,
  "scriptSearchQueryStoreMaxAbout": 256

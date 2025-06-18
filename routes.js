@@ -53,7 +53,7 @@ var statusTMR = function (aReq, aRes, aNext) {
 var fudgeMin = 60;
 var fudgeSec = 6;
 
-var waitInstallCapMin = isDev ? 1 : 60;
+var waitInstallCapMin = isDev ? settings.waitInstallCapMin.dev : settings.waitInstallCapMin.pro;
 var installCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: appendUrlLeaf(limiter, '/installCapLimiter'),
@@ -119,7 +119,7 @@ var installCapLimiter = rateLimit({
   }
 });
 
-var waitRateInstallSec = isDev ? 30 : 60;
+var waitRateInstallSec = isDev ? settings.waitRateInstallSec.dev : settings.waitRateInstallSec.pro;
 var installRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: appendUrlLeaf(limiter, '/installRateLimiter'),
@@ -167,7 +167,7 @@ var installRateLimiter = rateLimit({
 var install1Limiter = lockdown ? installCapLimiter : installRateLimiter;
 var install2Limiter = lockdown ? installRateLimiter : installCapLimiter;
 
-var waitRateMetaSec = isDev ? 30 : 60;
+var waitRateMetaSec = isDev ? settings.waitRateMetaSec.dev : settings.waitRateMetaSec.pro;
 var metaRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: appendUrlLeaf(limiter, '/metaRateLimiter'),
@@ -212,7 +212,7 @@ var metaRateLimiter = rateLimit({
   }
 });
 
-var waitApiCapMin = isDev ? 1: 15;
+var waitApiCapMin = isDev ? settings.waitApiCapMin.dev: settings.waitApiCapMin.pro;
 var apiCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: appendUrlLeaf(limiter, '/apiCapLimiter'),
@@ -235,7 +235,7 @@ var apiCapLimiter = rateLimit({
   }
 });
 
-var waitAuthCapMin = isDev ? 1: 1440;
+var waitAuthCapMin = isDev ? settings.waitAuthCapMin.dev: settings.waitAuthCapMin.pro;
 var authCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: appendUrlLeaf(limiter, '/authCapLimiter'),
@@ -259,7 +259,7 @@ var authCapLimiter = rateLimit({
   }
 });
 
-var waitCaptchaCapMin = isDev ? 1: 1440;
+var waitCaptchaCapMin = isDev ? settings.waitCaptchaCapMin.dev: settings.waitCaptchaCapMin.pro;
 var captchaCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: appendUrlLeaf(limiter, '/captchaCapLimiter'),
@@ -293,7 +293,7 @@ var captchaCapLimiter = rateLimit({
   }
 });
 
-var waitListCapMin = isDev ? 1: 60;
+var waitListCapMin = isDev ? settings.waitListCapMin.dev: settings.waitListCapMin.pro;
 var listCapLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: appendUrlLeaf(limiter, '/listCapLimiter'),
@@ -359,7 +359,7 @@ var listCapLimiter = rateLimit({
   }
 });
 
-var waitListRateSec = isDev ? parseInt(4 / 2) : 4;
+var waitListRateSec = isDev ? settings.waitListRateSec.dev : settings.waitListRateSec.pro;
 var listRateLimiter = rateLimit({
   store: (isDev ? undefined : undefined),
   windowMs: waitListRateSec * 1000, // n seconds for all stores
@@ -403,7 +403,8 @@ var list1Limiter = lockdown ? listCapLimiter : listRateLimiter;
 var list2Limiter = lockdown ? listRateLimiter : listCapLimiter;
 
 
-var waitListAnyQRateSec = isDev ? parseInt(40 / 2) : 40;
+var waitListAnyQRateSec = isDev
+  ? settings.waitListAnyQRateSec.dev : settings.waitListAnyQRateSec.pro;
 var listAnyQRateLimiter = rateLimit({
   store: (isDev ? undefined : undefined),
   windowMs: waitListAnyQRateSec * 1000, // n seconds for all stores
@@ -439,7 +440,8 @@ var listAnyQRateLimiter = rateLimit({
   }
 });
 
-var waitListSameQCapMin = isDev ? 5 : 15;
+var waitListSameQCapMin = isDev
+  ? settings.waitListSameQCapMin.dev : settings.waitListSameQCapMin.pro;
 var listSameQRateLimiter = rateLimit({
   store: (isDev ? undefined : new MongoStore({
     uri: appendUrlLeaf(limiter, '/listSameQCapLimiter'),
