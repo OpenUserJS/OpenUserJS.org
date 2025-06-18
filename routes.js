@@ -256,6 +256,12 @@ var authCapLimiter = rateLimit({
         retryAfter: waitAuthCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
       }
     });
+  },
+  skip: function (aReq, aRes) {
+    if (aReq.session.newstrategy) {
+      // NOTE: Still counting by design
+      return true;
+    }
   }
 });
 

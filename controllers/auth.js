@@ -463,7 +463,7 @@ exports.callback = function (aReq, aRes, aNext) {
       aUser.authed = now;
 
       // Check probationary status vs lastAuthed for alt IP circumvention prevention
-      if (aUser._probationary && lastAuthed) {
+      if (aUser._probationary && lastAuthed && !newstrategy) {
         if (!moment().isAfter(moment(lastAuthed).add(waitAuthCapMin, 'minutes'))) {
           aUser.save(function (aErr, aUser) {
             if (aErr) {
