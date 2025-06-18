@@ -49,7 +49,7 @@
   "pro": 15
  },
  "waitAuthCapMin": {
-  "dev": 1,
+  "dev": 2,
   "pro": 1440
  },
  "waitCaptchaCapMin": {
