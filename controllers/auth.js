@@ -8,12 +8,16 @@ var isDbg = require('../libs/debug').isDbg;
 //
 
 //--- Dependency inclusions
+var moment = require('moment');
 var passport = require('passport');
 var colors = require('ansi-colors');
 
 //--- Model inclusions
 var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
+
+//--- Configuration inclusions
+var settings = require('../models/settings.json');
 
 //--- Controller inclusions
 
@@ -423,6 +427,12 @@ exports.callback = function (aReq, aRes, aNext) {
 
     aReq.logIn(aUser, function (aErr) {
       var now = null;
+      var lastAuthed = null;
+
+      var fudgeMin = settings.fudgeMin;
+      var fudgeSec = settings.fudgeSec;
+
+      var waitAuthCapMin = isDev ? settings.waitAuthCapMin.dev: settings.waitAuthCapMin.pro;
 
       if (aErr) {
         console.error('Not logged in');
@@ -447,6 +457,52 @@ exports.callback = function (aReq, aRes, aNext) {
         now.toISOString()
       );
 
+      lastAuthed = aUser.authed;
+
+      // Save the last date a user sucessfully logged in
+      aUser.authed = now;
+
+      // Check probationary status vs lastAuthed for alt IP circumvention prevention
+      if (aUser._probationary && lastAuthed) {
+        if (!moment().isAfter(moment(lastAuthed).add(waitAuthCapMin, 'minutes'))) {
+          aUser.save(function (aErr, aUser) {
+            if (aErr) {
+              // NOTE: A user could get back in quicker but still delayed from `authed`
+              console.error(
+                colors.red(
+                  'Probationary logged out failed to write current authentication date to aUser'),
+                aUser.name,
+                colors.red('at'),
+                aReq.connection.remoteAddress,
+                colors.red('on'),
+                now.toISOString()
+              );
+            }
+          });
+
+          console.log(
+            colors.red('Logged out probationary User'),
+            aUser.name,
+            colors.red('at'),
+            aReq.connection.remoteAddress,
+            colors.red('on'),
+            now.toISOString()
+          );
+
+          statusCodePage(aReq, aRes, aNext, {
+            statusCode: 429,
+            statusMessage: 'Too many requests.',
+            suppressNavigation: true,
+            isCustomView: true,
+            statusData: {
+              isListView: true,
+              retryAfter: waitAuthCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
+            }
+          });
+          return;
+        }
+      }
+
       // Store the user info in the session
       aReq.session.user = aUser;
 
@@ -463,8 +519,6 @@ exports.callback = function (aReq, aRes, aNext) {
         aReq.session.passport.oujsOptions.strategy = strategy;
       }
 
-      // Save the last date a user sucessfully logged in
-      aUser.authed = new Date();
 
       // Save consent
       aUser.consented = true;
