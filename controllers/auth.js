@@ -16,9 +16,6 @@ var colors = require('ansi-colors');
 var Strategy = require('../models/strategy.js').Strategy;
 var User = require('../models/user').User;
 
-//--- Configuration inclusions
-var settings = require('../models/settings.json');
-
 //--- Controller inclusions
 
 //--- Library inclusions
@@ -38,6 +35,7 @@ var modelParser = require('../libs/modelParser');
 
 //--- Configuration inclusions
 var allStrategies = require('./strategies.json');
+var settings = require('../models/settings.json');
 
 //---
 
