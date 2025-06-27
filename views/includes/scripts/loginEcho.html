@@ -20,15 +20,17 @@
       var consent = document.querySelector('input[name="consent"]');
       var action = document.querySelector('button#action');
       var blocking = null;
+      var icon = ' <i class="fa fa-sign-in fa-fw"></i>';
 
       function onInput(aEv) {
         var req = new XMLHttpRequest();
         var wantname = cleanFilename(aEv.target.value, '');
 
         function show(aConsent) {
-          action.innerHTML = action.innerHTML.replace(/Sign Up/, 'Sign In');
+          action.innerHTML = action.innerHTML = 'Sign In' + icon
           action.classList.add('btn-success');
           action.classList.remove('btn-info');
+          action.classList.remove('btn-warning');
 
           if (captcha) {
             if (!blocking) {
@@ -46,9 +48,23 @@
         }
 
         function hide() {
-          action.innerHTML = action.innerHTML.replace(/Sign In/, 'Sign Up');
+          action.innerHTML = action.innerHTML = 'Sign Up' + icon;
           action.classList.remove('btn-success');
+          action.classList.remove('btn-warning');
           action.classList.add('btn-info');
+
+          if (captcha) {
+            captcha.style.display = 'block';
+          }
+
+          consent.checked = false;
+        }
+
+        function hideEx() {
+          action.innerHTML = action.innerHTML = 'Sign In / Sign Up' + icon;
+          action.classList.remove('btn-info');
+          action.classList.remove('btn-success');
+          action.classList.add('btn-warning');
 
           if (captcha) {
             captcha.style.display = 'block';
@@ -72,6 +88,10 @@
                   show(/ consent$/.test(this.getResponseHeader('Warning')));
                   auth.value = '';
                   break;
+                case 429:
+                  hideEx();
+                  auth.value = 'github';
+                  break;
                 default:
                   hide();
                   auth.value = 'github';
@@ -91,6 +111,8 @@
 
       if (username && auth && action) {
         action.innerHTML = action.innerHTML.replace(/Next/, 'Sign Up');
+        action.classList.remove('btn-danger');
+        action.classList.add('btn-info');
 
         username.addEventListener('input', onInput, {
           capture : true,
