@@ -19,7 +19,7 @@
     "oauth": true,
     "readonly": false
   },
-  "reddit": {
+  "reddit-commonjs": {
     "name": "Reddit",
     "oauth": true,
     "readonly": true

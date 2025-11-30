@@ -52,7 +52,7 @@
     "passport-gitlab2": "5.0.0",
     "passport-google-oauth20": "2.0.0",
     "passport-imgur": "0.0.3",
-    "passport-reddit": "0.2.4",
+    "passport-reddit-commonjs": "1.1.0",
     "passport-steam": "1.0.18",
     "pegjs": "0.10.0",
     "rate-limit-mongo": "2.3.2",
