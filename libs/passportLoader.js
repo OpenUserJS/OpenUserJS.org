@@ -23,7 +23,9 @@ exports.strategyInstances = nil();
 // Notice it is general so it can load any passport strategy
 exports.loadPassport = function (aStrategy) {
   var requireStr = 'passport-' + aStrategy.name
-    + (aStrategy.name === 'google' ? '-oauth20' : (aStrategy.name === 'gitlab' ? '2' : ''));
+    + (aStrategy.name === 'google' ? '-oauth20'
+      : (aStrategy.name === 'gitlab' ? '2'
+        : (aStrategy.name === 'reddit' ? '-commonjs' : '')));
   var instance = null;
   var PassportStrategy = null;
 
