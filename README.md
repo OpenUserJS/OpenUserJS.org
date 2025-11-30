@@ -67,8 +67,8 @@ Repository | Reference | Recent Version
 [passport-gitlab2][passport-gitlab2GHUrl] | [Documentation][passport-gitlab2DOCUrl] | [![NPM version][passport-gitlab2NPMVersionImage]][passport-gitlab2NPMUrl] ![OAuth2][oauth2Logo]
 [passport-google-oauth2][passport-google-oauth2GHUrl] | [Documentation][passport-google-oauth2DOCUrl] | [![NPM version][passport-google-oauth2NPMVersionImage]][passport-google-oauth2NPMUrl] ![OAuth2][oauth2Logo]
 [passport-imgur][passport-imgurGHUrl] | [Documentation][passport-imgurDOCUrl] | [![NPM version][passport-imgurNPMVersionImage]][passport-imgurNPMUrl] ![OAuth2][oauth2Logo] <sup>![oauth][oauthLogo]</sup>
-[passport-reddit][passport-redditGHUrl] | [Documentation][passport-redditDOCUrl] | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo]
-[passport-steam][passport-steamGHUrl] <br />&#x22D4; [`OpenID2`][passport-steamGHOpenIDUrl]  | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo] [&#x22D4;][passport-openid]
+[passport-reddit][passport-redditGHUrl] [<br />&#x22D4; `536b656c6c79/passport-reddit-commonJS`][passport-reddit-commonjsGHUrl] | [Documentation][passport-redditDOCUrl] <br />[&#x22D4;](passport-reddit-commonjsDOCUrl) | [![NPM version][passport-redditNPMVersionImage]][passport-redditNPMUrl] ![OAuth2][oauth2Logo] <br />[&#x22D4; ![NPM version][passport-reddit-commonjsNPMVersionImage]][passport-reddit-commonjsNPMUrl]
+[passport-steam][passport-steamGHUrl] [<br />&#x22D4; `OpenID2`][passport-steamGHOpenIDUrl]  | [Documentation][passport-steamDOCUrl] | [![NPM version][passport-steamNPMVersionImage]][passport-steamNPMUrl] ![OpenID][openidLogo] <br />[&#x22D4;][passport-openid]
 [pegjs][pegjsGHUrl] | [Documentation][pegjsDOCUrl] | [![NPM version][pegjsNPMVersionImage]][pegjsNPMUrl]
 [rate-limit-mongo][rate-limit-mongoGHUrl] | [Documentation][rate-limit-mongoDOCUrl] | [![NPM version][rate-limit-mongoNPMVersionImage]][rate-limit-mongoNPMUrl]
 [remark][remarkGHUrl] | [Documentation][remarkDOCUrl] | [![NPM version][remarkNPMVersionImage]][remarkNPMUrl]
@@ -373,6 +373,11 @@ Outdated dependencies list can be achieved with `$ npm outdated` from the termin
 [passport-redditDOCUrl]: https://github.com/Slotos/passport-reddit/blob/master/README.md
 [passport-redditNPMUrl]: https://www.npmjs.com/package/passport-reddit
 [passport-redditNPMVersionImage]: https://badgen.net/npm/v/passport-reddit?cache=86400
+
+[passport-reddit-commonjsGHUrl]: https://github.com/536b656c6c79/passport-reddit-commonJS
+[passport-reddit-commonjsDOCUrl]: https://github.com/536b656c6c79/passport-reddit-commonJS/blob/master/README.md
+[passport-reddit-commonjsNPMUrl]: https://www.npmjs.com/package/passport-reddit-commonjs
+[passport-reddit-commonjsNPMVersionImage]: https://badgen.net/npm/v/passport-reddit-commonjs?cache=86400
 
 [passport-steamGHUrl]: https://github.com/liamcurry/passport-steam
 [passport-steamGHOpenIDUrl]: https://github.com/OpenUserJs/passport-steam/tree/OpenID2
