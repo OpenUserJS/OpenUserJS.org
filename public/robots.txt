@@ -1,4 +1,5 @@
 User-agent: *
+Crawl-Delay: 5
 Disallow: /admin/
 Disallow: /mod/
 Disallow: /flag/
@@ -10,3 +11,10 @@ Disallow: /dist/
 Disallow: /fonts/
 Disallow: /js/
 Disallow: /redist/
+Disallow: /install/
+Disallow: /src/
+Disallow: /meta/
+Disallow: /api/
+Disallow: /post/
+Disallow: /*.js$
+Disallow: /*.user.js$

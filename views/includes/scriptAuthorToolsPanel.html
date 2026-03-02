@@ -4,18 +4,113 @@
     <div class="panel-title"><i class="fa fa-fw fa-user"></i> Author Tools</div>
   </div>
   <div class="panel-body">
+    {{^isScriptViewSourcePage}}
     <ul class="nav nav-pills nav-justified">
-      <li><a rel="nofollow" href="{{{script.scriptEditMetadataPageUrl}}}"><i class="fa fa-edit"></i> Edit Script Info</a></li>
-      <li><a rel="nofollow" href="{{{script.scriptEditSourcePageUrl}}}"><i class="fa fa-file-text"></i> Edit Script</a></li>
+      <li><a rel="nofollow" href="{{{script.scriptEditMetadataPageUrl}}}"><i class="fa fa-edit"></i> {{^script._about}}Add{{/script._about}}{{#script._about}}Edit{{/script._about}} Script Info</a></li>
     </ul>
+    {{/isScriptViewSourcePage}}
+    {{#isScriptViewSourcePage}}
 
-    <hr>
+    {{^script.isLib}}
+    <h4>UserScript Block</h4>
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-default btn-group-justified" id="regenerate" title="Click this to regenerate some keys based off the current code changes. Warning: If the source is large it may take a while depending on platform."><i class="fa fa-fw fa-history"></i> Regenerate some keys from the current editor source</button>
+        </span>
+      </div>
+    </div>
+    {{/script.isLib}}
 
-    <h4>Installs per Version <small>since <time>2 Sept 2014</time></small></h4>
+    {{^script.isLib}}
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-{{#lockdown.updateURLCheck}}info{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}default{{/lockdown.updateURLCheck}}" id="updateurl-raw" data-clipboard-text="// @updateURL {{{script.scriptPermalinkMetaPageUrl}}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @updateURL</button>
+        </span>
+        <input type="text" class="form-control" id="updateurl" value="{{{script.scriptPermalinkMetaPageUrl}}}" placeholder="empty" readonly="readonly">
+        <span class="input-group-btn">
+          <a class="btn btn-{{#lockdown.updateURLCheck}}danger{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}warning{{/lockdown.updateURLCheck}}"
+            title="How do I use this?"
+            href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">
+              <i class="fa fa-{{#lockdown.updateURLCheck}}exclamation-triangle{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}question-circle{{/lockdown.updateURLCheck}}"></i>
+          </a>
+        </span>
+      </div>
+    </div>
 
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="downloadurl-raw" data-clipboard-text="// @downloadURL {{#script.meta.UserScript.downloadURL}}{{{script.meta.UserScript.downloadURL.0.value}}}{{/script.meta.UserScript.downloadURL}}{{^script.meta.UserScript.downloadURL}}{{{script.scriptPermalinkInstallPageUrl}}}{{/script.meta.UserScript.downloadURL}}" title="Copy key and raw URL to clipboard"><i class="octicon octicon-clippy"></i> // @downloadURL</button>
+        </span>
+        <input type="text" class="form-control" id="downloadurl" value="{{#script.meta.UserScript.downloadURL}}{{{script.meta.UserScript.downloadURL.0.value}}}{{/script.meta.UserScript.downloadURL}}{{^script.meta.UserScript.downloadURL}}{{{script.scriptPermalinkInstallPageUrl}}}{{/script.meta.UserScript.downloadURL}}" placeholder="empty" readonly="readonly">
+        <span class="input-group-btn dropup">
+          <button type="button" class="btn btn-default dropdown-toggle" id="alt-install-target-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Alternate download source targets"{{#newScript}} disabled="disabled"{{/newScript}}><span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
+          <ul class="dropdown-menu scrollable-menu dropdown-menu-right" id="install-targets">
+            {{#script.availableScriptPermalinkInstallPageUrl}}<li {{#default}}class="active"{{/default}}><a href="#" title="{{{url}}">{{label}}</a></li>{{/script.availableScriptPermalinkInstallPageUrl}}
+          </ul>
+        </span>
+        <span class="input-group-btn">
+          <a class="btn btn-default"
+            title="How do I use this?"
+            href="/about/Frequently-Asked-Questions#q-is-there-a-way-to-not-count-script-updates-with-this-sites-install-counter-">
+              <i class="fa fa-question-circle"></i>
+          </a>
+        </span>
+      </div>
+    </div>
+    {{/script.isLib}}
+
+    {{#script.isLib}}
+    <h4>UserScript and UserLibrary Block</h4>
+    {{/script.isLib}}
+
+    <div class="form-group">
+      <div class="input-group col-xs-12">
+        <span class="input-group-btn">
+          <button class="btn btn-default" id="copyright-raw" data-clipboard-text="// @copyright {{script.copyrightPrimary}}" title="Copy key and raw data to clipboard"><i class="octicon octicon-clippy"></i> // @copyright</button>
+        </span>
+        <input type="text" class="form-control" id="copyright" value="{{script.copyrightPrimary}}" readonly="readonly">
+        <span class="input-group-btn">
+          <a class="btn btn-default"
+            title="How do I use this?"
+            href="/user/add/{{#script.isLib}}lib{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}#userscript-block-copyright">
+              <i class="fa fa-{{#lockdown.updateURLCheck}}exclamation-triangle{{/lockdown.updateURLCheck}}{{^lockdown.updateURLCheck}}question-circle{{/lockdown.updateURLCheck}}"></i>
+          </a>
+        </span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button class="btn btn-info" id="license-raw" data-clipboard-text="// @license MIT" title="Copy key and primary raw SPDX short id to clipboard"><i class="octicon octicon-clippy"></i> // @license</button>
+      </span>
+      <input id="spdx-short-id" type="text" class="form-control" aria-label="..." value="MIT" readonly="readonly">
+      <span class="input-group-btn dropup">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="OSI approved SPDX short id list"><img src="/images/license/osi16.png"> <span class="caret"></span> <span class="sr-only">Toggle Dropdown</span> </button>
+        <ul class="dropdown-menu scrollable-menu dropdown-menu-right" id="osi-spdx">
+          {{#script.scriptAcceptableOSILicense}}<li><a href="#">{{shortIdSPDX}}</a></li>{{/script.scriptAcceptableOSILicense}}
+        </ul>
+      </span>
+      <span class="input-group-btn">
+        <a class="btn btn-danger"
+          title="How do I use this?"
+          href="/user/add/{{#script.isLib}}lib{{/script.isLib}}{{^script.isLib}}scripts{{/script.isLib}}#userscript-block-license">
+            <i class="fa fa-exclamation-triangle"></i>
+        </a>
+      </span>
+    </div>
+    {{/isScriptViewSourcePage}}
+    {{^isScriptViewSourcePage}}
+    {{^script.isLib}}
+    <h4>Installs per Version <small>effective <time title='Tue Sep 2 2014'>Sep '14</time></small></h4>
     <p><code>{{script.meta.version}}{{^script.meta.version}}Current{{/script.meta.version}}</code> <span class="label label-default">{{script.installsSinceUpdate}} installs</span></p>
+    {{/script.isLib}}
+    {{/isScriptViewSourcePage}}
   </div>
 </div>
+{{^isScriptViewSourcePage}}
 <div class="panel panel-danger">
   <div class="panel-heading">
     <div class="panel-title"><i class="fa fa-fw fa-bolt"></i> Danger Zone</div>
@@ -26,4 +121,5 @@
     </ul>
   </div>
 </div>
+{{/isScriptViewSourcePage}}
 {{/authorTools}}

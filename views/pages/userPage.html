@@ -15,7 +15,19 @@
             {{#user.aboutRendered}}
             <div class="panel panel-default">
               <div class="panel-body">
-                <div class="user-content">{{{user.aboutRendered}}}</div>
+                {{#authedUser}}
+                  <div class="user-content">{{{user.aboutRendered}}}</div>
+                {{/authedUser}}
+                {{^authedUser}}
+                  {{#user.isTrusted}}
+                    <div class="user-content">{{{user.aboutRendered}}}</div>
+                  {{/user.isTrusted}}
+                  {{^user.isTrusted}}
+                    {{#user.aboutRendered}}
+                      <em>This site requires you to be registered and logged in to view personal profiles.</em>
+                    {{/user.aboutRendered}}
+                  {{/user.isTrusted}}
+                {{/authedUser}}
               </div>
             </div>
             {{/user.aboutRendered}}
@@ -29,5 +41,6 @@
   </div>
   {{> includes/userModals.html }}
   {{> includes/footer.html }}
+  {{> includes/scripts/clipboard.html }}
 </body>
 </html>

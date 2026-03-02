@@ -1,19 +1,15 @@
-<script type="text/javascript" charset="UTF-8" src="/redist/npm/marked/lib/marked.js"></script>
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/marked/marked.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/bootstrap-markdown/js/bootstrap-markdown.js"></script>
 <script type="text/javascript">
   (function () {
 
     // Keep in sync with `./libs/markdown.js`
     marked.setOptions({
-      // highlight: ...
       // renderer: ...
-      gfm: true,
-      tables: true,
+      async: false,
       breaks: true,
-      pedantic: false,
-      // sanitize: ...
-      smartLists: true,
-      smartypants: false
+      gfm: true,
+      pedantic: false
     });
 
   })();

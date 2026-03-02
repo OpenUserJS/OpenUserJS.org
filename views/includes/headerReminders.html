@@ -1,8 +1,107 @@
 <div class="reminders">
-{{^hideReminder}}
-  <div class="alert alert-warning alert-dismissible small fade in" role="alert">
-    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>REMINDER:</b> Don't miss out reading the <a class="alert-link" href="/announcements/Google_Authentication_Deprecation">Google Authentication Deprecation</a> with migration  announcement.</p>
+{{^authedUser}}
+  {{^hideReminderGDPR}}
+    <div class="alert alert-warning alert-dismissible small fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+      <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>NOTICE:</b> By continued use of this site you understand and agree to the binding <a class= "alert-link" href="/about/Terms-of-Service">Terms of Service</a> and <a class="alert-link" href="/about/Privacy-Policy">Privacy Policy</a>.</p>
+    </div>
+  {{/hideReminderGDPR}}
+{{/authedUser}}
+{{#showInvalidAuth}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Invalid Authorization for requested Strategy.</p>
   </div>
-{{/hideReminder}}
+{{/showInvalidAuth}}
+{{#showStratFail}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Strategy Fail.</p>
+  </div>
+{{/showStratFail}}
+{{#showNoConsent}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> No Consent.</p>
+  </div>
+{{/showNoConsent}}
+{{#showNoName}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Missing Username.</p>
+  </div>
+{{/showNoName}}
+{{#showTooLong}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Username too long.</p>
+  </div>
+{{/showTooLong}}
+{{#showUsernameFail}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Username Fail. Please try again later.</p>
+  </div>
+{{/showUsernameFail}}
+{{#showROAuth}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Read-only Authorization for requested Strategy.</p>
+  </div>
+{{/showROAuth}}
+{{#showRetryAuth}}
+  <div class="alert alert-warning small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>WARNING:</b> Retry Authorization.</p>
+  </div>
+{{/showRetryAuth}}
+{{#showAuthFail}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Authorization Fail.</p>
+  </div>
+{{/showAuthFail}}
+{{#showReminderListLimit}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>WARNING:</b> You will reach your list limit in {{showReminderListLimit}} more requests.</p>
+  </div>
+{{/showReminderListLimit}}
+{{#showReminderInstallLimit}}
+  <div class="alert alert-danger small fade in" role="alert">
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>WARNING:</b> You will reach your install limit in {{showReminderListLimit}} more requests.</p>
+  </div>
+{{/showReminderInstallLimit}}
+{{#showSesssionNoExtend}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Extending session further prohibited.</p>
+  </div>
+{{/showSesssionNoExtend}}
+{{#showSessionMissingUsername}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> <code>Username</code> must be set.</p>
+  </div>
+{{/showSessionMissingUsername}}
+{{#showSesssionCurrentSessionProhibited}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Cannot delete this session.</p>
+  </div>
+{{/showSesssionCurrentSessionProhibited}}
+{{#showSesssionHigherRankProhibited}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Cannot delete a session with a higher rank.</p>
+  </div>
+{{/showSesssionHigherRankProhibited}}
+{{#showSesssionNoOwned}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Cannot delete a session that is not owned.</p>
+  </div>
+{{/showSesssionNoOwned}}
+{{#showSesssionNoAdmin}}
+  <div class="alert alert-danger alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>ERROR:</b> Cannot delete a session that is being administered.</p>
+  </div>
+{{/showSesssionNoAdmin}}
+{{^hideReminderThis}}
+<!--  <div class="alert alert-info alert-dismissible alert-autodismissible small fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <p><i class="fa fa-fw fa-exclamation-triangle"></i> <b>REMINDER:</b> Don't miss out reading the <a class="alert-link" href="/">descriptive</a> announcement.</p>
+  </div>-->
+{{/hideReminderThis}}
 </div>

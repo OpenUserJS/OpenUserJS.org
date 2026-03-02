@@ -7,6 +7,7 @@ var isDbg = require('../libs/debug').isDbg;
 
 //
 var passport = require('passport');
+var colors = require('ansi-colors');
 
 var nil = require('../libs/helpers').nil;
 
@@ -22,11 +23,20 @@ exports.strategyInstances = nil();
 // Notice it is general so it can load any passport strategy
 exports.loadPassport = function (aStrategy) {
   var requireStr = 'passport-' + aStrategy.name
-    + (aStrategy.name === 'google' ? '-oauth' : '');
-  var PassportStrategy = require(requireStr)[
-    aStrategy.name === 'google' ? 'OAuth2Strategy' : 'Strategy'];
+    + (aStrategy.name === 'google' ? '-oauth20'
+      : (aStrategy.name === 'gitlab' ? '2'
+        : (aStrategy.name === 'reddit' ? '-commonjs' : '')));
   var instance = null;
-  var authParams = null;
+  var PassportStrategy = null;
+
+  try {
+    PassportStrategy = require(requireStr).Strategy;
+  } catch (aE) {
+    console.error(
+      colors.red('Error loading *' + requireStr + '* for stored Auth Strategy API Key')
+    );
+    return;
+  }
 
   if (aStrategy.openid) {
     instance = new PassportStrategy(
@@ -51,15 +61,6 @@ exports.loadPassport = function (aStrategy) {
       },
       function () { } // we replace this callback later (_verify)
     );
-  }
-
-  if (aStrategy.name === 'google') {
-    authParams = instance.authorizationParams;
-    instance.authorizationParams = function() {
-      var val = authParams.apply(this, arguments);
-      val['openid.realm'] = AUTH_CALLBACK_BASE_URL + '/';
-      return val;
-    };
   }
 
   exports.strategyInstances[aStrategy.name] = instance;

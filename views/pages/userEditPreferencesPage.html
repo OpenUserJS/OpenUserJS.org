@@ -16,26 +16,70 @@
               <div class="panel-body">
                 <div class="edit-authentication-box">
                   <h2 class="edit-authentication">Authentication</h2>
-                  <p><strong>{{defaultStrategy}}</strong> is your current form of authentication.</p>
+                  <div class="input-group col-xs-12">
+                    <span class="input-group-addon">
+                      <i class="fa fa-user fa-fw"></i>
+                    </span>
+                    <span class="list-group-item">
+                      <img src="/images/strat/{{defaultStrat}}16.png"> <strong>{{defaultStrategy}} {{#defaultStrategyDisabled}} &#x1D3F;&#x1D3C;{{/defaultStrategyDisabled}}</strong>
+                    </span>
+                    <div style="width: 100%;">
+                      <div class="input-group-addon">
+                        <p class="pull-right"><strong>Default preferred <i class="fa fa-sign-in fa-fw"></i></strong></p>
+                      </div>
+                    </div>
+                  </div>
                   {{#haveOtherStrategies}}
-                  <p>Other verified forms of authentication:</p>
                   {{#usedStrategies}}
-                  <strong>{{display}}</strong> - <a href="/auth/{{strat}}">Make default</a><br />
+                  <div class="input-group col-xs-12">
+                    <span class="input-group-addon">
+                      <i class="fa fa-user fa-fw"></i>
+                    </span>
+                    <span class="list-group-item">
+                      <img src="/images/strat/{{strat}}16.png"> {{display}}{{#disabled}} &#x1D3F;&#x1D3C;{{/disabled}}
+                    </span>
+                    <div style="width: 100%;">
+                      <div class="input-group-addon">
+                        <a class="btn btn-sm btn-success pull-right" href="/auth/{{strat}}">Make default preferred <i class="fa fa-sign-in fa-fw"></i></a>
+                      </div>
+                    </div>
+                  </div>
                   {{/usedStrategies}}
                   {{/haveOtherStrategies}}
+                  {{#unusedStrategies}}
                   <form id="register" method="post" action="/auth/">
-                    <p>Add another form of authentication:</p>
                     <div class="input-group col-xs-12">
+                      <span class="input-group-addon">
+                        <i class="fa fa-user fa-fw"></i>
+                      </span>
                       <select name="auth" class="form-control">
                         {{#openStrategies}}
-                        <option value="{{strat}}">{{display}}</option>
+                        <option value="{{strat}}"{{#disabled}} disabled="disabled"{{/disabled}}>{{display}}{{#disabled}} &#x1D3F;&#x1D3C;{{/disabled}}</option>
                         {{/openStrategies}}
                       </select>
-                      <div class="input-group-btn">
-                        <button class="btn btn-success" type="submit">Authenticate</button>
+                      <div style="width: 100%;">
+                        <div class="input-group-addon">
+                          <button class="btn btn-sm btn-success pull-right" type="submit">Attach new default preferred <i class="fa fa-sign-in fa-fw"></i></button>
+                        </div>
                       </div>
                     </div>
                   </form>
+                  {{/unusedStrategies}}
+                </div>
+                <div class="edit-session-box">
+                  <h2 class="edit-session">Session</h2>
+                  <div class="session-area list-group">
+                    {{#sessionList}}
+                      {{> includes/session.html }}
+                    {{/sessionList}}
+                    {{^sessionList}}
+                    <div class="panel">
+                      <div class="panel-body">
+                        <em>This user hasn't added any sessions yet.</em>
+                      </div>
+                    </div>
+                    {{/sessionList}}
+                  </div>
                 </div>
               </div>
             </div>
@@ -48,5 +92,6 @@
     </div>
   </div>
   {{> includes/footer.html }}
+  {{> includes/scripts/clipboard.html }}
 </body>
 </html>

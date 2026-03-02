@@ -2,6 +2,7 @@
   "removeReasons" : [
     "Bad external script hosts ",
     "Cookie stealings ",
+    "Copyright infringements ",
     "Incomplete metadata blocks ",
     "Licensing conflicts ",
     "Malwares ",
@@ -10,6 +11,7 @@
     "Privacy stealings ",
     "Spammings ",
     "Unattributed script derivatives ",
+    "Undocumented auto-giftings ",
     "Undocumented auto-likes ",
     "Vague descriptions ",
     "Vague scripts ",
