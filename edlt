@@ -1,0 +1,45 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<office:color-table xmlns:office="http://openoffice.org/2000/office" xmlns:style="http://openoffice.org/2000/style" xmlns:text="http://openoffice.org/2000/text" xmlns:table="http://openoffice.org/2000/table" xmlns:draw="http://openoffice.org/2000/drawing" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="http://openoffice.org/2000/meta" xmlns:number="http://openoffice.org/2000/datastyle" xmlns:svg="http://www.w3.org/2000/svg" xmlns:chart="http://openoffice.org/2000/chart" xmlns:dr3d="http://openoffice.org/2000/dr3d" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="http://openoffice.org/2000/form" xmlns:script="http://openoffice.org/2000/script" xmlns:config="http://openoffice.org/2001/config">
+<draw:color draw:name=" Magenta 1" draw:color="#f7b2cc"/>
+<draw:color draw:name=" Magenta 2" draw:color="#b62b6e"/>
+<draw:color draw:name=" Magenta 3" draw:color="#7b1b53"/>
+<draw:color draw:name=" Magenta 4" draw:color="#4f1035"/>
+<draw:color draw:name=" Purple 1" draw:color="#d6b4d6"/>
+<draw:color draw:name=" Purple 2" draw:color="#9628c6"/>
+<draw:color draw:name=" Purple 3" draw:color="#662978"/>
+<draw:color draw:name=" Purple 4" draw:color="#42194f"/>
+<draw:color draw:name=" Blue 1" draw:color="#bfceea"/>
+<draw:color draw:name=" Blue 2" draw:color="#4374b7"/>
+<draw:color draw:name=" Blue 3" draw:color="#214184"/>
+<draw:color draw:name=" Blue 4" draw:color="#102548"/>
+<draw:color draw:name=" CC Green 1" draw:color="#e0e4e1"/>
+<draw:color draw:name=" CC Green 2" draw:color="#abb8af"/>
+<draw:color draw:name=" CC Green 3" draw:color="#43594a"/>
+<draw:color draw:name=" CC Green 4" draw:color="#2a372f"/>
+<draw:color draw:name=" Green 1" draw:color="#e4eba0"/>
+<draw:color draw:name=" Green 2" draw:color="#98c807"/>
+<draw:color draw:name=" Green 3" draw:color="#627d0f"/>
+<draw:color draw:name=" Green 4" draw:color="#3d5024"/>
+<draw:color draw:name=" Sand 1" draw:color="#ebe0b2"/>
+<draw:color draw:name=" Sand 2" draw:color="#b1a24a"/>
+<draw:color draw:name=" Sand 3" draw:color="#6d6118"/>
+<draw:color draw:name=" Sand 4" draw:color="#44411f"/>
+<draw:color draw:name=" Yellow 1" draw:color="#fff3a2"/>
+<draw:color draw:name=" Yellow 2" draw:color="#edd812"/>
+<draw:color draw:name=" Yellow 3" draw:color="#b09a11"/>
+<draw:color draw:name=" Yellow 4" draw:color="#4e4917"/>
+<draw:color draw:name=" Orange 1" draw:color="#ffd89e"/>
+<draw:color draw:name=" Orange 2" draw:color="#ef9421"/>
+<draw:color draw:name=" Orange 3" draw:color="#a46810"/>
+<draw:color draw:name=" Orange 4" draw:color="#543d03"/>
+<draw:color draw:name=" Red 1" draw:color="#fab499"/>
+<draw:color draw:name=" Red 2" draw:color="#d13814"/>
+<draw:color draw:name=" Red 3" draw:color="#912b10"/>
+<draw:color draw:name=" Red 4" draw:color="#5a1c0e"/>
+<draw:color draw:name=" Gray 1" draw:color="#ededee"/>
+<draw:color draw:name=" Gray 2" draw:color="#dcddde"/>
+<draw:color draw:name=" Gray 3" draw:color="#a7a9ac"/>
+<draw:color draw:name=" Gray 4" draw:color="#636466"/>
+<draw:color draw:name=" Gray 5" draw:color="#393839"/>
+<draw:color draw:name=" Gray 6" draw:color="#121513"/>
+</office:color-table>
