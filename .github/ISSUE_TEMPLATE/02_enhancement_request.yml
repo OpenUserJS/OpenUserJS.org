@@ -1,0 +1,29 @@
+name: Enhancement Request
+description: Something we **DO** have implemented already but needs improvement upon to the best of your knowledge. (Please search existing issues and milestones first.)
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill this out.
+  - type: textarea
+    id: what-is-missing
+    attributes:
+      label: What is missing?
+      description: Describe your enhancement idea.
+      placeholder: Start typing here.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: Describe the problem you are facing.
+      placeholder: Continue typing here.
+    validations:
+      required: true
+  - type: textarea
+    id: alt
+    attributes:
+      label: Alternatives you have tried.
+      description: Describe any workarounds you tried so far and how they worked for you.

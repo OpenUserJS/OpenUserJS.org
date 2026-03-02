@@ -160,7 +160,7 @@ body > .navbar {
 
 // ce08ea6
 /*
- * Homepage: http://www.google.com/fonts/specimen/Squada+One
+ * Homepage: https://fonts.google.com/specimen/Squada+One
  * License: SIL Open Font License, 1.1
  * From: @import url("https://fonts.googleapis.com/css?family=Squada+One");
  */
@@ -168,7 +168,12 @@ body > .navbar {
   font-family: 'Squada One';
   font-style: normal;
   font-weight: 400;
-  src: local('Squada One'), local('SquadaOne-Regular'), url(../../fonts/squadaone.woff) format('woff');
+  src: local('Squada One'), local('SquadaOne-Regular'),
+       url(../../fonts/SquadaOne-Regular.woff2) format('woff2'),
+       url(../../fonts/SquadaOne-Regular.woff) format('woff'),
+       url(../../fonts/SquadaOne-Regular.ttf) format('truetype'),
+       url(../../fonts/SquadaOne-Regular.eot) format('embedded-opentype'),
+       url(../../fonts/SquadaOne-Regular.svg) format('svg');
 }
 // /ce08ea6
 
@@ -186,4 +191,8 @@ body > .navbar {
 .navbar-brand span.mode {
   padding: 5px;
   font-size: 12px;
+}
+
+.dropdown-menu {
+  font-family: @font-family-sans-serif;
 }

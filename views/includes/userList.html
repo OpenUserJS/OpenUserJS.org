@@ -1,25 +1,88 @@
 <table class="table table-hover table-condensed">
   <thead>
     <tr>
-      <th><a href="?orderBy=name&orderDir={{orderDir.name}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Name</a></th>
-      <th><a href="?orderBy=role&orderDir={{orderDir.role}}{{#isFlagged}}&flagged=true{{/isFlagged}}">Rank</a></th>
+      <th class="text-center{{#orderedByName}} active{{/orderedByName}}"><a href="?orderBy=name&orderDir={{orderDir.name}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}">Name</a></th>
+      <th class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}" title="Since"><a href="?orderBy=created&orderDir={{orderDir.created}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}"><span class="visible-lg visible-md">Since</span><span class="hidden-lg hidden-md"><i class="fa fa-clock-o"></i></a></th>
+      <th class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}" title="Revised"><a href="?orderBy=updated&orderDir={{orderDir.created}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}"><span class="visible-lg visible-md">Revised</span><span class="hidden-lg hidden-md"><i class="fa fa-history"></i></a></th>
+      <th class="text-center td-fit{{#orderedByRole}} active{{/orderedByRole}}" title="Rank"><a href="?orderBy=role&orderDir={{orderDir.role}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}{{#isFlagged}}&flagged={{isFlagged}}{{/isFlagged}}"><span class="visible-lg visible-md">Rank</span><span class="hidden-lg hidden-md"><i class="fa fa-trophy"></i></a></th>
+      {{#hasFlagged}}
+      <th title="Flagger"><span class="visible-lg visible-md">Flagger</span><span class="hidden-lg hidden-md"><i class="fa fa-flag"></i></span></a></th>
+      {{/hasFlagged}}
     </tr>
   </thead>
   <tbody>
-    {{#userList}}
-    <tr class="tr-link">
-      <td>
-        <b>
-          <a href="{{{userPageUrl}}}" class="tr-link-a">{{name}}</a>
-        </b>
-      </td>
-      <td>
-        <p>
-          <span class="label label-default">{{roleName}}</span>
-        </p>
-      </td>
-    </tr>
-    {{/userList}}
+    {{#isAdmin}}
+      {{#userList}}
+      <tr class="tr-link">
+        <td>
+          <b>
+            <a href="{{{userPageUrl}}}" class="tr-link-a">{{name}}</a>
+          </b>
+        </td>
+        <td class="text-center td-fit">
+          <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
+        </td>
+        <td class="text-center td-fit">
+          {{#isUpdated}}
+          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic{{#authedUser.isMod}}{{#isUpdatedWarning}} iconic-warning{{/isUpdatedWarning}}{{/authedUser.isMod}}">{{{updatedHumanizedIconic}}}</time>
+          {{/isUpdated}}
+        </td>
+        <td class="text-center td-fit">
+          <p>
+            <span class="label label-default">{{roleName}}</span>
+          </p>
+        </td>
+        {{#hasFlagged}}
+        <td>
+          <ul class="flaggedList">
+          {{#flaggedList}}
+            <li>
+              {{#name}}<span class="label label-info"><a href="/users/{{name}}">{{name}}</a></span>{{/name}}
+              <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+            </li>
+          {{/flaggedList}}
+          </ul>
+        </td>
+        {{/hasFlagged}}
+      </tr>
+      {{/userList}}
+    {{/isAdmin}}
+    {{^isAdmin}}
+      {{#userList}}
+      <tr class="tr-link">
+        <td>
+          <b>
+            <a href="{{{userPageUrl}}}" class="tr-link-a">{{name}}</a>
+          </b>
+        </td>
+        <td class="text-center td-fit">
+          <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
+        </td>
+        <td class="text-center td-fit">
+          {{#isUpdated}}
+          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic{{#authedUser.isMod}}{{#isUpdatedWarning}} iconic-warning{{/isUpdatedWarning}}{{/authedUser.isMod}}">{{{updatedHumanizedIconic}}}</time>
+          {{/isUpdated}}
+        </td>
+        <td class="text-center td-fit">
+          <p>
+            <span class="label label-default">{{roleName}}</span>
+          </p>
+        </td>
+        {{#hasFlagged}}
+        <td>
+          <ul class="flaggedList">
+          {{#flaggedList}}
+            <li>
+              {{#name}}<span class="label label-default">{{rank}}</span>{{/name}}
+              <span title="{{since}}">{{#reason}}{{reason}}{{/reason}}{{^reason}}&hellip;{{/reason}}</span>
+            </li>
+          {{/flaggedList}}
+          </ul>
+        </td>
+        {{/hasFlagged}}
+      </tr>
+      {{/userList}}
+    {{/isAdmin}}
     {{^userList}}
     <tr class="tr-link">
       <td colspan="4">

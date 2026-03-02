@@ -7,6 +7,8 @@ lib-cov
 *.out
 *.pid
 *.gz
+!dev/devDBclean.gz
+!dev/devDBdirty.gz
 
 pids
 logs
@@ -17,11 +19,16 @@ node_modules
 
 data
 
+package-lock.json
 Gemfile.lock
+
+S3rver
+
 fakeS3
 dev/fakeS3
 
 cert
+keys
 aws.json
 prod.sh
 

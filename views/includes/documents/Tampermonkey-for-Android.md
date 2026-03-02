@@ -1,10 +1,14 @@
 ## Tampermonkey for Android
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.min.svg?sanitize=true" width="128" height="128" align="right">
 
-![Tampermonkey icon][tampermonkeyIcon]
+Tampermonkey is a userscript manager extension for [Android][android], [Chrome][Chrome], [Chromium][Chromium], [Edge][Edge], [Firefox][firefox], [Opera][Opera], [Safari][Safari], and other similar web browsers, written by Jan Biniok. However, it is also available as a standalone, userscript enabled web browser for Android mobile devices. The version currently available is a Beta release and is rather basic as a web browser, so it may not have all the features required to make some websites work, but it is reasonably comprehensive in its support for userscripts. There are also versions for [Chrome][tampermonkeyForChrome], [Chromium][tampermonkeyForChromium], [Edge][tampermonkeyForEdge], [Firefox][tamperMonkeyForFirefox], [Opera][tampermonkeyForOpera], and [Safari][tampermonkeyForSafari].
 
-Tampermonkey is a userscript manager extension for [Chrome][Chrome], [Opera][Opera] and other similar web browsers, written by Jan Biniok. However, it is also available as a standalone, userscript enabled web browser for Android mobile devices. The version currently available is a Beta release and is rather basic as a web browser, so it may not have all the features required to make some websites work, but it is reasonably comprehensive in its support for userscripts.
 
-#### Installing Tampermonkey
+## WARNING!
+
+This is a pilot study and the version of Chrome that has this embedded Tampermonkey is out of date. Use at your own risk!
+
+### Installing Tampermonkey
 
 To get going with Tampermonkey on Android, first you have to install the app from the [Google Play Store][gooPlayStoreTampermonkey]. You need Android v2.2 *(Froyo)* or higher.
 
@@ -16,7 +20,7 @@ From the Tampermonkey page in the Chrome Store, click the green "Install" button
 
 Once Tampermonkey is installed, you can launch it from the "Open" button in the Play Store app, or from its icon in your device's app launcher. You will see a basic web browser window, with the Tampermonkey icon in the top right corner.
 
-#### Installing Userscripts
+### Installing Userscripts
 
 Once Tampermonkey is installed, installing userscripts from [OpenUserJS.org][oujs] is simple. Navigate to the OpenUserJS page for the script, then click the blue "Install" button at the top of the page.
 
@@ -34,9 +38,9 @@ Tampermonkey will then display a screen showing you where the userscript has com
 
 Installing userscripts from other sources is a similar process. You just need to find the installation link for the script. This will be a button or link to a file with a name that ends ".user.js"
 
-NB After installing a userscript, you won't normally notice any further changes until you visit a website that it runs on.
+After installing a userscript, you won't normally notice any further changes until you visit a website that it runs on.
 
-#### Managing Userscripts
+### Managing Userscripts
 
 Clicking on the Tampermonkey icon at any time will take you to a menu that shows you what userscripts are running on the website you are looking at. It also lets you check for updated scripts *(it does daily automatic checks by default)*, and open the Tampermonkey Options screen.
 
@@ -44,32 +48,55 @@ Clicking on the Tampermonkey icon at any time will take you to a menu that shows
 
 In the Options screen, the "Installed scripts" tab is the main place to manage your userscripts. The numbered circle to the left of each script shows you the order they run in, and whether they are enabled *(green)* or disabled *(red)* - click it to toggle the status. You can also uninstall userscripts *(trash can icon)*, or check for new updates *(click the "last updated" date)*.
 
-#### Trouble shooting
+### Trouble shooting
 
 If you think a userscript is causing problems and you have more than one script running on a web page, you can disable them all in Tampermonkey's options then re-enable them one by one, until you find the culprit. Remember to reload the web page each time - userscripts normally only run when a web page loads.
 
 Sometimes, when you use more than one userscript on the same web page, they need to run in a particular order. You can change the order using the Tampermonkey dashboard. In the "Sort" column, click on the green arrow icons to move scripts up or down in the sort order.
 
-#### More
+### More
 
 * [Get Tampermonkey from the Google Play Store][gooPlayStoreTampermonkey]
-* [Tampermonkey for Opera][tampermonkeyForOpera]
-* [Tampermonkey for Chrome][tampermonkeyForChrome]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
+* [Tampermonkey for Chrome][tampermonkeyForChrome]
+* [Tampermonkey for Chromium][tampermonkeyForChromium]
+* [Tampermonkey for Edge][tampermonkeyForEdge]
+* [Tampermonkey for Opera][tampermonkeyForOpera]
+* [Tampermonkey for Safari][tampermonkeyForSafari]
+
+<!-- # References -->
+
+<!-- ## Statics -->
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
-[tampermonkeyIcon]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_icon.png "Tampermonkey"
+[oujs]: https://openuserjs.org/
+
+<!-- ## Browser pages -->
+[android]: Android
 [chrome]: Chrome
+[chromium]: Chromium
+[edge]: Edge
+[firefox]: Firefox
 [opera]: Opera
+[safari]: Safari
+
+<!-- ## .user.js engine external linkage -->
+[tampermonkeyNet]: http://tampermonkey.net/
 [gooPlayStoreTampermonkey]: https://play.google.com/store/apps/details?id=net.biniok.tampermonkey
+
+<!-- ## Screenshots -->
 [tampermonkeyGooPlayScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an1.png "Tampermonkey in the Google Play Store"
 [tampermonkeyAndroidScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an2.png "Accept permisisons"
-[oujs]: https://openuserjs.org/
 [oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script_an.png "Ready to install a script"
 [tampermonkeyAndroidScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an3.png "Install via Tampermonkey"
 [tampermonkeyAndroidScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an4.png "Installing a script"
 [tampermonkeyAndroidScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an5.png "Tampermonkey Options"
-[tampermonkeyNet]: http://tampermonkey.net/
-[tampermonkeyForOpera]: Tampermonkey-for-Opera
+
+<!-- ## Other related .user.js engine internal pages -->
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
+[tampermonkeyForChromium]: Tampermonkey-for-Chromium
+[tampermonkeyForEdge]: Tampermonkey-for-Edge
+[tampermonkeyForFirefox]: Tampermonkey-for-Firefox
+[tampermonkeyForOpera]: Tampermonkey-for-Opera
+[tampermonkeyForSafari]: Tampermonkey-for-Safari

@@ -1,44 +1,435 @@
 <script type="text/javascript" charset="UTF-8" src="/redist/npm/ace-builds/src/ace.js"></script>
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/js-beautify/js/lib/beautify.js"></script>
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/diff/dist/diff.js"></script>
 <script type="text/javascript">
   (function () {
+    'use strict';
+
+    {{> includes/scripts/polyfillObjectAssign.js }}
 
     $(document).ready(function () {
-      var editor = ace.edit("editor");
+      var editor = null;
+      var wrap = $('#wrap');
+      var beautify = $('#beautify');
+      var diff = $('#diff');
+      var rawSource = null;
+      var modSource = null;
+      var isBlocking = null;
+      var hasChanged = false;
+      var placeholder = null;
+      var username = '{{authedUser.name}}' || 'username';
+      var isLib = {{isLib}};
+      var isUpdateURLCheck = {{lockdown.updateURLCheck}};
+      var now = new Date();
+      var year = now.getFullYear();
 
-      function hasCalc(aPrefix) {
-        var el = null;
+      //
+      function hasRelative(aPrefix) {
+        var hasCalc = null;
+        var hasUnitV = null;
 
         aPrefix = aPrefix || "";
-        el = document.createElement("div");
-        el.style.setProperty(aPrefix + "width", "calc(1px)", "");
-        return !!el.style.length;
+        hasCalc = document.createElement("div");
+        hasCalc.style.setProperty(aPrefix + "width", "calc(1px)", "");
+
+        if (!!hasCalc.style.length) {
+          hasUnitV = document.createElement("div");
+          hasUnitV.style.setProperty(aPrefix + "width", "calc(5vw + 5vw)", "");
+        }
+
+        return !!hasCalc.style.length && !!hasUnitV.style.length;
       }
 
-      function hasAnyCalc() {
-        return hasCalc("-moz-") || hasCalc("-ms-") || hasCalc("-o-") || hasCalc("-webkit-") || hasCalc();
+      function hasOurRelative() {
+        return hasRelative("-moz-") || hasRelative("-ms-") || hasRelative("-o-") ||
+          hasRelative("-webkit-") || hasRelative();
       }
 
       function calcHeight() {
-        return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}303{{/newScript}};
+        return window.innerHeight - {{#newScript}}190{{/newScript}}{{^newScript}}302{{/newScript}};
       }
 
-      editor.setTheme("ace/theme/dawn");
-      editor.getSession().setMode("ace/mode/javascript");
+      function onresize() {
+        $("#editor").height(calcHeight);
+        editor.resize(true);
+      }
 
-      {{#readOnly}}editor.setReadOnly(true);{{/readOnly}}
-      {{^readOnly}}
-      // TODO: Submit using AJAX
-      $('#submit_code').click(function () {
-        $('#source').val(editor.getValue());
-        $('#code_form').submit();
-      });
-      {{/readOnly}}
+      function oninput() {
+        var shouldShow = !editor.session.getValue().length;
+        var node = editor.renderer.emptyMessageNode;
+        if (!shouldShow && node) {
+          editor.renderer.scroller.removeChild(editor.renderer.emptyMessageNode);
+          editor.renderer.emptyMessageNode = null;
+        } else if (shouldShow && !node) {
+          node = editor.renderer.emptyMessageNode = document.createElement("div");
+          node.textContent = placeholder;
+          node.className = "ace_invisible ace_emptyMessage";
+          node.style.padding = "0 0.75em";
+          editor.renderer.scroller.appendChild(node);
+        }
+      }
 
-      // Older browser JavaScript work-around for #136
-      if (!hasAnyCalc()) {
-        $("#editor").height(calcHeight());
-        $(document).on("resize", function () {
-          $("#editor").height(calcHeight);
+      function onwrap(aEv) {
+        if (editor.getSession().getUseWrapMode()) {
+          editor.getSession().setUseWrapMode(false);
+          aEv.target.classList.remove('active');
+        } else {
+          editor.getSession().setUseWrapMode(true);
+          aEv.target.classList.add('active');
+        }
+        aEv.target.blur();
+      }
+
+      function onchange(aEv) {
+        if (isBlocking) {
+          return;
+        }
+
+        if (!hasChanged) {
+          hasChanged = true;
+
+          $('button#submit_code').removeClass('btn-success').addClass('btn-warning');
+          $('.ace_gutter-layer').addClass('btn-warning');
+          $('#diff').removeAttr('disabled');
+        }
+
+        $('#beautify').removeClass('active');
+      }
+
+      function beautifyThis(aString) {
+        return js_beautify(aString.replace(/\t/g, '  '), {
+
+          indent_size: 2,
+          indent_char: ' ',
+          max_preserve_newlines: 2,
+          brace_style: 'end-expand',
+          unescape_strings: true,
+          space_after_anon_function: true
+        }) + '\n';
+      }
+
+      function onbeautify(aEv) {
+        if (aEv.target.classList.contains('active') && !hasChanged) {
+          isBlocking = true;
+          editor.getSession().setValue(rawSource);
+          aEv.target.classList.remove('active');
+          isBlocking = false;
+
+          $('button#submit_code').addClass('btn-success').removeClass('btn-warning');
+          $('.ace_gutter-layer').removeClass('btn-warning');
+
+          $('#diff').attr('disabled', 'disabled');
+
+        } else {
+          isBlocking = true;
+          if (!hasChanged) {
+            aEv.target.classList.add('active');
+          }
+
+          $('#diff').removeAttr('disabled');
+
+          editor.getSession().setValue(
+            beautifyThis(hasChanged ? editor.getSession().getValue() : rawSource));
+          isBlocking = false;
+
+          $('button#submit_code').removeClass('btn-success').addClass('btn-warning');
+          $('.ace_gutter-layer').addClass('btn-warning');
+          onhashchange(null);
+        }
+
+        aEv.target.blur();
+      }
+
+      function onhashchange(aEv) {
+        var hash = null;
+        var line = null;
+        var lines = editor.getSession().getValue().split('\n').length;
+        var matches = window.location.hash.match(/^\#H([0-9a-fA-F]{128})L(\d+)$/);
+
+        // Scroll into
+        if ( !$('#beautify').hasClass('active')) {
+          if (matches) {
+            hash = matches[1];
+            line = parseInt(matches[2]);
+
+            if ('{{script.hash}}' === hash) {
+              if (line > 0 && line <= lines) {
+                editor.resize(true);
+                editor.gotoLine(line, 0, true);
+                editor.scrollToLine(line - 1, false, true, function () {});
+                return;
+              }
+            }
+          }
+        }
+
+        // No matches... reset to defaults
+        if (!$('#beautify').hasClass('active')) {
+          editor.resize(true);
+          editor.gotoLine(1, 0, true);
+          editor.scrollToLine(0, false, true, function () {});
+        }
+        window.location.hash = '';
+      }
+
+      function ondiff(aEv) {
+        isBlocking = true;
+        if (aEv.target.classList.contains('active')) {
+          aEv.target.classList.remove('active');
+
+          $('#beautify').removeAttr('disabled');
+          $('#submit_code').removeAttr('disabled');
+
+          editor.setReadOnly(false);
+          editor.getSession().setMode("ace/mode/javascript");
+          editor.renderer.setShowGutter(true);
+          editor.getSession().setValue(modSource);
+
+          modSource = null; // Free up mem
+
+        } else {
+          aEv.target.classList.add('active');
+          $('#beautify').attr('disabled', 'disabled');
+          $('#submit_code').attr('disabled', 'disabled');
+
+          modSource = editor.getSession().getValue();
+          editor.setReadOnly(true);
+          editor.getSession().setMode("ace/mode/diff");
+          editor.renderer.setShowGutter(false);
+
+          editor.getSession().setValue(
+            Diff.createTwoFilesPatch(
+            '{{script.scriptViewSourcePageUrl}}'
+              + '@{{script.meta.UserScript.version.0.value}}+{{script.hashShort}}',
+            '{{script.scriptViewSourcePageUrl}}',
+            rawSource,
+            modSource,
+            undefined, // NOTE: Required
+            undefined, // NOTE: Required
+            {
+              context: 3 // Show n lines before and after a diff
+            }
+          ).split('\n').slice(1).join('\n'));
+        }
+        isBlocking = false;
+
+        aEv.target.blur();
+      }
+
+      //
+      if (typeof ace !== 'undefined') {
+        placeholder = (
+          isLib
+            ? [
+              '// ==UserScript==',
+              '// @namespace     https://openuserjs.org/users/' + username,
+              '// @exclude       *',
+              '',
+              '// ==UserLibrary==',
+              '// @name          Getting Started with a User Library',
+              '// @description   ' +
+                'Showing the current basic and recommended format for a Library script.',
+              '// @copyright     ' + year + ', ' +  username
+                + ' (https://openuserjs.org/users/' + username + ')',
+              '// @license       OSI-SPDX-Short-Identifier',
+              '// @version       0.0.0',
+              '',
+              '// ==/UserScript==',
+              '',
+              '// ==/UserLibrary==',
+              '',
+              '// ==OpenUserJS==',
+              '// @author ' + username,
+              '// ==/OpenUserJS==',
+              '',
+              '/**',
+              '  *',
+              '  * Please begin typing or paste your User Library now.',
+              '  *',
+              '  */'
+            ] : [
+              '// ==UserScript==',
+              '// @namespace     https://openuserjs.org/users/' + username,
+              '// @name          Getting Started with a User Script',
+              '// @description   ' +
+                'Showing the current basic and recommended format for a User script.',
+              '// @copyright     ' + year + ', ' +  username
+                + ' (https://openuserjs.org/users/' + username + ')',
+              '// @license       OSI-SPDX-Short-Identifier',
+              '// @version       0.0.0',
+              '// @include       https://www.example.com/*',
+              '// @grant none',
+              (isUpdateURLCheck
+                ? '// @updateURL     https://openuserjs.org/meta/' + username + '/Getting_Started_with_a_User_Script.meta.js\n// ==/UserScript=='
+                : '// ==/UserScript=='),
+              '',
+              '// ==OpenUserJS==',
+              '// @author ' + username,
+              '// ==/OpenUserJS==',
+              '',
+              '/**',
+              '  *',
+              '  * Please begin typing or paste your User script now.',
+              '  *',
+              '  * NOTE: It is still strongly recommended to use the Author Tools panel to',
+              '  *       add your `@updateURL` even if we are not in lockdown.',
+              '  *',
+              '  */'
+            ]
+        ).join('\n');
+
+        editor = ace.edit("editor");
+        rawSource = editor.getSession().getValue();
+
+        editor.$blockScrolling = Infinity;
+        wrap.removeAttr('disabled');
+        beautify.removeAttr('disabled');
+
+        $('#submit_code').removeAttr('disabled');
+
+        editor.getSession().on('changeMode', function (aEv, aSession) {
+          var globals = {};
+          if (editor.getSession().getMode().$id === "ace/mode/javascript") {
+            if (!!editor.getSession().$worker) {
+
+              Object.assign(globals,
+                // GM3- See https://sourceforge.net/p/greasemonkey/wiki/Greasemonkey_Manual:API/
+                {
+                  'GM_addStyle': true,
+                  'GM_deleteValue': true,
+                  'GM_getResourceText': true,
+                  'GM_getResourceURL': true,
+                  'GM_getValue': true,
+                  'GM_listValues': true,
+                  'GM_log': true,
+                  'GM_openInTab': true,
+                  'GM_setClipboard': true,
+                  'GM_setValue': true,
+                  'GM_registerMenuCommand': true,
+                  'GM_xmlhttpRequest': true,
+                  'unsafeWindow': true
+                },
+                // GM4 See https://wiki.greasespot.net/Greasemonkey_Manual:API
+                {
+                  'GM': true,
+                  'unsafeWindow': true
+                },
+                // Tampermonkey See https://www.tampermonkey.net/documentation.php
+                {
+                  'GM_addStyle': true,
+                  'GM_addValueChangeListener': true,
+                  'GM_deleteValue': true,
+                  'GM_download': true,
+                  'GM_getResourceText': true,
+                  'GM_getResourceURL': true,
+                  'GM_getTab': true,
+                  'GM_getTabs': true,
+                  'GM_getValue': true,
+                  'GM_info': true,
+                  'GM_listValues': true,
+                  'GM_log': true,
+                  'GM_notification': true,
+                  'GM_openInTab': true,
+                  'GM_registerMenuCommand': true,
+                  'GM_removeValueChangeListener': true,
+                  'GM_saveTab': true,
+                  'GM_setClipboard': true,
+                  'GM_setValue': true,
+                  'GM_unregisterMenuCommand': true,
+                  'GM_xmlhttpRequest': true,
+                  'unsafeWindow': true
+                },
+                // Violentmonkey See https://violentmonkey.github.io/api/
+                {
+                  'GM_addStyle': true,
+                  'GM_deleteValue': true,
+                  'GM_download': true,
+                  'GM_getResourceText': true,
+                  'GM_getResourceURL': true,
+                  'GM_getValue': true,
+                  'GM_info': true,
+                  'GM_listValues': true,
+                  'GM_notification': true,
+                  'GM_openInTab': true,
+                  'GM_registerMenuCommand': true,
+                  'GM_setClipboard': true,
+                  'GM_setValue': true,
+                  'GM_unregisterMenuCommand': true,
+                  'GM_xmlhttpRequest': true,
+                  'unsafeWindow': true
+                }
+              );
+
+              editor.getSession().$worker.send('setOptions', [{
+                // See https://jshint.com/docs/options/
+                'maxerr': 1000,
+                'globals': globals,
+                '-I003': true, // "ES5 option is now set per default" ... NOTE: KEEP ALWAYS
+                'moz': true,   // ES5.1 (JavaScript 1.7+)
+                'strict': 'implied', // Useful for finding missing `globals` for Authors to add such as jQuery
+                '-W034': true, // "Unnecessary directive \"{a}\".", e.g. `'use strict'`
+                'devel': true,
+                'browser': true,
+                'laxcomma': true, // NOTE: deprecated but in use with Ace current
+                'laxbreak': true, // NOTE: deprecated but in use with Ace current
+                'multistr': true, // NOTE: deprecated but in use with Ace current
+                'newcap': false,  // NOTE: deprecated but in use with Ace current
+                'sub': true,      // NOTE: deprecated but in use with Ace current
+                'eqnull': true,
+                '-W014': true // "Bad line breaking before '{a}'."
+              }]);
+            }
+          }
+        });
+
+        editor.setTheme("ace/theme/dawn");
+        editor.getSession().setMode("ace/mode/javascript");
+        editor.container.style.fontFamily = "monospace";
+
+        {{#readOnly}}
+        ['showSettingsMenu', 'overwrite'].forEach(function (aE, aI, aA) {
+          editor.commands.removeCommand(aE);
+        });
+        editor.setReadOnly(true);
+        {{/readOnly}}
+        {{^readOnly}}
+        // TODO: Submit using AJAX
+        $('#submit_code').click(function () {
+          $('#source').val(editor.getValue());
+          $('#code_form').submit();
+        });
+        {{/readOnly}}
+
+        // Some older and newer browser JavaScript work-around for #136
+        if (!hasOurRelative()) {
+          $("#editor").height(calcHeight());
+
+          if (window.addEventListener) {
+            window.addEventListener('resize', onresize, false);
+          } else if (window.attachEvent) {
+            window.attachEvent('resize', onresize);
+          }
+        }
+
+        editor.on('input', oninput);
+        editor.on('change', onchange);
+        wrap.on('click', onwrap);
+        diff.on('click', ondiff);
+        beautify.on('click', onbeautify);
+        setTimeout(oninput, 250);
+
+        if (window.location.hash) {
+          onhashchange(null);
+        }
+
+        $(window).on('hashchange', onhashchange);
+
+        editor.on("gutterclick", function (aEv) {
+          var gotoLine = aEv.getDocumentPosition().row + 1;
+          if (gotoLine) {
+            window.location.hash = window.location.hash =
+              'H' + '{{script.hash}}' + 'L' + gotoLine;
+          }
         });
       }
     });

@@ -67,16 +67,18 @@
       "class"
     ],
     "a": [
-      "href"
+      "href",
+      "referrerpolicy"
     ],
     "img": [
-      "src"
+      "src",
+      "referrerpolicy"
     ],
     "div": [
       "itemscope",
       "itemtype"
     ],
-    "all": [
+    "*": [
       "abbr",
       "accept",
       "accept-charset",

@@ -20,11 +20,37 @@ function renderFile(aRes, aPath, aOptions) {
     aOptions.isDev = isDev;
   }
 
-  // Hide the Google OAuth migration reminder for logged-in users
-  // that don't use Google for authentication
-  if (aOptions.authedUser && aOptions.authedUser
-      .strategies.indexOf('google') === -1) {
-    aOptions.hideReminder = true;
+  // Hide task for any reminder... See #484
+  // NOTE: This code structure and CSS is always active for future reminders
+  //   so please do not remove unless refactoring in a new issue as a whole.
+  // Example Code task and sync UI with banner text/link at `./includes/headerReminders`:
+  // if (aOptions.authedUser && aOptions.authedUser.strategies.indexOf('google') === -1) {
+  //   aOptions.hideReminderThis = true;
+  // }
+
+  if (aRes.oujsOptions) {
+    aOptions.hideReminderGDPR = aRes.oujsOptions.hideReminderGDPR;
+    aOptions.showReminderListLimit = aRes.oujsOptions.showReminderListLimit;
+    aOptions.showReminderInstallLimit = aRes.oujsOptions.showReminderInstallLimit;
+
+    // NOTE: Keep in sync with app.js, user.js, and headerReminders.html
+    aOptions.showInvalidAuth = aRes.oujsOptions.showInvalidAuth;
+    aOptions.showStratFail = aRes.oujsOptions.showStratFail;
+    aOptions.showNoConsent = aRes.oujsOptions.showNoConsent;
+    aOptions.showNoName = aRes.oujsOptions.showNoName;
+    aOptions.showTooLong = aRes.oujsOptions.showTooLong;
+    aOptions.showUsernameFail = aRes.oujsOptions.showUsernameFail;
+    aOptions.showROAuth = aRes.oujsOptions.showROAuth;
+    aOptions.showRetryAuth = aRes.oujsOptions.showRetryAuth;
+    aOptions.showAuthFail = aRes.oujsOptions.showAuthFail;
+
+    // NOTE: Keep in sync with app.js, admin.js, user.js, and headerReminders.html
+    aOptions.showSesssionNoExtend = aRes.oujsOptions.showSesssionNoExtend;
+    aOptions.showSessionMissingUsername = aRes.oujsOptions.showSessionMissingUsername;
+    aOptions.showSesssionCurrentSessionProhibited = aRes.oujsOptions.showSesssionCurrentSessionProhibited;
+    aOptions.showSesssionHigherRankProhibited = aRes.oujsOptions.showSesssionHigherRankProhibited;
+    aOptions.showSesssionNoOwned = aRes.oujsOptions.showSesssionNoOwned;
+    aOptions.showSesssionNoAdmin = aRes.oujsOptions.showSesssionNoAdmin;
   }
 
   aRes.set('Content-Type', 'text/html; charset=UTF-8');

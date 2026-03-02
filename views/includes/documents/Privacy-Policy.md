@@ -1,4 +1,5 @@
 ## Privacy Policy
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/fa-solid-lock.min.svg?sanitize=true" width="128" height="128" align="right">
 
 Your privacy is critically important to us. At OpenUserJS.org *(OUJS)* we have a few fundamental principles:
 

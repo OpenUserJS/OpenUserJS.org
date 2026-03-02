@@ -1,0 +1,29 @@
+name: Feature Request
+description: Something we **DO NOT** already have implemented to the best of your knowledge but you would like to see. (Please search existing issues and milestones first.)
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill this out.
+  - type: textarea
+    id: what-is-missing
+    attributes:
+      label: What is missing?
+      description: Describe your feature idea.
+      placeholder: Start typing here.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: Describe the problem you are facing.
+      placeholder: Continue typing here.
+    validations:
+      required: true
+  - type: textarea
+    id: alt
+    attributes:
+      label: Alternatives you have tried.
+      description: Describe any workarounds you tried so far and how they worked for you.

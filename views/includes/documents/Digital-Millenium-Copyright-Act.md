@@ -1,10 +1,11 @@
 ## Digital Millenium Copyright Act
+<img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/misc-copyright.min.svg?sanitize=true" width="128" height="128" align="right">
 
 ### Filing a Notification
 
 A written notification must be made. This can be done by written email to the owner. Letters or faxes will not be accepted unless a prior arrangement has been made. The notification must:
 
-1. Identify in sufficient detail the copyrighted work that you believe has been infringed upon *(i.e., describe the work that you own)*.
+1. Identify in sufficient detail the copyrighted work that you believe has been [infringed][copyrightGovFAQinfringement] upon *(i.e., describe the work that [you own][copyrightGovFAQauthor])*.
 2. Identify the item that you claim is infringing on your copyright, and provide information reasonably sufficient to locate the item. For example "The allegedly infringing work I am referring to is located at the URL ..."
 3. Provide a reasonably sufficient method of contacting you; phone number and email address would be preferred along with verifiable mailing address.
 4. *(Optional)* Provide information, if possible, sufficient to permit identification of the content that allegedly contains infringing material. You may also provide screenshots or other materials that are helpful to identify the works in question. *(This is for identification only, not to "prove" substantive claims.)*
@@ -16,10 +17,21 @@ Please note: The DMCA provides that you may be liable for damages *(including co
 
 ### Send the written document to the designated address at:
 
-  [sizzlemctwizzle@gmail.com](mailto:sizzlemctwizzle@gmail.com?subject=DMCA "By submitting an email regarding a DMCA notice you agree to the terms set forth provided in this document and the Terms of Service. Failure to provide the required information will be reason for immediate dismissal of any claim.")
+  [DMCA Contact][DMCAcontact]
 
 ### Counter Notification
 
 A counter notification may be issued in the event there is a need for dispute resolution.
 
-For additional information please visit [www.copyright.gov](http://www.copyright.gov/)
+For additional information please visit:
+* [www.copyright.gov][copyrightGov]
+* [Fair Use Rationale][oujsFairUseRationale]
+
+
+[copyrightGov]: https://www.copyright.gov/
+[copyrightGovFAQauthor]: https://www.copyright.gov/help/faq/faq-definitions.html#author
+[copyrightGovFAQinfringement]: https://www.copyright.gov/help/faq/faq-definitions.html#infringement
+
+[oujsFairUseRationale]: /about/Terms-of-Service#fair-use-rationale
+
+[DMCAcontact]: mailto:sizzlemctwizzle@gmail.com?subject=DMCA "By submitting an email regarding a DMCA notice you agree to the terms set forth provided in this document and the Terms of Service. Failure to provide the required information will be reason for immediate dismissal of any claim."

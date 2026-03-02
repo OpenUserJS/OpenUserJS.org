@@ -1,32 +1,34 @@
 <table class="table table-hover table-condensed">
   <thead>
     <tr>
-      <th class="text-center td-fit"><a href="?orderBy=model&orderDir={{orderDir.model}}">Type</a></th>
+      <th class="text-center td-fit{{#orderedByModel}} active{{/orderedByModel}}"><a href="?orderBy=model&orderDir={{orderDir.model}}{{#byModel}}&byModel={{byModel}}{{/byModel}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}">Model</a></th>
       <th>Item</th>
       <th>Reason</th>
-      <th class="text-center td-fit"><a href="?orderBy=removerName&orderDir={{orderDir.removerName}}">Removed By</a></th>
-      <th class="text-center td-fit"><a href="?orderBy=removed&orderDir={{orderDir.removed}}">Date</a></th>
+      <th class="text-center td-fit{{#orderedByRemoverName}} active{{/orderedByRemoverName}}" title="Remover"><a href="?orderBy=removerName&orderDir={{orderDir.removerName}}{{#byModel}}&byModel={{byModel}}{{/byModel}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><span class="visible-lg visible-md">Remover</span><span class="hidden-lg hidden-md"><i class="fa fa-coffee"></i></span></a></th>
+      <th class="text-center td-fit{{#orderedByRemoved}} active{{/orderedByRemoved}}"><a href="?orderBy=removed&orderDir={{orderDir.removed}}{{#byModel}}&byModel={{byModel}}{{/byModel}}{{#searchBarValue}}&q={{searchBarValue}}{{/searchBarValue}}"><span class="visible-lg visible-md">Date</span><span class="hidden-lg hidden-md"><i class="fa fa-calendar"></span></a></th>
     </tr>
   </thead>
   <tbody>
     {{#removedItemList}}
     <tr class="tr-link">
-      <td class="td-fit">
+      <td class="td-fit align-middle">
         <p>{{#item.hasUrl}}<a href="{{item.url}}" class="tr-link-a">{{/item.hasUrl}}{{model}}{{#item.hasUrl}}</a>{{/item.hasUrl}}</p>
       </td>
-      <td class="td-fit">
-        <p><a href="{{{url}}}" class="tr-link-a">{{item.description}}</a></p>
+      <td class="td-fit align-middle">
+        <p>{{#isAdmin}}<a href="{{{url}}}" class="tr-link-a">{{/isAdmin}}{{item.description}}{{#isAdmin}}</a>{{/isAdmin}}</p>
       </td>
-      <td>
-        <p>{{reason}}</p>
+      <td class="align-middle">
+        <p{{#remover.automated}} class="reason-automated"{{/remover.automated}}>{{reason}}</p>
       </td>
-      <td class="td-fit">
+      <td class="td-fit align-middle">
         <p>
-          <a href="{{remover.userPageUrl}}">{{remover.name}}</a>
+          <span class="label label-info">
+            <a href="{{remover.userPageUrl}}">{{remover.name}}</a>
+          </span>
         </p>
       </td>
       <td class="text-center td-fit">
-        <time datetime="{{removedISOFormat}}" title="{{removed}}">{{removedHumanized}}</time>
+        <time datetime="{{removedISOFormat}}" title="{{removed}}" class="iconic">{{{removedHumanizedIconic}}}</time>
       </td>
     </tr>
     {{/removedItemList}}

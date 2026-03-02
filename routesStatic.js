@@ -10,6 +10,32 @@ var path = require('path');
 var url = require('url');
 
 var express = require('express');
+var rateLimit = require('express-rate-limit');
+
+var fudgeSec = 6;
+
+var waitStaticRateSec = isDev ? parseInt(4 / 2) : 4;
+var staticRateLimiter = rateLimit({
+  store: (isDev ? undefined : undefined),
+  windowMs: waitStaticRateSec * 1000, // n seconds for all stores
+  max: 1, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    aRes.header('Retry-After', waitStaticRateSec + fudgeSec);
+    aRes.status(429).send();
+  },
+  keyGenerator: function (aReq, aRes, aNext) {
+    return aReq.ip + aReq._parsedUrl.pathname;
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (authedUser && authedUser.isAdmin) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
+  }
+});
+
 
 module.exports = function (aApp) {
   var day = 1000 * 60 * 60 * 24;
@@ -35,26 +61,31 @@ module.exports = function (aApp) {
             path.join(dirname, aModuleBaseName, basename),
             { maxage: aModuleOption[basename].maxage }
           )
+
         );
       }
     }
   }
 
-  aApp.use(express.static(path.join(__dirname, 'public'), { maxage: day * 1 }));
+  aApp.use(staticRateLimiter, express.static(path.join(__dirname, 'public'), { maxage: day * 1 }));
 
   serveModule('/redist/npm/', 'ace-builds/src/', 7);
 
+  serveModule('/redist/npm/', 'animate.css/', {
+    'animate.css': { maxage: day * 1 }
+  });
+
   serveModule('/redist/npm/', 'bootstrap/', {
-    'dist/js/bootstrap.js': { maxage: day * 1 },
-    'dist/fonts/glyphicons-halflings-regular.eot': { maxage: day * 7 },
-    'dist/fonts/glyphicons-halflings-regular.svg': { maxage: day * 7 },
-    'dist/fonts/glyphicons-halflings-regular.ttf': { maxage: day * 7 },
-    'dist/fonts/glyphicons-halflings-regular.woff': { maxage: day * 7 }
+    'dist/js/bootstrap.js': { maxage: day * 1 }
   });
 
   serveModule('/redist/npm/', 'bootstrap-markdown/', {
     'js/bootstrap-markdown.js': { maxage: day * 1 },
     'css/bootstrap-markdown.min.css': { maxage: day * 1 }
+  });
+
+  serveModule('/redist/npm/', 'clipboard/', {
+    'dist/clipboard.js': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'font-awesome/', {
@@ -67,22 +98,33 @@ module.exports = function (aApp) {
     'fonts/FontAwesome.otf': { maxage: day * 7 }
   });
 
+  serveModule('/redist/npm/', 'highlight.js/', {
+    'styles/github.css': { maxage: day * 1 }
+  });
+
   serveModule('/redist/npm/', 'jquery/', {
-    'dist/jquery.js': { maxage: day * 7 },
-    'dist/jquery.min.map': { maxage: day * 7 }
+    'dist/jquery.js': { maxage: day * 7 }
+  });
+
+  serveModule('/redist/npm/', 'js-beautify/', {
+    'js/lib/beautify.js': { maxage: day * 7 }
+  });
+
+  serveModule('/redist/npm/', 'diff/', {
+    'dist/diff.js': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'marked/', {
-    'lib/marked.js': { maxage: day * 1 }
+    'marked.min.js': { maxage: day * 1 }
   });
 
   serveModule('/redist/npm/', 'octicons/', {
-    'octicons/octicons.css': { maxage: day * 1 },
-    'octicons/octicons-local.ttf': { maxage: day * 7 },
-    'octicons/octicons.eot': { maxage: day * 7 },
-    'octicons/octicons.svg': { maxage: day * 7 },
-    'octicons/octicons.ttf': { maxage: day * 7 },
-    'octicons/octicons.woff': { maxage: day * 7 }
+    'build/font/octicons.css': { maxage: day * 1 },
+    'build/font/octicons.eot': { maxage: day * 7 },
+    'build/font/octicons.svg': { maxage: day * 7 },
+    'build/font/octicons.ttf': { maxage: day * 7 },
+    'build/font/octicons.woff': { maxage: day * 7 },
+    'build/font/octicons.woff2': { maxage: day * 7 }
   });
 
   serveModule('/redist/npm/', 'select2/', {

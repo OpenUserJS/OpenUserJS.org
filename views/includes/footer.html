@@ -3,14 +3,17 @@
     <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" data-toggle="collapse" data-target=".navbar-collapse-bottom" class="navbar-toggle" onclick="$('html, body').animate({scrollTop: $(document).height()}, 'slow')"><i class="fa fa-bars"></i></button>
-        <a href="https://github.com/OpenUserJs" class="navbar-brand">&copy; 2013+ <span class="hidden-xs">OpenUserJS</span><span class="visible-xs-inline">OUJS</span> Group</a>
+        <a rel="bookmark" referrerpolicy="same-origin" href="#" data-toggle="modal" data-target="#donateSiteModal" class="btn btn-donate" title="Monetary donations for this site">
+          <i class="fa fa-fw fa-money"></i><span class=""> Donate</span>
+        </a>
+        <a href="https://github.com/OpenUserJs" class="navbar-brand">&copy; 2013+ OpenUserJS</a>
       </div>
       <div class="navbar-collapse navbar-collapse-bottom collapse">
         <ul class="nav navbar-nav navbar-right">
           <li><a href="/about">About</a></li>
           <li><a href="/about/Terms-of-Service">Terms of Service</a></li>
-          <li><a href="/about/Digital-Millenium-Copyright-Act" title="Digital Millennium Copyright Act">DMCA</a></li>
           <li><a href="/about/Privacy-Policy">Privacy Policy</a></li>
+          <li><a href="/about/Digital-Millenium-Copyright-Act" title="Digital Millennium Copyright Act">DMCA</a></li>
           <li><a href="https://github.com/OpenUserJs/OpenUserJS.org">Development</a></li>
           <li><a href="https://github.com/orgs/OpenUserJs/people">Collaborators</a></li>
         </ul>
@@ -20,7 +23,8 @@
 </footer>
 
 <!-- JS -->
-<script type="text/javascript" charset="UTF-8" src="/redist/npm/jquery/dist/jquery.js"></script>
-<script type="text/javascript" charset="UTF-8" src="/redist/npm/bootstrap/dist/js/bootstrap.js"></script>
-{{> includes/scripts/hideReminders.html }}
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/jquery/dist/jquery.js"{{#nonce}} nonce="{{nonce}}"{{/nonce}}></script>
+<script type="text/javascript" charset="UTF-8" src="/redist/npm/bootstrap/dist/js/bootstrap.js"{{#nonce}} nonce="{{nonce}}"{{/nonce}}></script>
 
+{{> includes/siteModals.html }}
+{{> includes/scripts/hideReminders.html }}

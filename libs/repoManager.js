@@ -4,6 +4,18 @@
 var isPro = require('../libs/debug').isPro;
 var isDev = require('../libs/debug').isDev;
 var isDbg = require('../libs/debug').isDbg;
+var uaOUJS = require('../libs/debug').uaOUJS;
+var statusError = require('../libs/debug').statusError;
+
+//--- Dependency inclusions
+var util = require('util');
+var colors = require('ansi-colors');
+
+//--- Model inclusions
+var Sync = require('../models/sync').Sync;
+
+//--- Controller inclusions
+var scriptStorage = require('../controllers/scriptStorage');
 
 //
 var https = require('https');
@@ -14,31 +26,66 @@ var Strategy = require('../models/strategy').Strategy;
 
 var nil = require('./helpers').nil;
 var github = require('../libs/githubClient');
+var settings = require('../models/settings.json');
+
 
 var clientId = null;
 var clientKey = null;
 
 Strategy.findOne({ name: 'github' }, function (aErr, aStrat) {
-  clientId = aStrat.id;
-  clientKey = aStrat.key;
+  if (aErr) {
+    console.error( aErr.message );
+    process.exit(1);
+    return;
+  }
+
+  if (!aStrat) {
+    console.warn( colors.red([
+      'Default GitHub Strategy document not found in DB.',
+      'Lower rate limit will be available.'
+    ].join('\n')));
+  } else {
+    clientId = aStrat.id;
+    clientKey = aStrat.key;
+  }
 });
 
 // Requests a GitHub url and returns the chunks as buffers
-function fetchRaw(aHost, aPath, aCallback) {
+function fetchRaw(aHost, aPath, aCallback, aOptions) {
   var options = {
     hostname: aHost,
     port: 443,
     path: aPath,
     method: 'GET',
-    headers: { 'User-Agent': 'Node.js' }
+    headers: {
+      'User-Agent': uaOUJS + (process.env.UA_SECRET ? ' ' + process.env.UA_SECRET : '')
+    }
   };
+
+  if (aOptions) {
+    // Ideally do a deep merge of aOptions -> options
+    // But for now, we just need the headers
+    if (aOptions.headers) {
+      Object.assign(options.headers, aOptions.headers);
+    }
+  }
 
   var req = https.request(options,
     function (aRes) {
+
+      if (isDbg) {
+        console.log(aRes);
+      }
+
       var bufs = [];
-      if (aRes.statusCode !== 200) { console.log(aRes.statusCode); return aCallback([new Buffer('')]); }
+      if (aRes.statusCode !== 200) {
+        console.warn(aRes.statusCode);
+        return aCallback([Buffer.from('')]);
+      }
       else {
-        aRes.on('data', function (aData) { bufs.push(aData); });
+        aRes.on('data', function (aData) {
+          bufs.push(aData);
+        });
         aRes.on('end', function () {
           aCallback(bufs);
         });
@@ -50,10 +97,23 @@ function fetchRaw(aHost, aPath, aCallback) {
 // Use for call the GitHub JSON api
 // Returns the JSON parsed object
 function fetchJSON(aPath, aCallback) {
-  aPath += '?client_id=' + clientId + '&client_secret=' + clientKey;
+  var encodedAuth = null;
+  var opts = null;
+
+  // The old authentication method, which GitHub deprecated
+  //aPath += '?client_id=' + clientId + '&client_secret=' + clientKey;
+  // We must now use OAuth Basic (user+key) or Bearer (token)
+  if (clientId && clientKey) {
+    encodedAuth = Buffer.from(`${clientId}:${clientKey}`).toString('base64');
+    opts = {
+      headers: {
+        Authorization: `Basic ${encodedAuth}`
+      }
+    };
+  }
   fetchRaw('api.github.com', aPath, function (aBufs) {
     aCallback(JSON.parse(Buffer.concat(aBufs).toString()));
-  });
+  }, opts);
 }
 
 // This manages actions on the repos of a user
@@ -95,25 +155,150 @@ RepoManager.prototype.fetchRecentRepos = function (aCallback) {
   ], aCallback);
 };
 
-// Import scripts on GitHub
-RepoManager.prototype.loadScripts = function (aCallback, aUpdate) {
-  var scriptStorage = require('../controllers/scriptStorage');
+// Import scripts to be sync'd into Sync model
+RepoManager.prototype.loadSyncs = function (aUpdate, aCallback) {
   var arrayOfRepos = this.makeRepoArray();
   var that = this;
 
-  // TODO: remove usage of makeRepoArray since it causes redundant looping
+  // TODO: Alter usage of makeRepoArray since it causes redundant looping
   arrayOfRepos.forEach(function (aRepo) {
-    async.each(aRepo.scripts, function (aScript, aCallback) {
+    async.each(aRepo.scripts, function (aScript, aInnerCallback) {
+      var hostname = 'raw.githubusercontent.com';
+      var uri = '/' + aRepo.user + '/' + aRepo.repo
+        + '/master' + aScript.path;
+
+      Sync.findOne(
+        { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
+        function (aErr, aSync) {
+          if (aErr) {
+            console.error('Error retrieving sync status');
+            aInnerCallback(aErr, aSync);
+            return;
+          }
+
+          if (aSync) {
+            // TODO: Maybe update the updated, response, and message to reflect redelivery?
+
+            aInnerCallback(null, aSync);
+          } else {
+            var sync = new Sync({
+              strat: 'github',
+              id: aUpdate,
+              target: 'https://' + hostname + uri,
+              response: 202,
+              message: 'Accepted',
+              created: new Date(),
+              _authorId: that.user.id
+            });
+
+            sync.save(function (aErr, aSync) {
+              if (aErr || !aSync) {
+                console.error('Unable to create Sync record');
+                aInnerCallback(aErr, aSync);
+                return;
+              }
+
+              aInnerCallback(null, aSync);
+            });
+          }
+
+        });
+
+    }, aCallback);
+  });
+};
+
+// Import scripts from GitHub
+RepoManager.prototype.loadScripts = function (aUpdate, aCallback) {
+  var arrayOfRepos = this.makeRepoArray();
+  var that = this;
+
+  // TODO: Alter usage of makeRepoArray since it causes redundant looping
+  arrayOfRepos.forEach(function (aRepo) {
+    async.each(aRepo.scripts, function (aScript, aInnerCallback) {
+      var hostname = 'raw.githubusercontent.com';
+      var uri = '/' + aRepo.user + '/' + aRepo.repo
+        + '/master' + aScript.path;
       var url = '/' + encodeURI(aRepo.user) + '/' + encodeURI(aRepo.repo)
         + '/master' + aScript.path;
-      fetchRaw('raw.githubusercontent.com', url, function (aBufs) {
-        scriptStorage.getMeta(aBufs, function (aMeta) {
-          if (aMeta) {
-            scriptStorage.storeScript(that.user, aMeta, Buffer.concat(aBufs),
-              aCallback, aUpdate);
-          }
-        });
+
+      fetchRaw(hostname, url, function (aBufs) {
+        var msg = null;
+        var thisBuf = Buffer.concat(aBufs);
+
+        if (thisBuf.byteLength <= settings.maximum_upload_script_size) {
+          scriptStorage.getMeta(aBufs, function (aMeta) {
+            if (aMeta) {
+              scriptStorage.storeScript(that.user, aMeta, thisBuf, !!aUpdate,
+                function (aErr, aScript) {
+                  if (aErr || !aScript) {
+                    msg = (aErr instanceof statusError ? aErr.status.message : aErr.message)
+                      || 'Unknown error with storing script';
+                    Sync.findOneAndUpdate(
+                      { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri }, {
+                        response: (aErr instanceof statusError ? aErr.status.code : aErr.code),
+                        message: msg,
+                        updated: new Date()
+                      },
+                      function (aErr, aSync) {
+                        if (aErr || !aSync) {
+                          console.error('Error changing sync status with ' + msg);
+                          return;
+                        }
+                      });
+                  } else {
+                    msg = 'OK';
+                    Sync.findOneAndUpdate(
+                      { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
+                      { response: 200, message: msg, updated: new Date()},
+                      function (aErr, aSync) {
+                        if (aErr || !aSync) {
+                          console.error('Error changing sync status with ' + msg);
+                          return;
+                        }
+                      });
+                  }
+
+                  aInnerCallback(aErr, aScript);
+                });
+            } else {
+              msg = 'Metadata block(s) missing.'
+              Sync.findOneAndUpdate(
+                { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
+                { response: 400, message: msg, updated: new Date()},
+                function (aErr, aSync) {
+                  if (aErr || !aSync) {
+                    console.error('Error changing sync status with ' + msg);
+                    return;
+                  }
+                });
+
+              aInnerCallback(new statusError({
+                message: msg,
+                  code: 400
+                }, null));
+            }
+          });
+        } else {
+          msg = util.format('File size is larger than maximum (%s bytes).',
+            settings.maximum_upload_script_size);
+          Sync.findOneAndUpdate(
+            { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
+            { response: 400, message: msg},
+            function (aErr, aSync) {
+              if (aErr || !aSync) {
+                console.error('Error changing sync status with ' + msg);
+                return;
+              }
+            });
+
+          aInnerCallback(new statusError({
+            message: msg,
+              code: 400
+            }, null));
+        }
       });
+
     }, aCallback);
   });
 };

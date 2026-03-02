@@ -24,6 +24,7 @@ html, body {
   color: #333333;
 }*/
 .rating .progress {
+  margin-bottom: 0;
   height: 4px;
 }
 .progress-bar-good {
@@ -129,8 +130,15 @@ h2.page-heading {
   position: fixed;
 }
 
-.md-editor {
+.md-editor,
+.md-input {
   min-height: 300px;
+}
+
+.md-editor textarea,
+.md-input textarea,
+.md-editor .md-preview {
+  margin-bottom: 10px !important;
 }
 
 textarea {
@@ -148,15 +156,18 @@ textarea {
   padding: 6px 4px;
 }
 
-.topic-avatar {
+.topic-avatar,
+.session-avatar {
   width: 60px; /* Avatar (45px) + Gutter Padding (15px) */
 }
 
-.topic-body {
+.topic-body,
+.session-body {
   width: calc(100% - 60px);
 }
 
-.topic-avatar a {
+.topic-avatar a,
+.session-avatar a {
   display: inline-block;
 }
 
@@ -169,12 +180,13 @@ textarea {
   opacity: 1;
 }
 
-.topic-meta-data .names .username {
+.topic-meta-data .names .username,
+.session-meta-data .names .username {
   font-weight: bold;
 }
 
-.topic-post-contents {
-
+.topic-post-contents,
+.session-post-contents {
 }
 
 .btn-addon-default {
@@ -194,11 +206,22 @@ textarea {
   margin: 0 auto;
 }
 
+.form-group-signin {
+  margin-bottom: 0;
+}
+
+.alert-signin {
+  margin-bottom: 0;
+  padding-top: 3.5em;
+}
+
 input#discussion-topic {
+  display: inline-block;
   width: calc(100% - 18px - 4px);
 }
 
-.topic-avatar i.fa.fa-user {
+.topic-avatar i.fa.fa-user,
+.session-avatar i.fa.fa-user {
   height: 45px;
   width: 45px;
   line-height: 45px;
@@ -245,9 +268,25 @@ h6:hover a.anchor {
   visibility: visible;
 }
 
+.script-meta {
+  overflow-wrap: break-word;
+}
+
 .user-content > :first-child,
 .panel-body > :first-child {
   margin-top: 0;
+}
+
+.user-data {
+  margin: 1px 0;
+  overflow-wrap: break-word;
+}
+
+.user-data pre,
+.user-content pre,
+.document-content pre {
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .user-data code,
@@ -260,6 +299,19 @@ h6:hover a.anchor {
 .user-content img,
 .document-content img {
   max-width: 100%;
+  min-width: 16px;
+}
+
+.list-group-striped > a:nth-of-type(2n+1) {
+  background-color: #f9f9f9;
+}
+
+.list-group-striped a.active {
+  background-color: #2c3e50;
+}
+
+.list-group-striped a:hover {
+  background-color: #f5f5f5;
 }
 
 .table-responsive {
@@ -290,4 +342,297 @@ a.panel-heading {
 .octicon-fw {
   text-align: center;
   width: 1.28571429em;
+}
+
+.reason-automated {
+  opacity: 0.25;
+}
+
+ul.flaggedList {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+/* A *bootstrap* fix for drop-down menus on buttons */
+.navbar {
+  position: static;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.badgen {
+  font-size: 11.475px;
+  letter-spacing: 0.75px;
+  color: white;
+  background-color: #5b5b5b;
+  padding: 4px 0 3.5px 4px;
+  border-radius: 3px;
+  text-shadow: 0 1px #333;
+}
+
+.badgen a {
+  font-size: 11.25px;
+  color: white;
+  background-color: #0f81c2;
+  padding: 4px 4px 3px 4px;
+  border-radius: 0 3px 3px 0;
+  text-shadow: 0 1px #045481;
+}
+
+
+.translucent-icon {
+  opacity: 0;
+}
+
+.hide-icon, .hide-alert {
+  display: none;
+}
+
+.opaque-icon {
+  opacity: 1;
+}
+
+.fade-icon {
+  transition: opacity 0.33s ease-in-out;
+}
+
+.form-inline {
+  display: inline;
+}
+
+.ua {
+  cursor: default;
+  width: 16px;
+  height: 16px;
+}
+.ua-chrome, .ua-chrome-mobile, .ua-chrome-mobile-ios, .ua-chrome-mobile-webview {
+  background: transparent url("/images/ua/chrome16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-chromium {
+  background: transparent url("/images/ua/chromium16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-coc-coc {
+  background: transparent url("/images/ua/coccoc16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-dragon {
+  background: transparent url("/images/ua/icedragon16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-edge {
+  background: transparent url("/images/ua/edge16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-firefox, .ua-firefox-mobile {
+  background: transparent url("/images/ua/firefox16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-ie {
+  background: transparent url("/images/ua/iexplorer16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-iron {
+  background: transparent url("/images/ua/iron16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-konqueror {
+  background: transparent url("/images/ua/konqueror16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-maxthon {
+  background: transparent url("/images/ua/maxthon16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-opera, .ua-opera-mobile {
+  background: transparent url("/images/ua/opera16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-otter {
+  background: transparent url("/images/ua/otter16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-pale-moon {
+  background: transparent url("/images/ua/palemoon16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-qq-browser {
+  background: transparent url("/images/ua/qqbrowser16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-qupzilla {
+  background: transparent url("/images/ua/qupzilla16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-rekonq {
+  background: transparent url("/images/ua/rekonq16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-safari, .ua-mobile-safari, .ua-mobile-safari-ui-wkwebview {
+  background: transparent url("/images/ua/safari16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-samsung-internet {
+  background: transparent url("/images/ua/samsunginternet16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-seamonkey {
+  background: transparent url("/images/ua/seamonkey16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-uc-browser {
+  background: transparent url("/images/ua/uc16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-vivaldi {
+  background: transparent url("/images/ua/vivaldi16.png") no-repeat left top;
+  color: transparent;
+}
+.ua-yandex-browser {
+  background: transparent url("/images/ua/yandex16.png") no-repeat left top;
+  color: transparent;
+}
+
+/* Disable Microsoft clear button */
+::-ms-clear {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Extend *bootstrap* */
+.form-control-clear {
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 15;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+.btn-donate {
+  color: #000;
+  background-color: #ffc439;
+  border-color: #f1b72a;
+  margin-top: 0.55em;
+}
+
+.btn-donate:hover {
+  background-color: #eab122;
+}
+
+/* Extend Ace */
+.ace_gutter-cell:hover {
+  font-weight: bold;
+}
+
+#editor .ace_gutter-cell:hover {
+  cursor: pointer;
+}
+
+/* Iconic dates */
+
+time.iconic, time.iconic-link {
+  font-size: 0.8em; /* change iconic size here */
+  display: block;
+  position: relative;
+  width: 3em;
+  height: 3em;
+  background-color: #fff;
+  margin: 0.25em auto;
+  border-radius: 0.5em;
+  box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #bdbdbd, 0 4px 0 #fff, 0 5px 0 #bdbdbd, 0 0 0 1px #bdbdbd;
+  overflow: hidden;
+  margin-top: 0;
+}
+
+time.iconic-warning, time.iconic-link-warning {
+  box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #df691a, 0 4px 0 #fff, 0 5px 0 #df691a, 0 0 0 1px #bdbdbd;
+}
+
+time.iconic-danger, time.iconic-link-danger {
+  box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #e74c3c, 0 4px 0 #fff, 0 5px 0 #e74c3c, 0 0 0 1px #bdbdbd;
+}
+
+time.iconic *,
+time.iconic-link * {
+  display: block;
+  width: 100%;
+  font-size: 0.75em;
+  font-weight: bold;
+  font-style: normal;
+  text-align: center;
+}
+
+time.iconic strong {
+  position: absolute;
+  top: 0;
+  padding: 0.05em 0;
+  color: #fff;
+  background-color: #2c3e50;
+  border-bottom: 1px dotted #709ecc;
+  box-shadow: 0 2px 0 #2c3e50;
+}
+
+time.iconic-link strong {
+  position: absolute;
+  top: 0;
+  padding: 0.05em 0;
+  color: #fff;
+  background-color: #df691a;
+  border-bottom: 1px dotted #709ecc;
+  box-shadow: 0 2px 0 #df691a;
+}
+
+time.iconic span,
+time.iconic-link span {
+  width: 100%;
+  font-size: 0.9em;
+  letter-spacing: -0.05em;
+  padding-top: 1.4em;
+  color: #2f2f2f;
+}
+
+time.iconic em,
+time.iconic-link em {
+  font-size: 0.7em;
+  position: absolute;
+  bottom: 0;
+  color: #2c3e50;
+}
+
+/* Login page */
+.white-space-normal {
+  white-space: normal;
+}
+
+.width-100 {
+  width: 100%;
+}
+
+/* Bootstrap 4.x backports */
+.table > tbody > tr > td.align-middle {
+  vertical-align: middle;
 }

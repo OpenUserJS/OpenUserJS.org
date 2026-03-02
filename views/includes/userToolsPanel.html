@@ -2,7 +2,7 @@
 <div class="panel panel-default">
   <div class="panel-body">
     <ul class="nav nav-pills nav-justified">
-      <li><a rel="nofollow" href="{{{user.userEditProfilePageUrl}}}" class="{{^user.userEditProfilePageUrl}}disabled{{/user.userEditProfilePageUrl}}"><i class="fa fa-user"></i> Edit Profile</a></li>
+      <li><a rel="nofollow" href="{{{user.userEditProfilePageUrl}}}" class="{{^user.userEditProfilePageUrl}}disabled{{/user.userEditProfilePageUrl}}"><i class="fa fa-user"></i> {{^user.about}}Add{{/user.about}}{{#user.about}}Edit{{/user.about}} Profile</a></li>
       <li><a rel="nofollow" href="/user/preferences"><i class="fa fa-cogs"></i> Preferences</a></li>
     </ul>
     <ul class="nav nav-pills nav-justified">

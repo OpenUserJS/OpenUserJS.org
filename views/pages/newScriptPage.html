@@ -16,71 +16,9 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12">
-        <div class="col-md-4">
-          {{#newUserJS}}
-          <h2><i class="fa fa-tags"></i> Script Metadata</h2>
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <p>You may read about most UserScript metadata blocks on the <a href="http://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge wiki</a>.</p>
-            </div>
-          </div>
-          <h3>OpenUserJS.org Supported</h3>
-          <div class="list-group script-metadata-definitions">
-            <div class="list-group-item">
-              <h4 class="list-group-item-heading"><code>@description This script even does the laundry!</code></h4>
-              <p class="list-group-item-text">Specially formatted on the script page. Last value shown.</p>
-            </div>
 
-            <div class="list-group-item">
-              <h4 class="list-group-item-heading"><code>@copyright Year, Author (Author Website)</code></h4>
-              <p class="list-group-item-text">Specially formatted on the script page. All values shown in reverse order.</p>
-            </div>
-            <div class="list-group-item">
-              <h4 class="list-group-item-heading"><code>@icon url</code></h4>
-              <p class="list-group-item-text">A url or data url. Resolution should be near 48px by 48px, Used in the script list page at 16px and on the script page at ~45px. Last value is shown.</p>
-            </div>
-            <div class="list-group-item">
-              <h4 class="list-group-item-heading"><code>@license License Type; License Homepage</code></h4>
-              <p class="list-group-item-text">Specially formatted on the script page. All values shown in reverse order. If absent MIT License (Expat) is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</p>
-            </div>
-            <div class="list-group-item">
-              <h4 class="list-group-item-heading"><code>@homepageURL url</code></h4>
-              <p class="list-group-item-text">A url of http, https or mailto protocol. Specially formatted on the script page. All values shown in reverse order.</p>
-            </div>
-            <div class="list-group-item">
-              <h4 class="list-group-item-heading"><code>@supportURL url</code></h4>
-              <p class="list-group-item-text">A url of http, https or mailto protocol. Specially formatted on the script page. Last value shown.</p>
-            </div>
-            <div class="list-group-item">
-              <h4 class="list-group-item-heading"><code>@oujs:author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></h4>
-              <p class="list-group-item-text">The author of the script. Required to enable <a href="#collaboration">Collaboration</a>. Last value shown. This key may be subject to change.</p>
-            </div>
-            <div class="list-group-item">
-              <h4 class="list-group-item-heading"><code>@oujs:collaborator username</code></h4>
-              <p class="list-group-item-text">May be defined multiple times. Required for <a href="#collaboration">Collaboration</a>. All values shown in reverse order. This key may be subject to change.</p>
-            </div>
-          </div>
-
-          <a name="collaboration"></a>
-          <h3>Collaboration</h3>
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <p>To allow other users to upload modified versions of your script to your account, add <code>@oujs:author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code> to the metadata of your script, along with <code>@oujs:collaborator username</code> for every user you wish to give write access. Only the real author of the script may modify these metadata keys. Collaborators may not use GitHub integration to update the script. Add them as collaborators to the GitHub repo instead.</p>
-            </div>
-          </div>
-          {{/newUserJS}}
-          {{#newJSLibrary}}
-          <h2><i class="fa fa-question"></i> Library Docs</h2>
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <h3>OpenUserJS.org Supported</h3>
-              <p>Any UserScript on OpenUserJS.org that <code>//@require</code>'s libraries from OpenUserJS.org will link to the library on the UserScript page.</p>
-            </div>
-          </div>
-          {{/newJSLibrary}}
-        </div>
-        <div class="col-md-4">
-          <h2><i class="fa fa-plus-square"></i> New Script</h2>
+        <div class="col-md-3">
+          <h2><a id="new-script"></a><i class="fa fa-plus-square"></i> New Script<a href="#new-script" class="anchor"><i class="fa fa-link"></i></a></h2>
           <div class="list-group">
             <a href="/about/Userscript-Beginners-HOWTO" class="list-group-item">
               <h4 class="list-group-item-heading"><i class="fa fa-fw fa-book"></i> UserScript Beginners HOWTO</h4>
@@ -88,29 +26,35 @@
                 Are you new to {{#newJSLibrary}}library {{/newJSLibrary}}{{^newJSLibrary}}user {{/newJSLibrary}} scripting and thought you would just dive right in without reading anything? Well if you change your mind check out some of our documentation by clicking here. Special thanks go out to all of our collaborators for all their dedication and effort.
               </p>
             </a>
-            <a href="{{{newScriptEditorPageUrl}}}" class="list-group-item">
+            <a href="{{{newScriptEditorPageUrl}}}" class="list-group-item" id="write-script-online">
               <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-pencil"></i> Write Script Online</h4>
               <p class="list-group-item-text">
-                Click here to write a script using the Ace editor <em>(used by GitHub)</em>.
+                Click here to write a script using the Ace editor</em>.
               </p>
             </a>
             <div class="list-group-item">
-              <h4 class="list-group-item-heading"><i class="fa fa-fw fa-upload"></i> Upload Script</h4>
+              <h4 class="list-group-item-heading" id="upload-script"><i class="fa fa-fw fa-upload"></i> Upload Script</h4>
               <p class="list-group-item-text">
                 <form action="{{{uploadNewScriptPageUrl}}}" method="post" enctype="multipart/form-data" class="form-horizontal">
                   <input type="hidden" name="uploadScript" value="true">
-                  {{#newJSLibrary}}
-                  <div class="form-group">
-                    <input type="text" class="form-control" name="script_name" placeholder="Script Name" required />
-                  </div>
-                  {{/newJSLibrary}}
                   <div class="form-group">
                     <div class="input-group">
-                      <input type="file" class="form-control" name="script" placeholder="Enter email" required />
+                      <span class="input-group-btn">
+                        <span class="btn btn-primary btn-file">
+                          Browse...
+                          <input type="file" accept="{{#newUserJS}}.user{{/newUserJS}}.js" name="script" required="required" />
+                        </span>
+                      </span>
+                      <input type="text" readonly="readonly" class="form-control" />
                       <span class="input-group-btn">
                         <button class="btn btn-success" type="submit">Submit</button>
                       </span>
                     </div>
+                    <noscript>
+                      <div role="alert" class="alert alert-warning small">
+                        <i class="fa fa-exclamation-triangle"></i> <strong>JavaScript DISABLED</strong>: No file selection feedback will be given.
+                      </div>
+                    </noscript>
                   </div>
                 </form>
               </p>
@@ -118,41 +62,336 @@
             <div class="list-group-item">
               <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-repo-forked"></i> Fork An Existing Script</h4>
               <p class="list-group-item-text">
-                While logged in, click the fork button on any script's main page, or view a script's source and "Submit Code as Fork".
+                While logged in view a script's source and click "Submit Code as Fork".
               </p>
             </div>
-            <a href="{{{authedUser.userGitHubRepoListPageUrl}}}" class="list-group-item">
+            {{#authedUser.hasGithub}}
+            <a href="{{{authedUser.userGitHubRepoListPageUrl}}}" class="list-group-item" id="import-script-from-github">
               <h4 class="list-group-item-heading"><i class="octicon octicon-fw octicon-repo-clone"></i> Import Script from GitHub</h4>
               <p class="list-group-item-text">
-                Click here to import a script<em>(s)</em> from a GitHub repository. If Sync Script has already been set up for the selected repository then it should automatically be linked for any scripts imported.
+                Click here to import a script<em>(s)</em> from a personal user GitHub repository. If Sync Script using GitHub has already been set up for the selected repository then it should automatically be linked for any scripts imported or previously directly published.
               </p>
             </a>
+            {{/authedUser.hasGithub}}
             <div role="alert" class="alert alert-info">
               <i class="fa fa-fw fa-info-circle"></i> <strong>LIMITS</strong>: The current transfer size limit is set at <span class="label label-default">{{maximumUploadScriptSize}} bytes</span> per script.
             </div>
           </div>
         </div>
-        <div class="col-md-4">
-          <h2><i class="fa fa-refresh"></i> Sync Script</h2>
+
+        <div class="col-md-6">
+          <h2><a id="script-metadata"></a><i class="octicon octicon-key"></i> Script Metadata<a href="#script-metadata" class="anchor"><i class="fa fa-link"></i></a></h2>
           <div class="panel panel-default">
             <div class="panel-body">
-              <h3><i class="octicon octicon-mark-github"></i> GitHub</h3>
-              <p>You may add a webhook to one or more of your GitHub repositories to automatically keep it up to date on OpenUserJS.org.</p>
-              <h4>Instructions</h4>
-              <p>Optionally you may upload the script to the site first. You may also use <a href="{{{authedUser.userGitHubRepoListPageUrl}}}">Import from Github</a> to speed things up as a shortcut.</p>
-              <ol>
-                <li>On your target GitHub repo, click Settings &gt; Webhooks &amp; Services &gt; Add Webhook.</li>
-                <li>In the Payload URL input, paste<br /><code>https://openuserjs.org/github/hook</code></li>
-                <li>Change the Content Type dropdown to<br /><code>application/x-www-form-urlencoded</code></li>
-                <li>Click <code>Add Webhook</code>.</li>
-              </ol>
-              <p>After adding the webhook, push a change to GitHub to make sure it's working.</p>
+              <p>You may read about most UserScript metadata block keys on the <a href="https://wiki.greasespot.net/Metadata_Block">Greasespot wiki</a> and at the <a href="https://sourceforge.net/p/greasemonkey/wiki/Metadata_Block/">Greasemonkey on SourceForge classic wiki</a>. Some samples to click and read <noscript>, with JavaScript enabled,</noscript> are listed below with their respective metadata block names.</p>
             </div>
           </div>
+          {{#newJSLibrary}}
+          <h3><a id="userscript-block"></a>UserScript Block<a href="#userscript-block" class="anchor"><i class="fa fa-link"></i></a></h3>
+          <div class="panel-group" id="accordion-userscript-block">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-exclude" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-exclude" href="#collapse-userscript-exclude"><code>@exclude *</code></a>
+                  <a href="#userscript-block-exclude" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-exclude" class="panel-collapse collapse in">
+                <div class="panel-body">
+                  <p><strong>This is required.</strong></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{/newJSLibrary}}
+          <h3><a id="userscript{{#newJSLibrary}}-and-userlibrary{{/newJSLibrary}}-block"></a>UserScript{{#newJSLibrary}} and UserLibrary{{/newJSLibrary}} Block<a href="#userscript{{#newJSLibrary}}-and-userlibrary{{/newJSLibrary}}-block" class="anchor"><i class="fa fa-link"></i></a></h3>
+          <div class="panel-group" id="accordion-user{{#newUserJS}}script{{/newUserJS}}-block">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-name" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-name"><code>@name My Script</code></a>
+                  <a href="#userscript-block-name" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-name" class="panel-collapse collapse in">
+                <div class="panel-body">
+                  <p><strong>Default non-localized is required.</strong></p>
+                  <p>Last value is used.</p>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-description" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-description"><code>@description This script even does the laundry!</code></a>
+                  <a href="#userscript-block-description" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-description" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>Specially formatted on the script page.</p>
+                  <p>Last value shown.</p>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-copyright" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-copyright"><code>@copyright Year, Author (Author Website)</code></a>
+                  <a href="#userscript-block-copyright" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-copyright" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>Specially formatted on the script page.</p>
+                  <p>All values shown in reverse order. Last key is primary.</p>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-license" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-license"><code>@license License Type; License Homepage</code></a>
+                  <a href="#userscript-block-license" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-license" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>Specially formatted on the script page. All values shown in reverse order. If absent <a href="https://spdx.org/licenses/MIT.html"><code>MIT</code></a> <a href="https://opensource.org/licenses/MIT">License <em>(Expat)</em></a> is implied. See <a href="/about/Terms-of-Service#licensing">licensing terms</a> for specifics.</p>
+                  <p><strong><code>License Type</code> component is required</strong> using at least one <a href="https://opensource.org/licenses/category">OSI approved</a> case&dash;sensitive <a href="https://spdx.org/licenses/">SPDX short identifier</a> and must be the only primary, last, <code>@license</code> key. Single short ids are accepted only per license key. i.e. No conjunction composites like <code>AND</code> or <code>OR</code>, or <code>WITH</code>exceptions. Any additional license is considered conjunctive with an implied <code>AND</code> using another <code>@license</code> key.</p>
+                  <p><strong><code>; License Homepage</code> component is currently optional</strong></p>
+                  <p>A url of http or https.</p>
+                  <p><strong>Single Licensed Example</strong> <em>(No specific document license web reference)</em>:
+                    <pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br />{{#newJSLibrary}}<code>// ==UserLibrary==</code><br />{{/newJSLibrary}}<code>// @license MIT</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code>{{#newJSLibrary}}<br /><code>// ==/UserLibrary==</code><br />{{/newJSLibrary}}</pre>
+                    &hellip; corresponding implied SPDX license expression syntax of <code>MIT</code> i.e. This script contains MIT primary source Code only.
+                  </p>
+                  <p><strong>Dual Licensed Example</strong> <em>(Specific document license web references)</em>:
+                    <pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br />{{#newJSLibrary}}<code>// ==UserLibrary==</code><br />{{/newJSLibrary}}<code>// @license CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode</code><br /><code>// @license GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code>{{#newJSLibrary}}<br /><code>// ==/UserLibrary==</code><br />{{/newJSLibrary}}</pre>
+                    &hellip; corresponding implied SPDX license expression syntax 2.0 of <code>(GPL-3.0-or-later AND CC-BY-NC-SA-4.0)</code> i.e. This script contains GPL primary Code and secondary CC Content.
+                  </p>
+                  <p><strong>Tertiary Licensed Example</strong> <em>(Mixed document license web reference)</em>:
+                    <pre class="small"><code>// ==UserScript==</code><br /><code>// ...</code><br />{{#newJSLibrary}}<code>// ==UserLibrary==</code><br />{{/newJSLibrary}}<code>// @license CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode</code><br /><code>// @license MIT</code><br /><code>// @license GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt</code><br /><code>// ...</code><br /><code>// ==/UserScript==</code>{{#newJSLibrary}}<br /><code>// ==/UserLibrary==</code><br />{{/newJSLibrary}}</pre>
+                    &hellip; corresponding implied SPDX license expression syntax 2.0 of <code>(GPL-3.0-or-later AND MIT AND CC-BY-NC-SA-4.0)</code> i.e. This script contains GPL primary Code, MIT secondary Code, and tertiary CC Content. Ideally you should avoid multiple Code licenses and by keeping additional support scripts in a separate Library for clarity since <code>(MIT AND GPL-3.0-or-later AND CC-BY-NC-SA-4.0)</code> is considered incompatible licensing.
+                  </p>
+
+                  <p>When in doubt it may be a wise choice to go with the site default Code license of <code>MIT</code> or some other popular license such as <code>GPL-3.0-or-later</code>. If you don't understand a less popular license then please don't use it when authoring or consult your legal counsel. Licensing is both protective and permissive for all parties. Figure out what balance you need and make your decision.</p>
+                  <p>All values shown in reverse order. Last key in source code is primary; Next prior key in source code is secondary; and so on.</p>
+                </div>
+              </div>
+            </div>
+            {{#newUserJS}}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-icon" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-icon"><code>@icon url</code></a>
+                  <a href="#userscript-block-icon" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-icon" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>A url of http, https, or an image <a href="https://www.wikipedia.org/wiki/Data_URI_scheme">data uri</a>.</p>
+                  <p>Resolution should be near 48px by 48px.</p>
+                  <p>Used in the script list page at 16px and on the script page at ~45px.</p>
+                  <p>Last value is shown.</p>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-homepageurl" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-homepageurl"><code>@homepageURL url</code></a>
+                  <a href="#userscript-block-homepageurl" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-homepageurl" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>A url of http or https. Specially formatted on the script page.</p>
+                  <p>All values shown in reverse order.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-supporturl" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-supporturl"><code>@supportURL url</code></a>
+                  <a href="#userscript-block-supporturl" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-supporturl" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>A url of http, https or mailto protocol. Specially formatted on the script page.</p>
+                  <p>Last value shown.</p>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-contributionurl" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-contributionurl"><code>@contributionURL url</code></a>
+                  <a href="#userscript-block-contributionurl" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-contributionurl" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>A url of https protocol only. Used for monetary requests for contributions. <code>@contributionAmount</code> is currently unsupported. Specially formatted on the script issues list and script issue page.</p>
+                  <p>Last value shown.</p>
+                </div>
+              </div>
+            </div>
+            {{/newUserJS}}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-version" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-user{{#newUserJS}}script{{/newUserJS}}-block" href="#collapse-userscript-version"><code>@version 1.0.0</code></a>
+                  <a href="#userscript-block-version" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-version" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>Enables the ability to use automatic script updates in most .user.js engines.</p>
+                  <p>Usually major dot minor dot build <em>(or Patch)</em>. May utilize the <a href="https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/version/format">Manifest Version Format</a> previously known as the Toolkit version format.</p>
+                  <p>Last value shown.</p>
+                </div>
+              </div>
+            </div>
+            {{#newUserJS}}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="userscript-block-updateurl" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-userscript-block" href="#collapse-userscript-updateurl"><code>@updateURL https://openuserjs.org/meta/{{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}/My_Script.meta.js</code></a>
+                  <a href="#userscript-block-updateurl" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-userscript-updateurl" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p><strong>Required in lockdown mode.</strong> See <a href="/about/Frequently-Asked-Questions#q-does-openuserjs-org-have-meta-">this FAQ item</a> for more.</p>
+                  <p>Last value is used.</p>
+                </div>
+              </div>
+            </div>
+            {{/newUserJS}}
+          </div>
+          <h3><a id="openuserjs-block"></a>OpenUserJS Block<a href="#openuserjs-block" class="anchor"><i class="fa fa-link"></i></a></h3>
+          <div class="panel-group" id="accordion-openuserjs-block">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="openuserjs-block-author" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-openuserjs-author"><code>@author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code></a>
+                  <a href="#openuserjs-block-author" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-openuserjs-author" class="panel-collapse collapse in">
+                <div class="panel-body">
+                  <p>The OpenUserJS Author username of the script.</p>
+                  <p><strong>Required to enable</strong> <a href="#collaboration">Collaboration</a>.</p>
+                  <p>Last value shown.</p>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a id="openuserjs-block-collaborator" rel="bookmark"></a>
+                  <a data-toggle="collapse" data-parent="#accordion-openuserjs-block" href="#collapse-openuserjs-collaborator"><code>@collaborator username</code></a>
+                  <a href="#openuserjs-block-collaborator" class="anchor"><i class="fa fa-link"></i></a>
+                </h5>
+              </div>
+              <div id="collapse-openuserjs-collaborator" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>The OpenUserJS Author username to collaborate with.</p>
+                  <p><strong>Required to activate</strong> <a href="#collaboration">Collaboration</a>. <strong>Please ensure the usernames exist for your scripts security.</strong></p>
+                  <p>May be defined multiple times.</p>
+                  <p>All values shown in reverse order.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <h2><a id="sync-script"></a><i class="fa fa-refresh"></i> Sync Script<a href="#sync-script" class="anchor"><i class="fa fa-link"></i></a></h2>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <h3><a id="collaboration"></a><img src="/images/favicon.gs.min.svg" width="26" height="26"> Collaboration<a href="#collaboration" class="anchor"><i class="fa fa-link"></i></a></h3>
+              <p>To allow other users to upload modified versions of your script to your account from this site create an OpenUserJS metadata block and add the necessary keys.
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4>
+                    <a id="sync-script-collaboration" rel="bookmark"></a>
+                    <a data-toggle="collapse" data-parent="#accordion-sync-script-collaboration" href="#collapse-collaboration-instructions">Instructions</a>
+                  </h4>
+                </div>
+                <div id="collapse-collaboration-instructions" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <p>Add one for you yourself and for every existing user you wish to give write access as demonstrated here:</p>
+                    <pre class="small"><code>// ==OpenUserJS==</code><br /><code>// @author {{#authedUser}}{{authedUser.name}}{{/authedUser}}{{^authedUser}}username{{/authedUser}}</code><br /><code>// @collaborator username</code><br /><code>// ==/OpenUserJS==</code></pre></p>
+                    <h4>Caveats</h4>
+                    <ul class="small">
+                      <li>Only the real author of the script may modify these metadata keys.</li>
+                      {{#authedUser.hasGithub}}
+                      <li>Collaborators on this site may not use GitHub integration to update the script. Add them as collaborators to the GitHub repository instead.</li>
+                      <li>If the webhook is enabled on a GitHub repository it will clobber any changes here on this site.</li>
+                      {{/authedUser.hasGithub}}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{#authedUser.hasGithub}}
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <h3><a id="github"></a><i class="octicon octicon-mark-github"></i> GitHub<a href="#github" class="anchor"><i class="fa fa-link"></i></a></h3>
+              <p>You may add a webhook to one or more of your personal user GitHub repositories to automatically keep it up to date on OpenUserJS.org.</p>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4>
+                    <a id="sync-script-github" rel="bookmark"></a>
+                    <a data-toggle="collapse" data-parent="#accordion-sync-script-github" href="#collapse-github-instructions">Instructions</a>
+                  </h4>
+                </div>
+                <div id="collapse-github-instructions" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <p>You may use <a href="#write-script-online">Write Script Online</a> or <a href="#upload-script">Upload Script</a> to the site first to determine if there are any validation issues. When the service is available you may use the link at <a href="#import-script-from-github">Import Script from GitHub</a> to speed things up as a shortcut.</p>
+                    <ol>
+                      <li>Ensure that you have and use a default <code>master</code> branch.</li>
+                      <li>On your target GitHub repo, click Settings &gt; Webhooks &gt; Add Webhook.</li>
+                      <li>In the Payload URL input, paste<br /><code>https://openuserjs.org/github/hook</code></li>
+                      <li>Change the Content Type dropdown to<br /><code>application/x-www-form-urlencoded</code></li>
+                      <li>Click <code>Add Webhook</code>.</li>
+                    </ol>
+                    <p>After adding the webhook, push a change to GitHub to make sure it's working.</p>
+                    <h4>Caveats</h4>
+                    <ul class="small">
+                      <li>This site will return an acknowledgement to GitHub of acceptance for queued retrieval. Larger payloads will take more time to process.</li>
+                      <li>GitHub currently has a caching mecahnism that may prevent serving the next version from being pulled too quickly so please give a little time in-between commits.</li>
+                      <li>If the database is locked, such as during brief maintenance periods or lockdown, updates may be temporarily rejected and may need to be redelivered manually.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{/authedUser.hasGithub}}
         </div>
       </div>
     </div>
   </div>
   {{> includes/footer.html }}
+  {{> includes/scripts/autoClickBookmark.html }}
+  {{> includes/scripts/browseFeedback.html }}
 </body>
 </html>

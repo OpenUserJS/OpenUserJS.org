@@ -1,0 +1,139 @@
+<script type="text/javascript"{{#nonce}} nonce="{{nonce}}"{{/nonce}}>
+  (function () {
+
+    var captcha = document.querySelector('div.h-captcha');
+
+    // NOTE: Keep in sync with helper
+    function cleanFilename(aFilename, aDefaultName) {
+      // Blacklist problem characters (slashes, colons, etc.).
+      var cleanName = (aFilename || '').replace(/[\\\/:*?\'\"<>|#;@=&]/g, '')
+
+      // Make whitespace readable.
+      .replace(/(\s|%20)+/g, '_');
+
+      return cleanName || aDefaultName;
+    };
+
+    function onDOMContentLoaded(aEv) {
+      var username = document.querySelector('input[name="username"]');
+      var auth = document.querySelector('select[name="auth"]');
+      var consent = document.querySelector('input[name="consent"]');
+      var action = document.querySelector('button#action');
+      var blocking = null;
+      var icon = ' <i class="fa fa-sign-in fa-fw"></i>';
+
+      function onInput(aEv) {
+        var req = new XMLHttpRequest();
+        var wantname = cleanFilename(aEv.target.value, '');
+
+        function show(aConsent) {
+          action.innerHTML = action.innerHTML = 'Sign In' + icon
+          action.classList.add('btn-success');
+          action.classList.remove('btn-info');
+          action.classList.remove('btn-warning');
+
+          if (captcha) {
+            if (!blocking) {
+              captcha.style.display = 'none';
+            } else {
+              captcha.style.display = 'block';
+            }
+          }
+
+          if (aConsent) {
+            consent.checked = false;
+          } else {
+            consent.checked = true;
+          }
+        }
+
+        function hide() {
+          action.innerHTML = action.innerHTML = 'Sign Up' + icon;
+          action.classList.remove('btn-success');
+          action.classList.remove('btn-warning');
+          action.classList.add('btn-info');
+
+          if (captcha) {
+            captcha.style.display = 'block';
+          }
+
+          consent.checked = false;
+        }
+
+        function hideEx() {
+          action.innerHTML = action.innerHTML = 'Next' + icon;
+          action.classList.remove('btn-info');
+          action.classList.remove('btn-success');
+          action.classList.add('btn-warning');
+
+          if (captcha) {
+            captcha.style.display = 'block';
+          }
+
+          consent.checked = false;
+        }
+
+        if (wantname) {
+          req.open('HEAD', '/api/user/exist/' + wantname);
+          req.onreadystatechange = function () {
+            if (this.readyState == this.DONE) {
+              switch (this.status) {
+                case 204:
+                  blocking = true;
+                  show(/ consent$/.test(this.getResponseHeader('Warning')));
+                  auth.value = '';
+                  break;
+                case 200:
+                  blocking = false;
+                  show(/ consent$/.test(this.getResponseHeader('Warning')));
+                  auth.value = '';
+                  break;
+                case 429:
+                  hideEx();
+                  auth.value = 'github';
+                  break;
+                default:
+                  hide();
+                  auth.value = 'github';
+              }
+            }
+          };
+          req.send();
+        } else {
+          hide();
+          auth.value = '';
+        }
+
+        if (username.value !== wantname) {
+          username.value = wantname;
+        }
+      }
+
+      if (username && auth && action) {
+        action.innerHTML = action.innerHTML.replace(/Next/, 'Sign Up');
+        action.classList.remove('btn-danger');
+        action.classList.add('btn-info');
+
+        username.addEventListener('input', onInput, {
+          capture : true,
+          passive : true
+        });
+      }
+    }
+
+    if (captcha) {
+      setInterval(function () {
+        if (captcha && captcha.hasChildNodes()) {
+          captcha.removeAttribute('class');
+          captcha.removeAttribute('data-sitekey');
+        }
+      }, 1);
+    }
+
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded, {
+      capture : true,
+      passive : true
+    });
+
+  })();
+</script>

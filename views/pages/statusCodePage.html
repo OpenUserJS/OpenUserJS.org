@@ -17,13 +17,95 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <h1 class="status-code text-center">{{statusCode}}</h1>
-            <p class="text-center">{{{statusMessage}}}</p>
-            <p class="text-center"> <a href="javascript: void(0);" onclick="history.go(-1);"><i class="fa fa-arrow-circle-left"></i>Go Back</a>.</p>
+            <p class="text-center">
+            {{#isCustomView}}
+              {{#statusData}}
+                {{#isAdminNpmVersionView}}
+                  <span class="badgen">
+                    host <a href="https://github.com/npm/npm/tree/v{{version}}">v{{version}}</a>
+                  </span>
+                  <a href="https://www.npmjs.com/package/npm">
+                    <img src="https://badgen.net/npm/v/npm?cache=86400" />
+                  </a>
+                {{/isAdminNpmVersionView}}
+                {{#isAdminGitShortView}}
+                  <a href="https://github.com/OpenUserJS/OpenUserJS.org/tree/{{shortHash}}">
+                    Tree: <strong><code>{{shortHash}}</code></strong>
+                  </a>
+                {{/isAdminGitShortView}}
+                {{#isAdminGitBranchView}}
+                  <a href="https://github.com/OpenUserJS/OpenUserJS.org/tree/{{branch}}">
+                    Branch: <strong>{{branch}}</strong>
+                  </a>
+                {{/isAdminGitBranchView}}
+                {{#isAdminProcessCloneView}}
+                  Clone: <strong>{{clone}}</strong>
+                {{/isAdminProcessCloneView}}
+                {{#isAdminSessionLengthView}}
+                  Session Length: <strong>{{length}}</strong>
+                {{/isAdminSessionLengthView}}
+                {{#isGHImport}}
+                  {{{statusMessage}}}<br /><a href="https://github.com/{{user}}/{{repo}}/tree/{{default_branch}}/{{path}}#bypass=true"><b>{{utf_pathname}}</b>{{utf_pathext}}</a>
+                {{/isGHImport}}
+                {{#isListView}}
+                  {{{statusMessage}}}<br />Please retry {{#retryAfter}}after approximately {{retryAfter}} seconds{{/retryAfter}}{{^retryAfter}}later{{/retryAfter}}.
+                {{/isListView}}
+              {{/statusData}}
+            {{/isCustomView}}
+            {{^isCustomView}}
+              {{{statusMessage}}}
+            {{/isCustomView}}
+            </p>
+            <div class="text-center">
+              <ul class="nav navpills">
+                <li><a id="action" href="#"></a></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
   {{> includes/footer.html }}
+  {{^suppressNavigation}}
+  <script type="text/javascript">
+    (function () {
+      'use strict';
+
+      function onClickReload(aEv) {
+        window.location.reload(false);
+      }
+
+      function onClickClose(aEv) {
+        window.close();
+      }
+
+      function onClickGoBack(aEv) {
+        window.history.back();
+      }
+
+      function onDOMContentLoaded(aEv) {
+        var thisNode = document.querySelector('#action');
+        if (thisNode) {
+          if (history.length > 1) {
+            thisNode.innerHTML = '<i class="fa fa-arrow-circle-left"></i> Go Back';
+            thisNode.addEventListener('click', onClickGoBack);
+          } else {
+            if (window.opener) {
+              thisNode.innerHTML = '<i class="fa fa-window-close"></i> Close window';
+              thisNode.addEventListener('click', onClickClose);
+            } else {
+              thisNode.innerHTML = '<i class="fa fa-refresh"></i> Reload window';
+              thisNode.addEventListener('click', onClickReload);
+            }
+          }
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+
+    })();
+  </script>
+  {{/suppressNavigation}}
 </body>
 </html>

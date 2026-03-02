@@ -17,7 +17,7 @@ var onErr = function (aErr, aOnErrFn) {
 
 exports.countTask = function (aModelListQuery, aDict, aKey, aOnErrFn) {
   return function (aCallback) {
-    aModelListQuery.model.count(aModelListQuery._conditions, function (aErr, aModelListCount) {
+    aModelListQuery.model.countDocuments(aModelListQuery._conditions, function (aErr, aModelListCount) {
       if (aErr) {
         onErr(aErr, aOnErrFn);
         aCallback();

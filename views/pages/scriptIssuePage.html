@@ -5,15 +5,7 @@
   {{> includes/head.html }}
   <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/bootstrap-markdown/css/bootstrap-markdown.min.css">
   <link rel="stylesheet" type="text/css" media="all" href="/css/scriptPage.css">
-  <style>
-    #show-reply-form-when-visible {
-      -moz-transition: height 1s ease;
-      -ms-transition: height 1s ease;
-      -o-transition: height 1s ease;
-      -webkit-transition: height 1s ease;
-      transition: height 1s ease;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" media="all" href="/redist/npm/animate.css/animate.css">
 </head>
 <body>
   {{> includes/header.html }}
@@ -33,7 +25,7 @@
 
               </ul>
               <a class="btn btn-sm {{^discussion.open}}btn-link{{/discussion.open}}{{#discussion.open}}btn-success{{/discussion.open}}" {{#canOpen}}href="{{{discussion.issueOpenUrl}}}"{{/canOpen}}>Open</a>
-              <a class="btn btn-sm {{#discussion.open}}btn-link{{/discussion.open}}{{^discussion.open}}btn-danger{{/discussion.open}}" {{#canClose}}href="{{{discussion.issueCloseUrl}}}"{{/canClose}}>{{#discussion.open}}Close{{/discussion.open}}{{^discussion.open}}Closed{{/discussion.open}}</a>
+              <a {{#canClose}}rel="bookmark" referrerpolicy="same-origin" data-toggle="modal" data-target="#closeIssueScriptModal" href="#" {{/canClose}}class="btn btn-sm {{#discussion.open}}btn-link{{/discussion.open}}{{^discussion.open}}btn-danger{{/discussion.open}}">{{#discussion.open}}Close{{/discussion.open}}{{^discussion.open}}Closed{{/discussion.open}}</a>
             </div>
           </div>
           <div class="container-fluid comments">
@@ -53,27 +45,41 @@
                 </div>
                 {{/paginationRendered}}
               </section>
+              <section class="topic-area list-group">
+                {{> includes/commentForm.html }}
+              </section>
             </div>
           </div>
         </div>
       </div>
       <div class="container-fluid col-sm-4">
-
+        {{> includes/searchBarPanel.html }}
+        {{#script.canDonate}}
+        {{#script.contribution}}
+        <div class="panel">
+          <div class="panel-body">
+            <div class="btn-group btn-group-justified">
+              <a rel="bookmark" referrerpolicy="same-origin" href="#" data-toggle="modal" data-target="#donateScriptModal" class="btn btn-donate" title="Monetary donations for this Author">
+                <i class="fa fa-fw fa-money"></i><span class=""> Donate</span>
+              </a>
+            </div>
+          </div>
+          {{/script.contribution}}
+          {{/script.canDonate}}
+        </div>
       </div>
     </div>
   </div>
 
-  <div id="show-reply-form-when-visible"></div>
-  {{> includes/commentForm.html }}
+  {{> includes/scriptModals.html }}
   {{> includes/footer.html }}
   {{#paginationRendered}}
       {{> includes/scripts/showTopPagination.html }}
   {{/paginationRendered}}
   {{> includes/scripts/lazyIconScript.html }}
-  {{#authedUser}}
+  {{> includes/scripts/formControlClear.html }}
   {{> includes/scripts/markdownEditor.html }}
   {{> includes/scripts/commentReplyScript.html }}
-  {{/authedUser}}
   {{^authedUser}}
     {{> includes/scripts/commentReplyTooltip.html }}
   {{/authedUser}}

@@ -2,20 +2,20 @@
   <table class="table table-hover table-condensed table-striped">
     <thead>
       <tr>
-        <th class="text-center"><a href="?orderBy=topic&orderDir={{orderDir.topic}}">Topic</a></th>
+        <th class="text-center{{#orderedByTopic}} active{{/orderedByTopic}}"><a href="?orderBy=topic&orderDir={{orderDir.topic}}">Topic</a></th>
         {{#multipleCategories}}
         <th class="text-center td-fit">Category</th>
         {{/multipleCategories}}
-        <th class="text-center td-fit">Users</th>
-        <th class="text-center td-fit"><a href="?orderBy=comments&orderDir={{orderDir.comments}}">Replies</a></th>
-        <th class="text-center td-fit"><a href="?orderBy=created&orderDir={{orderDir.created}}">Created</a></th>
-        <th class="text-center td-fit"><a href="?orderBy=updated&orderDir={{orderDir.updated}}">Updated</a></th>
+        <th class="text-center td-fit" title="Users"><span class="visible-lg visible-md">Users</span><span class="hidden-lg hidden-md"><i class="fa fa-user"></i></th>
+        <th class="text-center td-fit{{#orderedByComments}} active{{/orderedByComments}}" title="Replies"><a href="?orderBy=comments&orderDir={{orderDir.comments}}"><span class="visible-lg visible-md">Replies</span><span class="hidden-lg hidden-md"><i class="fa fa-comment"></i></a></th>
+        <th class="text-center td-fit{{#orderedByCreated}} active{{/orderedByCreated}}" title="Created"><a href="?orderBy=created&orderDir={{orderDir.created}}"><span class="visible-lg visible-md">Created</span><span class="hidden-lg hidden-md"><i class="fa fa-clock-o"></i></a></th>
+        <th class="text-center td-fit{{#orderedByUpdated}} active{{/orderedByUpdated}}" title="Updated"><a href="?orderBy=updated&orderDir={{orderDir.updated}}"><span class="visible-lg visible-md">Updated</span><span class="hidden-lg hidden-md"><i class="fa fa-history"></i></a></th>
       </tr>
     </thead>
     <tbody>
       {{#discussionList}}
       <tr class="tr-link">
-        <td>
+        <td class="align-middle">
           <b>
             <a href="{{{discussionPageUrl}}}" class="tr-link-a">{{topic}}</a>
             {{^open}}
@@ -24,23 +24,36 @@
           </b>
         </td>
         {{#multipleCategories}}
-        <td class="td-fit">
-          <span class="label label-default"><a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.name}}</a></span>
+        <td class="td-fit align-middle">
+          {{#category.isScriptIssue}}
+          <span class="label label-default"><a {{#category.categoryAuthorPageUrl}}href="{{{category.categoryAuthorPageUrl}}}"{{/category.categoryAuthorPageUrl}}>{{category.authorName}}</a></span>
+          <br class="hidden-lg hidden-md">
+          <span style="color: #ccc;">/</span>
+          <span class="label label-default"><a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.scriptName}}</a></span>
+          {{/category.isScriptIssue}}
+          {{^category.isScriptIssue}}
+          <span class="label label-default">
+            <a {{#category.categoryPageUrl}}href="{{{category.categoryPageUrl}}}"{{/category.categoryPageUrl}}>{{category.name}}</a>
+          </span>
+          {{/category.isScriptIssue}}
         </td>
         {{/multipleCategories}}
-        <td class="td-fit">
+        <td class="td-fit align-middle">
           {{#recentCommentors}}
           <span class="label label-info"><a href="/users/{{{name}}}">{{{name}}}</a></span>
+          <br class="hidden-lg hidden-md">
           {{/recentCommentors}}
         </td>
-        <td class="text-center td-fit">
+        <td class="text-center td-fit align-middle">
           <p>{{replies}}</p>
         </td>
         <td class="text-center td-fit">
-          <time datetime="{{createdISOFormat}}" title="{{created}}">{{createdHumanized}}</time>
+          <time datetime="{{createdISOFormat}}" title="{{created}}" class="iconic">{{{createdHumanizedIconic}}}</time>
         </td>
         <td class="text-center td-fit">
-          <time datetime="{{updatedISOFormat}}" title="{{updated}}">{{updatedHumanized}}</time>
+          {{#isUpdated}}
+          <time datetime="{{updatedISOFormat}}" title="{{updated}}" class="iconic">{{{updatedHumanizedIconic}}}</time>
+          {{/isUpdated}}
         </td>
       </tr>
       {{/discussionList}}

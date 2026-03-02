@@ -15,6 +15,8 @@ Neatness counts.
 
 **Always use `'use strict';` in all .js files**
 
+Current ECMAScript 5 is implemented and supported at this time. This may change eventually to some ECMAScript 6 from the finalization that occurred in June of 2015.
+
 ---
 
 ### EditorConfig
@@ -153,7 +155,7 @@ Generally, use line comments. Save block comments for formal documentation and f
 **Variable and function names should be clearly descriptive of what they contain, in the context of the application**.
 
 Names should be formed from the 26 upper and lower case letters *(A-Z, a-z)*, the 10 digits _(0-9)_, and the underscore *(_)*.
-Avoid use of international characters because they may not read well or be understood everywhere and may cause [BOM][WIKIPEDIABOM]s to appear. Do not use the dollar sign *($)* or backslash *(\)* in names.
+Avoid use of international characters because they may not read well or be understood everywhere and may cause [BOM][wikipediaBOM]s to appear. Do not use the dollar sign *($)* or backslash *(\)* in names.
 
 Do not use an underscore *(_)* as the first character of a name. It is sometimes used to indicate privacy, but it does not actually provide privacy.
 If privacy is important, use the forms that provide private members. Avoid conventions that demonstrate a lack of competence.
@@ -385,8 +387,9 @@ The following **may not** be used:
 * `eval()`
 * `Function` constructor (it uses `eval()`)
 * `with()` *(it can be highly inconsistent)*
+* `Promise` *(unpredictable and considered unstable in some browser implementations at this time. Utilize callback structure with some standards of receiving `function optionalName(aArg1, aArg2, ..., aCallback)` and sending `function optionalName(aCallback, aArg1, aArg2, ...)` signatures for use with internal Code styling and async package including possible `aErr` argument parameter)*
 
-Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`. If you're trying to force a server side function to run asynchronously use [`setImmediate`](http://nodejs.org/api/timers.html#timers_setimmediate_callback_arg) *(or [`process.nextTick`](http://nodejs.org/api/process.html#process_process_nexttick_callback) if you really know what you're doing)*.
+Do not pass strings to `setTimeout` or `setInterval`. They use `eval()`. If you're trying to force a server side function to run asynchronously use [`setImmediate`][nodejsTimersSetImmediate] *(or [`process.nextTick`][nodejsProcessProcessnextTick] if you really know what you're doing)*.
 
 `parseInt()` must be used with a radix parameter, e.g.,
 ```javascript
@@ -395,11 +398,13 @@ var i = parseInt(num, 10); // base 10 - decimal system
 
 Read more on the [awful parts of JavaScript][awfulparts].
 
-  [WIKIPEDIABOM]: http://www.wikipedia.org/wiki/Byte_order_mark
-  [IETFRFC3629S4]: http://tools.ietf.org/html/rfc3629#section-4
-  [awfulparts]: http://oreilly.com/javascript/excerpts/javascript-good-parts/awful-parts.html
-  [camelcase]: http://www.wikipedia.org/wiki/CamelCase
-  [codeconventions]: http://javascript.crockford.com/code.html
-  [editorconfig]: http://editorconfig.org/
-  [impliedglobals]: http://www.adequatelygood.com/Finding-Improper-JavaScript-Globals.html
-  [typecoercion]: http://webreflection.blogspot.com/2010/10/javascript-coercion-demystified.html
+[nodejsProcessProcessnextTick]: https://nodejs.org/api/process.html#process_process_nexttick_callback_args
+[nodejsTimersSetImmediate]: https://nodejs.org/api/timers.html#timers_setimmediate_callback_args
+[wikipediaBOM]: https://www.wikipedia.org/wiki/Byte_order_mark
+[IETFRFC3629S4]: https://tools.ietf.org/html/rfc3629#section-4
+[awfulparts]: http://archive.oreilly.com/pub/a/javascript/excerpts/javascript-good-parts/awful-parts.html
+[camelcase]: https://www.wikipedia.org/wiki/CamelCase
+[codeconventions]: http://javascript.crockford.com/code.html
+[editorconfig]: http://editorconfig.org/
+[impliedglobals]: http://www.adequatelygood.com/Finding-Improper-JavaScript-Globals.html
+[typecoercion]: http://webreflection.blogspot.com/2010/10/javascript-coercion-demystified.html

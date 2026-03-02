@@ -1,5 +1,80 @@
 {
-  "secret" : "someSecretStringForSession",
-  "connect" : "mongodb://nodejitsu_sizzlemctwizzle:b6vrl5hvkv2a3vvbaq1nor7fdl@ds045978.mongolab.com:45978/nodejitsu_sizzlemctwizzle_nodejitsudb8203815757",
-  "maximum_upload_script_size": 1048576
+ "secret" : "someSecretStringForSession",
+ "connect" : "mongodb://dev:oujs123@localhost/openuserjs_devel",
+ "limiter" : "mongodb://dev:oujs123@localhost:27017",
+ "maximum_upload_script_size": 1048576,
+ "ttl": {
+  "minimum": 2,
+  "nominal": 6,
+  "timerSanity": 7,
+  "timerSanityExpiry": 11,
+  "maximum": 12
+ },
+
+ "captchaOpts" : {
+  "isMath": true,
+  "mathMin": 999,
+  "mathMax": 9999,
+  "mathOperator": "+-",
+  "useFont": null,
+  "size": 4,
+  "ignoreChars": "0o1i",
+  "noise": 6,
+  "color": true,
+  "background": null,
+  "width": 200,
+  "height": 50,
+  "fontSize": 56,
+  "charPreset": null
+ },
+
+ "NOTE1": "WATCHPOINT: ~60 second poll time in MongoDB",
+
+ "fudgeMin": 60,
+ "fudgeSec": 5,
+ "waitInstallCapMin": {
+  "dev": 1,
+  "pro": 60
+ },
+ "waitRateInstallSec": {
+  "dev": 30,
+  "pro": 60
+ },
+ "waitRateMetaSec": {
+  "dev": 30,
+  "pro": 60
+ },
+ "waitApiCapMin": {
+  "dev": 1,
+  "pro": 15
+ },
+ "waitAuthCapMin": {
+  "dev": 2,
+  "pro": 1440
+ },
+ "waitCaptchaCapMin": {
+  "dev": 1,
+  "pro": 1440
+ },
+ "waitListCapMin": {
+  "dev": 1,
+  "pro": 60
+ },
+ "waitListRateSec": {
+  "dev": 2,
+  "pro": 4
+ },
+ "waitListAnyQRateSec": {
+  "dev": 20,
+  "pro": 40
+ },
+ "waitListSameQCapMin": {
+  "dev": 5,
+  "pro": 15
+ },
+
+ "NOTE2": "Requires DB migration for changing below settings",
+
+ "scriptSearchQueryStoreMaxDescription": 512,
+ "scriptSearchQueryStoreMaxAbout": 256
 }

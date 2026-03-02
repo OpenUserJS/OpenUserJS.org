@@ -64,7 +64,7 @@ exports.paginateTemplate = paginateTemplate;
 
 var newPagination = function (aCurrentPage, aItemsPerPage) {
   // Options
-  var maxItemsPerPage = 100;
+  var maxItemsPerPage = 25;
   var defaultItemsPerPage = 25;
 
   //
@@ -126,7 +126,11 @@ exports.statusCodePage = function (aReq, aRes, aNext, aOptions) {
   pageMetadata(aOptions, [aOptions.statusCode, aOptions.statusMessage], aOptions.statusMessage);
 
   //---
-  aRes.status(aOptions.statusCode).render('pages/statusCodePage', aOptions);
+  if (typeof aOptions.statusCode !== 'number') {
+    aRes.status(400).render('pages/statusCodePage', aOptions);
+  } else {
+    aRes.status(aOptions.statusCode).render('pages/statusCodePage', aOptions);
+  }
 };
 
 // Add page metadata, containing title, description and keywords.
@@ -150,12 +154,12 @@ function pageMetadata(aOptions, aTitle, aDescription, aKeywords) {
     'user script',
     'user scripts',
     'user.js',
+    '.user.js',
     'repository',
     'Greasemonkey',
     'Greasemonkey Port',
-    'Scriptish',
-    'TamperMonkey',
-    'Violent monkey',
+    'Tampermonkey',
+    'Violentmonkey',
     'JavaScript',
     'add-ons',
     'extensions',
