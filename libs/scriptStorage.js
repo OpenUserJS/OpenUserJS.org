@@ -156,6 +156,7 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
               case 'GM_addElement':
               case 'GM_addStyle':
               case 'GM_addValueChangeListener':
+              case 'GM.addValueChangeListener':
               case 'GM_deleteValue':
               case 'GM.deleteValue':
               case 'GM_download':
@@ -176,6 +177,7 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
               case 'GM_registerMenuCommand':
               case 'GM.registerMenuCommand':
               case 'GM_removeValueChangeListener':
+              case 'GM.removeValueChangeListener':
               case 'GM_saveTab':
               case 'GM_setClipboard':
               case 'GM.setClipboard':
