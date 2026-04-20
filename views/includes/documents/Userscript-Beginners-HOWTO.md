@@ -31,9 +31,11 @@ Find your web browser in the table below, and follow the links to find out the o
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; | [Android][android] | [&nbsp;iOS&nbsp;][ios] | [Linux][linux] | [&nbsp;macOS&nbsp;][macos] | [Windows][windows]
 --- | :---: | :---: | :---: | :---: | :---:
 &emsp; |
-**[Chrome][chrome]** | [Tampermonkey][tampermonkeyForAndroid] | &ndash; | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome], [Violentmonkey][violentmonkeyForChrome]
+**[Brave][brave]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForBrave], [Violentmonkey][violentmonkeyForBrave] | [Tampermonkey][tampermonkeyForBrave], [Violentmonkey][violentmonkeyForBrave] | [Tampermonkey][tampermonkeyForBrave], [Violentmonkey][violentmonkeyForBrave]
 &emsp; |
-**[Chromium][chromium]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium]
+**[Chrome][chrome]** | [Tampermonkey][tampermonkeyForAndroid] | &ndash; | [Tampermonkey][tampermonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome] | [Tampermonkey][tampermonkeyForChrome]
+&emsp; |
+**[Chromium][chromium]** | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium]
 &emsp; |
 **[Edge][edge]** | &ndash; | &ndash; | &ndash; | &ndash; | [Tampermonkey][tampermonkeyForEdge]
 &emsp; |
@@ -49,7 +51,7 @@ Find your web browser in the table below, and follow the links to find out the o
 &emsp; |
 **[SeaMonkey][seamonkey]** | &ndash; | &ndash; | [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]| [Greasemonkey Port][greasemonkeyPortForSeaMonkey]
 &emsp; |
-**[Yandex Browser][yandexbrowser]** | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | &ndash; | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium], [Violentmonkey][violentmonkeyForChromium]
+**[Yandex Browser][yandexbrowser]** | [Tampermonkey][tampermonkeyForChromium] | &ndash; | [Tampermonkey][tampermonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium] | [Tampermonkey][tampermonkeyForChromium]
 
 [githubFavicon]: https://assets-cdn.github.com/favicon.ico
 [oujsFavicon]: https://raw.githubusercontent.com/OpenUserJs/OpenUserJS.org/master/public/images/favicon16.png
@@ -58,6 +60,7 @@ Find your web browser in the table below, and follow the links to find out the o
 [greasemonkeyPortForSeaMonkey]: Greasemonkey-Port-for-SeaMonkey
 
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
+[tampermonkeyForBrave]: Tampermonkey-for-Brave
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForEdge]: Tampermonkey-for-Edge
@@ -65,8 +68,7 @@ Find your web browser in the table below, and follow the links to find out the o
 [tampermonkeyForOpera]: Tampermonkey-for-Opera
 [tampermonkeyForSafari]: Tampermonkey-for-Safari
 
-[violentmonkeyForChrome]: Violentmonkey-for-Chrome
-[violentmonkeyForChromium]: Violentmonkey-for-Chromium
+[violentmonkeyForBrave]: Violentmonkey-for-Brave
 [violentmonkeyForFirefox]: Violentmonkey-for-Firefox
 [violentmonkeyForOpera]: Violentmonkey-for-Opera
 
@@ -76,6 +78,7 @@ Find your web browser in the table below, and follow the links to find out the o
 [macos]: macOS
 [windows]: Windows
 
+[brave]: Brave
 [chrome]: Chrome
 [chromium]: Chromium
 [edge]: Edge

@@ -1,15 +1,15 @@
-## Violentmonkey for Chromium
+## Violentmonkey for Brave
 <img src="https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_icon.min.svg?sanitize=true" width="128" height="128" align="right">
 
-Violentmonkey is a userscript manager for the [Chrome][chrome], [Chromium][chromium], [Firefox][firefox], [Opera][opera] web browser, written by [gera2ld][gera2ld].
+Violentmonkey is a userscript manager for the [Brave][brave], [Firefox][firefox], and [Opera][opera] web browser and formerly the [Chrome][chrome], [Chromium][chromium] browsers using Manifest v2.x, written by [gera2ld][gera2ld].
 
 ### Installing Violentmonkey
 
 To get userscripts going with the desktop version of Violentmonkey, first you have to install it from the [Chrome Add-ons website][chromeAddons].
 
-![Screenshot of Violentmonkey page in Chromium Add-ons website][chromeAddonsScreenshot1]
+![Screenshot of Violentmonkey page in Brave Add-ons website][braveAddonsScreenshot1]
 
-From the Violentmonkey page in the Chromium Add-ons website, click the green "Add to Chromium" button to install the extension. Once Violentmonkey has finished installing, you should see a pop-up confirming that Violentmonkey has been added to Chromium. This should point to a new Violentmonkey icon at the top of the Chromium window, next to the address bar.
+From the Violentmonkey page in the Chromium Add-ons website, click the green "Add to Brave" button to install the extension. Once Violentmonkey has finished installing, you should see a pop-up confirming that Violentmonkey has been added to Brave. This should point to a new extension puzzle piece, near the top of the Brave window, next to the address bar. Inside the menu will be Violentmonkey.
 
 ### Installing Userscripts
 
@@ -19,7 +19,7 @@ Once Violentmonkey is installed, installing userscripts from [OpenUserJS.org][ou
 
 Violentmonkey will display a screen showing you the source code of the userscript. Click the "Confirm installation" button to finish installing the script.
 
-![Screenshot of Violentmonkey script installation][violentmonkeyChromiumScreenshot2]
+![Screenshot of Violentmonkey script installation][violentmonkeyBraveScreenshot2]
 
 Installing userscripts from other sources is a similar process. You just need to find the installation link for the script. This will be a button or link to a file with a name that ends ".user.js"
 
@@ -29,8 +29,7 @@ After installing a userscript, you won't normally notice any further changes unt
 
 Clicking on the Violentmonkey icon at any time will pop up a menu that shows you what userscripts are running on the website you are looking at. You can enable or disable each one by clicking on its name *(ticks mark enabled userscripts)*. The menu also lets you disable userscripts in general, or manage the scripts you have installed.
 
-![Screenshot of Violentmonkey Dashboard][violentmonkeyChromiumScreenshot3]
-
+![Screenshot of Violentmonkey Dashboard][violentmonkeyBraveScreenshot3]
 Clicking "Open Dashboard" in the Violentmonkey menu takes you a dashboard screen that lists all your installed scripts. Each one can be temporarily disabled or removed totally using the buttons provided. You can also manually check for updated userscripts.
 
 ### Trouble shooting
@@ -50,11 +49,12 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [opera]: Opera
 [chrome]: Chrome
 [chromium]: Chromium
+[brave]: Brave
 [firefox]: Firefox
 [gera2ld]: https://github.com/gera2ld
 [chromeAddons]: https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag
-[chromeAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_ch1.gif "Violentmonkey in the Opera Add-ons website"
+[braveAddonsScreenshot1]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_br1.gif "Violentmonkey in the Opera Add-ons website"
 [oujsScriptPageScreenshot]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/openuserjs_script.gif "Ready to install a script"
-[violentmonkeyChromiumScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_ch3.gif "Installing a script"
-[violentmonkeyChromiumScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_ch4.png "Violentmonkey Dashboard"
+[violentmonkeyBraveScreenshot2]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_br3.gif "Installing a script"
+[violentmonkeyBraveScreenshot3]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/violentmonkey_br4.png "Violentmonkey Dashboard"
 [violentmonkeyIO]: https://violentmonkey.github.io/

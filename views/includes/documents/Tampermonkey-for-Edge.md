@@ -49,6 +49,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
 * [Tampermonkey for Android][tampermonkeyForAndroid]
+* [Tampermonkey for Brave][tampermonkeyForBrave]
 * [Tampermonkey for Chrome][tampermonkeyForChrome]
 * [Tampermonkey for Chromium][tampermonkeyForChromium]
 * [Tampermonkey for Opera][tampermonkeyForOpera]
@@ -82,6 +83,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 
 <!-- ## Other related .user.js engine internal pages -->
 [tampermonkeyForAndroid]: Tampermonkey-for-Android
+[tampermonkeyForBrave]: Tampermonkey-for-Brave
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForFirefox]: Tampermonkey-for-Firefox

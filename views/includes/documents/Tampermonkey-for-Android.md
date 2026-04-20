@@ -59,6 +59,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 * [Get Tampermonkey from the Google Play Store][gooPlayStoreTampermonkey]
 * [Tampermonkey.net][tampermonkeyNet] - documentation, discussion and downloads for other versions of Tampermonkey.
 
+* [Tampermonkey for Brave][tampermonkeyForBrave]
 * [Tampermonkey for Chrome][tampermonkeyForChrome]
 * [Tampermonkey for Chromium][tampermonkeyForChromium]
 * [Tampermonkey for Edge][tampermonkeyForEdge]
@@ -94,6 +95,7 @@ Sometimes, when you use more than one userscript on the same web page, they need
 [tampermonkeyAndroidScreenshot4]: https://raw.githubusercontent.com/wiki/OpenUserJS/OpenUserJS.org/images/tampermonkey_an5.png "Tampermonkey Options"
 
 <!-- ## Other related .user.js engine internal pages -->
+[tampermonkeyForBrave]: Tampermonkey-for-Brave
 [tampermonkeyForChrome]: Tampermonkey-for-Chrome
 [tampermonkeyForChromium]: Tampermonkey-for-Chromium
 [tampermonkeyForEdge]: Tampermonkey-for-Edge

@@ -72,6 +72,12 @@ exports.view = function (aReq, aRes, aNext) {
       case 'QupZilla':
         aRes.redirect(301, aReq.url.replace(/QupZilla\/?$/, 'Falkon'));
         return;
+      case 'Violentmonkey-for-Chrome':
+        aRes.redirect(301, aReq.url.replace(/Violentmonkey-for-Chrome\/?$/, 'Violentmonkey-for-Brave'));
+        return;
+      case 'Violentmonkey-for-Chromium':
+        aRes.redirect(301, aReq.url.replace(/Violentmonkey-for-Chromium\/?$/, 'Violentmonkey-for-Brave'));
+        return;
     }
 
     documentPath = 'views/includes/documents';
