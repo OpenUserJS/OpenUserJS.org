@@ -494,6 +494,37 @@ var listSameQRateLimiter = rateLimit({
   }
 });
 
+var waitVoteCapMin = isDev ? settings.waitVoteCapMin.dev: settings.waitVoteCapMin.pro;
+var voteCapLimiter = rateLimit({
+  store: (isDev ? undefined : new MongoStore({
+    uri: appendUrlLeaf(limiter, '/voteCapLimiter'),
+    resetExpireDateOnChange: true, // Rolling
+    expireTimeMs: waitVoteCapMin * 60 * 1000 // n minutes for mongo store
+  })),
+  windowMs: waitVoteCapMin * 60 * 1000, // n minutes for all stores
+  max: 3, // limit each IP to n requests per windowMs for memory store or expireTimeMs for mongo store
+  handler: function (aReq, aRes, aNext, aOptions) {
+    statusCodePage(aReq, aRes, aNext, {
+      statusCode: 429,
+      statusMessage: 'Too many requests.',
+      suppressNavigation: true,
+      isCustomView: true,
+      statusData: {
+        isListView: true,
+        retryAfter: waitAuthCapMin * 60 + (isDev ? fudgeSec : fudgeMin)
+      }
+    });
+  },
+  skip: function (aReq, aRes) {
+    var authedUser = aReq.session.user;
+
+    if (authedUser && authedUser.isMod) {
+      this.store.resetKey(this.keyGenerator);
+      return true;
+    }
+  }
+});
+
 
 module.exports = function (aApp) {
   //--- Middleware
@@ -600,7 +631,7 @@ module.exports = function (aApp) {
   aApp.route('/mod/removed/:id').head(statusTMR).get(authentication.validateUser, moderation.removedItemPage);
 
   // Vote route
-  aApp.route(/^\/vote\/(scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, vote.vote);
+  aApp.route(/^\/vote\/(scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(voteCapLimiter, authentication.validateUser, vote.vote);
 
   // Flag route
   aApp.route(/^\/flag\/(users|scripts|libs)\/((.+?)(?:\/(.+))?)$/).post(authentication.validateUser, flag.flag);

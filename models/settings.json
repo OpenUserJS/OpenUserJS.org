@@ -72,6 +72,11 @@
   "dev": 5,
   "pro": 15
  },
+  "waitVoteCapMin": {
+  "dev": 1,
+  "pro": 30
+ },
+
 
  "NOTE2": "Requires DB migration for changing below settings",
 
