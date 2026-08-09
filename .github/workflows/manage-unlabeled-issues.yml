@@ -1,0 +1,39 @@
+name: Manage Unlabeled Issues
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  close-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            if (context.payload.issue.labels.length === 0) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                state: 'closed',
+                state_reason: 'completed'
+              });
+
+              await github.rest.issues.lock({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                lock_reason: 'spam'
+              });
+
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                labels: ['Ignored Rules']
+              });
+            }
