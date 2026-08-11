@@ -152,13 +152,19 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
               case 'none':
                 hasGrantNone = true;
                 // fallsthrough
-              case 'GM.*':
               case 'GM_addElement':
               case 'GM_addStyle':
+              case 'GM.addStyle':
               case 'GM_addValueChangeListener':
               case 'GM.addValueChangeListener':
+              case 'GM_audio':
+              case 'GM.audio':
+              case 'GM_cookie':
+              case 'GM.cookie':
               case 'GM_deleteValue':
               case 'GM.deleteValue':
+              case 'GM_deleteValues':
+              case 'GM.deleteValues':
               case 'GM_download':
               case 'GM_getResourceText':
               case 'GM_getResourceURL':
@@ -183,6 +189,8 @@ function invalidKey(aAuthorName, aScriptName, aIsLib, aKeyName, aKeyValue) {  //
               case 'GM.setClipboard':
               case 'GM_setValue':
               case 'GM.setValue':
+              case 'GM_setValues':
+              case 'GM.setValues':
               case 'GM_unregisterMenuCommand':
               case 'GM_xmlhttpRequest':
               case 'GM.xmlHttpRequest':
