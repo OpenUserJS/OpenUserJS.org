@@ -2308,6 +2308,7 @@ exports.webhook = function (aReq, aRes) {
   var repos = {};
   var repo = null;
   var update = null;
+  var defaultBranch = null;
 
   // Return if script storage is in read-only mode
   if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
@@ -2375,9 +2376,10 @@ exports.webhook = function (aReq, aRes) {
 
   //
 
-  // Only accept commits from the `master` branch
-  if (payload.ref !== 'refs/heads/master') {
-    aRes.status(403).send('Default branch is not `master`.'); // Forbidden
+  // Only accept commits from the repository's default branch
+  defaultBranch = (payload.repository && payload.repository.default_branch) || 'master';
+  if (payload.ref !== 'refs/heads/' + defaultBranch) {
+    aRes.status(403).send('Push is not to default branch.'); // Forbidden
     return;
   }
 
