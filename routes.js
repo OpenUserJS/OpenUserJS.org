@@ -561,7 +561,9 @@ module.exports = function (aApp) {
   aApp.route('/users/:username/profile/captcha').head(statusTMR).get(captchaCapLimiter, authentication.validateUser, user.userEditProfilePageCaptcha);
   aApp.route('/users/:username/update').head(statusTMR).post(authentication.validateUser, admin.adminUserUpdate);
   // NOTE: Some below inconsistent with priors
-  aApp.route('/user/preferences').head(statusTMR).get(authentication.validateUser, user.userEditPreferencesPage);
+  aApp.route('/user/preferences').head(statusTMR)
+    .get(authentication.validateUser, user.userEditPreferencesPage)
+    .post(authentication.validateUser, user.userUpdatePreferences);
   aApp.route('/user').head(statusTMR).get(function (aReq, aRes) {
     aRes.redirect(302, '/users');
   });

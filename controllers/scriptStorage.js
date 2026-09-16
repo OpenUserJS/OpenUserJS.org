@@ -2376,13 +2376,6 @@ exports.webhook = function (aReq, aRes) {
 
   //
 
-  // Only accept commits from the repository's default branch
-  defaultBranch = (payload.repository && payload.repository.default_branch) || 'master';
-  if (payload.ref !== 'refs/heads/' + defaultBranch) {
-    aRes.status(403).send('Push is not to default branch.'); // Forbidden
-    return;
-  }
-
   // Gather all the info for the RepoManager
   username = payload.repository.owner.name;
   reponame = payload.repository.name;
@@ -2410,6 +2403,13 @@ exports.webhook = function (aReq, aRes) {
 
     if (aUser.strategies.indexOf('github') <= -1) { // Don't rely on just `ghUsername`!
       aRes.status(403).send('Requires supported authentication strategy on account.'); // Reject due to lack of GitHub as Auth
+      return;
+    }
+
+    // Only accept commits from the default branch (defaults to `master`, allows user migration to `main`)
+    defaultBranch = aUser.ghBranch || 'master';
+    if (payload.ref !== 'refs/heads/' + defaultBranch) {
+      aRes.status(403).send('Default branch is not `' + defaultBranch + '`.'); // Forbidden
       return;
     }
 

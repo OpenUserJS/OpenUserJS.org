@@ -28,6 +28,7 @@ var userSchema = new Schema({
 
   // Store their GitHub username when they import scripts
   ghUsername: String,
+  ghBranch: { type: String, default: 'master' },
 
   // Moderation
   role: Number,
