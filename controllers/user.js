@@ -1658,6 +1658,11 @@ exports.userGitHubRepoPage = function (aReq, aRes, aNext) {
       },
       function (aRepo, aCallback) {
         options.repo = aRepo;
+        if (authedUser && authedUser.ghBranch) {
+          options.repo.default_branch = authedUser.ghBranch;
+        } else {
+          options.repo.default_branch = options.repo.default_branch || 'master';
+        }
         options.repoAsEncoded = {
           default_branch: encodeURIComponent(options.repo.default_branch)
         };
@@ -1741,7 +1746,9 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   }
 
   options.githubRepoName = githubRepoName = aReq.body.repo || aReq.query.repo;
-  options.githubDefaultBranch = githubDefaultBranch = aReq.body.default_branch || aReq.query.default_branch;
+  options.githubDefaultBranch = githubDefaultBranch =
+    (authedUser && authedUser.ghBranch) || aReq.body.default_branch || aReq.query.default_branch
+    || 'master';
   options.githubPathName = githubPathName = aReq.body.pathname || aReq.query.pathname;
   options.githubPathExt = githubPathExt = aReq.body.pathext || aReq.query.pathext;
   options.githubBlobPath = githubBlobPath = aReq.body.path || aReq.query.path;
