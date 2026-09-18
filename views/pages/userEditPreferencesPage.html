@@ -67,6 +67,7 @@
                   {{/unusedStrategies}}
                 </div>
                 {{#user.hasGithub}}
+                {{^user.isGhBranchMain}}
                 <div class="edit-github-box">
                   <h2 class="edit-github">GitHub Integration</h2>
                   <div class="input-group col-xs-12">
@@ -74,12 +75,8 @@
                       <i class="fa fa-github fa-fw"></i>
                     </span>
                     <span class="list-group-item">
-                      Default branch: <strong>{{user.ghBranch}}</strong>
-                      {{#user.isGhBranchMain}}
-                      <span class="text-muted small">&mdash; Migrated</span>
-                      {{/user.isGhBranchMain}}
+                      Default branch: <code>master</code>
                     </span>
-                    {{^user.isGhBranchMain}}
                     <div style="width: 100%;">
                       <div class="input-group-addon">
                         <form method="post" action="/user/preferences" style="display: inline;">
@@ -90,9 +87,9 @@
                         </form>
                       </div>
                     </div>
-                    {{/user.isGhBranchMain}}
                   </div>
                 </div>
+                {{/user.isGhBranchMain}}
                 {{/user.hasGithub}}
                 <div class="edit-session-box">
                   <h2 class="edit-session">Session</h2>
