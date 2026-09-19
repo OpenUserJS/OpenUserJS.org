@@ -67,7 +67,10 @@ var modifySessions = require('./libs/modifySessions');
 var settings = require('./models/settings.json');
 
 var connectStr = process.env.CONNECT_STRING || settings.connect;
-var sessionSecret = process.env.SESSION_SECRET || settings.secret;
+// Never fall back to a hardcoded secret from settings.json (CWE-798).
+// If SESSION_SECRET is not provided via environment, generate a random
+// per-process secret instead of using a checked-in credential.
+var sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(64).toString('hex');
 var db = mongoose.connection;
 
 var moment = require('moment');
