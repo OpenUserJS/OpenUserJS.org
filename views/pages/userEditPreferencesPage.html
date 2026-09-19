@@ -66,6 +66,31 @@
                   </form>
                   {{/unusedStrategies}}
                 </div>
+                {{#user.hasGithub}}
+                {{^user.isGhBranchMain}}
+                <div class="edit-github-box">
+                  <h2 class="edit-github">GitHub Integration</h2>
+                  <div class="input-group col-xs-12">
+                    <span class="input-group-addon">
+                      <i class="fa fa-github fa-fw"></i>
+                    </span>
+                    <span class="list-group-item">
+                      Default branch: <code>master</code>
+                    </span>
+                    <div style="width: 100%;">
+                      <div class="input-group-addon">
+                        <form method="post" action="/user/preferences" style="display: inline;">
+                          <input type="hidden" name="branch" value="main">
+                          <button class="btn btn-sm btn-warning pull-right" type="submit" title="Permanent one-way migration to main">
+                            Migrate to <code>main</code> <i class="fa fa-code-fork fa-fw"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {{/user.isGhBranchMain}}
+                {{/user.hasGithub}}
                 <div class="edit-session-box">
                   <h2 class="edit-session">Session</h2>
                   <div class="session-area list-group">

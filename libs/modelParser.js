@@ -738,6 +738,8 @@ var parseUser = function (aUser) {
   user.userStrategies = user.strategies;
   user.hasGithub = user.strategies && user.strategies.indexOf('github') > -1; // NOTE: Watchpoint
   user.canSync = user.hasGithub;
+  user.ghBranch = user.ghBranch || 'master';
+  user.isGhBranchMain = user.ghBranch === 'main';
 
   // Dates
   parseDateProperty(user, 'created');

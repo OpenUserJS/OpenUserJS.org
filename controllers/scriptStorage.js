@@ -2308,6 +2308,7 @@ exports.webhook = function (aReq, aRes) {
   var repos = {};
   var repo = null;
   var update = null;
+  var defaultBranch = null;
 
   // Return if script storage is in read-only mode
   if (process.env.READ_ONLY_SCRIPT_STORAGE === 'true') {
@@ -2375,12 +2376,6 @@ exports.webhook = function (aReq, aRes) {
 
   //
 
-  // Only accept commits from the `master` branch
-  if (payload.ref !== 'refs/heads/master') {
-    aRes.status(403).send('Default branch is not `master`.'); // Forbidden
-    return;
-  }
-
   // Gather all the info for the RepoManager
   username = payload.repository.owner.name;
   reponame = payload.repository.name;
@@ -2408,6 +2403,13 @@ exports.webhook = function (aReq, aRes) {
 
     if (aUser.strategies.indexOf('github') <= -1) { // Don't rely on just `ghUsername`!
       aRes.status(403).send('Requires supported authentication strategy on account.'); // Reject due to lack of GitHub as Auth
+      return;
+    }
+
+    // Only accept commits from the default branch (defaults to `master`, allows user migration to `main`)
+    defaultBranch = aUser.ghBranch || 'master';
+    if (payload.ref !== 'refs/heads/' + defaultBranch) {
+      aRes.status(403).send('Default branch is not `' + defaultBranch + '`.'); // Forbidden
       return;
     }
 

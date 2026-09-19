@@ -163,9 +163,10 @@ RepoManager.prototype.loadSyncs = function (aUpdate, aCallback) {
   // TODO: Alter usage of makeRepoArray since it causes redundant looping
   arrayOfRepos.forEach(function (aRepo) {
     async.each(aRepo.scripts, function (aScript, aInnerCallback) {
+      var branch = (that.user && that.user.ghBranch) || 'master';
       var hostname = 'raw.githubusercontent.com';
       var uri = '/' + aRepo.user + '/' + aRepo.repo
-        + '/master' + aScript.path;
+        + '/' + branch + aScript.path;
 
       Sync.findOne(
         { _authorId: that.user.id, id: aUpdate, target: 'https://' + hostname + uri },
@@ -216,11 +217,12 @@ RepoManager.prototype.loadScripts = function (aUpdate, aCallback) {
   // TODO: Alter usage of makeRepoArray since it causes redundant looping
   arrayOfRepos.forEach(function (aRepo) {
     async.each(aRepo.scripts, function (aScript, aInnerCallback) {
+      var branch = (that.user && that.user.ghBranch) || 'master';
       var hostname = 'raw.githubusercontent.com';
       var uri = '/' + aRepo.user + '/' + aRepo.repo
-        + '/master' + aScript.path;
+        + '/' + branch + aScript.path;
       var url = '/' + encodeURI(aRepo.user) + '/' + encodeURI(aRepo.repo)
-        + '/master' + aScript.path;
+        + '/' + branch + aScript.path;
 
       fetchRaw(hostname, url, function (aBufs) {
         var msg = null;

@@ -1272,6 +1272,44 @@ exports.userEditPreferencesPage = function (aReq, aRes, aNext) {
   });
 };
 
+exports.userUpdatePreferences = function (aReq, aRes, aNext) {
+  var authedUser = aReq.session.user;
+  var branch = aReq.body.branch;
+
+  if (!authedUser) {
+    aRes.redirect('/login');
+    return;
+  }
+
+  User.findOne({
+    _id: authedUser._id
+  }, function (aErr, aUser) {
+    if (aErr || !aUser) {
+      aNext();
+      return;
+    }
+
+    // One-way migration to `main` for GitHub authed accounts only
+    if (branch === 'main' && aUser.strategies && aUser.strategies.indexOf('github') > -1) {
+      if (aUser.ghBranch !== 'main') {
+        aUser.ghBranch = 'main';
+        aUser.save(function (aErr) {
+          if (aErr) {
+            console.error(aErr);
+          }
+          if (aReq.session && aReq.session.user) {
+            aReq.session.user.ghBranch = 'main';
+          }
+          aRes.redirect('/user/preferences');
+        });
+        return;
+      }
+    }
+
+    aRes.redirect('/user/preferences');
+  });
+};
+
 exports.newScriptPage = function (aReq, aRes, aNext) {
   function preRender() {
   }
@@ -1703,7 +1741,8 @@ exports.userGitHubImportScriptPage = function (aReq, aRes, aNext) {
   }
 
   options.githubRepoName = githubRepoName = aReq.body.repo || aReq.query.repo;
-  options.githubDefaultBranch = githubDefaultBranch = aReq.body.default_branch || aReq.query.default_branch;
+  options.githubDefaultBranch = githubDefaultBranch =
+    aReq.body.default_branch || aReq.query.default_branch;
   options.githubPathName = githubPathName = aReq.body.pathname || aReq.query.pathname;
   options.githubPathExt = githubPathExt = aReq.body.pathext || aReq.query.pathext;
   options.githubBlobPath = githubBlobPath = aReq.body.path || aReq.query.path;
